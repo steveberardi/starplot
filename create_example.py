@@ -9,9 +9,9 @@ start_time = time.time()
 
 styles = [
     ("blue", BLUE),
-    ("chalk", CHALK),
-    ("mono", MONO),
-    ("red", RED),
+    # ("chalk", CHALK),
+    # ("mono", MONO),
+    # ("red", RED),
 ]
 
 for n, style in styles:

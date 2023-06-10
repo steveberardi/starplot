@@ -1,13 +1,10 @@
 # ⭐ starplot 💫
 Python library for creating star charts and maps
 
-## Examples
+## Example
 ![Example](examples/starchart-blue.png)
 
-### More Styles
-<img src="examples/starchart-chalk.png" height="300" width="300">
-<img src="examples/starchart-red.png" height="300" width="300">
-<img src="examples/starchart-mono.png" height="300" width="300">
+For more styles, check out the [examples](examples/).
 
 ## Getting Started
 
