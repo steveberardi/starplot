@@ -1,5 +1,5 @@
 # ⭐ starplot 💫
-Python library for creating star charts and maps
+**starplot** is a Python library for creating star charts and maps.
 
 ## Example
 ![Example](examples/starchart-blue.png)
@@ -8,7 +8,8 @@ For more styles, check out the [examples](examples/).
 
 ## Getting Started
 
-To create a star chart for today as seen from [Palomar Mountain](https://en.wikipedia.org/wiki/Palomar_Mountain) in California:
+To create a star chart for tonight's sky as seen from [Palomar Mountain](https://en.wikipedia.org/wiki/Palomar_Mountain) in California:
+
 ```python
 from datetime import datetime
 from starplot.charts import create_star_chart
@@ -24,13 +25,24 @@ create_star_chart(
 )
 ```
 
+## Core Dependencies
+
+- pandas
+- matplotlib
+- numpy
+- cartopy
+- geopandas
+- pydantic
+- skyfield
+- adjustText
+
 ## Coming Soon
 
 - Deep Sky Objects (DSOs)
 - Support for plotting additional objects (and styling per object)
 - Documentation
 
-## How To
+## (WIP) How To
 - Create basic star chart
 - Create new style
 - Add additional objects
