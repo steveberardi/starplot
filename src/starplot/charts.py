@@ -22,9 +22,7 @@ from starplot.utils import in_circle
 
 def get_position(tz: str, dt: datetime, lat: float, lon: float):
     ts = load.timescale()
-    t = ts.from_datetime(
-        timezone(tz).localize(dt.replace(hour=22))
-    )  # TODO: dont use constant hour
+    t = ts.from_datetime(timezone(tz).localize(dt))
     loc = wgs84.latlon(lat, lon).at(t)
     return t, loc.from_altaz(alt_degrees=90, az_degrees=0)
 

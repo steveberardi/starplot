@@ -18,7 +18,7 @@ from starplot.styles import BLUE
 create_star_chart(
     lat=33.363484, 
     lon=-116.836394
-    dt=datetime.now(),
+    dt=datetime.now().replace(hour=22),
     tz_identifier="America/Los_Angeles", 
     filename="starchart.png",
     style=BLUE,

@@ -18,7 +18,7 @@ for n, style in styles:
     create_star_chart(
         lat=32.97,
         lon=-117.038611,
-        dt=datetime.now(),
+        dt=datetime.now().replace(hour=22),
         # dt=datetime(2023, 10, 28),
         # dt=datetime(2023, 2, 8),
         tz_identifier="America/Los_Angeles", 
