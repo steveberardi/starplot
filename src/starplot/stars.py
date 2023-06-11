@@ -19,9 +19,11 @@ star_names = {
     80763: "Antares",
     69673: "Arcturus",
     27989: "Betelgeuse",
+    30438: "Canopus",
     24608: "Capella",
     36850: "Castor",
     102098: "Deneb",
+    54061: "Dubhe",
     25428: "Elnath",
     113368: "Fomalhaut",
     65378: "Mizar",
@@ -73,7 +75,7 @@ allstars = {
     "Benetnash": 67301,
     "Betelgeuse": 27989,  # --
     "Birdun": 66657,
-    "Canopus": 30438,
+    "Canopus": 30438, # --
     "Capella": 24608,  # --
     "Caph": 746,
     "Castor": 36850,  # --
@@ -82,7 +84,7 @@ allstars = {
     "Denebola": 57632,
     "Diphda": 3419,
     "Dschubba": 78401,
-    "Dubhe": 54061,
+    "Dubhe": 54061, # --
     "Durre Menthor": 8102,
     "Elnath": 25428,  # --
     "Enif": 107315,
