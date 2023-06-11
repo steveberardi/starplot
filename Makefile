@@ -31,8 +31,8 @@ build: venv
 publish: venv
 	$(PYTHON) -m flit publish
 
-examples: venv
-	$(PYTHON) create_example.py
+example: venv
+	$(PYTHON) example.py
 
 clean:
 	rm -rf __pycache__
@@ -40,4 +40,4 @@ clean:
 	rm -rf dist
 	rm -rf htmlcov
 
-.PHONY: install shell build publish clean examples
+.PHONY: install shell build publish clean example
