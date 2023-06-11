@@ -75,7 +75,7 @@ allstars = {
     "Benetnash": 67301,
     "Betelgeuse": 27989,  # --
     "Birdun": 66657,
-    "Canopus": 30438, # --
+    "Canopus": 30438,  # --
     "Capella": 24608,  # --
     "Caph": 746,
     "Castor": 36850,  # --
@@ -84,7 +84,7 @@ allstars = {
     "Denebola": 57632,
     "Diphda": 3419,
     "Dschubba": 78401,
-    "Dubhe": 54061, # --
+    "Dubhe": 54061,  # --
     "Durre Menthor": 8102,
     "Elnath": 25428,  # --
     "Enif": 107315,
