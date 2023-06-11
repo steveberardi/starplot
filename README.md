@@ -42,8 +42,6 @@ create_star_chart(
 - Support for plotting additional objects (and styling per object)
 - Documentation
 
-## (WIP) How To
-- Create basic star chart
-- Create new style
-- Add additional objects
+## License
+[MIT](LICENSE)
 
