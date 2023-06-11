@@ -34,8 +34,6 @@ create_star_chart(
 - pandas
 - matplotlib
 - numpy
-- cartopy
-- geopandas
 - pydantic
 - skyfield
 - adjustText
