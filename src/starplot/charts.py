@@ -20,7 +20,7 @@ from starplot.styles import PlotStyle, MONO
 from starplot.utils import in_circle
 
 
-def get_position(tz: str, dt: datetime, lat: float, lon: float):
+def get_position(lat: float, lon: float, dt: datetime, tz: str = "UTC"):
     ts = load.timescale()
     t = ts.from_datetime(timezone(tz).localize(dt))
     loc = wgs84.latlon(lat, lon).at(t)
@@ -31,8 +31,8 @@ def create_star_chart(
     lat: float,
     lon: float,
     dt: datetime,
-    tz_identifier: str,
     filename: str,
+    tz_identifier: str = "UTC",
     style: PlotStyle = MONO,
     limiting_magnitude: float = 4.6,
     limiting_magnitude_labels: float = 2,
@@ -42,10 +42,10 @@ def create_star_chart(
     **kwargs
 ):
     t, position = get_position(
-        tz=tz_identifier,
-        dt=dt,
         lat=lat,
         lon=lon,
+        dt=dt,
+        tz=tz_identifier,
     )
 
     eph = load("de421.bsp")
