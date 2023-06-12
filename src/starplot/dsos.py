@@ -1,3 +1,4 @@
+# TODO : trim base dso list to avoid too many labels on starchart
 messier = {
     "M1": (5.575547, 22.014472),
     "M2": (21.557503, 0.823306),
