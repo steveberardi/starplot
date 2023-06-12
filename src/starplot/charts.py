@@ -15,6 +15,7 @@ from starplot.constellations import (
     create_projected_constellation_lines,
     labels as conlabels,
 )
+from starplot.dsos import messier
 from starplot.stars import get_star_data, star_names
 from starplot.styles import PlotStyle, MONO
 from starplot.utils import in_circle
@@ -143,6 +144,28 @@ def create_star_chart(
                 ],
             )
             label.set_alpha(0.6)
+            labels.append(label)
+    
+    # Plot Messier objects
+    for m in messier:
+        ra, dec = messier.get(m)
+        x, y = project_fn(position_of_radec(ra, dec))
+
+        if in_circle(x, y):
+            label = ax.text(
+                x,
+                y,
+                m.upper(),
+                color=style.constellation_font_color.as_hex(),
+                fontsize=style.constellation_font_size,
+                weight=style.constellation_font_weight,
+                zorder=1,
+                path_effects=[
+                    pe.withStroke(
+                        linewidth=2, foreground=style.background_color.as_hex()
+                    )
+                ],
+            )
             labels.append(label)
 
     ax.set_xlim(-1.1, 1.1)
