@@ -20,6 +20,15 @@ from starplot.stars import get_star_data, star_names
 from starplot.styles import PlotStyle, MONO
 from starplot.utils import in_circle
 
+DSO_BASE = [
+    "M5",
+    "M13",
+    "M23",
+    "M42",
+    "M44",
+    "M45",
+]
+
 
 def get_position(lat: float, lon: float, dt: datetime, tz: str = "UTC"):
     ts = load.timescale()
@@ -145,17 +154,28 @@ def create_star_chart(
             )
             label.set_alpha(0.6)
             labels.append(label)
-    
-    # Plot Messier objects
-    for m in messier:
+
+    # Plot DSO objects
+    for m in DSO_BASE:
         ra, dec = messier.get(m)
         x, y = project_fn(position_of_radec(ra, dec))
 
         if in_circle(x, y):
-            label = ax.text(
+            ax.plot(
                 x,
                 y,
+                marker="^",
+                markersize=4,
+                color=style.star_color.as_hex(),
+                fillstyle="none",
+                linestyle="--"
+            )
+            label = ax.text(
+                x + 0.005,
+                y + 0.005,
                 m.upper(),
+                ha="right",
+                va="center",
                 color=style.constellation_font_color.as_hex(),
                 fontsize=style.constellation_font_size,
                 weight=style.constellation_font_weight,
