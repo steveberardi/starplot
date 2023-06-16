@@ -13,6 +13,34 @@ class FontWeightEnum(str, Enum):
     ULTRA_LIGHT = "ultralight"
 
 
+class MarkerSymbolEnum(str, Enum):
+    POINT = "."
+    CIRCLE = "o"
+    SQUARE = "s"
+    STAR = "*"
+    DIAMOND = "D"
+    TRIANGLE = "^"
+
+
+class MarkerStyle(BaseModel):
+    color: Color = Color("#000")
+    symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
+    size: int = 4
+    fillstyle: str = "none"
+
+
+class LabelStyle(BaseModel):
+    font_size: int = 8
+    font_weight: FontWeightEnum = FontWeightEnum.NORMAL
+    font_color: Color = Color("#000")
+    font_alpha: float = 1
+
+
+class ObjectStyle(BaseModel):
+    marker: MarkerStyle = MarkerStyle()
+    label: LabelStyle = LabelStyle()
+
+
 class PlotStyle(BaseModel):
     """
     Base plotting style (monochrome)
