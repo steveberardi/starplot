@@ -227,24 +227,35 @@ def create_star_chart(
     ax.text(-1.042, 0, "E", **border_font_kwargs)
     ax.text(0, -1.045, "S", **border_font_kwargs)
 
-    # Inner border circle
-    circle = plt.Circle(
+    # Background Circle
+    background_circle = plt.Circle(
         (0, 0),
         facecolor=style.background_color.as_hex(),
         radius=1.0,
-        linewidth=2,
-        edgecolor=style.border_line_color.as_hex(),
+        linewidth=0,
+        # edgecolor=style.border_line_color.as_hex(),
         fill=True,
         zorder=-100,
     )
-    ax.add_patch(circle)
+    ax.add_patch(background_circle)
 
-    # clip stars outside border circle
-    starx.set_clip_path(circle)
-    cons.set_clip_path(circle)
+    # clip stars outside background circle
+    starx.set_clip_path(background_circle)
+    cons.set_clip_path(background_circle)
+
+    # Border Circles
+    inner_border = plt.Circle(
+        (0, 0),
+        radius=1.0,
+        linewidth=2,
+        edgecolor=style.border_line_color.as_hex(),
+        fill=False,
+        zorder=100,
+    )
+    ax.add_patch(inner_border)
 
     # Outer border circle
-    circle2 = plt.Circle(
+    outer_border = plt.Circle(
         (0, 0),
         facecolor=style.border_bg_color.as_hex(),
         radius=1.06,
@@ -253,7 +264,7 @@ def create_star_chart(
         fill=True,
         zorder=-200,
     )
-    ax.add_patch(circle2)
+    ax.add_patch(outer_border)
 
     # adjust text to avoid collisions
     adjust_text(labels, starpos_x, starpos_y)

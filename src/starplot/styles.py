@@ -13,6 +13,12 @@ class FontWeightEnum(str, Enum):
     ULTRA_LIGHT = "ultralight"
 
 
+class FontStyleEnum(str, Enum):
+    NORMAL = "normal"
+    ITALIC = "italic"
+    OBLIQUE = "oblique"
+
+
 class MarkerSymbolEnum(str, Enum):
     POINT = "."
     CIRCLE = "o"
@@ -27,6 +33,7 @@ class MarkerStyle(BaseModel):
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     size: int = 4
     fillstyle: str = "none"
+    visible: bool = True
 
 
 class LabelStyle(BaseModel):
@@ -34,6 +41,7 @@ class LabelStyle(BaseModel):
     font_weight: FontWeightEnum = FontWeightEnum.NORMAL
     font_color: Color = Color("#000")
     font_alpha: float = 1
+    visible: bool = True
 
 
 class ObjectStyle(BaseModel):
