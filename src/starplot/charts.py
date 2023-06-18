@@ -4,7 +4,6 @@ from adjustText import adjust_text as _adjust_text
 
 from matplotlib import pyplot as plt, patheffects as pe
 from matplotlib.collections import LineCollection
-from matplotlib.figure import Figure
 
 from skyfield.api import Star, load, wgs84
 from skyfield.positionlib import position_of_radec
@@ -17,7 +16,7 @@ from starplot.constellations import (
     labels as conlabels,
 )
 from starplot.dsos import DSO_BASE, messier
-from starplot.stars import get_star_data, star_names
+from starplot.stars import get_star_data, hip_names
 from starplot.styles import PlotStyle, GRAYSCALE
 from starplot.utils import in_circle
 from starplot.models import SkyObject
@@ -45,7 +44,7 @@ def create_star_chart(
     extra_objects: list[SkyObject] = None,
     *args,
     **kwargs
-) -> Figure:
+):
     extra_objects = extra_objects or []
 
     t, position = get_position(
@@ -108,13 +107,13 @@ def create_star_chart(
     for i, s in stardata[bright_stars].iterrows():
         if (
             in_circle(s["x"], s["y"])
-            and i in star_names
+            and i in hip_names
             and s["magnitude"] < limiting_magnitude_labels
         ):
             label = ax.text(
                 s["x"] + 0.00984,
                 s["y"] - 0.006,
-                star_names[i],
+                hip_names[i],
                 **style.star.label.matplot_kwargs,
                 ha="left",
                 va="top",
@@ -239,4 +238,5 @@ def create_star_chart(
             filename, bbox_inches="tight", pad_inches=0, edgecolor=None, dpi=figure_dpi
         )
 
-    return fig
+    plt.clf()
+    plt.close(fig)

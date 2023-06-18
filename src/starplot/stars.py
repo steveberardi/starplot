@@ -8,7 +8,7 @@ from skyfield.data import hipparcos
     Keys: Hipparcos ID
     Values: Common Name
 """
-star_names = {
+hip_names = {
     95947: "Albireo",
     65477: "Alcor",
     21421: "Aldebaran",
@@ -83,7 +83,7 @@ allstars = {
     "Deneb": 102098,  # --
     "Deneb Kaitos": 3419,
     "Denebola": 57632,
-    "Diphda": 3419, # --
+    "Diphda": 3419,  # --
     "Dschubba": 78401,
     "Dubhe": 54061,  # --
     "Durre Menthor": 8102,
