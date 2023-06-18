@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from adjustText import adjust_text
+from adjustText import adjust_text as _adjust_text
 
 from matplotlib import pyplot as plt, patheffects as pe
 from matplotlib.collections import LineCollection
+from matplotlib.figure import Figure
 
 from skyfield.api import Star, load, wgs84
 from skyfield.positionlib import position_of_radec
@@ -42,17 +43,18 @@ def create_star_chart(
     lat: float,
     lon: float,
     dt: datetime,
-    filename: str,
+    filename: str = None,
     tz_identifier: str = "UTC",
     style: PlotStyle = GRAYSCALE,
     limiting_magnitude: float = 4.6,
     limiting_magnitude_labels: float = 2,
     figure_size: int = 16,
     figure_dpi: int = 200,
+    adjust_text: bool = True,
     extra_objects: list[SkyObject] = None,
     *args,
     **kwargs
-):
+) -> Figure:
     extra_objects = extra_objects or []
 
     t, position = get_position(
@@ -205,7 +207,6 @@ def create_star_chart(
         facecolor=style.background_color.as_hex(),
         radius=1.0,
         linewidth=0,
-        # edgecolor=style.border_line_color.as_hex(),
         fill=True,
         zorder=-100,
     )
@@ -239,8 +240,12 @@ def create_star_chart(
     ax.add_patch(outer_border)
 
     # adjust text to avoid collisions
-    adjust_text(labels, starpos_x, starpos_y)
+    if adjust_text:
+        _adjust_text(labels, starpos_x, starpos_y)
 
-    fig.savefig(
-        filename, bbox_inches="tight", pad_inches=0, edgecolor=None, dpi=figure_dpi
-    )
+    if filename is not None:
+        fig.savefig(
+            filename, bbox_inches="tight", pad_inches=0, edgecolor=None, dpi=figure_dpi
+        )
+
+    return fig
