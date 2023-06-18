@@ -17,7 +17,7 @@ from starplot.constellations import (
 )
 from starplot.dsos import messier
 from starplot.stars import get_star_data, star_names
-from starplot.styles import PlotStyle, MONO
+from starplot.styles import PlotStyle, GRAYSCALE
 from starplot.utils import in_circle
 from starplot.models import SkyObject
 
@@ -44,7 +44,7 @@ def create_star_chart(
     dt: datetime,
     filename: str,
     tz_identifier: str = "UTC",
-    style: PlotStyle = MONO,
+    style: PlotStyle = GRAYSCALE,
     limiting_magnitude: float = 4.6,
     limiting_magnitude_labels: float = 2,
     figure_size: int = 16,
@@ -89,15 +89,14 @@ def create_star_chart(
 
     # Path for border or "glow" around text to make text easier to read
     # when it's drawn over stars
-    text_border = pe.withStroke(linewidth=2, foreground=style.background_color.as_hex())
+    text_border = pe.withStroke(
+        linewidth=style.text_border_width, foreground=style.background_color.as_hex()
+    )
 
     # Draw constellation lines
     constellations = LineCollection(
         create_projected_constellation_lines(stardata),
-        colors=style.constellation_line_color.as_hex(),
-        linewidths=style.constellation_line_width,
-        zorder=-1,
-        alpha=style.constellation_line_alpha,
+        **style.constellation.line.matplot_kwargs,
     )
     cons = ax.add_collection(constellations)
 
@@ -106,7 +105,7 @@ def create_star_chart(
         stardata["x"][bright_stars],
         stardata["y"][bright_stars],
         sizes,
-        color=style.star_color.as_hex(),
+        color=style.star.marker.color.as_hex(),
     )
 
     starpos_x = []
@@ -123,15 +122,12 @@ def create_star_chart(
                 s["x"] + 0.00984,
                 s["y"] - 0.006,
                 star_names[i],
-                color=style.star_font_color.as_hex(),
+                **style.star.label.matplot_kwargs,
                 ha="left",
                 va="top",
-                fontsize=style.star_font_size,
-                weight=style.star_font_weight,
-                zorder=1,
                 path_effects=[text_border],
             )
-            label.set_alpha(style.star_font_alpha)
+            label.set_alpha(style.star.label.font_alpha)
             labels.append(label)
             starpos_x.append(s["x"])
             starpos_y.append(s["y"])
@@ -141,18 +137,14 @@ def create_star_chart(
         fullname, ra, dec = conlabels.get(con)
         x, y = project_fn(position_of_radec(ra, dec))
 
-        if in_circle(x, y) and fullname:
+        if in_circle(x, y):
             label = ax.text(
                 x,
                 y,
                 fullname.upper(),
-                color=style.constellation_font_color.as_hex(),
-                fontsize=style.constellation_font_size,
-                weight=style.constellation_font_weight,
-                zorder=1,
                 path_effects=[text_border],
+                **style.constellation.label.matplot_kwargs,
             )
-            label.set_alpha(0.6)
             labels.append(label)
 
     # Plot DSO objects
@@ -161,24 +153,14 @@ def create_star_chart(
         x, y = project_fn(position_of_radec(ra, dec))
 
         if in_circle(x, y):
-            ax.plot(
-                x,
-                y,
-                marker="o",
-                markersize=4,
-                color=style.star_color.as_hex(),
-                fillstyle="none",
-            )
+            ax.plot(x, y, **style.dso.marker.matplot_kwargs)
             label = ax.text(
-                x + 0.005,
-                y + 0.005,
+                x + style.text_offset_x,
+                y + style.text_offset_y,
                 m.upper(),
                 ha="right",
                 va="center",
-                color=style.constellation_font_color.as_hex(),
-                fontsize=style.constellation_font_size,
-                weight=style.constellation_font_weight,
-                zorder=1,
+                **style.dso.label.matplot_kwargs,
                 path_effects=[text_border],
             )
             labels.append(label)
@@ -187,24 +169,14 @@ def create_star_chart(
         x, y = project_fn(position_of_radec(obj.ra, obj.dec))
 
         if in_circle(x, y):
-            ax.plot(
-                x,
-                y,
-                marker=obj.style.marker.symbol,
-                markersize=obj.style.marker.size,
-                color=obj.style.marker.color.as_hex(),
-                fillstyle=obj.style.marker.fillstyle,
-            )
+            ax.plot(x, y, **obj.style.marker.matplot_kwargs)
             label = ax.text(
-                x + 0.005,
-                y + 0.005,
+                x + style.text_offset_x,
+                y + style.text_offset_y,
                 obj.name.upper(),
                 ha="right",
                 va="center",
-                color=obj.style.label.font_color.as_hex(),
-                fontsize=obj.style.label.font_size,
-                weight=obj.style.label.font_weight,
-                zorder=1,
+                **obj.style.label.matplot_kwargs,
                 path_effects=[text_border],
             )
             labels.append(label)

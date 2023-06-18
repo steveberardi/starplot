@@ -2,7 +2,7 @@ import time
 from datetime import datetime
 
 from starplot.charts import create_star_chart
-from starplot.styles import BLUE, MONO, CHALK, RED
+from starplot.styles import BLUE, GRAYSCALE, CHALK, RED
 from starplot.models import SkyObject
 
 start_time = time.time()
@@ -12,7 +12,7 @@ extra = [
         name="Mel 111",
         ra=12.36,
         dec=25.85,
-        style={"marker": {"size": 10, "symbol": "*", "fillstyle": "full"}},
+        style={"marker": {"size": 10, "symbol": "*", "fill": "full"}},
     ),
 ]
 
@@ -24,7 +24,7 @@ create_star_chart(
     # dt=datetime(2023, 2, 8),
     tz_identifier="America/Los_Angeles",
     filename="temp.png",
-    style=BLUE,
+    style=GRAYSCALE,
     extra_objects=extra,
 )
 
