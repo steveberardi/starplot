@@ -23,6 +23,7 @@ star_names = {
     24608: "Capella",
     36850: "Castor",
     102098: "Deneb",
+    3419: "Diphda",
     54061: "Dubhe",
     25428: "Elnath",
     113368: "Fomalhaut",
@@ -82,7 +83,7 @@ allstars = {
     "Deneb": 102098,  # --
     "Deneb Kaitos": 3419,
     "Denebola": 57632,
-    "Diphda": 3419,
+    "Diphda": 3419, # --
     "Dschubba": 78401,
     "Dubhe": 54061,  # --
     "Durre Menthor": 8102,

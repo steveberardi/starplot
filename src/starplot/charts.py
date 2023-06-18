@@ -16,20 +16,11 @@ from starplot.constellations import (
     create_projected_constellation_lines,
     labels as conlabels,
 )
-from starplot.dsos import messier
+from starplot.dsos import DSO_BASE, messier
 from starplot.stars import get_star_data, star_names
 from starplot.styles import PlotStyle, GRAYSCALE
 from starplot.utils import in_circle
 from starplot.models import SkyObject
-
-DSO_BASE = [
-    "M5",
-    "M13",
-    "M23",
-    "M42",
-    "M44",
-    "M45",
-]
 
 
 def get_position(lat: float, lon: float, dt: datetime, tz: str = "UTC"):
@@ -47,7 +38,7 @@ def create_star_chart(
     tz_identifier: str = "UTC",
     style: PlotStyle = GRAYSCALE,
     limiting_magnitude: float = 4.6,
-    limiting_magnitude_labels: float = 2,
+    limiting_magnitude_labels: float = 2.1,
     figure_size: int = 16,
     figure_dpi: int = 200,
     adjust_text: bool = True,

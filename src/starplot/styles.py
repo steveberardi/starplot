@@ -42,6 +42,7 @@ class MarkerStyle(BaseModel):
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     size: int = 4
     fill: FillStyleEnum = FillStyleEnum.NONE
+    alpha: float = 1.0
     visible: bool = True
 
     @property
@@ -51,6 +52,7 @@ class MarkerStyle(BaseModel):
             marker=self.symbol,
             markersize=self.size,
             fillstyle=self.fill,
+            alpha=self.alpha,
         )
 
 
@@ -166,6 +168,16 @@ RED = PlotStyle(
         marker=MarkerStyle(color="#7a0000"),
         label=LabelStyle(font_color="#7a0000"),
     ),
+    # DSOs
+    dso=ObjectStyle(
+        marker=MarkerStyle(
+            color="#7a0000",
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=4,
+            fill=FillStyleEnum.FULL,
+        ),
+        label=LabelStyle(font_color="#7a0000"),
+    ),
     # Constellations
     constellation=PathStyle(
         line=LineStyle(width=2, color="#ff8e8e", alpha=0.2),
@@ -186,6 +198,22 @@ CHALK = PlotStyle(
         marker=MarkerStyle(color="#88c0d0"),
         label=LabelStyle(
             font_size=9, font_color="#88c0d0", font_weight=FontWeightEnum.BOLD
+        ),
+    ),
+    # DSOs
+    dso=ObjectStyle(
+        marker=MarkerStyle(
+            color="rgb(230, 204, 147)",
+            symbol=MarkerSymbolEnum.TRIANGLE,
+            size=4,
+            fill=FillStyleEnum.FULL,
+            alpha=0.46,
+        ),
+        label=LabelStyle(
+            font_size=7,
+            font_color="rgb(230, 204, 147)",
+            font_weight=FontWeightEnum.LIGHT,
+            font_alpha=0.6,
         ),
     ),
     # Constellations
