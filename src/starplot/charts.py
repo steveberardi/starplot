@@ -60,7 +60,7 @@ def create_star_chart(
     earth = eph["earth"]
 
     project_fn = build_stereographic_projection(position)
-    stardata = get_star_data()
+    stardata = get_star_data(limiting_magnitude)
     labels = []
 
     # project stars to stereographic plot

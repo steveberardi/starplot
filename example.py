@@ -28,7 +28,7 @@ def create_example():
         # dt=datetime(1983, 6, 8),
         tz_identifier="America/Los_Angeles",
         filename="temp.png",
-        style=GRAYSCALE,
+        style=BLUE,
         extra_objects=extra,
     )
 
