@@ -1,6 +1,6 @@
-from skyfield.api import load
 from skyfield.data import hipparcos
 
+from starplot.data import load
 
 """
     Dictionary of stars that will be labeled on the plot
@@ -162,7 +162,12 @@ allstars = {
 }
 
 
-def get_star_data():
-    with load.open(hipparcos.URL) as f:
+def get_star_data(limiting_magnitude: float = 8):
+    if limiting_magnitude <= 8:
+        filepath = "hip8.gz"
+    else:
+        filepath = hipparcos.URL
+
+    with load.open(filepath) as f:
         stardata = hipparcos.load_dataframe(f)
     return stardata

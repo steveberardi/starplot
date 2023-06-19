@@ -1,4 +1,5 @@
 PYTHON=./venv/bin/python
+DE421_URL=https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp
 
 export PYTHONPATH=./src/
 
@@ -9,7 +10,7 @@ lint: venv
 # @$(PYTHON) -m mypy src/
 
 format: venvdev
-	@$(PYTHON) -m black src/ example.py $(ARGS)
+	@$(PYTHON) -m black src/ scripts/ example.py $(ARGS)
 
 test: venv
 	$(PYTHON) -m pytest --cov=src/ --cov-report=term --cov-report=html .
@@ -33,6 +34,12 @@ publish: venv
 
 example: venv
 	$(PYTHON) example.py
+
+ephemeris: venv
+	$(PYTHON) -m jplephem excerpt 2001/1/1 2050/1/1 $(DE421_URL) de421sub.bsp
+
+hip8: venv
+	$(PYTHON) ./scripts/hip.py hip_main.dat hip8.dat
 
 clean:
 	rm -rf __pycache__

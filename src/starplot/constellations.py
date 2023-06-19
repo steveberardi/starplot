@@ -1,8 +1,8 @@
 import numpy as np
 
-from skyfield.api import load
 from skyfield.data import stellarium
 
+from starplot.data import load
 
 """
 Dictionary of labels for each constellation
@@ -106,8 +106,7 @@ labels = {
 
 
 def get_constellation_data():
-    url = "https://raw.githubusercontent.com/Stellarium/stellarium/master/skycultures/modern_st/constellationship.fab"
-    with load.open(url) as f:
+    with load.open("constellations_hip.fab") as f:
         consdata = stellarium.parse_constellations(f)
     return consdata
 
