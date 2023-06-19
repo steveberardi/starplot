@@ -9,7 +9,7 @@ lint: venv
 # @$(PYTHON) -m mypy src/
 
 format: venvdev
-	@$(PYTHON) -m black src/ $(ARGS)
+	@$(PYTHON) -m black src/ example.py $(ARGS)
 
 test: venv
 	$(PYTHON) -m pytest --cov=src/ --cov-report=term --cov-report=html .

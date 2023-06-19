@@ -28,8 +28,8 @@ def test_plot_style_valid(kwargs):
         dict(background_color=2),
         dict(background_color=None),
         dict(background_color="rgb(12,12,12,12,12)"),
-        dict(background_color="#fff", constellation_line_width="hello"),
-        dict(star_font_weight="invalid"),
+        dict(background_color="#fff", constellation="hello"),
+        dict(star={"label": {"font_weight": "invalid"}}),
         
     ]
 )
