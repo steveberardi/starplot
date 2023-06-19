@@ -41,6 +41,7 @@ def create_star_chart(
     figure_size: int = 16,
     figure_dpi: int = 200,
     adjust_text: bool = True,
+    include_info_text: bool = False,
     extra_objects: list[SkyObject] = None,
     *args,
     **kwargs
@@ -228,6 +229,14 @@ def create_star_chart(
         zorder=-200,
     )
     ax.add_patch(outer_border)
+
+    if include_info_text:
+        ax.text(
+            -1,
+            -1,
+            f"{str(lat)}, {str(lon)}\n\n{str(dt.isoformat())}",
+            fontsize=14
+        )
 
     # adjust text to avoid collisions
     if adjust_text:
