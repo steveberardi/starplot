@@ -44,7 +44,7 @@ def create_star_chart(
     include_info_text: bool = False,
     extra_objects: list[SkyObject] = None,
     *args,
-    **kwargs
+    **kwargs,
 ):
     extra_objects = extra_objects or []
 
@@ -231,12 +231,7 @@ def create_star_chart(
     ax.add_patch(outer_border)
 
     if include_info_text:
-        ax.text(
-            -1,
-            -1,
-            f"{str(lat)}, {str(lon)}\n\n{str(dt.isoformat())}",
-            fontsize=14
-        )
+        ax.text(-1, -1, f"{str(lat)}, {str(lon)}\n\n{str(dt.isoformat())}", fontsize=14)
 
     # adjust text to avoid collisions
     if adjust_text:
