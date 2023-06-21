@@ -5,7 +5,7 @@ from adjustText import adjust_text as _adjust_text
 from matplotlib import pyplot as plt, patheffects as pe
 from matplotlib.collections import LineCollection
 
-from skyfield.api import Star, load, wgs84
+from skyfield.api import Star, wgs84
 from skyfield.positionlib import position_of_radec
 from skyfield.projections import build_stereographic_projection
 
@@ -15,6 +15,7 @@ from starplot.constellations import (
     create_projected_constellation_lines,
     labels as conlabels,
 )
+from starplot.data import load
 from starplot.dsos import DSO_BASE, messier
 from starplot.stars import get_star_data, hip_names
 from starplot.styles import PlotStyle, GRAYSCALE
@@ -55,11 +56,11 @@ def create_star_chart(
         tz=tz_identifier,
     )
 
-    eph = load("de421.bsp")
+    eph = load("de421_2001.bsp")
     earth = eph["earth"]
 
     project_fn = build_stereographic_projection(position)
-    stardata = get_star_data()
+    stardata = get_star_data(limiting_magnitude)
     labels = []
 
     # project stars to stereographic plot

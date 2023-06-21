@@ -25,10 +25,10 @@ def create_example():
         lon=-117.038611,
         dt=datetime.now().replace(hour=22),
         # dt=datetime(2023, 12, 28).replace(hour=22),
-        # dt=datetime(2023, 2, 8),
+        # dt=datetime(1983, 6, 8),
         tz_identifier="America/Los_Angeles",
         filename="temp.png",
-        style=GRAYSCALE,
+        style=BLUE,
         extra_objects=extra,
     )
 
@@ -71,7 +71,7 @@ def create_365():
 
 
 # create_style_examples()
-create_example()
 # create_365()
+create_example()
 
 print(f"Total run time: {time.time() - start_time}")
