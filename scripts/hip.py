@@ -1,6 +1,7 @@
 import sys
 
 from starplot.constellations import get_constellation_data
+from starplot.stars import BASE_LIMITING_MAG
 
 
 def get_constellation_hips():
@@ -16,7 +17,7 @@ def get_constellation_hips():
 def trim_hip(
     filename_in: str = "hip_main.dat",
     filename_out: str = "hip_trim.dat",
-    limiting_magnitude: float = 8,
+    limiting_magnitude: float = BASE_LIMITING_MAG,
     separator: str = "|",
 ):
     """Trims the HIP data file to only stars brighter than limiting_magnitude"""

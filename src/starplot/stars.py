@@ -161,9 +161,11 @@ allstars = {
     "Wezen": 34444,
 }
 
+BASE_LIMITING_MAG = 8
 
-def get_star_data(limiting_magnitude: float = 8):
-    if limiting_magnitude <= 8:
+
+def get_star_data(limiting_magnitude: float = BASE_LIMITING_MAG):
+    if limiting_magnitude <= BASE_LIMITING_MAG:
         filepath = "hip8.gz"
     else:
         filepath = hipparcos.URL
