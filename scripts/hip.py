@@ -33,7 +33,7 @@ def trim_hip(
             if not star[5]:
                 print(f"No magnitude found for HIP-{str(hip)}")
                 continue
-            
+
             mag = float(star[5])  # use Vmag for magnitude
 
             if hip in constellation_hips and mag > limiting_magnitude_con:

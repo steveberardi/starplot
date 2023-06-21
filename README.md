@@ -40,8 +40,7 @@ create_star_chart(
 
 ## Coming Soon
 
-- Deep Sky Objects (DSOs)
-- Support for plotting additional objects (and styling per object)
+- Chart labels (location, date)
 - Documentation
 
 ## License
