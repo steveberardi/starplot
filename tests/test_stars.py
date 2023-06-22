@@ -1,5 +1,3 @@
-import pytest
-
 from starplot.stars import hip_names
 
 

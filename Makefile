@@ -6,11 +6,11 @@ export PYTHONPATH=./src/
 install: venv
 
 lint: venv
-	@$(PYTHON) -m flake8 --ignore E501,W503 src/
+	@$(PYTHON) -m flake8 --ignore E501,W503 src/ tests/
 # @$(PYTHON) -m mypy src/
 
 format: venvdev
-	@$(PYTHON) -m black src/ scripts/ example.py $(ARGS)
+	@$(PYTHON) -m black src/ tests/ scripts/ example.py $(ARGS)
 
 test: venv
 	$(PYTHON) -m pytest --cov=src/ --cov-report=term --cov-report=html .

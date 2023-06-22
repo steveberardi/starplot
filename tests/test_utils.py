@@ -10,7 +10,7 @@ from starplot.utils import in_circle
         (1, 1, False),
         (0.2, 0.8, True),
         (1.01, 0, False),
-    ]
+    ],
 )
 def test_in_circle(x, y, expected):
     assert in_circle(x, y) == expected

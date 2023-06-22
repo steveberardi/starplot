@@ -1,5 +1,3 @@
-import pytest
-
 from starplot.constellations import labels
 
 
