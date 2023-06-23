@@ -11,16 +11,18 @@ def test_star_hip_names():
     assert hip_names[32349] == "Sirius"
     assert hip_names[91262] == "Vega"
 
-@patch('starplot.stars.hipparcos.load_dataframe')
-@patch('starplot.stars.load')
+
+@patch("starplot.stars.hipparcos.load_dataframe")
+@patch("starplot.stars.load")
 def test_get_star_data_base(loadfile, loadframe):
     """assert local file is used when limiting magnitude is within its range"""
     get_star_data()
     loadfile.open.assert_called_with("hip8.gz")
     loadframe.assert_called_once()
 
-@patch('starplot.stars.hipparcos.load_dataframe')
-@patch('starplot.stars.load')
+
+@patch("starplot.stars.hipparcos.load_dataframe")
+@patch("starplot.stars.load")
 def test_get_star_data_remote(loadfile, loadframe):
     """assert remote file is used when limiting magnitude is outside its range"""
     mag = BASE_LIMITING_MAG + 1

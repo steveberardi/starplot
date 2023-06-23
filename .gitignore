@@ -17,6 +17,9 @@ hip8.dat
 
 temp*
 
+# test generated data
+tests/data/actual*.png
+
 # Distribution / packaging
 .Python
 build/
