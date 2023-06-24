@@ -22,6 +22,6 @@ jobs:
     - name: Check lint
       run: make lint
     - name: Run Tests
-      run: docker build -t starplot --target test .
+      run: make docker-build-test
     - name: Build
       run: make build

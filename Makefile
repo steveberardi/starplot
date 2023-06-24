@@ -5,7 +5,7 @@ export PYTHONPATH=./src/
 
 install: venv
 
-lint: venv
+lint: venvdev
 	@$(PYTHON) -m flake8 --ignore E501,W503 src/ tests/
 # @$(PYTHON) -m mypy src/
 
@@ -28,6 +28,9 @@ shell: venv
 
 build: venv
 	$(PYTHON) -m flit build
+
+docker-build-test:
+	docker build -t starplot --target test .
 
 publish: venv
 	$(PYTHON) -m flit publish

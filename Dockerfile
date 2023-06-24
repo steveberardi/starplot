@@ -1,24 +1,21 @@
-# FROM ubuntu:22.04 as base
-FROM python:3.9.17 as base
+FROM python:3.9.17-bullseye as base
 
-# RUN apt-get update && apt-get install -y python3.9 python3-pip python-is-python3
-# RUN sudo apt install python-is-python3
 WORKDIR /starplot
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+COPY requirements.txt pyproject.toml .
 
 # Copy source code
 COPY ./src /starplot/src
+COPY ./scripts /starplot/scripts
+COPY example.py .
 
 # Lint, Format, Tests
 FROM base as test
 COPY ./tests /starplot/tests
-COPY requirements-dev.txt .
-RUN pip install -r requirements-dev.txt
-COPY Makefile /starplot
+COPY requirements-dev.txt Makefile .
+# RUN pip install -r requirements-dev.txt
 
-ENV PYTHONPATH=./src/
-RUN python -m pytest --cov=src/ --cov-report=term --cov-report=html .
+RUN make format ARGS=--check && make lint && make test
+# RUN python -m pytest --cov=src/ --cov-report=term --cov-report=html .
 
 
