@@ -2,7 +2,7 @@ FROM python:3.9.17-bullseye as base
 
 WORKDIR /starplot
 
-COPY requirements.txt pyproject.toml .
+COPY requirements.txt pyproject.toml Makefile /starplot/
 
 # Copy source code
 COPY ./src /starplot/src
@@ -12,7 +12,7 @@ COPY example.py .
 # Lint, Format, Tests
 FROM base as test
 COPY ./tests /starplot/tests
-COPY requirements-dev.txt Makefile .
+COPY requirements-dev.txt .
 # RUN pip install -r requirements-dev.txt
 
 RUN make format ARGS=--check && make lint && make test
