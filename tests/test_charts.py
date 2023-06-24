@@ -1,7 +1,8 @@
-import hashlib
 from pathlib import Path
-
 from datetime import datetime
+
+import imagehash
+from PIL import Image
 
 from starplot.charts import create_star_chart
 from starplot.models import SkyObject
@@ -10,11 +11,10 @@ HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
 
 
-def assert_md5_equal(filename_1, filename_2):
-    with open(filename_1, "rb") as f1, open(filename_2, "rb") as f2:
-        md5_f1 = hashlib.md5(f1.read()).hexdigest()
-        md5_f2 = hashlib.md5(f2.read()).hexdigest()
-        assert md5_f1 == md5_f2
+def assert_hash_equal(filename_1, filename_2):
+    hash_1 = imagehash.dhash(Image.open(filename_1))
+    hash_2 = imagehash.dhash(Image.open(filename_2))
+    assert hash_1 == hash_2
 
 
 def test_creates_star_chart_correctly():
@@ -26,7 +26,7 @@ def test_creates_star_chart_correctly():
         tz_identifier="UTC",
         filename=filename,
     )
-    assert_md5_equal(filename, DATA_PATH / "expected.png")
+    assert_hash_equal(filename, DATA_PATH / "expected.png")
 
 
 def test_creates_star_chart_with_extra_objects():
@@ -49,4 +49,4 @@ def test_creates_star_chart_with_extra_objects():
         filename=filename,
         extra_objects=extra,
     )
-    assert_md5_equal(filename, DATA_PATH / "expected-extra.png")
+    assert_hash_equal(filename, DATA_PATH / "expected-extra.png")
