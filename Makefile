@@ -12,7 +12,7 @@ lint: venv
 format: venvdev
 	@$(PYTHON) -m black src/ tests/ scripts/ example.py $(ARGS)
 
-test: venv
+test: venvdev
 	$(PYTHON) -m pytest --cov=src/ --cov-report=term --cov-report=html .
 
 venvdev: venv requirements-dev.txt
