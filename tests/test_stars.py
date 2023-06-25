@@ -24,7 +24,7 @@ def test_get_star_data_base(loadfile, loadframe):
 @patch("starplot.stars.hipparcos.load_dataframe")
 @patch("starplot.stars.load")
 def test_get_star_data_remote(loadfile, loadframe):
-    """assert remote file is used when limiting magnitude is outside its range"""
+    """assert remote file is used when limiting magnitude is outside the local file's range"""
     mag = BASE_LIMITING_MAG + 1
     get_star_data(mag)
     loadfile.open.assert_called_with(hipparcos.URL)

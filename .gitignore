@@ -17,7 +17,7 @@ hip8.dat
 
 temp*
 
-# test generated data
+# test-generated data
 tests/data/actual*.png
 
 # Distribution / packaging
