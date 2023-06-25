@@ -30,6 +30,7 @@ def create_example():
         filename="temp.png",
         style=BLUE,
         extra_objects=extra,
+        include_info_text=True,
     )
 
 
