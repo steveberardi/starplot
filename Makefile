@@ -5,14 +5,14 @@ export PYTHONPATH=./src/
 
 install: venv
 
-lint: venv
-	@$(PYTHON) -m flake8 --ignore E501,W503 src/
+lint: venvdev
+	@$(PYTHON) -m flake8 --ignore E501,W503 src/ tests/
 # @$(PYTHON) -m mypy src/
 
 format: venvdev
-	@$(PYTHON) -m black src/ scripts/ example.py $(ARGS)
+	@$(PYTHON) -m black src/ tests/ scripts/ example.py $(ARGS)
 
-test: venv
+test: venvdev
 	$(PYTHON) -m pytest --cov=src/ --cov-report=term --cov-report=html .
 
 venvdev: venv requirements-dev.txt
@@ -28,6 +28,9 @@ shell: venv
 
 build: venv
 	$(PYTHON) -m flit build
+
+docker-build-test:
+	docker build -t starplot --target test .
 
 publish: venv
 	$(PYTHON) -m flit publish
