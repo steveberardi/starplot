@@ -232,7 +232,10 @@ def create_star_chart(
     ax.add_patch(outer_border)
 
     if include_info_text:
-        ax.text(-1, -1, f"{str(lat)}, {str(lon)}\n\n{str(dt.isoformat())}", fontsize=14)
+        tz_abbreviation = timezone(tz_identifier).localize(dt).tzname()
+        dt_str = dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + tz_abbreviation
+        info = f"{str(lat)}, {str(lon)}\n{dt_str}"
+        ax.text(-1.03, -1.03, info, fontsize=13, family="monospace", linespacing=2)
 
     # adjust text to avoid collisions
     if adjust_text:
