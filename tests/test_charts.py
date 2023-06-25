@@ -51,3 +51,15 @@ def test_creates_star_chart_with_extra_objects():
         extra_objects=extra,
     )
     assert_hash_equal(filename, DATA_PATH / "expected-extra.png")
+
+def test_creates_star_chart_with_info_label():
+    filename = DATA_PATH / "actual-info.png"
+    create_star_chart(
+        lat=32.97,
+        lon=-117.038611,
+        dt=datetime(2023, 6, 20, 4),
+        tz_identifier="UTC",
+        filename=filename,
+        include_info_text=True,
+    )
+    assert_hash_equal(filename, DATA_PATH / "expected-info.png")
