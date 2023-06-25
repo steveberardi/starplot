@@ -52,6 +52,7 @@ def test_creates_star_chart_with_extra_objects():
     )
     assert_hash_equal(filename, DATA_PATH / "expected-extra.png")
 
+
 def test_creates_star_chart_with_info_label():
     filename = DATA_PATH / "actual-info.png"
     create_star_chart(

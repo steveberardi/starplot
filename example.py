@@ -68,11 +68,12 @@ def create_365():
             tz_identifier="UTC",
             filename=f"temp/day-{day_of_year}.png",
             style=BLUE,
+            include_info_text=True,
         )
 
 
 # create_style_examples()
-# create_365()
-create_example()
+create_365()
+# create_example()
 
 print(f"Total run time: {time.time() - start_time}")

@@ -233,7 +233,7 @@ def create_star_chart(
 
     if include_info_text:
         tz_abbreviation = timezone(tz_identifier).localize(dt).tzname()
-        dt_str = dt.strftime("%m/%d/%Y @ %H:%M:%S") + ' ' + tz_abbreviation
+        dt_str = dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + tz_abbreviation
         info = f"{str(lat)}, {str(lon)}\n{dt_str}"
         ax.text(-1.03, -1.03, info, fontsize=13, family="monospace", linespacing=2)
 
