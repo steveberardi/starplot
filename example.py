@@ -73,7 +73,7 @@ def create_365():
 
 
 # create_style_examples()
-create_365()
-# create_example()
+# create_365()
+create_example()
 
 print(f"Total run time: {time.time() - start_time}")
