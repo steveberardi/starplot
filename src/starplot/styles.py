@@ -44,6 +44,7 @@ class MarkerStyle(BaseModel):
     fill: FillStyleEnum = FillStyleEnum.NONE
     alpha: float = 1.0
     visible: bool = True
+    zorder: int = -1
 
     @property
     def matplot_kwargs(self) -> dict:
@@ -53,6 +54,7 @@ class MarkerStyle(BaseModel):
             markersize=self.size,
             fillstyle=self.fill,
             alpha=self.alpha,
+            zorder=self.zorder,
         )
 
 
@@ -67,6 +69,22 @@ class LineStyle(BaseModel):
         return dict(
             colors=self.color.as_hex(),
             linewidths=self.width,
+            alpha=self.alpha,
+            zorder=self.zorder,
+        )
+
+
+class PolygonStyle(BaseModel):
+    edge_width: int = 1
+    color: Color = Color("#000")
+    alpha: float = 1.0
+    zorder: int = -1
+
+    @property
+    def matplot_kwargs(self) -> dict:
+        return dict(
+            color=self.color.as_hex(),
+            linewidth=self.edge_width,
             alpha=self.alpha,
             zorder=self.zorder,
         )
@@ -139,6 +157,14 @@ class PlotStyle(BaseModel):
     constellation: PathStyle = PathStyle(
         line=LineStyle(color="#c8c8c8"),
         label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT),
+    )
+
+    # Milky Way
+    milky_way: PolygonStyle = PolygonStyle(
+        color="#d9d9d9",
+        alpha=0.36,
+        edge_width=0,
+        zorder=-10000,
     )
 
 
@@ -225,5 +251,27 @@ CHALK = PlotStyle(
             font_color="rgb(230, 204, 147)",
             font_alpha=0.6,
         ),
+    ),
+)
+
+MAP_BLUE = PlotStyle(
+    background_color="#fff",
+    # Borders
+    border_font_color="#f1f6ff",
+    border_line_color="#2f4358",
+    border_bg_color="#7997b9",
+    # Constellations
+    constellation=PathStyle(
+        line=LineStyle(width=3, color="#6ba832", alpha=0.34),
+        label=LabelStyle(
+            font_size=20, font_color="#c5c5c5", font_weight=FontWeightEnum.LIGHT
+        ),
+    ),
+    # Milky Way
+    milky_way=PolygonStyle(
+        color="#94c5e3",
+        alpha=0.16,
+        edge_width=0,
+        zorder=-10000,
     ),
 )

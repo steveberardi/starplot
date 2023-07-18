@@ -1,42 +1,45 @@
 PYTHON=./venv/bin/python
 DE421_URL=https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp
+DOCKER_RUN=docker run --rm -it -v $(shell pwd):/starplot starplot bash -c
 
 export PYTHONPATH=./src/
 
 install: venv
 
 lint: venvdev
-	@$(PYTHON) -m flake8 --ignore E501,W503 src/ tests/
-# @$(PYTHON) -m mypy src/
+	$(DOCKER_RUN) "python -m flake8 --ignore E501,W503 src/ tests/"
 
-format: venvdev
-	@$(PYTHON) -m black src/ tests/ scripts/ example.py $(ARGS)
+format:
+	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ example.py $(ARGS)"
 
-test: venvdev
-	$(PYTHON) -m pytest --cov=src/ --cov-report=term --cov-report=html .
+test:
+	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
 
-venvdev: venv requirements-dev.txt
-	./venv/bin/pip install -r requirements-dev.txt
 
-venv: requirements.txt
-	python -m venv venv
-	./venv/bin/pip install -r requirements.txt
-	touch venv
+docker-build-test:
+	docker build -t starplot-test --target test .
 
-shell: venv
-	@$(PYTHON)
+docker-build:
+	docker build -t starplot --target dev .
 
+bash:
+	$(DOCKER_RUN) bash
+
+shell:
+	$(DOCKER_RUN) python
+
+example-map:
+	$(DOCKER_RUN) "python /starplot/src/starplot/plot.py"
+
+example:
+	$(DOCKER_RUN) "python example.py"
+
+# PyPi - build & publish
 build: venv
 	$(PYTHON) -m flit build
 
-docker-build-test:
-	docker build -t starplot --target test .
-
 publish: venv
 	$(PYTHON) -m flit publish
-
-example: venv
-	$(PYTHON) example.py
 
 ephemeris: venv
 	$(PYTHON) -m jplephem excerpt 2001/1/1 2050/1/1 $(DE421_URL) de421sub.bsp
