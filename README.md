@@ -31,16 +31,17 @@ create_star_chart(
 
 ## Core Dependencies
 
-- pandas
 - matplotlib
+- pandas
 - numpy
-- pydantic
 - skyfield
+- geopandas
+- cartopy
+- pydantic
 - adjustText
 
 ## Coming Soon
 
-- Chart labels (location, date)
 - Documentation
 
 ## License
