@@ -28,7 +28,7 @@ def create_example():
         # dt=datetime(2023, 12, 28).replace(hour=22),
         # dt=datetime(1983, 6, 8),
         tz_identifier="America/Los_Angeles",
-        filename="temp-tonight.svg",
+        filename="temp-tonight.png",
         style=GRAYSCALE,
         # extra_objects=extra,
         include_info_text=True,
@@ -147,7 +147,7 @@ def create_map_all():
 
 # create_style_examples()
 # create_365()
-# create_example()
+create_example()
 create_map()
 # create_map_all()
 

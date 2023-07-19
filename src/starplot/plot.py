@@ -9,6 +9,7 @@ import cartopy.crs as ccrs
 
 from matplotlib import pyplot as plt, patheffects
 import geopandas as gpd
+from pytz import timezone
 
 from skyfield.api import Star
 
@@ -52,6 +53,7 @@ class StarPlot:
         figure_size: int = 16,
         resolution: int = 2048,
         adjust_text: bool = True,
+        ephemeris: str = "de421_2001.bsp",
         *args,
         **kwargs,
     ):
@@ -62,6 +64,8 @@ class StarPlot:
         self.figure_size = figure_size
         self.resolution = resolution
         self.adjust_text = adjust_text
+        self.dt = dt or timezone("UTC").localize(datetime.now())
+        self.ephemeris = ephemeris
 
         self.labels = []
         self.text_border = patheffects.withStroke(
@@ -69,6 +73,8 @@ class StarPlot:
             foreground=self.style.background_color.as_hex(),
         )
         self._size_multiplier = 64 / (self.resolution / self.figure_size)
+
+        self.timescale = load.timescale().from_datetime(self.dt)
 
         # if projection == Projection.STEREO_ZENITH:
         #     if not all([lat, lon, dt, tz_identifier]):
@@ -86,6 +92,14 @@ class StarPlot:
 
     def _prepare_coords(self, ra, dec) -> (float, float):
         return ra, dec
+
+    def _maybe_remove_label(self, label):
+        extent = label.get_window_extent()
+
+        if self.ax.contains_point(extent.p0) and self.ax.contains_point(extent.p1):
+            self.labels.append(label)
+        else:
+            label.remove()
 
     def adjust_labels(self) -> None:
         _adjust_text(self.labels, ax=self.ax, ensure_inside_axes=False)
@@ -144,7 +158,7 @@ class StarPlot:
                 path_effects=[self.text_border],
             )
             label.set_clip_on(True)
-            self.labels.append(label)
+            self._maybe_remove_label(label)
 
     def in_bounds(self, ra, dec) -> bool:
         raise NotImplementedError
@@ -189,14 +203,6 @@ class MapPlot(StarPlot):
             self.dec_max,
         ]
 
-    def _radec_extent(self):
-        return (
-            (self._extent[0] + 180) / 15,
-            (self._extent[1] + 180) / 15,
-            self._extent[2],
-            self._extent[3],
-        )
-
     def _adjust_radec_minmax(self):
         extent = self.ax.get_extent(crs=ccrs.PlateCarree())
         self.ra_min = (extent[0] + 180) / 15
@@ -216,11 +222,7 @@ class MapPlot(StarPlot):
         constellation_borders = gpd.read_file(DataFiles.CONSTELLATION_BORDERS)
         constellation_borders.plot(
             ax=self.ax,
-            color="#000",
-            alpha=0.2,
-            linewidth=2,
-            ls="--",
-            zorder=-100,
+            **self.style.constellation_borders.matplot_kwargs,
             **self._plot_kwargs(),
         )
 
@@ -235,15 +237,7 @@ class MapPlot(StarPlot):
                     **self._plot_kwargs(),
                 )
                 label.set_clip_on(True)
-
-                extent = label.get_window_extent()
-
-                if self.ax.contains_point(extent.p0) and self.ax.contains_point(
-                    extent.p1
-                ):
-                    self.labels.append(label)
-                else:
-                    label.remove()
+                self._maybe_remove_label(label)
 
     def _plot_milky_way(self):
         mw = gpd.read_file(DataFiles.MILKY_WAY)
@@ -255,18 +249,17 @@ class MapPlot(StarPlot):
 
     def _plot_stars(self):
         stars = get_star_data()
-        eph = load("de421_2001.bsp")
+        eph = load(self.ephemeris)
         earth = eph["earth"]
-        t = load.timescale().utc(2023, 7, 2)
         nearby_stars_df = stars[
             (stars["magnitude"] <= self.limiting_magnitude)
-            & (stars["ra_hours"] <= self.ra_max + 5)
-            & (stars["ra_hours"] >= self.ra_min - 5)
-            & (stars["dec_degrees"] <= self.dec_max + 10)
-            & (stars["dec_degrees"] >= self.dec_min - 10)
+            & (stars["ra_hours"] < self.ra_max + 5)
+            & (stars["ra_hours"] > self.ra_min - 5)
+            & (stars["dec_degrees"] < self.dec_max + 10)
+            & (stars["dec_degrees"] > self.dec_min - 10)
         ]
         nearby_stars = Star.from_dataframe(nearby_stars_df)
-        astrometric = earth.at(t).observe(nearby_stars)
+        astrometric = earth.at(self.timescale).observe(nearby_stars)
         stars_ra, stars_dec, _ = astrometric.radec()
 
         sizes = []
@@ -301,14 +294,7 @@ class MapPlot(StarPlot):
                     **self._plot_kwargs(),
                 )
                 label.set_clip_on(True)
-                extent = label.get_window_extent()
-
-                if self.ax.contains_point(extent.p0) and self.ax.contains_point(
-                    extent.p1
-                ):
-                    self.labels.append(label)
-                else:
-                    label.remove()
+                self._maybe_remove_label(label)
 
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))

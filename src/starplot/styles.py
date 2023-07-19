@@ -37,6 +37,13 @@ class MarkerSymbolEnum(str, Enum):
     TRIANGLE = "^"
 
 
+class LineStyleEnum(str, Enum):
+    SOLID = "solid"
+    DASHED = "dashed"
+    DASHED_DOTS = "dashdot"
+    DOTTED = "dotted"
+
+
 class MarkerStyle(BaseModel):
     color: Color = Color("#000")
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
@@ -61,6 +68,7 @@ class MarkerStyle(BaseModel):
 class LineStyle(BaseModel):
     width: int = 1
     color: Color = Color("#000")
+    style: LineStyleEnum = LineStyleEnum.SOLID
     alpha: float = 1.0
     zorder: int = -1
 
@@ -68,6 +76,7 @@ class LineStyle(BaseModel):
     def matplot_kwargs(self) -> dict:
         return dict(
             colors=self.color.as_hex(),
+            linestyle=self.style,
             linewidths=self.width,
             alpha=self.alpha,
             zorder=self.zorder,
@@ -157,6 +166,9 @@ class PlotStyle(BaseModel):
     constellation: PathStyle = PathStyle(
         line=LineStyle(color="#c8c8c8"),
         label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT),
+    )
+    constellation_borders: LineStyle = LineStyle(
+        color="#000", width=2, style=LineStyleEnum.DASHED, alpha=0.2, zorder=-100
     )
 
     # Milky Way
