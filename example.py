@@ -1,10 +1,12 @@
 import time
 from datetime import datetime, timedelta
 
+from pytz import timezone
+
 from starplot.charts import create_star_chart
 from starplot.styles import BLUE, GRAYSCALE, CHALK, RED, MAP_BLUE
 from starplot.models import SkyObject
-from starplot.plot import StarPlot, Projection, MapPlot
+from starplot.plot import StarPlot, Projection, MapPlot, ZenithPlot
 
 start_time = time.time()
 
@@ -144,11 +146,24 @@ def create_map_all():
     )
     splt.export("temp-all.png")
 
+def create_zenith():
+    plt = ZenithPlot(
+        lat=32.97,
+        lon=-117.038611,
+        dt=timezone("America/Los_Angeles").localize(datetime.now().replace(hour=21)),
+        limiting_magnitude=4.6,
+        style=BLUE,
+        # style=GRAYSCALE,
+        adjust_text=False,
+        resolution=2000,
+    )
+    plt.export("temp-zenith-new.png")
 
 # create_style_examples()
 # create_365()
-create_example()
+# create_example()
 create_map()
+create_zenith()
 # create_map_all()
 
 print(f"Total run time: {time.time() - start_time}")
