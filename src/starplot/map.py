@@ -20,7 +20,6 @@ warnings.filterwarnings("ignore", module="cartopy")
 
 
 class Projection(str, Enum):
-    STEREO_ZENITH = "stereo_zenith"
     STEREO_NORTH = "stereo_north"
     STEREO_SOUTH = "stereo_south"
     MERCATOR = "mercator"

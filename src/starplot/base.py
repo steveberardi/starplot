@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 from adjustText import adjust_text as _adjust_text
-
-
 from matplotlib import pyplot as plt, patheffects
 from pytz import timezone
 
