@@ -51,7 +51,7 @@ class StarPlot(ABC):
     def __init__(
         self,
         dt: datetime = None,
-        # tz_identifier: str = None,
+        tz_identifier: str = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
         style: PlotStyle = GRAYSCALE,
@@ -80,16 +80,6 @@ class StarPlot(ABC):
 
         self.timescale = load.timescale().from_datetime(self.dt)
 
-        # if projection == Projection.STEREO_ZENITH:
-        #     if not all([lat, lon, dt, tz_identifier]):
-        #         raise ValueError(
-        #             "Missing required kwarg for 'stereo_zenith' projection: lat, lon, dt, and tz_identifier are required"
-        #         )
-        # else:
-        #     if not all([ra_min, ra_max, dec_min, dec_max]):
-        #         raise ValueError(
-        #             f"Missing required kwarg for '{projection.name}' projection: ra_min, ra_max, dec_min, dec_max are required"
-        #         )
 
     def _plot_kwargs(self) -> dict:
         return {}
@@ -181,7 +171,9 @@ class ZenithPlot(StarPlot):
         self._init_plot()
     
     def in_bounds(self, ra, dec) -> bool:
-        return False
+        x, y = self.project_fn(position_of_radec(ra, dec))
+        result = in_circle(x, y)
+        return result
     
     def _calc_position(self):
         loc = wgs84.latlon(self.lat, self.lon).at(self.timescale)

@@ -2,7 +2,7 @@ FROM python:3.9.17-bullseye as base
 
 WORKDIR /starplot
 
-RUN apt-get update -y && apt-get install  -y libgeos-dev
+RUN apt-get update -y && apt-get install  -y libgeos-dev libgdal-dev
 
 COPY . .
 

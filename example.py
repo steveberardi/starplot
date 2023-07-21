@@ -162,7 +162,7 @@ def create_zenith():
 # create_style_examples()
 # create_365()
 # create_example()
-create_map()
+# create_map()
 create_zenith()
 # create_map_all()
 
