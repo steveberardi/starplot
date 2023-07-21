@@ -6,7 +6,9 @@ from pytz import timezone
 from starplot.charts import create_star_chart
 from starplot.styles import BLUE, GRAYSCALE, CHALK, RED, MAP_BLUE
 from starplot.models import SkyObject
-from starplot.plot import StarPlot, Projection, MapPlot, ZenithPlot
+from starplot.map import Projection
+
+import starplot as splt
 
 start_time = time.time()
 
@@ -76,7 +78,7 @@ def create_365():
 
 
 def create_map():
-    splt = MapPlot(
+    p = splt.MapPlot(
         projection=Projection.STEREO_NORTH,
         # projection=Projection.MERCATOR,
         ra_min=15,
@@ -89,9 +91,9 @@ def create_map():
         adjust_text=False,
         resolution=4000,
     )
-    splt.draw_reticle(18.6167, 38.78)
-    splt.draw_reticle(1.6167, 58.78)
-    splt.plot_object(
+    p.draw_reticle(18.6167, 38.78)
+    p.draw_reticle(1.6167, 58.78)
+    p.plot_object(
         SkyObject(
             name="M57",
             ra=18.885,  # 283.275,  # 18.885,
@@ -112,7 +114,7 @@ def create_map():
     Correct lon/lat: 81, 38
     Calculated: 99
     """
-    splt.export("temp-vega.png")
+    p.export("temp-vega.png")
 
 
 def create_map_all():
@@ -146,8 +148,9 @@ def create_map_all():
     )
     splt.export("temp-all.png")
 
+
 def create_zenith():
-    plt = ZenithPlot(
+    p = splt.ZenithPlot(
         lat=32.97,
         lon=-117.038611,
         dt=timezone("America/Los_Angeles").localize(datetime.now().replace(hour=21)),
@@ -157,7 +160,8 @@ def create_zenith():
         adjust_text=False,
         resolution=2000,
     )
-    plt.export("temp-zenith-new.png")
+    p.export("temp-zenith-new.png")
+
 
 # create_style_examples()
 # create_365()

@@ -6,7 +6,7 @@ export PYTHONPATH=./src/
 
 install: venv
 
-lint: venvdev
+lint:
 	$(DOCKER_RUN) "python -m flake8 --ignore E501,W503 src/ tests/"
 
 format:
