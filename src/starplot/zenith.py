@@ -50,7 +50,9 @@ class ZenithPlot(StarPlot):
     def _plot_constellation_lines(self):
         constellations = LineCollection(
             create_projected_constellation_lines(self._stardata),
-            **self.style.constellation.line.matplot_kwargs,
+            **self.style.constellation.line.matplot_kwargs(
+                size_multiplier=self._size_multiplier
+            ),
         )
         self._plotted_conlines = self.ax.add_collection(constellations)
 
@@ -65,7 +67,9 @@ class ZenithPlot(StarPlot):
                     y,
                     fullname.upper(),
                     path_effects=[self.text_border],
-                    **self.style.constellation.label.matplot_kwargs,
+                    **self.style.constellation.label.matplot_kwargs(
+                        size_multiplier=self._size_multiplier
+                    ),
                 )
                 self._maybe_remove_label(label)
 
@@ -87,9 +91,10 @@ class ZenithPlot(StarPlot):
         sizes = []
         for m in stardata["magnitude"][bright_stars]:
             if m < 2:
-                sizes.append((6 - m) ** 2.26)
+                sizes.append((8 - m) ** 2.86 * self._size_multiplier)
             else:
-                sizes.append((1 + self.limiting_magnitude - m) ** 2)
+                # sizes.append((1 + self.limiting_magnitude - m) ** 2 * self._size_multiplier)
+                sizes.append((8 - m) ** 2.16 * self._size_multiplier)
 
         # Draw stars
         self._plotted_stars = self.ax.scatter(
@@ -113,7 +118,9 @@ class ZenithPlot(StarPlot):
                     s["x"] + 0.00984,
                     s["y"] - 0.006,
                     hip_names[i],
-                    **self.style.star.label.matplot_kwargs,
+                    **self.style.star.label.matplot_kwargs(
+                        size_multiplier=self._size_multiplier
+                    ),
                     ha="left",
                     va="top",
                     path_effects=[self.text_border],
@@ -131,14 +138,22 @@ class ZenithPlot(StarPlot):
             x, y = self.project_fn(position_of_radec(ra, dec))
 
             if in_circle(x, y):
-                self.ax.plot(x, y, **self.style.dso.marker.matplot_kwargs)
+                self.ax.plot(
+                    x,
+                    y,
+                    **self.style.dso.marker.matplot_kwargs(
+                        size_multiplier=self._size_multiplier
+                    ),
+                )
                 label = self.ax.text(
                     x + self.style.text_offset_x,
                     y + self.style.text_offset_y,
                     m.upper(),
                     ha="right",
                     va="center",
-                    **self.style.dso.label.matplot_kwargs,
+                    **self.style.dso.label.matplot_kwargs(
+                        size_multiplier=self._size_multiplier
+                    ),
                     path_effects=[self.text_border],
                 )
                 self._maybe_remove_label(label)
@@ -146,7 +161,7 @@ class ZenithPlot(StarPlot):
     def _plot_border(self):
         # Plot border text
         border_font_kwargs = dict(
-            fontsize=self.style.border_font_size,
+            fontsize=self.style.border_font_size * self._size_multiplier * 2,
             weight=self.style.border_font_weight,
             color=self.style.border_font_color.as_hex(),
         )
@@ -174,7 +189,7 @@ class ZenithPlot(StarPlot):
         inner_border = plt.Circle(
             (0, 0),
             radius=1.0,
-            linewidth=2,
+            linewidth=2 * self._size_multiplier,
             edgecolor=self.style.border_line_color.as_hex(),
             fill=False,
             zorder=100,
@@ -186,7 +201,7 @@ class ZenithPlot(StarPlot):
             (0, 0),
             facecolor=self.style.border_bg_color.as_hex(),
             radius=1.06,
-            linewidth=4,
+            linewidth=4 * self._size_multiplier,
             edgecolor=self.style.border_line_color.as_hex(),
             fill=True,
             zorder=-200,

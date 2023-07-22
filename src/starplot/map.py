@@ -80,7 +80,9 @@ class MapPlot(StarPlot):
         constellation_lines = gpd.read_file(DataFiles.CONSTELLATION_LINES)
         constellation_lines.plot(
             ax=self.ax,
-            **self.style.constellation.line.matplot_kwargs,
+            **self.style.constellation.line.matplot_kwargs(
+                size_multiplier=self._size_multiplier
+            ),
             **self._plot_kwargs(),
         )
 
@@ -88,7 +90,9 @@ class MapPlot(StarPlot):
         constellation_borders = gpd.read_file(DataFiles.CONSTELLATION_BORDERS)
         constellation_borders.plot(
             ax=self.ax,
-            **self.style.constellation_borders.matplot_kwargs,
+            **self.style.constellation_borders.matplot_kwargs(
+                size_multiplier=self._size_multiplier
+            ),
             **self._plot_kwargs(),
         )
 
@@ -99,7 +103,9 @@ class MapPlot(StarPlot):
                 label = self.ax.text(
                     *self._prepare_coords(ra, dec),
                     con.upper(),
-                    **self.style.constellation.label.matplot_kwargs,
+                    **self.style.constellation.label.matplot_kwargs(
+                        size_multiplier=self._size_multiplier
+                    ),
                     **self._plot_kwargs(),
                     path_effects=[self.text_border],
                 )
@@ -110,7 +116,9 @@ class MapPlot(StarPlot):
         mw = gpd.read_file(DataFiles.MILKY_WAY)
         mw.plot(
             ax=self.ax,
-            **self.style.milky_way.matplot_kwargs,
+            **self.style.milky_way.matplot_kwargs(
+                size_multiplier=self._size_multiplier
+            ),
             **self._plot_kwargs(),
         )
 
@@ -132,7 +140,7 @@ class MapPlot(StarPlot):
         sizes = []
         for m in nearby_stars_df["magnitude"]:
             if m < 4.6:
-                sizes.append((8 - m) ** 2.56 * self._size_multiplier)
+                sizes.append((8 - m) ** 2.36 * self._size_multiplier)
             else:
                 sizes.append(0.75 * self._size_multiplier)
 
@@ -157,7 +165,9 @@ class MapPlot(StarPlot):
                     hip_names[i],
                     ha="left",
                     va="top",
-                    **self.style.star.label.matplot_kwargs,
+                    **self.style.star.label.matplot_kwargs(
+                        size_multiplier=self._size_multiplier
+                    ),
                     **self._plot_kwargs(),
                     path_effects=[self.text_border],
                 )
@@ -190,7 +200,6 @@ class MapPlot(StarPlot):
 
 
 class MercatorPlot(MapPlot):
-    
     def _adjust_radec_minmax(self):
         return
 

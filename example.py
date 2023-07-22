@@ -101,6 +101,7 @@ def create_map_all():
     )
     splt.export("temp-all.png")
 
+
 def create_map_orion():
     p = splt.MapPlot(
         # projection=Projection.STEREO_NORTH,
@@ -129,12 +130,13 @@ def create_map_orion():
                 "label": {
                     "font_size": 12,
                     "font_weight": "bold",
-                    "font_color": "darkred"
-                }
+                    "font_color": "darkred",
+                },
             },
         )
     )
     p.export("temp-orion.png")
+
 
 def create_zenith():
     p = splt.ZenithPlot(
@@ -144,8 +146,8 @@ def create_zenith():
         limiting_magnitude=4.6,
         style=BLUE,
         # style=GRAYSCALE,
-        adjust_text=False,
-        resolution=2000,
+        # adjust_text=False,
+        resolution=4000,
     )
     p.plot_object(
         SkyObject(
@@ -157,7 +159,8 @@ def create_zenith():
             },
         )
     )
-    p.export("temp-zenith-new.svg", format="svg")
+    p.export("temp-zenith-new.png", format="png")
+
 
 def create_map():
     p = splt.MercatorPlot(
@@ -169,16 +172,18 @@ def create_map():
         dec_max=80,
         limiting_magnitude=6,
         style=MAP_BLUE,
-        resolution=12000,
+        resolution=4000,
     )
     p.export("temp-map.png")
+
 
 # create_style_examples()
 # create_365()
 # create_example()
 # create_map_orion()
-# create_zenith()
 # create_map_all()
+
+create_zenith()
 create_map()
 
 print(f"Total run time: {time.time() - start_time}")

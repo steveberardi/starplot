@@ -18,17 +18,18 @@ class StarPlot(ABC):
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
         style: PlotStyle = GRAYSCALE,
-        figure_size: int = 16,
         resolution: int = 2048,
         adjust_text: bool = True,
         ephemeris: str = "de421_2001.bsp",
         *args,
         **kwargs,
     ):
+        px = 1 / plt.rcParams["figure.dpi"]  # pixel in inches
+
         self.limiting_magnitude = limiting_magnitude
         self.limiting_magnitude_labels = limiting_magnitude_labels
         self.style = style
-        self.figure_size = figure_size
+        self.figure_size = resolution * px
         self.resolution = resolution
         self.adjust_text = adjust_text
         self.dt = dt or timezone("UTC").localize(datetime.now())
@@ -39,7 +40,7 @@ class StarPlot(ABC):
             linewidth=self.style.text_border_width,
             foreground=self.style.background_color.as_hex(),
         )
-        self._size_multiplier = 64 / (self.resolution / self.figure_size)
+        self._size_multiplier = self.resolution / 3000
 
         self.timescale = load.timescale().from_datetime(self.dt)
 
@@ -70,7 +71,7 @@ class StarPlot(ABC):
             format=format,
             bbox_inches="tight",
             pad_inches=0,
-            dpi=(self.resolution / self.figure_size * 1.28),
+            dpi=144,  # (self.resolution / self.figure_size * 1.28),
         )
 
     def draw_reticle(self, ra, dec) -> None:
@@ -102,14 +103,16 @@ class StarPlot(ABC):
             self.ax.plot(
                 ra,
                 dec,
-                **obj.style.marker.matplot_kwargs,
+                **obj.style.marker.matplot_kwargs(
+                    size_multiplier=self._size_multiplier
+                ),
                 **self._plot_kwargs(),
             )
             label = self.ax.text(
                 ra,
                 dec,
                 obj.name,
-                **obj.style.label.matplot_kwargs,
+                **obj.style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
                 **self._plot_kwargs(),
                 path_effects=[self.text_border],
             )

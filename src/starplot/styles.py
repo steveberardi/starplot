@@ -3,6 +3,8 @@ from enum import Enum
 from pydantic import BaseModel
 from pydantic.color import Color
 
+FONT_SCALE = 2
+
 
 class FillStyleEnum(str, Enum):
     FULL = "full"
@@ -53,12 +55,11 @@ class MarkerStyle(BaseModel):
     visible: bool = True
     zorder: int = -1
 
-    @property
-    def matplot_kwargs(self) -> dict:
+    def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex(),
             marker=self.symbol,
-            markersize=self.size,
+            markersize=self.size * size_multiplier * FONT_SCALE,
             fillstyle=self.fill,
             alpha=self.alpha,
             zorder=self.zorder,
@@ -72,12 +73,11 @@ class LineStyle(BaseModel):
     alpha: float = 1.0
     zorder: int = -1
 
-    @property
-    def matplot_kwargs(self) -> dict:
+    def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             colors=self.color.as_hex(),
             linestyle=self.style,
-            linewidths=self.width,
+            linewidths=self.width * size_multiplier,
             alpha=self.alpha,
             zorder=self.zorder,
         )
@@ -89,11 +89,10 @@ class PolygonStyle(BaseModel):
     alpha: float = 1.0
     zorder: int = -1
 
-    @property
-    def matplot_kwargs(self) -> dict:
+    def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex(),
-            linewidth=self.edge_width,
+            linewidth=self.edge_width * size_multiplier,
             alpha=self.alpha,
             zorder=self.zorder,
         )
@@ -108,11 +107,10 @@ class LabelStyle(BaseModel):
     zorder: int = 1
     visible: bool = True
 
-    @property
-    def matplot_kwargs(self) -> dict:
+    def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.font_color.as_hex(),
-            fontsize=self.font_size,
+            fontsize=self.font_size * size_multiplier * FONT_SCALE,
             fontstyle=self.font_style,
             weight=self.font_weight,
             alpha=self.font_alpha,
@@ -151,7 +149,7 @@ class PlotStyle(BaseModel):
     # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(fillstyle=FillStyleEnum.FULL),
-        label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD),
+        label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1024),
     )
 
     # Deep Sky Objects (DSOs)
@@ -192,6 +190,12 @@ BLUE = PlotStyle(
     constellation=PathStyle(
         line=LineStyle(width=2, color="#6ba832", alpha=0.2),
         label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT),
+    ),
+    milky_way=PolygonStyle(
+        color="#94c5e3",
+        alpha=0.16,
+        edge_width=0,
+        zorder=-10000,
     ),
 )
 
@@ -272,11 +276,15 @@ MAP_BLUE = PlotStyle(
     border_font_color="#f1f6ff",
     border_line_color="#2f4358",
     border_bg_color="#7997b9",
+    star=ObjectStyle(
+        marker=MarkerStyle(fillstyle=FillStyleEnum.FULL),
+        label=LabelStyle(font_size=5, font_weight=FontWeightEnum.BOLD, zorder=1024),
+    ),
     # Constellations
     constellation=PathStyle(
-        line=LineStyle(width=3, color="#6ba832", alpha=0.34),
+        line=LineStyle(width=2, color="#6ba832", alpha=0.34),
         label=LabelStyle(
-            font_size=20, font_color="#c5c5c5", font_weight=FontWeightEnum.LIGHT
+            font_size=7, font_color="#c5c5c5", font_weight=FontWeightEnum.LIGHT
         ),
     ),
     # Milky Way
