@@ -151,6 +151,9 @@ class PlotStyle(BaseModel):
         marker=MarkerStyle(fillstyle=FillStyleEnum.FULL),
         label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1024),
     )
+    bayer_labels: LabelStyle = LabelStyle(
+        font_size=8, font_weight=FontWeightEnum.LIGHT, zorder=1024
+    )
 
     # Deep Sky Objects (DSOs)
     dso: ObjectStyle = ObjectStyle(
@@ -278,13 +281,13 @@ MAP_BLUE = PlotStyle(
     border_bg_color="#7997b9",
     star=ObjectStyle(
         marker=MarkerStyle(fillstyle=FillStyleEnum.FULL),
-        label=LabelStyle(font_size=5, font_weight=FontWeightEnum.BOLD, zorder=1024),
+        label=LabelStyle(font_size=8, font_weight=FontWeightEnum.BOLD, zorder=1024),
     ),
     # Constellations
     constellation=PathStyle(
         line=LineStyle(width=2, color="#6ba832", alpha=0.34),
         label=LabelStyle(
-            font_size=7, font_color="#c5c5c5", font_weight=FontWeightEnum.LIGHT
+            font_size=11, font_color="#c5c5c5", font_weight=FontWeightEnum.LIGHT
         ),
     ),
     # Milky Way

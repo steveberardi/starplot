@@ -11,7 +11,7 @@ from skyfield.api import Star
 
 from starplot.base import StarPlot
 from starplot.constellations import labels as conlabels
-from starplot.data import load, DataFiles
+from starplot.data import load, DataFiles, bayer
 from starplot.stars import get_star_data, hip_names
 
 
@@ -155,19 +155,30 @@ class MapPlot(StarPlot):
 
         # Plot star names
         for i, s in nearby_stars_df.iterrows():
+            (i in hip_names or i in bayer.hip)
+            name = hip_names.get(i)
+            bayer_desig = bayer.hip.get(i)
             if (
-                i in hip_names
+                (name or bayer_desig)
                 and s["magnitude"] < self.limiting_magnitude
-                # and self.in_bounds(s["ra_hours"], s["dec_degrees"])
+                and self.in_bounds(s["ra_hours"], s["dec_degrees"])
             ):
+                if name:
+                    # name takes precendence over bayer labels
+                    text = name
+                    style = self.style.star.label.matplot_kwargs(self._size_multiplier)
+                else:
+                    text = bayer_desig
+                    style = self.style.bayer_labels.matplot_kwargs(
+                        self._size_multiplier
+                    )
+
                 label = self.ax.text(
                     *self._prepare_coords(s["ra_hours"], s["dec_degrees"]),
-                    hip_names[i],
+                    text,
                     ha="left",
                     va="top",
-                    **self.style.star.label.matplot_kwargs(
-                        size_multiplier=self._size_multiplier
-                    ),
+                    **style,
                     **self._plot_kwargs(),
                     path_effects=[self.text_border],
                 )

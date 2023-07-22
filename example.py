@@ -103,16 +103,15 @@ def create_map_all():
 
 
 def create_map_orion():
-    p = splt.MapPlot(
-        # projection=Projection.STEREO_NORTH,
+    p = splt.MercatorPlot(
         projection=Projection.MERCATOR,
-        ra_min=3.5,
-        ra_max=8.8,
+        ra_min=3.6,
+        ra_max=7.8,
         dec_min=-16,
         dec_max=24,
         limiting_magnitude=7.2,
         style=MAP_BLUE,
-        resolution=4000,
+        resolution=2000,
     )
     p.plot_object(
         SkyObject(
@@ -121,16 +120,18 @@ def create_map_orion():
             dec=-4.61,
             style={
                 "marker": {
-                    "size": 12,
+                    "size": 10,
                     "symbol": "s",
                     "fill": "full",
                     "color": "#ff6868",
-                    "alpha": 0.76,
+                    "alpha": 1,
+                    "zorder": 4096,
                 },
                 "label": {
-                    "font_size": 12,
+                    "font_size": 10,
                     "font_weight": "bold",
                     "font_color": "darkred",
+                    "zorder": 4096,
                 },
             },
         )
@@ -173,6 +174,7 @@ def create_map():
         limiting_magnitude=6,
         style=MAP_BLUE,
         resolution=4000,
+        adjust_text=False,
     )
     p.export("temp-map.png")
 
@@ -180,10 +182,10 @@ def create_map():
 # create_style_examples()
 # create_365()
 # create_example()
-# create_map_orion()
+create_map_orion()
 # create_map_all()
 
-create_zenith()
-create_map()
+# create_zenith()
+# create_map()
 
 print(f"Total run time: {time.time() - start_time}")
