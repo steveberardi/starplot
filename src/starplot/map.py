@@ -170,7 +170,7 @@ class MapPlot(StarPlot):
         self.ax.set_extent(self._latlon_bounds(), crs=ccrs.PlateCarree())
         self._adjust_radec_minmax()
 
-        gridlines = self.ax.gridlines(draw_labels=False)
+        gridlines = self.ax.gridlines(zorder=-1000, draw_labels=False)
         gridlines.top_labels = False
         gridlines.right_labels = False
 
