@@ -30,7 +30,7 @@ def create_365():
         )
 
 
-def create_map():
+def create_map_vega():
     p = splt.MapPlot(
         projection=Projection.STEREO_NORTH,
         # projection=Projection.MERCATOR,
@@ -159,12 +159,26 @@ def create_zenith():
     )
     p.export("temp-zenith-new.svg", format="svg")
 
+def create_map():
+    p = splt.MercatorPlot(
+        # projection=Projection.STEREO_NORTH,
+        projection=Projection.MERCATOR,
+        ra_min=0,
+        ra_max=24,
+        dec_min=-80,
+        dec_max=80,
+        limiting_magnitude=6,
+        style=MAP_BLUE,
+        resolution=12000,
+    )
+    p.export("temp-map.png")
 
 # create_style_examples()
 # create_365()
 # create_example()
-create_map_orion()
-create_zenith()
+# create_map_orion()
+# create_zenith()
 # create_map_all()
+create_map()
 
 print(f"Total run time: {time.time() - start_time}")

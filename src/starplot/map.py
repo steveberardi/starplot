@@ -187,3 +187,17 @@ class MapPlot(StarPlot):
 
         if self.adjust_text:
             self.adjust_labels()
+
+
+class MercatorPlot(MapPlot):
+    
+    def _adjust_radec_minmax(self):
+        return
+
+    def _latlon_bounds(self):
+        return [
+            -1 * (self.ra_max * 15 - 360),
+            -1 * (self.ra_min * 15 - 360),
+            self.dec_min,
+            self.dec_max,
+        ]
