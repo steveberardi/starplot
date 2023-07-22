@@ -1,4 +1,4 @@
-# ⭐ starplot ⭐
+# ![starplot](https://raw.githubusercontent.com/steveberardi/starplot/main/docs/logo.png) starplot ⭐
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge)
 ![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge)
