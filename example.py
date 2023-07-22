@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 
 from pytz import timezone
 
-from starplot.charts import create_star_chart
 from starplot.styles import BLUE, GRAYSCALE, CHALK, RED, MAP_BLUE
 from starplot.models import SkyObject
 from starplot.map import Projection

@@ -11,15 +11,24 @@ from starplot.constellations import (
     labels as conlabels,
 )
 from starplot.data import load
+from starplot.dsos import DSO_BASE, messier
 from starplot.stars import get_star_data, hip_names
 from starplot.utils import in_circle
 
 
 class ZenithPlot(StarPlot):
-    def __init__(self, lat: float = None, lon: float = None, *args, **kwargs):
+    def __init__(
+        self,
+        lat: float = None,
+        lon: float = None,
+        include_info_text: bool = False,
+        *args,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
         self.lat = lat
         self.lon = lon
+        self.include_info_text = include_info_text
 
         self._calc_position()
         self.project_fn = build_stereographic_projection(self.position)
@@ -116,6 +125,24 @@ class ZenithPlot(StarPlot):
                 starpos_x.append(s["x"])
                 starpos_y.append(s["y"])
 
+    def _plot_dso_base(self):
+        for m in DSO_BASE:
+            ra, dec = messier.get(m)
+            x, y = self.project_fn(position_of_radec(ra, dec))
+
+            if in_circle(x, y):
+                self.ax.plot(x, y, **self.style.dso.marker.matplot_kwargs)
+                label = self.ax.text(
+                    x + self.style.text_offset_x,
+                    y + self.style.text_offset_y,
+                    m.upper(),
+                    ha="right",
+                    va="center",
+                    **self.style.dso.label.matplot_kwargs,
+                    path_effects=[self.text_border],
+                )
+                self._maybe_remove_label(label)
+
     def _plot_border(self):
         # Plot border text
         border_font_kwargs = dict(
@@ -175,12 +202,20 @@ class ZenithPlot(StarPlot):
         self.ax.xaxis.set_visible(False)
         self.ax.yaxis.set_visible(False)
         self.ax.set_aspect(1.0)
-        plt.axis("off")
+        self.ax.axis("off")
 
         self._plot_stars()
         self._plot_constellation_lines()
         self._plot_constellation_labels()
+        self._plot_dso_base()
         self._plot_border()
+
+        if self.include_info_text:
+            dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
+            info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
+            self.ax.text(
+                -1.03, -1.03, info, fontsize=13, family="monospace", linespacing=2
+            )
 
         if self.adjust_text:
             self.adjust_labels()
