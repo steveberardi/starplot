@@ -18,7 +18,6 @@
 *Map around the constellation Orion, with M42 marked:*
 ![map-orion](examples/mercator-orion.png)
 
-
 [More examples](examples/)
 
 ## Getting Started
