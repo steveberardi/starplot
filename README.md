@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/steveberardi/starplot/plot-framework/docs/banner.svg" width="900">
+# <img src="docs/banner.svg" width="900">
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge)
 ![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge)
@@ -11,10 +11,14 @@
 - 📥 **Export** - png, svg
 - 🧭 **Label Collision Avoidance** - via `adjustText`
 
-## Example
-![Example](https://raw.githubusercontent.com/steveberardi/starplot/main/examples/starchart-blue.png)
+## Examples
+![starchart-blue](examples/starchart-blue.png)
+*Zenith plot of the stars from a specific time/location*
 
-For more styles, check out the [examples](examples/).
+![map-orion](examples/mercator-orion.png)
+*Map around the constellation Orion, with M42 marked*
+
+[More examples](examples/)
 
 ## Getting Started
 

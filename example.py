@@ -101,6 +101,35 @@ def create_map_all():
     )
     splt.export("temp-all.png")
 
+def create_map_orion():
+    p = splt.MapPlot(
+        # projection=Projection.STEREO_NORTH,
+        projection=Projection.MERCATOR,
+        ra_min=3.5,
+        ra_max=8.8,
+        dec_min=-16,
+        dec_max=24,
+        limiting_magnitude=8.0,
+        style=MAP_BLUE,
+        resolution=4000,
+    )
+    p.plot_object(
+        SkyObject(
+            name="M42",
+            ra=5.58333,
+            dec=-4.61,
+            style={
+                "marker": {
+                    "size": 11,
+                    "symbol": "s",
+                    "fill": "full",
+                    "color": "#ff6868",
+                    "alpha": 0.76,
+                }
+            },
+        )
+    )
+    p.export("temp-orion.png")
 
 def create_zenith():
     p = splt.ZenithPlot(
@@ -129,7 +158,7 @@ def create_zenith():
 # create_style_examples()
 # create_365()
 # create_example()
-create_map()
+create_map_orion()
 create_zenith()
 # create_map_all()
 

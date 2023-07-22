@@ -101,6 +101,7 @@ class MapPlot(StarPlot):
                     con.upper(),
                     **self.style.constellation.label.matplot_kwargs,
                     **self._plot_kwargs(),
+                    path_effects=[self.text_border],
                 )
                 label.set_clip_on(True)
                 self._maybe_remove_label(label)
@@ -158,6 +159,7 @@ class MapPlot(StarPlot):
                     va="top",
                     **self.style.star.label.matplot_kwargs,
                     **self._plot_kwargs(),
+                    path_effects=[self.text_border],
                 )
                 label.set_clip_on(True)
                 self._maybe_remove_label(label)
