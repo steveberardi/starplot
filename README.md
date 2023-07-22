@@ -12,11 +12,12 @@
 - 🧭 **Label Collision Avoidance** - via `adjustText`
 
 ## Examples
+*Zenith plot of the stars from a specific time/location:*
 ![starchart-blue](examples/starchart-blue.png)
-*Zenith plot of the stars from a specific time/location*
 
+*Map around the constellation Orion, with M42 marked:*
 ![map-orion](examples/mercator-orion.png)
-*Map around the constellation Orion, with M42 marked*
+
 
 [More examples](examples/)
 

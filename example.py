@@ -109,7 +109,7 @@ def create_map_orion():
         ra_max=8.8,
         dec_min=-16,
         dec_max=24,
-        limiting_magnitude=8.0,
+        limiting_magnitude=7.2,
         style=MAP_BLUE,
         resolution=4000,
     )
@@ -120,11 +120,16 @@ def create_map_orion():
             dec=-4.61,
             style={
                 "marker": {
-                    "size": 11,
+                    "size": 12,
                     "symbol": "s",
                     "fill": "full",
                     "color": "#ff6868",
                     "alpha": 0.76,
+                },
+                "label": {
+                    "font_size": 12,
+                    "font_weight": "bold",
+                    "font_color": "darkred"
                 }
             },
         )
