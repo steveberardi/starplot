@@ -67,7 +67,7 @@ class MarkerStyle(BaseModel):
 
 
 class LineStyle(BaseModel):
-    width: int = 1
+    width: int = 2
     color: Color = Color("#000")
     style: LineStyleEnum = LineStyleEnum.SOLID
     alpha: float = 1.0

@@ -184,6 +184,6 @@ def create_map():
 # create_map_all()
 
 create_zenith()
-# create_map()
+create_map()
 
 print(f"Total run time: {time.time() - start_time}")
