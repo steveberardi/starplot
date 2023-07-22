@@ -5,6 +5,12 @@
 
 **starplot** is a Python library for creating star charts and maps.
 
+- ⭐ **Zenith Plots** - showing the stars from a specific time/location
+- 🗺️ **Map Plots** - including North/South polar and Mercator projections
+- 🎨 **Custom Styles** - for all objects
+- 📥 **Export** - png, svg
+- 🧭 **Label Collision Avoidance** - via `adjustText`
+
 ## Example
 ![Example](https://raw.githubusercontent.com/steveberardi/starplot/main/examples/starchart-blue.png)
 
