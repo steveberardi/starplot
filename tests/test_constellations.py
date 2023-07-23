@@ -1,5 +1,5 @@
-from starplot.constellations import labels
+from starplot.data import constellations
 
 
 def test_constellation_label_count():
-    assert len(labels.keys()) == 88
+    assert len(constellations.properties.keys()) == 88

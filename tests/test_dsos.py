@@ -1,10 +1,10 @@
-from starplot.dsos import messier, DSO_BASE
+from starplot.data import dsos
 
 
 def test_messier():
-    assert len(messier) == 109
+    assert len(dsos.messier) == 109
 
 
 def test_dso_base():
-    assert "M42" in DSO_BASE
-    assert "M13" in DSO_BASE
+    assert "M42" in dsos.ZENITH_BASE
+    assert "M13" in dsos.ZENITH_BASE

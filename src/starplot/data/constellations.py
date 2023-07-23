@@ -1,12 +1,10 @@
-import numpy as np
-
 from skyfield.data import stellarium
 
-from starplot.data import load
-from starplot.utils import in_circle
+from starplot.data import load as _load
+
 
 """
-Dictionary of labels for each constellation
+Dictionary of properties for each constellation
 
 Keys: Constellation's 3-letter IAU abbreviation
 Value: Tuple of full name (with newlines), right ascension (RA), and declination (DEC)
@@ -14,7 +12,7 @@ Value: Tuple of full name (with newlines), right ascension (RA), and declination
 The RA/DEC for each constellation is the initial position of the label (to avoid overlapping),
 but this position could change after adjusting all labels together before the final plot is saved.
 """
-labels = {
+properties = {
     "And": ("Andromeda", 0.93, 43.57),
     "Ant": ("Antlia", 10.57, -35.71),
     "Aps": ("Apus", 15.95, -78.42),
@@ -106,33 +104,16 @@ labels = {
 }
 
 
-def get_constellation_data():
-    with load.open("constellations_hip.fab") as f:
+def load():
+    with _load.open("constellations_hip.fab") as f:
         consdata = stellarium.parse_constellations(f)
     return consdata
 
 
-def create_projected_constellation_lines(stardata_projected):
-    consdata = get_constellation_data()
-    stars_1 = []
-    stars_2 = []
-    for _, lines in consdata:
-        any_star_in_view = False
-        constars_1 = []
-        constars_2 = []
-        for s1, s2 in lines:
-            sx1, sy1 = stardata_projected[["x", "y"]].loc[s1].values
-            sx2, sy2 = stardata_projected[["x", "y"]].loc[s2].values
-            if in_circle(sx1, sy1, radius=1.1) or in_circle(sx2, sy2, radius=1.1):
-                any_star_in_view = True
-            constars_1.append(s1)
-            constars_2.append(s2)
+def get(constellation_id: str):
+    return properties.get(constellation_id)
 
-        if any_star_in_view:
-            stars_1.extend(constars_1)
-            stars_2.extend(constars_2)
 
-    xy1 = stardata_projected[["x", "y"]].loc[stars_1].values
-    xy2 = stardata_projected[["x", "y"]].loc[stars_2].values
-
-    return np.rollaxis(np.array([xy1, xy2]), 1)
+def iterator():
+    for c in properties.keys():
+        yield c
