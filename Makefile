@@ -1,6 +1,13 @@
 PYTHON=./venv/bin/python
 DE421_URL=https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp
-DOCKER_RUN=docker run --rm -it -v $(shell pwd):/starplot starplot bash -c
+
+ifeq ($(CI), true)
+ DR_ARGS=
+else
+ DR_ARGS=-it
+endif
+
+DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot bash -c
 
 export PYTHONPATH=./src/
 

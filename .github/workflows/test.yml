@@ -18,10 +18,10 @@ jobs:
     - name: Build Docker container
       run: make docker-build
     - name: Check Lint
-      run: make lint
+      run: make lint CI=true
     - name: Check Format
-      run: make format ARGS=--check
+      run: make format CI=true ARGS=--check
     - name: Run Tests
-      run: make test
+      run: make test CI=true
     - name: Build
       run: make build
