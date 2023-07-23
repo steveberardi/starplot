@@ -32,27 +32,19 @@ shell:
 example:
 	$(DOCKER_RUN) "python example.py"
 
-# TODO : move below to docker?
 # PyPi - build & publish
-venvdev: venv requirements-dev.txt
-	./venv/bin/pip install -r requirements-dev.txt
+build:
+	$(DOCKER_RUN) "python -m flit build"
 
-venv: requirements.txt
-	python -m venv venv
-	./venv/bin/pip install -r requirements.txt
-	touch venv
-
-build: venvdev
-	$(PYTHON) -m flit build
-
-publish: venvdev
+# TODO : move publish to docker
+publish:
 	$(PYTHON) -m flit publish
 
-ephemeris: venv
-	$(PYTHON) -m jplephem excerpt 2001/1/1 2050/1/1 $(DE421_URL) de421sub.bsp
+ephemeris:
+	$(DOCKER_RUN) "python -m jplephem excerpt 2001/1/1 2050/1/1 $(DE421_URL) de421sub.bsp"
 
-hip8: venv
-	$(PYTHON) ./scripts/hip.py hip_main.dat hip8.dat
+hip8:
+	$(DOCKER_RUN) "python ./scripts/hip.py hip_main.dat hip8.dat"
 
 clean:
 	rm -rf __pycache__
