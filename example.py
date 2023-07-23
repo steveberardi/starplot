@@ -31,13 +31,14 @@ def create_365():
 
 
 def create_map_stereo_vega():
-    style = PlotStyle.load_from_file("blue.yml")
+    # style = PlotStyle.load_from_file("blue.yml")
     # style = style.extend({
     #     "bayer_labels": {
     #         "font_name": "GFS Didot",
     #         "font_size": 10
     #     }
     # })
+    style = MAP_BLUE
     style.bayer_labels.font_name = "GFS Didot"
     style.bayer_labels.font_size = 10
     p = splt.MapPlot(
@@ -126,7 +127,7 @@ def create_zenith():
         style=BLUE,
         # style=GRAYSCALE,
         # adjust_text=False,
-        resolution=4000,
+        resolution=2000,
     )
     p.plot_object(
         SkyObject(
@@ -177,7 +178,7 @@ def create_map_stereo_north():
 # create_map_orion()
 # create_map_all()
 
-# create_zenith()
+create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 create_map_stereo_vega()

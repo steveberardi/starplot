@@ -1,20 +1,39 @@
 from matplotlib import pyplot as plt
 from matplotlib.collections import LineCollection
+import numpy as np
 
 from skyfield.api import Star, wgs84
 from skyfield.positionlib import position_of_radec
 from skyfield.projections import build_stereographic_projection
 
 from starplot.base import StarPlot
-from starplot.constellations import (
-    create_projected_constellation_lines,
-    labels as conlabels,
-)
-from starplot.data import load
-from starplot.dsos import DSO_BASE, messier
-from starplot.stars import get_star_data, hip_names
+from starplot.data import load, constellations, stars, dsos
 from starplot.utils import in_circle
 
+def create_projected_constellation_lines(stardata_projected):
+    consdata = constellations.load()
+    stars_1 = []
+    stars_2 = []
+    for _, lines in consdata:
+        any_star_in_view = False
+        constars_1 = []
+        constars_2 = []
+        for s1, s2 in lines:
+            sx1, sy1 = stardata_projected[["x", "y"]].loc[s1].values
+            sx2, sy2 = stardata_projected[["x", "y"]].loc[s2].values
+            if in_circle(sx1, sy1, radius=1.1) or in_circle(sx2, sy2, radius=1.1):
+                any_star_in_view = True
+            constars_1.append(s1)
+            constars_2.append(s2)
+
+        if any_star_in_view:
+            stars_1.extend(constars_1)
+            stars_2.extend(constars_2)
+
+    xy1 = stardata_projected[["x", "y"]].loc[stars_1].values
+    xy2 = stardata_projected[["x", "y"]].loc[stars_2].values
+
+    return np.rollaxis(np.array([xy1, xy2]), 1)
 
 class ZenithPlot(StarPlot):
     def __init__(
@@ -57,8 +76,8 @@ class ZenithPlot(StarPlot):
         self._plotted_conlines = self.ax.add_collection(constellations)
 
     def _plot_constellation_labels(self):
-        for con in conlabels:
-            fullname, ra, dec = conlabels.get(con)
+        for con in constellations.iterator():
+            fullname, ra, dec = constellations.get(con)
             x, y = self.project_fn(position_of_radec(ra, dec))
 
             if in_circle(x, y):
@@ -74,7 +93,7 @@ class ZenithPlot(StarPlot):
                 self._maybe_remove_label(label)
 
     def _plot_stars(self):
-        stardata = get_star_data(self.limiting_magnitude)
+        stardata = stars.load(self.limiting_magnitude)
         self._stardata = stardata
 
         eph = load(self.ephemeris)
@@ -111,13 +130,13 @@ class ZenithPlot(StarPlot):
         for i, s in stardata[bright_stars].iterrows():
             if (
                 in_circle(s["x"], s["y"])
-                and i in hip_names
+                and i in stars.hip_names
                 and s["magnitude"] < self.limiting_magnitude_labels
             ):
                 label = self.ax.text(
                     s["x"] + 0.00984,
                     s["y"] - 0.006,
-                    hip_names[i],
+                    stars.hip_names[i],
                     **self.style.star.label.matplot_kwargs(
                         size_multiplier=self._size_multiplier
                     ),
@@ -133,8 +152,8 @@ class ZenithPlot(StarPlot):
                 starpos_y.append(s["y"])
 
     def _plot_dso_base(self):
-        for m in DSO_BASE:
-            ra, dec = messier.get(m)
+        for m in dsos.ZENITH_BASE:
+            ra, dec = dsos.messier.get(m)
             x, y = self.project_fn(position_of_radec(ra, dec))
 
             if in_circle(x, y):

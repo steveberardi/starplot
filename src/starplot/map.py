@@ -10,9 +10,7 @@ import geopandas as gpd
 from skyfield.api import Star
 
 from starplot.base import StarPlot
-from starplot.constellations import labels as conlabels
-from starplot.data import load, DataFiles, bayer
-from starplot.stars import get_star_data, hip_names
+from starplot.data import load, DataFiles, bayer, constellations, stars
 
 
 # Silence noisy cartopy warnings
@@ -99,8 +97,8 @@ class MapPlot(StarPlot):
         )
 
     def _plot_constellation_labels(self):
-        for con in conlabels:
-            fullname, ra, dec = conlabels.get(con)
+        for con in constellations.iterator():
+            fullname, ra, dec = constellations.get(con)
             if self.in_bounds(ra, dec):
                 label = self.ax.text(
                     *self._prepare_coords(ra, dec),
@@ -125,15 +123,15 @@ class MapPlot(StarPlot):
         )
 
     def _plot_stars(self):
-        stars = get_star_data()
+        stardata = stars.load()
         eph = load(self.ephemeris)
         earth = eph["earth"]
-        nearby_stars_df = stars[
-            (stars["magnitude"] <= self.limiting_magnitude)
-            & (stars["ra_hours"] < self.ra_max + 5)
-            & (stars["ra_hours"] > self.ra_min - 5)
-            & (stars["dec_degrees"] < self.dec_max + 10)
-            & (stars["dec_degrees"] > self.dec_min - 10)
+        nearby_stars_df = stardata[
+            (stardata["magnitude"] <= self.limiting_magnitude)
+            & (stardata["ra_hours"] < self.ra_max + 5)
+            & (stardata["ra_hours"] > self.ra_min - 5)
+            & (stardata["dec_degrees"] < self.dec_max + 10)
+            & (stardata["dec_degrees"] > self.dec_min - 10)
         ]
         nearby_stars = Star.from_dataframe(nearby_stars_df)
         astrometric = earth.at(self.timescale).observe(nearby_stars)
@@ -157,8 +155,8 @@ class MapPlot(StarPlot):
 
         # Plot star names
         for i, s in nearby_stars_df.iterrows():
-            (i in hip_names or i in bayer.hip)
-            name = hip_names.get(i)
+            (i in stars.hip_names or i in bayer.hip)
+            name = stars.hip_names.get(i)
             bayer_desig = bayer.hip.get(i)
             if (
                 (name or bayer_desig)
