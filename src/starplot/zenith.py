@@ -10,6 +10,7 @@ from starplot.base import StarPlot
 from starplot.data import load, constellations, stars, dsos
 from starplot.utils import in_circle
 
+
 def create_projected_constellation_lines(stardata_projected):
     consdata = constellations.load()
     stars_1 = []
@@ -34,6 +35,7 @@ def create_projected_constellation_lines(stardata_projected):
     xy2 = stardata_projected[["x", "y"]].loc[stars_2].values
 
     return np.rollaxis(np.array([xy1, xy2]), 1)
+
 
 class ZenithPlot(StarPlot):
     def __init__(

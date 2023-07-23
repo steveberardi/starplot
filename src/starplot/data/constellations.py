@@ -113,6 +113,7 @@ def load():
 def get(constellation_id: str):
     return properties.get(constellation_id)
 
+
 def iterator():
     for c in properties.keys():
         yield c

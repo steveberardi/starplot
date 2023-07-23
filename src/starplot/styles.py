@@ -12,9 +12,7 @@ from pydantic.color import Color
 from pydantic import BaseModel
 from pydantic.functional_serializers import PlainSerializer
 
-ColorStr = Annotated[
-    Color, PlainSerializer(lambda c: c.as_hex(), return_type=str)
-]
+ColorStr = Annotated[Color, PlainSerializer(lambda c: c.as_hex(), return_type=str)]
 
 
 FONT_SCALE = 2
@@ -198,22 +196,21 @@ class PlotStyle(BaseModel):
 
     @staticmethod
     def load_from_file(filename: str):
-        with open(filename, 'r') as sfile:
+        with open(filename, "r") as sfile:
             style = yaml.safe_load(sfile)
             return PlotStyle.parse_obj(style)
-    
+
     def dump_to_file(self, filename: str):
-        with open(filename, 'w') as outfile:
+        with open(filename, "w") as outfile:
             style_json = self.model_dump_json()
             style_yaml = yaml.dump(json.loads(style_json))
             outfile.write(style_yaml)
-    
+
     def extend(self, updates: dict):
         style_json = self.model_dump_json()
         style_dict = json.loads(style_json)
         style_dict.update(updates)
         return PlotStyle.parse_obj(style_dict)
-
 
 
 GRAYSCALE = PlotStyle()
