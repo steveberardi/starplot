@@ -104,6 +104,7 @@ class LabelStyle(BaseModel):
     font_color: Color = Color("#000")
     font_alpha: float = 1
     font_style: FontStyleEnum = FontStyleEnum.NORMAL
+    font_name: str = None
     zorder: int = 1
     visible: bool = True
 
@@ -112,6 +113,7 @@ class LabelStyle(BaseModel):
             color=self.font_color.as_hex(),
             fontsize=self.font_size * size_multiplier * FONT_SCALE,
             fontstyle=self.font_style,
+            fontname=self.font_name,
             weight=self.font_weight,
             alpha=self.font_alpha,
             zorder=self.zorder,
