@@ -23,6 +23,8 @@ RUN pip install --no-binary :all: shapely
 
 ENV PYTHONPATH=/starplot/src/
 
+RUN git config --global --add safe.directory /starplot
+
 # TEST - Lint, Format, Tests
 # FROM base as test
 # RUN make lint && make format ARGS=--check && make test
