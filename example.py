@@ -33,12 +33,11 @@ def create_365():
 def create_map_vega():
     p = splt.MapPlot(
         projection=Projection.STEREO_NORTH,
-        # projection=Projection.MERCATOR,
-        ra_min=15,
-        ra_max=19,
+        ra_min=18,
+        ra_max=19.5,
         dec_min=30,
         dec_max=65,
-        limiting_magnitude=9.0,
+        limiting_magnitude=10.0,
         style=MAP_BLUE,
         # style=GRAYSCALE,
         adjust_text=False,
@@ -49,7 +48,7 @@ def create_map_vega():
     p.plot_object(
         SkyObject(
             name="M57",
-            ra=18.885,  # 283.275,  # 18.885,
+            ra=18.885,
             dec=33.03,
             style={
                 "marker": {
@@ -67,43 +66,11 @@ def create_map_vega():
     Correct lon/lat: 81, 38
     Calculated: 99
     """
-    p.export("temp-vega.png")
-
-
-def create_map_all():
-    splt = MapPlot(
-        projection=Projection.MERCATOR,
-        ra_min=0,
-        ra_max=24,
-        dec_min=-90,
-        dec_max=90,
-        limiting_magnitude=8.0,
-        style=MAP_BLUE,
-        adjust_text=False,
-        resolution=8000,
-        # style=GRAYSCALE,
-    )
-    splt.draw_reticle(279.2499984, 38.78)
-    splt.plot_object(
-        SkyObject(
-            name="M57",
-            ra=283.275,  # 18.885,
-            dec=33.03,
-            style={
-                "marker": {
-                    "size": 10,
-                    "symbol": "s",
-                    "fill": "full",
-                    "color": "red",
-                }
-            },
-        )
-    )
-    splt.export("temp-all.png")
+    p.export("temp-map-stereo-vega.png")
 
 
 def create_map_orion():
-    p = splt.MercatorPlot(
+    p = splt.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=3.6,
         ra_max=7.8,
@@ -163,9 +130,8 @@ def create_zenith():
     p.export("temp-zenith-new.png", format="png")
 
 
-def create_map():
-    p = splt.MercatorPlot(
-        # projection=Projection.STEREO_NORTH,
+def create_map_mercator():
+    p = splt.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=0,
         ra_max=24,
@@ -176,7 +142,22 @@ def create_map():
         resolution=4000,
         adjust_text=False,
     )
-    p.export("temp-map.png")
+    p.export("temp-map-mercator.png")
+
+
+def create_map_stereo_north():
+    p = splt.MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=0,
+        ra_max=24,
+        dec_min=0,
+        dec_max=90,
+        limiting_magnitude=12,
+        style=MAP_BLUE,
+        resolution=8000,
+        adjust_text=False,
+    )
+    p.export("temp-map-north.png")
 
 
 # create_style_examples()
@@ -186,6 +167,8 @@ create_map_orion()
 # create_map_all()
 
 # create_zenith()
-# create_map()
+# create_map_mercator()
+# create_map_stereo_north()
+create_map_vega()
 
 print(f"Total run time: {time.time() - start_time}")

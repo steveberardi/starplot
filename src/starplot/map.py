@@ -56,25 +56,27 @@ class MapPlot(StarPlot):
         return dict(transform=ccrs.PlateCarree())
 
     def _prepare_coords(self, ra, dec) -> (float, float):
-        return (ra * 15 - 360) * -1, dec
+        return -1 * (ra * 15 - 360), dec
 
     def in_bounds(self, ra, dec) -> bool:
         return self.ra_min < ra < self.ra_max and self.dec_min < dec < self.dec_max
 
     def _latlon_bounds(self):
+        # convert the RA/DEC bounds to lat/lon bounds
         return [
-            self.ra_min * 15 - 180,
-            self.ra_max * 15 - 180,
+            -1 * (self.ra_max * 15 - 360),
+            -1 * (self.ra_min * 15 - 360),
             self.dec_min,
             self.dec_max,
         ]
 
     def _adjust_radec_minmax(self):
-        extent = self.ax.get_extent(crs=ccrs.PlateCarree())
-        self.ra_min = (extent[0] + 180) / 15
-        self.ra_max = (extent[1] + 180) / 15
-        self.dec_min = extent[2]
-        self.dec_max = extent[3]
+        # adjust the RA min/max if the DEC bounds is near the poles
+        if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH] and (
+            self.dec_max > 80 or self.dec_min < -80
+        ):
+            self.ra_min = 0
+            self.ra_max = 24
 
     def _plot_constellation_lines(self):
         constellation_lines = gpd.read_file(DataFiles.CONSTELLATION_LINES)
@@ -201,23 +203,5 @@ class MapPlot(StarPlot):
         self._plot_milky_way()
         self._plot_stars()
 
-        # print(self.ax.patch.get_extents())
-        # print(self.ax.get_window_extent())
-        # print(self.ax.get_position())
-        # self._extent = self.ax.get_extent(crs=ccrs.PlateCarree())
-
         if self.adjust_text:
             self.adjust_labels()
-
-
-class MercatorPlot(MapPlot):
-    def _adjust_radec_minmax(self):
-        return
-
-    def _latlon_bounds(self):
-        return [
-            -1 * (self.ra_max * 15 - 360),
-            -1 * (self.ra_min * 15 - 360),
-            self.dec_min,
-            self.dec_max,
-        ]
