@@ -30,17 +30,17 @@ def create_365():
         )
 
 
-def create_map_vega():
+def create_map_stereo_vega():
     p = splt.MapPlot(
         projection=Projection.STEREO_NORTH,
-        ra_min=18,
-        ra_max=19.5,
+        ra_min=17,
+        ra_max=20,
         dec_min=30,
-        dec_max=65,
-        limiting_magnitude=10.0,
+        dec_max=55,
+        limiting_magnitude=12.0,
         style=MAP_BLUE,
         # style=GRAYSCALE,
-        adjust_text=False,
+        # adjust_text=False,
         resolution=4000,
     )
     p.draw_reticle(18.6167, 38.78)
@@ -56,6 +56,7 @@ def create_map_vega():
                     "symbol": "s",
                     "fill": "full",
                     "color": "red",
+                    "alpha": 0.6,
                 }
             },
         )
@@ -163,12 +164,12 @@ def create_map_stereo_north():
 # create_style_examples()
 # create_365()
 # create_example()
-create_map_orion()
+# create_map_orion()
 # create_map_all()
 
 # create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
-create_map_vega()
+create_map_stereo_vega()
 
 print(f"Total run time: {time.time() - start_time}")

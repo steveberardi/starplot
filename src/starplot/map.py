@@ -25,11 +25,11 @@ class Projection(str, Enum):
     MERCATOR = "mercator"
 
     @staticmethod
-    def crs(projection):
+    def crs(projection, center_lon=-180):
         return {
-            Projection.STEREO_NORTH: ccrs.NorthPolarStereo(),
-            Projection.STEREO_SOUTH: ccrs.SouthPolarStereo(),
-            Projection.MERCATOR: ccrs.PlateCarree(-180),
+            Projection.STEREO_NORTH: ccrs.NorthPolarStereo(center_lon),
+            Projection.STEREO_SOUTH: ccrs.SouthPolarStereo(center_lon),
+            Projection.MERCATOR: ccrs.PlateCarree(center_lon),
         }.get(projection)
 
 
@@ -189,7 +189,15 @@ class MapPlot(StarPlot):
 
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
-        self.ax = plt.axes(projection=Projection.crs(self.projection))
+
+        if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:
+            # for stereo projections, try to orient map so the pole is "up"
+            bounds = self._latlon_bounds()
+            center_lon = (bounds[0] + bounds[1]) / 2
+        else:
+            center_lon = -180
+
+        self.ax = plt.axes(projection=Projection.crs(self.projection, center_lon))
         self.ax.set_extent(self._latlon_bounds(), crs=ccrs.PlateCarree())
         self._adjust_radec_minmax()
 
