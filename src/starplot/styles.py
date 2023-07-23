@@ -1,7 +1,21 @@
+import json
 from enum import Enum
+from typing import Optional
+
+from typing_extensions import Annotated
+
+import yaml
 
 from pydantic import BaseModel
 from pydantic.color import Color
+
+from pydantic import BaseModel
+from pydantic.functional_serializers import PlainSerializer
+
+ColorStr = Annotated[
+    Color, PlainSerializer(lambda c: c.as_hex(), return_type=str)
+]
+
 
 FONT_SCALE = 2
 
@@ -47,7 +61,7 @@ class LineStyleEnum(str, Enum):
 
 
 class MarkerStyle(BaseModel):
-    color: Color = Color("#000")
+    color: ColorStr = ColorStr("#000")
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     size: int = 4
     fill: FillStyleEnum = FillStyleEnum.NONE
@@ -68,7 +82,7 @@ class MarkerStyle(BaseModel):
 
 class LineStyle(BaseModel):
     width: int = 2
-    color: Color = Color("#000")
+    color: ColorStr = ColorStr("#000")
     style: LineStyleEnum = LineStyleEnum.SOLID
     alpha: float = 1.0
     zorder: int = -1
@@ -85,7 +99,7 @@ class LineStyle(BaseModel):
 
 class PolygonStyle(BaseModel):
     edge_width: int = 1
-    color: Color = Color("#000")
+    color: ColorStr = ColorStr("#000")
     alpha: float = 1.0
     zorder: int = -1
 
@@ -101,10 +115,10 @@ class PolygonStyle(BaseModel):
 class LabelStyle(BaseModel):
     font_size: int = 8
     font_weight: FontWeightEnum = FontWeightEnum.NORMAL
-    font_color: Color = Color("#000")
+    font_color: ColorStr = ColorStr("#000")
     font_alpha: float = 1
     font_style: FontStyleEnum = FontStyleEnum.NORMAL
-    font_name: str = None
+    font_name: Optional[str] = None
     zorder: int = 1
     visible: bool = True
 
@@ -136,7 +150,7 @@ class PlotStyle(BaseModel):
     """
 
     # Base
-    background_color: Color = Color("#fff")
+    background_color: ColorStr = ColorStr("#fff")
     text_border_width: int = 2
     text_offset_x: float = 0.005
     text_offset_y: float = 0.005
@@ -144,9 +158,9 @@ class PlotStyle(BaseModel):
     # Borders
     border_font_size: int = 18
     border_font_weight: FontWeightEnum = FontWeightEnum.BOLD
-    border_font_color: Color = Color("#000")
-    border_line_color: Color = Color("#000")
-    border_bg_color = Color("#fff")
+    border_font_color: ColorStr = ColorStr("#000")
+    border_line_color: ColorStr = ColorStr("#000")
+    border_bg_color: ColorStr = ColorStr("#fff")
 
     # Stars
     star: ObjectStyle = ObjectStyle(
@@ -181,6 +195,25 @@ class PlotStyle(BaseModel):
         edge_width=0,
         zorder=-10000,
     )
+
+    @staticmethod
+    def load_from_file(filename: str):
+        with open(filename, 'r') as sfile:
+            style = yaml.safe_load(sfile)
+            return PlotStyle.parse_obj(style)
+    
+    def dump_to_file(self, filename: str):
+        with open(filename, 'w') as outfile:
+            style_json = self.model_dump_json()
+            style_yaml = yaml.dump(json.loads(style_json))
+            outfile.write(style_yaml)
+    
+    def extend(self, updates: dict):
+        style_json = self.model_dump_json()
+        style_dict = json.loads(style_json)
+        style_dict.update(updates)
+        return PlotStyle.parse_obj(style_dict)
+
 
 
 GRAYSCALE = PlotStyle()

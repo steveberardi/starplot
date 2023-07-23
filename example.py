@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from pytz import timezone
 
-from starplot.styles import BLUE, GRAYSCALE, CHALK, RED, MAP_BLUE
+from starplot.styles import PlotStyle, BLUE, GRAYSCALE, CHALK, RED, MAP_BLUE
 from starplot.models import SkyObject
 from starplot.map import Projection
 
@@ -31,6 +31,15 @@ def create_365():
 
 
 def create_map_stereo_vega():
+    style = PlotStyle.load_from_file("blue.yml")
+    # style = style.extend({
+    #     "bayer_labels": {
+    #         "font_name": "GFS Didot",
+    #         "font_size": 10
+    #     }
+    # })
+    style.bayer_labels.font_name = "GFS Didot"
+    style.bayer_labels.font_size = 10
     p = splt.MapPlot(
         projection=Projection.STEREO_NORTH,
         ra_min=17,
@@ -38,7 +47,8 @@ def create_map_stereo_vega():
         dec_min=30,
         dec_max=55,
         limiting_magnitude=12.0,
-        style=MAP_BLUE,
+        # style=MAP_BLUE,
+        style=style,
         # style=GRAYSCALE,
         # adjust_text=False,
         resolution=4000,
@@ -171,5 +181,7 @@ def create_map_stereo_north():
 # create_map_mercator()
 # create_map_stereo_north()
 create_map_stereo_vega()
+
+# MAP_BLUE.dump_to_file("blue.yml")
 
 print(f"Total run time: {time.time() - start_time}")
