@@ -8,8 +8,6 @@ import yaml
 
 from pydantic import BaseModel
 from pydantic.color import Color
-
-from pydantic import BaseModel
 from pydantic.functional_serializers import PlainSerializer
 
 ColorStr = Annotated[Color, PlainSerializer(lambda c: c.as_hex(), return_type=str)]

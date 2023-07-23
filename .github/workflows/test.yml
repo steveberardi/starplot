@@ -15,7 +15,13 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: '3.9'
+    - name: Build Docker container
+      run: make docker-build
+    - name: Check Lint
+      run: make lint
+    - name: Check Format
+      run: make format ARGS=--check
     - name: Run Tests
-      run: make docker-build-test
+      run: make test
     - name: Build
       run: make build

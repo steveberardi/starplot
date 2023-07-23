@@ -82,13 +82,15 @@ def create_map_stereo_vega():
 
 
 def create_map_orion():
-    style = MAP_BLUE.extend({
-        "bayer_labels": {
-            "font_name": "GFS Didot",
-            "font_size": 9,
-            "font_alpha": 0.9
-        },
-    })
+    style = MAP_BLUE.extend(
+        {
+            "bayer_labels": {
+                "font_name": "GFS Didot",
+                "font_size": 9,
+                "font_alpha": 0.9,
+            },
+        }
+    )
     style.star.label.font_size = 11
 
     p = splt.MapPlot(

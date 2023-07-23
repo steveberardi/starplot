@@ -1,5 +1,4 @@
 from pathlib import Path
-from datetime import datetime, timezone
 
 import pytest
 

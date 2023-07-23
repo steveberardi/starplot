@@ -13,10 +13,6 @@ format:
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
 
-
-docker-build-test:
-	docker build -t starplot-test --target test .
-
 docker-build:
 	docker build -t starplot --target dev .
 
