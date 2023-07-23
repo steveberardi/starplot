@@ -82,15 +82,24 @@ def create_map_stereo_vega():
 
 
 def create_map_orion():
+    style = MAP_BLUE.extend({
+        "bayer_labels": {
+            "font_name": "GFS Didot",
+            "font_size": 9,
+            "font_alpha": 0.9
+        },
+    })
+    style.star.label.font_size = 11
+
     p = splt.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=3.6,
         ra_max=7.8,
         dec_min=-16,
-        dec_max=24,
+        dec_max=23.6,
         limiting_magnitude=7.2,
-        style=MAP_BLUE,
-        resolution=2000,
+        style=style,
+        resolution=1900,
     )
     p.plot_object(
         SkyObject(
@@ -178,10 +187,11 @@ def create_map_stereo_north():
 # create_map_orion()
 # create_map_all()
 
-create_zenith()
+# create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
-create_map_stereo_vega()
+# create_map_stereo_vega()
+create_map_orion()
 
 # MAP_BLUE.dump_to_file("blue.yml")
 

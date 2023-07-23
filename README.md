@@ -37,7 +37,7 @@ p = sp.ZenithPlot(
     style=sp.styles.BLUE,
     resolution=2000,
 )
-p.export("starchart.svg", format="svg")
+p.export("starchart.png")
 ```
 
 ## Core Dependencies

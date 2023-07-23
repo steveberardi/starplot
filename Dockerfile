@@ -7,6 +7,7 @@ RUN apt-get update -y && apt-get install  -y libgeos-dev libgdal-dev
 COPY . .
 
 # install fonts
+# not required, but make the maps look better (especially greek letters)
 RUN mkdir -p /usr/share/fonts/truetype
 RUN wget https://github.com/google/fonts/raw/main/ofl/gfsdidot/GFSDidot-Regular.ttf -P /tmp/fonts
 RUN install -m644 /tmp/fonts/*.ttf /usr/share/fonts/truetype/

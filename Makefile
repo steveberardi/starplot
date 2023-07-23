@@ -4,8 +4,6 @@ DOCKER_RUN=docker run --rm -it -v $(shell pwd):/starplot starplot bash -c
 
 export PYTHONPATH=./src/
 
-install: venv
-
 lint:
 	$(DOCKER_RUN) "python -m flake8 --ignore E501,W503 src/ tests/"
 
@@ -28,17 +26,23 @@ bash:
 shell:
 	$(DOCKER_RUN) python
 
-example-map:
-	$(DOCKER_RUN) "python /starplot/src/starplot/plot.py"
-
 example:
 	$(DOCKER_RUN) "python example.py"
 
+# TODO : move below to docker?
 # PyPi - build & publish
-build: venv
+venvdev: venv requirements-dev.txt
+	./venv/bin/pip install -r requirements-dev.txt
+
+venv: requirements.txt
+	python -m venv venv
+	./venv/bin/pip install -r requirements.txt
+	touch venv
+
+build: venvdev
 	$(PYTHON) -m flit build
 
-publish: venv
+publish: venvdev
 	$(PYTHON) -m flit publish
 
 ephemeris: venv
