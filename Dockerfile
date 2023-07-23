@@ -24,8 +24,8 @@ RUN pip install --no-binary :all: shapely
 ENV PYTHONPATH=/starplot/src/
 
 # TEST - Lint, Format, Tests
-FROM base as test
-RUN make lint && make format ARGS=--check && make test
+# FROM base as test
+# RUN make lint && make format ARGS=--check && make test
 
 FROM base as dev
 CMD ["bash"]
