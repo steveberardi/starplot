@@ -1,0 +1,9 @@
+site_name: starplot
+repo_url: https://github.com/steveberardi/starplot
+
+theme:
+  name: material
+  palette:
+    scheme: blue
+    accent: blue
+  logo: images/logo.png

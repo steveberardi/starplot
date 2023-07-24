@@ -32,6 +32,10 @@ shell:
 example:
 	$(DOCKER_RUN) "python example.py"
 
+docs-serve:
+	docker run --rm -it -p 8000:8000 -v $(shell pwd):/starplot starplot bash -c "mkdocs serve -a 0.0.0.0:8000"
+
+
 # PyPi - build & publish
 build:
 	$(DOCKER_RUN) "python -m flit build"
