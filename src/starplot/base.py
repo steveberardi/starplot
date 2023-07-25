@@ -66,6 +66,13 @@ class StarPlot(ABC):
             plt.close(self.fig)
 
     def export(self, filename: str, format: str = "png"):
+        """Exports the plot to an image file.
+
+        Args:
+            filename: Filename of exported file
+            format: Format of file: "png" or "svg"
+
+        """
         self.fig.savefig(
             filename,
             format=format,
@@ -97,6 +104,12 @@ class StarPlot(ABC):
         )
 
     def plot_object(self, obj: SkyObject):
+        """Plots an object (see SkyObject for details).
+
+        Args:
+            obj: The object to plot
+            
+        """
         ra, dec = self._prepare_coords(obj.ra, obj.dec)
 
         if self.in_bounds(obj.ra, obj.dec):
@@ -121,4 +134,14 @@ class StarPlot(ABC):
 
     @abstractmethod
     def in_bounds(self, ra, dec) -> bool:
+        """Determine if a coordinate is within the bounds of the plot.
+
+        Args:
+            ra: Right ascension
+            dec: Declination
+        
+        Returns:
+            bool: True if the coordinate is in bounds, otherwise False
+
+        """
         raise NotImplementedError

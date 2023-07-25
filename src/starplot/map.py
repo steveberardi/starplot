@@ -18,6 +18,15 @@ warnings.filterwarnings("ignore", module="cartopy")
 
 
 class Projection(str, Enum):
+    """
+    Supported projections for MapPlots
+
+    Attributes:
+        MERCATOR: Good for declinations between -70 and 70, but distorts objects near the poles
+        STEREO_NORTH: Good for objects near the north celestial pole, but distorts objects near the mid declinations
+        STEREO_SOUTH: Good for objects near the south celestial pole, but distorts objects near the mid declinations
+    """
+
     STEREO_NORTH = "stereo_north"
     STEREO_SOUTH = "stereo_south"
     MERCATOR = "mercator"
@@ -41,7 +50,20 @@ class MapPlot(StarPlot):
         dec_max: float,
         *args,
         **kwargs,
-    ):
+    ) -> MapPlot:
+        """Creates a new map plot.
+
+        Args:
+            projection: Projection of the map
+            ra_min: Minimum right ascension of the map
+            ra_max: Maximum right ascension of the map
+            dec_min: Minimum declination of the map
+            dec_max: Maximum declination of the map
+
+        Returns:
+            A new instance of a MapPlot
+
+        """
         super().__init__(*args, **kwargs)
         self.projection = projection
         self.ra_min = ra_min
@@ -53,10 +75,20 @@ class MapPlot(StarPlot):
     def _plot_kwargs(self) -> dict:
         return dict(transform=ccrs.PlateCarree())
 
-    def _prepare_coords(self, ra, dec) -> (float, float):
+    def _prepare_coords(self, ra: float, dec: float) -> (float, float):
         return -1 * (ra * 15 - 360), dec
 
-    def in_bounds(self, ra, dec) -> bool:
+    def in_bounds(self, ra: float, dec: float) -> bool:
+        """Determine if a coordinate is within the bounds of the plot.
+
+        Args:
+            ra: Right ascension
+            dec: Declination
+        
+        Returns:
+            True if the coordinate is in bounds, otherwise False
+
+        """
         return self.ra_min < ra < self.ra_max and self.dec_min < dec < self.dec_max
 
     def _latlon_bounds(self):

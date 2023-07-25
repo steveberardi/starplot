@@ -1,9 +1,40 @@
-site_name: starplot
+site_name: Starplot
 repo_url: https://github.com/steveberardi/starplot
+
+nav:
+    - Overview: index.md
+    - Installation: installation.md
+    - Examples: examples.md
+    - Reference:
+        - starplot.MapPlot: reference-mapplot.md
+        - starplot.Projection: reference-projection.md
+        - starplot.PlotStyle: reference-plotstyle.md
+        - starplot.SkyObject: reference-skyobject.md
+        - starplot.ZenithPlot: reference-zenithplot.md
+    - License: license.md
 
 theme:
   name: material
   palette:
-    scheme: blue
+    primary: blue
     accent: blue
-  logo: images/logo.png
+  logo: images/mono.png
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: false
+
+    
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
