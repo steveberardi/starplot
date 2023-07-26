@@ -16,9 +16,27 @@ nav:
 theme:
   name: material
   palette:
-    primary: blue
-    accent: blue
+    # primary: custom
+    # Palette toggle for light mode
+    - scheme: default
+      primary: custom
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   logo: images/mono.png
+  features:
+    - content.code.copy
+  
+
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - search

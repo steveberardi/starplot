@@ -12,7 +12,6 @@ from skyfield.api import Star
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars
 
-
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
 
@@ -50,7 +49,7 @@ class MapPlot(StarPlot):
         dec_max: float,
         *args,
         **kwargs,
-    ) -> MapPlot:
+    ) -> 'MapPlot':
         """Creates a new map plot.
 
         Args:

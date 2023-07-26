@@ -3,9 +3,9 @@ title: starplot - star charts and maps in Python
 ---
 
 # Welcome to Starplot
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge)
-![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=1680dc)
-![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=38ba98)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge&color=a2c185)
+![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=85C0C1)
+![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=A485C1)
 
 Starplot is a Python library for creating star charts and maps.
 
@@ -33,7 +33,3 @@ Starplot is a Python library for creating star charts and maps.
 pip install starplot
 ```
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.

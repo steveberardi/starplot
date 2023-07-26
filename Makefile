@@ -35,6 +35,8 @@ example:
 docs-serve:
 	docker run --rm -it -p 8000:8000 -v $(shell pwd):/starplot starplot bash -c "mkdocs serve -a 0.0.0.0:8000"
 
+docs-build:
+	$(DOCKER_RUN) "mkdocs build"
 
 # PyPi - build & publish
 build:
