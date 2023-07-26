@@ -38,15 +38,53 @@ def create_projected_constellation_lines(stardata_projected):
 
 
 class ZenithPlot(StarPlot):
+    """Creates a new zenith plot.
+
+    Args:
+        lat: Latitude of viewing location
+        lon: Longitude of viewing location
+        include_info_text: If True, then the plot will include the time/location
+        dt: Date/time to use for star positions
+        tz_identifier: Timezone for dt
+        limiting_magnitude: Minimum magnitude of stars to plot
+        limiting_magnitude_labels: Minimum magnitude of stars to label on the plot
+        style: Styling for the plot (colors, size, fonts, etc)
+        resolution: Size (in pixels) of largest dimension of the map
+        adjust_text: If True, then the labels will be adjusted to avoid overlapping
+        ephemeris: Ephemeris to use for calculating star positions
+
+    Returns:
+        A new instance of a ZenithPlot
+
+    """
     def __init__(
         self,
         lat: float = None,
         lon: float = None,
         include_info_text: bool = False,
+        dt: datetime = None,
+        tz_identifier: str = None,
+        limiting_magnitude: float = 6.0,
+        limiting_magnitude_labels: float = 2.1,
+        style: PlotStyle = MAP_BLUE,
+        resolution: int = 2048,
+        adjust_text: bool = True,
+        ephemeris: str = "de421_2001.bsp",
         *args,
         **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
+    ) -> "ZenithPlot":
+        super().__init__(
+            dt,
+            tz_identifier,
+            limiting_magnitude,
+            limiting_magnitude_labels,
+            style,
+            resolution,
+            adjust_text,
+            ephemeris,
+            *args,
+            **kwargs,
+        )
         self.lat = lat
         self.lon = lon
         self.include_info_text = include_info_text

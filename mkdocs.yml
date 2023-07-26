@@ -11,12 +11,12 @@ nav:
         - starplot.PlotStyle: reference-plotstyle.md
         - starplot.SkyObject: reference-skyobject.md
         - starplot.ZenithPlot: reference-zenithplot.md
+    - Data Sources: data-sources.md
     - License: license.md
 
 theme:
   name: material
   palette:
-    # primary: custom
     # Palette toggle for light mode
     - scheme: default
       primary: custom
@@ -34,7 +34,6 @@ theme:
   features:
     - content.code.copy
   
-
 extra_css:
   - stylesheets/extra.css
 
@@ -45,8 +44,6 @@ plugins:
         python:
           options:
             show_source: false
-
-    
 
 markdown_extensions:
   - pymdownx.highlight:
