@@ -59,9 +59,11 @@ class StarPlot(ABC):
             label.remove()
 
     def adjust_labels(self) -> None:
+        """Adjust all the labels to avoid overlapping."""
         _adjust_text(self.labels, ax=self.ax, ensure_inside_axes=False)
 
     def close_fig(self) -> None:
+        """Closes the underlying matplotlib figure."""
         if self.fig:
             plt.close(self.fig)
 
@@ -81,7 +83,15 @@ class StarPlot(ABC):
             dpi=144,  # (self.resolution / self.figure_size * 1.28),
         )
 
-    def draw_reticle(self, ra, dec) -> None:
+    def draw_reticle(self, ra: float, dec: float) -> None:
+        """Plots a reticle on the map.
+
+        Args:
+            ra: Right ascension of the reticle's center
+            dec: Declination of the reticle's center
+
+        """
+
         # Plot as a marker to avoid projection distortion
         self.ax.plot(
             *self._prepare_coords(ra, dec),
@@ -108,7 +118,7 @@ class StarPlot(ABC):
 
         Args:
             obj: The object to plot
-            
+
         """
         ra, dec = self._prepare_coords(obj.ra, obj.dec)
 
@@ -139,7 +149,7 @@ class StarPlot(ABC):
         Args:
             ra: Right ascension
             dec: Declination
-        
+
         Returns:
             bool: True if the coordinate is in bounds, otherwise False
 

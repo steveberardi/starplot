@@ -1,3 +1,4 @@
+import datetime
 import warnings
 
 from enum import Enum
@@ -11,6 +12,7 @@ from skyfield.api import Star
 
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars
+from starplot.styles import PlotStyle, MAP_BLUE
 
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
@@ -40,6 +42,28 @@ class Projection(str, Enum):
 
 
 class MapPlot(StarPlot):
+    """Creates a new map plot.
+
+    Args:
+        projection: Projection of the map
+        ra_min: Minimum right ascension of the map
+        ra_max: Maximum right ascension of the map
+        dec_min: Minimum declination of the map
+        dec_max: Maximum declination of the map
+        dt: Date/time to use for star positions
+        tz_identifier: Timezone for dt
+        limiting_magnitude: Minimum magnitude of stars to plot
+        limiting_magnitude_labels: Minimum magnitude of stars to label on the plot
+        style: Styling for the plot (colors, size, fonts, etc)
+        resolution: Size (in pixels) of largest dimension of the map
+        adjust_text: If True, then the labels will be adjusted to avoid overlapping
+        ephemeris: Ephemeris to use for calculating star positions
+
+    Returns:
+        A new instance of a MapPlot
+
+    """
+
     def __init__(
         self,
         projection: Projection,
@@ -47,23 +71,29 @@ class MapPlot(StarPlot):
         ra_max: float,
         dec_min: float,
         dec_max: float,
+        dt: datetime = None,
+        tz_identifier: str = None,
+        limiting_magnitude: float = 6.0,
+        limiting_magnitude_labels: float = 2.1,
+        style: PlotStyle = MAP_BLUE,
+        resolution: int = 2048,
+        adjust_text: bool = True,
+        ephemeris: str = "de421_2001.bsp",
         *args,
         **kwargs,
-    ) -> 'MapPlot':
-        """Creates a new map plot.
-
-        Args:
-            projection: Projection of the map
-            ra_min: Minimum right ascension of the map
-            ra_max: Maximum right ascension of the map
-            dec_min: Minimum declination of the map
-            dec_max: Maximum declination of the map
-
-        Returns:
-            A new instance of a MapPlot
-
-        """
-        super().__init__(*args, **kwargs)
+    ) -> "MapPlot":
+        super().__init__(
+            dt,
+            tz_identifier,
+            limiting_magnitude,
+            limiting_magnitude_labels,
+            style,
+            resolution,
+            adjust_text,
+            ephemeris,
+            *args,
+            **kwargs,
+        )
         self.projection = projection
         self.ra_min = ra_min
         self.ra_max = ra_max
@@ -83,7 +113,7 @@ class MapPlot(StarPlot):
         Args:
             ra: Right ascension
             dec: Declination
-        
+
         Returns:
             True if the coordinate is in bounds, otherwise False
 

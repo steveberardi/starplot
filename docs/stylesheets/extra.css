@@ -11,7 +11,7 @@
 }
 
 .doc-heading {
-    padding-top: 1rem;
+    padding-top: 0rem;
 }
 
 .doc-heading code {
@@ -21,8 +21,14 @@
     font-weight: 600;
 }
 
-.doc-contents.first {
+.doc-object.doc-class {
     border-top: 2px solid rgba(200, 200, 200, 0.6);
+}
+.doc-contents.first {
+    /* border-top: 2px solid rgba(200, 200, 200, 0.6);
+    margin-left: 1rem;
+    padding-left: 1rem;
+    border-left: 1px solid rgb(150, 150, 150); */
 }
 
 .doc-function .doc-contents {
