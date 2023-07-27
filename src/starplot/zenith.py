@@ -60,6 +60,7 @@ class ZenithPlot(StarPlot):
         A new instance of a ZenithPlot
 
     """
+
     def __init__(
         self,
         lat: float = None,

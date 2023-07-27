@@ -99,7 +99,7 @@ def create_map_orion():
         ra_max=7.8,
         dec_min=-16,
         dec_max=23.6,
-        limiting_magnitude=7.2,
+        limiting_magnitude=9.2,
         style=style,
         resolution=4000,
         adjust_text=False,

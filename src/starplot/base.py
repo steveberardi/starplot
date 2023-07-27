@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 from adjustText import adjust_text as _adjust_text
-from matplotlib import pyplot as plt, patheffects
+from matplotlib import pyplot as plt, patheffects, transforms
 from pytz import timezone
 
 from starplot.data import load
@@ -36,6 +36,7 @@ class StarPlot(ABC):
         self.ephemeris = ephemeris
 
         self.labels = []
+        self._labels_extents = []
         self.text_border = patheffects.withStroke(
             linewidth=self.style.text_border_width,
             foreground=self.style.background_color.as_hex(),
@@ -50,11 +51,22 @@ class StarPlot(ABC):
     def _prepare_coords(self, ra, dec) -> (float, float):
         return ra, dec
 
-    def _maybe_remove_label(self, label):
+    def _is_label_collision(self, extent) -> bool:
+        for e in self._labels_extents:
+            if transforms.Bbox.intersection(e, extent):
+                return True
+        return False
+
+    def _maybe_remove_label(self, label) -> None:
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
 
-        if self.ax.contains_point(extent.p0) and self.ax.contains_point(extent.p1):
+        if (
+            self.ax.contains_point(extent.p0)
+            and self.ax.contains_point(extent.p1)
+            and not self._is_label_collision(extent)
+        ):
             self.labels.append(label)
+            self._labels_extents.append(extent)
         else:
             label.remove()
 
@@ -113,7 +125,7 @@ class StarPlot(ABC):
             **self._plot_kwargs(),
         )
 
-    def plot_object(self, obj: SkyObject):
+    def plot_object(self, obj: SkyObject) -> None:
         """Plots an object (see SkyObject for details).
 
         Args:
@@ -143,7 +155,7 @@ class StarPlot(ABC):
             self._maybe_remove_label(label)
 
     @abstractmethod
-    def in_bounds(self, ra, dec) -> bool:
+    def in_bounds(self, ra: float, dec: float) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
 
         Args:
