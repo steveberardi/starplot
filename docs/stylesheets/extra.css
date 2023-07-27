@@ -10,6 +10,10 @@
     font-weight: 600;
 }
 
+.md-content {
+    max-width: 900px;
+}
+
 .doc-heading {
     padding-top: 0rem;
 }

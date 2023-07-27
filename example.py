@@ -86,7 +86,7 @@ def create_map_orion():
         {
             "bayer_labels": {
                 "font_name": "GFS Didot",
-                "font_size": 9,
+                "font_size": 7,
                 "font_alpha": 0.9,
             },
         }
@@ -101,7 +101,8 @@ def create_map_orion():
         dec_max=23.6,
         limiting_magnitude=7.2,
         style=style,
-        resolution=1900,
+        resolution=4000,
+        adjust_text=False,
     )
     p.plot_object(
         SkyObject(
@@ -126,7 +127,7 @@ def create_map_orion():
             },
         )
     )
-    p.export("temp-orion.png")
+    p.export("temp-orion.svg", format="svg")
 
 
 def create_zenith():

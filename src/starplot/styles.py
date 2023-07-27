@@ -314,7 +314,7 @@ MAP_BLUE = PlotStyle(
         label=LabelStyle(font_size=8, font_weight=FontWeightEnum.BOLD, zorder=1024),
     ),
     bayer_labels=LabelStyle(
-        font_size=8, font_weight=FontWeightEnum.LIGHT, zorder=1024, alpha=0.72
+        font_size=7, font_weight=FontWeightEnum.LIGHT, zorder=1024, alpha=0.72
     ),
     # Constellations
     constellation=PathStyle(

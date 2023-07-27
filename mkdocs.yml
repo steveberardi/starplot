@@ -4,6 +4,7 @@ repo_url: https://github.com/steveberardi/starplot
 nav:
     - Overview: index.md
     - Installation: installation.md
+    - Tutorial: tutorial.md
     - Examples: examples.md
     - Reference:
         - starplot.MapPlot: reference-mapplot.md
@@ -13,6 +14,7 @@ nav:
         - starplot.ZenithPlot: reference-zenithplot.md
     - Data Sources: data-sources.md
     - License: license.md
+    - Roadmap: roadmap.md
 
 theme:
   name: material
@@ -33,6 +35,8 @@ theme:
   logo: images/mono.png
   features:
     - content.code.copy
+    - navigation.expand
+    - toc.integrate
   
 extra_css:
   - stylesheets/extra.css

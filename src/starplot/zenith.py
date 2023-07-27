@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from matplotlib import pyplot as plt
 from matplotlib.collections import LineCollection
 import numpy as np
@@ -8,6 +10,7 @@ from skyfield.projections import build_stereographic_projection
 
 from starplot.base import StarPlot
 from starplot.data import load, constellations, stars, dsos
+from starplot.styles import PlotStyle, GRAYSCALE
 from starplot.utils import in_circle
 
 
@@ -66,7 +69,7 @@ class ZenithPlot(StarPlot):
         tz_identifier: str = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
-        style: PlotStyle = MAP_BLUE,
+        style: PlotStyle = GRAYSCALE,
         resolution: int = 2048,
         adjust_text: bool = True,
         ephemeris: str = "de421_2001.bsp",

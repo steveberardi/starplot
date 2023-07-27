@@ -1,4 +1,4 @@
-
+Starplot is available on [PyPI](https://pypi.org/project/starplot/), but it's basically just a thin layer on top of Matplotlib, Skyfield, Cartopy, and others. So, before installing Starplot you'll need a few dependencies:
 
 ```
 pip install starplot
