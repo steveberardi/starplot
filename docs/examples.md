@@ -1,10 +1,10 @@
 This page has a bunch of examples to get you familiar with Starplot and how it works.
 
-1. Basic Star Chart for time/location
-2. Star Chart with an Extra Object Plotted
-3. Basic Map of Orion
+1. [Star Chart for time/location](#star-chart-for-timelocation)
+2. [Star Chart with an Extra Object Plotted](#star-chart-with-an-extra-object-plotted)
+3. [Map of Orion](#map-of-orion)
 
-## Basic Star Chart for Time/Location
+## Star Chart for Time/Location
 To create a star chart for tonight's sky as seen from [Palomar Mountain](https://en.wikipedia.org/wiki/Palomar_Mountain) in California:
 
 ```python
@@ -33,7 +33,7 @@ The created file should look something like this:
 
 ## Star Chart with an Extra Object Plotted
 
-
+Building on the first example, you can also plot additional objects and even customize their style. Here's an example that plots the [Coma Star Cluster](https://en.wikipedia.org/wiki/Coma_Star_Cluster) (Mel 111) as a red star:
 
 ```python
 from datetime import datetime
@@ -66,7 +66,7 @@ p.export("starchart-mel111.png", format="png")
 
 
 
-## Basic Map of Orion
+## Map of Orion
 
 The following code will create a simple map plot that shows the area around the constellation Orion, including an extra marker for M42 - The Great Orion Nebula:
 
