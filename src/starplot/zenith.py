@@ -51,10 +51,11 @@ class ZenithPlot(StarPlot):
         tz_identifier: Timezone for dt
         limiting_magnitude: Minimum magnitude of stars to plot
         limiting_magnitude_labels: Minimum magnitude of stars to label on the plot
+        ephemeris: Ephemeris to use for calculating star positions
         style: Styling for the plot (colors, size, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
+        hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
-        ephemeris: Ephemeris to use for calculating star positions
 
     Returns:
         A new instance of a ZenithPlot

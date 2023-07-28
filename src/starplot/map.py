@@ -54,10 +54,11 @@ class MapPlot(StarPlot):
         tz_identifier: Timezone for dt
         limiting_magnitude: Minimum magnitude of stars to plot
         limiting_magnitude_labels: Minimum magnitude of stars to label on the plot
+        ephemeris: Ephemeris to use for calculating star positions
         style: Styling for the plot (colors, size, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
+        hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
-        ephemeris: Ephemeris to use for calculating star positions
 
     Returns:
         A new instance of a MapPlot
@@ -160,20 +161,11 @@ class MapPlot(StarPlot):
         )
 
     def _plot_constellation_labels(self):
+        style = self.style.constellation.label.matplot_kwargs(size_multiplier=self._size_multiplier)
         for con in constellations.iterator():
             fullname, ra, dec = constellations.get(con)
             if self.in_bounds(ra, dec):
-                label = self.ax.text(
-                    *self._prepare_coords(ra, dec),
-                    con.upper(),
-                    **self.style.constellation.label.matplot_kwargs(
-                        size_multiplier=self._size_multiplier
-                    ),
-                    **self._plot_kwargs(),
-                    path_effects=[self.text_border],
-                )
-                label.set_clip_on(True)
-                self._maybe_remove_label(label)
+                self._plot_text(ra, dec, con.upper(), **style)
 
     def _plot_milky_way(self):
         mw = gpd.read_file(DataFiles.MILKY_WAY)
@@ -218,13 +210,13 @@ class MapPlot(StarPlot):
 
         # Plot star names
         for i, s in nearby_stars_df.iterrows():
-            (i in stars.hip_names or i in bayer.hip)
             name = stars.hip_names.get(i)
             bayer_desig = bayer.hip.get(i)
+            ra, dec = s["ra_hours"], s["dec_degrees"]
             if (
                 (name or bayer_desig)
                 and s["magnitude"] < self.limiting_magnitude
-                and self.in_bounds(s["ra_hours"], s["dec_degrees"])
+                and self.in_bounds(ra, dec)
             ):
                 if name:
                     # name takes precendence over bayer labels
@@ -236,17 +228,7 @@ class MapPlot(StarPlot):
                         self._size_multiplier
                     )
 
-                label = self.ax.text(
-                    *self._prepare_coords(s["ra_hours"], s["dec_degrees"]),
-                    text,
-                    ha="left",
-                    va="top",
-                    **style,
-                    **self._plot_kwargs(),
-                    path_effects=[self.text_border],
-                )
-                label.set_clip_on(True)
-                self._maybe_remove_label(label)
+                self._plot_text(ra, dec, text, ha="left", va="top", **style)
 
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))

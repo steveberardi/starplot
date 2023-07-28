@@ -157,6 +157,20 @@ class StarPlot(ABC):
             label.set_clip_on(True)
             self._maybe_remove_label(label)
 
+    def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
+        x, y = self._prepare_coords(ra, dec)
+        label = self.ax.text(
+            x,
+            y,
+            text,
+            *args,
+            **kwargs,
+            **self._plot_kwargs(),
+            path_effects=[self.text_border],
+        )
+        label.set_clip_on(True)
+        self._maybe_remove_label(label)
+
     @abstractmethod
     def in_bounds(self, ra: float, dec: float) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
