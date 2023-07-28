@@ -6,6 +6,6 @@ Here are some planned features coming soon to Starplot:
 - 💫 **Plotting ecliptic**
 - 🌐 **RA/DEC Labels**
 - ⚖️ **Better auto font-size adjustment**
-- ☄️ **Label collision detection**
+- ☄️ **Better label collision detection and handling**
 
 ✨ Clear Skies! ✨

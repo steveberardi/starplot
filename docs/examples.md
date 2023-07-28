@@ -33,7 +33,7 @@ The created file should look something like this:
 
 ## Star Chart with an Extra Object Plotted
 
-Building on the first example, you can also plot additional objects and even customize their style. Here's an example that plots the [Coma Star Cluster](https://en.wikipedia.org/wiki/Coma_Star_Cluster) (Mel 111) as a red star:
+Building on the first example, you can also plot additional objects and even customize their style. Here's an example that plots the [Coma Star Cluster](https://en.wikipedia.org/wiki/Coma_Star_Cluster) (Mel 111) as a red star and also changes the plot style to `GRAYSCALE`:
 
 ```python
 from datetime import datetime
@@ -47,7 +47,7 @@ p = splt.ZenithPlot(
     lon=-117.038611,
     dt=tz.localize(datetime.now().replace(hour=22)),
     limiting_magnitude=4.6,
-    style=BLUE,
+    style=sp.styles.GRAYSCALE,
     resolution=2000,
 )
 p.plot_object(
@@ -60,10 +60,11 @@ p.plot_object(
         },
     )
 )
-p.export("starchart-mel111.png", format="png")
+p.export("starchart-coma.png", format="png")
 
 ```
 
+![zenith-coma](images/zenith-coma.png)
 
 
 ## Map of Orion

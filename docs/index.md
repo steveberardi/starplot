@@ -17,7 +17,7 @@ Starplot is a Python library for creating star charts and maps.
 
 - 📥 **Export** - png, svg
 
-- 🧭 **Label Collision Avoidance** - via `adjustText`
+- 🧭 **Label Collision Avoidance**
 
 ## Examples
 *Zenith plot of the stars from a specific time/location ([source code](examples/#basic-star-chart-for-timelocation)):*
