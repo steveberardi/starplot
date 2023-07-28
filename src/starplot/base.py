@@ -14,7 +14,6 @@ class StarPlot(ABC):
     def __init__(
         self,
         dt: datetime = None,
-        tz_identifier: str = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
         ephemeris: str = "de421_2001.bsp",

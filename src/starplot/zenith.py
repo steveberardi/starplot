@@ -47,8 +47,7 @@ class ZenithPlot(StarPlot):
         lat: Latitude of viewing location
         lon: Longitude of viewing location
         include_info_text: If True, then the plot will include the time/location
-        dt: Date/time to use for star positions
-        tz_identifier: Timezone for dt
+        dt: Date/time to use for star positions (*must be timezone-aware*)
         limiting_magnitude: Minimum magnitude of stars to plot
         limiting_magnitude_labels: Minimum magnitude of stars to label on the plot
         ephemeris: Ephemeris to use for calculating star positions
@@ -68,7 +67,6 @@ class ZenithPlot(StarPlot):
         lon: float = None,
         include_info_text: bool = False,
         dt: datetime = None,
-        tz_identifier: str = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
         ephemeris: str = "de421_2001.bsp",
@@ -81,7 +79,6 @@ class ZenithPlot(StarPlot):
     ) -> "ZenithPlot":
         super().__init__(
             dt,
-            tz_identifier,
             limiting_magnitude,
             limiting_magnitude_labels,
             ephemeris,

@@ -23,7 +23,6 @@ def create_365():
             lat=32.97,
             lon=-117.038611,
             dt=dt.replace(hour=4, minute=0),
-            tz_identifier="UTC",
             filename=f"temp/day-{day_of_year}.png",
             style=BLUE,
             include_info_text=True,
