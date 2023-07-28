@@ -4,7 +4,6 @@ repo_url: https://github.com/steveberardi/starplot
 nav:
     - Overview: index.md
     - Installation: installation.md
-    - Tutorial: tutorial.md
     - Examples: examples.md
     - Reference:
         - starplot.MapPlot: reference-mapplot.md
@@ -14,7 +13,7 @@ nav:
         - starplot.ZenithPlot: reference-zenithplot.md
     - Data Sources: data-sources.md
     - License: license.md
-    - Roadmap: roadmap.md
+    - Coming Soon: roadmap.md
 
 theme:
   name: material
@@ -33,9 +32,10 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   logo: images/mono.png
+  favicon: images/favicon.png
   features:
     - content.code.copy
-    - navigation.expand
+    # - navigation.expand
     - toc.integrate
   
 extra_css:
@@ -59,3 +59,5 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true 

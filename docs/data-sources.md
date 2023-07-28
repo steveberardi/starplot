@@ -11,7 +11,7 @@
 - Catalogue of Constellation Boundary Data; Davenhall A.C., Leggett S.K. (1989) [VizieR VI/49](http://vizier.cfa.harvard.edu/viz-bin/Cat?VI/49) (via [d3-celestial](https://github.com/ofrohn/d3-celestial))
 
 
-### **Deep Space Objects (DSOs)**
+### **Deep Sky Objects (DSOs)**
 - [OpenNGC](https://github.com/mattiaverga/OpenNGC)
 
 ### **Milky Way Outline**
