@@ -17,10 +17,11 @@ class StarPlot(ABC):
         tz_identifier: str = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
+        ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = GRAYSCALE,
         resolution: int = 2048,
-        adjust_text: bool = True,
-        ephemeris: str = "de421_2001.bsp",
+        hide_colliding_labels: bool = True,
+        adjust_text: bool = False,
         *args,
         **kwargs,
     ):
@@ -31,7 +32,9 @@ class StarPlot(ABC):
         self.style = style
         self.figure_size = resolution * px
         self.resolution = resolution
+        self.hide_colliding_labels = hide_colliding_labels
         self.adjust_text = adjust_text
+
         self.dt = dt or timezone("UTC").localize(datetime.now())
         self.ephemeris = ephemeris
 
@@ -63,7 +66,7 @@ class StarPlot(ABC):
         if (
             self.ax.contains_point(extent.p0)
             and self.ax.contains_point(extent.p1)
-            and not self._is_label_collision(extent)
+            and not ( self.hide_colliding_labels and self._is_label_collision(extent) )
         ):
             self.labels.append(label)
             self._labels_extents.append(extent)

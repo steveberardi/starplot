@@ -102,7 +102,6 @@ def create_map_orion():
         limiting_magnitude=9.2,
         style=style,
         resolution=4000,
-        adjust_text=False,
     )
     p.plot_object(
         SkyObject(
