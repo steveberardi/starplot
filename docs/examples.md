@@ -1,6 +1,6 @@
 This page has a bunch of examples to get you familiar with Starplot and how it works.
 
-1. [Star Chart for time/location](#star-chart-for-timelocation)
+1. [Star Chart for Time/Location](#star-chart-for-timelocation)
 2. [Star Chart with an Extra Object Plotted](#star-chart-with-an-extra-object-plotted)
 3. [Map of Orion](#map-of-orion)
 
@@ -28,7 +28,9 @@ The created file should look something like this:
 
 ![starchart-blue](images/starchart-blue.png)
 
-*Of course, it may look a little different depending on the date/time you run this code, but this example reflects what the chart would like for a day in July.*
+!!! info "Does your result look different?"
+
+    Your result may look a little different depending on the date/time you run this code (because the position of the stars in the sky depends on time/location). But, the example above reflects what the chart would like for a day in July.
 
 
 ## Star Chart with an Extra Object Plotted
@@ -96,7 +98,6 @@ p = splt.MapPlot(
     limiting_magnitude=7.2,
     style=style,
     resolution=4000,
-    adjust_text=False,
 )
 p.plot_object(
     SkyObject(
