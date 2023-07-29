@@ -8,8 +8,8 @@ nav:
     - Reference:
         - starplot.MapPlot: reference-mapplot.md
         - starplot.ZenithPlot: reference-zenithplot.md
-        - starplot.PlotStyle: reference-plotstyle.md
         - starplot.SkyObject: reference-skyobject.md
+        - Styling: reference-styling.md
     - Data Sources: data-sources.md
     - License: license.md
     - Coming Soon: roadmap.md
@@ -48,6 +48,7 @@ plugins:
           options:
             show_source: false
             show_bases: false
+            docstring_section_style: list
 
 markdown_extensions:
   # - toc:

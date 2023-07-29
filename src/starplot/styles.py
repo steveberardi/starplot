@@ -253,7 +253,7 @@ class ObjectStyle(BaseModel):
     """Defines the style for a SkyObject"""
 
     marker: MarkerStyle = MarkerStyle()
-    """Style for the object's marker"""
+    """Style for the object's marker `[MarkerStyle][starplot.styles.MarkerStyle]`"""
 
     label: LabelStyle = LabelStyle()
     """Style for the object's label"""
@@ -330,17 +330,35 @@ class PlotStyle(BaseModel):
 
     @staticmethod
     def load_from_file(filename: str):
+        """
+        Load a style from a YAML file
+
+        Args:
+            filename: Filename of style file
+        """
         with open(filename, "r") as sfile:
             style = yaml.safe_load(sfile)
             return PlotStyle.parse_obj(style)
 
     def dump_to_file(self, filename: str):
+        """
+        Save the style to a YAML file
+
+        Args:
+            filename: Filename of style file
+        """
         with open(filename, "w") as outfile:
             style_json = self.model_dump_json()
             style_yaml = yaml.dump(json.loads(style_json))
             outfile.write(style_yaml)
 
-    def extend(self, updates: dict):
+    def extend(self, updates: dict) -> 'PlotStyle':
+        """
+        Creates a new style with the provided updates
+
+        Args:
+            updates: Dictionary of updates to the style
+        """
         style_json = self.model_dump_json()
         style_dict = json.loads(style_json)
         style_dict.update(updates)
