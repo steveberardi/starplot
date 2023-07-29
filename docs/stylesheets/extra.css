@@ -49,3 +49,10 @@
 .doc-object .doc-attribute .doc-label {
     display: none;
 }
+.doc-object .doc-attribute .doc-heading {
+    margin-top: 0;
+}
+.doc-object .doc-attribute .doc-contents {
+    margin-bottom: 0;
+    padding-bottom: 1rem;
+}
