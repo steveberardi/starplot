@@ -57,7 +57,7 @@ class ZenithPlot(StarPlot):
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
 
     Returns:
-        A new instance of a ZenithPlot
+        ZenithPlot: A new instance of a ZenithPlot
 
     """
 

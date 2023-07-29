@@ -7,10 +7,9 @@ nav:
     - Examples: examples.md
     - Reference:
         - starplot.MapPlot: reference-mapplot.md
-        - starplot.Projection: reference-projection.md
+        - starplot.ZenithPlot: reference-zenithplot.md
         - starplot.PlotStyle: reference-plotstyle.md
         - starplot.SkyObject: reference-skyobject.md
-        - starplot.ZenithPlot: reference-zenithplot.md
     - Data Sources: data-sources.md
     - License: license.md
     - Coming Soon: roadmap.md
@@ -48,6 +47,7 @@ plugins:
         python:
           options:
             show_source: false
+            show_bases: false
 
 markdown_extensions:
   # - toc:

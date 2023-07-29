@@ -7,6 +7,32 @@ class SkyObject(BaseModel):
     """
     Model for plotting additional objects (e.g. DSOs)
 
+    Example Usage:
+        Create a sky object of the Orion Nebula (M42) with custom styling:
+        ```python
+        m42 = SkyObject(
+            name="M42",
+            ra=5.58333,
+            dec=-4.61,
+            style={
+                "marker": {
+                    "size": 10,
+                    "symbol": "s",
+                    "fill": "full",
+                    "color": "#ff6868",
+                },
+                "label": {
+                    "font_size": 10,
+                    "font_weight": "bold",
+                    "font_color": "darkred",
+                },
+            },
+        )
+        ```
+
+    ```python 
+    starplot.SkyObject(name: str, ra: float, dec: float, style: ObjectStyle)
+    ```
     Args:
         name (str): Name of object (used for plotting its label)
         ra (flaot): Right ascension of object

@@ -22,15 +22,16 @@ class Projection(str, Enum):
     """
     Supported projections for MapPlots
 
-    Attributes:
-        MERCATOR: Good for declinations between -70 and 70, but distorts objects near the poles
-        STEREO_NORTH: Good for objects near the north celestial pole, but distorts objects near the mid declinations
-        STEREO_SOUTH: Good for objects near the south celestial pole, but distorts objects near the mid declinations
     """
 
     STEREO_NORTH = "stereo_north"
+    """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""
+    
     STEREO_SOUTH = "stereo_south"
+    """Good for objects near the south celestial pole, but distorts objects near the mid declinations"""
+
     MERCATOR = "mercator"
+    """Good for declinations between -70 and 70, but distorts objects near the poles"""
 
     @staticmethod
     def crs(projection, center_lon=-180):
@@ -60,7 +61,7 @@ class MapPlot(StarPlot):
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
 
     Returns:
-        A new instance of a MapPlot
+        MapPlot: A new instance of a MapPlot
 
     """
 
