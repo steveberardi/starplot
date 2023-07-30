@@ -87,6 +87,7 @@ class MarkerStyle(BaseModel):
         )
         ```
     """
+
     color: ColorStr = ColorStr("#000")
     """Fill color of marker. Can be a hex, rgb, hsl, or word string."""
 
@@ -102,11 +103,11 @@ class MarkerStyle(BaseModel):
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
-    visible: bool = True
-    """If true, the marker will be plotted"""
-
     zorder: int = -1
     """Zorder of marker"""
+
+    visible: bool = True
+    """If true, the marker will be plotted"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
@@ -135,7 +136,7 @@ class LineStyle(BaseModel):
         )
         ```
     """
-    
+
     width: int = 2
     """Width of line"""
 
@@ -150,6 +151,9 @@ class LineStyle(BaseModel):
 
     zorder: int = -1
     """Zorder of the line"""
+
+    visible: bool = True
+    """If True, the line will be plotted"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
@@ -189,6 +193,9 @@ class PolygonStyle(BaseModel):
     zorder: int = -1
     """Zorder of the polygon"""
 
+    visible: bool = True
+    """If True, the polygon will be plotted"""
+
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex(),
@@ -213,6 +220,7 @@ class LabelStyle(BaseModel):
         )
         ```
     """
+
     font_size: int = 8
     """Relative font size of the label"""
 
@@ -261,12 +269,13 @@ class ObjectStyle(BaseModel):
 
 class PathStyle(BaseModel):
     """Defines the style for a path (e.g. constellation lines)"""
-    
+
     line: LineStyle = LineStyle()
     """Style for the line"""
-    
+
     label: LabelStyle = LabelStyle()
     """Style for the path's label"""
+
 
 class PlotStyle(BaseModel):
     """
@@ -352,7 +361,7 @@ class PlotStyle(BaseModel):
             style_yaml = yaml.dump(json.loads(style_json))
             outfile.write(style_yaml)
 
-    def extend(self, updates: dict) -> 'PlotStyle':
+    def extend(self, updates: dict) -> "PlotStyle":
         """
         Creates a new style with the provided updates
 

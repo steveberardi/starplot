@@ -26,7 +26,7 @@ class Projection(str, Enum):
 
     STEREO_NORTH = "stereo_north"
     """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""
-    
+
     STEREO_SOUTH = "stereo_south"
     """Good for objects near the south celestial pole, but distorts objects near the mid declinations"""
 
@@ -74,7 +74,7 @@ class MapPlot(StarPlot):
         dec_max: float,
         dt: datetime = None,
         limiting_magnitude: float = 6.0,
-        limiting_magnitude_labels: float = 2.1,
+        limiting_magnitude_labels: float = 6.0,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = MAP_BLUE,
         resolution: int = 2048,
@@ -139,6 +139,8 @@ class MapPlot(StarPlot):
             self.ra_max = 24
 
     def _plot_constellation_lines(self):
+        if not self.style.constellation.line.visible:
+            return
         constellation_lines = gpd.read_file(DataFiles.CONSTELLATION_LINES)
         constellation_lines.plot(
             ax=self.ax,
@@ -149,6 +151,8 @@ class MapPlot(StarPlot):
         )
 
     def _plot_constellation_borders(self):
+        if not self.style.constellation_borders.visible:
+            return
         constellation_borders = gpd.read_file(DataFiles.CONSTELLATION_BORDERS)
         constellation_borders.plot(
             ax=self.ax,
@@ -159,13 +163,19 @@ class MapPlot(StarPlot):
         )
 
     def _plot_constellation_labels(self):
-        style = self.style.constellation.label.matplot_kwargs(size_multiplier=self._size_multiplier)
+        if not self.style.constellation.label.visible:
+            return
+        style = self.style.constellation.label.matplot_kwargs(
+            size_multiplier=self._size_multiplier
+        )
         for con in constellations.iterator():
             fullname, ra, dec = constellations.get(con)
             if self.in_bounds(ra, dec):
                 self._plot_text(ra, dec, con.upper(), **style)
 
     def _plot_milky_way(self):
+        if not self.style.milky_way.visible:
+            return
         mw = gpd.read_file(DataFiles.MILKY_WAY)
         mw.plot(
             ax=self.ax,
@@ -198,35 +208,40 @@ class MapPlot(StarPlot):
                 sizes.append(0.75 * self._size_multiplier)
 
         # Plot Stars
-        self.ax.scatter(
-            *self._prepare_coords(stars_ra.hours, stars_dec.degrees),
-            sizes,
-            zorder=100,
-            color=self.style.star.marker.color.as_hex(),
-            **self._plot_kwargs(),
-        )
+        if self.style.star.marker.visible:
+            self.ax.scatter(
+                *self._prepare_coords(stars_ra.hours, stars_dec.degrees),
+                sizes,
+                zorder=100,
+                color=self.style.star.marker.color.as_hex(),
+                **self._plot_kwargs(),
+            )
 
         # Plot star names
         for i, s in nearby_stars_df.iterrows():
             name = stars.hip_names.get(i)
             bayer_desig = bayer.hip.get(i)
             ra, dec = s["ra_hours"], s["dec_degrees"]
+
             if (
                 (name or bayer_desig)
-                and s["magnitude"] < self.limiting_magnitude
+                and s["magnitude"] < self.limiting_magnitude_labels
                 and self.in_bounds(ra, dec)
             ):
-                if name:
+                if self.style.star.label.visible and name:
                     # name takes precendence over bayer labels
                     text = name
                     style = self.style.star.label.matplot_kwargs(self._size_multiplier)
-                else:
+                elif self.style.bayer_labels.visible and bayer_desig:
                     text = bayer_desig
                     style = self.style.bayer_labels.matplot_kwargs(
                         self._size_multiplier
                     )
+                else:
+                    text = None
 
-                self._plot_text(ra, dec, text, ha="left", va="top", **style)
+                if text is not None:
+                    self._plot_text(ra, dec, text, ha="left", va="top", **style)
 
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))

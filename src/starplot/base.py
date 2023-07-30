@@ -65,7 +65,7 @@ class StarPlot(ABC):
         if (
             self.ax.contains_point(extent.p0)
             and self.ax.contains_point(extent.p1)
-            and not ( self.hide_colliding_labels and self._is_label_collision(extent) )
+            and not (self.hide_colliding_labels and self._is_label_collision(extent))
         ):
             self.labels.append(label)
             self._labels_extents.append(extent)

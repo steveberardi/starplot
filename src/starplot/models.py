@@ -30,7 +30,7 @@ class SkyObject(BaseModel):
         )
         ```
 
-    ```python 
+    ```python
     starplot.SkyObject(name: str, ra: float, dec: float, style: ObjectStyle)
     ```
     Args:

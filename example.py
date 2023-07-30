@@ -88,9 +88,17 @@ def create_map_orion():
                 "font_size": 7,
                 "font_alpha": 0.9,
             },
+            "constellation_borders": {
+                "visible": False
+            },
+            "milky_way": {
+                "visible": False
+            }
         }
     )
     style.star.label.font_size = 11
+    # style.star.label.visible = False
+    # style.bayer_labels.visible = False
 
     p = splt.MapPlot(
         projection=Projection.MERCATOR,
