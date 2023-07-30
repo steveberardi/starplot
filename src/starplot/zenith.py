@@ -111,6 +111,9 @@ class ZenithPlot(StarPlot):
         self.position = loc.from_altaz(alt_degrees=90, az_degrees=0)
 
     def _plot_constellation_lines(self):
+        if not self.style.constellation.line.visible:
+            return
+
         constellations = LineCollection(
             create_projected_constellation_lines(self._stardata),
             **self.style.constellation.line.matplot_kwargs(
@@ -120,6 +123,9 @@ class ZenithPlot(StarPlot):
         self._plotted_conlines = self.ax.add_collection(constellations)
 
     def _plot_constellation_labels(self):
+        if not self.style.constellation.label.visible:
+            return
+
         for con in constellations.iterator():
             fullname, ra, dec = constellations.get(con)
             x, y = self.project_fn(position_of_radec(ra, dec))
@@ -160,27 +166,31 @@ class ZenithPlot(StarPlot):
                 sizes.append((8 - m) ** 1.36 * (self._size_multiplier**2))
 
         # Draw stars
-        self._plotted_stars = self.ax.scatter(
-            stardata["x"][bright_stars],
-            stardata["y"][bright_stars],
-            sizes,
-            color=self.style.star.marker.color.as_hex(),
-        )
+        if self.style.star.marker.visible:
+            self._plotted_stars = self.ax.scatter(
+                stardata["x"][bright_stars],
+                stardata["y"][bright_stars],
+                sizes,
+                color=self.style.star.marker.color.as_hex(),
+            )
 
         starpos_x = []
         starpos_y = []
 
         # Plot star names
-        for i, s in stardata[bright_stars].iterrows():
+        if not self.style.star.label.visible:
+            return
+
+        for hip_id, s in stardata[bright_stars].iterrows():
             if (
                 in_circle(s["x"], s["y"])
-                and i in stars.hip_names
+                and hip_id in stars.ZENITH_BASE
                 and s["magnitude"] < self.limiting_magnitude_labels
             ):
                 label = self.ax.text(
                     s["x"] + 0.00984,
                     s["y"] - 0.006,
-                    stars.hip_names[i],
+                    stars.hip_names[hip_id],
                     **self.style.star.label.matplot_kwargs(
                         size_multiplier=self._size_multiplier
                     ),
@@ -196,6 +206,9 @@ class ZenithPlot(StarPlot):
                 starpos_y.append(s["y"])
 
     def _plot_dso_base(self):
+        if not self.style.dso.marker.visible:
+            return
+
         for m in dsos.ZENITH_BASE:
             ra, dec = dsos.messier.get(m)
             x, y = self.project_fn(position_of_radec(ra, dec))

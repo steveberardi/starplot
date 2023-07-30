@@ -217,31 +217,31 @@ class MapPlot(StarPlot):
                 **self._plot_kwargs(),
             )
 
-        # Plot star names
-        for i, s in nearby_stars_df.iterrows():
-            name = stars.hip_names.get(i)
-            bayer_desig = bayer.hip.get(i)
+        # Plot star labels (names and bayer designations)
+        stars_labeled = nearby_stars_df[
+            (nearby_stars_df["magnitude"] <= self.limiting_magnitude_labels)
+            & (nearby_stars_df["ra_hours"] <= self.ra_max)
+            & (nearby_stars_df["ra_hours"] >= self.ra_min)
+            & (nearby_stars_df["dec_degrees"] <= self.dec_max)
+            & (nearby_stars_df["dec_degrees"] >= self.dec_min)
+        ]
+
+        for hip_id, s in stars_labeled.iterrows():
+            name = stars.hip_names.get(hip_id)
+            bayer_desig = bayer.hip.get(hip_id)
             ra, dec = s["ra_hours"], s["dec_degrees"]
 
-            if (
-                (name or bayer_desig)
-                and s["magnitude"] < self.limiting_magnitude_labels
-                and self.in_bounds(ra, dec)
-            ):
-                if self.style.star.label.visible and name:
-                    # name takes precendence over bayer labels
-                    text = name
-                    style = self.style.star.label.matplot_kwargs(self._size_multiplier)
-                elif self.style.bayer_labels.visible and bayer_desig:
-                    text = bayer_desig
-                    style = self.style.bayer_labels.matplot_kwargs(
-                        self._size_multiplier
-                    )
-                else:
-                    text = None
+            if name and self.style.star.label.visible:
+                style = self.style.star.label.matplot_kwargs(self._size_multiplier)
+                self._plot_text(
+                    ra - 0.01, dec - 0.12, name, ha="left", va="top", **style
+                )
 
-                if text is not None:
-                    self._plot_text(ra, dec, text, ha="left", va="top", **style)
+            if bayer_desig and self.style.bayer_labels.visible:
+                style = self.style.bayer_labels.matplot_kwargs(self._size_multiplier)
+                self._plot_text(
+                    ra + 0.01, dec, bayer_desig, ha="right", va="bottom", **style
+                )
 
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))

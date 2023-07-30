@@ -85,18 +85,14 @@ def create_map_orion():
         {
             "bayer_labels": {
                 "font_name": "GFS Didot",
-                "font_size": 7,
+                "font_size": 6,
                 "font_alpha": 0.9,
             },
-            "constellation_borders": {
-                "visible": False
-            },
-            "milky_way": {
-                "visible": False
-            }
+            # "constellation_borders": {"visible": False},
+            # "milky_way": {"visible": False},
         }
     )
-    style.star.label.font_size = 11
+    style.star.label.font_size = 8
     # style.star.label.visible = False
     # style.bayer_labels.visible = False
 
@@ -121,7 +117,7 @@ def create_map_orion():
                     "symbol": "s",
                     "fill": "full",
                     "color": "#ff6868",
-                    "alpha": 1,
+                    "alpha": 0.7,
                     "zorder": 4096,
                 },
                 "label": {
