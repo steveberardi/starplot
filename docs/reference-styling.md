@@ -2,12 +2,17 @@
 
 Starplot has a styling framework that lets you fully customize the appearance of your plots. The framework consists of a bunch of [Pydantic models](https://docs.pydantic.dev/latest/usage/models/) that represent different things you can style (e.g. markers, lines, labels, etc). Since they're based on Pydantic models, this means you can easily define new styles through a JSON (or even a YAML file).
 
+- [Built-in Plot Styles](#built-in-plot-styles)
+- [Extending an Existing PlotStyle](#extending-an-existing-plotstyle)
+- [Creating a New PlotStyle](#creating-a-new-plotstyle)
+- [Code Reference](#code-reference)
 
+
+## Built-in Plot Styles
+
+Starplot has five built-in styles:
 
 TODO
-
-- List of built-in plot styles
-
 
 
 ## Extending an Existing PlotStyle
@@ -181,9 +186,13 @@ To create a whole new style, you can do it through code, JSON, or YAML:
 
     ```
 
+!!! tip "Creating New Styles"
 
+    As you can see in the examples above, creating a whole new style is easiest to do via a YAML file. Doing it in code is certainly possible, but the result is very verbose.
 
 ---
+
+## Code Reference
 
 
 ::: starplot.PlotStyle

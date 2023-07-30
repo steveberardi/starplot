@@ -1,4 +1,4 @@
-This page has a bunch of examples to get you familiar with Starplot and how it works.
+This page has a few examples to get you familiar with Starplot and how it works.
 
 1. [Star Chart for Time/Location](#star-chart-for-timelocation)
 2. [Star Chart with an Extra Object Plotted](#star-chart-with-an-extra-object-plotted)
