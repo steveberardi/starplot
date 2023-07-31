@@ -185,6 +185,21 @@ def create_map_stereo_north():
     )
     p.export("temp-map-north.png")
 
+def create_map_stereo_south():
+    p = splt.MapPlot(
+        projection=Projection.STEREO_SOUTH,
+        ra_min=9,
+        ra_max=15,
+        dec_min=-90,
+        dec_max=-40,
+        limiting_magnitude=8,
+        style=MAP_BLUE,
+        resolution=8000,
+        adjust_text=False,
+    )
+    p.export("temp-map-south.svg", format="svg")
+
+
 
 # create_style_examples()
 # create_365()
@@ -195,8 +210,9 @@ def create_map_stereo_north():
 # create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
+create_map_stereo_south()
 # create_map_stereo_vega()
-create_map_orion()
+# create_map_orion()
 
 # MAP_BLUE.dump_to_file("blue.yml")
 

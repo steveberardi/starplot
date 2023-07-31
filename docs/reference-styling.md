@@ -10,14 +10,25 @@ Starplot has a styling framework that lets you fully customize the appearance of
 
 ## Built-in Plot Styles
 
-Starplot has five built-in styles:
+Starplot has five built-in styles (all imported from `starplot.styles`):
 
-TODO
+
+- `GRAYSCALE` - Optimized for printing in grayscale (the default for `ZenithPlot`)
+
+- `BLUE` - Grayish blue colors
+
+- `CHALK` - Low saturation/contrast
+
+- `RED` - Everything red
+
+- `MAP_BLUE` - Similar to the `BLUE` style, but more tailored for maps (the default for `MapPlot`)
 
 
 ## Extending an Existing PlotStyle
 
-If there's an existing [PlotStyle][starplot.PlotStyle] that you just want to make some minor changes to, the easiest way to do that is through the PlotStyle's `extend` method. Here's an example of using it to create a new style that uses a different font for stars' Bayer labels:
+If there's an existing [PlotStyle][starplot.PlotStyle] that you just want to make some minor changes to, then you can use the PlotStyle's `extend` method.
+
+Here's an example of extending the `MAP_BLUE` style to use a different font for Bayer labels of stars:
 
 ```python
 from starplot.styles import MAP_BLUE
@@ -102,6 +113,7 @@ To create a whole new style, you can do it through code, JSON, or YAML:
 === "YAML"
 
     ```yaml
+    # style.yml
     background_color: '#fff'
     bayer_labels:
         font_alpha: 1.0
@@ -186,9 +198,26 @@ To create a whole new style, you can do it through code, JSON, or YAML:
 
     ```
 
-!!! tip "Creating New Styles"
+    **Using the above `style.yml`**:
+    ```python
+    import starplot as splt
 
-    As you can see in the examples above, creating a whole new style is easiest to do via a YAML file. Doing it in code is certainly possible, but the result is very verbose.
+    # load the style
+    style = splt.styles.PlotStyle.load_from_file("style.yml")
+
+    p = splt.MapPlot(
+        ra_min=3.6,
+        ra_max=7.8,
+        dec_min=-16,
+        dec_max=23.6,
+        style=style,
+    )
+    
+    ```
+
+!!! tip "Tip: Creating New Styles"
+
+    As you can see in the examples above, creating a whole new style from scratch is easiest to do via a YAML file. Doing it in code is certainly possible, but the result is very verbose.
 
 ---
 
@@ -244,3 +273,28 @@ To create a whole new style, you can do it through code, JSON, or YAML:
         show_root_heading: true
         show_docstring_attributes: true
         members: true
+
+::: starplot.styles.FontStyleEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.FontWeightEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.LineStyleEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.MarkerSymbolEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+

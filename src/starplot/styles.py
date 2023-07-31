@@ -39,6 +39,8 @@ class FillStyleEnum(str, Enum):
 
 
 class FontWeightEnum(str, Enum):
+    """Options for font weight."""
+
     NORMAL = "normal"
     BOLD = "bold"
     HEAVY = "heavy"
@@ -54,6 +56,8 @@ class FontStyleEnum(str, Enum):
 
 
 class MarkerSymbolEnum(str, Enum):
+    """Options for marker symbols"""
+
     POINT = "."
     CIRCLE = "o"
     SQUARE = "s"
