@@ -29,6 +29,8 @@ class SkyObject(BaseModel):
             },
         )
         ```
+        Plot the object with [`MapPlot.plot_object()`][starplot.MapPlot.plot_object] or [`ZenithPlot.plot_object()`][starplot.ZenithPlot.plot_object]
+
 
     ```python
     starplot.SkyObject(name: str, ra: float, dec: float, style: ObjectStyle)
