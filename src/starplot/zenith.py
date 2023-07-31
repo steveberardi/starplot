@@ -48,8 +48,8 @@ class ZenithPlot(StarPlot):
         lon: Longitude of viewing location
         include_info_text: If True, then the plot will include the time/location
         dt: Date/time to use for star positions (*must be timezone-aware*)
-        limiting_magnitude: Minimum magnitude of stars to plot
-        limiting_magnitude_labels: Minimum magnitude of stars to label on the plot
+        limiting_magnitude: Maximum magnitude of stars to plot
+        limiting_magnitude_labels: Maximum magnitude of stars to label on the plot
         ephemeris: Ephemeris to use for calculating star positions
         style: Styling for the plot (colors, size, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
