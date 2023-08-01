@@ -30,7 +30,7 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-  logo: images/logo2.png
+  logo: images/mono.png
   favicon: images/favicon.png
   features:
     - content.code.copy
