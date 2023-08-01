@@ -1,0 +1,21 @@
+name: Publish Docs
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Build Docker image
+      run: make docker-build
+    - name: Build Docs
+      run: make docs-build
+    - name: Publish Docs
+      run: make docs-publish

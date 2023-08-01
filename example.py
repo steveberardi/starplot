@@ -157,6 +157,20 @@ def create_zenith():
 
 
 def create_map_mercator():
+    style = MAP_BLUE.extend(
+        {
+            "bayer_labels": {
+                "font_name": "GFS Didot",
+                "font_size": 4,
+                "font_alpha": 0.9,
+                "visible": False,
+            },
+            # "constellation_borders": {"visible": False},
+            # "milky_way": {"visible": False},
+        }
+    )
+    style.star.label.font_size = 4
+    style.constellation.label.font_size = 6
     p = splt.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=0,
@@ -164,11 +178,11 @@ def create_map_mercator():
         dec_min=-80,
         dec_max=80,
         limiting_magnitude=6,
-        style=MAP_BLUE,
-        resolution=4000,
+        style=style,
+        resolution=16000,
         adjust_text=False,
     )
-    p.export("temp-map-mercator.png")
+    p.export("temp/map-mercator.svg", format="svg")
 
 
 def create_map_stereo_north():
@@ -208,9 +222,9 @@ def create_map_stereo_south():
 # create_map_all()
 
 # create_zenith()
-# create_map_mercator()
+create_map_mercator()
 # create_map_stereo_north()
-create_map_stereo_south()
+# create_map_stereo_south()
 # create_map_stereo_vega()
 # create_map_orion()
 

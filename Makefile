@@ -38,6 +38,9 @@ docs-serve:
 docs-build:
 	$(DOCKER_RUN) "mkdocs build"
 
+docs-publish:
+	$(DOCKER_RUN) "mkdocs gh-deploy --force"
+
 # PyPi - build & publish
 build:
 	$(DOCKER_RUN) "python -m flit build"
