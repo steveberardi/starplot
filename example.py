@@ -23,7 +23,6 @@ def create_365():
             lat=32.97,
             lon=-117.038611,
             dt=dt.replace(hour=4, minute=0),
-            tz_identifier="UTC",
             filename=f"temp/day-{day_of_year}.png",
             style=BLUE,
             include_info_text=True,
@@ -86,12 +85,16 @@ def create_map_orion():
         {
             "bayer_labels": {
                 "font_name": "GFS Didot",
-                "font_size": 9,
+                "font_size": 6,
                 "font_alpha": 0.9,
             },
+            # "constellation_borders": {"visible": False},
+            # "milky_way": {"visible": False},
         }
     )
-    style.star.label.font_size = 11
+    style.star.label.font_size = 8
+    # style.star.label.visible = False
+    # style.bayer_labels.visible = False
 
     p = splt.MapPlot(
         projection=Projection.MERCATOR,
@@ -99,9 +102,9 @@ def create_map_orion():
         ra_max=7.8,
         dec_min=-16,
         dec_max=23.6,
-        limiting_magnitude=7.2,
+        limiting_magnitude=9.2,
         style=style,
-        resolution=1900,
+        resolution=4000,
     )
     p.plot_object(
         SkyObject(
@@ -114,7 +117,7 @@ def create_map_orion():
                     "symbol": "s",
                     "fill": "full",
                     "color": "#ff6868",
-                    "alpha": 1,
+                    "alpha": 0.7,
                     "zorder": 4096,
                 },
                 "label": {
@@ -126,7 +129,7 @@ def create_map_orion():
             },
         )
     )
-    p.export("temp-orion.png")
+    p.export("temp-orion.svg", format="svg")
 
 
 def create_zenith():
@@ -154,6 +157,20 @@ def create_zenith():
 
 
 def create_map_mercator():
+    style = MAP_BLUE.extend(
+        {
+            "bayer_labels": {
+                "font_name": "GFS Didot",
+                "font_size": 4,
+                "font_alpha": 0.9,
+                "visible": False,
+            },
+            # "constellation_borders": {"visible": False},
+            # "milky_way": {"visible": False},
+        }
+    )
+    style.star.label.font_size = 4
+    style.constellation.label.font_size = 6
     p = splt.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=0,
@@ -161,11 +178,11 @@ def create_map_mercator():
         dec_min=-80,
         dec_max=80,
         limiting_magnitude=6,
-        style=MAP_BLUE,
-        resolution=4000,
+        style=style,
+        resolution=16000,
         adjust_text=False,
     )
-    p.export("temp-map-mercator.png")
+    p.export("temp/map-mercator.svg", format="svg")
 
 
 def create_map_stereo_north():
@@ -183,6 +200,21 @@ def create_map_stereo_north():
     p.export("temp-map-north.png")
 
 
+def create_map_stereo_south():
+    p = splt.MapPlot(
+        projection=Projection.STEREO_SOUTH,
+        ra_min=9,
+        ra_max=15,
+        dec_min=-90,
+        dec_max=-40,
+        limiting_magnitude=8,
+        style=MAP_BLUE,
+        resolution=8000,
+        adjust_text=False,
+    )
+    p.export("temp-map-south.svg", format="svg")
+
+
 # create_style_examples()
 # create_365()
 # create_example()
@@ -190,10 +222,11 @@ def create_map_stereo_north():
 # create_map_all()
 
 # create_zenith()
-# create_map_mercator()
+create_map_mercator()
 # create_map_stereo_north()
+# create_map_stereo_south()
 # create_map_stereo_vega()
-create_map_orion()
+# create_map_orion()
 
 # MAP_BLUE.dump_to_file("blue.yml")
 

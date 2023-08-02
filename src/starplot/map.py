@@ -1,3 +1,4 @@
+import datetime
 import warnings
 
 from enum import Enum
@@ -11,16 +12,26 @@ from skyfield.api import Star
 
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars
-
+from starplot.styles import PlotStyle, MAP_BLUE
 
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
 
 
 class Projection(str, Enum):
+    """
+    Supported projections for MapPlots
+
+    """
+
     STEREO_NORTH = "stereo_north"
+    """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""
+
     STEREO_SOUTH = "stereo_south"
+    """Good for objects near the south celestial pole, but distorts objects near the mid declinations"""
+
     MERCATOR = "mercator"
+    """Good for declinations between -70 and 70, but distorts objects near the poles"""
 
     @staticmethod
     def crs(projection, center_lon=-180):
@@ -32,6 +43,28 @@ class Projection(str, Enum):
 
 
 class MapPlot(StarPlot):
+    """Creates a new map plot.
+
+    Args:
+        projection: Projection of the map
+        ra_min: Minimum right ascension of the map
+        ra_max: Maximum right ascension of the map
+        dec_min: Minimum declination of the map
+        dec_max: Maximum declination of the map
+        dt: Date/time to use for star positions (*must be timezone-aware*)
+        limiting_magnitude: Maximum magnitude of stars to plot
+        limiting_magnitude_labels: Maximum magnitude of stars to label on the plot
+        ephemeris: Ephemeris to use for calculating star positions
+        style: Styling for the plot (colors, size, fonts, etc)
+        resolution: Size (in pixels) of largest dimension of the map
+        hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
+        adjust_text: If True, then the labels will be adjusted to avoid overlapping
+
+    Returns:
+        MapPlot: A new instance of a MapPlot
+
+    """
+
     def __init__(
         self,
         projection: Projection,
@@ -39,10 +72,29 @@ class MapPlot(StarPlot):
         ra_max: float,
         dec_min: float,
         dec_max: float,
+        dt: datetime = None,
+        limiting_magnitude: float = 6.0,
+        limiting_magnitude_labels: float = 6.0,
+        ephemeris: str = "de421_2001.bsp",
+        style: PlotStyle = MAP_BLUE,
+        resolution: int = 2048,
+        hide_colliding_labels: bool = True,
+        adjust_text: bool = False,
         *args,
         **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
+    ) -> "MapPlot":
+        super().__init__(
+            dt,
+            limiting_magnitude,
+            limiting_magnitude_labels,
+            ephemeris,
+            style,
+            resolution,
+            hide_colliding_labels,
+            adjust_text,
+            *args,
+            **kwargs,
+        )
         self.projection = projection
         self.ra_min = ra_min
         self.ra_max = ra_max
@@ -53,10 +105,20 @@ class MapPlot(StarPlot):
     def _plot_kwargs(self) -> dict:
         return dict(transform=ccrs.PlateCarree())
 
-    def _prepare_coords(self, ra, dec) -> (float, float):
+    def _prepare_coords(self, ra: float, dec: float) -> (float, float):
         return -1 * (ra * 15 - 360), dec
 
-    def in_bounds(self, ra, dec) -> bool:
+    def in_bounds(self, ra: float, dec: float) -> bool:
+        """Determine if a coordinate is within the bounds of the plot.
+
+        Args:
+            ra: Right ascension
+            dec: Declination
+
+        Returns:
+            True if the coordinate is in bounds, otherwise False
+
+        """
         return self.ra_min < ra < self.ra_max and self.dec_min < dec < self.dec_max
 
     def _latlon_bounds(self):
@@ -77,6 +139,8 @@ class MapPlot(StarPlot):
             self.ra_max = 24
 
     def _plot_constellation_lines(self):
+        if not self.style.constellation.line.visible:
+            return
         constellation_lines = gpd.read_file(DataFiles.CONSTELLATION_LINES)
         constellation_lines.plot(
             ax=self.ax,
@@ -87,6 +151,8 @@ class MapPlot(StarPlot):
         )
 
     def _plot_constellation_borders(self):
+        if not self.style.constellation_borders.visible:
+            return
         constellation_borders = gpd.read_file(DataFiles.CONSTELLATION_BORDERS)
         constellation_borders.plot(
             ax=self.ax,
@@ -97,22 +163,19 @@ class MapPlot(StarPlot):
         )
 
     def _plot_constellation_labels(self):
+        if not self.style.constellation.label.visible:
+            return
+        style = self.style.constellation.label.matplot_kwargs(
+            size_multiplier=self._size_multiplier
+        )
         for con in constellations.iterator():
             fullname, ra, dec = constellations.get(con)
             if self.in_bounds(ra, dec):
-                label = self.ax.text(
-                    *self._prepare_coords(ra, dec),
-                    con.upper(),
-                    **self.style.constellation.label.matplot_kwargs(
-                        size_multiplier=self._size_multiplier
-                    ),
-                    **self._plot_kwargs(),
-                    path_effects=[self.text_border],
-                )
-                label.set_clip_on(True)
-                self._maybe_remove_label(label)
+                self._plot_text(ra, dec, con.upper(), **style)
 
     def _plot_milky_way(self):
+        if not self.style.milky_way.visible:
+            return
         mw = gpd.read_file(DataFiles.MILKY_WAY)
         mw.plot(
             ax=self.ax,
@@ -145,45 +208,40 @@ class MapPlot(StarPlot):
                 sizes.append(0.75 * self._size_multiplier)
 
         # Plot Stars
-        self.ax.scatter(
-            *self._prepare_coords(stars_ra.hours, stars_dec.degrees),
-            sizes,
-            zorder=100,
-            color=self.style.star.marker.color.as_hex(),
-            **self._plot_kwargs(),
-        )
+        if self.style.star.marker.visible:
+            self.ax.scatter(
+                *self._prepare_coords(stars_ra.hours, stars_dec.degrees),
+                sizes,
+                zorder=100,
+                color=self.style.star.marker.color.as_hex(),
+                **self._plot_kwargs(),
+            )
 
-        # Plot star names
-        for i, s in nearby_stars_df.iterrows():
-            (i in stars.hip_names or i in bayer.hip)
-            name = stars.hip_names.get(i)
-            bayer_desig = bayer.hip.get(i)
-            if (
-                (name or bayer_desig)
-                and s["magnitude"] < self.limiting_magnitude
-                and self.in_bounds(s["ra_hours"], s["dec_degrees"])
-            ):
-                if name:
-                    # name takes precendence over bayer labels
-                    text = name
-                    style = self.style.star.label.matplot_kwargs(self._size_multiplier)
-                else:
-                    text = bayer_desig
-                    style = self.style.bayer_labels.matplot_kwargs(
-                        self._size_multiplier
-                    )
+        # Plot star labels (names and bayer designations)
+        stars_labeled = nearby_stars_df[
+            (nearby_stars_df["magnitude"] <= self.limiting_magnitude_labels)
+            & (nearby_stars_df["ra_hours"] <= self.ra_max)
+            & (nearby_stars_df["ra_hours"] >= self.ra_min)
+            & (nearby_stars_df["dec_degrees"] <= self.dec_max)
+            & (nearby_stars_df["dec_degrees"] >= self.dec_min)
+        ]
 
-                label = self.ax.text(
-                    *self._prepare_coords(s["ra_hours"], s["dec_degrees"]),
-                    text,
-                    ha="left",
-                    va="top",
-                    **style,
-                    **self._plot_kwargs(),
-                    path_effects=[self.text_border],
+        for hip_id, s in stars_labeled.iterrows():
+            name = stars.hip_names.get(hip_id)
+            bayer_desig = bayer.hip.get(hip_id)
+            ra, dec = s["ra_hours"], s["dec_degrees"]
+
+            if name and self.style.star.label.visible:
+                style = self.style.star.label.matplot_kwargs(self._size_multiplier)
+                self._plot_text(
+                    ra - 0.01, dec - 0.12, name, ha="left", va="top", **style
                 )
-                label.set_clip_on(True)
-                self._maybe_remove_label(label)
+
+            if bayer_desig and self.style.bayer_labels.visible:
+                style = self.style.bayer_labels.matplot_kwargs(self._size_multiplier)
+                self._plot_text(
+                    ra + 0.01, dec, bayer_desig, ha="right", va="bottom", **style
+                )
 
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))

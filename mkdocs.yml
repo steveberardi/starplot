@@ -1,0 +1,65 @@
+site_name: Starplot
+repo_url: https://github.com/steveberardi/starplot
+
+nav:
+    - Overview: index.md
+    - Installation: installation.md
+    - Examples: examples.md
+    - Reference:
+        - starplot.MapPlot: reference-mapplot.md
+        - starplot.ZenithPlot: reference-zenithplot.md
+        - starplot.SkyObject: reference-skyobject.md
+        - Styling: reference-styling.md
+    - Data Sources: data-sources.md
+    - License: license.md
+    - Coming Soon: roadmap.md
+
+theme:
+  name: material
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: custom
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  logo: images/mono.png
+  favicon: images/favicon.png
+  features:
+    - content.code.copy
+    # - navigation.expand
+    - toc.integrate
+  
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: false
+            show_bases: false
+            docstring_section_style: list
+
+markdown_extensions:
+  # - toc:
+  #     permalink: true
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true 

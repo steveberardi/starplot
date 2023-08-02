@@ -24,7 +24,6 @@ def map_plot_mercator():
         limiting_magnitude=7.2,
         style=styles.MAP_BLUE,
         resolution=2000,
-        adjust_text=False,
     )
 
 

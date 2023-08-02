@@ -1,0 +1,58 @@
+:root {
+    --md-primary-fg-color:        hsl(209, 53%, 37%);
+    --md-primary-fg-color--light: hsl(209, 53%, 70%);
+    --md-primary-fg-color--dark:  rgb(32, 70, 105);
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+    font-weight: 600;
+}
+
+.md-content {
+    max-width: 900px;
+}
+
+.doc-heading {
+    padding-top: 0rem;
+}
+
+.doc-heading code {
+    padding: 0.5rem;
+    width: 100%;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.doc-object.doc-class {
+    border-top: 2px solid rgba(200, 200, 200, 0.6);
+}
+.doc-contents.first {
+    /* border-top: 2px solid rgba(200, 200, 200, 0.6);
+    margin-left: 1rem;
+    padding-left: 1rem;
+    border-left: 1px solid rgb(150, 150, 150); */
+}
+
+.doc-function .doc-contents {
+    margin-left: 1rem;
+    padding-left: 1rem;
+    border-left: 1px solid rgb(201, 201, 201);
+}
+
+.doc-object .doc-attribute {
+    margin-left: 1rem;
+    padding-left: 1rem;
+    border-left: 1px solid rgb(201, 201, 201);
+}
+.doc-object .doc-attribute .doc-label {
+    display: none;
+}
+.doc-object .doc-attribute .doc-heading {
+    margin-top: 0;
+}
+.doc-object .doc-attribute .doc-contents {
+    margin-bottom: 0;
+    padding-bottom: 1rem;
+}

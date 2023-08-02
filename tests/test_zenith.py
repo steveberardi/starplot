@@ -20,7 +20,6 @@ def zenith_plot():
         dt=datetime(2023, 6, 20, 4, tzinfo=timezone.utc),
         limiting_magnitude=4.6,
         resolution=2048,
-        adjust_text=False,
     )
 
 
@@ -52,7 +51,6 @@ def test_zenith_plot_with_info_label():
         limiting_magnitude=4.6,
         resolution=2048,
         include_info_text=True,
-        adjust_text=False,
     )
     zp.export(filename)
     assert_hash_equal(filename, DATA_PATH / "expected-zenith-info.png")

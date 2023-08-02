@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 from adjustText import adjust_text as _adjust_text
-from matplotlib import pyplot as plt, patheffects
+from matplotlib import pyplot as plt, patheffects, transforms
 from pytz import timezone
 
 from starplot.data import load
@@ -14,13 +14,13 @@ class StarPlot(ABC):
     def __init__(
         self,
         dt: datetime = None,
-        tz_identifier: str = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
+        ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = GRAYSCALE,
         resolution: int = 2048,
-        adjust_text: bool = True,
-        ephemeris: str = "de421_2001.bsp",
+        hide_colliding_labels: bool = True,
+        adjust_text: bool = False,
         *args,
         **kwargs,
     ):
@@ -31,11 +31,14 @@ class StarPlot(ABC):
         self.style = style
         self.figure_size = resolution * px
         self.resolution = resolution
+        self.hide_colliding_labels = hide_colliding_labels
         self.adjust_text = adjust_text
+
         self.dt = dt or timezone("UTC").localize(datetime.now())
         self.ephemeris = ephemeris
 
         self.labels = []
+        self._labels_extents = []
         self.text_border = patheffects.withStroke(
             linewidth=self.style.text_border_width,
             foreground=self.style.background_color.as_hex(),
@@ -50,22 +53,42 @@ class StarPlot(ABC):
     def _prepare_coords(self, ra, dec) -> (float, float):
         return ra, dec
 
-    def _maybe_remove_label(self, label):
+    def _is_label_collision(self, extent) -> bool:
+        for e in self._labels_extents:
+            if transforms.Bbox.intersection(e, extent):
+                return True
+        return False
+
+    def _maybe_remove_label(self, label) -> None:
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
 
-        if self.ax.contains_point(extent.p0) and self.ax.contains_point(extent.p1):
+        if (
+            self.ax.contains_point(extent.p0)
+            and self.ax.contains_point(extent.p1)
+            and not (self.hide_colliding_labels and self._is_label_collision(extent))
+        ):
             self.labels.append(label)
+            self._labels_extents.append(extent)
         else:
             label.remove()
 
     def adjust_labels(self) -> None:
+        """Adjust all the labels to avoid overlapping."""
         _adjust_text(self.labels, ax=self.ax, ensure_inside_axes=False)
 
     def close_fig(self) -> None:
+        """Closes the underlying matplotlib figure."""
         if self.fig:
             plt.close(self.fig)
 
     def export(self, filename: str, format: str = "png"):
+        """Exports the plot to an image file.
+
+        Args:
+            filename: Filename of exported file
+            format: Format of file: "png" or "svg"
+
+        """
         self.fig.savefig(
             filename,
             format=format,
@@ -74,7 +97,15 @@ class StarPlot(ABC):
             dpi=144,  # (self.resolution / self.figure_size * 1.28),
         )
 
-    def draw_reticle(self, ra, dec) -> None:
+    def draw_reticle(self, ra: float, dec: float) -> None:
+        """Plots a reticle on the map.
+
+        Args:
+            ra: Right ascension of the reticle's center
+            dec: Declination of the reticle's center
+
+        """
+
         # Plot as a marker to avoid projection distortion
         self.ax.plot(
             *self._prepare_coords(ra, dec),
@@ -96,7 +127,13 @@ class StarPlot(ABC):
             **self._plot_kwargs(),
         )
 
-    def plot_object(self, obj: SkyObject):
+    def plot_object(self, obj: SkyObject) -> None:
+        """Plots an object (see SkyObject for details).
+
+        Args:
+            obj: The object to plot
+
+        """
         ra, dec = self._prepare_coords(obj.ra, obj.dec)
 
         if self.in_bounds(obj.ra, obj.dec):
@@ -119,6 +156,30 @@ class StarPlot(ABC):
             label.set_clip_on(True)
             self._maybe_remove_label(label)
 
+    def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
+        x, y = self._prepare_coords(ra, dec)
+        label = self.ax.text(
+            x,
+            y,
+            text,
+            *args,
+            **kwargs,
+            **self._plot_kwargs(),
+            path_effects=[self.text_border],
+        )
+        label.set_clip_on(True)
+        self._maybe_remove_label(label)
+
     @abstractmethod
-    def in_bounds(self, ra, dec) -> bool:
+    def in_bounds(self, ra: float, dec: float) -> bool:
+        """Determine if a coordinate is within the bounds of the plot.
+
+        Args:
+            ra: Right ascension
+            dec: Declination
+
+        Returns:
+            bool: True if the coordinate is in bounds, otherwise False
+
+        """
         raise NotImplementedError
