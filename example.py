@@ -199,6 +199,7 @@ def create_map_stereo_north():
     )
     p.export("temp-map-north.png")
 
+
 def create_map_stereo_south():
     p = splt.MapPlot(
         projection=Projection.STEREO_SOUTH,
@@ -212,7 +213,6 @@ def create_map_stereo_south():
         adjust_text=False,
     )
     p.export("temp-map-south.svg", format="svg")
-
 
 
 # create_style_examples()
