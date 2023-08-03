@@ -21,7 +21,7 @@ test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
 
 docker-build:
-	docker build -t starplot --target dev .
+	docker build -t starplot .
 
 bash:
 	$(DOCKER_RUN) bash
