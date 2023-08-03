@@ -20,8 +20,15 @@ format:
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
 
-docker-build:
-	docker build -t starplot .
+docker-dev:
+	docker build -t starplot --target dev .
+
+docker-base:
+	docker build -t starplot-base --target base .
+	docker tag starplot-base sberardi/starplot-base:latest
+
+docker-base-push:
+	docker push sberardi/starplot-base:latest
 
 bash:
 	$(DOCKER_RUN) bash
