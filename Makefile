@@ -7,7 +7,7 @@ else
  DR_ARGS=-it
 endif
 
-DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot bash -c
+DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 
 export PYTHONPATH=./src/
 
@@ -21,7 +21,7 @@ test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
 
 docker-dev:
-	docker build -t starplot --target dev .
+	docker build -t starplot-dev --target dev .
 
 docker-base:
 	docker build -t starplot-base --target base .
