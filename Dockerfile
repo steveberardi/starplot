@@ -16,7 +16,7 @@ RUN install -m644 /tmp/fonts/*.ttf /usr/share/fonts/truetype/
 RUN fc-cache -f
 
 # ---------------------------------------------------------------------
-FROM base as dev
+FROM sberardi/starplot-base as dev
 
 WORKDIR /starplot
 

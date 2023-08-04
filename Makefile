@@ -30,6 +30,10 @@ docker-base:
 docker-base-push:
 	docker push sberardi/starplot-base:latest
 
+docker-multi-arch:
+# docker buildx create --name starplot-builder --bootstrap --use
+	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag sberardi/starplot-base:latest --target base .
+
 bash:
 	$(DOCKER_RUN) bash
 
