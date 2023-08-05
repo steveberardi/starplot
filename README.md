@@ -1,4 +1,4 @@
-# <img src="docs/images/favicon.svg" width="24"> Starplot
+# <img src="docs/images/favicon.svg" width="48" style="vertical-align:middle"> Starplot
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge)
 ![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge)
