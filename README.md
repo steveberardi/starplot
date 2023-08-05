@@ -3,7 +3,7 @@
 ![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=85C0C1)
 ![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=A485C1)
 
-**starplot** is a Python library for creating star charts and maps.
+**Starplot** is a Python library for creating star charts and maps.
 
 - ⭐ **Zenith Plots** - showing the stars from a specific time/location
 - 🗺️ **Map Plots** - including North/South polar and Mercator projections
@@ -20,7 +20,7 @@
 
 [More examples](examples/)
 
-## Getting Started
+## Basic Usage
 
 To create a star chart for tonight's sky as seen from [Palomar Mountain](https://en.wikipedia.org/wiki/Palomar_Mountain) in California:
 
@@ -39,6 +39,11 @@ p = sp.ZenithPlot(
 )
 p.export("starchart.png")
 ```
+
+## Documentation
+
+[https://starplot.dev](https://starplot.dev)
+
 
 ## Core Dependencies
 
