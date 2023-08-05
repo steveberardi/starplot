@@ -1,7 +1,7 @@
 # <img src="docs/images/favicon.svg" width="48" style="vertical-align:middle"> Starplot
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge)
-![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge&color=a2c185)
+![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=85C0C1)
+![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=A485C1)
 
 **starplot** is a Python library for creating star charts and maps.
 
