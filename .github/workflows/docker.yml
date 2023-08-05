@@ -1,0 +1,15 @@
+name: Docker Build and Push
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: Docker Login
+      run: echo $DOCKER_PASSWORD | docker login --username sberardi --password-stdin
+    - name: Build and Push Docker Images
+      run: make docker-multi-arch
+

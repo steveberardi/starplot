@@ -7,7 +7,8 @@ else
  DR_ARGS=-it
 endif
 
-DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot bash -c
+DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
+DOCKER_BUILDER=starplot-builder
 
 export PYTHONPATH=./src/
 
@@ -20,8 +21,19 @@ format:
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
 
-docker-build:
-	docker build -t starplot --target dev .
+docker-dev:
+	docker build -t starplot-dev --target dev .
+
+docker-base:
+	docker build -t starplot-base --target base .
+	docker tag starplot-base sberardi/starplot-base:latest
+
+docker-base-push:
+	docker push sberardi/starplot-base:latest
+
+docker-multi-arch:
+	docker buildx inspect $(DOCKER_BUILDER) && echo "Builder already exists!" || docker buildx create --name $(DOCKER_BUILDER) --bootstrap --use
+	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag sberardi/starplot-base:latest --target base .
 
 bash:
 	$(DOCKER_RUN) bash
@@ -32,8 +44,11 @@ shell:
 example:
 	$(DOCKER_RUN) "python example.py"
 
+# ------------------------------------------------------------------
+# Docs
+docs-serve: DR_ARGS=-it -p 8000:8000
 docs-serve:
-	docker run --rm -it -p 8000:8000 -v $(shell pwd):/starplot starplot bash -c "mkdocs serve -a 0.0.0.0:8000 --watch src/"
+	$(DOCKER_RUN) "mkdocs serve -a 0.0.0.0:8000 --watch src/"
 
 docs-build:
 	$(DOCKER_RUN) "mkdocs build"
@@ -41,14 +56,17 @@ docs-build:
 docs-publish:
 	$(DOCKER_RUN) "mkdocs gh-deploy --force"
 
+# ------------------------------------------------------------------
 # PyPi - build & publish
 build:
 	$(DOCKER_RUN) "python -m flit build"
 
-# TODO : move publish to docker
+publish: DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
 publish:
-	$(PYTHON) -m flit publish
+	$(DOCKER_RUN) "python -m flit publish"
 
+# ------------------------------------------------------------------
+# Utils
 ephemeris:
 	$(DOCKER_RUN) "python -m jplephem excerpt 2001/1/1 2050/1/1 $(DE421_URL) de421sub.bsp"
 
