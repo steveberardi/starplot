@@ -1,4 +1,4 @@
-# <img src="docs/images/banner.svg" width="900">
+# <img src="docs/images/favicon.svg" width="24"> Starplot
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge)
 ![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge)
@@ -9,7 +9,7 @@
 - 🗺️ **Map Plots** - including North/South polar and Mercator projections
 - 🎨 **Custom Styles** - for all objects
 - 📥 **Export** - png, svg
-- 🧭 **Label Collision Avoidance** - via `adjustText`
+- 🧭 **Label Collision Avoidance**
 
 ## Examples
 *Zenith plot of the stars from a specific time/location:*
@@ -45,15 +45,20 @@ p.export("starchart.png")
 - matplotlib
 - pandas
 - numpy
-- skyfield
 - geopandas
 - cartopy
+- skyfield
 - pydantic
 - adjustText
 
 ## Coming Soon
 
-- Documentation
+- 🔭 Scope plots - that will simulate what you'll see through a telescope eyepiece
+- 🪐 More objects - including planets, and a base library of deep sky objects (DSOs)
+- 💫 Plotting ecliptic
+- 🌐 RA/DEC Labels
+- ⚖️ Better auto font-size adjustment
+- ☄️ Better label collision detection and handling
 
 ## License
 [MIT License](LICENSE)
