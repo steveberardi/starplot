@@ -8,6 +8,7 @@ else
 endif
 
 DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
+DOCKER_BUILDER=starplot-builder
 
 export PYTHONPATH=./src/
 
@@ -31,7 +32,7 @@ docker-base-push:
 	docker push sberardi/starplot-base:latest
 
 docker-multi-arch:
-# docker buildx create --name starplot-builder --bootstrap --use
+	docker buildx inspect $(DOCKER_BUILDER) && echo "Builder already exists!" || docker buildx create --name $(DOCKER_BUILDER) --bootstrap --use
 	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag sberardi/starplot-base:latest --target base .
 
 bash:
