@@ -43,6 +43,8 @@ shell:
 example:
 	$(DOCKER_RUN) "python example.py"
 
+# ------------------------------------------------------------------
+# Docs
 docs-serve: DR_ARGS=-it -p 8000:8000
 docs-serve:
 	$(DOCKER_RUN) "mkdocs serve -a 0.0.0.0:8000 --watch src/"
@@ -53,14 +55,17 @@ docs-build:
 docs-publish:
 	$(DOCKER_RUN) "mkdocs gh-deploy --force"
 
+# ------------------------------------------------------------------
 # PyPi - build & publish
 build:
 	$(DOCKER_RUN) "python -m flit build"
 
-# TODO : move publish to docker
+publish: DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
 publish:
-	$(PYTHON) -m flit publish
+	$(DOCKER_RUN) "python -m flit publish"
 
+# ------------------------------------------------------------------
+# Utils
 ephemeris:
 	$(DOCKER_RUN) "python -m jplephem excerpt 2001/1/1 2050/1/1 $(DE421_URL) de421sub.bsp"
 
