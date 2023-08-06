@@ -14,7 +14,7 @@ steps:
 timeout: 5400s  # 90 minutes
 availableSecrets:
   secretManager:
-  - versionName: projects/1036427073125/secrets/DOCKER_TOKEN/versions/1
+  - versionName: projects/snappy-apps/secrets/DOCKER_TOKEN/versions/1
     env: 'TOKEN'
 options:
   pool:
