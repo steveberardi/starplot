@@ -36,3 +36,6 @@ Home = "https://github.com/steveberardi/starplot"
 [tool.pytest.ini_options]
 testpaths = ["./tests"]
 filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+ignore = ["E501"]
