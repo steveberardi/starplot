@@ -1,6 +1,6 @@
 """Star charts and maps"""
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 from .base import StarPlot  # noqa: F401
 from .zenith import ZenithPlot  # noqa: F401
