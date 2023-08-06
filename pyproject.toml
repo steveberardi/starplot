@@ -31,7 +31,9 @@ dependencies = [
 ]
 
 [project.urls]
-Home = "https://github.com/steveberardi/starplot"
+Home = "https://starplot.dev"
+Documentation = "https://starplot.dev"
+Source = "https://github.com/steveberardi/starplot"
 
 [tool.pytest.ini_options]
 testpaths = ["./tests"]

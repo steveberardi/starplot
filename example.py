@@ -7,7 +7,7 @@ from starplot.styles import PlotStyle, BLUE, GRAYSCALE, CHALK, RED, MAP_BLUE
 from starplot.models import SkyObject
 from starplot.map import Projection
 
-import starplot as splt
+import starplot as sp
 
 start_time = time.time()
 
@@ -40,7 +40,7 @@ def create_map_stereo_vega():
     style = MAP_BLUE
     style.bayer_labels.font_name = "GFS Didot"
     style.bayer_labels.font_size = 10
-    p = splt.MapPlot(
+    p = sp.MapPlot(
         projection=Projection.STEREO_NORTH,
         ra_min=17,
         ra_max=20,
@@ -96,7 +96,7 @@ def create_map_orion():
     # style.star.label.visible = False
     # style.bayer_labels.visible = False
 
-    p = splt.MapPlot(
+    p = sp.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=3.6,
         ra_max=7.8,
@@ -133,7 +133,7 @@ def create_map_orion():
 
 
 def create_zenith():
-    p = splt.ZenithPlot(
+    p = sp.ZenithPlot(
         lat=32.97,
         lon=-117.038611,
         dt=timezone("America/Los_Angeles").localize(datetime.now().replace(hour=21)),
@@ -171,7 +171,7 @@ def create_map_mercator():
     )
     style.star.label.font_size = 4
     style.constellation.label.font_size = 6
-    p = splt.MapPlot(
+    p = sp.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=0,
         ra_max=24,
@@ -186,7 +186,7 @@ def create_map_mercator():
 
 
 def create_map_stereo_north():
-    p = splt.MapPlot(
+    p = sp.MapPlot(
         projection=Projection.STEREO_NORTH,
         ra_min=0,
         ra_max=24,
@@ -201,7 +201,7 @@ def create_map_stereo_north():
 
 
 def create_map_stereo_south():
-    p = splt.MapPlot(
+    p = sp.MapPlot(
         projection=Projection.STEREO_SOUTH,
         ra_min=9,
         ra_max=15,
@@ -215,6 +215,116 @@ def create_map_stereo_south():
     p.export("temp-map-south.svg", format="svg")
 
 
+def example_1_create_star_chart():
+    from datetime import datetime
+    from pytz import timezone
+    import starplot as sp
+
+    tz = timezone("America/Los_Angeles")
+
+    p = sp.ZenithPlot(
+        lat=33.363484,
+        lon=-116.836394,
+        dt=tz.localize(datetime.now().replace(hour=22)),
+        limiting_magnitude=4.6,
+        style=sp.styles.BLUE,
+        resolution=2000,
+    )
+    p.export("temp/example_1.png")
+
+
+def example_2_create_star_chart_extra():
+    from datetime import datetime
+    from pytz import timezone
+    import starplot as sp
+
+    tz = timezone("America/Los_Angeles")
+
+    p = sp.ZenithPlot(
+        lat=32.97,
+        lon=-117.038611,
+        dt=tz.localize(datetime.now().replace(hour=22)),
+        limiting_magnitude=4.6,
+        style=sp.styles.GRAYSCALE,
+        resolution=2000,
+    )
+    p.plot_object(
+        SkyObject(
+            name="Mel 111",
+            ra=12.36,
+            dec=25.85,
+            style={
+                "marker": {"size": 10, "symbol": "*", "fill": "full", "color": "red"}
+            },
+        )
+    )
+    p.export("temp/example_2.png")
+
+
+def example_3_create_map_orion():
+    import starplot as sp
+
+    style = sp.styles.MAP_BLUE.extend(
+        {
+            "bayer_labels": {
+                "font_name": "GFS Didot",  # use a better font for Greek letters
+                "font_size": 7,
+                "font_alpha": 0.9,
+            },
+        }
+    )
+    style.star.label.font_size = 11
+
+    p = sp.MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=3.6,
+        ra_max=7.8,
+        dec_min=-16,
+        dec_max=23.6,
+        limiting_magnitude=7.2,
+        style=style,
+        resolution=4000,
+    )
+    p.plot_object(
+        SkyObject(
+            name="M42",
+            ra=5.58333,
+            dec=-4.61,
+            style={
+                "marker": {
+                    "size": 10,
+                    "symbol": "s",
+                    "fill": "full",
+                    "color": "#ff6868",
+                    "alpha": 1,
+                    "zorder": 4096,
+                },
+                "label": {
+                    "font_size": 10,
+                    "font_weight": "bold",
+                    "font_color": "darkred",
+                    "zorder": 4096,
+                },
+            },
+        )
+    )
+    p.export("temp/example_3.svg", format="svg")
+
+
+def example_style():
+    import starplot as sp
+
+    sp.styles.MAP_BLUE.dump_to_file("temp/blue.yml")
+
+
+# Documented Examples
+# example_1_create_star_chart()
+# example_2_create_star_chart_extra()
+# example_3_create_map_orion()
+example_style()
+
+
+# ------------------------------------------
 # create_style_examples()
 # create_365()
 # create_example()
@@ -226,7 +336,7 @@ def create_map_stereo_south():
 # create_map_stereo_north()
 # create_map_stereo_south()
 # create_map_stereo_vega()
-create_map_orion()
+# create_map_orion()
 
 # MAP_BLUE.dump_to_file("blue.yml")
 
