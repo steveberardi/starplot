@@ -15,3 +15,6 @@ availableSecrets:
   secretManager:
   - versionName: projects/1036427073125/secrets/DOCKER_TOKEN/versions/1
     env: 'TOKEN'
+options:
+  pool:
+    name: 'projects/snappy-apps/locations/us-west2/workerPools/snappy-worker-pool'
