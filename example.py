@@ -142,6 +142,7 @@ def create_zenith():
         # style=GRAYSCALE,
         # adjust_text=False,
         resolution=2000,
+        include_info_text=True,
     )
     p.plot_object(
         SkyObject(
@@ -153,7 +154,7 @@ def create_zenith():
             },
         )
     )
-    p.export("temp-zenith-new.png", format="png")
+    p.export("temp/zenith-poway.png", format="png")
 
 
 def create_map_mercator():
@@ -321,7 +322,7 @@ def example_style():
 # example_1_create_star_chart()
 # example_2_create_star_chart_extra()
 # example_3_create_map_orion()
-example_style()
+# example_style()
 
 
 # ------------------------------------------
@@ -331,7 +332,7 @@ example_style()
 # create_map_orion()
 # create_map_all()
 
-# create_zenith()
+create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()

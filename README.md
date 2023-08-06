@@ -1,4 +1,4 @@
-# <img src="docs/images/favicon.svg" width="48" style="vertical-align:middle"> Starplot
+# <img src="https://raw.githubusercontent.com/steveberardi/starplot/main/docs/images/favicon.svg" width="48" style="vertical-align:middle"> Starplot
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge&color=a2c185)
 ![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=85C0C1)
 ![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=A485C1)
@@ -13,12 +13,11 @@
 
 ## Examples
 *Zenith plot of the stars from a specific time/location:*
-![starchart-blue](examples/starchart-blue.png)
+![starchart-blue](https://github.com/steveberardi/starplot/blob/main/examples/starchart-blue.png?raw=true)
 
 *Map around the constellation Orion, with M42 marked:*
-![map-orion](examples/mercator-orion.png)
+![map-orion](https://github.com/steveberardi/starplot/blob/main/examples/mercator-orion.png?raw=true)
 
-[More examples](examples/)
 
 ## Basic Usage
 
@@ -66,4 +65,4 @@ p.export("starchart.png")
 - ☄️ Better label collision detection and handling
 
 ## License
-[MIT License](LICENSE)
+[MIT License](https://github.com/steveberardi/starplot/blob/main/LICENSE)
