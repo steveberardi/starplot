@@ -223,7 +223,7 @@ def example_1_create_star_chart():
     tz = timezone("America/Los_Angeles")
 
     p = sp.ZenithPlot(
-        lat=33.363484, 
+        lat=33.363484,
         lon=-116.836394,
         dt=tz.localize(datetime.now().replace(hour=22)),
         limiting_magnitude=4.6,
@@ -231,6 +231,7 @@ def example_1_create_star_chart():
         resolution=2000,
     )
     p.export("temp/example_1.png")
+
 
 def example_2_create_star_chart_extra():
     from datetime import datetime
@@ -258,6 +259,7 @@ def example_2_create_star_chart_extra():
         )
     )
     p.export("temp/example_2.png")
+
 
 def example_3_create_map_orion():
     import starplot as sp
@@ -309,11 +311,17 @@ def example_3_create_map_orion():
     p.export("temp/example_3.svg", format="svg")
 
 
+def example_style():
+    import starplot as sp
+
+    sp.styles.MAP_BLUE.dump_to_file("temp/blue.yml")
+
 
 # Documented Examples
-example_1_create_star_chart()
-example_2_create_star_chart_extra()
-example_3_create_map_orion()
+# example_1_create_star_chart()
+# example_2_create_star_chart_extra()
+# example_3_create_map_orion()
+example_style()
 
 
 # ------------------------------------------
