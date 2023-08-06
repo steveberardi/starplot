@@ -1,0 +1,17 @@
+steps:
+# -------- DOCKER LOGIN --------
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', 'echo $$TOKEN | docker login --username sberardi --password-stdin']
+  secretEnv: ['TOKEN']
+
+# -------- DOCKER BUILD --------
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', 'make docker-multi-arch']
+
+# -------- CONFIG --------
+availableSecrets:
+  secretManager:
+  - versionName: projects/1036427073125/secrets/DOCKER_TOKEN/versions/1
+    env: 'TOKEN'

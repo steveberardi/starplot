@@ -20,10 +20,10 @@ Starplot is a Python library for creating star charts and maps.
 - 🧭 **Label Collision Avoidance**
 
 ## Examples
-*Zenith plot of the stars from a specific time/location ([source code](examples/#basic-star-chart-for-timelocation)):*
+*Zenith plot of the stars from a specific time/location ([source code](examples/#star-chart-for-timelocation)):*
 <img src="images/starchart-blue.png" height="900" width="900">
 
-*Map around the constellation Orion, with M42 marked ([source code](examples/#basic-map-of-orion)):*
+*Map around the constellation Orion, with M42 marked ([source code](examples/#map-of-orion)):*
 <img src="images/mercator-orion.png" width="900">
 
 [Check out more examples...](examples.md)
