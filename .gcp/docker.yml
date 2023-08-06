@@ -1,0 +1,21 @@
+steps:
+# -------- DOCKER LOGIN --------
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', 'echo $$TOKEN | docker login --username sberardi --password-stdin']
+  secretEnv: ['TOKEN']
+
+# -------- DOCKER BUILD --------
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', 'make docker-multi-arch']
+
+# -------- CONFIG --------
+timeout: 5400s  # 90 minutes
+availableSecrets:
+  secretManager:
+  - versionName: projects/snappy-apps/secrets/DOCKER_TOKEN/versions/1
+    env: 'TOKEN'
+options:
+  pool:
+    name: 'projects/snappy-apps/locations/us-west2/workerPools/snappy-worker-pool'

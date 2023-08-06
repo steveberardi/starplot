@@ -265,20 +265,20 @@ class ObjectStyle(BaseModel):
     """Defines the style for a SkyObject"""
 
     marker: MarkerStyle = MarkerStyle()
-    """Style for the object's marker `[MarkerStyle][starplot.styles.MarkerStyle]`"""
+    """Style for the object's marker (see [MarkerStyle][starplot.styles.MarkerStyle])"""
 
     label: LabelStyle = LabelStyle()
-    """Style for the object's label"""
+    """Style for the object's label (see [LabelStyle][starplot.styles.LabelStyle])"""
 
 
 class PathStyle(BaseModel):
     """Defines the style for a path (e.g. constellation lines)"""
 
     line: LineStyle = LineStyle()
-    """Style for the line"""
+    """Style for the line (see [LineStyle][starplot.styles.LineStyle])"""
 
     label: LabelStyle = LabelStyle()
-    """Style for the path's label"""
+    """Style for the path's label (see [LabelStyle][starplot.styles.LabelStyle])"""
 
 
 class PlotStyle(BaseModel):

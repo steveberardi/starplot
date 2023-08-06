@@ -13,7 +13,7 @@ DOCKER_BUILDER=starplot-builder
 export PYTHONPATH=./src/
 
 lint:
-	$(DOCKER_RUN) "python -m flake8 --ignore E501,W503 src/ tests/"
+	$(DOCKER_RUN) "ruff check src/ tests/"
 
 format:
 	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ example.py $(ARGS)"
