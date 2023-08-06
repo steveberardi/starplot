@@ -1,4 +1,4 @@
-matplotlib==3.5.1
+matplotlib==3.7.2
 numpy==1.25.2
 pandas==1.4.0
 pydantic==2.0.3

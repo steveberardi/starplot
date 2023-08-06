@@ -27,6 +27,7 @@ dependencies = [
     "cartopy >= 0.21.1",
     "geopandas >= 0.13.2",
     "pillow >= 10.0.0",
+    "PyYAML >= 6.0.1",
 ]
 
 [project.urls]
