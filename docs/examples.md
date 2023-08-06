@@ -35,7 +35,7 @@ The created file should look something like this:
 
 ## Star Chart with an Extra Object Plotted
 
-Building on the first example, you can also plot additional objects and even customize their style. Here's an example that plots the [Coma Star Cluster](https://en.wikipedia.org/wiki/Coma_Star_Cluster) (Mel 111) as a red star and also changes the plot style to `GRAYSCALE`:
+Building on the first example, you can also plot additional objects and even customize their style. Here's an example that plots the [Coma Star Cluster](https://en.wikipedia.org/wiki/Coma_Star_Cluster) (Melotte 111) as a red star and also changes the plot style to `GRAYSCALE`:
 
 ```python
 from datetime import datetime
@@ -44,7 +44,7 @@ import starplot as sp
 
 tz = timezone("America/Los_Angeles")
 
-p = splt.ZenithPlot(
+p = sp.ZenithPlot(
     lat=32.97,
     lon=-117.038611,
     dt=tz.localize(datetime.now().replace(hour=22)),
@@ -62,7 +62,7 @@ p.plot_object(
         },
     )
 )
-p.export("starchart-coma.png", format="png")
+p.export("starchart-coma.png")
 
 ```
 
@@ -74,8 +74,6 @@ p.export("starchart-coma.png", format="png")
 The following code will create a simple map plot that shows the area around the constellation Orion, including an extra marker for M42 - The Great Orion Nebula:
 
 ```python
-from datetime import datetime
-from pytz import timezone
 import starplot as sp
 
 style = sp.styles.MAP_BLUE.extend(
@@ -89,7 +87,7 @@ style = sp.styles.MAP_BLUE.extend(
 )
 style.star.label.font_size = 11
 
-p = splt.MapPlot(
+p = sp.MapPlot(
     projection=Projection.MERCATOR,
     ra_min=3.6,
     ra_max=7.8,

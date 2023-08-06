@@ -47,11 +47,11 @@ class ZenithPlot(StarPlot):
         lat: Latitude of viewing location
         lon: Longitude of viewing location
         include_info_text: If True, then the plot will include the time/location
-        dt: Date/time to use for star positions (*must be timezone-aware*)
-        limiting_magnitude: Maximum magnitude of stars to plot
-        limiting_magnitude_labels: Maximum magnitude of stars to label on the plot
+        dt: Date/time to use for star positions (*must be timezone-aware*). Default = current UTC time.
+        limiting_magnitude: Limiting magnitude of stars to plot
+        limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
         ephemeris: Ephemeris to use for calculating star positions
-        style: Styling for the plot (colors, size, fonts, etc)
+        style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping

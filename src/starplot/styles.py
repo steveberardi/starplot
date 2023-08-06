@@ -388,7 +388,7 @@ BLUE = PlotStyle(
     border_bg_color="#7997b9",
     # Constellations
     constellation=PathStyle(
-        line=LineStyle(width=2, color="#6ba832", alpha=0.2),
+        line=LineStyle(width=3, color="#6ba832", alpha=0.2),
         label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT),
     ),
     milky_way=PolygonStyle(
@@ -422,7 +422,7 @@ RED = PlotStyle(
     ),
     # Constellations
     constellation=PathStyle(
-        line=LineStyle(width=2, color="#ff8e8e", alpha=0.2),
+        line=LineStyle(width=3, color="#ff8e8e", alpha=0.2),
         label=LabelStyle(
             font_size=7, font_weight=FontWeightEnum.LIGHT, font_color="#7a0000"
         ),
@@ -460,7 +460,7 @@ CHALK = PlotStyle(
     ),
     # Constellations
     constellation=PathStyle(
-        line=LineStyle(width=1, color="rgb(230, 204, 147)", alpha=0.36),
+        line=LineStyle(width=2, color="rgb(230, 204, 147)", alpha=0.36),
         label=LabelStyle(
             font_size=7,
             font_weight=FontWeightEnum.LIGHT,
