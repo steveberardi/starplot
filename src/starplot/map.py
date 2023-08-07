@@ -38,7 +38,7 @@ class Projection(str, Enum):
         return {
             Projection.STEREO_NORTH: ccrs.NorthPolarStereo(center_lon),
             Projection.STEREO_SOUTH: ccrs.SouthPolarStereo(center_lon),
-            Projection.MERCATOR: ccrs.PlateCarree(center_lon),
+            Projection.MERCATOR: ccrs.Mercator(center_lon),
         }.get(projection)
 
 
