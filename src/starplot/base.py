@@ -61,11 +61,10 @@ class StarPlot(ABC):
 
     def _maybe_remove_label(self, label) -> None:
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+        ax_extent = self.ax.get_window_extent()
 
-        if (
-            self.ax.contains_point(extent.p0)
-            and self.ax.contains_point(extent.p1)
-            and not (self.hide_colliding_labels and self._is_label_collision(extent))
+        if transforms.Bbox.intersection(ax_extent, extent) and not (
+            self.hide_colliding_labels and self._is_label_collision(extent)
         ):
             self.labels.append(label)
             self._labels_extents.append(extent)
