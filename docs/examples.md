@@ -53,7 +53,7 @@ p = sp.ZenithPlot(
     resolution=2000,
 )
 p.plot_object(
-    SkyObject(
+    sp.SkyObject(
         name="Mel 111",
         ra=12.36,
         dec=25.85,
@@ -88,7 +88,7 @@ style = sp.styles.MAP_BLUE.extend(
 style.star.label.font_size = 11
 
 p = sp.MapPlot(
-    projection=Projection.MERCATOR,
+    projection=sp.Projection.MERCATOR,
     ra_min=3.6,
     ra_max=7.8,
     dec_min=-16,
@@ -98,7 +98,7 @@ p = sp.MapPlot(
     resolution=4000,
 )
 p.plot_object(
-    SkyObject(
+    sp.SkyObject(
         name="M42",
         ra=5.58333,
         dec=-4.61,
