@@ -17,14 +17,14 @@ nav:
 theme:
   name: material
   palette:
-    # Palette toggle for light mode
+    # toggle for light mode
     - scheme: default
       primary: custom
       toggle:
         icon: material/brightness-7 
         name: Switch to dark mode
 
-    # Palette toggle for dark mode
+    # toggle for dark mode
     - scheme: slate
       primary: custom
       toggle:
@@ -34,7 +34,6 @@ theme:
   favicon: images/favicon.png
   features:
     - content.code.copy
-    # - navigation.expand
     - toc.integrate
   
 extra_css:
@@ -51,8 +50,6 @@ plugins:
             docstring_section_style: list
 
 markdown_extensions:
-  # - toc:
-  #     permalink: true
   - admonition
   - md_in_html
   - pymdownx.highlight:
