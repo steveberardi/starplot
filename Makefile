@@ -77,6 +77,7 @@ clean:
 	rm -rf __pycache__
 	rm -rf venv
 	rm -rf dist
+	rm -rf site
 	rm -rf htmlcov
 
 .PHONY: install shell build publish clean example
