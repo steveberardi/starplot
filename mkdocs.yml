@@ -16,6 +16,7 @@ nav:
 
 theme:
   name: material
+  custom_dir: docs/custom/
   palette:
     # Palette toggle for light mode
     - scheme: default
@@ -39,6 +40,9 @@ theme:
   
 extra_css:
   - stylesheets/extra.css
+
+exclude_docs: |
+  custom/
 
 plugins:
   - search
