@@ -247,7 +247,7 @@ class MapPlot(StarPlot):
     def _plot_ecliptic(self):
         g = pyproj.Geod(ellps='WGS84')
         points = 50
-        lonlats = g.npts(1, 0, 90, -23.4, points)
+        lonlats = g.npts(1, 0, 90, -23.4, points, initial_idx=0, terminus_idx=0)
 
         x = [x for x, y in lonlats]
         y = [y for x, y in lonlats]
@@ -257,7 +257,7 @@ class MapPlot(StarPlot):
             color="red",
             **self._plot_kwargs()
         )
-        lonlats = g.npts(90, -23.4, 180, 0, points)
+        lonlats = g.npts(90, -23.4, 180, 0, points, initial_idx=0, terminus_idx=0)
 
         x = [x for x, y in lonlats]
         y = [y for x, y in lonlats]
