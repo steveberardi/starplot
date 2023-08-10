@@ -7,6 +7,7 @@ import cartopy.crs as ccrs
 
 from matplotlib import pyplot as plt
 import geopandas as gpd
+import pyproj
 
 from skyfield.api import Star
 
@@ -243,6 +244,33 @@ class MapPlot(StarPlot):
                     ra + 0.01, dec, bayer_desig, ha="right", va="bottom", **style
                 )
 
+    def _plot_ecliptic(self):
+        g = pyproj.Geod(ellps='WGS84')
+        points = 50
+        lonlats = g.npts(1, 0, 90, -23.4, points)
+
+        x = [x for x, y in lonlats]
+        y = [y for x, y in lonlats]
+        self.ax.scatter(
+            x,
+            y,
+            color="red",
+            **self._plot_kwargs()
+        )
+        lonlats = g.npts(90, -23.4, 180, 0, points)
+
+        x = [x for x, y in lonlats]
+        y = [y for x, y in lonlats]
+        self.ax.scatter(
+            x,
+            y,
+            color="red",
+            **self._plot_kwargs()
+        )
+
+        self.ax.plot([1, 90], [0, -23.4], color='blue', linewidth=5, transform=ccrs.Geodetic())
+        # self.ax.plot([180, 358], [-23, 23], color='red', linewidth=5, transform=ccrs.Geodetic())
+
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
 
@@ -266,6 +294,7 @@ class MapPlot(StarPlot):
         self._plot_constellation_labels()
         self._plot_milky_way()
         self._plot_stars()
+        self._plot_ecliptic()
 
         if self.adjust_text:
             self.adjust_labels()

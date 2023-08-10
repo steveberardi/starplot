@@ -180,7 +180,7 @@ def create_map_mercator():
         dec_max=80,
         limiting_magnitude=6,
         style=style,
-        resolution=16000,
+        resolution=8000,
         adjust_text=False,
     )
     p.export("temp/map-mercator.svg", format="svg")
@@ -332,8 +332,8 @@ def example_style():
 # create_map_orion()
 # create_map_all()
 
-create_zenith()
-# create_map_mercator()
+# create_zenith()
+create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
 # create_map_stereo_vega()
