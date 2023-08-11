@@ -362,6 +362,15 @@ class PlotStyle(BaseModel):
         zorder=-1024,
     )
 
+    # Celestial Equator
+    celestial_equator: LineStyle = LineStyle(
+        color="black",
+        width=2,
+        style=LineStyleEnum.DASHED_DOTS,
+        alpha=0.9,
+        zorder=-1024,
+    )
+
     @staticmethod
     def load_from_file(filename: str):
         """

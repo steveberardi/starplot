@@ -275,6 +275,14 @@ class MapPlot(StarPlot):
             )
         # self.ax.plot([180, 358], [-23, 23], color='red', linewidth=5, transform=ccrs.Geodetic())
 
+    def _plot_celestial_equator(self):
+        self.ax.plot(
+            [0, 360],
+            [0, 0],
+            **self._plot_kwargs(),
+            **self.style.celestial_equator.matplot_kwargs(self._size_multiplier),
+        )
+
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
 
@@ -301,6 +309,7 @@ class MapPlot(StarPlot):
         self._plot_milky_way()
         self._plot_stars()
         self._plot_ecliptic()
+        self._plot_celestial_equator()
 
         if self.adjust_text:
             self.adjust_labels()
