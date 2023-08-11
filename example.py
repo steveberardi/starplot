@@ -332,7 +332,7 @@ def example_style():
 # create_map_orion()
 # create_map_all()
 
-# create_zenith()
+create_zenith()
 create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()

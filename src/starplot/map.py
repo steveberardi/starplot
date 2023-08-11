@@ -268,13 +268,10 @@ class MapPlot(StarPlot):
                 [s[1], s[3]],
                 # [1, 90],
                 # [0, -23.4],
-                color="#e33b3b",
-                linewidth=5,
-                alpha=0.8,
-                linestyle = (0,(0.1,4)),
-                dash_capstyle="round",
-                zorder=-1024,
+                # linestyle = (0,(0.1,4)),
+                dash_capstyle=self.style.ecliptic.dash_capstyle,
                 transform=ccrs.Geodetic(),
+                **self.style.ecliptic.matplot_kwargs(self._size_multiplier),
             )
         # self.ax.plot([180, 358], [-23, 23], color='red', linewidth=5, transform=ccrs.Geodetic())
 

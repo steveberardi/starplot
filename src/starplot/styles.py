@@ -73,6 +73,12 @@ class LineStyleEnum(str, Enum):
     DOTTED = "dotted"
 
 
+class DashCapStyleEnum(str, Enum):
+    BUTT = "butt"
+    PROJECTING = "projecting"
+    ROUND = "round"
+
+
 class MarkerStyle(BaseModel):
     """
     Styling properties for markers.
@@ -150,6 +156,9 @@ class LineStyle(BaseModel):
     style: LineStyleEnum = LineStyleEnum.SOLID
     """Style of the line (e.g. solid, dashed, etc)."""
 
+    dash_capstyle: DashCapStyleEnum = DashCapStyleEnum.PROJECTING
+    """Style of dash endpoints"""
+
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
@@ -160,13 +169,15 @@ class LineStyle(BaseModel):
     """If True, the line will be plotted"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
-        return dict(
-            colors=self.color.as_hex(),
+        result = dict(
+            color=self.color.as_hex(),
             linestyle=self.style,
-            linewidths=self.width * size_multiplier,
+            linewidth=self.width * size_multiplier,
+            # dash_capstyle=self.dash_capstyle,
             alpha=self.alpha,
             zorder=self.zorder,
         )
+        return result
 
 
 class PolygonStyle(BaseModel):
@@ -340,6 +351,16 @@ class PlotStyle(BaseModel):
         zorder=-10000,
     )
     """Styling for the Milky Way (only applies to map plots)"""
+
+    # Ecliptic
+    ecliptic: LineStyle = LineStyle(
+        color="#e33b3b",
+        width=2,
+        style=LineStyleEnum.DOTTED,
+        dash_capstyle=DashCapStyleEnum.ROUND,
+        alpha=0.75,
+        zorder=-1024,
+    )
 
     @staticmethod
     def load_from_file(filename: str):
