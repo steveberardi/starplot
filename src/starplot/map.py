@@ -245,30 +245,37 @@ class MapPlot(StarPlot):
                 )
 
     def _plot_ecliptic(self):
-        g = pyproj.Geod(ellps='WGS84')
+        g = pyproj.Geod(ellps="WGS84")
         points = 50
-        lonlats = g.npts(1, 0, 90, -23.4, points, initial_idx=0, terminus_idx=0)
 
-        x = [x for x, y in lonlats]
-        y = [y for x, y in lonlats]
-        self.ax.scatter(
-            x,
-            y,
-            color="red",
-            **self._plot_kwargs()
-        )
-        lonlats = g.npts(90, -23.4, 180, 0, points, initial_idx=0, terminus_idx=0)
+        sections = [
+            [0, 0, 90, -23.4],
+            [90, -23.4, 180, 0],
+            [180, 0, 270, 23.4],
+            [270, 23.4, 360, 0],
+        ]
+        for s in sections:
+            # lonlats = g.npts(*s, points, initial_idx=0, terminus_idx=0)
 
-        x = [x for x, y in lonlats]
-        y = [y for x, y in lonlats]
-        self.ax.scatter(
-            x,
-            y,
-            color="red",
-            **self._plot_kwargs()
-        )
+            # x = [x for x, y in lonlats]
+            # y = [y for x, y in lonlats]
+            # self.ax.scatter(
+            #     x, y, color="#e33b3b", alpha=0.8, zorder=-1024, **self._plot_kwargs()
+            # )
 
-        self.ax.plot([1, 90], [0, -23.4], color='blue', linewidth=5, transform=ccrs.Geodetic())
+            self.ax.plot(
+                [s[0], s[2]],
+                [s[1], s[3]],
+                # [1, 90],
+                # [0, -23.4],
+                color="#e33b3b",
+                linewidth=5,
+                alpha=0.8,
+                linestyle = (0,(0.1,4)),
+                dash_capstyle="round",
+                zorder=-1024,
+                transform=ccrs.Geodetic(),
+            )
         # self.ax.plot([180, 358], [-23, 23], color='red', linewidth=5, transform=ccrs.Geodetic())
 
     def _init_plot(self):
@@ -281,7 +288,9 @@ class MapPlot(StarPlot):
         else:
             center_lon = -180
 
-        self.ax = plt.axes(projection=Projection.crs(self.projection, center_lon))
+        self._proj = Projection.crs(self.projection, center_lon)
+        self._proj.threshold = 100
+        self.ax = plt.axes(projection=self._proj)
         self.ax.set_extent(self._latlon_bounds(), crs=ccrs.PlateCarree())
         self._adjust_radec_minmax()
 

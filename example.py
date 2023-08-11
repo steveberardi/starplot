@@ -191,14 +191,14 @@ def create_map_stereo_north():
         projection=Projection.STEREO_NORTH,
         ra_min=0,
         ra_max=24,
-        dec_min=0,
+        dec_min=-40,
         dec_max=90,
-        limiting_magnitude=12,
+        limiting_magnitude=8,
         style=MAP_BLUE,
-        resolution=8000,
+        resolution=4000,
         adjust_text=False,
     )
-    p.export("temp-map-north.png")
+    p.export("temp/temp-map-north.png")
 
 
 def create_map_stereo_south():
