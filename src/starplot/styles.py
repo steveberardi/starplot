@@ -353,22 +353,38 @@ class PlotStyle(BaseModel):
     """Styling for the Milky Way (only applies to map plots)"""
 
     # Ecliptic
-    ecliptic: LineStyle = LineStyle(
-        color="#e33b3b",
-        width=2,
-        style=LineStyleEnum.DOTTED,
-        dash_capstyle=DashCapStyleEnum.ROUND,
-        alpha=0.75,
-        zorder=-1024,
+    ecliptic: PathStyle = PathStyle(
+        line=LineStyle(
+            color="#e33b3b",
+            width=1,
+            style=LineStyleEnum.DOTTED,
+            dash_capstyle=DashCapStyleEnum.ROUND,
+            alpha=0.75,
+            zorder=-1024,
+        ),
+        label=LabelStyle(
+            font_size=5,
+            font_color="#e33b3b",
+            font_weight=FontWeightEnum.LIGHT,
+            font_alpha=0.65,
+        ),
     )
 
     # Celestial Equator
-    celestial_equator: LineStyle = LineStyle(
-        color="black",
-        width=2,
-        style=LineStyleEnum.DASHED_DOTS,
-        alpha=0.9,
-        zorder=-1024,
+    celestial_equator: PathStyle = PathStyle(
+        line=LineStyle(
+            color="#2d5ec2",
+            width=1,
+            style=LineStyleEnum.DASHED_DOTS,
+            alpha=0.65,
+            zorder=-1024,
+        ),
+        label=LabelStyle(
+            font_size=5,
+            font_color="#2d5ec2",
+            font_weight=FontWeightEnum.LIGHT,
+            font_alpha=0.65,
+        ),
     )
 
     @staticmethod

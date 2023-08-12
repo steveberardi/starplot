@@ -129,7 +129,7 @@ def create_map_orion():
             },
         )
     )
-    p.export("temp-orion.svg", format="svg")
+    p.export("temp/map-orion.svg", format="svg")
 
 
 def create_zenith():
@@ -332,12 +332,12 @@ def example_style():
 # create_map_orion()
 # create_map_all()
 
-create_zenith()
+# create_zenith()
 create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
 # create_map_stereo_vega()
-# create_map_orion()
+create_map_orion()
 
 # MAP_BLUE.dump_to_file("blue.yml")
 
