@@ -7,13 +7,14 @@ import cartopy.crs as ccrs
 
 from matplotlib import pyplot as plt
 import geopandas as gpd
-import pyproj
+
 
 from skyfield.api import Star
 
 from starplot.base import StarPlot
-from starplot.data import load, DataFiles, bayer, constellations, stars
+from starplot.data import load, DataFiles, bayer, constellations, stars, constants
 from starplot.styles import PlotStyle, MAP_BLUE
+from starplot.utils import bbox_minmax_angle
 
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
@@ -245,48 +246,39 @@ class MapPlot(StarPlot):
                 )
 
     def _plot_ecliptic(self):
-        g = pyproj.Geod(ellps="WGS84")
-        points = 50
+        if not self.style.ecliptic.line.visible:
+            return
 
-        sections = [
-            [0, 0, 90, -23.4],
-            [90, -23.4, 180, 0],
-            [180, 0, 270, 23.4],
-            [270, 23.4, 360, 0],
+        incline = constants.ECLIPTIC_ANGLE
+
+        radecs = [
+            [(24, 18), (0, -1 * incline), (21, -15)],
+            [(18, 12), (-1 * incline, 0), (15, -15)],
+            [(12, 6), (0, incline), (9, 15)],
+            [(6, 0), (incline, 0), (3, 15)],
         ]
-        
-        radec = [
-            [(24, 18), (0, -23.4)],
-            [(18, 12), (-23.4, 0)],
-            [(12, 6), (0, 23.4)],
-            [(6, 0), (23.4, 0)],
-        ]
-        for ra, dec in radec:
-            # lonlats = g.npts(*s, points, initial_idx=0, terminus_idx=0)
+        for ras, decs, text_coord in radecs:
+            lon_0 = -1 * (ras[0] * 15 - 360)
+            lon_1 = -1 * (ras[1] * 15 - 360)
+            coef = (decs[1] - decs[0]) / incline
 
-            # x = [x for x, y in lonlats]
-            # y = [y for x, y in lonlats]
-            # self.ax.scatter(
-            #     x, y, color="#e33b3b", alpha=0.8, zorder=-1024, **self._plot_kwargs()
-            # )
-            lon_0 = -1 * (ra[0] * 15 - 360)
-            lon_1 = -1 * (ra[1] * 15 - 360)
-            # lon = -1 * (ra * 15 - 360)
+            eline = self.ax.plot(
+                [lon_0, lon_1],  # x
+                decs,  # y
+                dash_capstyle=self.style.ecliptic.line.dash_capstyle,
+                transform=ccrs.Geodetic(),
+                **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
+            )
 
-            if self.style.ecliptic.line.visible:
-                self.ax.plot(
-                    [lon_0, lon_1],  # x
-                    dec,  # y
-                    dash_capstyle=self.style.ecliptic.line.dash_capstyle,
-                    transform=ccrs.Geodetic(),
-                    **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
-                )
+            angle = coef * bbox_minmax_angle(eline[0].get_bbox())
 
             if self.style.ecliptic.label.visible:
                 self._plot_text(
-                    sum(ra)/2,
-                    sum(dec)/2,
+                    *text_coord,
                     "ECLIPTIC",
+                    rotation=angle,
+                    rotation_mode="anchor",
+                    transform_rotates_text=True,
                     **self.style.ecliptic.label.matplot_kwargs(self._size_multiplier),
                 )
 
@@ -296,11 +288,15 @@ class MapPlot(StarPlot):
                 [0, 360],
                 [0, 0],
                 **self._plot_kwargs(),
-                **self.style.celestial_equator.line.matplot_kwargs(self._size_multiplier),
+                **self.style.celestial_equator.line.matplot_kwargs(
+                    self._size_multiplier
+                ),
             )
 
         if self.style.celestial_equator.label.visible:
-            style = self.style.celestial_equator.label.matplot_kwargs(self._size_multiplier)
+            style = self.style.celestial_equator.label.matplot_kwargs(
+                self._size_multiplier
+            )
 
             for ra in range(0, 24, 4):
                 self._plot_text(ra, 0.25, "CELESTIAL EQUATOR", **style)
