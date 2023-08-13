@@ -317,9 +317,26 @@ class MapPlot(StarPlot):
         self.ax.set_extent(self._latlon_bounds(), crs=ccrs.PlateCarree())
         self._adjust_radec_minmax()
 
-        gridlines = self.ax.gridlines(zorder=-10_000, draw_labels=False)
-        gridlines.top_labels = False
-        gridlines.right_labels = False
+        import matplotlib.ticker as mticker
+
+        from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter, LatitudeLocator
+
+        grid_labels_visible = self.style.gridlines.label.visible
+        
+        gridlines = self.ax.gridlines(draw_labels=grid_labels_visible, **self.style.gridlines.line.matplot_kwargs())
+
+        gridlines.top_labels = grid_labels_visible
+        gridlines.right_labels = grid_labels_visible
+        # gridlines.xlabels_top = grid_labels_visible
+        # gridlines.ylabels_left = grid_labels_visible
+        # gridlines.xlines = grid_labels_visible
+        # gridlines.xlocator = mticker.FixedLocator([-180, -45, 0, 45, 180])
+        # gridlines.ylocator = LatitudeLocator()
+        # gridlines.xformatter = LongitudeFormatter()
+        # gridlines.yformatter = LatitudeFormatter()
+        # gridlines.xlabel_style = {'size': 15, 'color': 'gray'}
+        # gridlines.xlabel_style = {'color': 'red', 'weight': 'bold'}
+
 
         self._plot_constellation_lines()
         self._plot_constellation_borders()

@@ -352,6 +352,25 @@ class PlotStyle(BaseModel):
     )
     """Styling for the Milky Way (only applies to map plots)"""
 
+    # Gridlines
+    gridlines: PathStyle = PathStyle(
+        line=LineStyle(
+            color="#888",
+            width=1,
+            style=LineStyleEnum.SOLID,
+            alpha=0.8,
+            zorder=-10_000,
+        ),
+        label=LabelStyle(
+            font_size=8,
+            font_color="#000",
+            font_weight=FontWeightEnum.LIGHT,
+            font_alpha=1,
+            visible=True,
+        ),
+    )
+    """Styling for gridlines (only applies to map plots)"""
+
     # Ecliptic
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(
