@@ -363,7 +363,7 @@ class PlotStyle(BaseModel):
             zorder=-1024,
         ),
         label=LabelStyle(
-            font_size=5,
+            font_size=4,
             font_color="#e33b3b",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=0.65,
@@ -374,13 +374,13 @@ class PlotStyle(BaseModel):
     celestial_equator: PathStyle = PathStyle(
         line=LineStyle(
             color="#2d5ec2",
-            width=1,
+            width=2,
             style=LineStyleEnum.DASHED_DOTS,
             alpha=0.65,
             zorder=-1024,
         ),
         label=LabelStyle(
-            font_size=5,
+            font_size=4,
             font_color="#2d5ec2",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=0.65,

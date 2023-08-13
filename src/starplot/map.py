@@ -254,6 +254,7 @@ class MapPlot(StarPlot):
             [180, 0, 270, 23.4],
             [270, 23.4, 360, 0],
         ]
+        
         radec = [
             [(24, 18), (0, -23.4)],
             [(18, 12), (-23.4, 0)],
@@ -272,33 +273,37 @@ class MapPlot(StarPlot):
             lon_1 = -1 * (ra[1] * 15 - 360)
             # lon = -1 * (ra * 15 - 360)
 
-            self.ax.plot(
-                [lon_0, lon_1],  # x
-                dec,  # y
-                dash_capstyle=self.style.ecliptic.line.dash_capstyle,
-                transform=ccrs.Geodetic(),
-                **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
-            )
+            if self.style.ecliptic.line.visible:
+                self.ax.plot(
+                    [lon_0, lon_1],  # x
+                    dec,  # y
+                    dash_capstyle=self.style.ecliptic.line.dash_capstyle,
+                    transform=ccrs.Geodetic(),
+                    **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
+                )
 
-            self._plot_text(
-                sum(ra)/2,
-                sum(dec)/2,
-                "ECLIPTIC",
-                **self.style.ecliptic.label.matplot_kwargs(self._size_multiplier),
-            )
+            if self.style.ecliptic.label.visible:
+                self._plot_text(
+                    sum(ra)/2,
+                    sum(dec)/2,
+                    "ECLIPTIC",
+                    **self.style.ecliptic.label.matplot_kwargs(self._size_multiplier),
+                )
 
     def _plot_celestial_equator(self):
-        self.ax.plot(
-            [0, 360],
-            [0, 0],
-            **self._plot_kwargs(),
-            **self.style.celestial_equator.line.matplot_kwargs(self._size_multiplier),
-        )
+        if self.style.celestial_equator.line.visible:
+            self.ax.plot(
+                [0, 360],
+                [0, 0],
+                **self._plot_kwargs(),
+                **self.style.celestial_equator.line.matplot_kwargs(self._size_multiplier),
+            )
 
-        style = self.style.celestial_equator.label.matplot_kwargs(self._size_multiplier)
+        if self.style.celestial_equator.label.visible:
+            style = self.style.celestial_equator.label.matplot_kwargs(self._size_multiplier)
 
-        for ra in range(0, 22, 6):
-            self._plot_text(ra, 0.25, "CELESTIAL EQUATOR", **style)
+            for ra in range(0, 24, 4):
+                self._plot_text(ra, 0.25, "CELESTIAL EQUATOR", **style)
 
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
@@ -316,7 +321,7 @@ class MapPlot(StarPlot):
         self.ax.set_extent(self._latlon_bounds(), crs=ccrs.PlateCarree())
         self._adjust_radec_minmax()
 
-        gridlines = self.ax.gridlines(zorder=-1000, draw_labels=False)
+        gridlines = self.ax.gridlines(zorder=-10_000, draw_labels=False)
         gridlines.top_labels = False
         gridlines.right_labels = False
 
