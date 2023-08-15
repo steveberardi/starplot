@@ -321,21 +321,32 @@ class MapPlot(StarPlot):
 
         from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter, LatitudeLocator
 
-        grid_labels_visible = self.style.gridlines.label.visible
+        # grid_labels_visible = self.style.gridlines.label.visible
         
-        gridlines = self.ax.gridlines(draw_labels=grid_labels_visible, **self.style.gridlines.line.matplot_kwargs())
+        gridlines = self.ax.gridlines(draw_labels=True, **self.style.gridlines.line.matplot_kwargs())
 
-        gridlines.top_labels = grid_labels_visible
-        gridlines.right_labels = grid_labels_visible
-        # gridlines.xlabels_top = grid_labels_visible
-        # gridlines.ylabels_left = grid_labels_visible
-        # gridlines.xlines = grid_labels_visible
+        # gridlines.top_labels = grid_labels_visible
+        # gridlines.right_labels = grid_labels_visible
+        # # gridlines.xlabels_top = grid_labels_visible
+        # # gridlines.ylabels_left = grid_labels_visible
+        # # gridlines.xlines = grid_labels_visible
         # gridlines.xlocator = mticker.FixedLocator([-180, -45, 0, 45, 180])
-        # gridlines.ylocator = LatitudeLocator()
+        # # gridlines.ylocator = LatitudeLocator()
         # gridlines.xformatter = LongitudeFormatter()
-        # gridlines.yformatter = LatitudeFormatter()
+        # # gridlines.yformatter = LatitudeFormatter()
         # gridlines.xlabel_style = {'size': 15, 'color': 'gray'}
-        # gridlines.xlabel_style = {'color': 'red', 'weight': 'bold'}
+        # # gridlines.xlabel_style = {'color': 'red', 'weight': 'bold'}
+
+        # # (x0, x1, y0, y1)
+        extent = self.ax.get_extent(crs=ccrs.PlateCarree())
+
+        xticks = [x for x in range(0, int(extent[1] - extent[0]), 5)]
+        # self.ax.set_xticks(xticks, crs=ccrs.PlateCarree())
+        # self.ax.set_yticks([-90, -60, -30, 0, 30, 60, 90], crs=ccrs.PlateCarree())
+        lon_formatter = LongitudeFormatter()
+        lat_formatter = LatitudeFormatter()
+        self.ax.xaxis.set_major_formatter(lon_formatter)
+        self.ax.yaxis.set_major_formatter(lat_formatter)
 
 
         self._plot_constellation_lines()

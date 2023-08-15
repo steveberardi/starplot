@@ -1,8 +1,8 @@
-FROM python:3.9.17-bullseye as base
+FROM python:3.10.12-bookworm as base
 
 WORKDIR /starplot
 
-RUN apt-get update -y && apt-get install  -y libgeos-dev libgdal-dev
+RUN apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
 
 # Install shapely from source to avoid cartopy segfault
 # https://stackoverflow.com/questions/52374356/
