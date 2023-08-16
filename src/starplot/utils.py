@@ -12,3 +12,25 @@ def bbox_minmax_angle(bbox: Bbox) -> float:
 def in_circle(x, y, center_x=0, center_y=0, radius=0.9) -> bool:
     """Determine if a point (x,y) is inside a circle"""
     return (x - center_x) ** 2 + (y - center_y) ** 2 < (radius**2)
+
+
+def lon_to_ra(lon) -> (int, int, int):
+    pos_lon = lon + 180
+    ra_decimal = 12 - (24 * pos_lon / 360)
+
+    hour = math.floor(ra_decimal)
+
+    min_decimal = 60 * (ra_decimal - hour)
+    minutes = math.floor(min_decimal)
+
+    sec_decimal = 60 * (min_decimal - minutes)
+    seconds = math.floor(sec_decimal)
+    
+    if hour < 0:
+        hour += 24
+    
+    if seconds >= 60:
+        minutes += 1
+        seconds -= 60
+    
+    return hour, minutes, seconds

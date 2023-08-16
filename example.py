@@ -77,7 +77,7 @@ def create_map_stereo_vega():
     Correct lon/lat: 81, 38
     Calculated: 99
     """
-    p.export("temp-map-stereo-vega.png")
+    p.export("temp/map-stereo-vega.png")
 
 
 def create_map_orion():
@@ -336,7 +336,7 @@ def example_style():
 create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_stereo_vega()
+create_map_stereo_vega()
 create_map_orion()
 
 # MAP_BLUE.dump_to_file("blue.yml")
