@@ -14,7 +14,15 @@ def in_circle(x, y, center_x=0, center_y=0, radius=0.9) -> bool:
     return (x - center_x) ** 2 + (y - center_y) ** 2 < (radius**2)
 
 
-def lon_to_ra(lon) -> (int, int, int):
+def lon_to_ra(lon: float) -> (int, int, int):
+    """Converts longitude back to right ascension
+
+    Args:
+        lon: Longitude to convert
+
+    Returns:
+        Tuple of ints: (hours, minutes, seconds)
+    """
     pos_lon = lon + 180
     ra_decimal = 12 - (24 * pos_lon / 360)
 
