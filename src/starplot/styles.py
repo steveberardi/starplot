@@ -362,7 +362,7 @@ class PlotStyle(BaseModel):
             zorder=-10_000,
         ),
         label=LabelStyle(
-            font_size=9,
+            font_size=11,
             font_color="#000",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,

@@ -80,19 +80,20 @@ class StarPlot(ABC):
         if self.fig:
             plt.close(self.fig)
 
-    def export(self, filename: str, format: str = "png"):
+    def export(self, filename: str, format: str = "png", padding: int = 0):
         """Exports the plot to an image file.
 
         Args:
             filename: Filename of exported file
             format: Format of file: "png" or "svg"
+            padding: Padding (in inches) around the image
 
         """
         self.fig.savefig(
             filename,
             format=format,
             bbox_inches="tight",
-            pad_inches=0,
+            pad_inches=padding,
             dpi=144,  # (self.resolution / self.figure_size * 1.28),
         )
 

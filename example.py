@@ -129,7 +129,7 @@ def create_map_orion():
             },
         )
     )
-    p.export("temp/map-orion.svg", format="svg")
+    p.export("temp/map-orion.svg", format="svg", padding=1)
 
 
 def create_zenith():
