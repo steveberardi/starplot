@@ -4,11 +4,9 @@ import warnings
 from enum import Enum
 
 import cartopy.crs as ccrs
-from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter, LatitudeLocator
-
 
 from matplotlib import pyplot as plt
-import matplotlib.ticker as mticker
+from matplotlib.ticker import FuncFormatter, FixedLocator
 import geopandas as gpd
 
 
@@ -308,44 +306,29 @@ class MapPlot(StarPlot):
         labels_visible = self.style.gridlines.label.visible
         lines_visible = self.style.gridlines.line.visible
 
-        from matplotlib.ticker import FuncFormatter
-
         def ra_formatter(x, pos) -> str:
             hour, minutes, seconds = lon_to_ra(x)
-            return f"{hour}:{minutes}:{seconds}"
-        
+            return f"{hour}h"
+
         def dec_formatter(x, pos) -> str:
-            return f"{x}\u00b0"
+            return f"{round(x)}\u00b0"
 
         if lines_visible:
-            gridlines = self.ax.gridlines(draw_labels=labels_visible, x_inline=False, y_inline=False, rotate_labels=False, **self.style.gridlines.line.matplot_kwargs())
-            
+            gridlines = self.ax.gridlines(
+                draw_labels=labels_visible,
+                x_inline=False,
+                y_inline=False,
+                rotate_labels=False,
+                **self.style.gridlines.line.matplot_kwargs(),
+            )
+
+            # use a fixed locator for right ascension so gridlines are only drawn at whole numbers
+            gridlines.xlocator = FixedLocator([x for x in range(-180, 180, 15)])
             gridlines.xformatter = FuncFormatter(ra_formatter)
             gridlines.xlabel_style = self.style.gridlines.label.matplot_kwargs()
 
             gridlines.yformatter = FuncFormatter(dec_formatter)
             gridlines.ylabel_style = self.style.gridlines.label.matplot_kwargs()
-
-        # gridlines.top_labels = grid_labels_visible
-        # gridlines.right_labels = grid_labels_visible
-        # # gridlines.xlabels_top = grid_labels_visible
-        # # gridlines.ylabels_left = grid_labels_visible
-        # # gridlines.xlines = grid_labels_visible
-        # gridlines.xlocator = mticker.FixedLocator([-180, -45, 0, 45, 180])
-        # # gridlines.ylocator = LatitudeLocator()
-        # gridlines.xformatter = LongitudeFormatter()
-        # # gridlines.yformatter = LatitudeFormatter()
-        # gridlines.xlabel_style = {'size': 15, 'color': 'gray'}
-        # # gridlines.xlabel_style = {'color': 'red', 'weight': 'bold'}
-
-        # # (x0, x1, y0, y1)
-        # extent = self.ax.get_extent(crs=ccrs.PlateCarree())
-
-        # xticks = [x for x in range(0, int(extent[1] - extent[0]), 5)]
-        # self.ax.set_xticks(xticks) #, crs=ccrs.PlateCarree())
-        # self.ax.set_yticks([-90, -60, -30, 0, 30, 60, 90], crs=ccrs.PlateCarree())
-        # self.ax.xaxis.set_major_formatter(FuncFormatter(formatter))
-        # self.ax.yaxis.set_major_formatter(lat_formatter)
 
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))

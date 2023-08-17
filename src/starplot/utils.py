@@ -25,12 +25,12 @@ def lon_to_ra(lon) -> (int, int, int):
 
     sec_decimal = 60 * (min_decimal - minutes)
     seconds = math.floor(sec_decimal)
-    
+
     if hour < 0:
         hour += 24
-    
+
     if seconds >= 60:
         minutes += 1
         seconds -= 60
-    
+
     return hour, minutes, seconds

@@ -362,11 +362,10 @@ class PlotStyle(BaseModel):
             zorder=-10_000,
         ),
         label=LabelStyle(
-            font_size=8,
+            font_size=9,
             font_color="#000",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
-            visible=True,
         ),
     )
     """Styling for gridlines (only applies to map plots)"""
@@ -388,6 +387,7 @@ class PlotStyle(BaseModel):
             font_alpha=0.65,
         ),
     )
+    """Styling for the Ecliptic"""
 
     # Celestial Equator
     celestial_equator: PathStyle = PathStyle(
@@ -405,6 +405,7 @@ class PlotStyle(BaseModel):
             font_alpha=0.65,
         ),
     )
+    """Styling for the Celestial Equator"""
 
     @staticmethod
     def load_from_file(filename: str):
