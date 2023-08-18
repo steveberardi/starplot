@@ -50,7 +50,9 @@ style.bayer_labels.font_size = 10
 
 ## Creating a New PlotStyle
 
-The easiest way to create a whole new style is by defining it in a YAML file, for example:
+The easiest way to create a whole new style is by defining it in a YAML file. You only have to define style properties that you want to override from the default base style -- similar to how Cascading Style Sheets (CSS) work.
+
+Example:
 
 
 ```yaml

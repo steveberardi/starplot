@@ -407,18 +407,21 @@ class PlotStyle(BaseModel):
     """Styling for the Celestial Equator"""
 
     @staticmethod
-    def load_from_file(filename: str):
+    def load_from_file(filename: str) -> "PlotStyle":
         """
-        Load a style from a YAML file
+        Load a style from a YAML file. The returned style is an extension of the default PlotStyle (see [`PlotStyle.extend`][starplot.styles.PlotStyle.extend])
 
         Args:
             filename: Filename of style file
+
+        Returns:
+            PlotStyle: A new instance of a PlotStyle
         """
         with open(filename, "r") as sfile:
             style = yaml.safe_load(sfile)
-            return PlotStyle.parse_obj(style)
+            return PlotStyle().extend(style)
 
-    def dump_to_file(self, filename: str):
+    def dump_to_file(self, filename: str) -> None:
         """
         Save the style to a YAML file
 
@@ -436,6 +439,9 @@ class PlotStyle(BaseModel):
 
         Args:
             updates: Dictionary of updates to the style
+
+        Returns:
+            PlotStyle: A new instance of a PlotStyle
         """
         style_json = self.model_dump_json()
         style_dict = json.loads(style_json)
