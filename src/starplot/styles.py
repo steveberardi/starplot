@@ -225,13 +225,12 @@ class LabelStyle(BaseModel):
     Styling properties for a label.
 
     Example Usage:
-        Creates a style for a partially transparent blue polygon:
+        Creates a style for a bold blue label:
         ```python
-        ps = PolygonStyle(
-                color="#d9d9d9",
-                alpha=0.36,
-                edge_width=0,
-                zorder=-10000,
+        ls = LabelStyle(
+                font_color="blue",
+                font_weight=FontWeightEnum.BOLD,
+                zorder=1,
         )
         ```
     """
@@ -541,7 +540,7 @@ MAP_BLUE = PlotStyle(
     # Borders
     border_font_color="#f1f6ff",
     border_line_color="#2f4358",
-    border_bg_color="#7997b9",
+    border_bg_color="#fff",
     star=ObjectStyle(
         marker=MarkerStyle(fillstyle=FillStyleEnum.FULL),
         label=LabelStyle(font_size=8, font_weight=FontWeightEnum.BOLD, zorder=1024),
@@ -564,3 +563,28 @@ MAP_BLUE = PlotStyle(
         zorder=-10000,
     ),
 )
+
+MAP_CHALK = CHALK.extend(dict(
+    bayer_labels=LabelStyle(font_color="#A3C796", font_alpha=0.8),
+    milky_way=PolygonStyle(
+        color="#95a3bf",
+        alpha=0.18,
+        edge_width=0,
+        zorder=-10000,
+    ),
+    gridlines=PathStyle(
+        line=LineStyle(
+            color="#888",
+            width=1,
+            style=LineStyleEnum.SOLID,
+            alpha=0.8,
+            zorder=-10_000,
+        ),
+        label=LabelStyle(
+            font_size=12,
+            font_color="#c2d2f3",
+            font_weight=FontWeightEnum.LIGHT,
+            font_alpha=0.8,
+        ),
+    )
+))

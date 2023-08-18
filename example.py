@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from pytz import timezone
 
-from starplot.styles import PlotStyle, BLUE, GRAYSCALE, CHALK, RED, MAP_BLUE
+from starplot.styles import PlotStyle, BLUE, GRAYSCALE, CHALK, RED, MAP_BLUE, MAP_CHALK
 from starplot.models import SkyObject
 from starplot.map import Projection
 
@@ -37,7 +37,7 @@ def create_map_stereo_vega():
     #         "font_size": 10
     #     }
     # })
-    style = MAP_BLUE
+    style = MAP_CHALK
     style.bayer_labels.font_name = "GFS Didot"
     style.bayer_labels.font_size = 10
     p = sp.MapPlot(
@@ -77,7 +77,7 @@ def create_map_stereo_vega():
     Correct lon/lat: 81, 38
     Calculated: 99
     """
-    p.export("temp/map-stereo-vega.png")
+    p.export("temp/map-stereo-vega.png", padding=0.5)
 
 
 def create_map_orion():
@@ -194,7 +194,7 @@ def create_map_stereo_north():
         dec_min=-40,
         dec_max=90,
         limiting_magnitude=8,
-        style=MAP_BLUE,
+        style=CHALK,
         resolution=4000,
         adjust_text=False,
     )
@@ -332,8 +332,8 @@ def example_style():
 # create_map_orion()
 # create_map_all()
 
-# create_zenith()
-create_map_mercator()
+create_zenith()
+# create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_stereo_vega()

@@ -331,7 +331,7 @@ class MapPlot(StarPlot):
             gridlines.ylabel_style = self.style.gridlines.label.matplot_kwargs()
 
     def _init_plot(self):
-        self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
+        self.fig = plt.figure(figsize=(self.figure_size, self.figure_size), facecolor=self.style.border_bg_color.as_hex())
 
         if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:
             # for stereo projections, try to orient map so the pole is "up"
@@ -344,6 +344,7 @@ class MapPlot(StarPlot):
         self._proj.threshold = 100
         self.ax = plt.axes(projection=self._proj)
         self.ax.set_extent(self._latlon_bounds(), crs=ccrs.PlateCarree())
+        self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
 
         self._plot_gridlines()
