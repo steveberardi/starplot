@@ -1,5 +1,6 @@
 import json
 from enum import Enum
+from pathlib import Path
 from typing import Optional
 
 from typing_extensions import Annotated
@@ -14,6 +15,9 @@ ColorStr = Annotated[Color, PlainSerializer(lambda c: c.as_hex(), return_type=st
 
 
 FONT_SCALE = 2
+
+HERE = Path(__file__).resolve().parent
+STYLES_PATH = HERE / "stylesheets"
 
 
 class FillStyleEnum(str, Enum):
@@ -419,7 +423,7 @@ class PlotStyle(BaseModel):
         """
         with open(filename, "r") as sfile:
             style = yaml.safe_load(sfile)
-            return PlotStyle().extend(style)
+            return PlotStyle().extend(**style)
 
     def dump_to_file(self, filename: str) -> None:
         """
@@ -433,25 +437,38 @@ class PlotStyle(BaseModel):
             style_yaml = yaml.dump(json.loads(style_json))
             outfile.write(style_yaml)
 
-    def extend(self, updates: dict) -> "PlotStyle":
+    def extend(self, *args, **kwargs) -> "PlotStyle":
         """
-        Creates a new style with the provided updates
+        Creates a new style with the provided updates from kwargs
+
+        Example Usage:
+            Create an extension of the GRAYSCALE style with a blue background and green constellation lines:
+            ```python
+
+            new_style = GRAYSCALE.extend(
+                background_color="#f1f6ff",
+                constellation=PathStyle(
+                    line=LineStyle(width=3, color="#6ba832", alpha=0.2),
+                    label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT),
+                ),
+            )
+            ```
 
         Args:
-            updates: Dictionary of updates to the style
+            kwargs: Updates to the style
 
         Returns:
             PlotStyle: A new instance of a PlotStyle
         """
         style_json = self.model_dump_json()
         style_dict = json.loads(style_json)
-        style_dict.update(updates)
+        style_dict.update(kwargs)
         return PlotStyle.parse_obj(style_dict)
 
 
 GRAYSCALE = PlotStyle()
 
-BLUE = PlotStyle(
+BLUE = GRAYSCALE.extend(
     background_color="#f1f6ff",
     # Borders
     border_font_color="#f1f6ff",
@@ -462,15 +479,9 @@ BLUE = PlotStyle(
         line=LineStyle(width=3, color="#6ba832", alpha=0.2),
         label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT),
     ),
-    milky_way=PolygonStyle(
-        color="#94c5e3",
-        alpha=0.16,
-        edge_width=0,
-        zorder=-10000,
-    ),
 )
 
-RED = PlotStyle(
+RED = GRAYSCALE.extend(
     background_color="#ffd0d0",
     # Borders
     border_font_color="#7a0000",
@@ -500,7 +511,7 @@ RED = PlotStyle(
     ),
 )
 
-CHALK = PlotStyle(
+CHALK = GRAYSCALE.extend(
     background_color="#4c566a",
     # Borders
     border_font_color="#a3be8c",
@@ -541,7 +552,7 @@ CHALK = PlotStyle(
     ),
 )
 
-MAP_BLUE = PlotStyle(
+MAP_BLUE = BLUE.extend(
     background_color="#fff",
     # Borders
     border_font_color="#f1f6ff",
@@ -570,7 +581,7 @@ MAP_BLUE = PlotStyle(
     ),
 )
 
-MAP_CHALK = CHALK.extend(dict(
+MAP_CHALK = CHALK.extend(
     bayer_labels=LabelStyle(font_color="#A3C796", font_alpha=0.8),
     milky_way=PolygonStyle(
         color="#95a3bf",
@@ -592,5 +603,5 @@ MAP_CHALK = CHALK.extend(dict(
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=0.8,
         ),
-    )
-))
+    ),
+)
