@@ -105,6 +105,9 @@ class MarkerStyle(BaseModel):
     color: ColorStr = ColorStr("#000")
     """Fill color of marker. Can be a hex, rgb, hsl, or word string."""
 
+    edge_color: ColorStr = ColorStr("#000")
+    """Fill color of marker. Can be a hex, rgb, hsl, or word string."""
+
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     """Symbol for marker"""
 
@@ -126,6 +129,7 @@ class MarkerStyle(BaseModel):
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex(),
+            markeredgecolor=self.edge_color.as_hex(),
             marker=self.symbol,
             markersize=self.size * size_multiplier * FONT_SCALE,
             fillstyle=self.fill,
@@ -315,7 +319,7 @@ class PlotStyle(BaseModel):
 
     # Stars
     star: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(fillstyle=FillStyleEnum.FULL),
+        marker=MarkerStyle(fill=FillStyleEnum.FULL),
         label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1024),
     )
     """Styling for stars"""
@@ -328,11 +332,53 @@ class PlotStyle(BaseModel):
     # Deep Sky Objects (DSOs)
     dso: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fillstyle=FillStyleEnum.FULL
+            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
         ),
         label=LabelStyle(font_size=8),
     )
     """Styling for deep sky objects (DSOs)"""
+
+    dso_open_cluster: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.CIRCLE,
+            size=10,
+            fill=FillStyleEnum.FULL,
+        ),
+        label=LabelStyle(font_size=8),
+    )
+    """Styling for open star clusters"""
+
+    dso_globular_cluster: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
+        ),
+        label=LabelStyle(font_size=8),
+    )
+    """Styling for globular star clusters"""
+
+    dso_galaxy: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
+        ),
+        label=LabelStyle(font_size=8),
+    )
+    """Styling for galaxies"""
+
+    dso_nebula: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
+        ),
+        label=LabelStyle(font_size=8),
+    )
+    """Styling for nebulas"""
+
+    dso_double_star: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
+        ),
+        label=LabelStyle(font_size=8),
+    )
+    """Styling for double stars"""
 
     # Constellations
     constellation: PathStyle = PathStyle(
@@ -559,7 +605,7 @@ MAP_BLUE = BLUE.extend(
     border_line_color="#2f4358",
     border_bg_color="#fff",
     star=ObjectStyle(
-        marker=MarkerStyle(fillstyle=FillStyleEnum.FULL),
+        marker=MarkerStyle(fill=FillStyleEnum.FULL),
         label=LabelStyle(font_size=8, font_weight=FontWeightEnum.BOLD, zorder=1024),
     ),
     bayer_labels=LabelStyle(
@@ -579,6 +625,16 @@ MAP_BLUE = BLUE.extend(
         edge_width=0,
         zorder=-10000,
     ),
+    dso_open_cluster=ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.CIRCLE,
+            size=8,
+            color="#fffb68",
+            fill=FillStyleEnum.FULL,
+            alpha=0.36,
+        ),
+        label=LabelStyle(font_size=4, visible=False),
+    )
 )
 
 MAP_CHALK = CHALK.extend(

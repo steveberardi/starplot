@@ -125,3 +125,27 @@ ZENITH_BASE = [
     "M93",
     "M104",
 ]
+
+ongc_types = {
+    "*": "Star",
+    "**": "Double star",
+    "*Ass": "Association of stars",
+    "OCl": "Open Cluster",
+    "GCl": "Globular Cluster",
+    "Cl+N": "Star cluster + Nebula",
+    "G": "Galaxy",
+    "GPair": "Galaxy Pair",
+    "GTrpl": "Galaxy Triplet",
+    "GGroup": "Group of galaxies",
+    "PN": "Planetary Nebula",
+    "HII": "HII Ionized region",
+    "DrkN": "Dark Nebula",
+    "EmN": "Emission Nebula",
+    "Neb": "Nebula",
+    "RfN": "Reflection Nebula",
+    "SNR": "Supernova remnant",
+    "Nova": "Nova star",
+    "NonEx": "Nonexistent object",
+    "Other": "Object of other/unknown type",
+    "Dup": "Duplicated record",
+}

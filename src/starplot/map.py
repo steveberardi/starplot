@@ -9,11 +9,12 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import FuncFormatter, FixedLocator
 import geopandas as gpd
 
-
+from pyongc import ongc
 from skyfield.api import Star
 
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, constants
+from starplot.models import SkyObject
 from starplot.styles import PlotStyle, MAP_BLUE
 from starplot.utils import bbox_minmax_angle, lon_to_ra
 
@@ -330,6 +331,32 @@ class MapPlot(StarPlot):
             gridlines.yformatter = FuncFormatter(dec_formatter)
             gridlines.ylabel_style = self.style.gridlines.label.matplot_kwargs()
 
+    def _plot_dsos(self):
+        dsos = ongc.listObjects(
+            # minra=self.ra_min,
+            # maxra=self.ra_max,
+            # mindec=self.dec_min,
+            # maxdec=self.dec_max,
+            # uptovmag=self.limiting_magnitude,
+            # TODO : query objects better, but this ra/dec range query doesnt work
+        )
+
+        for d in dsos:
+            if d.coords is None:
+                continue
+
+            ra = d.coords[0][0] + d.coords[0][1] / 60 + d.coords[0][2] / 3600
+            dec = d.coords[1][0] + d.coords[1][1] / 60 + d.coords[1][2] / 3600
+
+            if d.type == "Open Cluster":
+                obj = SkyObject(
+                    name=d.name,
+                    ra=ra,
+                    dec=dec,
+                    style=self.style.dso_open_cluster,
+                )
+                self.plot_object(obj)
+
     def _init_plot(self):
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
@@ -358,6 +385,7 @@ class MapPlot(StarPlot):
         self._plot_stars()
         self._plot_ecliptic()
         self._plot_celestial_equator()
+        self._plot_dsos()
 
         if self.adjust_text:
             self.adjust_labels()

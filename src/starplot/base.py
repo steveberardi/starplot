@@ -145,16 +145,17 @@ class StarPlot(ABC):
                 ),
                 **self._plot_kwargs(),
             )
-            label = self.ax.text(
-                ra,
-                dec,
-                obj.name,
-                **obj.style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
-                **self._plot_kwargs(),
-                path_effects=[self.text_border],
-            )
-            label.set_clip_on(True)
-            self._maybe_remove_label(label)
+            if obj.style.label.visible:
+                label = self.ax.text(
+                    ra,
+                    dec,
+                    obj.name,
+                    **obj.style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
+                    **self._plot_kwargs(),
+                    path_effects=[self.text_border],
+                )
+                label.set_clip_on(True)
+                self._maybe_remove_label(label)
 
     def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
         x, y = self._prepare_coords(ra, dec)
