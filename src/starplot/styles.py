@@ -3,13 +3,12 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-from typing_extensions import Annotated
-
 import yaml
 
 from pydantic import BaseModel
 from pydantic.color import Color
 from pydantic.functional_serializers import PlainSerializer
+from typing_extensions import Annotated
 
 ColorStr = Annotated[Color, PlainSerializer(lambda c: c.as_hex(), return_type=str)]
 
@@ -17,7 +16,23 @@ ColorStr = Annotated[Color, PlainSerializer(lambda c: c.as_hex(), return_type=st
 FONT_SCALE = 2
 
 HERE = Path(__file__).resolve().parent
-STYLES_PATH = HERE / "stylesheets"
+
+
+def merge_dict(dict_1: dict, dict_2: dict) -> None:
+    """
+
+    Args:
+        dict_1: Base dictionary to merge into
+        dict_2: Dictionary to merge into the base (dict_1)
+
+    Returns:
+        None (dict_1 is modified directly)
+    """
+    for k in dict_2.keys():
+        if k in dict_1 and isinstance(dict_1[k], dict) and isinstance(dict_2[k], dict):
+            merge_dict(dict_1[k], dict_2[k])
+        else:
+            dict_1[k] = dict_2[k]
 
 
 class FillStyleEnum(str, Enum):
@@ -334,49 +349,55 @@ class PlotStyle(BaseModel):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(
+            font_size=8,
+            font_weight=FontWeightEnum.LIGHT,
+        ),
     )
     """Styling for deep sky objects (DSOs)"""
 
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            size=10,
+            size=6,
             fill=FillStyleEnum.FULL,
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(
+            font_size=8,
+            font_weight=FontWeightEnum.LIGHT,
+        ),
     )
     """Styling for open star clusters"""
 
     dso_globular_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
+            symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.FULL, color="#555", alpha=0.8
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=8, visible=False),
     )
     """Styling for globular star clusters"""
 
     dso_galaxy: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
+            symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=8, visible=False),
     )
     """Styling for galaxies"""
 
     dso_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
+            symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=8, visible=False),
     )
     """Styling for nebulas"""
 
     dso_double_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
+            symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.TOP
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=8, visible=False),
     )
     """Styling for double stars"""
 
@@ -508,7 +529,7 @@ class PlotStyle(BaseModel):
         """
         style_json = self.model_dump_json()
         style_dict = json.loads(style_json)
-        style_dict.update(kwargs)
+        merge_dict(style_dict, kwargs)
         return PlotStyle.parse_obj(style_dict)
 
 
@@ -625,16 +646,19 @@ MAP_BLUE = BLUE.extend(
         edge_width=0,
         zorder=-10000,
     ),
-    dso_open_cluster=ObjectStyle(
-        marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE,
-            size=8,
-            color="#fffb68",
-            fill=FillStyleEnum.FULL,
-            alpha=0.36,
-        ),
-        label=LabelStyle(font_size=4, visible=False),
-    )
+    dso_open_cluster={
+        "marker": {"color": "#fffb68", "alpha": 0.3},
+        "label": {"visible": False},
+    },
+    dso_galaxy={
+        "marker": {"color": "hsl(18, 68%, 75%)", "alpha": 0.5},
+    },
+    dso_nebula={
+        "marker": {"color": "hsl(91, 53%, 75%)", "alpha": 0.5},
+    },
+    dso_double_star={
+        "marker": {"alpha": 0.6},
+    },
 )
 
 MAP_CHALK = CHALK.extend(

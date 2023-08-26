@@ -38,6 +38,7 @@ def create_map_stereo_vega():
     #     }
     # })
     style = MAP_CHALK
+    style = MAP_BLUE
     style.bayer_labels.font_name = "GFS Didot"
     style.bayer_labels.font_size = 10
     p = sp.MapPlot(
@@ -77,7 +78,7 @@ def create_map_stereo_vega():
     Correct lon/lat: 81, 38
     Calculated: 99
     """
-    p.export("temp/map-stereo-vega.png", padding=0.5)
+    p.export("temp/map-stereo-vega.svg", format="svg", padding=0.5)
 
 
 def create_map_orion():
@@ -117,12 +118,14 @@ def create_map_orion():
                     "symbol": "s",
                     "fill": "full",
                     "color": "#ff6868",
+                    # "color": "blue",
                     "alpha": 0.7,
                     "zorder": 4096,
                 },
                 "label": {
-                    "font_size": 10,
+                    "font_size": 12,
                     "font_weight": "bold",
+                    # "font_color": "blue",
                     "font_color": "darkred",
                     "zorder": 4096,
                 },
@@ -336,7 +339,7 @@ def example_style():
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_stereo_vega()
+create_map_stereo_vega()
 create_map_orion()
 
 # MAP_BLUE.dump_to_file("blue.yml")

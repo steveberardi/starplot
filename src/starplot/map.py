@@ -13,7 +13,7 @@ from pyongc import ongc
 from skyfield.api import Star
 
 from starplot.base import StarPlot
-from starplot.data import load, DataFiles, bayer, constellations, stars, constants
+from starplot.data import load, DataFiles, bayer, constellations, stars, constants, dsos
 from starplot.models import SkyObject
 from starplot.styles import PlotStyle, MAP_BLUE
 from starplot.utils import bbox_minmax_angle, lon_to_ra
@@ -332,28 +332,58 @@ class MapPlot(StarPlot):
             gridlines.ylabel_style = self.style.gridlines.label.matplot_kwargs()
 
     def _plot_dsos(self):
-        dsos = ongc.listObjects(
-            # minra=self.ra_min,
-            # maxra=self.ra_max,
-            # mindec=self.dec_min,
-            # maxdec=self.dec_max,
-            # uptovmag=self.limiting_magnitude,
-            # TODO : query objects better, but this ra/dec range query doesnt work
+        nearby_dsos = ongc.listObjects(
+            minra=self.ra_min * 15,  # convert to degrees
+            maxra=self.ra_max * 15,  # convert to degrees
+            mindec=self.dec_min,
+            maxdec=self.dec_max,
+            uptovmag=self.limiting_magnitude,
         )
 
-        for d in dsos:
+        styles = {
+            # Star Clusters ----------
+            dsos.Type.OPEN_CLUSTER: self.style.dso_open_cluster,
+            dsos.Type.GLOBULAR_CLUSTER: self.style.dso_globular_cluster,
+            # Galaxies ----------
+            dsos.Type.GALAXY: self.style.dso_galaxy,
+            dsos.Type.GALAXY_PAIR: self.style.dso_galaxy,
+            dsos.Type.GALAXY_TRIPLET: self.style.dso_galaxy,
+            dsos.Type.GROUP_OF_GALAXIES: self.style.dso_galaxy,
+            # Nebulas ----------
+            dsos.Type.NEBULA: self.style.dso_nebula,
+            dsos.Type.PLANETARY_NEBULA: self.style.dso_nebula,
+            dsos.Type.EMISSION_NEBULA: self.style.dso_nebula,
+            dsos.Type.STAR_CLUSTER_NEBULA: self.style.dso_nebula,
+            dsos.Type.REFLECTION_NEBULA: self.style.dso_nebula,
+            # Stars ----------
+            dsos.Type.STAR: None,
+            dsos.Type.DOUBLE_STAR: self.style.dso_double_star,
+            dsos.Type.ASSOCIATION_OF_STARS: self.style.dso,
+            # Undefined - TODO
+            "Dark Nebula": None,
+            "HII Ionized region": None,
+            "Supernova remnant": None,
+            "Nova star": None,
+            "Nonexistent object": None,
+            "Object of other/unknown type": None,
+            "Duplicated record": None,
+        }
+
+        for d in nearby_dsos:
             if d.coords is None:
                 continue
 
             ra = d.coords[0][0] + d.coords[0][1] / 60 + d.coords[0][2] / 3600
             dec = d.coords[1][0] + d.coords[1][1] / 60 + d.coords[1][2] / 3600
+            style = styles.get(d.type)
 
-            if d.type == "Open Cluster":
+            # only plot DSOs with defined styles
+            if style:
                 obj = SkyObject(
                     name=d.name,
                     ra=ra,
                     dec=dec,
-                    style=self.style.dso_open_cluster,
+                    style=style,
                 )
                 self.plot_object(obj)
 

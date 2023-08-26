@@ -150,7 +150,9 @@ class StarPlot(ABC):
                     ra,
                     dec,
                     obj.name,
-                    **obj.style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
+                    **obj.style.label.matplot_kwargs(
+                        size_multiplier=self._size_multiplier
+                    ),
                     **self._plot_kwargs(),
                     path_effects=[self.text_border],
                 )
