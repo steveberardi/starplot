@@ -344,6 +344,17 @@ class PlotStyle(BaseModel):
     )
     """Styling for Bayer labels of stars (only applies to map plots)"""
 
+    planets: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.CIRCLE, size=4, fill=FillStyleEnum.LEFT
+        ),
+        label=LabelStyle(
+            font_size=8,
+            font_weight=FontWeightEnum.BOLD,
+        ),
+    )
+    """Styling for planets"""
+
     # Deep Sky Objects (DSOs)
     dso: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -550,6 +561,9 @@ BLUE = GRAYSCALE.extend(
         line=LineStyle(width=3, color="#6ba832", alpha=0.2),
         label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT),
     ),
+    planets={
+        "marker": {"color": "#f89d00", "alpha": 0.4, "fill": FillStyleEnum.FULL},
+    },
 )
 
 RED = GRAYSCALE.extend(

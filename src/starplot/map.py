@@ -15,6 +15,7 @@ from skyfield.api import Star
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, constants, dsos
 from starplot.models import SkyObject
+from starplot.planets import get_planet_positions
 from starplot.styles import PlotStyle, MAP_BLUE
 from starplot.utils import bbox_minmax_angle, lon_to_ra
 
@@ -59,6 +60,7 @@ class MapPlot(StarPlot):
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
         ephemeris: Ephemeris to use for calculating star positions
+        include_planets: If True, then planets will be plotted
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
@@ -80,6 +82,7 @@ class MapPlot(StarPlot):
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 6.0,
         ephemeris: str = "de421_2001.bsp",
+        include_planets: bool = False,
         style: PlotStyle = MAP_BLUE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
@@ -99,6 +102,7 @@ class MapPlot(StarPlot):
             *args,
             **kwargs,
         )
+        self.include_planets = include_planets
         self.projection = projection
         self.ra_min = ra_min
         self.ra_max = ra_max
@@ -387,6 +391,23 @@ class MapPlot(StarPlot):
                 )
                 self.plot_object(obj)
 
+    def _plot_planets(self):
+        if not self.include_planets:
+            return
+
+        planets = get_planet_positions(self.ephemeris, self.timescale)
+
+        for name, pos in planets.items():
+            ra, dec = pos
+
+            obj = SkyObject(
+                name=name.upper(),
+                ra=ra,
+                dec=dec,
+                style=self.style.planets,
+            )
+            self.plot_object(obj)
+
     def _init_plot(self):
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
@@ -416,6 +437,7 @@ class MapPlot(StarPlot):
         self._plot_ecliptic()
         self._plot_celestial_equator()
         self._plot_dsos()
+        self._plot_planets()
 
         if self.adjust_text:
             self.adjust_labels()

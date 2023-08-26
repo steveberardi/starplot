@@ -131,6 +131,7 @@ def create_zenith():
         style=BLUE,
         # style=GRAYSCALE,
         # adjust_text=False,
+        include_planets=True,
         resolution=2000,
         include_info_text=True,
     )
@@ -144,7 +145,7 @@ def create_zenith():
             },
         )
     )
-    p.export("temp/zenith-poway.png", format="png")
+    p.export("temp/zenith-poway.svg", format="svg")
 
 
 def create_map_mercator():
@@ -206,14 +207,42 @@ def create_map_stereo_south():
     p.export("temp-map-south.svg", format="svg")
 
 
+def create_map_with_planets():
+    style: PlotStyle = MAP_BLUE.extend(
+        bayer_labels={"visible": False},
+    )
+    style.star.label.visible = False
+    # style.star.marker.visible = False
+    style.constellation.label.visible = False
+    style.ecliptic.label.visible = False
+    style.celestial_equator.label.visible = False
+
+    # mars pos 8/26/2023: Right Ascension is 11h 57m 08s and the Declination is +01° 03' 38”
+
+    p = sp.MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=0,
+        ra_max=24,
+        dec_min=-70,
+        dec_max=70,
+        limiting_magnitude=3.2,
+        include_planets=True,
+        hide_colliding_labels=False,
+        style=style,
+        resolution=2600,
+    )
+    p.export("temp/map-planets.svg", format="svg", padding=1)
+
+
 # ------------------------------------------
 
-# create_zenith()
+create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_stereo_vega()
-create_map_orion()
+# create_map_stereo_vega()
+# create_map_orion()
+create_map_with_planets()
 
 # MAP_BLUE.dump_to_file("blue.yml")
 

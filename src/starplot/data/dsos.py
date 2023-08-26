@@ -154,6 +154,10 @@ ongc_types = {
 
 
 class Type(str, Enum):
+    """
+    Types of deep sky objects (DSOs), as designated in OpenNGC
+    """
+
     STAR = "Star"
     DOUBLE_STAR = "Double star"
     ASSOCIATION_OF_STARS = "Association of stars"

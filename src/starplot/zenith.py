@@ -10,6 +10,8 @@ from skyfield.projections import build_stereographic_projection
 
 from starplot.base import StarPlot
 from starplot.data import load, constellations, stars, dsos
+from starplot.models import SkyObject
+from starplot.planets import get_planet_positions
 from starplot.styles import PlotStyle, GRAYSCALE
 from starplot.utils import in_circle
 
@@ -51,6 +53,7 @@ class ZenithPlot(StarPlot):
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
         ephemeris: Ephemeris to use for calculating star positions
+        include_planets: If True, then planets will be plotted
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
@@ -70,6 +73,7 @@ class ZenithPlot(StarPlot):
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
         ephemeris: str = "de421_2001.bsp",
+        include_planets: bool = False,
         style: PlotStyle = GRAYSCALE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
@@ -92,6 +96,7 @@ class ZenithPlot(StarPlot):
         self.lat = lat
         self.lon = lon
         self.include_info_text = include_info_text
+        self.include_planets = include_planets
 
         self._calc_position()
         self.project_fn = build_stereographic_projection(self.position)
@@ -284,6 +289,23 @@ class ZenithPlot(StarPlot):
         )
         self.ax.add_patch(outer_border)
 
+    def _plot_planets(self):
+        if not self.include_planets:
+            return
+
+        planets = get_planet_positions(self.ephemeris, self.timescale)
+
+        for name, pos in planets.items():
+            ra, dec = pos
+
+            obj = SkyObject(
+                name=name.upper(),
+                ra=ra,
+                dec=dec,
+                style=self.style.planets,
+            )
+            self.plot_object(obj)
+
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
         self.ax = plt.axes()
@@ -300,6 +322,7 @@ class ZenithPlot(StarPlot):
         self._plot_constellation_labels()
         self._plot_dso_base()
         self._plot_border()
+        self._plot_planets()
 
         if self.include_info_text:
             dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
