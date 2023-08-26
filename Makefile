@@ -16,7 +16,7 @@ lint:
 	$(DOCKER_RUN) "ruff check src/ tests/"
 
 format:
-	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ example.py $(ARGS)"
+	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ $(ARGS)"
 
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
@@ -41,8 +41,11 @@ bash:
 shell:
 	$(DOCKER_RUN) python
 
-example:
-	$(DOCKER_RUN) "python example.py"
+scratchpad:
+	$(DOCKER_RUN) "python scripts/scratchpad.py"
+
+examples:
+	$(DOCKER_RUN) "cd examples && python examples.py"
 
 # ------------------------------------------------------------------
 # Docs
@@ -80,4 +83,4 @@ clean:
 	rm -rf site
 	rm -rf htmlcov
 
-.PHONY: install shell build publish clean example
+.PHONY: install test shell build publish clean ephemeris hip8 scratchpad examples

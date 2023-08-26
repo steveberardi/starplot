@@ -152,8 +152,8 @@ ongc_types = {
     "Dup": "Duplicated record",
 }
 
-class Type(str, Enum):
 
+class Type(str, Enum):
     STAR = "Star"
     DOUBLE_STAR = "Double star"
     ASSOCIATION_OF_STARS = "Association of stars"

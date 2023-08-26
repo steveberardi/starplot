@@ -1,0 +1,237 @@
+background_color: '#fff'
+bayer_labels:
+  font_alpha: 1.0
+  font_color: '#000'
+  font_name: null
+  font_size: 7
+  font_style: normal
+  font_weight: light
+  visible: true
+  zorder: 1024
+border_bg_color: '#fff'
+border_font_color: '#f1f6ff'
+border_font_size: 18
+border_font_weight: bold
+border_line_color: '#2f4358'
+celestial_equator:
+  label:
+    font_alpha: 0.65
+    font_color: '#2d5ec2'
+    font_name: null
+    font_size: 4
+    font_style: normal
+    font_weight: light
+    visible: true
+    zorder: 1
+  line:
+    alpha: 0.65
+    color: '#2d5ec2'
+    dash_capstyle: projecting
+    style: dashdot
+    visible: true
+    width: 2
+    zorder: -1024
+constellation:
+  label:
+    font_alpha: 1.0
+    font_color: '#c5c5c5'
+    font_name: null
+    font_size: 11
+    font_style: normal
+    font_weight: light
+    visible: true
+    zorder: 1
+  line:
+    alpha: 0.34
+    color: '#6ba832'
+    dash_capstyle: projecting
+    style: solid
+    visible: true
+    width: 3
+    zorder: -1
+constellation_borders:
+  alpha: 0.2
+  color: '#000'
+  dash_capstyle: projecting
+  style: dashed
+  visible: true
+  width: 2
+  zorder: -100
+dso:
+  label:
+    font_alpha: 1.0
+    font_color: '#000'
+    font_name: null
+    font_size: 8
+    font_style: normal
+    font_weight: light
+    visible: true
+    zorder: 1
+  marker:
+    alpha: 1.0
+    color: '#000'
+    edge_color: '#000'
+    fill: full
+    size: 4
+    symbol: ^
+    visible: true
+    zorder: -1
+dso_double_star:
+  label:
+    font_alpha: 1.0
+    font_color: '#000'
+    font_name: null
+    font_size: 8
+    font_style: normal
+    font_weight: normal
+    visible: false
+    zorder: 1
+  marker:
+    alpha: 0.6
+    color: '#000'
+    edge_color: '#000'
+    fill: top
+    size: 6
+    symbol: o
+    visible: true
+    zorder: -1
+dso_galaxy:
+  label:
+    font_alpha: 1.0
+    font_color: '#000'
+    font_name: null
+    font_size: 8
+    font_style: normal
+    font_weight: normal
+    visible: false
+    zorder: 1
+  marker:
+    alpha: 0.5
+    color: '#ebae94'
+    edge_color: '#000'
+    fill: full
+    size: 6
+    symbol: o
+    visible: true
+    zorder: -1
+dso_globular_cluster:
+  label:
+    font_alpha: 1.0
+    font_color: '#000'
+    font_name: null
+    font_size: 8
+    font_style: normal
+    font_weight: normal
+    visible: false
+    zorder: 1
+  marker:
+    alpha: 0.8
+    color: '#555'
+    edge_color: '#000'
+    fill: full
+    size: 6
+    symbol: o
+    visible: true
+    zorder: -1
+dso_nebula:
+  label:
+    font_alpha: 1.0
+    font_color: '#000'
+    font_name: null
+    font_size: 8
+    font_style: normal
+    font_weight: normal
+    visible: false
+    zorder: 1
+  marker:
+    alpha: 0.5
+    color: '#bee19d'
+    edge_color: '#000'
+    fill: full
+    size: 6
+    symbol: s
+    visible: true
+    zorder: -1
+dso_open_cluster:
+  label:
+    font_alpha: 1.0
+    font_color: '#000'
+    font_name: null
+    font_size: 8
+    font_style: normal
+    font_weight: light
+    visible: false
+    zorder: 1
+  marker:
+    alpha: 0.3
+    color: '#fffb68'
+    edge_color: '#000'
+    fill: full
+    size: 6
+    symbol: o
+    visible: true
+    zorder: -1
+ecliptic:
+  label:
+    font_alpha: 0.65
+    font_color: '#e33b3b'
+    font_name: null
+    font_size: 4
+    font_style: normal
+    font_weight: light
+    visible: true
+    zorder: 1
+  line:
+    alpha: 0.75
+    color: '#e33b3b'
+    dash_capstyle: round
+    style: dotted
+    visible: true
+    width: 1
+    zorder: -1024
+gridlines:
+  label:
+    font_alpha: 1.0
+    font_color: '#000'
+    font_name: null
+    font_size: 11
+    font_style: normal
+    font_weight: light
+    visible: true
+    zorder: 1
+  line:
+    alpha: 0.8
+    color: '#888'
+    dash_capstyle: projecting
+    style: solid
+    visible: true
+    width: 1
+    zorder: -10000
+milky_way:
+  alpha: 0.16
+  color: '#94c5e3'
+  edge_width: 0
+  visible: true
+  zorder: -10000
+star:
+  label:
+    font_alpha: 1.0
+    font_color: '#000'
+    font_name: null
+    font_size: 8
+    font_style: normal
+    font_weight: bold
+    visible: true
+    zorder: 1024
+  marker:
+    alpha: 1.0
+    color: '#000'
+    edge_color: '#000'
+    fill: full
+    size: 4
+    symbol: .
+    visible: true
+    zorder: -1
+text_border_width: 2
+text_offset_x: 0.005
+text_offset_y: 0.005

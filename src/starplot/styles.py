@@ -371,7 +371,11 @@ class PlotStyle(BaseModel):
 
     dso_globular_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.FULL, color="#555", alpha=0.8
+            symbol=MarkerSymbolEnum.CIRCLE,
+            size=6,
+            fill=FillStyleEnum.FULL,
+            color="#555",
+            alpha=0.8,
         ),
         label=LabelStyle(font_size=8, visible=False),
     )
