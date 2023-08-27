@@ -6,7 +6,7 @@ from starplot import styles
 from starplot.map import MapPlot, Projection
 from starplot.models import SkyObject
 
-from .utils import assert_hash_equal
+from .utils import assert_hashes_equal
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -44,7 +44,7 @@ def map_plot_stereo_north():
 def test_map_plot_mercator_base(map_plot_mercator):
     filename = DATA_PATH / "actual-mercator-base.png"
     map_plot_mercator.export(filename)
-    assert_hash_equal(filename, DATA_PATH / "expected-mercator-base.png")
+    assert_hashes_equal(filename, DATA_PATH / "expected-mercator-base.png")
 
 
 def test_map_plot_mercator_with_extra_object(map_plot_mercator):
@@ -73,13 +73,13 @@ def test_map_plot_mercator_with_extra_object(map_plot_mercator):
         )
     )
     map_plot_mercator.export(filename)
-    assert_hash_equal(filename, DATA_PATH / "expected-mercator-extra.png")
+    assert_hashes_equal(filename, DATA_PATH / "expected-mercator-extra.png")
 
 
 def test_map_plot_stereo_base(map_plot_stereo_north):
     filename = DATA_PATH / "actual-stereo-north-base.png"
     map_plot_stereo_north.export(filename)
-    assert_hash_equal(filename, DATA_PATH / "expected-stereo-north-base.png")
+    assert_hashes_equal(filename, DATA_PATH / "expected-stereo-north-base.png")
 
 
 def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
@@ -102,4 +102,4 @@ def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
         )
     )
     map_plot_stereo_north.export(filename)
-    assert_hash_equal(filename, DATA_PATH / "expected-stereo-north-extra.png")
+    assert_hashes_equal(filename, DATA_PATH / "expected-stereo-north-extra.png")
