@@ -7,6 +7,7 @@ from pytz import timezone
 
 from starplot.data import load
 from starplot.models import SkyObject
+from starplot.planets import get_planet_positions
 from starplot.styles import PlotStyle, GRAYSCALE
 
 
@@ -16,6 +17,7 @@ class StarPlot(ABC):
         dt: datetime = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
+        include_planets: bool = False,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = GRAYSCALE,
         resolution: int = 2048,
@@ -28,6 +30,7 @@ class StarPlot(ABC):
 
         self.limiting_magnitude = limiting_magnitude
         self.limiting_magnitude_labels = limiting_magnitude_labels
+        self.include_planets = include_planets
         self.style = style
         self.figure_size = resolution * px
         self.resolution = resolution
@@ -172,6 +175,23 @@ class StarPlot(ABC):
         )
         label.set_clip_on(True)
         self._maybe_remove_label(label)
+
+    def _plot_planets(self):
+        if not self.include_planets:
+            return
+
+        planets = get_planet_positions(self.timescale, ephemeris=self.ephemeris)
+
+        for name, pos in planets.items():
+            ra, dec = pos
+
+            obj = SkyObject(
+                name=name.upper(),
+                ra=ra,
+                dec=dec,
+                style=self.style.planets,
+            )
+            self.plot_object(obj)
 
     @abstractmethod
     def in_bounds(self, ra: float, dec: float) -> bool:

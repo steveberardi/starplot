@@ -13,7 +13,7 @@ class Planets(str, Enum):
     NEPTUNE = "neptune"
 
 
-def get_planet_positions(ephemeris, timescale) -> dict:
+def get_planet_positions(timescale, ephemeris: str = "de421_2001.bsp") -> dict:
     result = {}
 
     eph = load(ephemeris)

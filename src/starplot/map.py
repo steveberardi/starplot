@@ -15,7 +15,6 @@ from skyfield.api import Star
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, constants, dsos
 from starplot.models import SkyObject
-from starplot.planets import get_planet_positions
 from starplot.styles import PlotStyle, MAP_BLUE
 from starplot.utils import bbox_minmax_angle, lon_to_ra
 
@@ -56,11 +55,11 @@ class MapPlot(StarPlot):
         ra_max: Maximum right ascension of the map
         dec_min: Minimum declination of the map
         dec_max: Maximum declination of the map
-        dt: Date/time to use for star positions, (*must be timezone-aware*). Default = current UTC time.
+        dt: Date/time to use for star/planet positions, (*must be timezone-aware*). Default = current UTC time.
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
-        ephemeris: Ephemeris to use for calculating star positions
         include_planets: If True, then planets will be plotted
+        ephemeris: Ephemeris to use for calculating star positions
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
@@ -81,8 +80,8 @@ class MapPlot(StarPlot):
         dt: datetime = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 6.0,
-        ephemeris: str = "de421_2001.bsp",
         include_planets: bool = False,
+        ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = MAP_BLUE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
@@ -94,6 +93,7 @@ class MapPlot(StarPlot):
             dt,
             limiting_magnitude,
             limiting_magnitude_labels,
+            include_planets,
             ephemeris,
             style,
             resolution,
@@ -102,7 +102,6 @@ class MapPlot(StarPlot):
             *args,
             **kwargs,
         )
-        self.include_planets = include_planets
         self.projection = projection
         self.ra_min = ra_min
         self.ra_max = ra_max
@@ -390,23 +389,6 @@ class MapPlot(StarPlot):
                     style=style,
                 )
                 self.plot_object(obj)
-
-    def _plot_planets(self):
-        if not self.include_planets:
-            return
-
-        planets = get_planet_positions(self.ephemeris, self.timescale)
-
-        for name, pos in planets.items():
-            ra, dec = pos
-
-            obj = SkyObject(
-                name=name.upper(),
-                ra=ra,
-                dec=dec,
-                style=self.style.planets,
-            )
-            self.plot_object(obj)
 
     def _init_plot(self):
         self.fig = plt.figure(

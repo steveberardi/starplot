@@ -217,8 +217,6 @@ def create_map_with_planets():
     style.ecliptic.label.visible = False
     style.celestial_equator.label.visible = False
 
-    # mars pos 8/26/2023: Right Ascension is 11h 57m 08s and the Declination is +01° 03' 38”
-
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=0,

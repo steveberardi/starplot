@@ -1,4 +1,7 @@
 from pathlib import Path
+from datetime import datetime
+
+from pytz import timezone
 
 import pytest
 
@@ -103,3 +106,32 @@ def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
     )
     map_plot_stereo_north.export(filename)
     assert_hashes_equal(filename, DATA_PATH / "expected-stereo-north-extra.png")
+
+
+def test_map_plot_with_planets():
+    filename = DATA_PATH / "actual-mercator-planets.png"
+    dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+
+    style = styles.MAP_BLUE
+    style.bayer_labels.visible = False
+    style.star.label.visible = False
+    style.constellation.label.visible = False
+    style.ecliptic.label.visible = False
+    style.celestial_equator.label.visible = False
+
+    p = MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=0,
+        ra_max=24,
+        dec_min=-70,
+        dec_max=70,
+        dt=dt,
+        limiting_magnitude=3,
+        include_planets=True,
+        hide_colliding_labels=False,
+        style=style,
+        resolution=2600,
+    )
+    p.export(filename)
+
+    assert_hashes_equal(filename, DATA_PATH / "expected-mercator-planets.png")
