@@ -9,7 +9,7 @@ from skyfield.positionlib import position_of_radec
 from skyfield.projections import build_stereographic_projection
 
 from starplot.base import StarPlot
-from starplot.data import load, constellations, stars, dsos
+from starplot.data import load, constellations, stars, dsos, ecliptic
 from starplot.models import SkyObject
 from starplot.planets import get_planet_positions
 from starplot.styles import PlotStyle, GRAYSCALE
@@ -124,6 +124,7 @@ class ZenithPlot(StarPlot):
             **self.style.constellation.line.matplot_kwargs(
                 size_multiplier=self._size_multiplier
             ),
+            clip_path=self.background_circle,
         )
         self._plotted_conlines = self.ax.add_collection(constellations)
 
@@ -177,6 +178,7 @@ class ZenithPlot(StarPlot):
                 stardata["y"][bright_stars],
                 sizes,
                 color=self.style.star.marker.color.as_hex(),
+                clip_path=self.background_circle,
             )
 
         starpos_x = []
@@ -252,7 +254,7 @@ class ZenithPlot(StarPlot):
         self.ax.text(0, -1.045, "S", **border_font_kwargs)
 
         # Background Circle
-        background_circle = plt.Circle(
+        self.background_circle = plt.Circle(
             (0, 0),
             facecolor=self.style.background_color.as_hex(),
             radius=1.0,
@@ -260,11 +262,7 @@ class ZenithPlot(StarPlot):
             fill=True,
             zorder=-100,
         )
-        self.ax.add_patch(background_circle)
-
-        # clip stars outside background circle
-        self._plotted_stars.set_clip_path(background_circle)
-        self._plotted_conlines.set_clip_path(background_circle)
+        self.ax.add_patch(self.background_circle)
 
         # Border Circles
         inner_border = plt.Circle(
@@ -285,7 +283,7 @@ class ZenithPlot(StarPlot):
             linewidth=4 * self._size_multiplier,
             edgecolor=self.style.border_line_color.as_hex(),
             fill=True,
-            zorder=-200,
+            zorder=-1024,
         )
         self.ax.add_patch(outer_border)
 
@@ -306,6 +304,28 @@ class ZenithPlot(StarPlot):
             )
             self.plot_object(obj)
 
+    def _plot_ecliptic(self):
+        if not self.style.ecliptic.line.visible:
+            return
+
+        xs = []
+        ys = []
+
+        for ra, dec in ecliptic.RA_DECS:
+            x, y = self.project_fn(position_of_radec(ra, dec))
+
+            xs.append(x)
+            ys.append(y)
+
+        self.ax.plot(
+            xs,
+            ys,
+            dash_capstyle=self.style.ecliptic.line.dash_capstyle,
+            clip_path=self.background_circle,
+            **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
+            **self._plot_kwargs(),
+        )
+
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
         self.ax = plt.axes()
@@ -317,11 +337,12 @@ class ZenithPlot(StarPlot):
         self.ax.set_aspect(1.0)
         self.ax.axis("off")
 
+        self._plot_border()
         self._plot_stars()
         self._plot_constellation_lines()
         self._plot_constellation_labels()
         self._plot_dso_base()
-        self._plot_border()
+        self._plot_ecliptic()
         self._plot_planets()
 
         if self.include_info_text:

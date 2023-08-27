@@ -463,7 +463,7 @@ class PlotStyle(BaseModel):
             style=LineStyleEnum.DOTTED,
             dash_capstyle=DashCapStyleEnum.ROUND,
             alpha=0.75,
-            zorder=-1024,
+            zorder=-20,
         ),
         label=LabelStyle(
             font_size=4,

@@ -76,6 +76,9 @@ ephemeris:
 hip8:
 	$(DOCKER_RUN) "python ./scripts/hip.py hip_main.dat hip8.dat"
 
+scripts:
+	$(DOCKER_RUN) "python ./scripts/$(SCRIPT).py"
+
 clean:
 	rm -rf __pycache__
 	rm -rf venv
@@ -83,4 +86,4 @@ clean:
 	rm -rf site
 	rm -rf htmlcov
 
-.PHONY: install test shell build publish clean ephemeris hip8 scratchpad examples
+.PHONY: install test shell build publish clean ephemeris hip8 scratchpad examples scripts
