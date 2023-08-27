@@ -495,8 +495,8 @@ class PlotStyle(BaseModel):
     @staticmethod
     def load_from_file(filename: str) -> "PlotStyle":
         """
-        Load a style from a YAML file. The returned style is an extension of the default PlotStyle 
-        (see [`PlotStyle.extend`][starplot.styles.PlotStyle.extend]), so you only need to define 
+        Load a style from a YAML file. The returned style is an extension of the default PlotStyle
+        (see [`PlotStyle.extend`][starplot.styles.PlotStyle.extend]), so you only need to define
         properties you want to override from the default.
 
         Args:
@@ -566,14 +566,8 @@ BLUE = GRAYSCALE.extend(
     planets={
         "marker": {"color": "#f89d00", "alpha": 0.4, "fill": FillStyleEnum.FULL},
     },
-    ecliptic={
-        "line": {"color": "#e33b3b"},
-        "label": {"color": "#e33b3b"}
-    },
-    celestial_equator={
-        "line": {"color": "#2d5ec2"},
-        "label": {"color": "#2d5ec2"}
-    }
+    ecliptic={"line": {"color": "#e33b3b"}, "label": {"color": "#e33b3b"}},
+    celestial_equator={"line": {"color": "#2d5ec2"}, "label": {"color": "#2d5ec2"}},
 )
 
 RED = GRAYSCALE.extend(
