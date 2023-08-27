@@ -50,7 +50,7 @@ style.bayer_labels.font_size = 10
 
 ## Creating a New PlotStyle
 
-The easiest way to create a whole new style is by defining it in a YAML file. You only have to define style properties that you want to override from the default base style -- similar to how Cascading Style Sheets (CSS) work.
+The easiest way to create a whole new style is by defining it in a YAML file. **You only have to define style properties that you want to override from the default base style** — similar to how Cascading Style Sheets (CSS) work.
 
 Example:
 
@@ -58,90 +58,31 @@ Example:
 ```yaml
 # style.yml
 
-background_color: '#fff'
-bayer_labels:
-  font_alpha: 1.0
-  font_color: '#000'
-  font_name: null
-  font_size: 7
-  font_style: normal
-  font_weight: light
-  visible: true
-  zorder: 1024
-border_bg_color: '#7997b9'
-border_font_color: '#f1f6ff'
-border_font_size: 18
-border_font_weight: bold
-border_line_color: '#2f4358'
+# hide the constellation labels/lines:
 constellation:
   label:
-    font_alpha: 1.0
-    font_color: '#c5c5c5'
-    font_name: null
-    font_size: 11
-    font_style: normal
-    font_weight: light
-    visible: true
-    zorder: 1
+    visible: false
   line:
-    alpha: 0.34
-    color: '#6ba832'
-    style: solid
-    visible: true
-    width: 3
-    zorder: -1
-constellation_borders:
-  alpha: 0.2
-  color: '#000'
-  style: dashed
-  visible: true
-  width: 2
-  zorder: -100
-dso:
-  label:
-    font_alpha: 1.0
-    font_color: '#000'
-    font_name: null
-    font_size: 8
-    font_style: normal
-    font_weight: normal
-    visible: true
-    zorder: 1
-  marker:
-    alpha: 1.0
-    color: '#000'
-    fill: none
-    size: 4
-    symbol: ^
-    visible: true
-    zorder: -1
+    visible: false
+
+# make the Milky Way gray
 milky_way:
-  alpha: 0.16
-  color: '#94c5e3'
-  edge_width: 0
-  visible: true
-  zorder: -10000
+  alpha: 0.36
+  color: '#888'
+
+# change the color of star labels to blue and
+# and change their symbol from dots to stars
 star:
   label:
-    font_alpha: 1.0
-    font_color: '#000'
-    font_name: null
-    font_size: 8
-    font_style: normal
-    font_weight: bold
-    visible: true
-    zorder: 1024
+    font_color: '#0e69b8'
   marker:
-    alpha: 1.0
-    color: '#000'
-    fill: none
-    size: 4
-    symbol: .
-    visible: true
-    zorder: -1
-text_border_width: 2
-text_offset_x: 0.005
-text_offset_y: 0.005
+    symbol: *
+
+# make nebulas green and their markers diamonds
+dso_nebula:
+  marker:
+    color: green
+    symbol: D
 
 ```
 

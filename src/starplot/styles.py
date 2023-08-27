@@ -458,7 +458,7 @@ class PlotStyle(BaseModel):
     # Ecliptic
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(
-            color="#e33b3b",
+            color="#777",
             width=1,
             style=LineStyleEnum.DOTTED,
             dash_capstyle=DashCapStyleEnum.ROUND,
@@ -467,7 +467,7 @@ class PlotStyle(BaseModel):
         ),
         label=LabelStyle(
             font_size=4,
-            font_color="#e33b3b",
+            font_color="#777",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=0.65,
         ),
@@ -477,7 +477,7 @@ class PlotStyle(BaseModel):
     # Celestial Equator
     celestial_equator: PathStyle = PathStyle(
         line=LineStyle(
-            color="#2d5ec2",
+            color="#999",
             width=2,
             style=LineStyleEnum.DASHED_DOTS,
             alpha=0.65,
@@ -485,7 +485,7 @@ class PlotStyle(BaseModel):
         ),
         label=LabelStyle(
             font_size=4,
-            font_color="#2d5ec2",
+            font_color="#999",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=0.65,
         ),
@@ -495,7 +495,9 @@ class PlotStyle(BaseModel):
     @staticmethod
     def load_from_file(filename: str) -> "PlotStyle":
         """
-        Load a style from a YAML file. The returned style is an extension of the default PlotStyle (see [`PlotStyle.extend`][starplot.styles.PlotStyle.extend])
+        Load a style from a YAML file. The returned style is an extension of the default PlotStyle 
+        (see [`PlotStyle.extend`][starplot.styles.PlotStyle.extend]), so you only need to define 
+        properties you want to override from the default.
 
         Args:
             filename: Filename of style file
@@ -564,6 +566,14 @@ BLUE = GRAYSCALE.extend(
     planets={
         "marker": {"color": "#f89d00", "alpha": 0.4, "fill": FillStyleEnum.FULL},
     },
+    ecliptic={
+        "line": {"color": "#e33b3b"},
+        "label": {"color": "#e33b3b"}
+    },
+    celestial_equator={
+        "line": {"color": "#2d5ec2"},
+        "label": {"color": "#2d5ec2"}
+    }
 )
 
 RED = GRAYSCALE.extend(
