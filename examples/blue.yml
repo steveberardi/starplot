@@ -188,7 +188,7 @@ ecliptic:
     style: dotted
     visible: true
     width: 1
-    zorder: -1024
+    zorder: -20
 gridlines:
   label:
     font_alpha: 1.0
@@ -213,6 +213,25 @@ milky_way:
   edge_width: 0
   visible: true
   zorder: -10000
+planets:
+  label:
+    font_alpha: 1.0
+    font_color: '#000'
+    font_name: null
+    font_size: 8
+    font_style: normal
+    font_weight: bold
+    visible: true
+    zorder: 1
+  marker:
+    alpha: 0.4
+    color: '#f89d00'
+    edge_color: '#000'
+    fill: full
+    size: 4
+    symbol: o
+    visible: true
+    zorder: -1
 star:
   label:
     font_alpha: 1.0

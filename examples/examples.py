@@ -94,7 +94,7 @@ def example_3_create_map_orion():
             },
         )
     )
-    p.export("03_map_orion.svg", format="svg")
+    p.export("03_map_orion.svg", format="svg", padding=0.5)
 
 
 def example_style():
