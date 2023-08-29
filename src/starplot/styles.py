@@ -337,7 +337,7 @@ class PlotStyle(BaseModel):
         marker=MarkerStyle(fill=FillStyleEnum.FULL),
         label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1024),
     )
-    """Styling for stars"""
+    """Styling for stars (see [ObjectStyle][starplot.styles.ObjectStyle])"""
 
     bayer_labels: LabelStyle = LabelStyle(
         font_size=8, font_weight=FontWeightEnum.LIGHT, zorder=1024
@@ -453,7 +453,7 @@ class PlotStyle(BaseModel):
             font_alpha=1,
         ),
     )
-    """Styling for gridlines (only applies to map plots)"""
+    """Styling for gridlines (including Right Ascension / Declination labels). *Only applies to map plots*."""
 
     # Ecliptic
     ecliptic: PathStyle = PathStyle(
