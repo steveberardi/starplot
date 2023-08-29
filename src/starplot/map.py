@@ -13,7 +13,7 @@ from pyongc import ongc
 from skyfield.api import Star
 
 from starplot.base import StarPlot
-from starplot.data import load, DataFiles, bayer, constellations, stars, constants, dsos
+from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
 from starplot.styles import PlotStyle, MAP_BLUE
 from starplot.utils import bbox_minmax_angle, lon_to_ra
@@ -254,7 +254,7 @@ class MapPlot(StarPlot):
         if not self.style.ecliptic.line.visible:
             return
 
-        incline = constants.ECLIPTIC_ANGLE
+        incline = ecliptic.ANGLE
 
         radecs = [
             [(24, 18), (0, -1 * incline), (21, -15)],

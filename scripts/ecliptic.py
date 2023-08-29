@@ -1,6 +1,6 @@
 import pyproj
 
-from starplot.data import constants
+from starplot.data import ecliptic
 from starplot.utils import lon_to_ra
 
 
@@ -12,7 +12,7 @@ def create_ecliptic_line(num_points=50, ndigits=4) -> list:
     2. Convert list of lat/lon to ra/dec
 
     """
-    incline = constants.ECLIPTIC_ANGLE
+    incline = ecliptic.ANGLE
     g = pyproj.Geod(ellps="WGS84")
 
     radecs = []
