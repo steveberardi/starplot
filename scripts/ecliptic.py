@@ -1,6 +1,7 @@
 import pyproj
 
 from starplot.data import constants
+from starplot.utils import lon_to_ra
 
 
 def create_ecliptic_line(num_points=50, ndigits=4) -> list:
@@ -25,7 +26,8 @@ def create_ecliptic_line(num_points=50, ndigits=4) -> list:
         lonlats = g.npts(*section, num_points, initial_idx=0, terminus_idx=0)
 
         for lon, lat in lonlats:
-            ra = round(((-1 * lon) + 360) / 15, ndigits)
+            h, m, s = lon_to_ra(lon)
+            ra = round((h + m / 60 + s / 3600), ndigits)
             dec = round(lat, ndigits)
             radecs.append((ra, dec))
 

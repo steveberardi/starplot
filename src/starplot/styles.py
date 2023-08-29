@@ -121,7 +121,7 @@ class MarkerStyle(BaseModel):
     """Fill color of marker. Can be a hex, rgb, hsl, or word string."""
 
     edge_color: ColorStr = ColorStr("#000")
-    """Fill color of marker. Can be a hex, rgb, hsl, or word string."""
+    """Edge color of marker. Can be a hex, rgb, hsl, or word string."""
 
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     """Symbol for marker"""
