@@ -13,6 +13,8 @@ Starplot is a Python library for creating star charts and maps.
 
 - 🗺️ **Map Plots** - including North/South polar and Mercator projections
 
+- 🪐 **Planets and Deep Sky Objects (DSOs)**
+
 - 🎨 **Custom Styles** - for all objects
 
 - 📥 **Export** - png, svg
