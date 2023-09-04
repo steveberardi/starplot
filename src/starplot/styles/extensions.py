@@ -243,5 +243,4 @@ HIDE_LABELS = dict(
     dso={"label": {"visible": False}},
     gridlines={"label": {"visible": False}},
     bayer_labels={"visible": False},
-
 )
