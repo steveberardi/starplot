@@ -1,6 +1,6 @@
 # Styling Framework
 
-Starplot has a styling framework that lets you fully customize the appearance of your plots. The framework consists of a bunch of [Pydantic models](https://docs.pydantic.dev/latest/usage/models/) that represent different things you can style (e.g. markers, lines, labels, etc). Since they're based on Pydantic models, this means you can easily define new styles through a JSON (or even a YAML file).
+Starplot has a styling framework that lets you fully customize the appearance of your plots. The framework consists of a bunch of [Pydantic models](https://docs.pydantic.dev/latest/usage/models/) that represent different things you can style (e.g. markers, lines, labels, etc). Since they're based on Pydantic models, this means you can define new styles through Python code, a JSON, or even a YAML file.
 
 - [Built-in Plot Styles](#built-in-plot-styles)
 - [Extending an Existing PlotStyle](#extending-an-existing-plotstyle)
@@ -10,30 +10,35 @@ Starplot has a styling framework that lets you fully customize the appearance of
 
 ## Built-in Plot Styles
 
-Starplot has five built-in styles (all imported from `starplot.styles`):
+Starplot has four built-in styles for each type of plot (all imported from `starplot.styles`):
 
+- **Grayscale** - Optimized for printing in grayscale
+    - `starplot.styles.MAP_GRAYSCALE` - for MapPlots
+    - `starplot.styles.ZENITH_GRAYSCALE` for ZenithPlots
 
-- `GRAYSCALE` - Optimized for printing in grayscale (the default for `ZenithPlot`)
+- **Light Blue** - Light and bright colors
+    - `starplot.styles.MAP_BLUE_LIGHT` - for MapPlots
+    - `starplot.styles.ZENITH_BLUE_LIGHT` for ZenithPlots
 
-- `BLUE` - Grayish blue colors
+- **Medium Blue** - Medium brightness bluish gray colors
+    - `starplot.styles.MAP_BLUE_MEDIUM` - for MapPlots
+    - `starplot.styles.ZENITH_BLUE_MEDIUM` for ZenithPlots
 
-- `CHALK` - Low saturation/contrast
-
-- `RED` - Everything red
-
-- `MAP_BLUE` - Similar to the `BLUE` style, but more tailored for maps (the default for `MapPlot`)
+- **Dark Blue** - Dark bluish gray colors
+    - `starplot.styles.MAP_BLUE_DARK` - for MapPlots
+    - `starplot.styles.ZENITH_BLUE_DARK` for ZenithPlots
 
 
 ## Extending an Existing PlotStyle
 
 If there's an existing [PlotStyle][starplot.PlotStyle] that you just want to make some minor changes to, then you can use the PlotStyle's `extend` method.
 
-Here's an example of extending the `MAP_BLUE` style to use a different font for Bayer labels of stars:
+Here's an example of extending the `MAP_BLUE_LIGHT` style to use a different font for Bayer labels of stars:
 
 ```python
-from starplot.styles import MAP_BLUE
+from starplot.styles import MAP_BLUE_LIGHT
 
-style = MAP_BLUE.extend({
+style = MAP_BLUE_LIGHT.extend({
     "bayer_labels": {
         "font_name": "GFS Didot",
         "font_size": 10
@@ -42,7 +47,7 @@ style = MAP_BLUE.extend({
 ```
 Alternatively, you can do this:
 ```python
-style = MAP_BLUE
+style = MAP_BLUE_LIGHT
 style.bayer_labels.font_name = "GFS Didot"
 style.bayer_labels.font_size = 10
 

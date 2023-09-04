@@ -8,7 +8,7 @@ from pytz import timezone
 from starplot.data import load
 from starplot.models import SkyObject
 from starplot.planets import get_planet_positions
-from starplot.styles import PlotStyle, GRAYSCALE
+from starplot.styles import PlotStyle, BASE
 
 
 class StarPlot(ABC):
@@ -19,7 +19,7 @@ class StarPlot(ABC):
         limiting_magnitude_labels: float = 2.1,
         include_planets: bool = False,
         ephemeris: str = "de421_2001.bsp",
-        style: PlotStyle = GRAYSCALE,
+        style: PlotStyle = BASE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,

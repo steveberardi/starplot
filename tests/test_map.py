@@ -25,7 +25,7 @@ def map_plot_mercator():
         dec_min=-16,
         dec_max=24,
         limiting_magnitude=7.2,
-        style=styles.MAP_BLUE,
+        style=styles.MAP_BLUE_LIGHT,
         resolution=2000,
     )
 
@@ -39,7 +39,7 @@ def map_plot_stereo_north():
         dec_min=30,
         dec_max=55,
         limiting_magnitude=12.0,
-        style=styles.MAP_BLUE,
+        style=styles.MAP_BLUE_LIGHT,
         resolution=2000,
     )
 
@@ -112,7 +112,7 @@ def test_map_plot_with_planets():
     filename = DATA_PATH / "actual-mercator-planets.png"
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
 
-    style = styles.MAP_BLUE
+    style = styles.MAP_BLUE_LIGHT
     style.bayer_labels.visible = False
     style.star.label.visible = False
     style.constellation.label.visible = False

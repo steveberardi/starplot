@@ -39,7 +39,7 @@ theme:
     - toc.integrate
   
 extra_css:
-  - stylesheets/extra.css
+  - css/extra.css
 
 exclude_docs: |
   custom/

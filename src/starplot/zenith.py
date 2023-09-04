@@ -10,7 +10,7 @@ from skyfield.projections import build_stereographic_projection
 
 from starplot.base import StarPlot
 from starplot.data import load, constellations, stars, dsos, ecliptic
-from starplot.styles import PlotStyle, GRAYSCALE
+from starplot.styles import PlotStyle, ZENITH_BASE
 from starplot.utils import in_circle
 
 
@@ -72,7 +72,7 @@ class ZenithPlot(StarPlot):
         limiting_magnitude_labels: float = 2.1,
         ephemeris: str = "de421_2001.bsp",
         include_planets: bool = False,
-        style: PlotStyle = GRAYSCALE,
+        style: PlotStyle = ZENITH_BASE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
@@ -85,7 +85,7 @@ class ZenithPlot(StarPlot):
             limiting_magnitude_labels,
             include_planets,
             ephemeris,
-            style,
+            ZENITH_BASE.extend(style.dict()),
             resolution,
             hide_colliding_labels,
             adjust_text,

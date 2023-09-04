@@ -15,7 +15,7 @@ from skyfield.api import Star
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
-from starplot.styles import PlotStyle, MAP_BLUE
+from starplot.styles import PlotStyle, MAP_BASE
 from starplot.utils import bbox_minmax_angle, lon_to_ra
 
 # Silence noisy cartopy warnings
@@ -82,7 +82,7 @@ class MapPlot(StarPlot):
         limiting_magnitude_labels: float = 6.0,
         include_planets: bool = False,
         ephemeris: str = "de421_2001.bsp",
-        style: PlotStyle = MAP_BLUE,
+        style: PlotStyle = MAP_BASE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
@@ -95,7 +95,7 @@ class MapPlot(StarPlot):
             limiting_magnitude_labels,
             include_planets,
             ephemeris,
-            style,
+            MAP_BASE.extend(style.dict()),
             resolution,
             hide_colliding_labels,
             adjust_text,
@@ -110,7 +110,7 @@ class MapPlot(StarPlot):
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
-        return dict(transform=ccrs.PlateCarree())
+        return dict(transform=ccrs.Geodetic())
 
     def _prepare_coords(self, ra: float, dec: float) -> (float, float):
         return -1 * (ra * 15 - 360), dec

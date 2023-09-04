@@ -15,14 +15,14 @@ import starplot as sp
 tz = timezone("America/Los_Angeles")
 
 p = sp.ZenithPlot(
-    lat=33.363484, 
+    lat=33.363484,
     lon=-116.836394,
     dt=tz.localize(datetime.now().replace(hour=22)),
     limiting_magnitude=4.6,
-    style=sp.styles.BLUE,
+    style=sp.styles.ZENITH_BLUE_MEDIUM,
     resolution=2000,
 )
-p.export("starchart.png")
+p.export("01_star_chart.png")
 ```
 The created file should look something like this:
 
@@ -49,7 +49,7 @@ p = sp.ZenithPlot(
     lon=-117.038611,
     dt=tz.localize(datetime.now().replace(hour=22)),
     limiting_magnitude=4.6,
-    style=sp.styles.GRAYSCALE,
+    style=sp.styles.ZENITH_GRAYSCALE,
     resolution=2000,
 )
 p.plot_object(
@@ -62,7 +62,7 @@ p.plot_object(
         },
     )
 )
-p.export("starchart-coma.png")
+p.export("02_star_chart_extra.png")
 
 ```
 
@@ -76,7 +76,7 @@ The following code will create a simple map plot that shows the area around the 
 ```python
 import starplot as sp
 
-style = sp.styles.MAP_BLUE.extend(
+style = sp.styles.MAP_BLUE_LIGHT.extend(
     {
         "bayer_labels": {
             "font_name": "GFS Didot",  # use a better font for Greek letters
@@ -120,10 +120,10 @@ p.plot_object(
         },
     )
 )
-p.export("orion.svg", format="svg")
+p.export("03_map_orion.svg", format="svg", padding=0.5)
 
 
 ```
 The result should look something like this:
 
-![map-orion](images/mercator-orion.png)
+![map-orion](images/03_map_orion.svg)
