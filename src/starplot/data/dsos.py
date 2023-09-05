@@ -1,3 +1,5 @@
+from enum import Enum
+
 messier = {
     "M1": (5.575547, 22.014472),
     "M2": (21.557503, 0.823306),
@@ -125,3 +127,59 @@ ZENITH_BASE = [
     "M93",
     "M104",
 ]
+
+ongc_types = {
+    "*": "Star",
+    "**": "Double star",
+    "*Ass": "Association of stars",
+    "OCl": "Open Cluster",
+    "GCl": "Globular Cluster",
+    "Cl+N": "Star cluster + Nebula",
+    "G": "Galaxy",
+    "GPair": "Galaxy Pair",
+    "GTrpl": "Galaxy Triplet",
+    "GGroup": "Group of galaxies",
+    "PN": "Planetary Nebula",
+    "HII": "HII Ionized region",
+    "DrkN": "Dark Nebula",
+    "EmN": "Emission Nebula",
+    "Neb": "Nebula",
+    "RfN": "Reflection Nebula",
+    "SNR": "Supernova remnant",
+    "Nova": "Nova star",
+    "NonEx": "Nonexistent object",
+    "Other": "Object of other/unknown type",
+    "Dup": "Duplicated record",
+}
+
+
+class Type(str, Enum):
+    """
+    Types of deep sky objects (DSOs), as designated in OpenNGC
+    """
+
+    STAR = "Star"
+    DOUBLE_STAR = "Double star"
+    ASSOCIATION_OF_STARS = "Association of stars"
+
+    OPEN_CLUSTER = "Open Cluster"
+    GLOBULAR_CLUSTER = "Globular Cluster"
+
+    GALAXY = "Galaxy"
+    GALAXY_PAIR = "Galaxy Pair"
+    GALAXY_TRIPLET = "Galaxy Triplet"
+    GROUP_OF_GALAXIES = "Group of galaxies"
+
+    NEBULA = "Nebula"
+    PLANETARY_NEBULA = "Planetary Nebula"
+    EMISSION_NEBULA = "Emission Nebula"
+    STAR_CLUSTER_NEBULA = "Star cluster + Nebula"
+    REFLECTION_NEBULA = "Reflection Nebula"
+
+    DARK_NEBULA = "Dark Nebula"
+    HII_IONIZED_REGION = "HII Ionized region"
+    SUPERNOVA_REMNANT = "Supernova remnant"
+    NOVA_STAR = "Nova star"
+    NONEXISTENT = "Nonexistent object"
+    UNKNOWN = "Object of other/unknown type"
+    DUPLICATE_RECORD = "Duplicated record"

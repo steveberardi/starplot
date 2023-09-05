@@ -6,13 +6,17 @@ from enum import Enum
 import cartopy.crs as ccrs
 
 from matplotlib import pyplot as plt
+from matplotlib.ticker import FuncFormatter, FixedLocator
 import geopandas as gpd
 
+from pyongc import ongc
 from skyfield.api import Star
 
 from starplot.base import StarPlot
-from starplot.data import load, DataFiles, bayer, constellations, stars
-from starplot.styles import PlotStyle, MAP_BLUE
+from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
+from starplot.models import SkyObject
+from starplot.styles import PlotStyle, MAP_BASE
+from starplot.utils import bbox_minmax_angle, lon_to_ra
 
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
@@ -51,9 +55,10 @@ class MapPlot(StarPlot):
         ra_max: Maximum right ascension of the map
         dec_min: Minimum declination of the map
         dec_max: Maximum declination of the map
-        dt: Date/time to use for star positions, (*must be timezone-aware*). Default = current UTC time.
+        dt: Date/time to use for star/planet positions, (*must be timezone-aware*). Default = current UTC time.
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
+        include_planets: If True, then planets will be plotted
         ephemeris: Ephemeris to use for calculating star positions
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
@@ -75,8 +80,9 @@ class MapPlot(StarPlot):
         dt: datetime = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 6.0,
+        include_planets: bool = False,
         ephemeris: str = "de421_2001.bsp",
-        style: PlotStyle = MAP_BLUE,
+        style: PlotStyle = MAP_BASE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
@@ -87,8 +93,9 @@ class MapPlot(StarPlot):
             dt,
             limiting_magnitude,
             limiting_magnitude_labels,
+            include_planets,
             ephemeris,
-            style,
+            MAP_BASE.extend(style.dict()),
             resolution,
             hide_colliding_labels,
             adjust_text,
@@ -103,7 +110,7 @@ class MapPlot(StarPlot):
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
-        return dict(transform=ccrs.PlateCarree())
+        return dict(transform=ccrs.Geodetic())
 
     def _prepare_coords(self, ra: float, dec: float) -> (float, float):
         return -1 * (ra * 15 - 360), dec
@@ -243,8 +250,151 @@ class MapPlot(StarPlot):
                     ra + 0.01, dec, bayer_desig, ha="right", va="bottom", **style
                 )
 
+    def _plot_ecliptic(self):
+        if not self.style.ecliptic.line.visible:
+            return
+
+        incline = ecliptic.ANGLE
+
+        radecs = [
+            [(24, 18), (0, -1 * incline), (21, -15)],
+            [(18, 12), (-1 * incline, 0), (15, -15)],
+            [(12, 6), (0, incline), (9, 15)],
+            [(6, 0), (incline, 0), (3, 15)],
+        ]
+        for ras, decs, text_coord in radecs:
+            lon_0 = -1 * (ras[0] * 15 - 360)
+            lon_1 = -1 * (ras[1] * 15 - 360)
+            coef = (decs[1] - decs[0]) / incline
+
+            eline = self.ax.plot(
+                [lon_0, lon_1],  # x
+                decs,  # y
+                dash_capstyle=self.style.ecliptic.line.dash_capstyle,
+                transform=ccrs.Geodetic(),
+                **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
+            )
+
+            angle = coef * bbox_minmax_angle(eline[0].get_bbox())
+
+            if self.style.ecliptic.label.visible:
+                self._plot_text(
+                    *text_coord,
+                    "ECLIPTIC",
+                    rotation=angle,
+                    rotation_mode="anchor",
+                    transform_rotates_text=True,
+                    **self.style.ecliptic.label.matplot_kwargs(self._size_multiplier),
+                )
+
+    def _plot_celestial_equator(self):
+        if self.style.celestial_equator.line.visible:
+            self.ax.plot(
+                [0, 360],
+                [0, 0],
+                **self._plot_kwargs(),
+                **self.style.celestial_equator.line.matplot_kwargs(
+                    self._size_multiplier
+                ),
+            )
+
+        if self.style.celestial_equator.label.visible:
+            style = self.style.celestial_equator.label.matplot_kwargs(
+                self._size_multiplier
+            )
+
+            for ra in range(0, 24, 4):
+                self._plot_text(ra, 0.25, "CELESTIAL EQUATOR", **style)
+
+    def _plot_gridlines(self):
+        labels_visible = self.style.gridlines.label.visible
+        lines_visible = self.style.gridlines.line.visible
+
+        def ra_formatter(x, pos) -> str:
+            hour, minutes, seconds = lon_to_ra(x)
+            return f"{hour}h"
+
+        def dec_formatter(x, pos) -> str:
+            return f"{round(x)}\u00b0"
+
+        if lines_visible:
+            gridlines = self.ax.gridlines(
+                draw_labels=labels_visible,
+                x_inline=False,
+                y_inline=False,
+                rotate_labels=False,
+                **self.style.gridlines.line.matplot_kwargs(),
+            )
+
+            # use a fixed locator for right ascension so gridlines are only drawn at whole numbers
+            gridlines.xlocator = FixedLocator([x for x in range(-180, 180, 15)])
+            gridlines.xformatter = FuncFormatter(ra_formatter)
+            gridlines.xlabel_style = self.style.gridlines.label.matplot_kwargs()
+
+            gridlines.yformatter = FuncFormatter(dec_formatter)
+            gridlines.ylabel_style = self.style.gridlines.label.matplot_kwargs()
+
+    def _plot_dsos(self):
+        nearby_dsos = ongc.listObjects(
+            minra=self.ra_min * 15,  # convert to degrees
+            maxra=self.ra_max * 15,  # convert to degrees
+            mindec=self.dec_min,
+            maxdec=self.dec_max,
+            uptovmag=self.limiting_magnitude,
+        )
+
+        styles = {
+            # Star Clusters ----------
+            dsos.Type.OPEN_CLUSTER: self.style.dso_open_cluster,
+            dsos.Type.GLOBULAR_CLUSTER: self.style.dso_globular_cluster,
+            # Galaxies ----------
+            dsos.Type.GALAXY: self.style.dso_galaxy,
+            dsos.Type.GALAXY_PAIR: self.style.dso_galaxy,
+            dsos.Type.GALAXY_TRIPLET: self.style.dso_galaxy,
+            dsos.Type.GROUP_OF_GALAXIES: self.style.dso_galaxy,
+            # Nebulas ----------
+            dsos.Type.NEBULA: self.style.dso_nebula,
+            dsos.Type.PLANETARY_NEBULA: self.style.dso_nebula,
+            dsos.Type.EMISSION_NEBULA: self.style.dso_nebula,
+            dsos.Type.STAR_CLUSTER_NEBULA: self.style.dso_nebula,
+            dsos.Type.REFLECTION_NEBULA: self.style.dso_nebula,
+            # Stars ----------
+            dsos.Type.STAR: None,
+            dsos.Type.DOUBLE_STAR: self.style.dso_double_star,
+            dsos.Type.ASSOCIATION_OF_STARS: self.style.dso,
+            # Undefined - TODO
+            "Dark Nebula": None,
+            "HII Ionized region": None,
+            "Supernova remnant": None,
+            "Nova star": None,
+            "Nonexistent object": None,
+            "Object of other/unknown type": None,
+            "Duplicated record": None,
+        }
+
+        for d in nearby_dsos:
+            if d.coords is None:
+                continue
+
+            ra = d.coords[0][0] + d.coords[0][1] / 60 + d.coords[0][2] / 3600
+            dec = d.coords[1][0] + d.coords[1][1] / 60 + d.coords[1][2] / 3600
+            style = styles.get(d.type)
+
+            # only plot DSOs with defined styles
+            if style:
+                obj = SkyObject(
+                    name=d.name,
+                    ra=ra,
+                    dec=dec,
+                    style=style,
+                )
+                self.plot_object(obj)
+
     def _init_plot(self):
-        self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
+        self.fig = plt.figure(
+            figsize=(self.figure_size, self.figure_size),
+            facecolor=self.style.border_bg_color.as_hex(),
+        )
 
         if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:
             # for stereo projections, try to orient map so the pole is "up"
@@ -253,19 +403,23 @@ class MapPlot(StarPlot):
         else:
             center_lon = -180
 
-        self.ax = plt.axes(projection=Projection.crs(self.projection, center_lon))
+        self._proj = Projection.crs(self.projection, center_lon)
+        self._proj.threshold = 100
+        self.ax = plt.axes(projection=self._proj)
         self.ax.set_extent(self._latlon_bounds(), crs=ccrs.PlateCarree())
+        self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
 
-        gridlines = self.ax.gridlines(zorder=-1000, draw_labels=False)
-        gridlines.top_labels = False
-        gridlines.right_labels = False
-
+        self._plot_gridlines()
         self._plot_constellation_lines()
         self._plot_constellation_borders()
         self._plot_constellation_labels()
         self._plot_milky_way()
         self._plot_stars()
+        self._plot_ecliptic()
+        self._plot_celestial_equator()
+        self._plot_dsos()
+        self._plot_planets()
 
         if self.adjust_text:
             self.adjust_labels()

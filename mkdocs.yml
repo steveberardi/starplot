@@ -1,4 +1,5 @@
 site_name: Starplot
+site_url: https://starplot.dev
 repo_url: https://github.com/steveberardi/starplot
 
 nav:
@@ -38,7 +39,7 @@ theme:
     - toc.integrate
   
 extra_css:
-  - stylesheets/extra.css
+  - css/extra.css
 
 exclude_docs: |
   custom/

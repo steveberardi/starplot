@@ -9,8 +9,8 @@ from skyfield.positionlib import position_of_radec
 from skyfield.projections import build_stereographic_projection
 
 from starplot.base import StarPlot
-from starplot.data import load, constellations, stars, dsos
-from starplot.styles import PlotStyle, GRAYSCALE
+from starplot.data import load, constellations, stars, dsos, ecliptic
+from starplot.styles import PlotStyle, ZENITH_BASE
 from starplot.utils import in_circle
 
 
@@ -47,9 +47,10 @@ class ZenithPlot(StarPlot):
         lat: Latitude of viewing location
         lon: Longitude of viewing location
         include_info_text: If True, then the plot will include the time/location
-        dt: Date/time to use for star positions (*must be timezone-aware*). Default = current UTC time.
+        dt: Date/time to use for star/planet positions (*must be timezone-aware*). Default = current UTC time.
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
+        include_planets: If True, then planets will be plotted
         ephemeris: Ephemeris to use for calculating star positions
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
@@ -70,7 +71,8 @@ class ZenithPlot(StarPlot):
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
         ephemeris: str = "de421_2001.bsp",
-        style: PlotStyle = GRAYSCALE,
+        include_planets: bool = False,
+        style: PlotStyle = ZENITH_BASE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
@@ -81,8 +83,9 @@ class ZenithPlot(StarPlot):
             dt,
             limiting_magnitude,
             limiting_magnitude_labels,
+            include_planets,
             ephemeris,
-            style,
+            ZENITH_BASE.extend(style.dict()),
             resolution,
             hide_colliding_labels,
             adjust_text,
@@ -119,6 +122,7 @@ class ZenithPlot(StarPlot):
             **self.style.constellation.line.matplot_kwargs(
                 size_multiplier=self._size_multiplier
             ),
+            clip_path=self.background_circle,
         )
         self._plotted_conlines = self.ax.add_collection(constellations)
 
@@ -172,6 +176,7 @@ class ZenithPlot(StarPlot):
                 stardata["y"][bright_stars],
                 sizes,
                 color=self.style.star.marker.color.as_hex(),
+                clip_path=self.background_circle,
             )
 
         starpos_x = []
@@ -247,7 +252,7 @@ class ZenithPlot(StarPlot):
         self.ax.text(0, -1.045, "S", **border_font_kwargs)
 
         # Background Circle
-        background_circle = plt.Circle(
+        self.background_circle = plt.Circle(
             (0, 0),
             facecolor=self.style.background_color.as_hex(),
             radius=1.0,
@@ -255,11 +260,7 @@ class ZenithPlot(StarPlot):
             fill=True,
             zorder=-100,
         )
-        self.ax.add_patch(background_circle)
-
-        # clip stars outside background circle
-        self._plotted_stars.set_clip_path(background_circle)
-        self._plotted_conlines.set_clip_path(background_circle)
+        self.ax.add_patch(self.background_circle)
 
         # Border Circles
         inner_border = plt.Circle(
@@ -280,9 +281,31 @@ class ZenithPlot(StarPlot):
             linewidth=4 * self._size_multiplier,
             edgecolor=self.style.border_line_color.as_hex(),
             fill=True,
-            zorder=-200,
+            zorder=-1024,
         )
         self.ax.add_patch(outer_border)
+
+    def _plot_ecliptic(self):
+        if not self.style.ecliptic.line.visible:
+            return
+
+        xs = []
+        ys = []
+
+        for ra, dec in ecliptic.RA_DECS:
+            x, y = self.project_fn(position_of_radec(ra, dec))
+
+            xs.append(x)
+            ys.append(y)
+
+        self.ax.plot(
+            xs,
+            ys,
+            dash_capstyle=self.style.ecliptic.line.dash_capstyle,
+            clip_path=self.background_circle,
+            **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
+            **self._plot_kwargs(),
+        )
 
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
@@ -295,11 +318,13 @@ class ZenithPlot(StarPlot):
         self.ax.set_aspect(1.0)
         self.ax.axis("off")
 
+        self._plot_border()
         self._plot_stars()
         self._plot_constellation_lines()
         self._plot_constellation_labels()
         self._plot_dso_base()
-        self._plot_border()
+        self._plot_ecliptic()
+        self._plot_planets()
 
         if self.include_info_text:
             dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()

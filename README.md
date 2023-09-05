@@ -13,10 +13,10 @@
 
 ## Examples
 *Zenith plot of the stars from a specific time/location:*
-![starchart-blue](https://github.com/steveberardi/starplot/blob/main/examples/starchart-blue.png?raw=true)
+![starchart-blue](https://github.com/steveberardi/starplot/blob/main/examples/01_star_chart.png?raw=true)
 
 *Map around the constellation Orion, with M42 marked:*
-![map-orion](https://github.com/steveberardi/starplot/blob/main/examples/mercator-orion.png?raw=true)
+![map-orion](https://github.com/steveberardi/starplot/blob/main/examples/03_map_orion.svg?raw=true)
 
 
 ## Basic Usage
@@ -58,9 +58,6 @@ p.export("starchart.png")
 ## Coming Soon
 
 - 🔭 Scope plots - that will simulate what you'll see through a telescope eyepiece
-- 🪐 More objects - including planets, and a base library of deep sky objects (DSOs)
-- 💫 Plotting ecliptic
-- 🌐 RA/DEC Labels
 - ⚖️ Better auto font-size adjustment
 - ☄️ Better label collision detection and handling
 
