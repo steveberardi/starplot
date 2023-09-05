@@ -83,7 +83,7 @@ class StarPlot(ABC):
         if self.fig:
             plt.close(self.fig)
 
-    def export(self, filename: str, format: str = "png", padding: int = 0):
+    def export(self, filename: str, format: str = "png", padding: float = 0):
         """Exports the plot to an image file.
 
         Args:
