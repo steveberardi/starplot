@@ -33,7 +33,7 @@ p = sp.ZenithPlot(
     lon=-116.836394,
     dt=timezone("America/Los_Angeles").localize(datetime.now().replace(hour=22)),
     limiting_magnitude=4.6,
-    style=sp.styles.BLUE,
+    style=sp.styles.ZENITH_BLUE_MEDIUM,
     resolution=2000,
 )
 p.export("starchart.png")
