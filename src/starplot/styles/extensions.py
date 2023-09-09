@@ -246,13 +246,3 @@ BLUE_DARK = dict(
 
 HIDE_LABELS = load("hide_labels.yml")
 
-# dict(
-#     star={"label": {"visible": False}},
-#     constellation={"label": {"visible": False}},
-#     planets={"label": {"visible": False}},
-#     ecliptic={"label": {"visible": False}},
-#     celestial_equator={"label": {"visible": False}},
-#     dso={"label": {"visible": False}},
-#     gridlines={"label": {"visible": False}},
-#     bayer_labels={"visible": False},
-# )

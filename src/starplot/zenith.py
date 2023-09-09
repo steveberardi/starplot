@@ -85,7 +85,7 @@ class ZenithPlot(StarPlot):
             limiting_magnitude_labels,
             include_planets,
             ephemeris,
-            ZENITH_BASE.extend(style.dict()),
+            style,
             resolution,
             hide_colliding_labels,
             adjust_text,

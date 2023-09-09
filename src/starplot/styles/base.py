@@ -532,14 +532,14 @@ class PlotStyle(BaseModel):
         from the last style (similar to how CSS works).
 
         Example Usage:
-            Create an extension of the default style with map optimizations, skylight color scheme,
+            Create an extension of the default style with map optimizations, light blue color scheme,
             and hide the constellation borders and Milky Way:
 
             ```python
 
             new_style = PlotStyle().extend(
-                sp.styles.MAP,
-                sp.styles.SKYLIGHT,
+                styles.extensions.MAP,
+                styles.extensions.BLUE_LIGHT,
                 {
                     "constellation_borders": {"visible": False},
                     "milky_way": {"visible": False},

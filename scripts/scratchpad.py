@@ -172,7 +172,7 @@ def create_map_with_planets():
 
 def create_map_sgr():
     style = sp.styles.MAP_BLUE_DARK.extend(
-        sp.styles.extensions.HIDE_LABELS,
+        # sp.styles.extensions.HIDE_LABELS,
         {
             "bayer_labels": {
                 "font_name": "GFS Didot",
@@ -183,7 +183,7 @@ def create_map_sgr():
         },
     )
     # style.star.label.visible = False
-    # # style.star.marker.visible = False
+    # style.star.marker.visible = False
     # style.constellation.label.visible = False
     # style.ecliptic.label.visible = False
     # style.celestial_equator.label.visible = False
@@ -206,16 +206,16 @@ def create_map_sgr():
         style=style,
         resolution=2600,
     )
-    p.export("temp/map-sgr.svg", format="svg", padding=1)
+    p.export("temp/map-sgr.svg", format="svg", padding=0.5)
 
 
 # ------------------------------------------
 
 # create_zenith()
 # create_map_mercator()
-create_map_stereo_north()
+# create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
+# create_map_orion()
 create_map_sgr()
 # create_map_with_planets()
 
