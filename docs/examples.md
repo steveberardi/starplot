@@ -10,16 +10,20 @@ To create a star chart for tonight's sky as seen from [Palomar Mountain](https:/
 ```python
 from datetime import datetime
 from pytz import timezone
-import starplot as sp
+from starplot import ZenithPlot
+from starplot.styles import PlotStyle, extensions
 
 tz = timezone("America/Los_Angeles")
 
-p = sp.ZenithPlot(
+p = ZenithPlot(
     lat=33.363484,
     lon=-116.836394,
     dt=tz.localize(datetime.now().replace(hour=22)),
     limiting_magnitude=4.6,
-    style=sp.styles.ZENITH_BLUE_MEDIUM,
+    style=PlotStyle().extend(
+        extensions.BLUE_MEDIUM,
+        extensions.ZENITH,
+    ),
     resolution=2000,
 )
 p.export("01_star_chart.png")
@@ -40,20 +44,24 @@ Building on the first example, you can also plot additional objects and even cus
 ```python
 from datetime import datetime
 from pytz import timezone
-import starplot as sp
+from starplot import ZenithPlot, SkyObject
+from starplot.styles import PlotStyle, extensions
 
 tz = timezone("America/Los_Angeles")
 
-p = sp.ZenithPlot(
+p = ZenithPlot(
     lat=32.97,
     lon=-117.038611,
     dt=tz.localize(datetime.now().replace(hour=22)),
     limiting_magnitude=4.6,
-    style=sp.styles.ZENITH_GRAYSCALE,
+    style=PlotStyle().extend(
+        extensions.GRAYSCALE,
+        extensions.ZENITH,
+    ),
     resolution=2000,
 )
 p.plot_object(
-    sp.SkyObject(
+    SkyObject(
         name="Mel 111",
         ra=12.36,
         dec=25.85,
@@ -74,21 +82,24 @@ p.export("02_star_chart_extra.png")
 The following code will create a simple map plot that shows the area around the constellation Orion, including an extra marker for M42 - The Great Orion Nebula:
 
 ```python
-import starplot as sp
+from starplot import MapPlot, Projection, SkyObject
+from starplot.styles import PlotStyle, extensions
 
-style = sp.styles.MAP_BLUE_LIGHT.extend(
+style = PlotStyle().extend(
+    extensions.BLUE_LIGHT,
+    extensions.MAP,
     {
         "bayer_labels": {
             "font_name": "GFS Didot",  # use a better font for Greek letters
             "font_size": 7,
             "font_alpha": 0.9,
         },
-    }
+    },
 )
 style.star.label.font_size = 11
 
-p = sp.MapPlot(
-    projection=sp.Projection.MERCATOR,
+p = MapPlot(
+    projection=Projection.MERCATOR,
     ra_min=3.6,
     ra_max=7.8,
     dec_min=-16,
@@ -98,7 +109,7 @@ p = sp.MapPlot(
     resolution=4000,
 )
 p.plot_object(
-    sp.SkyObject(
+    SkyObject(
         name="M42",
         ra=5.58333,
         dec=-4.61,
@@ -121,7 +132,6 @@ p.plot_object(
     )
 )
 p.export("03_map_orion.svg", format="svg", padding=0.5)
-
 
 ```
 The result should look something like this:

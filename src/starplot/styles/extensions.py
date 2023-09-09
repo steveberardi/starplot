@@ -11,9 +11,11 @@ from starplot.styles.base import (
 HERE = Path(__file__).resolve().parent
 EXT_PATH = HERE / "ext"
 
+
 def load(filename: str) -> dict:
     with open(EXT_PATH / filename, "r") as infile:
         return yaml.safe_load(infile)
+
 
 MAP = dict(
     star={"label": {"font_size": 8}},
@@ -245,4 +247,3 @@ BLUE_DARK = dict(
 # Helpers
 
 HIDE_LABELS = load("hide_labels.yml")
-
