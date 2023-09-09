@@ -1,9 +1,19 @@
+from pathlib import Path
+
+import yaml
+
 from starplot.styles.base import (
     FontWeightEnum,
     FillStyleEnum,
     LineStyleEnum,
 )
 
+HERE = Path(__file__).resolve().parent
+EXT_PATH = HERE / "ext"
+
+def load(filename: str) -> dict:
+    with open(EXT_PATH / filename, "r") as infile:
+        return yaml.safe_load(infile)
 
 MAP = dict(
     star={"label": {"font_size": 8}},
@@ -234,13 +244,15 @@ BLUE_DARK = dict(
 
 # Helpers
 
-HIDE_LABELS = dict(
-    star={"label": {"visible": False}},
-    constellation={"label": {"visible": False}},
-    planets={"label": {"visible": False}},
-    ecliptic={"label": {"visible": False}},
-    celestial_equator={"label": {"visible": False}},
-    dso={"label": {"visible": False}},
-    gridlines={"label": {"visible": False}},
-    bayer_labels={"visible": False},
-)
+HIDE_LABELS = load("hide_labels.yml")
+
+# dict(
+#     star={"label": {"visible": False}},
+#     constellation={"label": {"visible": False}},
+#     planets={"label": {"visible": False}},
+#     ecliptic={"label": {"visible": False}},
+#     celestial_equator={"label": {"visible": False}},
+#     dso={"label": {"visible": False}},
+#     gridlines={"label": {"visible": False}},
+#     bayer_labels={"visible": False},
+# )

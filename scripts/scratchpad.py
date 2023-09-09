@@ -7,7 +7,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot.styles import PlotStyle
+from starplot.styles import PlotStyle, extensions
 from starplot.models import SkyObject
 from starplot.map import Projection
 

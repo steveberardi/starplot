@@ -53,6 +53,8 @@ plugins:
             show_source: false
             show_bases: false
             docstring_section_style: list
+  - macros:
+      include_dir: src/starplot/styles/ext/
 
 markdown_extensions:
   - admonition
@@ -64,5 +66,6 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - pymdownx.details
   - pymdownx.tabbed:
       alternate_style: true 
