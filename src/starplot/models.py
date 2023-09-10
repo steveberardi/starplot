@@ -31,10 +31,6 @@ class SkyObject(BaseModel):
         ```
         Plot the object with [`MapPlot.plot_object()`][starplot.map.MapPlot.plot_object] or [`ZenithPlot.plot_object()`][starplot.zenith.ZenithPlot.plot_object]
 
-
-    ```python
-    starplot.SkyObject(name: str, ra: float, dec: float, style: ObjectStyle)
-    ```
     Args:
         name (str): Name of object (used for plotting its label)
         ra (flaot): Right ascension of object

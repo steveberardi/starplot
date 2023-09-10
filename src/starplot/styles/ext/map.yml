@@ -1,0 +1,15 @@
+bayer_labels:
+  font_size: 7
+constellation:
+  label:
+    font_size: 11
+    font_weight: light
+  line:
+    width: 3
+ecliptic:
+  line:
+    alpha: 0.8
+    width: 2
+star:
+  label:
+    font_size: 8

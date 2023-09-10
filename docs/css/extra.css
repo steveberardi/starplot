@@ -81,3 +81,8 @@
     margin-bottom: 0;
     padding-bottom: 1rem;
 }
+
+code.raw {
+    display: block;
+    white-space: pre-wrap   
+}

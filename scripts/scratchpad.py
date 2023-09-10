@@ -189,12 +189,12 @@ def create_map_sgr():
     # style.celestial_equator.label.visible = False
 
     p = sp.MapPlot(
-        projection=Projection.STEREO_NORTH,
+        projection=Projection.STEREO_SOUTH,
         # SGR
-        ra_min=17.5,
-        ra_max=19.5,
+        ra_min=16,
+        ra_max=20,
         dec_min=-40,
-        dec_max=-15,
+        dec_max=-10,
         # CYG
         # ra_min=19,
         # ra_max=21,
@@ -206,9 +206,26 @@ def create_map_sgr():
         style=style,
         resolution=2600,
     )
-    p.export("temp/map-sgr.svg", format="svg", padding=0.5)
+    p.export("temp/map-sgr.svg", format="svg", padding=0.4)
 
 
+def dump_extensions():
+    import yaml
+
+    ext = {
+        "blue_light": extensions.BLUE_LIGHT,
+        "blue_medium": extensions.BLUE_MEDIUM,
+        "blue_dark": extensions.BLUE_DARK,
+        "grayscale": extensions.GRAYSCALE,
+        "map": extensions.MAP,
+        "zenith": extensions.ZENITH,
+
+    }
+
+    for k, v in ext.items():
+        with open(f"temp/{k}.yml", "w") as outfile:
+            style_yaml = yaml.dump(v)
+            outfile.write(style_yaml)
 # ------------------------------------------
 
 # create_zenith()
@@ -219,5 +236,6 @@ def create_map_sgr():
 create_map_sgr()
 # create_map_with_planets()
 
+# dump_extensions()
 
 print(f"Total run time: {time.time() - start_time}")

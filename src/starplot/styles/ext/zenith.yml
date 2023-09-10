@@ -1,0 +1,5 @@
+ecliptic:
+  label:
+    visible: false
+  line:
+    visible: false

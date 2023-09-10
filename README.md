@@ -7,6 +7,7 @@
 
 - ⭐ **Zenith Plots** - showing the stars from a specific time/location
 - 🗺️ **Map Plots** - including North/South polar and Mercator projections
+- 🪐 **Planets and Deep Sky Objects (DSOs)**
 - 🎨 **Custom Styles** - for all objects
 - 📥 **Export** - png, svg
 - 🧭 **Label Collision Avoidance**

@@ -30,10 +30,10 @@ from starplot.styles import PlotStyle, extensions
 style = PlotStyle()
 
 # Step 2: extend the style with a few built-in extensions
-style = style.extend([
+style = style.extend(
     extensions.MAP,
     extensions.BLUE_DARK
-])
+)
 
 # Step 3: apply the style in a new map plot
 mp = MapPlot(
@@ -69,10 +69,9 @@ This works well when you only want to change a couple properties, but for more c
 
 ## Extending a Style
 
-Once you have an instance of a PlotStyle, then you can customize it with the PlotStyle's [`extend`](#starplot.PlotStyle.extend) method. This method takes a list of dictionaries and applies them to the original style in sequential order. In other words, when extending a PlotStyle, **you only have to define style properties that you want to override from the current style** — similar to how Cascading Style Sheets (CSS) work.
+Once you have an instance of a PlotStyle, then you can customize it with the PlotStyle's [`extend`](#starplot.PlotStyle.extend) method. This method takes in one or more args of dictionaries and applies them to the original style in sequential order. In other words, when extending a PlotStyle, **you only have to define style properties that you want to override from the current style** — similar to how Cascading Style Sheets (CSS) work.
 
 Starplot has a few [built-in extensions](#built-in-style-extensions) for applying color schemes, hiding labels, etc. But, you can also easily create your own extensions.
-
 
 ### Basic Example
 Here's a simple example of extending a style to use a different font for Bayer labels of stars:
@@ -80,12 +79,14 @@ Here's a simple example of extending a style to use a different font for Bayer l
 ```python
 from starplot import PlotStyle
 
-style = PlotStyle().extend([{
-    "bayer_labels": {
-        "font_name": "GFS Didot",
-        "font_size": 10
+style = PlotStyle().extend(
+    {
+        "bayer_labels": {
+            "font_name": "GFS Didot",
+            "font_size": 10
+        }
     }
-}])
+)
 ```
 Alternatively, you can do this:
 ```python
@@ -156,15 +157,14 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
 
 - **Color Schemes**
     - `GRAYSCALE` - Optimized for printing in grayscale ([details](#extensions-grayscale))
-    - `BLUE_LIGHT` - Light and bright colors
-    - `BLUE_MEDIUM` - Medium brightness bluish gray colors
-    - `BLUE_DARK` - Dark bluish gray colors
+    - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
+    - `BLUE_MEDIUM` - Medium brightness bluish gray colors ([details](#extensions-blue-medium))
+    - `BLUE_DARK` - Dark bluish gray colors ([details](#extensions-blue-dark))
 - **Plot types**
-    - `MAP_BASE`
-    - `ZENITH_BASE`
+    - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
+    - `ZENITH` - Basic styling tailored for zenith plots ([details](#extensions-zenith))
 - **Others**
     - `HIDE_LABELS` - Hides all the labels ([details](#extensions-hide-labels))
-
 
 ---
 
@@ -245,25 +245,96 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
         show_docstring_attributes: true
         members: true
 
+---
+
 ## Style Extensions
 
-<h2 class="doc doc-heading" id="extensions-grayscale">
-    <code>GRAYSCALE</code>
-</h2>
+- **Color Schemes**
+    - `GRAYSCALE` - Optimized for printing in grayscale ([details](#extensions-grayscale))
+    - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
+    - `BLUE_MEDIUM` - Medium brightness bluish gray colors ([details](#extensions-blue-medium))
+    - `BLUE_DARK` - Dark bluish gray colors ([details](#extensions-blue-dark))
+- **Plot types**
+    - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
+    - `ZENITH` - Basic styling tailored for zenith plots ([details](#extensions-zenith))
+- **Others**
+    - `HIDE_LABELS` - Hides all the labels ([details](#extensions-hide-labels))
+
+
+<!-- GRAYSCALE -->
+<h2 class="doc doc-heading" id="extensions-grayscale"><code>GRAYSCALE</code></h2>
 
 <div class="indent" markdown>
 Optimized for printing in grayscale
 
 **Source**
 ```yaml
-{% include 'hide_labels.yml' %}
+{% include 'grayscale.yml' %}
 ```
 </div>
 
+<!-- BLUE LIGHT -->
+<h2 class="doc doc-heading" id="extensions-blue-light"><code>BLUE_LIGHT</code></h2>
 
-<h2 class="doc doc-heading" id="extensions-hide-labels">
-    <code>HIDE_LABELS</code>
-</h2>
+<div class="indent" markdown>
+Light and bright colors
+
+**Source**
+```yaml
+{% include 'blue_light.yml' %}
+```
+</div>
+
+<!-- BLUE MEDIUM -->
+<h2 class="doc doc-heading" id="extensions-blue-medium"><code>BLUE_MEDIUM</code></h2>
+
+<div class="indent" markdown>
+Medium brightness bluish gray colors
+
+**Source**
+```yaml
+{% include 'blue_medium.yml' %}
+```
+</div>
+
+<!-- BLUE DARK -->
+<h2 class="doc doc-heading" id="extensions-blue-dark"><code>BLUE_DARK</code></h2>
+
+<div class="indent" markdown>
+Dark bluish gray colors
+
+**Source**
+```yaml
+{% include 'blue_dark.yml' %}
+```
+</div>
+
+<!-- MAP -->
+<h2 class="doc doc-heading" id="extensions-map"><code>MAP</code></h2>
+
+<div class="indent" markdown>
+Basic styling tailored for map plots
+
+**Source**
+```yaml
+{% include 'map.yml' %}
+```
+</div>
+
+<!-- ZENITH -->
+<h2 class="doc doc-heading" id="extensions-zenith"><code>ZENITH</code></h2>
+
+<div class="indent" markdown>
+Basic styling tailored for zenith plots
+
+**Source**
+```yaml
+{% include 'zenith.yml' %}
+```
+</div>
+
+<!-- HIDE_LABELS -->
+<h2 class="doc doc-heading" id="extensions-hide-labels"><code>HIDE_LABELS</code></h2>
 
 <div class="indent" markdown>
 Hides all the labels
@@ -272,5 +343,4 @@ Hides all the labels
 ```yaml
 {% include 'hide_labels.yml' %}
 ```
-
 </div>
