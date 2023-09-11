@@ -40,31 +40,32 @@ def create_map_orion():
         resolution=4000,
     )
     # marker for M42
-    # p.plot_object(
-    #     SkyObject(
-    #         name="M42",
-    #         ra=5.58333,
-    #         dec=-4.61,
-    #         style={
-    #             "marker": {
-    #                 "size": 10,
-    #                 "symbol": "s",
-    #                 "fill": "full",
-    #                 # "color": "#ff6868",
-    #                 "color": "blue",
-    #                 "alpha": 0.7,
-    #                 "zorder": 4096,
-    #             },
-    #             "label": {
-    #                 "font_size": 12,
-    #                 "font_weight": "bold",
-    #                 # "font_color": "blue",
-    #                 "font_color": "darkred",
-    #                 "zorder": 4096,
-    #             },
-    #         },
-    #     )
-    # )
+    p.plot_object(
+        SkyObject(
+            name="M42",
+            ra=5.58333,
+            dec=-4.61,
+            style={
+                "marker": {
+                    "size": 10,
+                    "symbol": "s",
+                    "fill": "full",
+                    # "color": "#ff6868",
+                    "color": "blue",
+                    "alpha": 0.7,
+                    "zorder": 4096,
+                },
+                "label": {
+                    "font_size": 12,
+                    "font_weight": "bold",
+                    # "font_color": "blue",
+                    # "font_name": "GFS Didot",
+                    "font_color": "darkred",
+                    "zorder": 4096,
+                },
+            },
+        )
+    )
     p.export("temp/map-orion.svg", format="svg", padding=1)
 
 
@@ -171,8 +172,12 @@ def create_map_with_planets():
 
 
 def create_map_sgr():
-    style = sp.styles.MAP_BLUE_DARK.extend(
+    style = PlotStyle().extend(
         # sp.styles.extensions.HIDE_LABELS,
+        extensions.MAP,
+        # extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        extensions.BLUE_DARK,
         {
             "bayer_labels": {
                 "font_name": "GFS Didot",
@@ -187,26 +192,28 @@ def create_map_sgr():
     # style.constellation.label.visible = False
     # style.ecliptic.label.visible = False
     # style.celestial_equator.label.visible = False
+    style.gridlines.label.font_size = 8
 
     p = sp.MapPlot(
         projection=Projection.STEREO_SOUTH,
         # SGR
         ra_min=16,
         ra_max=20,
-        dec_min=-40,
+        dec_min=-50,
         dec_max=-10,
         # CYG
         # ra_min=19,
         # ra_max=21,
         # dec_min=35,
         # dec_max=55,
-        limiting_magnitude=8,
+        limiting_magnitude=6,
         # include_planets=True,
         # hide_colliding_labels=False,
         style=style,
-        resolution=2600,
+        resolution=1600,
     )
-    p.export("temp/map-sgr.svg", format="svg", padding=0.4)
+    p.export("temp/map-sgr.svg", format="svg", padding=0.3)
+    p.export("temp/map-sgr.png", format="png", padding=0.3)
 
 
 def dump_extensions():
@@ -232,7 +239,7 @@ def dump_extensions():
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 create_map_sgr()
 # create_map_with_planets()
 
