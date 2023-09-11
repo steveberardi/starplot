@@ -54,7 +54,8 @@ plugins:
             show_bases: false
             docstring_section_style: list
   - macros:
-      include_dir: src/starplot/styles/ext/
+      include_dir: .
+      # include_dir: examples/ src/starplot/styles/ext/
 
 markdown_extensions:
   - admonition

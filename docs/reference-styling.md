@@ -269,7 +269,7 @@ Optimized for printing in grayscale
 
 **Source**
 ```yaml
-{% include 'grayscale.yml' %}
+{% include 'src/starplot/styles/ext/grayscale.yml' %}
 ```
 </div>
 
@@ -281,7 +281,7 @@ Light and bright colors
 
 **Source**
 ```yaml
-{% include 'blue_light.yml' %}
+{% include 'src/starplot/styles/ext/blue_light.yml' %}
 ```
 </div>
 
@@ -293,7 +293,7 @@ Medium brightness bluish gray colors
 
 **Source**
 ```yaml
-{% include 'blue_medium.yml' %}
+{% include 'src/starplot/styles/ext/blue_medium.yml' %}
 ```
 </div>
 
@@ -305,7 +305,7 @@ Dark bluish gray colors
 
 **Source**
 ```yaml
-{% include 'blue_dark.yml' %}
+{% include 'src/starplot/styles/ext/blue_dark.yml' %}
 ```
 </div>
 
@@ -317,7 +317,7 @@ Basic styling tailored for map plots
 
 **Source**
 ```yaml
-{% include 'map.yml' %}
+{% include 'src/starplot/styles/ext/map.yml' %}
 ```
 </div>
 
@@ -329,7 +329,7 @@ Basic styling tailored for zenith plots
 
 **Source**
 ```yaml
-{% include 'zenith.yml' %}
+{% include 'src/starplot/styles/ext/zenith.yml' %}
 ```
 </div>
 
@@ -341,6 +341,6 @@ Hides all the labels
 
 **Source**
 ```yaml
-{% include 'hide_labels.yml' %}
+{% include 'src/starplot/styles/ext/hide_labels.yml' %}
 ```
 </div>

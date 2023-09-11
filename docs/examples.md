@@ -4,33 +4,18 @@ This page has a few examples to get you familiar with Starplot and how it works.
 2. [Star Chart with an Extra Object Plotted](#star-chart-with-an-extra-object-plotted)
 3. [Map of Orion](#map-of-orion)
 
+
+
 ## Star Chart for Time/Location
 To create a star chart for tonight's sky as seen from [Palomar Mountain](https://en.wikipedia.org/wiki/Palomar_Mountain) in California:
 
 ```python
-from datetime import datetime
-from pytz import timezone
-from starplot import ZenithPlot
-from starplot.styles import PlotStyle, extensions
-
-tz = timezone("America/Los_Angeles")
-
-p = ZenithPlot(
-    lat=33.363484,
-    lon=-116.836394,
-    dt=tz.localize(datetime.now().replace(hour=22)),
-    limiting_magnitude=4.6,
-    style=PlotStyle().extend(
-        extensions.BLUE_MEDIUM,
-        extensions.ZENITH,
-    ),
-    resolution=2000,
-)
-p.export("01_star_chart.png")
+{% include 'examples/example_1.py' %}
 ```
+
 The created file should look something like this:
 
-![starchart-blue](images/starchart-blue.png)
+![starchart-blue](images/example_1.png)
 
 !!! info "Does your result look different?"
 
@@ -42,39 +27,10 @@ The created file should look something like this:
 Building on the first example, you can also plot additional objects and even customize their style. Here's an example that plots the [Coma Star Cluster](https://en.wikipedia.org/wiki/Coma_Star_Cluster) (Melotte 111) as a red star and also changes the plot style to `GRAYSCALE`:
 
 ```python
-from datetime import datetime
-from pytz import timezone
-from starplot import ZenithPlot, SkyObject
-from starplot.styles import PlotStyle, extensions
-
-tz = timezone("America/Los_Angeles")
-
-p = ZenithPlot(
-    lat=32.97,
-    lon=-117.038611,
-    dt=tz.localize(datetime.now().replace(hour=22)),
-    limiting_magnitude=4.6,
-    style=PlotStyle().extend(
-        extensions.GRAYSCALE,
-        extensions.ZENITH,
-    ),
-    resolution=2000,
-)
-p.plot_object(
-    SkyObject(
-        name="Mel 111",
-        ra=12.36,
-        dec=25.85,
-        style={
-            "marker": {"size": 10, "symbol": "*", "fill": "full", "color": "red"}
-        },
-    )
-)
-p.export("02_star_chart_extra.png")
-
+{% include 'examples/example_2.py' %}
 ```
 
-![zenith-coma](images/zenith-coma.png)
+![zenith-coma](images/example_2.png)
 
 
 ## Map of Orion
@@ -82,58 +38,9 @@ p.export("02_star_chart_extra.png")
 The following code will create a simple map plot that shows the area around the constellation Orion, including an extra marker for M42 - The Great Orion Nebula:
 
 ```python
-from starplot import MapPlot, Projection, SkyObject
-from starplot.styles import PlotStyle, extensions
-
-style = PlotStyle().extend(
-    extensions.BLUE_LIGHT,
-    extensions.MAP,
-    {
-        "bayer_labels": {
-            "font_name": "GFS Didot",  # use a better font for Greek letters
-            "font_size": 7,
-            "font_alpha": 0.9,
-        },
-    },
-)
-style.star.label.font_size = 11
-
-p = MapPlot(
-    projection=Projection.MERCATOR,
-    ra_min=3.6,
-    ra_max=7.8,
-    dec_min=-16,
-    dec_max=23.6,
-    limiting_magnitude=7.2,
-    style=style,
-    resolution=4000,
-)
-p.plot_object(
-    SkyObject(
-        name="M42",
-        ra=5.58333,
-        dec=-4.61,
-        style={
-            "marker": {
-                "size": 10,
-                "symbol": "s",
-                "fill": "full",
-                "color": "#ff6868",
-                "alpha": 1,
-                "zorder": 4096,
-            },
-            "label": {
-                "font_size": 10,
-                "font_weight": "bold",
-                "font_color": "darkred",
-                "zorder": 4096,
-            },
-        },
-    )
-)
-p.export("03_map_orion.svg", format="svg", padding=0.5)
-
+{% include 'examples/example_3.py' %}
 ```
+
 The result should look something like this:
 
-![map-orion](images/03_map_orion.svg)
+![map-orion](images/example_3.svg)
