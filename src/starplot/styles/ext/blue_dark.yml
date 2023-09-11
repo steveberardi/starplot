@@ -57,7 +57,7 @@ gridlines:
   label:
     font_alpha: 0.8
     font_color: '#c2d2f3'
-    font_size: 12
+    font_size: 8
     font_weight: light
   line:
     alpha: 0.8

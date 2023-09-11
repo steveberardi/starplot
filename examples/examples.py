@@ -12,7 +12,7 @@ def example_1_create_star_chart():
     p = ZenithPlot(
         lat=33.363484,
         lon=-116.836394,
-        dt=tz.localize(datetime.now().replace(hour=22)),
+        dt=datetime.now(tz).replace(hour=22),
         limiting_magnitude=4.6,
         style=PlotStyle().extend(
             extensions.BLUE_MEDIUM,
@@ -34,7 +34,7 @@ def example_2_create_star_chart_extra():
     p = ZenithPlot(
         lat=32.97,
         lon=-117.038611,
-        dt=tz.localize(datetime.now().replace(hour=22)),
+        dt=datetime.now(tz).replace(hour=22),
         limiting_magnitude=4.6,
         style=PlotStyle().extend(
             extensions.GRAYSCALE,

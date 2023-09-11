@@ -17,7 +17,9 @@ start_time = time.time()
 
 
 def create_map_orion():
-    style = sp.styles.MAP_BLUE_LIGHT.extend(
+    style = PlotStyle().extend(
+        extensions.BLUE_LIGHT,
+        extensions.MAP,
         {
             "star": {
                 "label": {"font_size": 8},
@@ -71,14 +73,17 @@ def create_map_orion():
 
 def create_zenith():
     """Create zenith plot for tonight's sky in Poway"""
+    style = PlotStyle().extend(
+        extensions.BLUE_MEDIUM,
+        extensions.ZENITH,
+    )
     p = sp.ZenithPlot(
         lat=32.97,
         lon=-117.038611,
-        dt=timezone("America/Los_Angeles").localize(datetime.now().replace(hour=21)),
-        limiting_magnitude=6,
+        dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21),
+        limiting_magnitude=4.6,
         # style=sp.styles.ZENITH_BLUE_MEDIUM,
-        style=sp.styles.ZENITH_BLUE_DARK,
-        # style=sp.styles.ZENITH_BLUE_DARK.extend(sp.styles.extensions.HIDE_LABELS),
+        style=style,
         include_planets=True,
         resolution=2000,
         include_info_text=True,
@@ -174,14 +179,14 @@ def create_map_with_planets():
 def create_map_sgr():
     style = PlotStyle().extend(
         # sp.styles.extensions.HIDE_LABELS,
-        extensions.MAP,
         # extensions.BLUE_LIGHT,
-        # extensions.BLUE_MEDIUM,
-        extensions.BLUE_DARK,
+        extensions.BLUE_MEDIUM,
+        # extensions.BLUE_DARK,
+        extensions.MAP,
         {
             "bayer_labels": {
                 "font_name": "GFS Didot",
-                "font_size": 7,
+                "font_size": 8,
             },
             # "constellation_borders": {"visible": False},
             # milky_way={"visible": False},
@@ -192,7 +197,7 @@ def create_map_sgr():
     # style.constellation.label.visible = False
     # style.ecliptic.label.visible = False
     # style.celestial_equator.label.visible = False
-    style.gridlines.label.font_size = 8
+    # style.gridlines.label.font_size = 8
 
     p = sp.MapPlot(
         projection=Projection.STEREO_SOUTH,
@@ -210,10 +215,10 @@ def create_map_sgr():
         # include_planets=True,
         # hide_colliding_labels=False,
         style=style,
-        resolution=1600,
+        resolution=2000,
     )
     p.export("temp/map-sgr.svg", format="svg", padding=0.3)
-    p.export("temp/map-sgr.png", format="png", padding=0.3)
+    # p.export("temp/map-sgr.png", format="png", padding=0.3)
 
 
 def dump_extensions():
@@ -240,7 +245,7 @@ def dump_extensions():
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
-create_map_sgr()
+# create_map_sgr()
 # create_map_with_planets()
 
 # dump_extensions()

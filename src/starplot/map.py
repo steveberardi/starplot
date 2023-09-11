@@ -293,10 +293,11 @@ class MapPlot(StarPlot):
             self.ax.plot(
                 [0, 360],
                 [0, 0],
-                **self._plot_kwargs(),
                 **self.style.celestial_equator.line.matplot_kwargs(
                     self._size_multiplier
                 ),
+                # **self._plot_kwargs(),
+                transform=ccrs.PlateCarree()
             )
 
         if self.style.celestial_equator.label.visible:

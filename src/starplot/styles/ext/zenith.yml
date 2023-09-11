@@ -3,3 +3,10 @@ ecliptic:
     visible: false
   line:
     visible: false
+celestial_equator:
+  label:
+    visible: false
+  line:
+    visible: false
+milky_way:
+  visible: false

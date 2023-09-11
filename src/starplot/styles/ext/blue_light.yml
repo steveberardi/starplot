@@ -4,7 +4,7 @@ border_font_color: '#f1f6ff'
 border_line_color: '#2f4358'
 celestial_equator:
   label:
-    color: '#2d5ec2'
+    font_color: '#2d5ec2'
   line:
     color: '#2d5ec2'
 constellation:
