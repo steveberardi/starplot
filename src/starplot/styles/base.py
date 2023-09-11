@@ -512,7 +512,7 @@ class PlotStyle(BaseModel):
 
     def dump_to_file(self, filename: str) -> None:
         """
-        Save the style to a YAML file
+        Save the style to a YAML file. ALL style properties will be written to the file.
 
         Args:
             filename: Filename of style file
