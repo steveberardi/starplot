@@ -377,6 +377,7 @@ class PlotStyle(BaseModel):
         label=LabelStyle(
             font_size=8,
             font_weight=FontWeightEnum.LIGHT,
+            visible=False,
         ),
     )
     """Styling for open star clusters"""

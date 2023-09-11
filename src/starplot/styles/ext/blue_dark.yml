@@ -20,6 +20,7 @@ constellation:
     alpha: 0.36
     color: rgb(230, 204, 147)
     width: 2
+
 dso:
   label:
     font_alpha: 0.6
@@ -33,10 +34,12 @@ dso:
     size: 4
 dso_double_star:
   marker:
-    alpha: 0.6
+    alpha: 0.8
+    color: '#88c0d0'
+    edge_color: '#88c0d0'
 dso_galaxy:
   marker:
-    alpha: 0.45
+    alpha: 0.6
     color: '#D99CBA'
 dso_nebula:
   marker:
@@ -48,6 +51,7 @@ dso_open_cluster:
   marker:
     alpha: 0.45
     color: '#d8d99c'
+
 ecliptic:
   label:
     color: '#D99CBA'
@@ -71,9 +75,11 @@ milky_way:
   edge_width: 0
   zorder: -10000
 planets:
+  label:
+    font_color: '#D99CCF'
   marker:
-    alpha: 0.6
-    color: '#A69777'
+    alpha: 0.8
+    color: '#D99CCF'
     fill: full
 star:
   label:

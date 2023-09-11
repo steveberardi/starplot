@@ -18,7 +18,10 @@ start_time = time.time()
 
 def create_map_orion():
     style = PlotStyle().extend(
-        extensions.BLUE_LIGHT,
+        extensions.GRAYSCALE,
+        # extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        # extensions.BLUE_DARK,
         extensions.MAP,
         {
             "star": {
@@ -74,7 +77,10 @@ def create_map_orion():
 def create_zenith():
     """Create zenith plot for tonight's sky in Poway"""
     style = PlotStyle().extend(
-        extensions.BLUE_MEDIUM,
+        extensions.GRAYSCALE,
+        # extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        # extensions.BLUE_DARK,
         extensions.ZENITH,
     )
     p = sp.ZenithPlot(
@@ -87,6 +93,7 @@ def create_zenith():
         include_planets=True,
         resolution=2000,
         include_info_text=True,
+        adjust_text=True,
     )
     p.export("temp/zenith-poway.svg", format="svg")
 
@@ -179,8 +186,9 @@ def create_map_with_planets():
 def create_map_sgr():
     style = PlotStyle().extend(
         # sp.styles.extensions.HIDE_LABELS,
+        extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
-        extensions.BLUE_MEDIUM,
+        # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
@@ -220,6 +228,34 @@ def create_map_sgr():
     p.export("temp/map-sgr.svg", format="svg", padding=0.3)
     # p.export("temp/map-sgr.png", format="png", padding=0.3)
 
+def create_galaxy_test():
+    style = PlotStyle().extend(
+        # sp.styles.extensions.HIDE_LABELS,
+        # extensions.GRAYSCALE,
+        # extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        extensions.BLUE_DARK,
+        extensions.MAP,
+        {
+            "bayer_labels": {
+                "font_name": "GFS Didot",
+                "font_size": 8,
+            },
+        },
+    )
+    p = sp.MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=11,
+        ra_max=16,
+        dec_min=-5,
+        dec_max=40,
+        limiting_magnitude=9,
+        # include_planets=True,
+        # hide_colliding_labels=False,
+        style=style,
+        resolution=2000,
+    )
+    p.export("temp/galaxy.svg", format="svg", padding=0.3)
 
 def dump_extensions():
     import yaml
@@ -241,12 +277,15 @@ def dump_extensions():
 
 # ------------------------------------------
 
-# create_zenith()
+create_galaxy_test()
+
+create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
-# create_map_sgr()
+create_map_sgr()
+
 # create_map_with_planets()
 
 # dump_extensions()
