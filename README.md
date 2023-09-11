@@ -17,7 +17,7 @@
 ![starchart-blue](https://github.com/steveberardi/starplot/blob/main/examples/01_star_chart.png?raw=true)
 
 *Map around the constellation Orion, with M42 marked:*
-![map-orion](https://github.com/steveberardi/starplot/blob/main/examples/03_map_orion.svg?raw=true)
+![map-orion](https://github.com/steveberardi/starplot/blob/main/examples/03_map_orion.png?raw=true)
 
 
 ## Basic Usage

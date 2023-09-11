@@ -297,7 +297,7 @@ class MapPlot(StarPlot):
                     self._size_multiplier
                 ),
                 # **self._plot_kwargs(),
-                transform=ccrs.PlateCarree()
+                transform=ccrs.PlateCarree(),
             )
 
         if self.style.celestial_equator.label.visible:

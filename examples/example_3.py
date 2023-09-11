@@ -22,7 +22,7 @@ p = MapPlot(
     dec_max=23.6,
     limiting_magnitude=7.2,
     style=style,
-    resolution=4000,
+    resolution=3600,
 )
 p.plot_object(
     SkyObject(
@@ -47,4 +47,4 @@ p.plot_object(
         },
     )
 )
-p.export("03_map_orion.svg", format="svg", padding=0.5)
+p.export("03_map_orion.png", padding=0.5)

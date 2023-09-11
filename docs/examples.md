@@ -7,7 +7,7 @@ This page has a few examples to get you familiar with Starplot and how it works.
 
 
 ## Star Chart for Time/Location
-To create a star chart for tonight's sky as seen from [Palomar Mountain](https://en.wikipedia.org/wiki/Palomar_Mountain) in California:
+To create a star chart for the sky as seen from [Palomar Mountain](https://en.wikipedia.org/wiki/Palomar_Mountain) in California on July 13, 2023 at 10pm PT:
 
 ```python
 {% include 'examples/example_1.py' %}
@@ -16,10 +16,6 @@ To create a star chart for tonight's sky as seen from [Palomar Mountain](https:/
 The created file should look something like this:
 
 ![starchart-blue](images/example_1.png)
-
-!!! info "Does your result look different?"
-
-    Your result may look a little different depending on the date/time you run this code (because the position of the stars in the sky depends on time/location). But, the example above reflects what the chart would like for a day in July.
 
 
 ## Star Chart with an Extra Object Plotted
@@ -43,4 +39,8 @@ The following code will create a simple map plot that shows the area around the 
 
 The result should look something like this:
 
-![map-orion](images/example_3.svg)
+![map-orion](images/example_3.png)
+
+---
+
+*Check out the code reference to learn more about using starplot!*

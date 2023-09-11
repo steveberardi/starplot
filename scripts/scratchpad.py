@@ -231,13 +231,14 @@ def dump_extensions():
         "grayscale": extensions.GRAYSCALE,
         "map": extensions.MAP,
         "zenith": extensions.ZENITH,
-
     }
 
     for k, v in ext.items():
         with open(f"temp/{k}.yml", "w") as outfile:
             style_yaml = yaml.dump(v)
             outfile.write(style_yaml)
+
+
 # ------------------------------------------
 
 # create_zenith()

@@ -9,5 +9,4 @@ subprocess.call("python example_2.py", shell=True)
 subprocess.call("cp 02*.png ../docs/images/example_2.png", shell=True)
 
 subprocess.call("python example_3.py", shell=True)
-subprocess.call("cp 03*.svg ../docs/images/example_3.svg", shell=True)
-
+subprocess.call("cp 03*.png ../docs/images/example_3.png", shell=True)
