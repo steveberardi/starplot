@@ -36,7 +36,6 @@ p = sp.ZenithPlot(
     lon=-116.836394,
     dt=datetime.now(tz).replace(hour=22),
     limiting_magnitude=4.6,
-    style=sp.styles.ZENITH_BLUE_MEDIUM,
     resolution=2000,
 )
 p.export("starchart.png")
@@ -60,6 +59,9 @@ p.export("starchart.png")
 
 ## Coming Soon
 
+- ⭐ Tycho stars
+- 🌖 Moon
+- 📋 Map legends
 - 🔭 Scope plots - that will simulate what you'll see through a telescope eyepiece
 - ⚖️ Better auto font-size adjustment
 - ☄️ Better label collision detection and handling

@@ -89,7 +89,7 @@ def create_zenith():
         dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21),
         limiting_magnitude=4.6,
         # style=sp.styles.ZENITH_BLUE_MEDIUM,
-        style=style,
+        # style=style,
         include_planets=True,
         resolution=2000,
         include_info_text=True,
@@ -228,6 +228,7 @@ def create_map_sgr():
     p.export("temp/map-sgr.svg", format="svg", padding=0.3)
     # p.export("temp/map-sgr.png", format="png", padding=0.3)
 
+
 def create_galaxy_test():
     style = PlotStyle().extend(
         # sp.styles.extensions.HIDE_LABELS,
@@ -256,6 +257,7 @@ def create_galaxy_test():
         resolution=2000,
     )
     p.export("temp/galaxy.svg", format="svg", padding=0.3)
+
 
 def dump_extensions():
     import yaml
