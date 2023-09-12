@@ -28,6 +28,7 @@ dependencies = [
     "geopandas >= 0.13.2",
     "pillow >= 10.0.0",
     "PyYAML >= 6.0.1",
+    "PyOngc >= 1.0.1",
 ]
 
 [project.urls]
