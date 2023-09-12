@@ -1,0 +1,90 @@
+background_color: '#4c566a'
+bayer_labels:
+  font_alpha: 0.8
+  font_color: '#85c9de'
+border_bg_color: '#2e3440'
+border_font_color: '#a3be8c'
+border_line_color: '#a3be8c'
+celestial_equator:
+  label:
+    color: '#77A67F'
+  line:
+    color: '#77A67F'
+constellation:
+  label:
+    font_alpha: 0.6
+    font_color: rgb(230, 204, 147)
+    font_size: 7
+    font_weight: light
+  line:
+    alpha: 0.36
+    color: rgb(230, 204, 147)
+    width: 2
+
+dso:
+  label:
+    font_alpha: 0.6
+    font_color: rgb(230, 204, 147)
+    font_size: 7
+    font_weight: light
+  marker:
+    alpha: 0.46
+    color: rgb(230, 204, 147)
+    fill: full
+    size: 4
+dso_double_star:
+  marker:
+    alpha: 0.8
+    color: '#88c0d0'
+    edge_color: '#88c0d0'
+dso_galaxy:
+  marker:
+    alpha: 0.6
+    color: '#D99CBA'
+dso_nebula:
+  marker:
+    alpha: 0.45
+    color: '#9CD9BB'
+dso_open_cluster:
+  label:
+    visible: false
+  marker:
+    alpha: 0.45
+    color: '#d8d99c'
+
+ecliptic:
+  label:
+    color: '#D99CBA'
+  line:
+    color: '#D99CBA'
+gridlines:
+  label:
+    font_alpha: 0.8
+    font_color: '#c2d2f3'
+    font_size: 8
+    font_weight: light
+  line:
+    alpha: 0.8
+    color: '#888'
+    style: solid
+    width: 1
+    zorder: -10000
+milky_way:
+  alpha: 0.14
+  color: '#95a3bf'
+  edge_width: 0
+  zorder: -10000
+planets:
+  label:
+    font_color: '#D99CCF'
+  marker:
+    alpha: 0.8
+    color: '#D99CCF'
+    fill: full
+star:
+  label:
+    font_color: '#88c0d0'
+    font_size: 9
+    font_weight: bold
+  marker:
+    color: '#88c0d0'

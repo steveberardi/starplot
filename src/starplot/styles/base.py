@@ -377,6 +377,7 @@ class PlotStyle(BaseModel):
         label=LabelStyle(
             font_size=8,
             font_weight=FontWeightEnum.LIGHT,
+            visible=False,
         ),
     )
     """Styling for open star clusters"""
@@ -485,7 +486,7 @@ class PlotStyle(BaseModel):
             zorder=-1024,
         ),
         label=LabelStyle(
-            font_size=4,
+            font_size=6,
             font_color="#999",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=0.65,
@@ -512,7 +513,7 @@ class PlotStyle(BaseModel):
 
     def dump_to_file(self, filename: str) -> None:
         """
-        Save the style to a YAML file
+        Save the style to a YAML file. ALL style properties will be written to the file.
 
         Args:
             filename: Filename of style file
@@ -532,14 +533,14 @@ class PlotStyle(BaseModel):
         from the last style (similar to how CSS works).
 
         Example Usage:
-            Create an extension of the default style with map optimizations, skylight color scheme,
+            Create an extension of the default style with map optimizations, light blue color scheme,
             and hide the constellation borders and Milky Way:
 
             ```python
 
             new_style = PlotStyle().extend(
-                sp.styles.MAP,
-                sp.styles.SKYLIGHT,
+                styles.extensions.MAP,
+                styles.extensions.BLUE_LIGHT,
                 {
                     "constellation_borders": {"visible": False},
                     "milky_way": {"visible": False},

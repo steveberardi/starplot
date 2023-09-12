@@ -1,0 +1,65 @@
+background_color: '#f1f6ff'
+border_bg_color: '#7997b9'
+border_font_color: '#f1f6ff'
+border_line_color: '#2f4358'
+bayer_labels:
+  font_alpha: 0.8
+  font_color: '#000'
+celestial_equator:
+  label:
+    color: '#2d5ec2'
+  line:
+    color: '#2d5ec2'
+constellation:
+  label:
+    font_size: 7
+    font_weight: light
+  line:
+    alpha: 0.2
+    color: '#6ba832'
+    width: 3
+ecliptic:
+  label:
+    color: '#e33b3b'
+  line:
+    color: '#e33b3b'
+planets:
+  marker:
+    alpha: 0.4
+    color: '#f89d00'
+    fill: full
+milky_way:
+  alpha: 0.14
+  color: '#94c5e3'
+  edge_width: 0
+gridlines:
+  label:
+    font_alpha: 0.8
+    font_color: '#f1f6ff'
+    font_size: 8
+    font_weight: light
+  line:
+    alpha: 0.6
+    color: '#888'
+    style: solid
+    width: 1
+    zorder: -10000
+
+# DSOs
+dso_double_star:
+  marker:
+    alpha: 0.6
+dso_galaxy:
+  marker:
+    alpha: 0.45
+    color: '#D99CBA'
+dso_nebula:
+  marker:
+    alpha: 0.45
+    color: '#a8f5b0'
+dso_open_cluster:
+  label:
+    visible: false
+  marker:
+    alpha: 0.5
+    color: '#EDF5A8'

@@ -95,7 +95,7 @@ class MapPlot(StarPlot):
             limiting_magnitude_labels,
             include_planets,
             ephemeris,
-            MAP_BASE.extend(style.dict()),
+            style,
             resolution,
             hide_colliding_labels,
             adjust_text,
@@ -110,6 +110,7 @@ class MapPlot(StarPlot):
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
+        # return dict(transform=ccrs.PlateCarree())
         return dict(transform=ccrs.Geodetic())
 
     def _prepare_coords(self, ra: float, dec: float) -> (float, float):
@@ -292,10 +293,11 @@ class MapPlot(StarPlot):
             self.ax.plot(
                 [0, 360],
                 [0, 0],
-                **self._plot_kwargs(),
                 **self.style.celestial_equator.line.matplot_kwargs(
                     self._size_multiplier
                 ),
+                # **self._plot_kwargs(),
+                transform=ccrs.PlateCarree(),
             )
 
         if self.style.celestial_equator.label.visible:

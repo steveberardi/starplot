@@ -7,6 +7,7 @@
 
 - ⭐ **Zenith Plots** - showing the stars from a specific time/location
 - 🗺️ **Map Plots** - including North/South polar and Mercator projections
+- 🪐 **Planets and Deep Sky Objects (DSOs)**
 - 🎨 **Custom Styles** - for all objects
 - 📥 **Export** - png, svg
 - 🧭 **Label Collision Avoidance**
@@ -16,7 +17,7 @@
 ![starchart-blue](https://github.com/steveberardi/starplot/blob/main/examples/01_star_chart.png?raw=true)
 
 *Map around the constellation Orion, with M42 marked:*
-![map-orion](https://github.com/steveberardi/starplot/blob/main/examples/03_map_orion.svg?raw=true)
+![map-orion](https://github.com/steveberardi/starplot/blob/main/examples/03_map_orion.png?raw=true)
 
 
 ## Basic Usage
@@ -28,12 +29,13 @@ from datetime import datetime
 from pytz import timezone
 import starplot as sp
 
+tz = timezone("America/Los_Angeles")
+
 p = sp.ZenithPlot(
     lat=33.363484, 
     lon=-116.836394,
-    dt=timezone("America/Los_Angeles").localize(datetime.now().replace(hour=22)),
+    dt=datetime.now(tz).replace(hour=22),
     limiting_magnitude=4.6,
-    style=sp.styles.ZENITH_BLUE_MEDIUM,
     resolution=2000,
 )
 p.export("starchart.png")
@@ -57,6 +59,9 @@ p.export("starchart.png")
 
 ## Coming Soon
 
+- ⭐ Tycho stars
+- 🌖 Moon
+- 📋 Map legends
 - 🔭 Scope plots - that will simulate what you'll see through a telescope eyepiece
 - ⚖️ Better auto font-size adjustment
 - ☄️ Better label collision detection and handling
