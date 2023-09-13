@@ -373,6 +373,7 @@ class MapPlot(StarPlot):
             "Object of other/unknown type": None,
             "Duplicated record": None,
         }
+        legend_markers = []
 
         for d in nearby_dsos:
             if d.coords is None:
@@ -390,12 +391,35 @@ class MapPlot(StarPlot):
                     dec=dec,
                     style=style,
                 )
-                self.plot_object(obj)
+                if d.type in legend_markers:
+                    label = None
+                else:
+                    label = d.type
+                    legend_markers.append(label)
+                self.plot_object(obj, label)
+
+    def _plot_legend(self):
+        bbox = self.ax.get_window_extent().transformed(self.fig.dpi_scale_trans.inverted())
+        width, height = bbox.width, bbox.height
+        self.fig.set_size_inches(width, height)
+
+        self.fig.legend(
+            ncols=10,
+            # bbox_to_anchor=(0, 1),
+            loc="outside lower center",
+            fontsize="small",
+            labelspacing=1.4,
+            handletextpad=1.3,
+            borderpad=1,
+            # mode="expand",
+            framealpha=0.5,
+        )
 
     def _init_plot(self):
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.border_bg_color.as_hex(),
+            layout='constrained',
         )
 
         if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:
@@ -422,6 +446,8 @@ class MapPlot(StarPlot):
         self._plot_celestial_equator()
         self._plot_dsos()
         self._plot_planets()
+
+        self._plot_legend()
 
         if self.adjust_text:
             self.adjust_labels()

@@ -18,10 +18,10 @@ start_time = time.time()
 
 def create_map_orion():
     style = PlotStyle().extend(
-        extensions.GRAYSCALE,
+        # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
+        extensions.BLUE_DARK,
         extensions.MAP,
         {
             "star": {
@@ -281,7 +281,7 @@ def dump_extensions():
 
 create_galaxy_test()
 
-create_zenith()
+# create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
