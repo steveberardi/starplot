@@ -6,6 +6,7 @@ from enum import Enum
 import cartopy.crs as ccrs
 
 from matplotlib import pyplot as plt
+from matplotlib.lines import Line2D
 from matplotlib.ticker import FuncFormatter, FixedLocator
 import geopandas as gpd
 
@@ -15,7 +16,7 @@ from skyfield.api import Star
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
-from starplot.styles import PlotStyle, MAP_BASE
+from starplot.styles import PlotStyle, MarkerStyle, MAP_BASE
 from starplot.utils import bbox_minmax_angle, lon_to_ra
 
 # Silence noisy cartopy warnings
@@ -107,6 +108,7 @@ class MapPlot(StarPlot):
         self.ra_max = ra_max
         self.dec_min = dec_min
         self.dec_max = dec_max
+        self._legend_handles = {}
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
@@ -220,10 +222,11 @@ class MapPlot(StarPlot):
             self.ax.scatter(
                 *self._prepare_coords(stars_ra.hours, stars_dec.degrees),
                 sizes,
-                zorder=100,
+                zorder=self.style.star.marker.zorder,
                 color=self.style.star.marker.color.as_hex(),
                 **self._plot_kwargs(),
             )
+            self._add_legend_handle_marker("Star", self.style.star.marker)
 
         # Plot star labels (names and bayer designations)
         stars_labeled = nearby_stars_df[
@@ -338,8 +341,8 @@ class MapPlot(StarPlot):
 
     def _plot_dsos(self):
         nearby_dsos = ongc.listObjects(
-            minra=self.ra_min * 15,  # convert to degrees
-            maxra=self.ra_max * 15,  # convert to degrees
+            minra=self.ra_min * 15,  # convert to degrees (0-360)
+            maxra=self.ra_max * 15,  # convert to degrees (0-360)
             mindec=self.dec_min,
             maxdec=self.dec_max,
             uptovmag=self.limiting_magnitude,
@@ -373,7 +376,19 @@ class MapPlot(StarPlot):
             "Object of other/unknown type": None,
             "Duplicated record": None,
         }
-        legend_markers = []
+        legend_labels = {
+            # Galaxies ----------
+            dsos.Type.GALAXY: "Galaxy",
+            dsos.Type.GALAXY_PAIR: "Galaxy",
+            dsos.Type.GALAXY_TRIPLET: "Galaxy",
+            dsos.Type.GROUP_OF_GALAXIES: "Galaxy",
+            # Nebulas ----------
+            dsos.Type.NEBULA: "Nebula",
+            dsos.Type.PLANETARY_NEBULA: "Nebula",
+            dsos.Type.EMISSION_NEBULA: "Nebula",
+            dsos.Type.STAR_CLUSTER_NEBULA: "Nebula",
+            dsos.Type.REFLECTION_NEBULA: "Nebula",
+        }
 
         for d in nearby_dsos:
             if d.coords is None:
@@ -391,35 +406,38 @@ class MapPlot(StarPlot):
                     dec=dec,
                     style=style,
                 )
-                if d.type in legend_markers:
-                    label = None
-                else:
-                    label = d.type
-                    legend_markers.append(label)
-                self.plot_object(obj, label)
+                legend_label = legend_labels.get(d.type) or d.type
+                self._add_legend_handle_marker(legend_label, obj.style.marker)
+                self.plot_object(obj)
+
+    def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
+        if label not in self._legend_handles:
+            self._legend_handles[label] = Line2D(
+                [],
+                [],
+                **style.matplot_kwargs(size_multiplier=self._size_multiplier),
+                **self._plot_kwargs(),
+                linestyle="None",
+                label=label,
+            )
 
     def _plot_legend(self):
-        bbox = self.ax.get_window_extent().transformed(self.fig.dpi_scale_trans.inverted())
+        bbox = self.ax.get_window_extent().transformed(
+            self.fig.dpi_scale_trans.inverted()
+        )
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
 
         self.fig.legend(
-            ncols=10,
-            # bbox_to_anchor=(0, 1),
-            loc="outside lower center",
-            fontsize="small",
-            labelspacing=1.4,
-            handletextpad=1.3,
-            borderpad=1,
-            # mode="expand",
-            framealpha=0.5,
+            handles=self._legend_handles.values(),
+            **self.style.legend.matplot_kwargs(size_multiplier=self._size_multiplier),
         )
 
     def _init_plot(self):
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.border_bg_color.as_hex(),
-            layout='constrained',
+            layout="constrained",
         )
 
         if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:

@@ -233,9 +233,9 @@ def create_galaxy_test():
     style = PlotStyle().extend(
         # sp.styles.extensions.HIDE_LABELS,
         # extensions.GRAYSCALE,
-        # extensions.BLUE_LIGHT,
+        extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        extensions.BLUE_DARK,
+        # extensions.BLUE_DARK,
         extensions.MAP,
         {
             "bayer_labels": {

@@ -88,3 +88,6 @@ star:
     font_weight: bold
   marker:
     color: '#88c0d0'
+
+legend:
+  background_color: '#a9b9d8'

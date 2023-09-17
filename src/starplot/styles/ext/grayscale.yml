@@ -40,3 +40,6 @@ planets:
   marker:
     color: '#000'
     fill: left
+
+legend:
+  background_color: '#fff'

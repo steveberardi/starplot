@@ -63,3 +63,6 @@ dso_open_cluster:
   marker:
     alpha: 0.5
     color: '#EDF5A8'
+
+legend:
+  background_color: '#f1f6ff'

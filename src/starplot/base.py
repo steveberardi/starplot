@@ -130,7 +130,7 @@ class StarPlot(ABC):
             **self._plot_kwargs(),
         )
 
-    def plot_object(self, obj: SkyObject, type_label: str = None) -> None:
+    def plot_object(self, obj: SkyObject) -> None:
         """Plots an object (see SkyObject for details).
 
         Args:
@@ -147,8 +147,7 @@ class StarPlot(ABC):
                     size_multiplier=self._size_multiplier
                 ),
                 **self._plot_kwargs(),
-                linestyle = 'None',
-                label=type_label,
+                linestyle="None",
             )
             if obj.style.label.visible:
                 label = self.ax.text(

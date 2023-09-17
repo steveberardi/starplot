@@ -99,6 +99,15 @@ class DashCapStyleEnum(str, Enum):
     ROUND = "round"
 
 
+class LegendLocationEnum(str, Enum):
+    """Options for the location of the map legend"""
+
+    INSIDE_TOP = "upper center"
+    INSIDE_BOTTOM = "lower center"
+    OUTSIDE_TOP = "outside upper center"
+    OUTSIDE_BOTTOM = "outside lower center"
+
+
 class MarkerStyle(BaseModel):
     """
     Styling properties for markers.
@@ -315,6 +324,54 @@ class PathStyle(BaseModel):
     """Style for the path's label (see [LabelStyle][starplot.styles.LabelStyle])"""
 
 
+class LegendStyle(BaseModel):
+    """Defines the style for the map legend. *Only applies to map plots.*"""
+
+    location: LegendLocationEnum = LegendLocationEnum.OUTSIDE_BOTTOM
+    """Location of the legend, relative to the map area (inside or outside)"""
+
+    background_color: ColorStr = ColorStr("#888")
+    """Background color of the legend box"""
+
+    background_alpha: float = 0.8
+    """Background's alpha (transparency)"""
+
+    expand: bool = False
+    """If True, the legend will be expanded to fit the full width of the map"""
+
+    num_columns: int = 8
+    """Number of columns in the legend"""
+
+    label_padding: float = 1.6
+    """Padding between legend labels"""
+
+    symbol_padding: float = 0.2
+    """Padding between each symbol and its label"""
+
+    border_padding: float = 1.28
+    """Padding around legend border"""
+
+    font_size: int = 9
+    """Relative font size of the legend labels"""
+
+    font_color: ColorStr = ColorStr("#000")
+    """Font color for legend labels"""
+
+    def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
+        return dict(
+            loc=self.location,
+            ncols=self.num_columns,
+            framealpha=self.background_alpha,
+            fontsize=self.font_size * size_multiplier * FONT_SCALE,
+            labelcolor=self.font_color.as_hex(),
+            borderpad=self.border_padding,
+            labelspacing=self.label_padding,
+            handletextpad=self.symbol_padding,
+            mode="expand" if self.expand else None,
+            facecolor=self.background_color.as_hex(),
+        )
+
+
 class PlotStyle(BaseModel):
     """
     Defines the styling for a plot
@@ -335,7 +392,7 @@ class PlotStyle(BaseModel):
 
     # Stars
     star: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(fill=FillStyleEnum.FULL),
+        marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=100, size=10),
         label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1024),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
@@ -438,6 +495,18 @@ class PlotStyle(BaseModel):
         zorder=-10000,
     )
     """Styling for the Milky Way (only applies to map plots)"""
+
+    # Legend
+    legend: LegendStyle = LegendStyle(
+        background_alpha=0.4,
+        label=LabelStyle(
+            font_size=12,
+            font_color="#000",
+            font_weight=FontWeightEnum.LIGHT,
+            font_alpha=1,
+        ),
+    )
+    """Styling for legend. *Only applies to map plots*."""
 
     # Gridlines
     gridlines: PathStyle = PathStyle(
