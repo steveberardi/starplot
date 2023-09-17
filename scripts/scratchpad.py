@@ -244,6 +244,9 @@ def create_galaxy_test():
             },
         },
     )
+    style.legend.location = "upper right"
+    style.legend.num_columns = 1
+
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=11,

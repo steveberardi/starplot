@@ -16,7 +16,7 @@ from skyfield.api import Star
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
-from starplot.styles import PlotStyle, MarkerStyle, MAP_BASE
+from starplot.styles import PlotStyle, MarkerStyle, MAP_BASE, LegendLocationEnum
 from starplot.utils import bbox_minmax_angle, lon_to_ra
 
 # Silence noisy cartopy warnings
@@ -428,7 +428,16 @@ class MapPlot(StarPlot):
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
 
-        self.fig.legend(
+        if self.style.legend.location in [
+            LegendLocationEnum.OUTSIDE_BOTTOM,
+            LegendLocationEnum.OUTSIDE_TOP,
+        ]:
+            # to plot legends outside the map area, you have to target the figure
+            target = self.fig
+        else:
+            target = self.ax
+
+        target.legend(
             handles=self._legend_handles.values(),
             **self.style.legend.matplot_kwargs(size_multiplier=self._size_multiplier),
         )

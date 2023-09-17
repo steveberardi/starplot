@@ -103,7 +103,11 @@ class LegendLocationEnum(str, Enum):
     """Options for the location of the map legend"""
 
     INSIDE_TOP = "upper center"
+    INSIDE_TOP_LEFT = "upper left"
+    INSIDE_TOP_RIGHT = "upper right"
     INSIDE_BOTTOM = "lower center"
+    INSIDE_BOTTOM_RIGHT = "lower right"
+    INSIDE_BOTTOM_LEFT = "lower left"
     OUTSIDE_TOP = "outside upper center"
     OUTSIDE_BOTTOM = "outside lower center"
 
@@ -333,7 +337,7 @@ class LegendStyle(BaseModel):
     background_color: ColorStr = ColorStr("#888")
     """Background color of the legend box"""
 
-    background_alpha: float = 0.8
+    background_alpha: float = 1.0
     """Background's alpha (transparency)"""
 
     expand: bool = False
@@ -392,7 +396,7 @@ class PlotStyle(BaseModel):
 
     # Stars
     star: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=100, size=10),
+        marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=10),
         label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1024),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
@@ -497,15 +501,7 @@ class PlotStyle(BaseModel):
     """Styling for the Milky Way (only applies to map plots)"""
 
     # Legend
-    legend: LegendStyle = LegendStyle(
-        background_alpha=0.4,
-        label=LabelStyle(
-            font_size=12,
-            font_color="#000",
-            font_weight=FontWeightEnum.LIGHT,
-            font_alpha=1,
-        ),
-    )
+    legend: LegendStyle = LegendStyle()
     """Styling for legend. *Only applies to map plots*."""
 
     # Gridlines
