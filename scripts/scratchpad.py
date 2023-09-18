@@ -31,6 +31,10 @@ def create_map_orion():
                 "font_name": "GFS Didot",
                 "font_size": 7,
             },
+            "legend": {
+                "location": "upper right",
+                "num_columns": 1,
+            }
         },
     )
 
