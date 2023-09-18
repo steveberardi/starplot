@@ -505,7 +505,7 @@ class PlotStyle(BaseModel):
 
     # Legend
     legend: LegendStyle = LegendStyle()
-    """Styling for legend. *Only applies to map plots*."""
+    """Styling for legend"""
 
     # Gridlines
     gridlines: PathStyle = PathStyle(
