@@ -6,7 +6,6 @@ from enum import Enum
 import cartopy.crs as ccrs
 
 from matplotlib import pyplot as plt
-from matplotlib.lines import Line2D
 from matplotlib.ticker import FuncFormatter, FixedLocator
 import geopandas as gpd
 
@@ -108,7 +107,7 @@ class MapPlot(StarPlot):
         self.ra_max = ra_max
         self.dec_min = dec_min
         self.dec_max = dec_max
-        self._legend_handles = {}
+
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
@@ -410,37 +409,12 @@ class MapPlot(StarPlot):
                 self._add_legend_handle_marker(legend_label, obj.style.marker)
                 self.plot_object(obj)
 
-    def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
-        if label not in self._legend_handles:
-            self._legend_handles[label] = Line2D(
-                [],
-                [],
-                **style.matplot_kwargs(size_multiplier=self._size_multiplier),
-                **self._plot_kwargs(),
-                linestyle="None",
-                label=label,
-            )
-
-    def _plot_legend(self):
+    def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
             self.fig.dpi_scale_trans.inverted()
         )
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
-
-        if self.style.legend.location in [
-            LegendLocationEnum.OUTSIDE_BOTTOM,
-            LegendLocationEnum.OUTSIDE_TOP,
-        ]:
-            # to plot legends outside the map area, you have to target the figure
-            target = self.fig
-        else:
-            target = self.ax
-
-        target.legend(
-            handles=self._legend_handles.values(),
-            **self.style.legend.matplot_kwargs(size_multiplier=self._size_multiplier),
-        )
 
     def _init_plot(self):
         self.fig = plt.figure(
@@ -474,7 +448,9 @@ class MapPlot(StarPlot):
         self._plot_dsos()
         self._plot_planets()
 
-        self._plot_legend()
+        self._fit_to_ax()
+
+        self.refresh_legend()
 
         if self.adjust_text:
             self.adjust_labels()

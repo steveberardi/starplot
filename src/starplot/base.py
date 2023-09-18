@@ -3,12 +3,13 @@ from datetime import datetime
 
 from adjustText import adjust_text as _adjust_text
 from matplotlib import pyplot as plt, patheffects, transforms
+from matplotlib.lines import Line2D
 from pytz import timezone
 
 from starplot.data import load
 from starplot.models import SkyObject
 from starplot.planets import get_planet_positions
-from starplot.styles import PlotStyle, BASE
+from starplot.styles import PlotStyle, BASE, MarkerStyle, LegendLocationEnum
 
 
 class StarPlot(ABC):
@@ -42,6 +43,8 @@ class StarPlot(ABC):
 
         self.labels = []
         self._labels_extents = []
+        self._legend_handles = {}
+        self.legend = None
         self.text_border = patheffects.withStroke(
             linewidth=self.style.text_border_width,
             foreground=self.style.background_color.as_hex(),
@@ -73,6 +76,38 @@ class StarPlot(ABC):
             self._labels_extents.append(extent)
         else:
             label.remove()
+
+    def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
+        if label not in self._legend_handles:
+            self._legend_handles[label] = Line2D(
+                [],
+                [],
+                **style.matplot_kwargs(size_multiplier=self._size_multiplier),
+                **self._plot_kwargs(),
+                linestyle="None",
+                label=label,
+            )
+
+    def refresh_legend(self):
+        if not self.style.legend.visible or not self._legend_handles:
+            return
+
+        if self.legend is not None:
+            self.legend.remove()
+
+        if self.style.legend.location in [
+            LegendLocationEnum.OUTSIDE_BOTTOM,
+            LegendLocationEnum.OUTSIDE_TOP,
+        ]:
+            # to plot legends outside the map area, you have to target the figure
+            target = self.fig
+        else:
+            target = self.ax
+
+        self.legend = target.legend(
+            handles=self._legend_handles.values(),
+            **self.style.legend.matplot_kwargs(size_multiplier=self._size_multiplier),
+        )
 
     def adjust_labels(self) -> None:
         """Adjust all the labels to avoid overlapping."""
@@ -149,6 +184,10 @@ class StarPlot(ABC):
                 **self._plot_kwargs(),
                 linestyle="None",
             )
+
+            if obj.legend_label is not None:
+                self._add_legend_handle_marker(obj.legend_label, obj.style.marker)
+
             if obj.style.label.visible:
                 label = self.ax.text(
                     ra,

@@ -69,8 +69,10 @@ def create_map_orion():
                     "zorder": 4096,
                 },
             },
+            legend_label="Messier Object",
         )
     )
+    p.refresh_legend()
     p.export("temp/map-orion.svg", format="svg", padding=1)
 
 
@@ -89,12 +91,13 @@ def create_zenith():
         dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21),
         limiting_magnitude=4.6,
         # style=sp.styles.ZENITH_BLUE_MEDIUM,
-        # style=style,
+        style=style,
         include_planets=True,
-        resolution=2000,
+        resolution=4000,
         include_info_text=True,
         adjust_text=True,
     )
+    p.refresh_legend()
     p.export("temp/zenith-poway.svg", format="svg")
 
 
@@ -282,9 +285,9 @@ def dump_extensions():
 
 # ------------------------------------------
 
-create_galaxy_test()
+# create_galaxy_test()
 
-# create_zenith()
+create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()

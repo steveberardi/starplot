@@ -186,6 +186,8 @@ class ZenithPlot(StarPlot):
         if not self.style.star.label.visible:
             return
 
+        self._add_legend_handle_marker("Star", self.style.star.marker)
+
         for hip_id, s in stardata[bright_stars].iterrows():
             if (
                 in_circle(s["x"], s["y"])
@@ -238,6 +240,7 @@ class ZenithPlot(StarPlot):
                     path_effects=[self.text_border],
                 )
                 self._maybe_remove_label(label)
+                self._add_legend_handle_marker("DSO", self.style.dso.marker)
 
     def _plot_border(self):
         # Plot border text
@@ -326,11 +329,19 @@ class ZenithPlot(StarPlot):
         self._plot_ecliptic()
         self._plot_planets()
 
+        self.refresh_legend()
+
         if self.include_info_text:
+            font_size = self.style.legend.font_size * self._size_multiplier * 2
             dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
             info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
             self.ax.text(
-                -1.03, -1.03, info, fontsize=13, family="monospace", linespacing=2
+                -1.03,
+                -1.03,
+                info,
+                fontsize=font_size,
+                family="monospace",
+                linespacing=2,
             )
 
         if self.adjust_text:

@@ -334,7 +334,7 @@ class LegendStyle(BaseModel):
     location: LegendLocationEnum = LegendLocationEnum.OUTSIDE_BOTTOM
     """Location of the legend, relative to the map area (inside or outside)"""
 
-    background_color: ColorStr = ColorStr("#888")
+    background_color: ColorStr = ColorStr("#fff")
     """Background color of the legend box"""
 
     background_alpha: float = 1.0
@@ -360,6 +360,9 @@ class LegendStyle(BaseModel):
 
     font_color: ColorStr = ColorStr("#000")
     """Font color for legend labels"""
+
+    visible: bool = True
+    """If True, the legend will be plotted"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
