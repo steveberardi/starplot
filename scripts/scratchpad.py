@@ -32,9 +32,10 @@ def create_map_orion():
                 "font_size": 7,
             },
             "legend": {
-                "location": "upper right",
+                "location": "lower right",
                 "num_columns": 1,
-            }
+                "background_alpha": 1,
+            },
         },
     )
 

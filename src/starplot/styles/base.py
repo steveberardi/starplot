@@ -400,12 +400,12 @@ class PlotStyle(BaseModel):
     # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=10),
-        label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1024),
+        label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
-        font_size=8, font_weight=FontWeightEnum.LIGHT, zorder=1024
+        font_size=8, font_weight=FontWeightEnum.LIGHT, zorder=1
     )
     """Styling for Bayer labels of stars *(see [`LabelStyle`][starplot.styles.LabelStyle])* - *only applies to map plots*"""
 
