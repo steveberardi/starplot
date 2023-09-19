@@ -15,7 +15,7 @@ from skyfield.api import Star
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
-from starplot.styles import PlotStyle, MarkerStyle, MAP_BASE, LegendLocationEnum
+from starplot.styles import PlotStyle, MAP_BASE
 from starplot.utils import bbox_minmax_angle, lon_to_ra
 
 # Silence noisy cartopy warnings

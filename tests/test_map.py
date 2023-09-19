@@ -9,7 +9,7 @@ from starplot import styles
 from starplot.map import MapPlot, Projection
 from starplot.models import SkyObject
 
-from .utils import assert_hashes_equal
+from .utils import colorhash, dhash
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -26,7 +26,7 @@ def map_plot_mercator():
         dec_max=24,
         limiting_magnitude=7.2,
         style=styles.MAP_BLUE_LIGHT,
-        resolution=2000,
+        resolution=4000,
     )
 
 
@@ -47,7 +47,8 @@ def map_plot_stereo_north():
 def test_map_plot_mercator_base(map_plot_mercator):
     filename = DATA_PATH / "actual-mercator-base.png"
     map_plot_mercator.export(filename)
-    assert_hashes_equal(filename, DATA_PATH / "expected-mercator-base.png")
+    assert dhash(filename) == "183b1a3e2e36644c"
+    assert colorhash(filename) == "07406040000"
 
 
 def test_map_plot_mercator_with_extra_object(map_plot_mercator):
@@ -76,13 +77,15 @@ def test_map_plot_mercator_with_extra_object(map_plot_mercator):
         )
     )
     map_plot_mercator.export(filename)
-    assert_hashes_equal(filename, DATA_PATH / "expected-mercator-extra.png")
+    assert dhash(filename) == "183b1a3e262c644c"
+    assert colorhash(filename) == "07403040000"
 
 
 def test_map_plot_stereo_base(map_plot_stereo_north):
     filename = DATA_PATH / "actual-stereo-north-base.png"
     map_plot_stereo_north.export(filename)
-    assert_hashes_equal(filename, DATA_PATH / "expected-stereo-north-base.png")
+    assert dhash(filename) == "57f664f4e8787477"
+    assert colorhash(filename) == "07000000000"
 
 
 def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
@@ -105,7 +108,8 @@ def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
         )
     )
     map_plot_stereo_north.export(filename)
-    assert_hashes_equal(filename, DATA_PATH / "expected-stereo-north-extra.png")
+    assert dhash(filename) == "57f664f4e8787477"
+    assert colorhash(filename) == "07e00008000"
 
 
 def test_map_plot_with_planets():
@@ -134,4 +138,5 @@ def test_map_plot_with_planets():
     )
     p.export(filename)
 
-    assert_hashes_equal(filename, DATA_PATH / "expected-mercator-planets.png")
+    assert dhash(filename) == "cccc716333368c0c"
+    assert colorhash(filename) == "07603000000"
