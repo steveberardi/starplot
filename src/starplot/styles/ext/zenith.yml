@@ -13,3 +13,8 @@ milky_way:
 legend:
   location: lower right
   num_columns: 1
+moon:
+  marker:
+    visible: true
+  label:
+    visible: true

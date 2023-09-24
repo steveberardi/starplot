@@ -81,6 +81,12 @@ planets:
     alpha: 0.8
     color: '#D99CCF'
     fill: full
+moon:
+  label:
+    font_color: '#f2f2f2'
+    font_alpha: 0.8
+  marker:
+    color: '#e9e9e9'
 star:
   label:
     font_color: '#88c0d0'

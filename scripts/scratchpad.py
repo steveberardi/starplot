@@ -84,10 +84,10 @@ def create_map_orion():
 def create_zenith():
     """Create zenith plot for tonight's sky in Poway"""
     style = PlotStyle().extend(
-        extensions.GRAYSCALE,
+        # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
+        extensions.BLUE_DARK,
         extensions.ZENITH,
     )
     p = sp.ZenithPlot(

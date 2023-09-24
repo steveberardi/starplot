@@ -411,7 +411,9 @@ class PlotStyle(BaseModel):
 
     planets: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE, size=4, fill=FillStyleEnum.LEFT
+            symbol=MarkerSymbolEnum.CIRCLE,
+            size=4,
+            fill=FillStyleEnum.LEFT,
         ),
         label=LabelStyle(
             font_size=8,
@@ -419,6 +421,23 @@ class PlotStyle(BaseModel):
         ),
     )
     """Styling for planets"""
+
+    moon: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.CIRCLE,
+            size=14,
+            fill=FillStyleEnum.FULL,
+            color="#c8c8c8",
+            alpha=0.5,
+            visible=False,
+        ),
+        label=LabelStyle(
+            font_size=8,
+            font_weight=FontWeightEnum.BOLD,
+            visible=False,
+        ),
+    )
+    """Styling for the moon"""
 
     # Deep Sky Objects (DSOs)
     dso: ObjectStyle = ObjectStyle(

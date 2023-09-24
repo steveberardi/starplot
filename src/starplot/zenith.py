@@ -50,7 +50,6 @@ class ZenithPlot(StarPlot):
         dt: Date/time to use for star/planet positions (*must be timezone-aware*). Default = current UTC time.
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
-        include_planets: If True, then planets will be plotted
         ephemeris: Ephemeris to use for calculating star positions
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
@@ -71,7 +70,6 @@ class ZenithPlot(StarPlot):
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
         ephemeris: str = "de421_2001.bsp",
-        include_planets: bool = False,
         style: PlotStyle = ZENITH_BASE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
@@ -83,7 +81,6 @@ class ZenithPlot(StarPlot):
             dt,
             limiting_magnitude,
             limiting_magnitude_labels,
-            include_planets,
             ephemeris,
             style,
             resolution,
@@ -328,6 +325,7 @@ class ZenithPlot(StarPlot):
         self._plot_dso_base()
         self._plot_ecliptic()
         self._plot_planets()
+        self._plot_moon()
 
         self.refresh_legend()
 

@@ -58,7 +58,6 @@ class MapPlot(StarPlot):
         dt: Date/time to use for star/planet positions, (*must be timezone-aware*). Default = current UTC time.
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
-        include_planets: If True, then planets will be plotted
         ephemeris: Ephemeris to use for calculating star positions
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
@@ -80,7 +79,6 @@ class MapPlot(StarPlot):
         dt: datetime = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 6.0,
-        include_planets: bool = False,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = MAP_BASE,
         resolution: int = 2048,
@@ -93,7 +91,6 @@ class MapPlot(StarPlot):
             dt,
             limiting_magnitude,
             limiting_magnitude_labels,
-            include_planets,
             ephemeris,
             style,
             resolution,
@@ -447,6 +444,7 @@ class MapPlot(StarPlot):
         self._plot_celestial_equator()
         self._plot_dsos()
         self._plot_planets()
+        self._plot_moon()
 
         self._fit_to_ax()
 

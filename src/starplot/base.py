@@ -18,7 +18,6 @@ class StarPlot(ABC):
         dt: datetime = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
-        include_planets: bool = False,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = BASE,
         resolution: int = 2048,
@@ -31,7 +30,6 @@ class StarPlot(ABC):
 
         self.limiting_magnitude = limiting_magnitude
         self.limiting_magnitude_labels = limiting_magnitude_labels
-        self.include_planets = include_planets
         self.style = style
         self.figure_size = resolution * px
         self.resolution = resolution
@@ -217,7 +215,7 @@ class StarPlot(ABC):
         self._maybe_remove_label(label)
 
     def _plot_planets(self):
-        if not self.include_planets:
+        if not self.style.planets.marker.visible:
             return
 
         planets = get_planet_positions(self.timescale, ephemeris=self.ephemeris)
@@ -225,6 +223,9 @@ class StarPlot(ABC):
         for name, pos in planets.items():
             ra, dec = pos
 
+            if self.in_bounds(ra, dec):
+                self._add_legend_handle_marker("Planet", self.style.planets.marker)
+    
             obj = SkyObject(
                 name=name.upper(),
                 ra=ra,
@@ -232,6 +233,25 @@ class StarPlot(ABC):
                 style=self.style.planets,
             )
             self.plot_object(obj)
+
+    def _plot_moon(self):
+        if not self.style.moon.marker.visible:
+            return
+
+        eph = load(self.ephemeris)
+        earth, moon = eph["earth"], eph['moon']
+
+        astrometric = earth.at(self.timescale).observe(moon)
+        ra, dec, _ = astrometric.radec()
+
+        obj = SkyObject(
+            name="MOON",
+            ra=ra.hours,
+            dec=dec.degrees,
+            style=self.style.moon,
+            legend_label="Moon",
+        )
+        self.plot_object(obj)
 
     @abstractmethod
     def in_bounds(self, ra: float, dec: float) -> bool:
