@@ -225,7 +225,7 @@ class StarPlot(ABC):
 
             if self.in_bounds(ra, dec):
                 self._add_legend_handle_marker("Planet", self.style.planets.marker)
-    
+
             obj = SkyObject(
                 name=name.upper(),
                 ra=ra,
@@ -239,7 +239,7 @@ class StarPlot(ABC):
             return
 
         eph = load(self.ephemeris)
-        earth, moon = eph["earth"], eph['moon']
+        earth, moon = eph["earth"], eph["moon"]
 
         astrometric = earth.at(self.timescale).observe(moon)
         ra, dec, _ = astrometric.radec()

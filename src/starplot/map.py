@@ -4,10 +4,10 @@ import warnings
 from enum import Enum
 
 import cartopy.crs as ccrs
-
 from matplotlib import pyplot as plt
 from matplotlib.ticker import FuncFormatter, FixedLocator
 import geopandas as gpd
+import numpy as np
 
 from pyongc import ongc
 from skyfield.api import Star
@@ -324,16 +324,47 @@ class MapPlot(StarPlot):
                 x_inline=False,
                 y_inline=False,
                 rotate_labels=False,
+                xpadding=12,
+                ypadding=12,
                 **self.style.gridlines.line.matplot_kwargs(),
             )
 
             # use a fixed locator for right ascension so gridlines are only drawn at whole numbers
-            gridlines.xlocator = FixedLocator([x for x in range(-180, 180, 15)])
+            hour_locations = [x for x in range(-180, 180, 15)]
+            gridlines.xlocator = FixedLocator(hour_locations)
             gridlines.xformatter = FuncFormatter(ra_formatter)
             gridlines.xlabel_style = self.style.gridlines.label.matplot_kwargs()
 
             gridlines.yformatter = FuncFormatter(dec_formatter)
             gridlines.ylabel_style = self.style.gridlines.label.matplot_kwargs()
+
+    def _plot_tick_marks(self):
+        if not self.style.tick_marks.visible:
+            return
+
+        xticks = [x for x in np.arange(-180, 180, 3.75)]
+        yticks = [x for x in np.arange(-90, 90, 1)]
+        tick_style = self.style.tick_marks.matplot_kwargs()
+        tick_style["family"] = "monospace"
+        xtick_style = tick_style.copy()
+        xtick_style["fontsize"] -= 4
+        xtick_style["weight"] = "heavy"
+
+        self.ax.gridlines(
+            draw_labels=True,
+            xlocs=xticks,
+            ylocs=yticks,
+            x_inline=False,
+            y_inline=False,
+            rotate_labels=False,
+            xpadding=0.34,
+            ypadding=0.34,
+            yformatter=FuncFormatter(lambda x, pos: "—"),
+            xformatter=FuncFormatter(lambda x, pos: "|"),
+            xlabel_style=xtick_style,
+            ylabel_style=tick_style,
+            alpha=0,  # hide the actual gridlines
+        )
 
     def _plot_dsos(self):
         nearby_dsos = ongc.listObjects(
@@ -435,6 +466,7 @@ class MapPlot(StarPlot):
         self._adjust_radec_minmax()
 
         self._plot_gridlines()
+        self._plot_tick_marks()
         self._plot_constellation_lines()
         self._plot_constellation_borders()
         self._plot_constellation_labels()

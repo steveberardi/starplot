@@ -47,7 +47,7 @@ def create_map_orion():
         dec_max=23.6,
         limiting_magnitude=9.2,
         style=style,
-        resolution=4000,
+        resolution=2000,
     )
     # marker for M42
     p.plot_object(
@@ -97,7 +97,6 @@ def create_zenith():
         limiting_magnitude=4.6,
         # style=sp.styles.ZENITH_BLUE_MEDIUM,
         style=style,
-        include_planets=True,
         resolution=4000,
         include_info_text=True,
         adjust_text=True,
@@ -175,6 +174,7 @@ def create_map_with_planets():
     style.constellation.label.visible = False
     style.ecliptic.label.visible = False
     style.celestial_equator.label.visible = False
+    style.planets.marker.visible = True
 
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
@@ -183,7 +183,6 @@ def create_map_with_planets():
         dec_min=-70,
         dec_max=70,
         limiting_magnitude=3.2,
-        include_planets=True,
         hide_colliding_labels=False,
         style=style,
         resolution=2600,
@@ -228,7 +227,6 @@ def create_map_sgr():
         # dec_min=35,
         # dec_max=55,
         limiting_magnitude=6,
-        # include_planets=True,
         # hide_colliding_labels=False,
         style=style,
         resolution=2000,
@@ -257,17 +255,16 @@ def create_galaxy_test():
 
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
-        ra_min=11,
-        ra_max=16,
+        ra_min=10.5,
+        ra_max=16.5,
         dec_min=-5,
-        dec_max=40,
+        dec_max=45,
         limiting_magnitude=9,
-        # include_planets=True,
         # hide_colliding_labels=False,
         style=style,
-        resolution=2000,
+        resolution=4000,
     )
-    p.export("temp/galaxy.svg", format="svg", padding=0.3)
+    p.export("temp/galaxy.svg", format="svg", padding=0.6)
 
 
 def dump_extensions():
@@ -291,9 +288,9 @@ def dump_extensions():
 # ------------------------------------------
 
 
-# create_galaxy_test()
+create_galaxy_test()
 
-create_zenith()
+# create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()

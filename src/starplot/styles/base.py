@@ -544,6 +544,15 @@ class PlotStyle(BaseModel):
     )
     """Styling for gridlines (including Right Ascension / Declination labels). *Only applies to map plots*."""
 
+    # Tick marks
+    tick_marks: LabelStyle = LabelStyle(
+        font_size=5,
+        font_color="#000",
+        font_alpha=1,
+        zorder=-100,
+    )
+    """Styling for tick marks on map plots."""
+
     # Ecliptic
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(

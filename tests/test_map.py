@@ -122,6 +122,8 @@ def test_map_plot_with_planets():
     style.constellation.label.visible = False
     style.ecliptic.label.visible = False
     style.celestial_equator.label.visible = False
+    style.planets.marker.visible = True
+    style.planets.label.visible = True
 
     p = MapPlot(
         projection=Projection.MERCATOR,
@@ -131,7 +133,6 @@ def test_map_plot_with_planets():
         dec_max=70,
         dt=dt,
         limiting_magnitude=3,
-        include_planets=True,
         hide_colliding_labels=False,
         style=style,
         resolution=2600,
