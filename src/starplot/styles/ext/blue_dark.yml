@@ -69,6 +69,8 @@ gridlines:
     style: solid
     width: 1
     zorder: -10000
+tick_marks:
+  font_color: '#888'
 milky_way:
   alpha: 0.14
   color: '#95a3bf'

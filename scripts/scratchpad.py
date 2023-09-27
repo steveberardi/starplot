@@ -47,7 +47,7 @@ def create_map_orion():
         dec_max=23.6,
         limiting_magnitude=9.2,
         style=style,
-        resolution=2000,
+        resolution=3000,
     )
     # marker for M42
     p.plot_object(
@@ -288,9 +288,9 @@ def dump_extensions():
 # ------------------------------------------
 
 
-create_galaxy_test()
+# create_galaxy_test()
 
-# create_zenith()
+create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
