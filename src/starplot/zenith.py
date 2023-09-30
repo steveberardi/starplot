@@ -162,9 +162,10 @@ class ZenithPlot(StarPlot):
         for m in stardata["magnitude"][bright_stars]:
             if m < 2:
                 sizes.append((8 - m) ** 2.56 * (self._size_multiplier**2))
+            elif m < 8:
+                sizes.append((8 - m) ** 1.38 * (self._size_multiplier**2))
             else:
-                # sizes.append((1 + self.limiting_magnitude - m) ** 2 * self._size_multiplier)
-                sizes.append((8 - m) ** 1.36 * (self._size_multiplier**2))
+                sizes.append(self._size_multiplier**2)
 
         # Draw stars
         if self.style.star.marker.visible:
