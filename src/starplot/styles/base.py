@@ -36,6 +36,11 @@ def merge_dict(dict_1: dict, dict_2: dict) -> None:
             dict_1[k] = dict_2[k]
 
 
+class BaseStyle(BaseModel):
+    class Config:
+        use_enum_values = True
+
+
 class FillStyleEnum(str, Enum):
     """Constants that represent the possible fill styles for markers."""
 
@@ -99,7 +104,7 @@ class DashCapStyleEnum(str, Enum):
     ROUND = "round"
 
 
-class MarkerStyle(BaseModel):
+class MarkerStyle(BaseStyle):
     """
     Styling properties for markers.
 
@@ -154,7 +159,7 @@ class MarkerStyle(BaseModel):
         )
 
 
-class LineStyle(BaseModel):
+class LineStyle(BaseStyle):
     """
     Styling properties for lines.
 
@@ -204,7 +209,7 @@ class LineStyle(BaseModel):
         return result
 
 
-class PolygonStyle(BaseModel):
+class PolygonStyle(BaseStyle):
     """
     Styling properties for polygons.
 
@@ -244,7 +249,7 @@ class PolygonStyle(BaseModel):
         )
 
 
-class LabelStyle(BaseModel):
+class LabelStyle(BaseStyle):
     """
     Styling properties for a label.
 
@@ -295,7 +300,7 @@ class LabelStyle(BaseModel):
         )
 
 
-class ObjectStyle(BaseModel):
+class ObjectStyle(BaseStyle):
     """Defines the style for a SkyObject"""
 
     marker: MarkerStyle = MarkerStyle()
@@ -305,7 +310,7 @@ class ObjectStyle(BaseModel):
     """Style for the object's label (see [LabelStyle][starplot.styles.LabelStyle])"""
 
 
-class PathStyle(BaseModel):
+class PathStyle(BaseStyle):
     """Defines the style for a path (e.g. constellation lines)"""
 
     line: LineStyle = LineStyle()
@@ -315,7 +320,7 @@ class PathStyle(BaseModel):
     """Style for the path's label (see [LabelStyle][starplot.styles.LabelStyle])"""
 
 
-class PlotStyle(BaseModel):
+class PlotStyle(BaseStyle):
     """
     Defines the styling for a plot
     """
