@@ -3,7 +3,7 @@ import pytest
 from pydantic import ValidationError
 from pydantic.color import Color
 
-from starplot.styles import PlotStyle, FontWeightEnum
+from starplot.styles import PlotStyle, FontWeightEnum, LineStyle, LineStyleEnum
 
 
 @pytest.mark.parametrize(
@@ -38,3 +38,8 @@ def test_plot_style_valid(kwargs):
 def test_plot_style_invalid(kwargs):
     with pytest.raises(ValidationError):
         PlotStyle(**kwargs)
+
+
+def test_style_enums_use_strings():
+    line_style = LineStyle(style=LineStyleEnum.DASHED)
+    assert line_style.style == "dashed"
