@@ -190,10 +190,12 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
         show_root_heading: true
         show_docstring_attributes: true
 
+
 ::: starplot.styles.PolygonStyle
     options:
         show_root_heading: true
         show_docstring_attributes: true
+
 
 ::: starplot.styles.LabelStyle
     options:
