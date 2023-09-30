@@ -1,4 +1,5 @@
-FROM python:3.10.12-bookworm as base
+FROM python:3.11.4-bookworm as base
+# FROM debian:bookworm as base
 
 WORKDIR /starplot
 
@@ -6,7 +7,8 @@ RUN apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
 
 # Install shapely from source to avoid cartopy segfault
 # https://stackoverflow.com/questions/52374356/
-RUN pip install --no-binary :all: shapely==2.0.1
+# RUN pip install --no-binary :all: shapely==2.0.1
+RUN pip install shapely==2.0.1
 
 # Install fonts
 # not required, but make the maps look better (especially greek letters)
