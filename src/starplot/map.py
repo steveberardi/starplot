@@ -233,6 +233,8 @@ class MapPlot(StarPlot):
             & (nearby_stars_df["dec_degrees"] >= self.dec_min)
         ]
 
+        stars_labeled.sort_values('magnitude')
+    
         for hip_id, s in stars_labeled.iterrows():
             name = stars.hip_names.get(hip_id)
             bayer_desig = bayer.hip.get(hip_id)

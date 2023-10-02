@@ -290,9 +290,9 @@ def dump_extensions():
 
 # create_galaxy_test()
 
-# create_zenith()
-create_map_mercator()
-create_map_stereo_north()
+create_zenith()
+# create_map_mercator()
+# create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
 create_map_sgr()

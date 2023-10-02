@@ -186,7 +186,10 @@ class ZenithPlot(StarPlot):
 
         self._add_legend_handle_marker("Star", self.style.star.marker)
 
-        for hip_id, s in stardata[bright_stars].iterrows():
+        stars_labeled = stardata[bright_stars]
+        stars_labeled.sort_values('magnitude')
+
+        for hip_id, s in stars_labeled.iterrows():
             if (
                 in_circle(s["x"], s["y"])
                 and hip_id in stars.ZENITH_BASE
