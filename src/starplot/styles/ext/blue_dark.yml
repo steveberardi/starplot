@@ -7,7 +7,7 @@ border_font_color: '#a3be8c'
 border_line_color: '#a3be8c'
 celestial_equator:
   label:
-    color: '#77A67F'
+    font_color: '#77A67F'
   line:
     color: '#77A67F'
 constellation:
@@ -54,7 +54,7 @@ dso_open_cluster:
 
 ecliptic:
   label:
-    color: '#D99CBA'
+    font_color: '#D99CBA'
   line:
     color: '#D99CBA'
 gridlines:

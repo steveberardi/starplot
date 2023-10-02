@@ -572,7 +572,7 @@ class PlotStyle(BaseStyle):
             font_size=4,
             font_color="#777",
             font_weight=FontWeightEnum.LIGHT,
-            font_alpha=0.65,
+            font_alpha=1,
         ),
     )
     """Styling for the Ecliptic"""

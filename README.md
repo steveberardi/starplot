@@ -58,10 +58,7 @@ p.export("starchart.png")
 - adjustText
 
 ## Coming Soon
-
-- ⭐ Tycho stars
-- 🌖 Moon
-- 📋 Map legends
+- ⭐ Custom markers
 - 🔭 Scope plots - that will simulate what you'll see through a telescope eyepiece
 - ⚖️ Better auto font-size adjustment
 - ☄️ Better label collision detection and handling

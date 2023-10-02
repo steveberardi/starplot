@@ -202,6 +202,7 @@ class StarPlot(ABC):
 
     def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
         x, y = self._prepare_coords(ra, dec)
+        kwargs["path_effects"] = kwargs.get("path_effects") or [self.text_border]
         label = self.ax.text(
             x,
             y,
@@ -209,7 +210,6 @@ class StarPlot(ABC):
             *args,
             **kwargs,
             **self._plot_kwargs(),
-            path_effects=[self.text_border],
         )
         label.set_clip_on(True)
         self._maybe_remove_label(label)

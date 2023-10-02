@@ -108,7 +108,7 @@ def create_zenith():
 def create_map_mercator():
     """Create near full extent of map with mercator projection"""
     style = sp.styles.MAP_BLUE_DARK.extend(
-        sp.styles.extensions.HIDE_LABELS,
+        # sp.styles.extensions.HIDE_LABELS,
         {
             "bayer_labels": {
                 "font_name": "GFS Didot",
@@ -133,7 +133,7 @@ def create_map_mercator():
         resolution=8000,
         adjust_text=False,
     )
-    p.export("temp/map-mercator.svg", format="svg", padding=0.5)
+    p.export("temp/map-mercator.svg", format="svg", padding=1)
 
 
 def create_map_stereo_north():
@@ -144,7 +144,7 @@ def create_map_stereo_north():
         dec_min=10,
         dec_max=90,
         limiting_magnitude=6,
-        style=sp.styles.MAP_BLUE_DARK.extend(sp.styles.extensions.HIDE_LABELS),
+        style=sp.styles.MAP_BLUE_DARK.extend(),  # sp.styles.extensions.HIDE_LABELS),
         resolution=4000,
     )
     p.export("temp/temp-map-north.svg", format="svg", padding=0.5)
@@ -290,9 +290,9 @@ def dump_extensions():
 
 # create_galaxy_test()
 
-create_zenith()
-# create_map_mercator()
-# create_map_stereo_north()
+# create_zenith()
+create_map_mercator()
+create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
 create_map_sgr()

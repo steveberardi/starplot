@@ -39,7 +39,7 @@ pip install starplot
 
 ### Segmentation Fault with map plots
 
-If you're seeing "segmentation fault" errors when creating map plots, you may have to compile [shapely](https://shapely.readthedocs.io/en/stable/index.html) from source for your runtime environment:
+If you're seeing "segmentation fault" errors when creating map plots, you may have to install [shapely](https://shapely.readthedocs.io/en/stable/index.html) from source for your runtime environment:
 ```
 pip install --no-binary :all: shapely
 ```

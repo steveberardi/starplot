@@ -4,7 +4,7 @@ import warnings
 from enum import Enum
 
 import cartopy.crs as ccrs
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, patheffects, transforms
 from matplotlib.ticker import FuncFormatter, FixedLocator
 import geopandas as gpd
 import numpy as np
@@ -254,38 +254,36 @@ class MapPlot(StarPlot):
         if not self.style.ecliptic.line.visible:
             return
 
-        incline = ecliptic.ANGLE
+        x = [-1 * (ra * 15 - 360) for ra, dec in ecliptic.RA_DECS]
+        y = [dec for ra, dec in ecliptic.RA_DECS]
 
-        radecs = [
-            [(24, 18), (0, -1 * incline), (21, -15)],
-            [(18, 12), (-1 * incline, 0), (15, -15)],
-            [(12, 6), (0, incline), (9, 15)],
-            [(6, 0), (incline, 0), (3, 15)],
-        ]
-        for ras, decs, text_coord in radecs:
-            lon_0 = -1 * (ras[0] * 15 - 360)
-            lon_1 = -1 * (ras[1] * 15 - 360)
-            coef = (decs[1] - decs[0]) / incline
+        self.ax.plot(
+            x,
+            y,
+            dash_capstyle=self.style.ecliptic.line.dash_capstyle,
+            **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
+            **self._plot_kwargs(),
+        )
 
-            eline = self.ax.plot(
-                [lon_0, lon_1],  # x
-                decs,  # y
-                dash_capstyle=self.style.ecliptic.line.dash_capstyle,
-                transform=ccrs.Geodetic(),
-                **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
-            )
+        if self.style.ecliptic.label.visible:
+            inbounds = []
+            for ra, dec in ecliptic.RA_DECS:
+                if self.in_bounds(ra, dec):
+                    inbounds.append((ra, dec))
 
-            angle = coef * bbox_minmax_angle(eline[0].get_bbox())
+            if len(inbounds) > 4:
+                label_spacing = int(len(inbounds) / 3) or 1
 
-            if self.style.ecliptic.label.visible:
-                self._plot_text(
-                    *text_coord,
-                    "ECLIPTIC",
-                    rotation=angle,
-                    rotation_mode="anchor",
-                    transform_rotates_text=True,
-                    **self.style.ecliptic.label.matplot_kwargs(self._size_multiplier),
-                )
+                for i in range(0, len(inbounds), label_spacing):
+                    ra, dec = inbounds[i]
+                    self._plot_text(
+                        ra,
+                        dec - 0.4,
+                        "ECLIPTIC",
+                        **self.style.ecliptic.label.matplot_kwargs(
+                            self._size_multiplier
+                        ),
+                    )
 
     def _plot_celestial_equator(self):
         if self.style.celestial_equator.line.visible:
@@ -295,7 +293,6 @@ class MapPlot(StarPlot):
                 **self.style.celestial_equator.line.matplot_kwargs(
                     self._size_multiplier
                 ),
-                # **self._plot_kwargs(),
                 transform=ccrs.PlateCarree(),
             )
 
@@ -304,7 +301,8 @@ class MapPlot(StarPlot):
                 self._size_multiplier
             )
 
-            for ra in range(0, 24, 4):
+            label_spacing = (self.ra_max - self.ra_min) / 3
+            for ra in np.arange(self.ra_min, self.ra_max, label_spacing):
                 self._plot_text(ra, 0.25, "CELESTIAL EQUATOR", **style)
 
     def _plot_gridlines(self):
