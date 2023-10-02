@@ -4,7 +4,7 @@ import warnings
 from enum import Enum
 
 import cartopy.crs as ccrs
-from matplotlib import pyplot as plt, patheffects, transforms
+from matplotlib import pyplot as plt
 from matplotlib.ticker import FuncFormatter, FixedLocator
 import geopandas as gpd
 import numpy as np
@@ -16,7 +16,7 @@ from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
 from starplot.styles import PlotStyle, MAP_BASE
-from starplot.utils import bbox_minmax_angle, lon_to_ra
+from starplot.utils import lon_to_ra
 
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
@@ -233,8 +233,8 @@ class MapPlot(StarPlot):
             & (nearby_stars_df["dec_degrees"] >= self.dec_min)
         ]
 
-        stars_labeled.sort_values('magnitude')
-    
+        stars_labeled.sort_values("magnitude")
+
         for hip_id, s in stars_labeled.iterrows():
             name = stars.hip_names.get(hip_id)
             bayer_desig = bayer.hip.get(hip_id)
