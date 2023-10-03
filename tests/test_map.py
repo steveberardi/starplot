@@ -38,7 +38,7 @@ def map_plot_stereo_north():
         ra_max=20,
         dec_min=30,
         dec_max=55,
-        limiting_magnitude=12.0,
+        limiting_magnitude=8.0,
         style=styles.MAP_BLUE_LIGHT,
         resolution=2000,
     )
