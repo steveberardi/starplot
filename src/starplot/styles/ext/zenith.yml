@@ -11,8 +11,7 @@ celestial_equator:
 milky_way:
   visible: false
 legend:
-  location: lower right
-  num_columns: 1
+  visible: false
 moon:
   marker:
     visible: true
