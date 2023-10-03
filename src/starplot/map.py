@@ -194,7 +194,7 @@ class MapPlot(StarPlot):
         )
 
     def _plot_stars(self):
-        stardata = stars.load()
+        stardata = stars.load(self.limiting_magnitude)
         eph = load(self.ephemeris)
         earth = eph["earth"]
         nearby_stars_df = stardata[
