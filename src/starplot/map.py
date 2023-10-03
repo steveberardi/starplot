@@ -51,10 +51,10 @@ class MapPlot(StarPlot):
 
     Args:
         projection: Projection of the map
-        ra_min: Minimum right ascension of the map
-        ra_max: Maximum right ascension of the map
-        dec_min: Minimum declination of the map
-        dec_max: Maximum declination of the map
+        ra_min: Minimum right ascension (hours) of the map
+        ra_max: Maximum right ascension (hours) of the map
+        dec_min: Minimum declination (degrees) of the map
+        dec_max: Maximum declination (degrees) of the map
         dt: Date/time to use for star/planet positions, (*must be timezone-aware*). Default = current UTC time.
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
