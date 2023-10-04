@@ -252,6 +252,12 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
         show_docstring_attributes: true
         members: true
 
+::: starplot.styles.LegendLocationEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
 ---
 
 ## Style Extensions

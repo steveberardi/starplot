@@ -529,7 +529,7 @@ class PlotStyle(BaseStyle):
 
     # Legend
     legend: LegendStyle = LegendStyle()
-    """Styling for legend"""
+    """Styling for legend - *(see [`LegendStyle`][starplot.styles.LegendStyle])* """
 
     # Gridlines
     gridlines: PathStyle = PathStyle(
