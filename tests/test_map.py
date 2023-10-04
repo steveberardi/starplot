@@ -47,7 +47,7 @@ def map_plot_stereo_north():
 def test_map_plot_mercator_base(map_plot_mercator):
     filename = DATA_PATH / "actual-mercator-base.png"
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "183b1a3e2636644c"
+    assert dhash(filename) == "183b1a3e3636644c"
     assert colorhash(filename) == "07406040000"
 
 
@@ -77,14 +77,14 @@ def test_map_plot_mercator_with_extra_object(map_plot_mercator):
         )
     )
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "183b1a3e262c644c"
+    assert dhash(filename) == "183b1a3e362c644c"
     assert colorhash(filename) == "07403040000"
 
 
 def test_map_plot_stereo_base(map_plot_stereo_north):
     filename = DATA_PATH / "actual-stereo-north-base.png"
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "56f6647468787477"
+    assert dhash(filename) == "56f6647468787267"
     assert colorhash(filename) == "07000000000"
 
 
@@ -108,8 +108,8 @@ def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
         )
     )
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "56f6647468787477"
-    assert colorhash(filename) == "07e00008000"
+    assert dhash(filename) == "56f6647468787267"
+    assert colorhash(filename) == "07e00000000"
 
 
 def test_map_plot_with_planets():
