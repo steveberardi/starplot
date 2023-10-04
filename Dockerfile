@@ -18,7 +18,7 @@ WORKDIR /starplot
 
 RUN apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
 
-# REQUIRED for Python 3.10.x
+# MAYBE REQUIRED for Python 3.10.x? TODO: investigate more
 # Install shapely from source to avoid cartopy segfault
 # https://stackoverflow.com/questions/52374356/
 RUN pip install --no-binary :all: shapely==2.0.1
