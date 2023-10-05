@@ -87,6 +87,10 @@ class StarPlot(ABC):
             )
 
     def refresh_legend(self):
+        """Redraws the legend.
+
+        This is useful if you want to include objects in the legend that were plotted AFTER creating the plot (via `plot_object`)
+        """
         if not self.style.legend.visible or not self._legend_handles:
             return
 
