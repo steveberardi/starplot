@@ -6,7 +6,7 @@ import pytest
 from starplot import ZenithPlot
 from starplot.models import SkyObject
 
-from .utils import assert_hashes_equal
+from .utils import colorhash, dhash
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -26,7 +26,9 @@ def zenith_plot():
 def test_zenith_plot_base(zenith_plot):
     filename = DATA_PATH / "actual-zenith-base.png"
     zenith_plot.export(filename)
-    assert_hashes_equal(filename, DATA_PATH / "expected-zenith-base.png")
+
+    assert dhash(filename) == "2b71ac848894790f"
+    assert colorhash(filename) == "07000000000"
 
 
 def test_zenith_plot_with_extra_objects(zenith_plot):
@@ -39,7 +41,9 @@ def test_zenith_plot_with_extra_objects(zenith_plot):
     )
     zenith_plot.plot_object(obj)
     zenith_plot.export(filename)
-    assert_hashes_equal(filename, DATA_PATH / "expected-zenith-extra.png")
+
+    assert dhash(filename) == "2b71ac848894790f"
+    assert colorhash(filename) == "07000038000"
 
 
 def test_zenith_plot_with_info_label():
@@ -53,4 +57,6 @@ def test_zenith_plot_with_info_label():
         include_info_text=True,
     )
     zp.export(filename)
-    assert_hashes_equal(filename, DATA_PATH / "expected-zenith-info.png")
+
+    assert dhash(filename) == "2b71ac848894790f"
+    assert colorhash(filename) == "07000000000"

@@ -190,10 +190,12 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
         show_root_heading: true
         show_docstring_attributes: true
 
+
 ::: starplot.styles.PolygonStyle
     options:
         show_root_heading: true
         show_docstring_attributes: true
+
 
 ::: starplot.styles.LabelStyle
     options:
@@ -209,6 +211,11 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
         show_docstring_attributes: true
 
 ::: starplot.styles.PathStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
+::: starplot.styles.LegendStyle
     options:
         show_root_heading: true
         show_docstring_attributes: true
@@ -240,6 +247,12 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
         members: true
 
 ::: starplot.styles.MarkerSymbolEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.LegendLocationEnum
     options:
         show_root_heading: true
         show_docstring_attributes: true

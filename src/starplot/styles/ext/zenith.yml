@@ -10,3 +10,10 @@ celestial_equator:
     visible: false
 milky_way:
   visible: false
+legend:
+  visible: false
+moon:
+  marker:
+    visible: true
+  label:
+    visible: true

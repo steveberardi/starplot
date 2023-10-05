@@ -33,12 +33,14 @@ class SkyObject(BaseModel):
 
     Args:
         name (str): Name of object (used for plotting its label)
-        ra (flaot): Right ascension of object
-        dec (flaot): Declination of object
+        ra (float): Right ascension (hours) of object
+        dec (float): Declination (degrees) of object
         style (ObjectStyle): Styling for object
+        legend_label (str): Optional. Label for object in the legend. If `None` (the default), then the object will not be labeled in the legend.
     """
 
     name: str
     ra: float
     dec: float
     style: ObjectStyle = ObjectStyle()
+    legend_label: str = None

@@ -7,7 +7,7 @@ border_font_color: '#a3be8c'
 border_line_color: '#a3be8c'
 celestial_equator:
   label:
-    color: '#77A67F'
+    font_color: '#77A67F'
   line:
     color: '#77A67F'
 constellation:
@@ -54,7 +54,7 @@ dso_open_cluster:
 
 ecliptic:
   label:
-    color: '#D99CBA'
+    font_color: '#D99CBA'
   line:
     color: '#D99CBA'
 gridlines:
@@ -69,6 +69,8 @@ gridlines:
     style: solid
     width: 1
     zorder: -10000
+tick_marks:
+  font_color: '#888'
 milky_way:
   alpha: 0.14
   color: '#95a3bf'
@@ -81,6 +83,12 @@ planets:
     alpha: 0.8
     color: '#D99CCF'
     fill: full
+moon:
+  label:
+    font_color: '#f2f2f2'
+    font_alpha: 0.8
+  marker:
+    color: '#e9e9e9'
 star:
   label:
     font_color: '#88c0d0'
@@ -88,3 +96,7 @@ star:
     font_weight: bold
   marker:
     color: '#88c0d0'
+
+legend:
+  background_color: '#a0abbf'
+  background_alpha: 0.6

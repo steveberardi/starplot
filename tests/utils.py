@@ -22,3 +22,16 @@ def assert_md5_equal(filename_1, filename_2):
         md5_1 = hashlib.md5(file1.read()).hexdigest()
         md5_2 = hashlib.md5(file2.read()).hexdigest()
         assert md5_1 == md5_2
+
+
+def assert_dhash_equal(filename, expected_hash: str):
+    actual_hash = str(imagehash.dhash(Image.open(filename)))
+    assert actual_hash == expected_hash
+
+
+def colorhash(filename):
+    return str(imagehash.colorhash(Image.open(filename)))
+
+
+def dhash(filename):
+    return str(imagehash.dhash(Image.open(filename)))

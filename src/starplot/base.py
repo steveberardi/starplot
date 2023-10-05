@@ -3,12 +3,13 @@ from datetime import datetime
 
 from adjustText import adjust_text as _adjust_text
 from matplotlib import pyplot as plt, patheffects, transforms
+from matplotlib.lines import Line2D
 from pytz import timezone
 
 from starplot.data import load
 from starplot.models import SkyObject
 from starplot.planets import get_planet_positions
-from starplot.styles import PlotStyle, BASE
+from starplot.styles import PlotStyle, BASE, MarkerStyle, LegendLocationEnum
 
 
 class StarPlot(ABC):
@@ -17,7 +18,6 @@ class StarPlot(ABC):
         dt: datetime = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
-        include_planets: bool = False,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = BASE,
         resolution: int = 2048,
@@ -30,7 +30,6 @@ class StarPlot(ABC):
 
         self.limiting_magnitude = limiting_magnitude
         self.limiting_magnitude_labels = limiting_magnitude_labels
-        self.include_planets = include_planets
         self.style = style
         self.figure_size = resolution * px
         self.resolution = resolution
@@ -42,6 +41,8 @@ class StarPlot(ABC):
 
         self.labels = []
         self._labels_extents = []
+        self._legend_handles = {}
+        self.legend = None
         self.text_border = patheffects.withStroke(
             linewidth=self.style.text_border_width,
             foreground=self.style.background_color.as_hex(),
@@ -73,6 +74,42 @@ class StarPlot(ABC):
             self._labels_extents.append(extent)
         else:
             label.remove()
+
+    def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
+        if label not in self._legend_handles:
+            self._legend_handles[label] = Line2D(
+                [],
+                [],
+                **style.matplot_kwargs(size_multiplier=self._size_multiplier),
+                **self._plot_kwargs(),
+                linestyle="None",
+                label=label,
+            )
+
+    def refresh_legend(self):
+        """Redraws the legend.
+
+        This is useful if you want to include objects in the legend that were plotted AFTER creating the plot (via `plot_object`)
+        """
+        if not self.style.legend.visible or not self._legend_handles:
+            return
+
+        if self.legend is not None:
+            self.legend.remove()
+
+        if self.style.legend.location in [
+            LegendLocationEnum.OUTSIDE_BOTTOM,
+            LegendLocationEnum.OUTSIDE_TOP,
+        ]:
+            # to plot legends outside the map area, you have to target the figure
+            target = self.fig
+        else:
+            target = self.ax
+
+        self.legend = target.legend(
+            handles=self._legend_handles.values(),
+            **self.style.legend.matplot_kwargs(size_multiplier=self._size_multiplier),
+        )
 
     def adjust_labels(self) -> None:
         """Adjust all the labels to avoid overlapping."""
@@ -147,7 +184,12 @@ class StarPlot(ABC):
                     size_multiplier=self._size_multiplier
                 ),
                 **self._plot_kwargs(),
+                linestyle="None",
             )
+
+            if obj.legend_label is not None:
+                self._add_legend_handle_marker(obj.legend_label, obj.style.marker)
+
             if obj.style.label.visible:
                 label = self.ax.text(
                     ra,
@@ -164,6 +206,7 @@ class StarPlot(ABC):
 
     def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
         x, y = self._prepare_coords(ra, dec)
+        kwargs["path_effects"] = kwargs.get("path_effects") or [self.text_border]
         label = self.ax.text(
             x,
             y,
@@ -171,19 +214,21 @@ class StarPlot(ABC):
             *args,
             **kwargs,
             **self._plot_kwargs(),
-            path_effects=[self.text_border],
         )
         label.set_clip_on(True)
         self._maybe_remove_label(label)
 
     def _plot_planets(self):
-        if not self.include_planets:
+        if not self.style.planets.marker.visible:
             return
 
         planets = get_planet_positions(self.timescale, ephemeris=self.ephemeris)
 
         for name, pos in planets.items():
             ra, dec = pos
+
+            if self.in_bounds(ra, dec):
+                self._add_legend_handle_marker("Planet", self.style.planets.marker)
 
             obj = SkyObject(
                 name=name.upper(),
@@ -192,6 +237,25 @@ class StarPlot(ABC):
                 style=self.style.planets,
             )
             self.plot_object(obj)
+
+    def _plot_moon(self):
+        if not self.style.moon.marker.visible:
+            return
+
+        eph = load(self.ephemeris)
+        earth, moon = eph["earth"], eph["moon"]
+
+        astrometric = earth.at(self.timescale).observe(moon)
+        ra, dec, _ = astrometric.radec()
+
+        obj = SkyObject(
+            name="MOON",
+            ra=ra.hours,
+            dec=dec.degrees,
+            style=self.style.moon,
+            legend_label="Moon",
+        )
+        self.plot_object(obj)
 
     @abstractmethod
     def in_bounds(self, ra: float, dec: float) -> bool:

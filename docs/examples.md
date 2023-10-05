@@ -13,7 +13,7 @@ To create a star chart for the sky as seen from [Palomar Mountain](https://en.wi
 {% include 'examples/example_1.py' %}
 ```
 
-The created file should look something like this:
+The created file should look like this:
 
 ![starchart-blue](images/example_1.png)
 
@@ -31,13 +31,13 @@ Building on the first example, you can also plot additional objects and even cus
 
 ## Map of Orion
 
-The following code will create a simple map plot that shows the area around the constellation Orion, including an extra marker for M42 - The Great Orion Nebula:
+The following code will create a simple map plot that shows the area around the constellation Orion, including a legend and an extra marker for M42 - The Great Orion Nebula:
 
 ```python
 {% include 'examples/example_3.py' %}
 ```
 
-The result should look something like this:
+The result should look like this:
 
 ![map-orion](images/example_3.png)
 

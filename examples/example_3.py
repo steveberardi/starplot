@@ -10,6 +10,11 @@ style = PlotStyle().extend(
             "font_size": 7,
             "font_alpha": 0.9,
         },
+        "legend": {
+            "location": "lower right",  # show legend inside map
+            "num_columns": 1,
+            "background_alpha": 1,
+        },
     },
 )
 style.star.label.font_size = 11

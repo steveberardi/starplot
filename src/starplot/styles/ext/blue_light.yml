@@ -33,7 +33,7 @@ dso_open_cluster:
     color: '#fffb68'
 ecliptic:
   label:
-    color: '#e33b3b'
+    font_color: '#e33b3b'
   line:
     color: '#e33b3b'
 milky_way:
@@ -45,3 +45,6 @@ planets:
     alpha: 0.4
     color: '#f89d00'
     fill: full
+
+legend:
+  background_color: '#fff'

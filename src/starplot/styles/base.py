@@ -104,6 +104,19 @@ class DashCapStyleEnum(str, Enum):
     ROUND = "round"
 
 
+class LegendLocationEnum(str, Enum):
+    """Options for the location of the map legend"""
+
+    INSIDE_TOP = "upper center"
+    INSIDE_TOP_LEFT = "upper left"
+    INSIDE_TOP_RIGHT = "upper right"
+    INSIDE_BOTTOM = "lower center"
+    INSIDE_BOTTOM_RIGHT = "lower right"
+    INSIDE_BOTTOM_LEFT = "lower left"
+    OUTSIDE_TOP = "outside upper center"
+    OUTSIDE_BOTTOM = "outside lower center"
+
+
 class MarkerStyle(BaseStyle):
     """
     Styling properties for markers.
@@ -320,6 +333,57 @@ class PathStyle(BaseStyle):
     """Style for the path's label (see [LabelStyle][starplot.styles.LabelStyle])"""
 
 
+class LegendStyle(BaseStyle):
+    """Defines the style for the map legend. *Only applies to map plots.*"""
+
+    location: LegendLocationEnum = LegendLocationEnum.OUTSIDE_BOTTOM
+    """Location of the legend, relative to the map area (inside or outside)"""
+
+    background_color: ColorStr = ColorStr("#fff")
+    """Background color of the legend box"""
+
+    background_alpha: float = 1.0
+    """Background's alpha (transparency)"""
+
+    expand: bool = False
+    """If True, the legend will be expanded to fit the full width of the map"""
+
+    num_columns: int = 8
+    """Number of columns in the legend"""
+
+    label_padding: float = 1.6
+    """Padding between legend labels"""
+
+    symbol_padding: float = 0.2
+    """Padding between each symbol and its label"""
+
+    border_padding: float = 1.28
+    """Padding around legend border"""
+
+    font_size: int = 9
+    """Relative font size of the legend labels"""
+
+    font_color: ColorStr = ColorStr("#000")
+    """Font color for legend labels"""
+
+    visible: bool = True
+    """If True, the legend will be plotted"""
+
+    def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
+        return dict(
+            loc=self.location,
+            ncols=self.num_columns,
+            framealpha=self.background_alpha,
+            fontsize=self.font_size * size_multiplier * FONT_SCALE,
+            labelcolor=self.font_color.as_hex(),
+            borderpad=self.border_padding,
+            labelspacing=self.label_padding,
+            handletextpad=self.symbol_padding,
+            mode="expand" if self.expand else None,
+            facecolor=self.background_color.as_hex(),
+        )
+
+
 class PlotStyle(BaseStyle):
     """
     Defines the styling for a plot
@@ -340,19 +404,21 @@ class PlotStyle(BaseStyle):
 
     # Stars
     star: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(fill=FillStyleEnum.FULL),
-        label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1024),
+        marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=10),
+        label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
-        font_size=8, font_weight=FontWeightEnum.LIGHT, zorder=1024
+        font_size=8, font_weight=FontWeightEnum.LIGHT, zorder=1
     )
     """Styling for Bayer labels of stars *(see [`LabelStyle`][starplot.styles.LabelStyle])* - *only applies to map plots*"""
 
     planets: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE, size=4, fill=FillStyleEnum.LEFT
+            symbol=MarkerSymbolEnum.CIRCLE,
+            size=4,
+            fill=FillStyleEnum.LEFT,
         ),
         label=LabelStyle(
             font_size=8,
@@ -360,6 +426,23 @@ class PlotStyle(BaseStyle):
         ),
     )
     """Styling for planets"""
+
+    moon: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.CIRCLE,
+            size=14,
+            fill=FillStyleEnum.FULL,
+            color="#c8c8c8",
+            alpha=0.5,
+            visible=False,
+        ),
+        label=LabelStyle(
+            font_size=8,
+            font_weight=FontWeightEnum.BOLD,
+            visible=False,
+        ),
+    )
+    """Styling for the moon"""
 
     # Deep Sky Objects (DSOs)
     dso: ObjectStyle = ObjectStyle(
@@ -444,6 +527,10 @@ class PlotStyle(BaseStyle):
     )
     """Styling for the Milky Way (only applies to map plots)"""
 
+    # Legend
+    legend: LegendStyle = LegendStyle()
+    """Styling for legend - *(see [`LegendStyle`][starplot.styles.LegendStyle])* """
+
     # Gridlines
     gridlines: PathStyle = PathStyle(
         line=LineStyle(
@@ -462,6 +549,15 @@ class PlotStyle(BaseStyle):
     )
     """Styling for gridlines (including Right Ascension / Declination labels). *Only applies to map plots*."""
 
+    # Tick marks
+    tick_marks: LabelStyle = LabelStyle(
+        font_size=5,
+        font_color="#000",
+        font_alpha=1,
+        zorder=-100,
+    )
+    """Styling for tick marks on map plots."""
+
     # Ecliptic
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(
@@ -476,7 +572,7 @@ class PlotStyle(BaseStyle):
             font_size=4,
             font_color="#777",
             font_weight=FontWeightEnum.LIGHT,
-            font_alpha=0.65,
+            font_alpha=1,
         ),
     )
     """Styling for the Ecliptic"""

@@ -4,7 +4,7 @@ border_font_color: '#000'
 border_line_color: '#000'
 celestial_equator:
   label:
-    color: '#999'
+    font_color: '#999'
   line:
     color: '#999'
 constellation:
@@ -29,7 +29,7 @@ dso_open_cluster:
     fill: none
 ecliptic:
   label:
-    color: '#777'
+    font_color: '#777'
   line:
     color: '#777'
 milky_way:
@@ -40,3 +40,6 @@ planets:
   marker:
     color: '#000'
     fill: left
+
+legend:
+  background_color: '#fff'
