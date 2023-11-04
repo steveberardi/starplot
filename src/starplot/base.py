@@ -127,6 +127,7 @@ class StarPlot(ABC):
             filename: Filename of exported file
             format: Format of file: "png" or "svg"
             padding: Padding (in inches) around the image
+            **kwargs: Any keyword arguments to pass through to matplotlib's `savefig` method
 
         """
         self.fig.savefig(
