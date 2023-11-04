@@ -4,6 +4,7 @@ repo_url: https://github.com/steveberardi/starplot
 
 nav:
     - Overview: index.md
+    - Demo: demo.md
     - Installation: installation.md
     - Examples: examples.md
     - Reference:
