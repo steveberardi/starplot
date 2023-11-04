@@ -46,6 +46,11 @@ p.export("starchart.png")
 [https://starplot.dev](https://starplot.dev)
 
 
+## Demo
+For a demo of Starplot's zenith plots, check out: 
+
+[Sky Atlas - Star Chart Creator](https://skyatlas.app/star-charts/)
+
 ## Core Dependencies
 
 - matplotlib
