@@ -120,7 +120,7 @@ class StarPlot(ABC):
         if self.fig:
             plt.close(self.fig)
 
-    def export(self, filename: str, format: str = "png", padding: float = 0):
+    def export(self, filename: str, format: str = "png", padding: float = 0, **kwargs):
         """Exports the plot to an image file.
 
         Args:
@@ -135,6 +135,7 @@ class StarPlot(ABC):
             bbox_inches="tight",
             pad_inches=padding,
             dpi=144,  # (self.resolution / self.figure_size * 1.28),
+            **kwargs,
         )
 
     def draw_reticle(self, ra: float, dec: float) -> None:

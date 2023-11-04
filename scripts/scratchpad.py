@@ -102,7 +102,7 @@ def create_zenith():
         adjust_text=True,
     )
     p.refresh_legend()
-    p.export("temp/zenith-poway.svg", format="svg")
+    p.export("temp/zenith-poway.png", format="png", transparent=True)
 
 
 def create_map_mercator():
@@ -294,8 +294,8 @@ create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
-create_map_sgr()
+# create_map_orion()
+# create_map_sgr()
 
 # create_map_with_planets()
 
