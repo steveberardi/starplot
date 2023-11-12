@@ -3,9 +3,11 @@ import warnings
 
 from enum import Enum
 
-import cartopy.crs as ccrs
+from cartopy import crs as ccrs
+from cartopy.geodesic import Geodesic
 from matplotlib import pyplot as plt
 from matplotlib.ticker import FuncFormatter, FixedLocator
+from shapely import geometry
 import geopandas as gpd
 import numpy as np
 
@@ -443,6 +445,44 @@ class MapPlot(StarPlot):
         )
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
+
+    def _plot_fov_circle(
+        self, ra, dec, fov, magnification
+    ):
+        # FOV (degrees) = FOV eyepiece / magnification
+        fov_degrees = fov / magnification
+
+        lon, lat = self._prepare_coords(ra, dec)
+
+        fov_radius = fov_degrees / 2
+
+        geod = Geodesic()
+        line = geometry.LineString([[lon, lat], [lon + fov_radius, lat]])
+        radius_meters = geod.geometry_length(line)
+
+        circle_points = Geodesic(flattening=0.0).circle(
+            lon=lon, lat=lat, radius=radius_meters, n_samples=200, endpoint=True
+        )
+        geom = geometry.Polygon(circle_points)
+        self.ax.add_geometries(
+            (geom,),
+            crs=ccrs.PlateCarree(),
+            facecolor="none",
+            edgecolor="red",
+            linewidth=2,
+        )
+
+    def plot_scope_view(
+        self, ra, dec, scope_focal_length, eyepiece_focal_length, eyepiece_fov
+    ):
+        # FOV (degrees) = FOV eyepiece / magnification
+        magnification = scope_focal_length / eyepiece_focal_length
+        self._plot_fov_circle(ra, dec, eyepiece_fov, magnification)
+
+    def plot_bino_view(
+        self, ra, dec, fov, magnification
+    ):
+        self._plot_fov_circle(ra, dec, fov, magnification)
 
     def _init_plot(self):
         self.fig = plt.figure(

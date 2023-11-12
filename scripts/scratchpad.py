@@ -267,6 +267,59 @@ def create_galaxy_test():
     p.export("temp/galaxy.svg", format="svg", padding=0.6)
 
 
+def create_scope_view_m45():
+    style = PlotStyle().extend(
+        sp.styles.extensions.HIDE_LABELS,
+        # extensions.GRAYSCALE,
+        extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        # extensions.BLUE_DARK,
+        extensions.MAP,
+        {
+            "constellation_borders": {"visible": False},
+        },
+    )
+    # style.star.label.visible = False
+    # style.star.marker.visible = False
+    # style.constellation.label.visible = False
+    style.ecliptic.label.visible = False
+    style.ecliptic.line.visible = False
+    # style.celestial_equator.label.visible = False
+    style.gridlines.line.visible = False
+    style.legend.visible = False
+
+    p = sp.MapPlot(
+        # projection=Projection.MERCATOR,
+        projection=Projection.STEREO_NORTH,
+        ra_min=3.2,
+        ra_max=4.1,
+        dec_min=21,
+        dec_max=27,
+        limiting_magnitude=12,
+        style=style,
+        resolution=1000,
+    )
+    p.plot_scope_view(
+        ra=3.7836111111,
+        dec=24.1166666667,
+        scope_focal_length=600,
+        eyepiece_focal_length=9,
+        eyepiece_fov=100,
+    )
+    p.plot_bino_view(
+        ra=3.7836111111,
+        dec=24.1166666667,
+        fov=65,
+        magnification=10
+    )
+    p.ax.set_title("TV-85 / 9mm @ 100deg / M45")
+    # p.ax.invert_xaxis()
+    # p.plot_circle(3.7798, 24.1166666667, 1.17)
+    # p.plot_circle(3.7798, 24.1166666667, 1.5)
+    p.export("temp/map-m45.svg", format="svg", padding=0.3)
+    # p.export("temp/map-sgr.png", format="png", padding=0.3)
+
+
 def dump_extensions():
     import yaml
 
@@ -288,9 +341,11 @@ def dump_extensions():
 # ------------------------------------------
 
 
+create_scope_view_m45()
+
 # create_galaxy_test()
 
-create_zenith()
+# create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
