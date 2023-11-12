@@ -12,3 +12,8 @@ The MapPlot class is used for creating map-type plots.
     options:
         show_root_heading: true
         show_docstring_attributes: true
+
+::: starplot.map.DEFAULT_FOV_STYLE
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true

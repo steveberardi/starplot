@@ -24,10 +24,10 @@ from starplot.utils import lon_to_ra
 warnings.filterwarnings("ignore", module="cartopy")
 
 DEFAULT_FOV_STYLE = PolygonStyle(
-    color="red"
-    edge_width=2,
-    fill=False,
+    fill_color=None, edge_color="red", edge_width=5, zorder=100
 )
+"""Default style for plotting scope and bino views"""
+
 
 class Projection(str, Enum):
     """
@@ -452,7 +452,7 @@ class MapPlot(StarPlot):
         self.fig.set_size_inches(width, height)
 
     def _plot_fov_circle(
-        self, ra, dec, fov, magnification
+        self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
     ):
         # FOV (degrees) = FOV eyepiece / magnification
         fov_degrees = fov / magnification
@@ -470,25 +470,52 @@ class MapPlot(StarPlot):
         )
         geom = geometry.Polygon(circle_points)
         self.ax.add_geometries(
-            (geom,),
+            [geom],
             crs=ccrs.PlateCarree(),
-            **DEFAULT_FOV_STYLE.matplot_kwargs(self._size_multiplier)
-            # facecolor="none",
-            # edgecolor="red",
-            # linewidth=2,
+            **style.matplot_kwargs(self._size_multiplier),
         )
 
     def plot_scope_view(
-        self, ra, dec, scope_focal_length, eyepiece_focal_length, eyepiece_fov
+        self,
+        ra: float,
+        dec: float,
+        scope_focal_length: float,
+        eyepiece_focal_length: float,
+        eyepiece_fov: float,
+        style: PolygonStyle = DEFAULT_FOV_STYLE,
     ):
+        """Draws a polygon representing the field of view for a telescope and eyepiece.
+
+        Args:
+            ra: Right ascension of the center of view
+            dec: Declination of the center of view
+            scope_focal_length: focal length (mm) of the scope
+            eyepiece_focal_length: focal length (mm) of the eyepiece
+            eyepiece_fov: field of view (degrees) of the eyepiece
+            style: style of the polygon
+        """
         # FOV (degrees) = FOV eyepiece / magnification
         magnification = scope_focal_length / eyepiece_focal_length
-        self._plot_fov_circle(ra, dec, eyepiece_fov, magnification)
+        self._plot_fov_circle(ra, dec, eyepiece_fov, magnification, style)
 
     def plot_bino_view(
-        self, ra, dec, fov, magnification
+        self,
+        ra: float,
+        dec: float,
+        fov: float,
+        magnification: float,
+        style: PolygonStyle = DEFAULT_FOV_STYLE,
     ):
-        self._plot_fov_circle(ra, dec, fov, magnification)
+        """Draws a polygon representing the field of view for binoculars.
+
+        Args:
+            ra: Right ascension of the center of view
+            dec: Declination of the center of view
+            fov: field of view (degrees) of the binoculars
+            magnification: magnification of the binoculars
+            style: style of the polygon
+        """
+        self._plot_fov_circle(ra, dec, fov, magnification, style)
 
     def _init_plot(self):
         self.fig = plt.figure(

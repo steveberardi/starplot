@@ -11,7 +11,9 @@ from pydantic.functional_serializers import PlainSerializer
 from typing_extensions import Annotated
 
 
-ColorStr = Annotated[Color, PlainSerializer(lambda c: c.as_hex(), return_type=str)]
+ColorStr = Annotated[
+    Color, PlainSerializer(lambda c: c.as_hex() if c else None, return_type=str)
+]
 
 
 FONT_SCALE = 2
@@ -241,17 +243,14 @@ class PolygonStyle(BaseStyle):
     edge_width: int = 1
     """Width of the polygon's edge"""
 
-    color: ColorStr = ColorStr("#000")
-    """Fill color of the polygon"""
+    color: Optional[ColorStr] = None
+    """If specified, this will be the fill color AND edge color of the polygon"""
 
-    edge_color: ColorStr = ColorStr("#000")
+    edge_color: Optional[ColorStr] = None
     """Edge color of the polygon"""
 
-    fill_color: ColorStr = ColorStr("#000")
+    fill_color: Optional[ColorStr] = None
     """Fill color of the polygon"""
-
-    fill: bool = True
-    """Fills polygon if True"""
 
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
@@ -263,12 +262,17 @@ class PolygonStyle(BaseStyle):
     """If True, the polygon will be plotted"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
-        return dict(
-            color=self.color.as_hex(),
+        styles = dict(
+            edgecolor=self.edge_color.as_hex() if self.edge_color else "none",
+            facecolor=self.fill_color.as_hex() if self.fill_color else "none",
             linewidth=self.edge_width * size_multiplier,
             alpha=self.alpha,
             zorder=self.zorder,
         )
+        if self.color:
+            styles["color"] = self.color.as_hex()
+
+        return styles
 
 
 class LabelStyle(BaseStyle):

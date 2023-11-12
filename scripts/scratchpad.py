@@ -306,12 +306,7 @@ def create_scope_view_m45():
         eyepiece_focal_length=9,
         eyepiece_fov=100,
     )
-    p.plot_bino_view(
-        ra=3.7836111111,
-        dec=24.1166666667,
-        fov=65,
-        magnification=10
-    )
+    p.plot_bino_view(ra=3.7836111111, dec=24.1166666667, fov=65, magnification=10)
     p.ax.set_title("TV-85 / 9mm @ 100deg / M45")
     # p.ax.invert_xaxis()
     # p.plot_circle(3.7798, 24.1166666667, 1.17)
