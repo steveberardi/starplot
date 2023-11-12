@@ -17,12 +17,17 @@ from skyfield.api import Star
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
-from starplot.styles import PlotStyle, MAP_BASE
+from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE
 from starplot.utils import lon_to_ra
 
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
 
+DEFAULT_FOV_STYLE = PolygonStyle(
+    color="red"
+    edge_width=2,
+    fill=False,
+)
 
 class Projection(str, Enum):
     """
@@ -467,9 +472,10 @@ class MapPlot(StarPlot):
         self.ax.add_geometries(
             (geom,),
             crs=ccrs.PlateCarree(),
-            facecolor="none",
-            edgecolor="red",
-            linewidth=2,
+            **DEFAULT_FOV_STYLE.matplot_kwargs(self._size_multiplier)
+            # facecolor="none",
+            # edgecolor="red",
+            # linewidth=2,
         )
 
     def plot_scope_view(

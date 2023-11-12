@@ -244,6 +244,15 @@ class PolygonStyle(BaseStyle):
     color: ColorStr = ColorStr("#000")
     """Fill color of the polygon"""
 
+    edge_color: ColorStr = ColorStr("#000")
+    """Edge color of the polygon"""
+
+    fill_color: ColorStr = ColorStr("#000")
+    """Fill color of the polygon"""
+
+    fill: bool = True
+    """Fills polygon if True"""
+
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
