@@ -24,7 +24,7 @@ from starplot.utils import lon_to_ra
 warnings.filterwarnings("ignore", module="cartopy")
 
 DEFAULT_FOV_STYLE = PolygonStyle(
-    fill_color=None, edge_color="red", edge_width=5, zorder=100
+    fill_color=None, edge_color="red", line_style="dashed", edge_width=4, zorder=100
 )
 """Default style for plotting scope and bino views"""
 

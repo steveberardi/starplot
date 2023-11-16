@@ -1,0 +1,33 @@
+bayer_labels:
+  visible: false
+constellation:
+  label:
+    visible: false
+constellation_borders:
+  visible: false
+dso:
+  label:
+    visible: false
+gridlines:
+  label:
+    visible: false
+  line:
+    visible: false
+star:
+  label:
+    visible: false
+planets:
+  label:
+    visible: false
+ecliptic:
+  label:
+    visible: false
+  line:
+    visible: false
+celestial_equator:
+  label:
+    visible: false
+legend:
+  visible: false
+tick_marks:
+  visible: false

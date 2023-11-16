@@ -252,6 +252,9 @@ class PolygonStyle(BaseStyle):
     fill_color: Optional[ColorStr] = None
     """Fill color of the polygon"""
 
+    line_style: LineStyleEnum = LineStyleEnum.SOLID
+    """Edge line style"""
+
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
@@ -266,6 +269,7 @@ class PolygonStyle(BaseStyle):
             edgecolor=self.edge_color.as_hex() if self.edge_color else "none",
             facecolor=self.fill_color.as_hex() if self.fill_color else "none",
             linewidth=self.edge_width * size_multiplier,
+            linestyle=self.line_style,
             alpha=self.alpha,
             zorder=self.zorder,
         )
