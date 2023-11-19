@@ -289,14 +289,14 @@ def create_scope_view_m45():
         resolution=1000,
         star_catalog="tycho-1",
     )
-    p.plot_scope_view(
+    p.plot_scope_fov(
         ra=3.7836111111,
         dec=24.1166666667,
         scope_focal_length=600,
         eyepiece_focal_length=14,
         eyepiece_fov=82,
     )
-    # p.plot_bino_view(ra=3.7836111111, dec=24.1166666667, fov=65, magnification=10)
+    # p.plot_bino_fov(ra=3.7836111111, dec=24.1166666667, fov=65, magnification=10)
     p.ax.set_title("TV-85 / 14mm @ 82deg / M45")
     # p.ax.invert_xaxis()
     # p.plot_circle(3.7798, 24.1166666667, 1.17)

@@ -477,7 +477,7 @@ class MapPlot(StarPlot):
             **style.matplot_kwargs(self._size_multiplier),
         )
 
-    def plot_scope_view(
+    def plot_scope_fov(
         self,
         ra: float,
         dec: float,
@@ -486,7 +486,7 @@ class MapPlot(StarPlot):
         eyepiece_fov: float,
         style: PolygonStyle = DEFAULT_FOV_STYLE,
     ):
-        """Draws a polygon representing the field of view for a telescope and eyepiece.
+        """Draws a circle representing the field of view for a telescope and eyepiece.
 
         Args:
             ra: Right ascension of the center of view
@@ -500,7 +500,7 @@ class MapPlot(StarPlot):
         magnification = scope_focal_length / eyepiece_focal_length
         self._plot_fov_circle(ra, dec, eyepiece_fov, magnification, style)
 
-    def plot_bino_view(
+    def plot_bino_fov(
         self,
         ra: float,
         dec: float,
@@ -508,7 +508,7 @@ class MapPlot(StarPlot):
         magnification: float,
         style: PolygonStyle = DEFAULT_FOV_STYLE,
     ):
-        """Draws a polygon representing the field of view for binoculars.
+        """Draws a circle representing the field of view for binoculars.
 
         Args:
             ra: Right ascension of the center of view

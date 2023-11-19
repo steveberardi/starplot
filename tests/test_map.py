@@ -141,3 +141,40 @@ def test_map_plot_with_planets():
 
     assert dhash(filename) == "cccc716333b68c0e"
     assert colorhash(filename) == "07603000000"
+
+
+def test_map_plot_scope_bino_fov():
+    filename = DATA_PATH / "actual-map-scope-bino-fov.png"
+    dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.MINIMAL,
+        styles.extensions.GRAYSCALE,
+        styles.extensions.MAP,
+    )
+
+    p = MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=52 / 15,
+        ra_max=60 / 15,
+        dec_min=20,
+        dec_max=28,
+        dt=dt,
+        limiting_magnitude=12,
+        style=style,
+        resolution=1000,
+        star_catalog="tycho-1",
+    )
+    p.plot_scope_fov(
+        ra=3.7836111111,
+        dec=24.1166666667,
+        scope_focal_length=600,
+        eyepiece_focal_length=14,
+        eyepiece_fov=82,
+    )
+    p.plot_bino_fov(ra=3.7836111111, dec=24.1166666667, fov=65, magnification=10)
+    p.ax.set_title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
+    p.export(filename, padding=0.3)
+
+    assert dhash(filename) == "86a4c29a9ad2a4ca"
+    assert colorhash(filename) == "07200030000"
