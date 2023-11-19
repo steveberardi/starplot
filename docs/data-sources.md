@@ -1,7 +1,7 @@
 
 ### **Stars**
 - An Extended Hipparcos Compilation (XHIP); Anderson E., Francis C. (2012) [VizieR V/137D](http://cdsarc.u-strasbg.fr/viz-bin/Cat?V/137D) 
-
+- [Tycho-1 Catalogue](https://www.cosmos.esa.int/web/hipparcos/catalogues)
 
 ### **Constellation Lines**
 - [IAU Constellation page](http://www.iau.org/public/themes/constellations/) (via [d3-celestial](https://github.com/ofrohn/d3-celestial))
