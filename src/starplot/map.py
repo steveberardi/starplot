@@ -30,10 +30,7 @@ DEFAULT_FOV_STYLE = PolygonStyle(
 
 
 class Projection(str, Enum):
-    """
-    Supported projections for MapPlots
-
-    """
+    """Supported projections for MapPlots"""
 
     STEREO_NORTH = "stereo_north"
     """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""
@@ -70,6 +67,7 @@ class MapPlot(StarPlot):
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
+        star_catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -91,6 +89,7 @@ class MapPlot(StarPlot):
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
+        star_catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -111,6 +110,7 @@ class MapPlot(StarPlot):
         self.ra_max = ra_max
         self.dec_min = dec_min
         self.dec_max = dec_max
+        self.star_catalog = star_catalog
 
         self._init_plot()
 
@@ -199,7 +199,9 @@ class MapPlot(StarPlot):
         )
 
     def _plot_stars(self):
-        stardata = stars.load(self.limiting_magnitude)
+        stardata = stars.load(
+            catalog=self.star_catalog, limiting_magnitude=self.limiting_magnitude
+        )
         eph = load(self.ephemeris)
         earth = eph["earth"]
         nearby_stars_df = stardata[

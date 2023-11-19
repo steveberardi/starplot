@@ -278,15 +278,16 @@ def create_scope_view_m45():
     )
 
     p = sp.MapPlot(
-        projection=Projection.MERCATOR,
-        # projection=Projection.STEREO_NORTH,
-        ra_min=54.5/15,
-        ra_max=58.5/15, # 3.9
+        # projection=Projection.MERCATOR,
+        projection=Projection.STEREO_NORTH,
+        ra_min=54.5 / 15,
+        ra_max=58.5 / 15,  # 3.9
         dec_min=22,
         dec_max=26,
         limiting_magnitude=12,
         style=style,
         resolution=1000,
+        star_catalog="tycho-1",
     )
     p.plot_scope_view(
         ra=3.7836111111,
@@ -333,7 +334,7 @@ create_scope_view_m45()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_sgr()
 
 # create_map_with_planets()
