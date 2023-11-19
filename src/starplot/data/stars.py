@@ -1,6 +1,8 @@
+from enum import Enum
+
 from skyfield.data import hipparcos
 
-from starplot.data import load as _load
+from starplot.data import load as _load, DataFiles
 
 """
     Dictionary of stars that will be labeled on the plot
@@ -147,7 +149,46 @@ ZENITH_BASE = [
 BASE_LIMITING_MAG = 8
 
 
-def load(limiting_magnitude: float = BASE_LIMITING_MAG):
+class StarCatalog(str, Enum):
+    """Built-in star catalogs"""
+
+    HIPPARCOS = "hipparcos"
+    """Hipparcos Catalog = 118,218 stars"""
+
+    TYCHO_1 = "tycho-1"
+    """Tycho-1 Catalog = 1,055,115 stars"""
+
+
+def load_tycho1():
+    from pandas import read_csv
+
+    df = read_csv(
+        DataFiles.TYCHO_1,
+        names=[
+            "hip",
+            "magnitude",
+            "ra_hours",
+            "dec_degrees",
+            "parallax_mas",
+            "ra_mas_per_year",
+            "dec_mas_per_year",
+        ],
+        compression="gzip",
+    )
+    df = df.assign(
+        ra_degrees=df["ra_hours"] * 15.0,
+        epoch_year=1991.25,
+    )
+    return df.set_index("hip")
+
+
+def load(
+    catalog: StarCatalog = StarCatalog.HIPPARCOS,
+    limiting_magnitude: float = BASE_LIMITING_MAG,
+):
+    if catalog == StarCatalog.TYCHO_1:
+        return load_tycho1()
+
     if limiting_magnitude <= BASE_LIMITING_MAG:
         filepath = "hip8.gz"
     else:

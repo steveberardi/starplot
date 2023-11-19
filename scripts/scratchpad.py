@@ -45,7 +45,7 @@ def create_map_orion():
         ra_max=7.8,
         dec_min=-16,
         dec_max=23.6,
-        limiting_magnitude=9.2,
+        limiting_magnitude=7.2,
         style=style,
         resolution=3000,
     )
@@ -267,6 +267,44 @@ def create_galaxy_test():
     p.export("temp/galaxy.svg", format="svg", padding=0.6)
 
 
+def create_scope_view_m45():
+    style = PlotStyle().extend(
+        extensions.MINIMAL,
+        extensions.GRAYSCALE,
+        # extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        # extensions.BLUE_DARK,
+        extensions.MAP,
+    )
+
+    p = sp.MapPlot(
+        # projection=Projection.MERCATOR,
+        projection=Projection.STEREO_NORTH,
+        ra_min=54.5 / 15,
+        ra_max=58.5 / 15,  # 3.9
+        dec_min=22,
+        dec_max=26,
+        limiting_magnitude=12,
+        style=style,
+        resolution=1000,
+        star_catalog="tycho-1",
+    )
+    p.plot_scope_fov(
+        ra=3.7836111111,
+        dec=24.1166666667,
+        scope_focal_length=600,
+        eyepiece_focal_length=14,
+        eyepiece_fov=82,
+    )
+    # p.plot_bino_fov(ra=3.7836111111, dec=24.1166666667, fov=65, magnification=10)
+    p.ax.set_title("TV-85 / 14mm @ 82deg / M45")
+    # p.ax.invert_xaxis()
+    # p.plot_circle(3.7798, 24.1166666667, 1.17)
+    # p.plot_circle(3.7798, 24.1166666667, 1.5)
+    p.export("temp/map-m45.svg", format="svg", padding=0.3)
+    # p.export("temp/map-sgr.png", format="png", padding=0.3)
+
+
 def dump_extensions():
     import yaml
 
@@ -288,13 +326,15 @@ def dump_extensions():
 # ------------------------------------------
 
 
+create_scope_view_m45()
+
 # create_galaxy_test()
 
-create_zenith()
+# create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_sgr()
 
 # create_map_with_planets()

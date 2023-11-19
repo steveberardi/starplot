@@ -3,9 +3,11 @@ import warnings
 
 from enum import Enum
 
-import cartopy.crs as ccrs
+from cartopy import crs as ccrs
+from cartopy.geodesic import Geodesic
 from matplotlib import pyplot as plt
 from matplotlib.ticker import FuncFormatter, FixedLocator
+from shapely import geometry
 import geopandas as gpd
 import numpy as np
 
@@ -15,18 +17,20 @@ from skyfield.api import Star
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
-from starplot.styles import PlotStyle, MAP_BASE
+from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE
 from starplot.utils import lon_to_ra
 
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
 
+DEFAULT_FOV_STYLE = PolygonStyle(
+    fill_color=None, edge_color="red", line_style="dashed", edge_width=4, zorder=100
+)
+"""Default style for plotting scope and bino views"""
+
 
 class Projection(str, Enum):
-    """
-    Supported projections for MapPlots
-
-    """
+    """Supported projections for MapPlots"""
 
     STEREO_NORTH = "stereo_north"
     """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""
@@ -63,6 +67,7 @@ class MapPlot(StarPlot):
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
+        star_catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -84,6 +89,7 @@ class MapPlot(StarPlot):
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
+        star_catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -104,6 +110,7 @@ class MapPlot(StarPlot):
         self.ra_max = ra_max
         self.dec_min = dec_min
         self.dec_max = dec_max
+        self.star_catalog = star_catalog
 
         self._init_plot()
 
@@ -192,7 +199,9 @@ class MapPlot(StarPlot):
         )
 
     def _plot_stars(self):
-        stardata = stars.load(self.limiting_magnitude)
+        stardata = stars.load(
+            catalog=self.star_catalog, limiting_magnitude=self.limiting_magnitude
+        )
         eph = load(self.ephemeris)
         earth = eph["earth"]
         nearby_stars_df = stardata[
@@ -443,6 +452,72 @@ class MapPlot(StarPlot):
         )
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
+
+    def _plot_fov_circle(
+        self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
+    ):
+        # FOV (degrees) = FOV eyepiece / magnification
+        fov_degrees = fov / magnification
+
+        lon, lat = self._prepare_coords(ra, dec)
+
+        fov_radius = fov_degrees / 2
+
+        geod = Geodesic()
+        line = geometry.LineString([[lon, lat], [lon + fov_radius, lat]])
+        radius_meters = geod.geometry_length(line)
+
+        circle_points = Geodesic(flattening=0.0).circle(
+            lon=lon, lat=lat, radius=radius_meters, n_samples=200, endpoint=True
+        )
+        geom = geometry.Polygon(circle_points)
+        self.ax.add_geometries(
+            [geom],
+            crs=ccrs.PlateCarree(),
+            **style.matplot_kwargs(self._size_multiplier),
+        )
+
+    def plot_scope_fov(
+        self,
+        ra: float,
+        dec: float,
+        scope_focal_length: float,
+        eyepiece_focal_length: float,
+        eyepiece_fov: float,
+        style: PolygonStyle = DEFAULT_FOV_STYLE,
+    ):
+        """Draws a circle representing the field of view for a telescope and eyepiece.
+
+        Args:
+            ra: Right ascension of the center of view
+            dec: Declination of the center of view
+            scope_focal_length: focal length (mm) of the scope
+            eyepiece_focal_length: focal length (mm) of the eyepiece
+            eyepiece_fov: field of view (degrees) of the eyepiece
+            style: style of the polygon
+        """
+        # FOV (degrees) = FOV eyepiece / magnification
+        magnification = scope_focal_length / eyepiece_focal_length
+        self._plot_fov_circle(ra, dec, eyepiece_fov, magnification, style)
+
+    def plot_bino_fov(
+        self,
+        ra: float,
+        dec: float,
+        fov: float,
+        magnification: float,
+        style: PolygonStyle = DEFAULT_FOV_STYLE,
+    ):
+        """Draws a circle representing the field of view for binoculars.
+
+        Args:
+            ra: Right ascension of the center of view
+            dec: Declination of the center of view
+            fov: field of view (degrees) of the binoculars
+            magnification: magnification of the binoculars
+            style: style of the polygon
+        """
+        self._plot_fov_circle(ra, dec, fov, magnification, style)
 
     def _init_plot(self):
         self.fig = plt.figure(

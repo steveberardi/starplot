@@ -26,6 +26,6 @@ def test_get_star_data_base(loadfile, loadframe):
 def test_get_star_data_remote(loadfile, loadframe):
     """assert remote file is used when limiting magnitude is outside the local file's range"""
     mag = stars.BASE_LIMITING_MAG + 1
-    stars.load(mag)
+    stars.load(limiting_magnitude=mag)
     loadfile.open.assert_called_with(hipparcos.URL)
     loadframe.assert_called_once()

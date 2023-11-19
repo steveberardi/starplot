@@ -165,6 +165,7 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     - `ZENITH` - Basic styling tailored for zenith plots ([details](#extensions-zenith))
 - **Others**
     - `HIDE_LABELS` - Hides all the labels ([details](#extensions-hide-labels))
+    - `MINIMAL` - Hides everything except stars and DSOs ([details](#extensions-minimal))
 
 ---
 
@@ -272,6 +273,7 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     - `ZENITH` - Basic styling tailored for zenith plots ([details](#extensions-zenith))
 - **Others**
     - `HIDE_LABELS` - Hides all the labels ([details](#extensions-hide-labels))
+    - `MINIMAL` - Hides everything except stars and DSOs ([details](#extensions-minimal))
 
 
 <!-- GRAYSCALE -->
@@ -355,5 +357,18 @@ Hides all the labels
 **Source**
 ```yaml
 {% include 'src/starplot/styles/ext/hide_labels.yml' %}
+```
+</div>
+
+
+<!-- MINIMAL -->
+<h2 class="doc doc-heading" id="extensions-minimal"><code>MINIMAL</code></h2>
+
+<div class="indent" markdown>
+Hides everything except stars and DSOs. Good for plotting scope fields of view.
+
+**Source**
+```yaml
+{% include 'src/starplot/styles/ext/minimal.yml' %}
 ```
 </div>

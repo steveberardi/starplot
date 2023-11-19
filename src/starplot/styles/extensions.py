@@ -24,3 +24,4 @@ BLUE_DARK = load("blue_dark.yml")
 
 # Helpers
 HIDE_LABELS = load("hide_labels.yml")
+MINIMAL = load("minimal.yml")
