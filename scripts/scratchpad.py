@@ -305,6 +305,35 @@ def create_scope_view_m45():
     # p.export("temp/map-sgr.png", format="png", padding=0.3)
 
 
+def create_scope_view_m11():
+    style = PlotStyle().extend(
+        extensions.MINIMAL,
+        extensions.GRAYSCALE,
+        extensions.MAP,
+    )
+
+    p = sp.MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=18.7,
+        ra_max=19,
+        dec_min=-8,
+        dec_max=-4,
+        limiting_magnitude=14,
+        style=style,
+        resolution=2000,
+        star_catalog="tycho-1",
+    )
+    p.plot_scope_fov(
+        ra=18.85,
+        dec=-6.27,
+        scope_focal_length=600,
+        eyepiece_focal_length=8,
+        eyepiece_fov=100,
+    )
+    p.ax.set_title("TV-85 / 8mm @ 100deg / M11")
+    p.export("temp/map-m11.svg", format="svg", padding=0.3)
+
+
 def dump_extensions():
     import yaml
 
@@ -326,15 +355,15 @@ def dump_extensions():
 # ------------------------------------------
 
 
-create_scope_view_m45()
-
+# create_scope_view_m45()
+create_scope_view_m11()
 # create_galaxy_test()
 
 # create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
+# create_map_orion()
 # create_map_sgr()
 
 # create_map_with_planets()

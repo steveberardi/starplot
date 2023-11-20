@@ -42,3 +42,22 @@ def lon_to_ra(lon: float) -> (int, int, int):
         seconds -= 60
 
     return hour, minutes, seconds
+
+
+def dec_str_to_float(dec_str):
+    """
+    Converts declination strings to a single float:
+
+    >> dec_str_to_float("-05:20:30")
+    >> -5.341667
+
+    """
+    multiplier = 1
+    dec_d, dec_m, dec_s = [float(d) for d in dec_str.split(":")]
+
+    if dec_str.startswith("-"):
+        multiplier = -1
+
+    dec_f = dec_d + multiplier * ((dec_m / 60) + (dec_s / 3600))
+
+    return round(dec_f, 6)
