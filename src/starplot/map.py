@@ -18,7 +18,7 @@ from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
 from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE
-from starplot.utils import lon_to_ra
+from starplot.utils import lon_to_ra, dec_str_to_float
 
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
@@ -431,7 +431,7 @@ class MapPlot(StarPlot):
                 continue
 
             ra = d.coords[0][0] + d.coords[0][1] / 60 + d.coords[0][2] / 3600
-            dec = d.coords[1][0] + d.coords[1][1] / 60 + d.coords[1][2] / 3600
+            dec = dec_str_to_float(d.dec)
             style = styles.get(d.type)
 
             # only plot DSOs with defined styles
