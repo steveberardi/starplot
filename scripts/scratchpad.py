@@ -333,6 +333,26 @@ def create_scope_view_m11():
     p.ax.set_title("TV-85 / 8mm @ 100deg / M11")
     p.export("temp/map-m11.svg", format="svg", padding=0.3)
 
+def create_startest():
+    style = PlotStyle().extend(
+        # extensions.MINIMAL,
+        extensions.BLUE_LIGHT,
+        extensions.MAP,
+    )
+
+    p = sp.MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=2,
+        ra_max=6,
+        dec_min=60,
+        dec_max=85,
+        limiting_magnitude=8,
+        style=style,
+        resolution=2000,
+        star_catalog="tycho-1",
+    )
+    p.export("temp/stars.svg", format="svg", padding=0.3)
+
 
 def dump_extensions():
     import yaml
@@ -354,9 +374,9 @@ def dump_extensions():
 
 # ------------------------------------------
 
-
+create_startest()
 # create_scope_view_m45()
-create_scope_view_m11()
+# create_scope_view_m11()
 # create_galaxy_test()
 
 # create_zenith()

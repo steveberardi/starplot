@@ -204,12 +204,16 @@ class MapPlot(StarPlot):
         )
         eph = load(self.ephemeris)
         earth = eph["earth"]
+
+        ra_buffer = (self.ra_max - self.ra_min) / 4
+        dec_buffer = (self.dec_max - self.dec_min) / 4
+
         nearby_stars_df = stardata[
             (stardata["magnitude"] <= self.limiting_magnitude)
-            & (stardata["ra_hours"] < self.ra_max + 5)
-            & (stardata["ra_hours"] > self.ra_min - 5)
-            & (stardata["dec_degrees"] < self.dec_max + 10)
-            & (stardata["dec_degrees"] > self.dec_min - 10)
+            & (stardata["ra_hours"] < self.ra_max + ra_buffer)
+            & (stardata["ra_hours"] > self.ra_min - ra_buffer)
+            & (stardata["dec_degrees"] < self.dec_max + dec_buffer)
+            & (stardata["dec_degrees"] > self.dec_min - dec_buffer)
         ]
         nearby_stars = Star.from_dataframe(nearby_stars_df)
         astrometric = earth.at(self.timescale).observe(nearby_stars)
