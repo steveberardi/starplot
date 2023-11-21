@@ -314,10 +314,10 @@ def create_scope_view_m11():
 
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
-        ra_min=18.7,
-        ra_max=19,
+        ra_min=18.6,
+        ra_max=19.16,
         dec_min=-8,
-        dec_max=-4,
+        dec_max=-3,
         limiting_magnitude=14,
         style=style,
         resolution=2000,
@@ -374,16 +374,16 @@ def dump_extensions():
 
 # ------------------------------------------
 
-create_startest()
-# create_scope_view_m45()
-# create_scope_view_m11()
+# create_startest()
+create_scope_view_m45()
+create_scope_view_m11()
 # create_galaxy_test()
 
 # create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_sgr()
 
 # create_map_with_planets()

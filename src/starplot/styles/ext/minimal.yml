@@ -31,3 +31,5 @@ legend:
   visible: false
 tick_marks:
   visible: false
+milky_way:
+  visible: false

@@ -223,6 +223,8 @@ class MapPlot(StarPlot):
         for m in nearby_stars_df["magnitude"]:
             if m < 4.6:
                 sizes.append((8 - m) ** 2.36 * self._size_multiplier)
+            # elif m < 8:
+            #     sizes.append((10 - m) ** 1.86 * self._size_multiplier)
             else:
                 sizes.append(0.75 * self._size_multiplier)
 
