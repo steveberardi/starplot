@@ -222,11 +222,11 @@ class MapPlot(StarPlot):
         sizes = []
         for m in nearby_stars_df["magnitude"]:
             if m < 4.6:
-                sizes.append((8 - m) ** 2.36 * self._size_multiplier)
-            # elif m < 8:
-            #     sizes.append((10 - m) ** 1.86 * self._size_multiplier)
+                sizes.append((8 - m) ** 2.92 * self._size_multiplier)
+            elif m < 5.62:
+                sizes.append((9 - m) ** 2.28 * self._size_multiplier)
             else:
-                sizes.append(0.75 * self._size_multiplier)
+                sizes.append(0.5 * self._size_multiplier)
 
         # Plot Stars
         if self.style.star.marker.visible:
@@ -236,6 +236,7 @@ class MapPlot(StarPlot):
                 zorder=self.style.star.marker.zorder,
                 color=self.style.star.marker.color.as_hex(),
                 **self._plot_kwargs(),
+                # rasterized=True
             )
             self._add_legend_handle_marker("Star", self.style.star.marker)
 

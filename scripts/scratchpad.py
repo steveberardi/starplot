@@ -19,9 +19,9 @@ start_time = time.time()
 def create_map_orion():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
-        # extensions.BLUE_LIGHT,
+        extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        extensions.BLUE_DARK,
+        # extensions.BLUE_DARK,
         extensions.MAP,
         {
             "star": {
@@ -318,7 +318,7 @@ def create_scope_view_m11():
         ra_max=19.16,
         dec_min=-8,
         dec_max=-3,
-        limiting_magnitude=14,
+        limiting_magnitude=11,
         style=style,
         resolution=2000,
         star_catalog="tycho-1",
