@@ -68,6 +68,7 @@ class MapPlot(StarPlot):
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
         star_catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
+        rasterize_stars: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -90,6 +91,7 @@ class MapPlot(StarPlot):
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
         star_catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
+        rasterize_stars: bool = False,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -111,6 +113,7 @@ class MapPlot(StarPlot):
         self.dec_min = dec_min
         self.dec_max = dec_max
         self.star_catalog = star_catalog
+        self.rasterize_stars = rasterize_stars
 
         self._init_plot()
 
@@ -220,13 +223,17 @@ class MapPlot(StarPlot):
         stars_ra, stars_dec, _ = astrometric.radec()
 
         sizes = []
+        alphas = []
         for m in nearby_stars_df["magnitude"]:
             if m < 4.6:
                 sizes.append((8 - m) ** 2.92 * self._size_multiplier)
-            elif m < 5.62:
-                sizes.append((9 - m) ** 2.28 * self._size_multiplier)
+                alphas.append(1)
+            elif m < 5.8:
+                sizes.append((9 - m) ** 2.36 * self._size_multiplier)
+                alphas.append(0.9)
             else:
-                sizes.append(0.5 * self._size_multiplier)
+                sizes.append(2.16 * self._size_multiplier)
+                alphas.append((16 - m) * 0.09)
 
         # Plot Stars
         if self.style.star.marker.visible:
@@ -235,8 +242,10 @@ class MapPlot(StarPlot):
                 sizes,
                 zorder=self.style.star.marker.zorder,
                 color=self.style.star.marker.color.as_hex(),
+                edgecolors=self.style.star.marker.edge_color.as_hex() if self.style.star.marker.edge_color else "none",
+                rasterized=self.rasterize_stars,
+                alpha=alphas,
                 **self._plot_kwargs(),
-                # rasterized=True
             )
             self._add_legend_handle_marker("Star", self.style.star.marker)
 

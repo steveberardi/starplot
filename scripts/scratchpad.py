@@ -19,8 +19,8 @@ start_time = time.time()
 def create_map_orion():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
-        extensions.BLUE_LIGHT,
-        # extensions.BLUE_MEDIUM,
+        # extensions.BLUE_LIGHT,
+        extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
@@ -47,7 +47,7 @@ def create_map_orion():
         dec_max=23.6,
         limiting_magnitude=7.2,
         style=style,
-        resolution=3000,
+        resolution=2600,
     )
     # marker for M42
     p.plot_object(
@@ -239,8 +239,8 @@ def create_galaxy_test():
     style = PlotStyle().extend(
         # sp.styles.extensions.HIDE_LABELS,
         # extensions.GRAYSCALE,
-        extensions.BLUE_LIGHT,
-        # extensions.BLUE_MEDIUM,
+        # extensions.BLUE_LIGHT,
+        extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
@@ -377,7 +377,7 @@ def dump_extensions():
 # create_startest()
 create_scope_view_m45()
 create_scope_view_m11()
-# create_galaxy_test()
+create_galaxy_test()
 
 # create_zenith()
 # create_map_mercator()

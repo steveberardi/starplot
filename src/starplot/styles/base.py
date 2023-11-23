@@ -141,7 +141,7 @@ class MarkerStyle(BaseStyle):
     color: ColorStr = ColorStr("#000")
     """Fill color of marker. Can be a hex, rgb, hsl, or word string."""
 
-    edge_color: ColorStr = ColorStr("#000")
+    edge_color: Optional[ColorStr] = ColorStr("#000")
     """Edge color of marker. Can be a hex, rgb, hsl, or word string."""
 
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
@@ -165,7 +165,7 @@ class MarkerStyle(BaseStyle):
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex(),
-            markeredgecolor=self.edge_color.as_hex(),
+            markeredgecolor=self.edge_color.as_hex() if self.edge_color else "none",
             marker=self.symbol,
             markersize=self.size * size_multiplier * FONT_SCALE,
             fillstyle=self.fill,
@@ -421,7 +421,7 @@ class PlotStyle(BaseStyle):
 
     # Stars
     star: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=10),
+        marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=10, edge_color=None),
         label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
