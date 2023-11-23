@@ -333,6 +333,7 @@ def create_scope_view_m11():
     p.ax.set_title("TV-85 / 8mm @ 100deg / M11")
     p.export("temp/map-m11.svg", format="svg", padding=0.3)
 
+
 def create_startest():
     style = PlotStyle().extend(
         # extensions.MINIMAL,

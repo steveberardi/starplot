@@ -245,7 +245,9 @@ class MapPlot(StarPlot):
                 sizes,
                 zorder=self.style.star.marker.zorder,
                 color=self.style.star.marker.color.as_hex(),
-                edgecolors=self.style.star.marker.edge_color.as_hex() if self.style.star.marker.edge_color else "none",
+                edgecolors=self.style.star.marker.edge_color.as_hex()
+                if self.style.star.marker.edge_color
+                else "none",
                 rasterized=self.rasterize_stars,
                 alpha=alphas,
                 **self._plot_kwargs(),
