@@ -68,6 +68,7 @@ class MapPlot(StarPlot):
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
         star_catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
+        rasterize_stars: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -90,6 +91,7 @@ class MapPlot(StarPlot):
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
         star_catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
+        rasterize_stars: bool = False,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -111,6 +113,7 @@ class MapPlot(StarPlot):
         self.dec_min = dec_min
         self.dec_max = dec_max
         self.star_catalog = star_catalog
+        self.rasterize_stars = rasterize_stars
 
         self._init_plot()
 
@@ -204,23 +207,36 @@ class MapPlot(StarPlot):
         )
         eph = load(self.ephemeris)
         earth = eph["earth"]
+
+        ra_buffer = (self.ra_max - self.ra_min) / 4
+        dec_buffer = (self.dec_max - self.dec_min) / 4
+
         nearby_stars_df = stardata[
             (stardata["magnitude"] <= self.limiting_magnitude)
-            & (stardata["ra_hours"] < self.ra_max + 5)
-            & (stardata["ra_hours"] > self.ra_min - 5)
-            & (stardata["dec_degrees"] < self.dec_max + 10)
-            & (stardata["dec_degrees"] > self.dec_min - 10)
+            & (stardata["ra_hours"] < self.ra_max + ra_buffer)
+            & (stardata["ra_hours"] > self.ra_min - ra_buffer)
+            & (stardata["dec_degrees"] < self.dec_max + dec_buffer)
+            & (stardata["dec_degrees"] > self.dec_min - dec_buffer)
         ]
         nearby_stars = Star.from_dataframe(nearby_stars_df)
         astrometric = earth.at(self.timescale).observe(nearby_stars)
         stars_ra, stars_dec, _ = astrometric.radec()
 
         sizes = []
+        alphas = []
         for m in nearby_stars_df["magnitude"]:
-            if m < 4.6:
-                sizes.append((8 - m) ** 2.36 * self._size_multiplier)
+            if m < 1.6:
+                sizes.append((9 - m) ** 2.85 * self._size_multiplier)
+                alphas.append(1)
+            elif m < 4.6:
+                sizes.append((8 - m) ** 2.92 * self._size_multiplier)
+                alphas.append(1)
+            elif m < 5.8:
+                sizes.append((9 - m) ** 2.46 * self._size_multiplier)
+                alphas.append(0.9)
             else:
-                sizes.append(0.75 * self._size_multiplier)
+                sizes.append(2.23 * self._size_multiplier)
+                alphas.append((16 - m) * 0.09)
 
         # Plot Stars
         if self.style.star.marker.visible:
@@ -229,6 +245,11 @@ class MapPlot(StarPlot):
                 sizes,
                 zorder=self.style.star.marker.zorder,
                 color=self.style.star.marker.color.as_hex(),
+                edgecolors=self.style.star.marker.edge_color.as_hex()
+                if self.style.star.marker.edge_color
+                else "none",
+                rasterized=self.rasterize_stars,
+                alpha=alphas,
                 **self._plot_kwargs(),
             )
             self._add_legend_handle_marker("Star", self.style.star.marker)

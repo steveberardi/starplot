@@ -3,6 +3,8 @@ bayer_labels:
 constellation:
   label:
     visible: false
+  line:
+    visible: false
 constellation_borders:
   visible: false
 dso:
@@ -30,4 +32,6 @@ celestial_equator:
 legend:
   visible: false
 tick_marks:
+  visible: false
+milky_way:
   visible: false

@@ -53,16 +53,24 @@ dso_galaxy:
   marker:
     alpha: 0.45
     color: '#D99CBA'
+    edge_color: '#b15d87'
 dso_nebula:
   marker:
-    alpha: 0.45
-    color: '#a8f5b0'
+    alpha: 0.56
+    color: hsl(91, 62%, 82%)
+    edge_color: hsl(91, 53%, 40%)
 dso_open_cluster:
   label:
     visible: false
   marker:
-    alpha: 0.5
-    color: '#EDF5A8'
+    alpha: 0.4
+    color: '#fffb68'
+    edge_color: '#989400'
+dso_globular_cluster:
+  marker:
+    alpha: 0.8
+    color: '#c7c7c7'
+    edge_color: '#444'
 
 legend:
   background_color: '#f1f6ff'

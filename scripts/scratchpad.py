@@ -20,8 +20,8 @@ def create_map_orion():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
-        # extensions.BLUE_MEDIUM,
-        extensions.BLUE_DARK,
+        extensions.BLUE_MEDIUM,
+        # extensions.BLUE_DARK,
         extensions.MAP,
         {
             "star": {
@@ -47,7 +47,7 @@ def create_map_orion():
         dec_max=23.6,
         limiting_magnitude=7.2,
         style=style,
-        resolution=3000,
+        resolution=2600,
     )
     # marker for M42
     p.plot_object(
@@ -239,8 +239,8 @@ def create_galaxy_test():
     style = PlotStyle().extend(
         # sp.styles.extensions.HIDE_LABELS,
         # extensions.GRAYSCALE,
-        extensions.BLUE_LIGHT,
-        # extensions.BLUE_MEDIUM,
+        # extensions.BLUE_LIGHT,
+        extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
@@ -314,11 +314,11 @@ def create_scope_view_m11():
 
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
-        ra_min=18.7,
-        ra_max=19,
+        ra_min=18.6,
+        ra_max=19.16,
         dec_min=-8,
-        dec_max=-4,
-        limiting_magnitude=14,
+        dec_max=-3,
+        limiting_magnitude=11,
         style=style,
         resolution=2000,
         star_catalog="tycho-1",
@@ -332,6 +332,27 @@ def create_scope_view_m11():
     )
     p.ax.set_title("TV-85 / 8mm @ 100deg / M11")
     p.export("temp/map-m11.svg", format="svg", padding=0.3)
+
+
+def create_startest():
+    style = PlotStyle().extend(
+        # extensions.MINIMAL,
+        extensions.BLUE_LIGHT,
+        extensions.MAP,
+    )
+
+    p = sp.MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=2,
+        ra_max=6,
+        dec_min=60,
+        dec_max=85,
+        limiting_magnitude=8,
+        style=style,
+        resolution=3000,
+        star_catalog="tycho-1",
+    )
+    p.export("temp/stars.png", format="png", padding=0.3)
 
 
 def dump_extensions():
@@ -354,16 +375,16 @@ def dump_extensions():
 
 # ------------------------------------------
 
-
-# create_scope_view_m45()
+create_startest()
+create_scope_view_m45()
 create_scope_view_m11()
-# create_galaxy_test()
+create_galaxy_test()
 
 # create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_sgr()
 
 # create_map_with_planets()
