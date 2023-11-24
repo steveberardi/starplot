@@ -3,6 +3,8 @@ bayer_labels:
 constellation:
   label:
     visible: false
+  line:
+    visible: false
 constellation_borders:
   visible: false
 dso:
