@@ -349,10 +349,10 @@ def create_startest():
         dec_max=85,
         limiting_magnitude=8,
         style=style,
-        resolution=2000,
+        resolution=3000,
         star_catalog="tycho-1",
     )
-    p.export("temp/stars.svg", format="svg", padding=0.3)
+    p.export("temp/stars.png", format="png", padding=0.3)
 
 
 def dump_extensions():
@@ -375,7 +375,7 @@ def dump_extensions():
 
 # ------------------------------------------
 
-# create_startest()
+create_startest()
 create_scope_view_m45()
 create_scope_view_m11()
 create_galaxy_test()
