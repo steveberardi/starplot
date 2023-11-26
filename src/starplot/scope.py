@@ -77,8 +77,11 @@ class ScopePlot(StarPlot):
         self.lon = lon
         self.include_info_text = include_info_text
 
-        magnification = scope_focal_length / eyepiece_focal_length
-        self.fov = eyepiece_fov / magnification
+        self.scope_focal_length = scope_focal_length
+        self.eyepiece_focal_length = eyepiece_focal_length
+        self.eyepiece_fov = eyepiece_fov
+        self.magnification = scope_focal_length / eyepiece_focal_length
+        self.fov = eyepiece_fov / self.magnification
 
         self._calc_position()
         self._init_plot()
@@ -112,10 +115,10 @@ class ScopePlot(StarPlot):
         earth = eph["earth"]
         nearby_stars_df = stardata[
             (stardata["magnitude"] <= self.limiting_magnitude)
-            & (stardata["ra_hours"] < self.ra + self.fov/15 * 2)
-            & (stardata["ra_hours"] > self.ra - self.fov/15 * 2)
-            & (stardata["dec_degrees"] < self.dec + self.fov * 2)
-            & (stardata["dec_degrees"] > self.dec - self.fov * 2)
+            & (stardata["ra_hours"] < self.ra + self.fov / 15 * 1.25)
+            & (stardata["ra_hours"] > self.ra - self.fov / 15 * 1.25)
+            & (stardata["dec_degrees"] < self.dec + self.fov * 1.25)
+            & (stardata["dec_degrees"] > self.dec - self.fov * 1.25)
         ]
 
         # location = earth + wgs84.latlon(self.lat, self.lon)
@@ -142,8 +145,11 @@ class ScopePlot(StarPlot):
             elif m < 5.85:
                 sizes.append((9 - m) ** 3.26 * self._size_multiplier)
                 alphas.append(0.94)
+            elif m < 9:
+                sizes.append((13 - m) ** 1.46 * self._size_multiplier)
+                alphas.append(0.88)
             else:
-                sizes.append(2.64 * self._size_multiplier)
+                sizes.append(3.68 * self._size_multiplier)
                 alphas.append((16 - m) * 0.09)
 
             s = Star(ra_hours=star["ra_hours"], dec_degrees=star["dec_degrees"])
@@ -167,6 +173,7 @@ class ScopePlot(StarPlot):
                 color=self.style.star.marker.color.as_hex(),
                 clip_path=self.background_circle,
                 alpha=alphas,
+                edgecolors="none",
             )
 
     def _plot_border(self):
@@ -227,7 +234,7 @@ class ScopePlot(StarPlot):
         y = self.pos_alt.degrees
 
         self.ax.set_xlim(x - self.fov * 1.1, x + self.fov * 1.1)
-        self.ax.set_ylim(y - self.fov / 2 * 1.05, y + self.fov / 2 * 1.05)
+        self.ax.set_ylim(y - self.fov / 2 * 1.06, y + self.fov / 2 * 1.06)
         self.ax.xaxis.set_visible(False)
         self.ax.yaxis.set_visible(False)
         self.ax.set_aspect(2.0)
@@ -238,17 +245,47 @@ class ScopePlot(StarPlot):
 
         print(x)
         print(y)
-        # self.ax.invert_xaxis()
 
-        # if self.include_info_text:
-        #     font_size = self.style.legend.font_size * self._size_multiplier * 2
-        #     dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        #     info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
-        #     self.ax.text(
-        #         -1.03,
-        #         -1.03,
-        #         info,
-        #         fontsize=font_size,
-        #         family="monospace",
-        #         linespacing=2,
-        #     )
+        if self.include_info_text:
+            self.ax.set_ylim(y - self.fov / 2 * 1.1, y + self.fov / 2 * 1.08)
+
+            dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
+            font_size = self.style.legend.font_size * self._size_multiplier * 2.1
+
+            # target, scope, location
+            column_labels = [
+                "Target (Alt/Az)",
+                "Target (RA/DEC)",
+                "Observer Lat, Lon",
+                "Observer Date/Time",
+                "Scope",
+            ]
+            values = [
+                f"{self.pos_alt.degrees:.0f}\N{DEGREE SIGN} / {self.pos_az.degrees:.0f}\N{DEGREE SIGN}",
+                f"{self.ra:.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
+                f"{self.lat:.2f}\N{DEGREE SIGN}, {self.lon:.2f}\N{DEGREE SIGN}",
+                dt_str,
+                f"{self.scope_focal_length}mm w/ {self.eyepiece_focal_length}mm ({self.magnification:.0f}x) @  {self.eyepiece_fov:.0f}\N{DEGREE SIGN} = {self.fov:.2f}\N{DEGREE SIGN} FOV",
+            ]
+
+            total_chars = sum([len(v) for v in values])
+            widths = [len(v) / total_chars for v in values]
+            widths = [0.15, 0.15, 0.2, 0.2, 0.3]
+
+            table = self.ax.table(
+                cellText=[values],
+                cellLoc="center",
+                colWidths=widths,
+                rowLabels=[None],
+                colLabels=column_labels,
+                loc="bottom",
+                edges="vertical",
+            )
+            table.auto_set_font_size(False)
+            table.set_fontsize(font_size)
+            table.scale(1, 2.1)
+            for col in range(len(values)):
+                table[0, col].set_text_props(
+                    fontweight="bold", fontsize=font_size * 1.12
+                )
+        # self.ax.invert_xaxis()
