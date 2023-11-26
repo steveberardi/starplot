@@ -112,40 +112,50 @@ class ScopePlot(StarPlot):
         earth = eph["earth"]
         nearby_stars_df = stardata[
             (stardata["magnitude"] <= self.limiting_magnitude)
-            & (stardata["ra_hours"] < 4.3)
-            & (stardata["ra_hours"] > 3.6)
-            & (stardata["dec_degrees"] < 29)
-            & (stardata["dec_degrees"] > 20.8)
+            & (stardata["ra_hours"] < self.ra + self.fov/15 * 2)
+            & (stardata["ra_hours"] > self.ra - self.fov/15 * 2)
+            & (stardata["dec_degrees"] < self.dec + self.fov * 2)
+            & (stardata["dec_degrees"] > self.dec - self.fov * 2)
         ]
 
-        location = earth + wgs84.latlon(self.lat, self.lon)
-        star_positions = location.at(self.timescale).observe(self.star)
+        # location = earth + wgs84.latlon(self.lat, self.lon)
+        # star_positions = location.at(self.timescale).observe(self.star)
 
-        app = star_positions.apparent()
+        # app = star_positions.apparent()
 
-        alt, az, distance = app.altaz()
+        # alt, az, distance = app.altaz()
 
         x = []
         y = []
         sizes = []
+        alphas = []
 
         for _, star in nearby_stars_df.iterrows():
             m = star["magnitude"]
 
             if m < 1.6:
                 sizes.append((9 - m) ** 3.6 * self._size_multiplier)
+                alphas.append(1)
             elif m < 4.6:
                 sizes.append((8 - m) ** 3.4 * self._size_multiplier)
-            elif m < 5.8:
+                alphas.append(1)
+            elif m < 5.85:
                 sizes.append((9 - m) ** 3.26 * self._size_multiplier)
+                alphas.append(0.94)
             else:
                 sizes.append(2.64 * self._size_multiplier)
+                alphas.append((16 - m) * 0.09)
 
             s = Star(ra_hours=star["ra_hours"], dec_degrees=star["dec_degrees"])
-            pos = location.at(self.timescale).observe(s)
+            pos = self.location.at(self.timescale).observe(s)
             app = pos.apparent()
             alt, az, _ = app.altaz()
-            x.append(az.degrees)
+            if self.pos_az.degrees > 350 and az.degrees < 100:
+                x.append(az.degrees + 360)
+            elif self.pos_az.degrees < 100 and az.degrees > 300:
+                x.append(az.degrees - 360)
+            else:
+                x.append(az.degrees)
             y.append(alt.degrees)
 
         # Draw stars
@@ -156,6 +166,7 @@ class ScopePlot(StarPlot):
                 sizes,
                 color=self.style.star.marker.color.as_hex(),
                 clip_path=self.background_circle,
+                alpha=alphas,
             )
 
     def _plot_border(self):
@@ -176,7 +187,6 @@ class ScopePlot(StarPlot):
             (self.pos_az.degrees, self.pos_alt.degrees),
             radius * 2,
             radius,
-            0,
             facecolor=self.style.background_color.as_hex(),
             linewidth=0,
             fill=True,
@@ -184,12 +194,11 @@ class ScopePlot(StarPlot):
         )
         self.ax.add_patch(self.background_circle)
 
-        # # Border Circles
+        # Inner Border
         inner_border = patches.Ellipse(
             (self.pos_az.degrees, self.pos_alt.degrees),
             radius * 2,
             radius,
-            0,
             linewidth=2 * self._size_multiplier,
             edgecolor=self.style.border_line_color.as_hex(),
             fill=False,
@@ -197,17 +206,18 @@ class ScopePlot(StarPlot):
         )
         self.ax.add_patch(inner_border)
 
-        # # Outer border circle
-        # outer_border = plt.Circle(
-        #     (self.pos_az.degrees, self.pos_alt.degrees),
-        #     facecolor=self.style.border_bg_color.as_hex(),
-        #     radius=radius,
-        #     linewidth=4 * self._size_multiplier,
-        #     edgecolor=self.style.border_line_color.as_hex(),
-        #     fill=True,
-        #     zorder=-1024,
-        # )
-        # self.ax.add_patch(outer_border)
+        # Outer border circle
+        outer_border = patches.Ellipse(
+            (self.pos_az.degrees, self.pos_alt.degrees),
+            radius * 2 + 0.2,
+            radius + 0.1,
+            facecolor=self.style.border_bg_color.as_hex(),
+            linewidth=4 * self._size_multiplier,
+            edgecolor=self.style.border_line_color.as_hex(),
+            fill=True,
+            zorder=-1024,
+        )
+        self.ax.add_patch(outer_border)
 
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
@@ -226,6 +236,8 @@ class ScopePlot(StarPlot):
         self._plot_border()
         self._plot_stars()
 
+        print(x)
+        print(y)
         # self.ax.invert_xaxis()
 
         # if self.include_info_text:

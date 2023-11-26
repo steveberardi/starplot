@@ -387,33 +387,35 @@ def dump_extensions():
 def create_scope_plot_m45():
     style = PlotStyle().extend(
         extensions.MINIMAL,
-        extensions.GRAYSCALE,
+        extensions.GRAYSCALE_DARK,
         extensions.MAP,
     )
 
     p = sp.ScopePlot(
-        ra=3.7836111111,
-        dec=24.1166666667,
+        # M45
+        # ra=3.7836111111,
+        # dec=24.1166666667,
+        
+        # owl cluster
+        # ra=1.33,
+        # dec=58.29,
+
+        # double cluster
+        ra=2.33,
+        dec=57.14,
+
         lat=32.97,
         lon=-117.038611,
         scope_focal_length=600,
         eyepiece_focal_length=14,
         eyepiece_fov=82,
-        dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21),
-        limiting_magnitude=12,
+        dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21, minute=45),
+        limiting_magnitude=15,
         style=style,
         resolution=1200,
         include_info_text=True,
         adjust_text=True,
     )
-    # p.plot_scope_fov(
-    #     ra=3.7836111111,
-    #     dec=24.1166666667,
-    #     scope_focal_length=600,
-    #     eyepiece_focal_length=14,
-    #     eyepiece_fov=82,
-    # )
-    # p.plot_bino_fov(ra=3.7836111111, dec=24.1166666667, fov=65, magnification=10)
     p.ax.set_title("TV-85 / 14mm @ 82deg / M45")
     # p.ax.invert_xaxis()
     # p.plot_circle(3.7798, 24.1166666667, 1.17)
