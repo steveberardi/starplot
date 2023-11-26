@@ -381,12 +381,17 @@ def create_scope_plot_m45():
     )
 
     p = sp.ScopePlot(
+        ra=3.7836111111,
+        dec=24.1166666667,
         lat=32.97,
         lon=-117.038611,
+        scope_focal_length=600,
+        eyepiece_focal_length=14,
+        eyepiece_fov=82,
         dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21),
         limiting_magnitude=12,
         style=style,
-        resolution=4000,
+        resolution=1200,
         include_info_text=True,
         adjust_text=True,
     )
@@ -402,8 +407,9 @@ def create_scope_plot_m45():
     # p.ax.invert_xaxis()
     # p.plot_circle(3.7798, 24.1166666667, 1.17)
     # p.plot_circle(3.7798, 24.1166666667, 1.5)
-    p.export("temp/scope-m45.svg", format="svg", padding=0.3)
+    p.export("temp/scope-m45.svg", format="svg", padding=0.2)
     # p.export("temp/map-sgr.png", format="png", padding=0.3)
+
 
 # ------------------------------------------
 
