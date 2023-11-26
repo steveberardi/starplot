@@ -19,8 +19,9 @@ start_time = time.time()
 def create_map_orion():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
+        extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
-        extensions.BLUE_MEDIUM,
+        # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
@@ -193,45 +194,51 @@ def create_map_with_planets():
 def create_map_sgr():
     style = PlotStyle().extend(
         # sp.styles.extensions.HIDE_LABELS,
-        extensions.GRAYSCALE,
+        # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
+        # extensions.MINIMAL,
+        extensions.HIDE_LABELS,
+        extensions.BLUE_DARK,
         extensions.MAP,
         {
             "bayer_labels": {
                 "font_name": "GFS Didot",
                 "font_size": 8,
             },
-            # "constellation_borders": {"visible": False},
-            # milky_way={"visible": False},
+            "constellation_borders": {"visible": False},
+            "milky_way": {
+                "visible": True,
+                "alpha": 0.06,
+            },
         },
     )
-    # style.star.label.visible = False
-    # style.star.marker.visible = False
-    # style.constellation.label.visible = False
-    # style.ecliptic.label.visible = False
-    # style.celestial_equator.label.visible = False
-    # style.gridlines.label.font_size = 8
+    style.ecliptic.line.visible = False
+    style.legend.visible = False
+    style.tick_marks.visible = False
+    style.gridlines.line.visible = False
+
+    style.constellation.line.width = 12
+
+    style.dso_open_cluster.marker.size = 12
+    style.dso_globular_cluster.marker.size = 12
+    style.dso.marker.size = 12
+    style.dso_galaxy.marker.size = 12
+    style.dso_nebula.marker.size = 12
 
     p = sp.MapPlot(
         projection=Projection.STEREO_SOUTH,
-        # SGR
-        ra_min=16,
-        ra_max=20,
-        dec_min=-50,
-        dec_max=-10,
-        # CYG
-        # ra_min=19,
-        # ra_max=21,
-        # dec_min=35,
-        # dec_max=55,
-        limiting_magnitude=6,
+        star_catalog="tycho-1",
+        ra_min=17.8,
+        ra_max=19.4,
+        dec_min=-36,
+        dec_max=-23,
+        limiting_magnitude=14,
         # hide_colliding_labels=False,
         style=style,
-        resolution=2000,
+        resolution=1600,
     )
-    p.export("temp/map-sgr.svg", format="svg", padding=0.3)
+    p.export("temp/map-sgr.svg", format="svg", padding=0.4)
     # p.export("temp/map-sgr.png", format="png", padding=0.3)
 
 
@@ -270,7 +277,7 @@ def create_galaxy_test():
 def create_scope_view_m45():
     style = PlotStyle().extend(
         extensions.MINIMAL,
-        extensions.GRAYSCALE,
+        extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
@@ -297,7 +304,7 @@ def create_scope_view_m45():
         eyepiece_fov=82,
     )
     # p.plot_bino_fov(ra=3.7836111111, dec=24.1166666667, fov=65, magnification=10)
-    p.ax.set_title("TV-85 / 14mm @ 82deg / M45")
+    p.ax.set_title("TV-85 / 14mm @ 82deg / M45", color="#c5c5c5")
     # p.ax.invert_xaxis()
     # p.plot_circle(3.7798, 24.1166666667, 1.17)
     # p.plot_circle(3.7798, 24.1166666667, 1.5)
@@ -337,22 +344,26 @@ def create_scope_view_m11():
 def create_startest():
     style = PlotStyle().extend(
         # extensions.MINIMAL,
-        extensions.BLUE_LIGHT,
+        # extensions.BLUE_LIGHT,
+        extensions.BLUE_DARK,
+        extensions.HIDE_LABELS,
         extensions.MAP,
     )
+    style.legend.visible = False
+    style.tick_marks.visible = False
 
     p = sp.MapPlot(
         projection=Projection.STEREO_NORTH,
-        ra_min=2,
-        ra_max=6,
-        dec_min=60,
-        dec_max=85,
+        ra_min=16,
+        ra_max=24,
+        dec_min=0,
+        dec_max=90,
         limiting_magnitude=8,
         style=style,
         resolution=3000,
         star_catalog="tycho-1",
     )
-    p.export("temp/stars.png", format="png", padding=0.3)
+    p.export("temp/stars.png", format="png", padding=0)
 
 
 def dump_extensions():
@@ -414,6 +425,8 @@ def create_scope_plot_m45():
 # ------------------------------------------
 
 create_scope_plot_m45()
+# create_startest()
+# create_scope_view_m45()
 # create_startest()
 # create_scope_view_m45()
 # create_scope_view_m11()
