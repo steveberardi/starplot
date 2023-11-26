@@ -144,7 +144,7 @@ class ZenithPlot(StarPlot):
                 self._maybe_remove_label(label)
 
     def _plot_stars(self):
-        stardata = stars.load(self.limiting_magnitude)
+        stardata = stars.load(limiting_magnitude=self.limiting_magnitude)
         self._stardata = stardata
 
         eph = load(self.ephemeris)
