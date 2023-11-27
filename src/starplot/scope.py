@@ -111,8 +111,6 @@ class ScopePlot(StarPlot):
             limiting_magnitude=self.limiting_magnitude,
         )
         self._stardata = stardata
-        eph = load(self.ephemeris)
-        earth = eph["earth"]
         nearby_stars_df = stardata[
             (stardata["magnitude"] <= self.limiting_magnitude)
             & (stardata["ra_hours"] < self.ra + self.fov / 15 * 1.25)
@@ -120,14 +118,6 @@ class ScopePlot(StarPlot):
             & (stardata["dec_degrees"] < self.dec + self.fov * 1.25)
             & (stardata["dec_degrees"] > self.dec - self.fov * 1.25)
         ]
-
-        # location = earth + wgs84.latlon(self.lat, self.lon)
-        # star_positions = location.at(self.timescale).observe(self.star)
-
-        # app = star_positions.apparent()
-
-        # alt, az, distance = app.altaz()
-
         x = []
         y = []
         sizes = []
@@ -250,7 +240,7 @@ class ScopePlot(StarPlot):
             self.ax.set_ylim(y - self.fov / 2 * 1.1, y + self.fov / 2 * 1.08)
 
             dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-            font_size = self.style.legend.font_size * self._size_multiplier * 2.1
+            font_size = self.style.legend.font_size * self._size_multiplier * 2.16
 
             # target, scope, location
             column_labels = [
@@ -286,6 +276,7 @@ class ScopePlot(StarPlot):
             table.scale(1, 2.1)
             for col in range(len(values)):
                 table[0, col].set_text_props(
-                    fontweight="bold", fontsize=font_size * 1.12
+                    fontweight="heavy", fontsize=font_size * 1.15
                 )
+                # table[0, col].set(color="#888", fill=True)
         # self.ax.invert_xaxis()
