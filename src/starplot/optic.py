@@ -138,16 +138,29 @@ class Binoculars(Optic):
         )
 
 class Camera(Optic):
-    """
-    Camera
-    
-    Field of view calculated using the following formula:
+    """Creates a new Binoculars optic
 
+    Note:
+        Field of view is calculated using the following formula:
+
+        ```
         TFOV = 2 * arctan( d / (2 * f) )
+        ```
 
-        where:
-            d = sensor dimension
-            f = focal length
+        _Where_:
+        
+        d = sensor size
+
+        f = focal length of lens
+
+    Args:
+        sensor_height: Height of camera sensor (mm)
+        sensor_width: Width of camera sensor (mm)
+        lens_focal_length: Focal length of camera lens (mm)
+
+    Returns:
+        Camera: A new instance of a Camera optic
+
     """
     
     def __init__(self, sensor_height: float, sensor_width: float, lens_focal_length: float) -> None:
