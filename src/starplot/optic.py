@@ -1,22 +1,94 @@
+from abc import ABC, abstractmethod 
 from datetime import datetime
 
 from matplotlib import pyplot as plt
 from matplotlib import patches
-from matplotlib.collections import LineCollection
-import numpy as np
 
 from skyfield.api import Star, wgs84
 from skyfield.positionlib import position_of_radec
-from skyfield.projections import build_stereographic_projection
 
 from starplot.base import StarPlot
-from starplot.data import load, constellations, stars, dsos, ecliptic
+from starplot.data import load, stars
 from starplot.styles import PlotStyle, ZENITH_BASE
-from starplot.utils import in_circle
+from starplot.utils import in_circle, bv_to_hex_color, azimuth_to_string
+
+"""
+Scope:
+    scope_focal_length: float,
+    eyepiece_focal_length: float,
+    eyepiece_fov: float,
+
+Binoculars:
+    magnification
+    fov
+
+Camera:
+    sensor_size_height
+    sensor_size_width
+    lens_focal_length
+
+    
+Methods:
+    create patch (for viewbox)
+    fov dimensions
+"""
 
 
-class ScopePlot(StarPlot):
-    """Creates a new scope plot.
+class Optic(ABC):
+    def __init__(self) -> None:
+        pass
+    
+    @abstractmethod
+    def patch(self, center_x, center_y) -> patches.Patch:
+        pass
+
+    @abstractmethod
+    def transform(self, axis) -> None:
+        pass
+
+
+class Scope(Optic):
+    def __init__(self, focal_length: float, eyepiece_focal_length: float, eyepiece_fov: float) -> None:
+        self.focal_length = focal_length
+        self.eyepiece_focal_length = eyepiece_focal_length
+        self.eyepiece_fov = eyepiece_fov
+        self.magnification = self.focal_length / self.eyepiece_focal_length
+        self.true_fov = self.eyepiece_fov / self.magnification
+    
+    def patch(self, center_x, center_y, **kwargs):
+        return patches.Ellipse(
+            (center_x, center_y),
+            self.true_fov * 2,
+            self.true_fov,
+            **kwargs,
+        )
+
+class Refractor(Scope):
+    def transform(self, axis) -> None:
+        axis.invert_xaxis()
+
+class Reflector(Scope):
+    def transform(self, axis) -> None:
+        axis.invert_yaxis()
+
+class Binoculars(Optic):
+    def __init__(self, magnification: float, fov: float) -> None:
+        self.magnification = magnification
+        self.apparent_fov = fov
+        self.true_fov = self.apparent_fov / self.magnification
+    
+    def patch(self, center_x, center_y, **kwargs):
+        return patches.Ellipse(
+            (center_x, center_y),
+            self.true_fov * 2,
+            self.true_fov,
+            **kwargs,
+        )
+
+
+
+class OpticPlot(StarPlot):
+    """Creates a new optic plot.
 
     Args:
         ra: Right ascension of target center
@@ -32,9 +104,11 @@ class ScopePlot(StarPlot):
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
+        colorize_stars: If True, then stars will be filled with their BV color index
+        raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the specified time/location
 
     Returns:
-        ScopePlot: A new instance of a ScopePlot
+        OpticPlot: A new instance of a OpticPlot
 
     """
 
@@ -56,9 +130,11 @@ class ScopePlot(StarPlot):
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
+        colorize_stars: bool = False,
+        raise_on_below_horizon: bool = True,
         *args,
         **kwargs,
-    ) -> "ScopePlot":
+    ) -> "OpticPlot":
         super().__init__(
             dt,
             limiting_magnitude,
@@ -76,6 +152,8 @@ class ScopePlot(StarPlot):
         self.lat = lat
         self.lon = lon
         self.include_info_text = include_info_text
+        self.colorize_stars = colorize_stars
+        self.raise_on_below_horizon = raise_on_below_horizon
 
         self.scope_focal_length = scope_focal_length
         self.eyepiece_focal_length = eyepiece_focal_length
@@ -105,6 +183,9 @@ class ScopePlot(StarPlot):
         self.pos_apparent = self.position.apparent()
         self.pos_alt, self.pos_az, _ = self.pos_apparent.altaz()
 
+        if self.pos_alt.degrees < 0 and self.raise_on_below_horizon:
+            raise ValueError("Target is below horizon at specified time/location.")
+
     def _plot_stars(self):
         stardata = stars.load(
             catalog=stars.StarCatalog.TYCHO_1,
@@ -122,12 +203,13 @@ class ScopePlot(StarPlot):
         y = []
         sizes = []
         alphas = []
+        colors = []
 
         for _, star in nearby_stars_df.iterrows():
             m = star["magnitude"]
 
             if m < 1.6:
-                sizes.append((9 - m) ** 3.6 * self._size_multiplier)
+                sizes.append((9 - m) ** 3.56 * self._size_multiplier)
                 alphas.append(1)
             elif m < 4.6:
                 sizes.append((8 - m) ** 3.4 * self._size_multiplier)
@@ -141,6 +223,13 @@ class ScopePlot(StarPlot):
             else:
                 sizes.append(3.68 * self._size_multiplier)
                 alphas.append((16 - m) * 0.09)
+
+            if self.colorize_stars:
+                c = bv_to_hex_color(star["bv"]) or self.style.star.marker.color.as_hex()
+            else:
+                c = self.style.star.marker.color.as_hex()
+
+            colors.append(c)
 
             s = Star(ra_hours=star["ra_hours"], dec_degrees=star["dec_degrees"])
             pos = self.location.at(self.timescale).observe(s)
@@ -160,7 +249,8 @@ class ScopePlot(StarPlot):
                 x,
                 y,
                 sizes,
-                color=self.style.star.marker.color.as_hex(),
+                colors,
+                # color=self.style.star.marker.color.as_hex(),
                 clip_path=self.background_circle,
                 alpha=alphas,
                 edgecolors="none",
@@ -233,9 +323,6 @@ class ScopePlot(StarPlot):
         self._plot_border()
         self._plot_stars()
 
-        print(x)
-        print(y)
-
         if self.include_info_text:
             self.ax.set_ylim(y - self.fov / 2 * 1.1, y + self.fov / 2 * 1.08)
 
@@ -248,14 +335,14 @@ class ScopePlot(StarPlot):
                 "Target (RA/DEC)",
                 "Observer Lat, Lon",
                 "Observer Date/Time",
-                "Scope",
+                "Optic",
             ]
             values = [
-                f"{self.pos_alt.degrees:.0f}\N{DEGREE SIGN} / {self.pos_az.degrees:.0f}\N{DEGREE SIGN}",
+                f"{self.pos_alt.degrees:.0f}\N{DEGREE SIGN} / {self.pos_az.degrees:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az.degrees)})",
                 f"{self.ra:.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
                 f"{self.lat:.2f}\N{DEGREE SIGN}, {self.lon:.2f}\N{DEGREE SIGN}",
                 dt_str,
-                f"{self.scope_focal_length}mm w/ {self.eyepiece_focal_length}mm ({self.magnification:.0f}x) @  {self.eyepiece_fov:.0f}\N{DEGREE SIGN} = {self.fov:.2f}\N{DEGREE SIGN} FOV",
+                f"{self.scope_focal_length}mm w/ {self.eyepiece_focal_length}mm ({self.magnification:.0f}x) @  {self.eyepiece_fov:.0f}\N{DEGREE SIGN} = {self.fov:.2f}\N{DEGREE SIGN} TFOV",
             ]
 
             total_chars = sum([len(v) for v in values])
@@ -278,5 +365,5 @@ class ScopePlot(StarPlot):
                 table[0, col].set_text_props(
                     fontweight="heavy", fontsize=font_size * 1.15
                 )
-                # table[0, col].set(color="#888", fill=True)
+
         # self.ax.invert_xaxis()

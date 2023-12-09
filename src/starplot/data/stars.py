@@ -172,6 +172,7 @@ def load_tycho1():
             "parallax_mas",
             "ra_mas_per_year",
             "dec_mas_per_year",
+            "bv",
         ],
         compression="gzip",
     )

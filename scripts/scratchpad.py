@@ -387,12 +387,11 @@ def dump_extensions():
 def create_scope_plot_m45():
     style = PlotStyle().extend(
         extensions.MINIMAL,
-        extensions.GRAYSCALE_DARK,
-        # extensions.GRAYSCALE,
-        # extensions.ZENITH,
+        # extensions.GRAYSCALE_DARK,
+        extensions.GRAYSCALE,
     )
 
-    p = sp.ScopePlot(
+    p = sp.OpticPlot(
         # M45
         # ra=3.7836111111,
         # dec=24.1166666667,
@@ -400,23 +399,45 @@ def create_scope_plot_m45():
         # ra=1.33,
         # dec=58.29,
         # double cluster
-        ra=2.33,
-        dec=57.14,
+        # ra=2.33,
+        # dec=57.14,
+        # M35
+        # ra=6.15,
+        # dec=24.34,
+        # Alder
+        # ra=4.598667,
+        # dec=16.50975,
+
+        # Hyades
+        ra=4.501,
+        dec=15.96,
+
         lat=32.97,
         lon=-117.038611,
-        scope_focal_length=600,
-        eyepiece_focal_length=14,
+
+        # AT72EDII
+        scope_focal_length=430,
+        eyepiece_focal_length=11,
         eyepiece_fov=82,
-        dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21, minute=45),
-        limiting_magnitude=15,
+
+        # TV-85
+        # scope_focal_length=600,
+        # eyepiece_focal_length=9,
+        # eyepiece_fov=100,
+        dt=datetime.now(timezone("America/Los_Angeles")).replace(
+            hour=19, minute=30, second=0
+        ),
+        limiting_magnitude=14,
         style=style,
-        resolution=1600,
+        resolution=1000,
         include_info_text=True,
+        # colorize_stars=True,
         # adjust_text=True,
     )
     # p.ax.set_title("TV-85 / 14mm @ 82deg / M45")
     # p.ax.invert_xaxis()
     p.export("temp/scope-m45.svg", format="svg", padding=0.2)
+    p.export("temp/scope-m45.png", format="png", padding=0.2)
 
 
 # ------------------------------------------
