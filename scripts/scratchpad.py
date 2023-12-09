@@ -387,14 +387,14 @@ def dump_extensions():
 def create_scope_plot_m45():
     style = PlotStyle().extend(
         extensions.MINIMAL,
-        # extensions.GRAYSCALE_DARK,
-        extensions.GRAYSCALE,
+        extensions.GRAYSCALE_DARK,
+        # extensions.GRAYSCALE,
     )
 
     p = sp.OpticPlot(
         # M45
-        # ra=3.7836111111,
-        # dec=24.1166666667,
+        ra=3.7836111111,
+        dec=24.1166666667,
         # owl cluster
         # ra=1.33,
         # dec=58.29,
@@ -409,27 +409,46 @@ def create_scope_plot_m45():
         # dec=16.50975,
 
         # Hyades
-        ra=4.501,
-        dec=15.96,
+        # ra=4.501,
+        # dec=15.96,
 
         lat=32.97,
         lon=-117.038611,
 
         # AT72EDII
-        scope_focal_length=430,
-        eyepiece_focal_length=11,
-        eyepiece_fov=82,
-
+        # optic=sp.optic.Refractor(
+        #     focal_length=430,
+        #     eyepiece_focal_length=11,
+        #     eyepiece_fov=82,
+        # ),
+        
         # TV-85
-        # scope_focal_length=600,
-        # eyepiece_focal_length=9,
-        # eyepiece_fov=100,
+        # optic=sp.optic.Refractor(
+        #     focal_length=600,
+        #     eyepiece_focal_length=9,
+        #     eyepiece_fov=100,
+        # ),
+
+        # 10x binoculars
+        optic=sp.optic.Binoculars(
+            magnification=10,
+            fov=65,
+        ),
+
+        # Fuji X-T1
+        # optic=sp.optic.Camera(
+        #     sensor_height=15.6,
+        #     # sensor_height=22.2,
+        #     sensor_width=23.6,
+        #     lens_focal_length=430,
+        # ),
+
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=19, minute=30, second=0
         ),
         limiting_magnitude=14,
         style=style,
-        resolution=1000,
+        resolution=1600,
         include_info_text=True,
         # colorize_stars=True,
         # adjust_text=True,
