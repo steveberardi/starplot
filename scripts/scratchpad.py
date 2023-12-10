@@ -407,34 +407,28 @@ def create_scope_plot_m45():
         # Alder
         # ra=4.598667,
         # dec=16.50975,
-
         # Hyades
         # ra=4.501,
         # dec=15.96,
-
         lat=32.97,
         lon=-117.038611,
-
         # AT72EDII
         # optic=sp.optic.Refractor(
         #     focal_length=430,
         #     eyepiece_focal_length=11,
         #     eyepiece_fov=82,
         # ),
-        
         # TV-85
         # optic=sp.optic.Refractor(
         #     focal_length=600,
         #     eyepiece_focal_length=9,
         #     eyepiece_fov=100,
         # ),
-
         # 10x binoculars
         optic=sp.optic.Binoculars(
             magnification=10,
             fov=65,
         ),
-
         # Fuji X-T1
         # optic=sp.optic.Camera(
         #     sensor_height=15.6,
@@ -442,13 +436,12 @@ def create_scope_plot_m45():
         #     sensor_width=23.6,
         #     lens_focal_length=430,
         # ),
-
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=19, minute=30, second=0
         ),
         limiting_magnitude=14,
         style=style,
-        resolution=1600,
+        resolution=2000,
         include_info_text=True,
         # colorize_stars=True,
         # adjust_text=True,

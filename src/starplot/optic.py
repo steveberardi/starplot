@@ -1,6 +1,6 @@
 import math
 
-from abc import ABC, abstractmethod 
+from abc import ABC, abstractmethod
 from datetime import datetime
 
 from matplotlib import pyplot as plt
@@ -13,32 +13,11 @@ from starplot.data import load, stars
 from starplot.styles import PlotStyle, ZENITH_BASE
 from starplot.utils import bv_to_hex_color, azimuth_to_string
 
-"""
-Scope:
-    scope_focal_length: float,
-    eyepiece_focal_length: float,
-    eyepiece_fov: float,
-
-Binoculars:
-    magnification
-    fov
-
-Camera:
-    sensor_size_height
-    sensor_size_width
-    lens_focal_length
-
-    
-Methods:
-    create patch (for viewbox)
-    fov dimensions
-"""
-
 
 class Optic(ABC):
     def __init__(self) -> None:
         pass
-    
+
     def __str__(self):
         return "Optic"
 
@@ -62,23 +41,26 @@ class Optic(ABC):
 
 class Scope(Optic):
     """Scope
-    
+
     Not meant to be used directly, use subclasses instead (Refractor, Reflector, etc)
     """
-    def __init__(self, focal_length: float, eyepiece_focal_length: float, eyepiece_fov: float) -> None:
+
+    def __init__(
+        self, focal_length: float, eyepiece_focal_length: float, eyepiece_fov: float
+    ) -> None:
         self.focal_length = focal_length
         self.eyepiece_focal_length = eyepiece_focal_length
         self.eyepiece_fov = eyepiece_fov
         self.magnification = self.focal_length / self.eyepiece_focal_length
         self.true_fov = self.eyepiece_fov / self.magnification
-    
+
     def __str__(self):
         return f"{self.focal_length}mm w/ {self.eyepiece_focal_length}mm ({self.magnification:.0f}x) @  {self.eyepiece_fov:.0f}\N{DEGREE SIGN} = {self.true_fov:.2f}\N{DEGREE SIGN} TFOV"
 
     @property
     def xlim(self):
         return self.true_fov * 1.2
-    
+
     @property
     def ylim(self):
         return self.true_fov / 2 * 1.16
@@ -92,13 +74,16 @@ class Scope(Optic):
             **kwargs,
         )
 
+
 class Refractor(Scope):
     def transform(self, axis) -> None:
         axis.invert_xaxis()
 
+
 class Reflector(Scope):
     def transform(self, axis) -> None:
         axis.invert_yaxis()
+
 
 class Binoculars(Optic):
     """Creates a new Binoculars optic
@@ -116,14 +101,14 @@ class Binoculars(Optic):
         self.magnification = magnification
         self.apparent_fov = fov
         self.true_fov = self.apparent_fov / self.magnification
-    
+
     def __str__(self):
         return f"{self.magnification}x @ {self.apparent_fov}\N{DEGREE SIGN} = {self.true_fov}\N{DEGREE SIGN}"
 
     @property
     def xlim(self):
         return self.true_fov * 1.2
-    
+
     @property
     def ylim(self):
         return self.true_fov / 2 * 1.16
@@ -137,6 +122,7 @@ class Binoculars(Optic):
             **kwargs,
         )
 
+
 class Camera(Optic):
     """Creates a new Binoculars optic
 
@@ -148,7 +134,7 @@ class Camera(Optic):
         ```
 
         _Where_:
-        
+
         d = sensor size
 
         f = focal length of lens
@@ -162,23 +148,29 @@ class Camera(Optic):
         Camera: A new instance of a Camera optic
 
     """
-    
-    def __init__(self, sensor_height: float, sensor_width: float, lens_focal_length: float) -> None:
+
+    def __init__(
+        self, sensor_height: float, sensor_width: float, lens_focal_length: float
+    ) -> None:
         self.sensor_height = sensor_height
         self.sensor_width = sensor_width
         self.lens_focal_length = lens_focal_length
 
-        self.true_fov_x = 2 * math.degrees(math.atan(self.sensor_width / (2 * self.lens_focal_length)))
-        self.true_fov_y = 2 * math.degrees(math.atan(self.sensor_height / (2 * self.lens_focal_length)))
+        self.true_fov_x = 2 * math.degrees(
+            math.atan(self.sensor_width / (2 * self.lens_focal_length))
+        )
+        self.true_fov_y = 2 * math.degrees(
+            math.atan(self.sensor_height / (2 * self.lens_focal_length))
+        )
         self.true_fov = max(self.true_fov_x, self.true_fov_y)
-    
+
     def __str__(self):
         return f"{self.sensor_width}x{self.sensor_height} w/ {self.lens_focal_length}mm lens = {self.true_fov_x:.2f}\N{DEGREE SIGN} x {self.true_fov_y:.2f}\N{DEGREE SIGN}"
-    
+
     @property
     def xlim(self):
         return self.true_fov_x * 1.2
-    
+
     @property
     def ylim(self):
         return self.true_fov_y / 2 * 1.16
@@ -194,7 +186,6 @@ class Camera(Optic):
             self.true_fov_y + padding * 2,
             **kwargs,
         )
-
 
 
 class OpticPlot(StarPlot):
@@ -266,6 +257,7 @@ class OpticPlot(StarPlot):
 
         self.optic = optic
 
+        # self._size_multiplier = self._size_multiplier * 2 / self.optic.true_fov
         self._calc_position()
         self._init_plot()
 
@@ -309,10 +301,10 @@ class OpticPlot(StarPlot):
             m = star["magnitude"]
 
             if m < 4.6:
-                sizes.append((9 - m) ** 3.5 * self._size_multiplier)
+                sizes.append((9 - m) ** 3.46 * self._size_multiplier)
                 alphas.append(1)
             # elif m < 4.6:
-            #     sizes.append((8 - m) ** 3.68 * self._size_multiplier)
+            #     sizes.append((9 - m) ** 3.68 * self._size_multiplier)
             #     alphas.append(1)
             elif m < 5.85:
                 sizes.append((9 - m) ** 3.46 * self._size_multiplier)
@@ -463,4 +455,3 @@ class OpticPlot(StarPlot):
                 table[0, col].set_text_props(
                     fontweight="heavy", fontsize=font_size * 1.15
                 )
-

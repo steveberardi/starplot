@@ -176,12 +176,12 @@ class StarPlot(ABC):
             obj: The object to plot
 
         """
-        ra, dec = self._prepare_coords(obj.ra, obj.dec)
+        x, y = self._prepare_coords(obj.ra, obj.dec)
 
         if self.in_bounds(obj.ra, obj.dec):
             self.ax.plot(
-                ra,
-                dec,
+                x,
+                y,
                 **obj.style.marker.matplot_kwargs(
                     size_multiplier=self._size_multiplier
                 ),
@@ -194,8 +194,8 @@ class StarPlot(ABC):
 
             if obj.style.label.visible:
                 label = self.ax.text(
-                    ra,
-                    dec,
+                    x,
+                    y,
                     obj.name,
                     **obj.style.label.matplot_kwargs(
                         size_multiplier=self._size_multiplier
