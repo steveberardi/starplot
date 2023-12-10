@@ -453,6 +453,8 @@ class OpticPlot(StarPlot):
 
         self._plot_border()
         self._plot_stars()
+        self._plot_planets()
+        self._plot_moon()
         self.optic.transform(self.ax)
 
         if self.include_info_text:

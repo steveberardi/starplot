@@ -46,9 +46,12 @@ milky_way:
   color: hsl(136, 0%, 62%)
   edge_width: 0
 planets:
+  label:
+    font_color: hsl(136, 0%, 97%)
   marker:
     color: hsl(136, 0%, 97%)
-    fill: left
+    fill: bottom
+    edge_color: hsl(136, 0%, 97%)
 gridlines:
   label:
     font_color: hsl(136, 0%, 97%)

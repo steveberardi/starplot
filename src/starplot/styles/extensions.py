@@ -13,6 +13,7 @@ def load(filename: str) -> dict:
 
 
 # Plot Types
+OPTIC = load("optic.yml")
 MAP = load("map.yml")
 ZENITH = load("zenith.yml")
 
