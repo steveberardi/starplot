@@ -394,8 +394,8 @@ def create_scope_plot_m45():
 
     p = sp.OpticPlot(
         # M45
-        ra=3.7836111111,
-        dec=24.1166666667,
+        # ra=3.7836111111,
+        # dec=24.1166666667,
         # owl cluster
         # ra=1.33,
         # dec=58.29,
@@ -403,8 +403,8 @@ def create_scope_plot_m45():
         # ra=2.33,
         # dec=57.14,
         # M35
-        # ra=6.15,
-        # dec=24.34,
+        ra=6.15,
+        dec=24.34,
         # Alder
         # ra=4.598667,
         # dec=16.50975,
@@ -435,7 +435,7 @@ def create_scope_plot_m45():
             sensor_height=15.6,
             # sensor_height=22.2,
             sensor_width=23.6,
-            lens_focal_length=625,
+            lens_focal_length=1250,
         ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=19, minute=30, second=0
