@@ -214,6 +214,8 @@ class OpticPlot(StarPlot):
 
     """
 
+    FIELD_OF_VIEW_MAX = 8.0
+
     def __init__(
         self,
         optic: Optic,
@@ -257,12 +259,24 @@ class OpticPlot(StarPlot):
 
         self.optic = optic
 
+        if self.optic.true_fov > self.FIELD_OF_VIEW_MAX:
+            raise ValueError(f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX})")
+
         # self._size_multiplier = self._size_multiplier * 2 / self.optic.true_fov
         self._calc_position()
         self._init_plot()
 
+    def _prepare_coords(self, ra, dec) -> (float, float):
+        point = Star(ra_hours=ra, dec_degrees=dec)
+        position = self.location.at(self.timescale).observe(point)
+        pos_apparent = position.apparent()
+        pos_alt, pos_az, _ = pos_apparent.altaz()
+        return pos_az.degrees, pos_alt.degrees
+
     def in_bounds(self, ra, dec) -> bool:
-        raise NotImplementedError
+        x, y = self._prepare_coords(ra, dec)
+        transformed = self.ax.transData.transform((x, y))
+        return self.background_patch.contains_point(transformed)
 
     def _calc_position(self):
         eph = load(self.ephemeris)
@@ -347,6 +361,7 @@ class OpticPlot(StarPlot):
                 alpha=alphas,
                 edgecolors="none",
             )
+            self._plotted_stars.set_clip_path(self.background_patch)
 
     def _plot_border(self):
         # Plot border text

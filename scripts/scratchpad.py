@@ -389,6 +389,7 @@ def create_scope_plot_m45():
         extensions.MINIMAL,
         extensions.GRAYSCALE_DARK,
         # extensions.GRAYSCALE,
+        # extensions.BLUE_DARK,
     )
 
     p = sp.OpticPlot(
@@ -446,10 +447,34 @@ def create_scope_plot_m45():
         # colorize_stars=True,
         # adjust_text=True,
     )
-    # p.ax.set_title("TV-85 / 14mm @ 82deg / M45")
-    # p.ax.invert_xaxis()
-    p.export("temp/scope-m45.svg", format="svg", padding=0.2)
-    p.export("temp/scope-m45.png", format="png", padding=0.2)
+    p.plot_object(
+        SkyObject(
+            name="M45",
+            ra=3.7836111111, dec=24.116666666,
+            style={
+                "marker": {
+                    "size": 10,
+                    "symbol": "s",
+                    "fill": "full",
+                    # "color": "#ff6868",
+                    "color": "red",
+                    "alpha": 0.7,
+                    "zorder": 4096,
+                },
+                "label": {
+                    "font_size": 12,
+                    "font_weight": "bold",
+                    # "font_color": "blue",
+                    # "font_name": "GFS Didot",
+                    "font_color": "darkred",
+                    "zorder": 4096,
+                },
+            },
+            legend_label="Messier Object",
+    ))
+    p.ax.set_title("M45 through 10x binoculars", fontsize=24)
+    p.export("temp/scope-m45.svg", format="svg", padding=0.3)
+    p.export("temp/scope-m45.png", format="png", padding=0.3)
 
 
 # ------------------------------------------
