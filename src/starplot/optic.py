@@ -31,6 +31,11 @@ class Optic(ABC):
     def ylim(self):
         pass
 
+    @property
+    @abstractmethod
+    def label(self):
+        return "Generic"
+
     @abstractmethod
     def patch(self, center_x, center_y) -> patches.Patch:
         pass
@@ -59,11 +64,15 @@ class Scope(Optic):
 
     @property
     def xlim(self):
-        return self.true_fov * 1.2
+        return self.true_fov * 1.1
 
     @property
     def ylim(self):
-        return self.true_fov / 2 * 1.16
+        return self.true_fov / 2 * 1.08
+
+    @property
+    def label(self):
+        return "Scope"
 
     def patch(self, center_x, center_y, **kwargs):
         padding = kwargs.pop("padding", 0)
@@ -76,11 +85,19 @@ class Scope(Optic):
 
 
 class Refractor(Scope):
+    @property
+    def label(self):
+        return "Refractor"
+
     def transform(self, axis) -> None:
         axis.invert_xaxis()
 
 
 class Reflector(Scope):
+    @property
+    def label(self):
+        return "Reflector"
+
     def transform(self, axis) -> None:
         axis.invert_yaxis()
 
@@ -107,11 +124,15 @@ class Binoculars(Optic):
 
     @property
     def xlim(self):
-        return self.true_fov * 1.2
+        return self.true_fov * 1.1
 
     @property
     def ylim(self):
-        return self.true_fov / 2 * 1.16
+        return self.true_fov / 2 * 1.08
+
+    @property
+    def label(self):
+        return "Binoculars"
 
     def patch(self, center_x, center_y, **kwargs):
         padding = kwargs.pop("padding", 0)
@@ -174,6 +195,10 @@ class Camera(Optic):
     @property
     def ylim(self):
         return self.true_fov_y / 2 * 1.16
+
+    @property
+    def label(self):
+        return "Camera"
 
     def patch(self, center_x, center_y, **kwargs):
         # needs to be 2x wider than height
@@ -260,7 +285,9 @@ class OpticPlot(StarPlot):
         self.optic = optic
 
         if self.optic.true_fov > self.FIELD_OF_VIEW_MAX:
-            raise ValueError(f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX})")
+            raise ValueError(
+                f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX})"
+            )
 
         # self._size_multiplier = self._size_multiplier * 2 / self.optic.true_fov
         self._calc_position()
@@ -429,7 +456,8 @@ class OpticPlot(StarPlot):
         self.optic.transform(self.ax)
 
         if self.include_info_text:
-            self.ax.set_ylim(y - self.optic.ylim, y + self.optic.ylim)
+            self.ax.set_xlim(x - self.optic.xlim * 1.03, x + self.optic.xlim * 1.03)
+            self.ax.set_ylim(y - self.optic.ylim * 1.03, y + self.optic.ylim * 1.03)
 
             dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
             font_size = self.style.legend.font_size * self._size_multiplier * 2.16
@@ -440,7 +468,7 @@ class OpticPlot(StarPlot):
                 "Target (RA/DEC)",
                 "Observer Lat, Lon",
                 "Observer Date/Time",
-                "Optic",
+                f"Optic - {self.optic.label}",
             ]
             values = [
                 f"{self.pos_alt.degrees:.0f}\N{DEGREE SIGN} / {self.pos_az.degrees:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az.degrees)})",
@@ -465,7 +493,7 @@ class OpticPlot(StarPlot):
             )
             table.auto_set_font_size(False)
             table.set_fontsize(font_size)
-            table.scale(1, 2.1)
+            table.scale(1, 3.1)
             for col in range(len(values)):
                 table[0, col].set_text_props(
                     fontweight="heavy", fontsize=font_size * 1.15

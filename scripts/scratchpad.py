@@ -426,17 +426,17 @@ def create_scope_plot_m45():
         #     eyepiece_fov=100,
         # ),
         # 10x binoculars
-        optic=sp.optic.Binoculars(
-            magnification=10,
-            fov=65,
-        ),
-        # Fuji X-T1
-        # optic=sp.optic.Camera(
-        #     sensor_height=15.6,
-        #     # sensor_height=22.2,
-        #     sensor_width=23.6,
-        #     lens_focal_length=430,
+        # optic=sp.optic.Binoculars(
+        #     magnification=10,
+        #     fov=65,
         # ),
+        # Fuji X-T1
+        optic=sp.optic.Camera(
+            sensor_height=15.6,
+            # sensor_height=22.2,
+            sensor_width=23.6,
+            lens_focal_length=625,
+        ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=19, minute=30, second=0
         ),
@@ -450,7 +450,8 @@ def create_scope_plot_m45():
     p.plot_object(
         SkyObject(
             name="M45",
-            ra=3.7836111111, dec=24.116666666,
+            ra=3.7836111111,
+            dec=24.116666666,
             style={
                 "marker": {
                     "size": 10,
@@ -471,8 +472,9 @@ def create_scope_plot_m45():
                 },
             },
             legend_label="Messier Object",
-    ))
-    p.ax.set_title("M45 through 10x binoculars", fontsize=24)
+        )
+    )
+    # p.ax.set_title("M45 through 10x binoculars", fontsize=24)
     p.export("temp/scope-m45.svg", format="svg", padding=0.3)
     p.export("temp/scope-m45.png", format="png", padding=0.3)
 
