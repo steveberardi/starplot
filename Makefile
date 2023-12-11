@@ -21,6 +21,12 @@ format:
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
 
+test309:
+	docker build -t starplot-test-309 --target test309 .
+
+test310:
+	docker build -t starplot-test-310 --target test310 .
+
 docker-dev:
 	docker build -t starplot-dev --target dev .
 
