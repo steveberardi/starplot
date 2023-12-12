@@ -54,4 +54,17 @@ RUN /starplot/scripts/setup.sh
 ENV PYTHONPATH=/starplot/src/
 
 RUN python -m pytest .
+
+# ---------------------------------------------------------------------
+FROM python:3.12.1-bookworm as test312
+
+WORKDIR /starplot
+
+COPY . .
+
+RUN /starplot/scripts/setup.sh
+
+ENV PYTHONPATH=/starplot/src/
+
+RUN python -m pytest .
 # ---------------------------------------------------------------------

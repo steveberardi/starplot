@@ -27,6 +27,9 @@ test309:
 test310:
 	docker build -t starplot-test-310 --target test310 .
 
+test312:
+	docker build -t starplot-test-312 --target test312 .
+
 docker-dev:
 	docker build -t starplot-dev --target dev .
 
