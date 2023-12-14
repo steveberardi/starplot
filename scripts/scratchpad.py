@@ -19,8 +19,8 @@ start_time = time.time()
 def create_map_orion():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
-        extensions.GRAYSCALE_DARK,
-        # extensions.BLUE_LIGHT,
+        # extensions.GRAYSCALE_DARK,
+        extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
@@ -78,6 +78,19 @@ def create_map_orion():
             legend_label="Messier Object",
         )
     )
+    from matplotlib import patches
+   
+    print(p._latlon_bounds())
+    sq = patches.Circle(
+        p._prepare_coords(6.5, 5),
+        radius=10,
+        fill=True,
+        color="red",
+        linewidth=20,
+        zorder=2000,
+        **p._plot_kwargs(),
+    )
+    p.ax.add_patch(sq)
     p.refresh_legend()
     p.export("temp/map-orion.svg", format="svg", padding=1)
 
@@ -394,11 +407,9 @@ def create_scope_plot_m45():
     )
 
     p = sp.OpticPlot(
-        ra=2.18,
-        dec=12.33,
         # M45
-        # ra=3.7836111111,
-        # dec=24.1166666667,
+        ra=3.7836111111,
+        dec=24.1166666667,
         # owl cluster
         # ra=1.33,
         # dec=58.29,
@@ -429,17 +440,17 @@ def create_scope_plot_m45():
         #     eyepiece_fov=100,
         # ),
         # 10x binoculars
-        # optic=sp.optic.Binoculars(
-        #     magnification=10,
-        #     fov=65,
-        # ),
-        # Fuji X-T1
-        optic=sp.optic.Camera(
-            sensor_height=15.6,
-            # sensor_height=22.2,
-            sensor_width=23.6,
-            lens_focal_length=400,
+        optic=sp.optic.Binoculars(
+            magnification=10,
+            fov=65,
         ),
+        # Fuji X-T1
+        # optic=sp.optic.Camera(
+        #     sensor_height=15.6,
+        #     # sensor_height=22.2,
+        #     sensor_width=23.6,
+        #     lens_focal_length=400,
+        # ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=19, minute=30, second=0
         ),
@@ -477,6 +488,7 @@ def create_scope_plot_m45():
             legend_label="Messier Object",
         )
     )
+    
     # p.ax.set_title("M45 through 10x binoculars", fontsize=24)
     p.export("temp/scope-m45.svg", format="svg", padding=0.3)
     p.export("temp/scope-m45.png", format="png", padding=0.3)
@@ -496,7 +508,7 @@ create_scope_plot_m45()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_sgr()
 
 # create_map_with_planets()

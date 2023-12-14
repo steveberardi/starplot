@@ -10,6 +10,9 @@ endif
 DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 
+DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" --target dev .
+DOCKER_RUN_PYTHON_TEST=docker run --rm -it -v $(shell pwd):/starplot starplot-$(PYTHON_VERSION)
+
 export PYTHONPATH=./src/
 
 lint:
@@ -21,14 +24,29 @@ format:
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
 
+# ------------------------------------------------------------------
+# Python version testing
+# ------------------------------------------------------------------
+test309: PYTHON_VERSION=3.9.18
 test309:
-	docker build -t starplot-test-309 --target test309 .
+	$(DOCKER_BUILD_PYTHON)
+	$(DOCKER_RUN_PYTHON_TEST)
 
+test310: PYTHON_VERSION=3.10.13
 test310:
-	docker build -t starplot-test-310 --target test310 .
+	$(DOCKER_BUILD_PYTHON)
+	$(DOCKER_RUN_PYTHON_TEST)
 
-test312:
-	docker build -t starplot-test-312 --target test312 .
+test311: PYTHON_VERSION=3.11.7
+test311:
+	$(DOCKER_BUILD_PYTHON)
+	$(DOCKER_RUN_PYTHON_TEST)
+
+test310: PYTHON_VERSION=3.12.1
+test310:
+	$(DOCKER_BUILD_PYTHON)
+	$(DOCKER_RUN_PYTHON_TEST)
+# ------------------------------------------------------------------
 
 docker-dev:
 	docker build -t starplot-dev --target dev .

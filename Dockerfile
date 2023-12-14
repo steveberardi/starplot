@@ -1,4 +1,5 @@
-FROM python:3.11.7-bookworm as base
+ARG PYTHON_VERSION=3.11.7
+FROM python:${PYTHON_VERSION}-bookworm AS base
 
 WORKDIR /starplot
 
@@ -25,46 +26,4 @@ ENV PYTHONPATH=/starplot/src/
 
 RUN git config --global --add safe.directory /starplot
 
-CMD ["bash"]
-
-# ---------------------------------------------------------------------
-# Python version testing
-# ---------------------------------------------------------------------
-FROM python:3.9.18-bookworm as test309
-
-WORKDIR /starplot
-
-COPY . .
-
-RUN /starplot/scripts/setup.sh
-
-ENV PYTHONPATH=/starplot/src/
-
-RUN python -m pytest .
-
-# ---------------------------------------------------------------------
-FROM python:3.10.13-bookworm as test310
-
-WORKDIR /starplot
-
-COPY . .
-
-RUN /starplot/scripts/setup.sh
-
-ENV PYTHONPATH=/starplot/src/
-
-RUN python -m pytest .
-
-# ---------------------------------------------------------------------
-FROM python:3.12.1-bookworm as test312
-
-WORKDIR /starplot
-
-COPY . .
-
-RUN /starplot/scripts/setup.sh
-
-ENV PYTHONPATH=/starplot/src/
-
-RUN python -m pytest .
-# ---------------------------------------------------------------------
+CMD ["bash", "-c", "python -m pytest ."]
