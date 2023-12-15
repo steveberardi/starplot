@@ -19,9 +19,9 @@ jobs:
     - name: Run Tests
       run: make test CI=true
     - name: Build
-      run: make build
+      run: make flit-build
     - name: Publish
       env:
         FLIT_USERNAME: __token__
         FLIT_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-      run: make publish
+      run: make flit-publish

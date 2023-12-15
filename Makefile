@@ -10,7 +10,7 @@ endif
 DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 
-DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" --target dev .
+DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" --target dev .
 DOCKER_RUN_PYTHON_TEST=docker run --rm -it -v $(shell pwd):/starplot starplot-$(PYTHON_VERSION)
 
 export PYTHONPATH=./src/
@@ -27,36 +27,31 @@ test:
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------
-test309: PYTHON_VERSION=3.9.18
-test309:
+test-3.9: PYTHON_VERSION=3.9.18
+test-3.9:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test310: PYTHON_VERSION=3.10.13
-test310:
+test-3.10: PYTHON_VERSION=3.10.13
+test-3.10:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test311: PYTHON_VERSION=3.11.7
-test311:
+test-3.11: PYTHON_VERSION=3.11.7
+test-3.11:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test310: PYTHON_VERSION=3.12.1
-test310:
+test-3.12: PYTHON_VERSION=3.12.1
+test-3.12:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 # ------------------------------------------------------------------
 
+docker-dev: PYTHON_VERSION=3.11.7
+docker-dev: DOCKER_BUILD_ARGS=-t starplot-dev
 docker-dev:
-	docker build -t starplot-dev --target dev .
-
-docker-base:
-	docker build -t starplot-base --target base .
-	docker tag starplot-base sberardi/starplot-base:latest
-
-docker-base-push:
-	docker push sberardi/starplot-base:latest
+	$(DOCKER_BUILD_PYTHON)
 
 docker-multi-arch:
 	docker buildx inspect $(DOCKER_BUILDER) && echo "Builder already exists!" || docker buildx create --name $(DOCKER_BUILDER) --bootstrap --use
@@ -88,11 +83,11 @@ docs-publish:
 
 # ------------------------------------------------------------------
 # PyPi - build & publish
-build:
+flit-build:
 	$(DOCKER_RUN) "python -m flit build"
 
-publish: DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
-publish:
+flit-publish: DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
+flit-publish:
 	$(DOCKER_RUN) "python -m flit publish"
 
 # ------------------------------------------------------------------
