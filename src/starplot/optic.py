@@ -393,11 +393,11 @@ class OpticPlot(StarPlot):
     def _plot_border(self):
         # Plot border text
         # radius = self.fov
-        border_font_kwargs = dict(
-            fontsize=self.style.border_font_size * self._size_multiplier * 2,
-            weight=self.style.border_font_weight,
-            color=self.style.border_font_color.as_hex(),
-        )
+        # border_font_kwargs = dict(
+        #     fontsize=self.style.border_font_size * self._size_multiplier * 2,
+        #     weight=self.style.border_font_weight,
+        #     color=self.style.border_font_color.as_hex(),
+        # )
         # self.ax.text(0, 1.009, "N", **border_font_kwargs)
         # self.ax.text(1.003, 0, "W", **border_font_kwargs)
         # self.ax.text(-1.042, 0, "E", **border_font_kwargs)

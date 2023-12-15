@@ -11,7 +11,7 @@ DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bas
 DOCKER_BUILDER=starplot-builder
 
 DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" --target dev .
-DOCKER_RUN_PYTHON_TEST=docker run --rm -it -v $(shell pwd):/starplot starplot-$(PYTHON_VERSION)
+DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-$(PYTHON_VERSION)
 
 export PYTHONPATH=./src/
 
