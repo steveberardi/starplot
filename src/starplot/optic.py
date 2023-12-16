@@ -15,6 +15,7 @@ from starplot.utils import bv_to_hex_color, azimuth_to_string
 
 
 class Optic(ABC):
+    
     def __init__(self) -> None:
         pass
 
@@ -85,6 +86,17 @@ class Scope(Optic):
 
 
 class Refractor(Scope):
+    """Creates a new Refractor Telescope optic
+
+    Args:
+        focal_length: Focal length (mm) of the telescope
+        eyepiece_focal_length: Focal length (mm) of the eyepiece
+        eyepiece_fov: Field of view (degrees) of the eyepiece
+
+    Returns:
+        Refractor: A new instance of a Refractor optic
+
+    """
     @property
     def label(self):
         return "Refractor"
