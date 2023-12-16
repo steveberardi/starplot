@@ -79,7 +79,7 @@ def create_map_orion():
         )
     )
     from matplotlib import patches
-   
+
     print(p._latlon_bounds())
     sq = patches.Circle(
         p._prepare_coords(6.5, 5),
@@ -488,7 +488,7 @@ def create_scope_plot_m45():
             legend_label="Messier Object",
         )
     )
-    
+
     # p.ax.set_title("M45 through 10x binoculars", fontsize=24)
     p.export("temp/scope-m45.svg", format="svg", padding=0.3)
     p.export("temp/scope-m45.png", format="png", padding=0.3)
