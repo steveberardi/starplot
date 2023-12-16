@@ -391,18 +391,6 @@ class OpticPlot(StarPlot):
             self._plotted_stars.set_clip_path(self.background_patch)
 
     def _plot_border(self):
-        # Plot border text
-        # radius = self.fov
-        # border_font_kwargs = dict(
-        #     fontsize=self.style.border_font_size * self._size_multiplier * 2,
-        #     weight=self.style.border_font_weight,
-        #     color=self.style.border_font_color.as_hex(),
-        # )
-        # self.ax.text(0, 1.009, "N", **border_font_kwargs)
-        # self.ax.text(1.003, 0, "W", **border_font_kwargs)
-        # self.ax.text(-1.042, 0, "E", **border_font_kwargs)
-        # self.ax.text(0, -1.045, "S", **border_font_kwargs)
-
         # Background of Viewable Area
         self.background_patch = self.optic.patch(
             self.pos_az.degrees,
@@ -464,7 +452,6 @@ class OpticPlot(StarPlot):
             dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
             font_size = self.style.legend.font_size * self._size_multiplier * 2.16
 
-            # target, scope, location
             column_labels = [
                 "Target (Alt/Az)",
                 "Target (RA/DEC)",

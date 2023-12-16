@@ -15,6 +15,16 @@ DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot star
 
 export PYTHONPATH=./src/
 
+# ------------------------------------------------------------------
+build: PYTHON_VERSION=3.11.7
+build: DOCKER_BUILD_ARGS=-t starplot-dev
+build:
+	$(DOCKER_BUILD_PYTHON)
+
+docker-multi-arch:
+	docker buildx inspect $(DOCKER_BUILDER) && echo "Builder already exists!" || docker buildx create --name $(DOCKER_BUILDER) --bootstrap --use
+	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag sberardi/starplot-base:latest --target base .
+
 lint:
 	$(DOCKER_RUN) "ruff check src/ tests/"
 
@@ -23,6 +33,18 @@ format:
 
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
+
+bash:
+	$(DOCKER_RUN) bash
+
+shell:
+	$(DOCKER_RUN) python
+
+scratchpad:
+	$(DOCKER_RUN) "python scripts/scratchpad.py"
+
+examples:
+	$(DOCKER_RUN) "cd examples && python examples.py"
 
 # ------------------------------------------------------------------
 # Python version testing
@@ -46,28 +68,6 @@ test-3.12: PYTHON_VERSION=3.12.1
 test-3.12:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
-# ------------------------------------------------------------------
-
-docker-dev: PYTHON_VERSION=3.11.7
-docker-dev: DOCKER_BUILD_ARGS=-t starplot-dev
-docker-dev:
-	$(DOCKER_BUILD_PYTHON)
-
-docker-multi-arch:
-	docker buildx inspect $(DOCKER_BUILDER) && echo "Builder already exists!" || docker buildx create --name $(DOCKER_BUILDER) --bootstrap --use
-	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag sberardi/starplot-base:latest --target base .
-
-bash:
-	$(DOCKER_RUN) bash
-
-shell:
-	$(DOCKER_RUN) python
-
-scratchpad:
-	$(DOCKER_RUN) "python scripts/scratchpad.py"
-
-examples:
-	$(DOCKER_RUN) "cd examples && python examples.py"
 
 # ------------------------------------------------------------------
 # Docs
@@ -108,4 +108,4 @@ clean:
 	rm -rf site
 	rm -rf htmlcov
 
-.PHONY: install test shell build publish clean ephemeris hip8 scratchpad examples scripts
+.PHONY: install test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts
