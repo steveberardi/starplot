@@ -428,11 +428,11 @@ def create_scope_plot_m45():
         lat=32.97,
         lon=-117.038611,
         # AT72EDII
-        # optic=sp.optic.Refractor(
-        #     focal_length=430,
-        #     eyepiece_focal_length=11,
-        #     eyepiece_fov=82,
-        # ),
+        optic=sp.optic.Refractor(
+            focal_length=430,
+            eyepiece_focal_length=11,
+            eyepiece_fov=82,
+        ),
         # TV-85
         # optic=sp.optic.Refractor(
         #     focal_length=600,
@@ -440,10 +440,10 @@ def create_scope_plot_m45():
         #     eyepiece_fov=100,
         # ),
         # 10x binoculars
-        optic=sp.optic.Binoculars(
-            magnification=10,
-            fov=65,
-        ),
+        # optic=sp.optic.Binoculars(
+        #     magnification=10,
+        #     fov=65,
+        # ),
         # Fuji X-T1
         # optic=sp.optic.Camera(
         #     sensor_height=15.6,
@@ -458,7 +458,7 @@ def create_scope_plot_m45():
         style=style,
         resolution=2000,
         include_info_text=True,
-        # colorize_stars=True,
+        colorize_stars=True,
         # adjust_text=True,
     )
     p.plot_object(
@@ -491,12 +491,48 @@ def create_scope_plot_m45():
 
     # p.ax.set_title("M45 through 10x binoculars", fontsize=24)
     p.export("temp/scope-m45.svg", format="svg", padding=0.3)
-    p.export("temp/scope-m45.png", format="png", padding=0.3)
+    # p.export("temp/scope-m45.png", format="png", padding=0.3)
+
+def create_bino_plot_m45():
+    style = PlotStyle().extend(
+        extensions.MINIMAL,
+        extensions.GRAYSCALE_DARK,
+        # extensions.GRAYSCALE,
+        # extensions.BLUE_DARK,
+        extensions.OPTIC,
+    )
+
+    p = sp.OpticPlot(
+        # M45
+        ra=3.7836111111,
+        dec=24.1166666667,
+        # Hyades
+        # ra=4.501,
+        # dec=15.96,
+        lat=32.97,
+        lon=-117.038611,
+        # 10x binoculars
+        optic=sp.optic.Binoculars(
+            magnification=10,
+            fov=65,
+        ),
+        dt=datetime.now(timezone("America/Los_Angeles")).replace(
+            hour=23, minute=30, second=0
+        ),
+        limiting_magnitude=14,
+        style=style,
+        resolution=2000,
+        include_info_text=True,
+        colorize_stars=True,
+    )
+
+    p.export("temp/bino-m45.svg", format="svg", padding=0.3)
 
 
 # ------------------------------------------
 
 create_scope_plot_m45()
+create_bino_plot_m45()
 # create_startest()
 # create_scope_view_m45()
 # create_startest()
@@ -508,7 +544,7 @@ create_scope_plot_m45()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
+# create_map_orion()
 # create_map_sgr()
 
 # create_map_with_planets()

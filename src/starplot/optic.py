@@ -301,7 +301,7 @@ class OpticPlot(StarPlot):
                 f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX})"
             )
 
-        # self._size_multiplier = self._size_multiplier * 2 / self.optic.true_fov
+        self._star_size_multiplier = self._size_multiplier * 0.4 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
         self._calc_position()
         self._init_plot()
 
@@ -354,19 +354,19 @@ class OpticPlot(StarPlot):
             m = star["magnitude"]
 
             if m < 4.6:
-                sizes.append((9 - m) ** 3.46 * self._size_multiplier)
+                sizes.append((9 - m) ** 3.34 * self._star_size_multiplier)
                 alphas.append(1)
             # elif m < 4.6:
             #     sizes.append((9 - m) ** 3.68 * self._size_multiplier)
             #     alphas.append(1)
             elif m < 5.85:
-                sizes.append((9 - m) ** 3.46 * self._size_multiplier)
+                sizes.append((9 - m) ** 3.46 * self._star_size_multiplier)
                 alphas.append(0.94)
             elif m < 9:
-                sizes.append((13 - m) ** 1.62 * self._size_multiplier)
+                sizes.append((13 - m) ** 1.62 * self._star_size_multiplier)
                 alphas.append(0.88)
             else:
-                sizes.append(3.72 * self._size_multiplier)
+                sizes.append(3.72 * self._star_size_multiplier)
                 alphas.append((16 - m) * 0.09)
 
             if self.colorize_stars:
@@ -401,6 +401,55 @@ class OpticPlot(StarPlot):
                 edgecolors="none",
             )
             self._plotted_stars.set_clip_path(self.background_patch)
+
+    def _plot_info(self):
+        if not self.include_info_text:
+            return
+
+        x = self.pos_az.degrees
+        y = self.pos_alt.degrees
+
+        self.ax.set_xlim(x - self.optic.xlim * 1.03, x + self.optic.xlim * 1.03)
+        self.ax.set_ylim(y - self.optic.ylim * 1.03, y + self.optic.ylim * 1.03)
+
+        dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
+        font_size = self.style.legend.font_size * self._size_multiplier * 2.16
+
+        column_labels = [
+            "Target (Alt/Az)",
+            "Target (RA/DEC)",
+            "Observer Lat, Lon",
+            "Observer Date/Time",
+            f"Optic - {self.optic.label}",
+        ]
+        values = [
+            f"{self.pos_alt.degrees:.0f}\N{DEGREE SIGN} / {self.pos_az.degrees:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az.degrees)})",
+            f"{self.ra:.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
+            f"{self.lat:.2f}\N{DEGREE SIGN}, {self.lon:.2f}\N{DEGREE SIGN}",
+            dt_str,
+            str(self.optic),
+        ]
+
+        total_chars = sum([len(v) for v in values])
+        widths = [len(v) / total_chars for v in values]
+        widths = [0.15, 0.15, 0.2, 0.2, 0.3]
+
+        table = self.ax.table(
+            cellText=[values],
+            cellLoc="center",
+            colWidths=widths,
+            rowLabels=[None],
+            colLabels=column_labels,
+            loc="bottom",
+            edges="vertical",
+        )
+        table.auto_set_font_size(False)
+        table.set_fontsize(font_size)
+        table.scale(1, 3.1)
+        for col in range(len(values)):
+            table[0, col].set_text_props(
+                fontweight="heavy", fontsize=font_size * 1.15
+            )
 
     def _plot_border(self):
         # Background of Viewable Area
@@ -455,47 +504,6 @@ class OpticPlot(StarPlot):
         self._plot_stars()
         self._plot_planets()
         self._plot_moon()
+        self._plot_info()
+
         self.optic.transform(self.ax)
-
-        if self.include_info_text:
-            self.ax.set_xlim(x - self.optic.xlim * 1.03, x + self.optic.xlim * 1.03)
-            self.ax.set_ylim(y - self.optic.ylim * 1.03, y + self.optic.ylim * 1.03)
-
-            dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-            font_size = self.style.legend.font_size * self._size_multiplier * 2.16
-
-            column_labels = [
-                "Target (Alt/Az)",
-                "Target (RA/DEC)",
-                "Observer Lat, Lon",
-                "Observer Date/Time",
-                f"Optic - {self.optic.label}",
-            ]
-            values = [
-                f"{self.pos_alt.degrees:.0f}\N{DEGREE SIGN} / {self.pos_az.degrees:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az.degrees)})",
-                f"{self.ra:.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
-                f"{self.lat:.2f}\N{DEGREE SIGN}, {self.lon:.2f}\N{DEGREE SIGN}",
-                dt_str,
-                str(self.optic),
-            ]
-
-            total_chars = sum([len(v) for v in values])
-            widths = [len(v) / total_chars for v in values]
-            widths = [0.15, 0.15, 0.2, 0.2, 0.3]
-
-            table = self.ax.table(
-                cellText=[values],
-                cellLoc="center",
-                colWidths=widths,
-                rowLabels=[None],
-                colLabels=column_labels,
-                loc="bottom",
-                edges="vertical",
-            )
-            table.auto_set_font_size(False)
-            table.set_fontsize(font_size)
-            table.scale(1, 3.1)
-            for col in range(len(values)):
-                table[0, col].set_text_props(
-                    fontweight="heavy", fontsize=font_size * 1.15
-                )
