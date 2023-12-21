@@ -13,6 +13,29 @@ from starplot.data import load, stars
 from starplot.styles import PlotStyle, ZENITH_BASE
 from starplot.utils import bv_to_hex_color, azimuth_to_string
 
+import pyproj
+import datetime
+import warnings
+
+from enum import Enum
+
+from cartopy import crs as ccrs
+from cartopy.geodesic import Geodesic
+from matplotlib.ticker import FuncFormatter, FixedLocator
+from shapely import geometry
+import geopandas as gpd
+import numpy as np
+
+from starplot.data import DataFiles, bayer, constellations, stars, ecliptic, dsos
+from starplot.models import SkyObject
+from starplot.styles import PolygonStyle, MAP_BASE
+from starplot.utils import lon_to_ra, dec_str_to_float
+
+
+DEFAULT_FOV_STYLE = PolygonStyle(
+    fill_color=None, edge_color="red", line_style="solid", edge_width=4, zorder=100
+)
+
 
 class Optic(ABC):
     def __init__(self) -> None:
@@ -43,6 +66,11 @@ class Optic(ABC):
     def transform(self, axis) -> None:
         pass
 
+    def _compute_radius(self, radius_degrees: float, x: float = 0, y: float = 0):
+        geod = pyproj.Geod('+a=6378137 +f=0.0', sphere=True)
+        _, _, distance = geod.inv(x, y,  x + radius_degrees, y)
+        return distance
+
 
 class Scope(Optic):
     """Scope
@@ -58,17 +86,18 @@ class Scope(Optic):
         self.eyepiece_fov = eyepiece_fov
         self.magnification = self.focal_length / self.eyepiece_focal_length
         self.true_fov = self.eyepiece_fov / self.magnification
+        self.radius = self._compute_radius(self.true_fov / 2)
 
     def __str__(self):
         return f"{self.focal_length}mm w/ {self.eyepiece_focal_length}mm ({self.magnification:.0f}x) @  {self.eyepiece_fov:.0f}\N{DEGREE SIGN} = {self.true_fov:.2f}\N{DEGREE SIGN} TFOV"
 
     @property
     def xlim(self):
-        return self.true_fov * 1.1
+        return self.radius * 1.03
 
     @property
     def ylim(self):
-        return self.true_fov / 2 * 1.08
+        return self.radius * 1.03
 
     @property
     def label(self):
@@ -76,10 +105,9 @@ class Scope(Optic):
 
     def patch(self, center_x, center_y, **kwargs):
         padding = kwargs.pop("padding", 0)
-        return patches.Ellipse(
+        return patches.Circle(
             (center_x, center_y),
-            (self.true_fov + padding) * 2,
-            self.true_fov + padding,
+            radius=self.radius + padding,
             **kwargs,
         )
 
@@ -130,17 +158,18 @@ class Binoculars(Optic):
         self.magnification = magnification
         self.apparent_fov = fov
         self.true_fov = self.apparent_fov / self.magnification
+        self.radius = self._compute_radius(self.true_fov / 2)
 
     def __str__(self):
         return f"{self.magnification}x @ {self.apparent_fov}\N{DEGREE SIGN} = {self.true_fov}\N{DEGREE SIGN}"
 
     @property
     def xlim(self):
-        return self.true_fov * 1.1
+        return self.radius * 1.03
 
     @property
     def ylim(self):
-        return self.true_fov / 2 * 1.08
+        return self.radius * 1.03
 
     @property
     def label(self):
@@ -148,10 +177,9 @@ class Binoculars(Optic):
 
     def patch(self, center_x, center_y, **kwargs):
         padding = kwargs.pop("padding", 0)
-        return patches.Ellipse(
+        return patches.Circle(
             (center_x, center_y),
-            (self.true_fov + padding) * 2,
-            self.true_fov + padding,
+            radius=self.radius + padding,
             **kwargs,
         )
 
@@ -314,6 +342,9 @@ class OpticPlot(StarPlot):
         pos_alt, pos_az, _ = pos_apparent.altaz()
         return pos_az.degrees, pos_alt.degrees
 
+    def _plot_kwargs(self) -> dict:
+        return dict(transform=ccrs.Geodetic())
+
     def in_bounds(self, ra, dec) -> bool:
         x, y = self._prepare_coords(ra, dec)
         transformed = self.ax.transData.transform((x, y))
@@ -341,10 +372,10 @@ class OpticPlot(StarPlot):
         self._stardata = stardata
         nearby_stars_df = stardata[
             (stardata["magnitude"] <= self.limiting_magnitude)
-            & (stardata["ra_hours"] < self.ra + self.optic.true_fov / 15 * 1.25)
-            & (stardata["ra_hours"] > self.ra - self.optic.true_fov / 15 * 1.25)
-            & (stardata["dec_degrees"] < self.dec + self.optic.true_fov * 1.25)
-            & (stardata["dec_degrees"] > self.dec - self.optic.true_fov * 1.25)
+            & (stardata["ra_hours"] < self.ra + self.optic.true_fov / 15 * 1.08)
+            & (stardata["ra_hours"] > self.ra - self.optic.true_fov / 15 * 1.08)
+            & (stardata["dec_degrees"] < self.dec + self.optic.true_fov * 1.08)
+            & (stardata["dec_degrees"] > self.dec - self.optic.true_fov * 1.08)
         ]
         x = []
         y = []
@@ -382,12 +413,13 @@ class OpticPlot(StarPlot):
             pos = self.location.at(self.timescale).observe(s)
             app = pos.apparent()
             alt, az, _ = app.altaz()
-            if self.pos_az.degrees > 350 and az.degrees < 100:
-                x.append(az.degrees + 360)
-            elif self.pos_az.degrees < 100 and az.degrees > 300:
-                x.append(az.degrees - 360)
-            else:
-                x.append(az.degrees)
+            # if self.pos_az.degrees > 350 and az.degrees < 100:
+            #     x.append(az.degrees + 360)
+            # elif self.pos_az.degrees < 100 and az.degrees > 300:
+            #     x.append(az.degrees - 360)
+            # else:
+            #     x.append(az.degrees)
+            x.append(az.degrees)
             y.append(alt.degrees)
 
         # Draw stars
@@ -401,6 +433,7 @@ class OpticPlot(StarPlot):
                 clip_path=self.background_patch,
                 alpha=alphas,
                 edgecolors="none",
+                **self._plot_kwargs(),
             )
             self._plotted_stars.set_clip_path(self.background_patch)
 
@@ -411,8 +444,8 @@ class OpticPlot(StarPlot):
         x = self.pos_az.degrees
         y = self.pos_alt.degrees
 
-        self.ax.set_xlim(x - self.optic.xlim * 1.03, x + self.optic.xlim * 1.03)
-        self.ax.set_ylim(y - self.optic.ylim * 1.03, y + self.optic.ylim * 1.03)
+        # self.ax.set_xlim(x - self.optic.xlim * 1.03, x + self.optic.xlim * 1.03)
+        # self.ax.set_ylim(y - self.optic.ylim * 1.03, y + self.optic.ylim * 1.03)
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
         font_size = self.style.legend.font_size * self._size_multiplier * 2.16
@@ -452,10 +485,14 @@ class OpticPlot(StarPlot):
             table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.15)
 
     def _plot_border(self):
+        x, y = self._proj.transform_point(
+            self.pos_az.degrees, self.pos_alt.degrees, ccrs.Geodetic()
+        )
+
         # Background of Viewable Area
         self.background_patch = self.optic.patch(
-            self.pos_az.degrees,
-            self.pos_alt.degrees,
+            x,
+            y,
             facecolor=self.style.background_color.as_hex(),
             linewidth=0,
             fill=True,
@@ -465,8 +502,8 @@ class OpticPlot(StarPlot):
 
         # Inner Border
         inner_border = self.optic.patch(
-            self.pos_az.degrees,
-            self.pos_alt.degrees,
+            x,
+            y,
             linewidth=2 * self._size_multiplier,
             edgecolor=self.style.border_line_color.as_hex(),
             fill=False,
@@ -476,34 +513,51 @@ class OpticPlot(StarPlot):
 
         # Outer border
         outer_border = self.optic.patch(
-            self.pos_az.degrees,
-            self.pos_alt.degrees,
-            padding=0.02,
-            linewidth=30 * self._size_multiplier,
+            x,
+            y,
+            padding=0.05,
+            linewidth=20 * self._size_multiplier,
             edgecolor=self.style.border_bg_color.as_hex(),
             fill=False,
             zorder=64,
         )
         self.ax.add_patch(outer_border)
 
+    def _fit_to_ax(self) -> None:
+        bbox = self.ax.get_window_extent().transformed(
+            self.fig.dpi_scale_trans.inverted()
+        )
+        width, height = bbox.width, bbox.height
+        self.fig.set_size_inches(width, height)
+
     def _init_plot(self):
-        self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
-        self.ax = plt.axes()
+        self._proj = ccrs.AzimuthalEquidistant(
+            central_longitude=self.pos_az.degrees,
+            central_latitude=self.pos_alt.degrees,    
+        )
+        self._proj.threshold = 100
 
-        x = self.pos_az.degrees
-        y = self.pos_alt.degrees
-
-        self.ax.set_xlim(x - self.optic.xlim, x + self.optic.xlim)
-        self.ax.set_ylim(y - self.optic.ylim, y + self.optic.ylim)
+        self.fig = plt.figure(
+            figsize=(self.figure_size, self.figure_size),
+            # facecolor=self.style.background_color.as_hex(),
+            layout="tight"
+        )
+        self.ax = plt.axes(projection=self._proj)
+        
         self.ax.xaxis.set_visible(False)
         self.ax.yaxis.set_visible(False)
-        self.ax.set_aspect(2.0)
         self.ax.axis("off")
 
         self._plot_border()
         self._plot_stars()
-        self._plot_planets()
-        self._plot_moon()
+        # self._plot_planets()
+        # self._plot_moon()
+        
+        self._fit_to_ax()
+        
+        self.ax.set_xlim(-1 * self.optic.xlim, self.optic.xlim)
+        self.ax.set_ylim(-1 * self.optic.ylim, self.optic.ylim)
+
         self._plot_info()
 
         self.optic.transform(self.ax)

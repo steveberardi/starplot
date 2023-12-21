@@ -428,11 +428,11 @@ def create_scope_plot_m45():
         lat=32.97,
         lon=-117.038611,
         # AT72EDII
-        optic=sp.optic.Refractor(
-            focal_length=430,
-            eyepiece_focal_length=11,
-            eyepiece_fov=82,
-        ),
+        # optic=sp.optic.Refractor(
+        #     focal_length=430,
+        #     eyepiece_focal_length=11,
+        #     eyepiece_fov=82,
+        # ),
         # TV-85
         # optic=sp.optic.Refractor(
         #     focal_length=600,
@@ -440,10 +440,10 @@ def create_scope_plot_m45():
         #     eyepiece_fov=100,
         # ),
         # 10x binoculars
-        # optic=sp.optic.Binoculars(
-        #     magnification=10,
-        #     fov=65,
-        # ),
+        optic=sp.optic.Binoculars(
+            magnification=10,
+            fov=65,
+        ),
         # Fuji X-T1
         # optic=sp.optic.Camera(
         #     sensor_height=15.6,
@@ -452,7 +452,7 @@ def create_scope_plot_m45():
         #     lens_focal_length=400,
         # ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=19, minute=30, second=0
+            hour=21, minute=30, second=0
         ),
         limiting_magnitude=14,
         style=style,
@@ -461,37 +461,38 @@ def create_scope_plot_m45():
         colorize_stars=True,
         # adjust_text=True,
     )
-    p.plot_object(
-        SkyObject(
-            name="M45",
-            ra=3.7836111111,
-            dec=24.116666666,
-            style={
-                "marker": {
-                    "size": 10,
-                    "symbol": "s",
-                    "fill": "full",
-                    # "color": "#ff6868",
-                    "color": "red",
-                    "alpha": 0.7,
-                    "zorder": 4096,
-                },
-                "label": {
-                    "font_size": 12,
-                    "font_weight": "bold",
-                    # "font_color": "blue",
-                    # "font_name": "GFS Didot",
-                    "font_color": "darkred",
-                    "zorder": 4096,
-                },
-            },
-            legend_label="Messier Object",
-        )
-    )
+    # p.plot_object(
+    #     SkyObject(
+    #         name="M45",
+    #         ra=3.7836111111,
+    #         dec=24.116666666,
+    #         style={
+    #             "marker": {
+    #                 "size": 10,
+    #                 "symbol": "s",
+    #                 "fill": "full",
+    #                 # "color": "#ff6868",
+    #                 "color": "red",
+    #                 "alpha": 0.7,
+    #                 "zorder": 4096,
+    #             },
+    #             "label": {
+    #                 "font_size": 12,
+    #                 "font_weight": "bold",
+    #                 # "font_color": "blue",
+    #                 # "font_name": "GFS Didot",
+    #                 "font_color": "darkred",
+    #                 "zorder": 4096,
+    #             },
+    #         },
+    #         legend_label="Messier Object",
+    #     )
+    # )
 
     # p.ax.set_title("M45 through 10x binoculars", fontsize=24)
     p.export("temp/scope-m45.svg", format="svg", padding=0.3)
     # p.export("temp/scope-m45.png", format="png", padding=0.3)
+
 
 def create_bino_plot_m45():
     style = PlotStyle().extend(
@@ -502,7 +503,7 @@ def create_bino_plot_m45():
         extensions.OPTIC,
     )
 
-    p = sp.OpticPlot(
+    p1 = sp.OpticPlot2(
         # M45
         ra=3.7836111111,
         dec=24.1166666667,
@@ -512,26 +513,58 @@ def create_bino_plot_m45():
         lat=32.97,
         lon=-117.038611,
         # 10x binoculars
-        optic=sp.optic.Binoculars(
+        optic=sp.optic2.Binoculars(
             magnification=10,
             fov=65,
         ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=23, minute=30, second=0
+            hour=15, minute=40, second=0
         ),
-        limiting_magnitude=14,
+        limiting_magnitude=12,
         style=style,
         resolution=2000,
         include_info_text=True,
-        colorize_stars=True,
+        # colorize_stars=True,
     )
 
-    p.export("temp/bino-m45.svg", format="svg", padding=0.3)
+    p2 = sp.OpticPlot2(
+        # M45
+        ra=3.7836111111,
+        dec=24.1166666667,
+        # Hyades
+        # ra=4.501,
+        # dec=15.96,
+        lat=32.97,
+        lon=-117.038611,
+        # 10x binoculars
+        # optic=sp.optic2.Binoculars(
+        #     magnification=10,
+        #     fov=65,
+        # ),
+        # AT72EDII
+        optic=sp.optic2.Refractor(
+            focal_length=430,
+            eyepiece_focal_length=11,
+            eyepiece_fov=82,
+        ),
+        dt=datetime.now(timezone("America/Los_Angeles")).replace(
+            hour=18, minute=50, second=0
+        ),
+        limiting_magnitude=12,
+        style=style,
+        resolution=2000,
+        include_info_text=True,
+        # colorize_stars=True,
+    )
+
+    p1.export("temp/bino-m45-p1.svg", format="svg", padding=0.3)
+    p2.export("temp/bino-m45-p2.svg", format="svg", padding=0.3)
+
 
 
 # ------------------------------------------
 
-create_scope_plot_m45()
+# create_scope_plot_m45()
 create_bino_plot_m45()
 # create_startest()
 # create_scope_view_m45()

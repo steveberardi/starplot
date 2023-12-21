@@ -8,3 +8,6 @@ from .map import MapPlot, Projection  # noqa: F401
 from .models import SkyObject  # noqa: F401
 from .optic import OpticPlot  # noqa: F401
 from .styles import PlotStyle  # noqa: F401
+
+
+from .optic2 import OpticPlot as OpticPlot2  # noqa: F401
