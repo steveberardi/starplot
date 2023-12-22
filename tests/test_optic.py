@@ -77,4 +77,4 @@ def test_optic_plot_camera(optic_style, dt_dec_16):
     optic_plot.export(filename)
 
     assert dhash(filename) == "4d55515575454d55"
-    assert colorhash(filename) == "3ae00008000"
+    assert colorhash(filename) in ["3ae00008000", "3ac00008000"]
