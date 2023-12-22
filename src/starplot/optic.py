@@ -105,7 +105,7 @@ class Scope(Optic):
             radius=self.radius + padding,
             **kwargs,
         )
-    
+
     def in_bounds(self, x, y) -> bool:
         return in_circle(x, y, 0, 0, self.radius)
 
@@ -202,7 +202,7 @@ class Binoculars(Optic):
             radius=self.radius + padding,
             **kwargs,
         )
-    
+
     def in_bounds(self, x, y) -> bool:
         return in_circle(x, y, 0, 0, self.radius)
 
@@ -276,7 +276,7 @@ class Camera(Optic):
             self.radius_y * 2 + padding,
             **kwargs,
         )
-    
+
     def in_bounds(self, x, y) -> bool:
         in_bounds_x = x < self.radius_x and x > 1 - self.radius_x
         in_bounds_y = y < self.radius_y and y > 1 - self.radius_y
