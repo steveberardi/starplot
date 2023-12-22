@@ -21,9 +21,11 @@ def optic_style():
         styles.extensions.OPTIC,
     )
 
+
 @pytest.fixture()
 def dt_dec_16():
     yield datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
+
 
 def test_optic_plot_binoculars(optic_style, dt_dec_16):
     optic_plot = OpticPlot(
@@ -49,6 +51,7 @@ def test_optic_plot_binoculars(optic_style, dt_dec_16):
 
     assert dhash(filename) == "8e17695545330f4d"
     assert colorhash(filename) == "33e00000000"
+
 
 def test_optic_plot_camera(optic_style, dt_dec_16):
     optic_plot = OpticPlot(
