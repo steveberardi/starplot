@@ -21,7 +21,7 @@
 ![map-orion](https://github.com/steveberardi/starplot/blob/main/examples/03_map_orion.png?raw=true)
 
 *Optic plot of The Pleiades through a refractor as seen from a specific time/location:*
-![map-orion](https://github.com/steveberardi/starplot/blob/main/examples/05_optic_m45.png?raw=true)
+![optic-pleiades](https://github.com/steveberardi/starplot/blob/main/examples/05_optic_m45.png?raw=true)
 
 ## Basic Usage
 
