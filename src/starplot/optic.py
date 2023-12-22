@@ -429,11 +429,8 @@ class OpticPlot(StarPlot):
         if not self.include_info_text:
             return
 
-        x = self.pos_az.degrees
-        y = self.pos_alt.degrees
-
-        # self.ax.set_xlim(x - self.optic.xlim * 1.03, x + self.optic.xlim * 1.03)
-        # self.ax.set_ylim(y - self.optic.ylim * 1.03, y + self.optic.ylim * 1.03)
+        self.ax.set_xlim(-1.16 * self.optic.xlim, 1.16 * self.optic.xlim)
+        self.ax.set_ylim(-1.1 * self.optic.ylim, 1.1 * self.optic.ylim)
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
         font_size = self.style.legend.font_size * self._size_multiplier * 2.16

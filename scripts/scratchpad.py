@@ -179,31 +179,6 @@ def create_map_stereo_south():
     p.export("temp-map-south.svg", format="svg")
 
 
-def create_map_with_planets():
-    style: PlotStyle = sp.styles.MAP_BLUE_LIGHT.extend(
-        bayer_labels={"visible": False},
-    )
-    style.star.label.visible = False
-    # style.star.marker.visible = False
-    style.constellation.label.visible = False
-    style.ecliptic.label.visible = False
-    style.celestial_equator.label.visible = False
-    style.planets.marker.visible = True
-
-    p = sp.MapPlot(
-        projection=Projection.MERCATOR,
-        ra_min=0,
-        ra_max=24,
-        dec_min=-70,
-        dec_max=70,
-        limiting_magnitude=3.2,
-        hide_colliding_labels=False,
-        style=style,
-        resolution=2600,
-    )
-    p.export("temp/map-planets.svg", format="svg", padding=1)
-
-
 def create_map_sgr():
     style = PlotStyle().extend(
         # sp.styles.extensions.HIDE_LABELS,
@@ -253,38 +228,6 @@ def create_map_sgr():
     )
     p.export("temp/map-sgr.svg", format="svg", padding=0.4)
     # p.export("temp/map-sgr.png", format="png", padding=0.3)
-
-
-def create_galaxy_test():
-    style = PlotStyle().extend(
-        # sp.styles.extensions.HIDE_LABELS,
-        # extensions.GRAYSCALE,
-        # extensions.BLUE_LIGHT,
-        extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
-        extensions.MAP,
-        {
-            "bayer_labels": {
-                "font_name": "GFS Didot",
-                "font_size": 8,
-            },
-        },
-    )
-    style.legend.location = "upper right"
-    style.legend.num_columns = 1
-
-    p = sp.MapPlot(
-        projection=Projection.MERCATOR,
-        ra_min=10.5,
-        ra_max=16.5,
-        dec_min=-5,
-        dec_max=45,
-        limiting_magnitude=9,
-        # hide_colliding_labels=False,
-        style=style,
-        resolution=4000,
-    )
-    p.export("temp/galaxy.svg", format="svg", padding=0.6)
 
 
 def create_scope_view_m45():
@@ -352,49 +295,6 @@ def create_scope_view_m11():
     )
     p.ax.set_title("TV-85 / 8mm @ 100deg / M11")
     p.export("temp/map-m11.svg", format="svg", padding=0.3)
-
-
-def create_startest():
-    style = PlotStyle().extend(
-        # extensions.MINIMAL,
-        # extensions.BLUE_LIGHT,
-        extensions.BLUE_DARK,
-        extensions.HIDE_LABELS,
-        extensions.MAP,
-    )
-    style.legend.visible = False
-    style.tick_marks.visible = False
-
-    p = sp.MapPlot(
-        projection=Projection.STEREO_NORTH,
-        ra_min=16,
-        ra_max=24,
-        dec_min=0,
-        dec_max=90,
-        limiting_magnitude=8,
-        style=style,
-        resolution=3000,
-        star_catalog="tycho-1",
-    )
-    p.export("temp/stars.png", format="png", padding=0)
-
-
-def dump_extensions():
-    import yaml
-
-    ext = {
-        "blue_light": extensions.BLUE_LIGHT,
-        "blue_medium": extensions.BLUE_MEDIUM,
-        "blue_dark": extensions.BLUE_DARK,
-        "grayscale": extensions.GRAYSCALE,
-        "map": extensions.MAP,
-        "zenith": extensions.ZENITH,
-    }
-
-    for k, v in ext.items():
-        with open(f"temp/{k}.yml", "w") as outfile:
-            style_yaml = yaml.dump(v)
-            outfile.write(style_yaml)
 
 
 def create_scope_plot_m45():
@@ -518,7 +418,7 @@ def create_bino_plot_m45():
             fov=65,
         ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=15, minute=40, second=0
+            hour=19, minute=40, second=0
         ),
         limiting_magnitude=12,
         style=style,
@@ -537,18 +437,18 @@ def create_bino_plot_m45():
         lat=32.97,
         lon=-117.038611,
         # 10x binoculars
-        optic=sp.optic.Binoculars(
-            magnification=10,
-            fov=65,
-        ),
-        # AT72EDII
-        # optic=sp.optic.Refractor(
-        #     focal_length=430,
-        #     eyepiece_focal_length=11,
-        #     eyepiece_fov=82,
+        # optic=sp.optic.Binoculars(
+        #     magnification=10,
+        #     fov=65,
         # ),
+        # AT72EDII
+        optic=sp.optic.Refractor(
+            focal_length=430,
+            eyepiece_focal_length=11,
+            eyepiece_fov=82,
+        ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=22, minute=0, second=0
+            hour=19, minute=0, second=0
         ),
         limiting_magnitude=12,
         style=style,
@@ -565,12 +465,9 @@ def create_bino_plot_m45():
 
 # create_scope_plot_m45()
 create_bino_plot_m45()
-# create_startest()
-# create_scope_view_m45()
-# create_startest()
+
 # create_scope_view_m45()
 # create_scope_view_m11()
-# create_galaxy_test()
 
 # create_zenith()
 # create_map_mercator()
@@ -579,8 +476,5 @@ create_bino_plot_m45()
 # create_map_orion()
 # create_map_sgr()
 
-# create_map_with_planets()
-
-# dump_extensions()
 
 print(f"Total run time: {time.time() - start_time}")
