@@ -4,7 +4,7 @@ from starplot import OpticPlot
 from starplot.optic import Refractor
 from starplot.styles import PlotStyle, extensions
 
-dt = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 30)
+dt = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 30, 0)
 
 style = PlotStyle().extend(
     extensions.MINIMAL,
@@ -16,10 +16,8 @@ p = OpticPlot(
     # M45
     ra=3.783611,
     dec=24.11667,
-    # lat=33.363484,
-    # lon=-116.836394,
-    lat=32.97,
-    lon=-117.038611,
+    lat=33.363484,
+    lon=-116.836394,
     # Refractor Telescope
     optic=Refractor(
         focal_length=430,
@@ -27,7 +25,7 @@ p = OpticPlot(
         eyepiece_fov=82,
     ),
     dt=dt,
-    limiting_magnitude=14,
+    limiting_magnitude=12,
     style=style,
     resolution=1600,
     include_info_text=True,

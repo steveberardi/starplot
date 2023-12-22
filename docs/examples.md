@@ -4,6 +4,7 @@ This page has a few examples to get you familiar with Starplot and how it works.
 2. [Star Chart with an Extra Object Plotted](#star-chart-with-an-extra-object-plotted)
 3. [Map of Orion](#map-of-orion)
 4. [Map of The Pleiades with a Scope Field of View](#map-of-the-pleiades-with-a-scope-field-of-view)
+5. [Optic plot of The Pleiades with a Refractor Telescope](#optic-plot-of-the-pleiades-with-a-refractor-telescope)
 
 
 
@@ -66,7 +67,7 @@ The result should look like this:
 
 ## Optic plot of The Pleiades with a Refractor Telescope
 
-The following code will create an optic plot that shows what The Pleiades will look like through a refractor telescope on December 16, 2023 at 9pm PT from Palomar Mountain in California.
+The following code will create an optic plot that shows what The Pleiades looked like through a refractor telescope on December 16, 2023 at 9pm PT from Palomar Mountain in California.
 
 ```python
 {% include 'examples/example_05.py' %}
