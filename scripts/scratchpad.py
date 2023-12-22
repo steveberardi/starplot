@@ -232,9 +232,9 @@ def create_map_sgr():
 
 def create_scope_view_m45():
     style = PlotStyle().extend(
-        extensions.MINIMAL,
-        extensions.GRAYSCALE_DARK,
-        # extensions.BLUE_LIGHT,
+        # extensions.MINIMAL,
+        # extensions.GRAYSCALE_DARK,
+        extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
@@ -243,24 +243,31 @@ def create_scope_view_m45():
     p = sp.MapPlot(
         # projection=Projection.MERCATOR,
         projection=Projection.STEREO_NORTH,
-        ra_min=54.5 / 15,
-        ra_max=58.5 / 15,  # 3.9
-        dec_min=22,
-        dec_max=26,
-        limiting_magnitude=12,
+        ra_min=1,
+        ra_max=5,  # 3.9
+        dec_min=20,
+        dec_max=65,
+        limiting_magnitude=8,
         style=style,
-        resolution=1000,
-        star_catalog="tycho-1",
+        resolution=2000,
+        # star_catalog="tycho-1",
     )
     p.plot_scope_fov(
         ra=3.7836111111,
         dec=24.1166666667,
         scope_focal_length=600,
-        eyepiece_focal_length=14,
-        eyepiece_fov=82,
+        eyepiece_focal_length=13,
+        eyepiece_fov=100,
+    )
+    p.plot_scope_fov(
+        ra=2.3333,
+        dec=57.14,
+        scope_focal_length=600,
+        eyepiece_focal_length=13,
+        eyepiece_fov=100,
     )
     # p.plot_bino_fov(ra=3.7836111111, dec=24.1166666667, fov=65, magnification=10)
-    p.ax.set_title("TV-85 / 14mm @ 82deg / M45", color="#c5c5c5")
+    # p.ax.set_title("TV-85 / 14mm @ 82deg / M45", color="#c5c5c5")
     # p.ax.invert_xaxis()
     # p.plot_circle(3.7798, 24.1166666667, 1.17)
     # p.plot_circle(3.7798, 24.1166666667, 1.5)
@@ -470,9 +477,9 @@ def create_bino_plot_m45():
 # ------------------------------------------
 
 # create_scope_plot_m45()
-create_bino_plot_m45()
+# create_bino_plot_m45()
 
-# create_scope_view_m45()
+create_scope_view_m45()
 # create_scope_view_m11()
 
 # create_zenith()

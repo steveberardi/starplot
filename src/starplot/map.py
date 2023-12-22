@@ -6,10 +6,12 @@ from enum import Enum
 from cartopy import crs as ccrs
 from cartopy.geodesic import Geodesic
 from matplotlib import pyplot as plt
+from matplotlib import patches
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import geometry
 import geopandas as gpd
 import numpy as np
+import pyproj
 
 from pyongc import ongc
 from skyfield.api import Star
@@ -24,7 +26,7 @@ from starplot.utils import lon_to_ra, dec_str_to_float
 warnings.filterwarnings("ignore", module="cartopy")
 
 DEFAULT_FOV_STYLE = PolygonStyle(
-    fill_color=None, edge_color="red", line_style="dashed", edge_width=4, zorder=100
+    fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
 )
 """Default style for plotting scope and bino views"""
 
@@ -157,13 +159,20 @@ class MapPlot(StarPlot):
     def _plot_constellation_lines(self):
         if not self.style.constellation.line.visible:
             return
+    
+        # ensures constellation lines are straight in all supported projections
+        if self.projection == Projection.MERCATOR:
+            transform = ccrs.PlateCarree()
+        else:
+            transform = ccrs.Geodetic()
+    
         constellation_lines = gpd.read_file(DataFiles.CONSTELLATION_LINES)
         constellation_lines.plot(
             ax=self.ax,
             **self.style.constellation.line.matplot_kwargs(
                 size_multiplier=self._size_multiplier
             ),
-            **self._plot_kwargs(),
+            transform=transform,
         )
 
     def _plot_constellation_borders(self):
@@ -175,7 +184,7 @@ class MapPlot(StarPlot):
             **self.style.constellation_borders.matplot_kwargs(
                 size_multiplier=self._size_multiplier
             ),
-            **self._plot_kwargs(),
+            transform=ccrs.PlateCarree(),
         )
 
     def _plot_constellation_labels(self):
@@ -474,29 +483,27 @@ class MapPlot(StarPlot):
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
 
+    def _compute_radius(self, radius_degrees: float, x: float = 0, y: float = 0):
+        geod = pyproj.Geod("+a=6378137 +f=0.0", sphere=True)
+        _, _, distance = geod.inv(x, y, x + radius_degrees, y)
+        return distance
+    
     def _plot_fov_circle(
         self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
     ):
         # FOV (degrees) = FOV eyepiece / magnification
         fov_degrees = fov / magnification
-
         lon, lat = self._prepare_coords(ra, dec)
-
         fov_radius = fov_degrees / 2
+        radius = self._compute_radius(fov_radius)
+        x, y = self._proj.transform_point(lon, lat, ccrs.Geodetic())
 
-        geod = Geodesic()
-        line = geometry.LineString([[lon, lat], [lon + fov_radius, lat]])
-        radius_meters = geod.geometry_length(line)
-
-        circle_points = Geodesic(flattening=0.0).circle(
-            lon=lon, lat=lat, radius=radius_meters, n_samples=200, endpoint=True
-        )
-        geom = geometry.Polygon(circle_points)
-        self.ax.add_geometries(
-            [geom],
-            crs=ccrs.PlateCarree(),
+        p = patches.Circle(
+            (x, y),
+            radius=radius,
             **style.matplot_kwargs(self._size_multiplier),
         )
+        self.ax.add_patch(p)
 
     def plot_scope_fov(
         self,
