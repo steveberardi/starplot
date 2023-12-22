@@ -239,9 +239,9 @@ class OpticPlot(StarPlot):
         optic: Optic instance that defines optical parameters
         ra: Right ascension of target center
         dec: Declination of target center
-        lat: Latitude of viewing location
-        lon: Longitude of viewing location
-        include_info_text: If True, then the plot will include the time/location
+        lat: Latitude of observer's location
+        lon: Longitude of observer's location
+        include_info_text: If True, then the plot will include a table with details of the target/observer/optic
         dt: Date/time to use for star/planet positions (*must be timezone-aware*). Default = current UTC time.
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
@@ -251,7 +251,7 @@ class OpticPlot(StarPlot):
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
         colorize_stars: If True, then stars will be filled with their BV color index
-        raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the specified time/location
+        raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
 
     Returns:
         OpticPlot: A new instance of a OpticPlot
@@ -402,12 +402,6 @@ class OpticPlot(StarPlot):
             pos = self.location.at(self.timescale).observe(s)
             app = pos.apparent()
             alt, az, _ = app.altaz()
-            # if self.pos_az.degrees > 350 and az.degrees < 100:
-            #     x.append(az.degrees + 360)
-            # elif self.pos_az.degrees < 100 and az.degrees > 300:
-            #     x.append(az.degrees - 360)
-            # else:
-            #     x.append(az.degrees)
             x.append(az.degrees)
             y.append(alt.degrees)
 
@@ -449,9 +443,6 @@ class OpticPlot(StarPlot):
             dt_str,
             str(self.optic),
         ]
-
-        total_chars = sum([len(v) for v in values])
-        widths = [len(v) / total_chars for v in values]
         widths = [0.15, 0.15, 0.2, 0.2, 0.3]
 
         table = self.ax.table(
