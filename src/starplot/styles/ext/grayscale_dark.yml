@@ -52,6 +52,9 @@ planets:
     color: hsl(136, 0%, 97%)
     fill: bottom
     edge_color: hsl(136, 0%, 97%)
+moon:
+  label:
+    font_color: hsl(136, 0%, 97%)
 gridlines:
   label:
     font_color: hsl(136, 0%, 97%)

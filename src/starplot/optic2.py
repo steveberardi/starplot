@@ -3,38 +3,17 @@ import math
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+import pyproj
+
+from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
 from matplotlib import patches
-
 from skyfield.api import Star, wgs84
 
 from starplot.base import StarPlot
 from starplot.data import load, stars
-from starplot.styles import PlotStyle, ZENITH_BASE
-from starplot.utils import bv_to_hex_color, azimuth_to_string
-
-import pyproj
-import datetime
-import warnings
-
-from enum import Enum
-
-from cartopy import crs as ccrs
-from cartopy.geodesic import Geodesic
-from matplotlib.ticker import FuncFormatter, FixedLocator
-from shapely import geometry
-import geopandas as gpd
-import numpy as np
-
-from starplot.data import DataFiles, bayer, constellations, stars, ecliptic, dsos
-from starplot.models import SkyObject
-from starplot.styles import PolygonStyle, MAP_BASE
-from starplot.utils import lon_to_ra, dec_str_to_float
-
-
-DEFAULT_FOV_STYLE = PolygonStyle(
-    fill_color=None, edge_color="red", line_style="solid", edge_width=4, zorder=100
-)
+from starplot.styles import PlotStyle, OPTIC_BASE
+from starplot.utils import bv_to_hex_color, azimuth_to_string, in_circle
 
 
 class Optic(ABC):
@@ -67,8 +46,8 @@ class Optic(ABC):
         pass
 
     def _compute_radius(self, radius_degrees: float, x: float = 0, y: float = 0):
-        geod = pyproj.Geod('+a=6378137 +f=0.0', sphere=True)
-        _, _, distance = geod.inv(x, y,  x + radius_degrees, y)
+        geod = pyproj.Geod("+a=6378137 +f=0.0", sphere=True)
+        _, _, distance = geod.inv(x, y, x + radius_degrees, y)
         return distance
 
 
@@ -279,7 +258,7 @@ class OpticPlot(StarPlot):
 
     """
 
-    FIELD_OF_VIEW_MAX = 8.0
+    FIELD_OF_VIEW_MAX = 9.0
 
     def __init__(
         self,
@@ -293,7 +272,7 @@ class OpticPlot(StarPlot):
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
         ephemeris: str = "de421_2001.bsp",
-        style: PlotStyle = ZENITH_BASE,
+        style: PlotStyle = OPTIC_BASE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
@@ -347,8 +326,18 @@ class OpticPlot(StarPlot):
 
     def in_bounds(self, ra, dec) -> bool:
         x, y = self._prepare_coords(ra, dec)
-        transformed = self.ax.transData.transform((x, y))
-        return self.background_patch.contains_point(transformed)
+        # transformed = self.ax.transAxes.transform((x, y))
+        # transformed = self.background_patch.get_transform().transform(transformed)
+
+        transformed = self._proj.transform_point(x, y, ccrs.Geodetic())
+        # return self.background_patch.contains_point(transformed)
+        # TODO : support rectangle patches
+        # print(f"point = {transformed}")
+        # print(f"limit = {self.optic.xlim}")
+
+        inbounds = in_circle(transformed[0], transformed[1], 0, 0, self.optic.xlim)
+
+        return inbounds  # and self.background_patch.contains_point(transformed)
 
     def _calc_position(self):
         eph = load(self.ephemeris)
@@ -429,7 +418,6 @@ class OpticPlot(StarPlot):
                 y,
                 sizes,
                 colors,
-                # color=self.style.star.marker.color.as_hex(),
                 clip_path=self.background_patch,
                 alpha=alphas,
                 edgecolors="none",
@@ -533,28 +521,28 @@ class OpticPlot(StarPlot):
     def _init_plot(self):
         self._proj = ccrs.AzimuthalEquidistant(
             central_longitude=self.pos_az.degrees,
-            central_latitude=self.pos_alt.degrees,    
+            central_latitude=self.pos_alt.degrees,
         )
         self._proj.threshold = 100
 
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
             # facecolor=self.style.background_color.as_hex(),
-            layout="tight"
+            layout="tight",
         )
         self.ax = plt.axes(projection=self._proj)
-        
+
         self.ax.xaxis.set_visible(False)
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")
 
         self._plot_border()
         self._plot_stars()
-        # self._plot_planets()
-        # self._plot_moon()
-        
+        self._plot_planets()
+        self._plot_moon()
+
         self._fit_to_ax()
-        
+
         self.ax.set_xlim(-1 * self.optic.xlim, self.optic.xlim)
         self.ax.set_ylim(-1 * self.optic.ylim, self.optic.ylim)
 

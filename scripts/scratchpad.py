@@ -537,18 +537,18 @@ def create_bino_plot_m45():
         lat=32.97,
         lon=-117.038611,
         # 10x binoculars
-        # optic=sp.optic2.Binoculars(
-        #     magnification=10,
-        #     fov=65,
-        # ),
-        # AT72EDII
-        optic=sp.optic2.Refractor(
-            focal_length=430,
-            eyepiece_focal_length=11,
-            eyepiece_fov=82,
+        optic=sp.optic2.Binoculars(
+            magnification=10,
+            fov=65,
         ),
+        # AT72EDII
+        # optic=sp.optic2.Refractor(
+        #     focal_length=430,
+        #     eyepiece_focal_length=11,
+        #     eyepiece_fov=82,
+        # ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=18, minute=50, second=0
+            hour=22, minute=0, second=0
         ),
         limiting_magnitude=12,
         style=style,
@@ -559,7 +559,6 @@ def create_bino_plot_m45():
 
     p1.export("temp/bino-m45-p1.svg", format="svg", padding=0.3)
     p2.export("temp/bino-m45-p2.svg", format="svg", padding=0.3)
-
 
 
 # ------------------------------------------

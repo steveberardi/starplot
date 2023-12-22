@@ -2,6 +2,9 @@ from starplot.styles import PlotStyle, extensions
 
 BASE = PlotStyle()
 
+# Optic Plots
+OPTIC_BASE = BASE.extend(extensions.OPTIC)
+
 # Map Plots
 MAP_BASE = BASE.extend(extensions.MAP)
 MAP_BLUE_LIGHT = MAP_BASE.extend(extensions.BLUE_LIGHT)
