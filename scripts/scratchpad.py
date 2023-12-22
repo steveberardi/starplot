@@ -503,7 +503,7 @@ def create_bino_plot_m45():
         extensions.OPTIC,
     )
 
-    p1 = sp.OpticPlot2(
+    p1 = sp.OpticPlot(
         # M45
         ra=3.7836111111,
         dec=24.1166666667,
@@ -513,7 +513,7 @@ def create_bino_plot_m45():
         lat=32.97,
         lon=-117.038611,
         # 10x binoculars
-        optic=sp.optic2.Binoculars(
+        optic=sp.optic.Binoculars(
             magnification=10,
             fov=65,
         ),
@@ -527,7 +527,7 @@ def create_bino_plot_m45():
         # colorize_stars=True,
     )
 
-    p2 = sp.OpticPlot2(
+    p2 = sp.OpticPlot(
         # M45
         ra=3.7836111111,
         dec=24.1166666667,
@@ -537,12 +537,12 @@ def create_bino_plot_m45():
         lat=32.97,
         lon=-117.038611,
         # 10x binoculars
-        optic=sp.optic2.Binoculars(
+        optic=sp.optic.Binoculars(
             magnification=10,
             fov=65,
         ),
         # AT72EDII
-        # optic=sp.optic2.Refractor(
+        # optic=sp.optic.Refractor(
         #     focal_length=430,
         #     eyepiece_focal_length=11,
         #     eyepiece_fov=82,
