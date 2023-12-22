@@ -4,11 +4,9 @@ import warnings
 from enum import Enum
 
 from cartopy import crs as ccrs
-from cartopy.geodesic import Geodesic
 from matplotlib import pyplot as plt
 from matplotlib import patches
 from matplotlib.ticker import FuncFormatter, FixedLocator
-from shapely import geometry
 import geopandas as gpd
 import numpy as np
 import pyproj
@@ -159,13 +157,13 @@ class MapPlot(StarPlot):
     def _plot_constellation_lines(self):
         if not self.style.constellation.line.visible:
             return
-    
+
         # ensures constellation lines are straight in all supported projections
         if self.projection == Projection.MERCATOR:
             transform = ccrs.PlateCarree()
         else:
             transform = ccrs.Geodetic()
-    
+
         constellation_lines = gpd.read_file(DataFiles.CONSTELLATION_LINES)
         constellation_lines.plot(
             ax=self.ax,
@@ -487,7 +485,7 @@ class MapPlot(StarPlot):
         geod = pyproj.Geod("+a=6378137 +f=0.0", sphere=True)
         _, _, distance = geod.inv(x, y, x + radius_degrees, y)
         return distance
-    
+
     def _plot_fov_circle(
         self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
     ):
