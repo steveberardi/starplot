@@ -17,6 +17,8 @@ from starplot.utils import bv_to_hex_color, azimuth_to_string, in_circle
 
 
 class Optic(ABC):
+    """Abstract class for defining Optics"""
+
     def __init__(self) -> None:
         pass
 
@@ -36,13 +38,17 @@ class Optic(ABC):
     @property
     @abstractmethod
     def label(self):
-        return "Generic"
+        return "Abstract Optic"
 
     @abstractmethod
     def patch(self, center_x, center_y) -> patches.Patch:
         pass
 
     def transform(self, axis) -> None:
+        pass
+
+    @abstractmethod
+    def in_bounds(self, x, y) -> bool:
         pass
 
     def _compute_radius(self, radius_degrees: float, x: float = 0, y: float = 0):
@@ -52,9 +58,19 @@ class Optic(ABC):
 
 
 class Scope(Optic):
-    """Scope
+    """Creates a new generic Scope optic
 
-    Not meant to be used directly, use subclasses instead (Refractor, Reflector, etc)
+    Use this class to create custom scope optics or as a generic optic that does NOT apply any transforms to the view
+
+    Also see subclasses of this optic: Refractor, Reflector
+
+    Args:
+        focal_length: Focal length (mm) of the telescope
+        eyepiece_focal_length: Focal length (mm) of the eyepiece
+        eyepiece_fov: Field of view (degrees) of the eyepiece
+
+    Returns:
+        Scope: A new instance of a Scope optic
     """
 
     def __init__(
@@ -72,11 +88,11 @@ class Scope(Optic):
 
     @property
     def xlim(self):
-        return self.radius * 1.03
+        return self.radius
 
     @property
     def ylim(self):
-        return self.radius * 1.03
+        return self.radius
 
     @property
     def label(self):
@@ -89,10 +105,18 @@ class Scope(Optic):
             radius=self.radius + padding,
             **kwargs,
         )
+    
+    def in_bounds(self, x, y) -> bool:
+        return in_circle(x, y, 0, 0, self.radius)
 
 
 class Refractor(Scope):
     """Creates a new Refractor Telescope optic
+
+    Warning:
+        This optic assumes a star diagonal is used, so it applies a transform that inverts the image.
+
+        If you don't want this transform applied, then use the generic Scope optic instead.
 
     Args:
         focal_length: Focal length (mm) of the telescope
@@ -113,6 +137,23 @@ class Refractor(Scope):
 
 
 class Reflector(Scope):
+    """Creates a new Reflector Telescope optic
+
+    Warning:
+        This optic applies a transform that produces an "upside-down" image.
+
+        If you don't want this transform applied, then use the generic Scope optic instead.
+
+    Args:
+        focal_length: Focal length (mm) of the telescope
+        eyepiece_focal_length: Focal length (mm) of the eyepiece
+        eyepiece_fov: Field of view (degrees) of the eyepiece
+
+    Returns:
+        Reflector: A new instance of a Reflector optic
+
+    """
+
     @property
     def label(self):
         return "Reflector"
@@ -144,11 +185,11 @@ class Binoculars(Optic):
 
     @property
     def xlim(self):
-        return self.radius * 1.03
+        return self.radius
 
     @property
     def ylim(self):
-        return self.radius * 1.03
+        return self.radius
 
     @property
     def label(self):
@@ -161,10 +202,13 @@ class Binoculars(Optic):
             radius=self.radius + padding,
             **kwargs,
         )
+    
+    def in_bounds(self, x, y) -> bool:
+        return in_circle(x, y, 0, 0, self.radius)
 
 
 class Camera(Optic):
-    """Creates a new Binoculars optic
+    """Creates a new Camera optic
 
     Note:
         Field of view is calculated using the following formula:
@@ -204,32 +248,39 @@ class Camera(Optic):
         )
         self.true_fov = max(self.true_fov_x, self.true_fov_y)
 
+        self.radius_x = self._compute_radius(self.true_fov_x / 2)
+        self.radius_y = self._compute_radius(self.true_fov_y / 2)
+
     def __str__(self):
         return f"{self.sensor_width}x{self.sensor_height} w/ {self.lens_focal_length}mm lens = {self.true_fov_x:.2f}\N{DEGREE SIGN} x {self.true_fov_y:.2f}\N{DEGREE SIGN}"
 
     @property
     def xlim(self):
-        return self.true_fov_x * 1.2
+        return self.radius_x
 
     @property
     def ylim(self):
-        return self.true_fov_y / 2 * 1.16
+        return self.radius_y
 
     @property
     def label(self):
         return "Camera"
 
     def patch(self, center_x, center_y, **kwargs):
-        # needs to be 2x wider than height
         padding = kwargs.pop("padding", 0)
-        x = center_x - self.true_fov_x - padding * 2
-        y = center_y - (self.true_fov_y / 2) - padding
+        x = center_x - self.radius_x - padding
+        y = center_y - self.radius_y - padding
         return patches.Rectangle(
             (x, y),
-            (self.true_fov_x + padding * 2) * 2,
-            self.true_fov_y + padding * 2,
+            self.radius_x * 2 + padding,
+            self.radius_y * 2 + padding,
             **kwargs,
         )
+    
+    def in_bounds(self, x, y) -> bool:
+        in_bounds_x = x < self.radius_x and x > 1 - self.radius_x
+        in_bounds_y = y < self.radius_y and y > 1 - self.radius_y
+        return in_bounds_x and in_bounds_y
 
 
 class OpticPlot(StarPlot):
@@ -315,6 +366,7 @@ class OpticPlot(StarPlot):
         self._init_plot()
 
     def _prepare_coords(self, ra, dec) -> (float, float):
+        """Converts RA/DEC to AZ/ALT"""
         point = Star(ra_hours=ra, dec_degrees=dec)
         position = self.location.at(self.timescale).observe(point)
         pos_apparent = position.apparent()
@@ -325,19 +377,9 @@ class OpticPlot(StarPlot):
         return dict(transform=ccrs.Geodetic())
 
     def in_bounds(self, ra, dec) -> bool:
-        x, y = self._prepare_coords(ra, dec)
-        # transformed = self.ax.transAxes.transform((x, y))
-        # transformed = self.background_patch.get_transform().transform(transformed)
-
-        transformed = self._proj.transform_point(x, y, ccrs.Geodetic())
-        # return self.background_patch.contains_point(transformed)
-        # TODO : support rectangle patches
-        # print(f"point = {transformed}")
-        # print(f"limit = {self.optic.xlim}")
-
-        inbounds = in_circle(transformed[0], transformed[1], 0, 0, self.optic.xlim)
-
-        return inbounds  # and self.background_patch.contains_point(transformed)
+        az, alt = self._prepare_coords(ra, dec)
+        x, y = self._proj.transform_point(az, alt, ccrs.Geodetic())
+        return self.optic.in_bounds(x, y)
 
     def _calc_position(self):
         eph = load(self.ephemeris)
@@ -531,8 +573,8 @@ class OpticPlot(StarPlot):
 
         self._fit_to_ax()
 
-        self.ax.set_xlim(-1 * self.optic.xlim, self.optic.xlim)
-        self.ax.set_ylim(-1 * self.optic.ylim, self.optic.ylim)
+        self.ax.set_xlim(-1.03 * self.optic.xlim, 1.03 * self.optic.xlim)
+        self.ax.set_ylim(-1.03 * self.optic.ylim, 1.03 * self.optic.ylim)
 
         self._plot_info()
 

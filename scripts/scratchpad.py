@@ -442,13 +442,19 @@ def create_bino_plot_m45():
         #     fov=65,
         # ),
         # AT72EDII
-        optic=sp.optic.Refractor(
-            focal_length=430,
-            eyepiece_focal_length=11,
-            eyepiece_fov=82,
+        # optic=sp.optic.Refractor(
+        #     focal_length=430,
+        #     eyepiece_focal_length=11,
+        #     eyepiece_fov=82,
+        # ),
+        # Fuji X-T2
+        optic=sp.optic.Camera(
+            sensor_height=15.6,
+            sensor_width=23.6,
+            lens_focal_length=430,
         ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=19, minute=0, second=0
+            hour=22, minute=0, second=0
         ),
         limiting_magnitude=12,
         style=style,

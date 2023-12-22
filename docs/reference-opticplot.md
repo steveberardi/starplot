@@ -18,6 +18,12 @@
         show_root_heading: true
         show_docstring_attributes: true
 
+### ::: starplot.optic.Scope
+    options:
+        merge_init_into_class: true
+        show_root_heading: true
+        show_docstring_attributes: true
+
 ### ::: starplot.optic.Refractor
     options:
         merge_init_into_class: true
