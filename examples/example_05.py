@@ -4,7 +4,7 @@ from starplot import OpticPlot
 from starplot.optic import Refractor
 from starplot.styles import PlotStyle, extensions
 
-dt = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 30, 0)
+dt = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 
 style = PlotStyle().extend(
     extensions.MINIMAL,
