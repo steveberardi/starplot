@@ -414,6 +414,9 @@ def create_bino_plot_m45():
         # M45
         ra=3.7836111111,
         dec=24.1166666667,
+        # double cluster
+        # ra=2.33,
+        # dec=57.14,
         # Hyades
         # ra=4.501,
         # dec=15.96,
@@ -425,7 +428,7 @@ def create_bino_plot_m45():
             fov=65,
         ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=19, minute=40, second=0
+            hour=21, minute=40, second=0
         ),
         limiting_magnitude=12,
         style=style,
@@ -436,8 +439,11 @@ def create_bino_plot_m45():
 
     p2 = sp.OpticPlot(
         # M45
-        ra=3.7836111111,
-        dec=24.1166666667,
+        # ra=3.7836111111,
+        # dec=24.1166666667,
+        # double cluster
+        ra=2.33,
+        dec=57.14,
         # Hyades
         # ra=4.501,
         # dec=15.96,
@@ -454,20 +460,26 @@ def create_bino_plot_m45():
         #     eyepiece_focal_length=11,
         #     eyepiece_fov=82,
         # ),
-        # Fuji X-T2
-        optic=sp.optic.Camera(
-            sensor_height=15.6,
-            sensor_width=23.6,
-            lens_focal_length=430,
+        # TV-85
+        optic=sp.optic.Refractor(
+            focal_length=600,
+            eyepiece_focal_length=14,
+            eyepiece_fov=82,
         ),
+        # Fuji X-T2
+        # optic=sp.optic.Camera(
+        #     sensor_height=15.6,
+        #     sensor_width=23.6,
+        #     lens_focal_length=430,
+        # ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=22, minute=0, second=0
         ),
-        limiting_magnitude=12,
+        limiting_magnitude=15,
         style=style,
         resolution=2000,
         include_info_text=True,
-        # colorize_stars=True,
+        colorize_stars=True,
     )
 
     p1.export("temp/bino-m45-p1.svg", format="svg", padding=0.3)
@@ -477,9 +489,9 @@ def create_bino_plot_m45():
 # ------------------------------------------
 
 # create_scope_plot_m45()
-# create_bino_plot_m45()
+create_bino_plot_m45()
 
-create_scope_view_m45()
+# create_scope_view_m45()
 # create_scope_view_m11()
 
 # create_zenith()
