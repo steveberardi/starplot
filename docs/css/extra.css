@@ -52,6 +52,9 @@
     font-weight: 600;
 }
 
+.doc-function h3.doc-heading span:nth-child(n+2) {
+    color: var(--md-code-hl-name-color) !important;
+}
 
 .indent {
     margin-left: 1rem;

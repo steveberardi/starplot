@@ -1,3 +1,6 @@
+Optic plots simulate what you'll see through an optic (e.g. binoculars, telescope, camera) at a specific time and location.
+
+These plots use an [azimuthal equidistant projection](https://en.wikipedia.org/wiki/Azimuthal_equidistant_projection).
 
 ::: starplot.OpticPlot
     options:
