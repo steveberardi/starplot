@@ -18,6 +18,7 @@ hip_names = {
     68702: "Hadar",
     95947: "Albireo",
     65477: "Alcor",
+    17702: "Alcyone",
     21421: "Aldebaran",
     105199: "Alderamin",
     15863: "Mirfak",

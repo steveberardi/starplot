@@ -11,7 +11,7 @@ from matplotlib import patches
 from skyfield.api import Star, wgs84
 
 from starplot.base import StarPlot
-from starplot.data import load, stars
+from starplot.data import load, stars, bayer
 from starplot.styles import PlotStyle, OPTIC_BASE
 from starplot.utils import bv_to_hex_color, azimuth_to_string, in_circle
 
@@ -460,6 +460,34 @@ class OpticPlot(StarPlot):
                 **self._plot_kwargs(),
             )
             self._plotted_stars.set_clip_path(self.background_patch)
+        
+        # Plot star labels (names and bayer designations)
+        stars_labeled = nearby_stars_df[
+            (nearby_stars_df["magnitude"] <= self.limiting_magnitude_labels)
+        ]
+
+        stars_labeled.sort_values("magnitude")
+
+        for hip_id, s in stars_labeled.iterrows():
+            name = stars.hip_names.get(hip_id)
+            bayer_desig = bayer.hip.get(hip_id)
+            ra, dec = s["ra_hours"], s["dec_degrees"]
+
+            if not self.in_bounds(ra, dec):
+                continue
+    
+            if name and self.style.star.label.visible:
+                style = self.style.star.label.matplot_kwargs(self._size_multiplier)
+                self._plot_text(
+                    ra, dec, name, ha="left", va="top", **style
+                )
+
+            if bayer_desig and self.style.bayer_labels.visible:
+                style = self.style.bayer_labels.matplot_kwargs(self._size_multiplier)
+                self._plot_text(
+                    ra, dec, bayer_desig, ha="right", va="bottom", **style
+                )
+
 
     def _plot_info(self):
         if not self.include_info_text:
@@ -579,3 +607,6 @@ class OpticPlot(StarPlot):
         self._plot_info()
 
         self.optic.transform(self.ax)
+
+        if self.adjust_text:
+            self.adjust_labels()
