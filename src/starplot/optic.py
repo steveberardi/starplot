@@ -58,11 +58,13 @@ class Optic(ABC):
 
 
 class Scope(Optic):
-    """Creates a new generic Scope optic
+    """Creates a new generic Scope optic.
 
-    Use this class to create custom scope optics or as a generic optic that does NOT apply any transforms to the view
+    Use this class to create custom scope optics or as a generic optic that does NOT apply any transforms to the view.
 
-    Also see subclasses of this optic: Refractor, Reflector
+    Also see subclasses of this optic:
+        - [`Refractor`][starplot.optic.Refractor]
+        - [`Reflector`][starplot.optic.Reflector]
 
     Args:
         focal_length: Focal length (mm) of the telescope
@@ -116,7 +118,7 @@ class Refractor(Scope):
     Warning:
         This optic assumes a star diagonal is used, so it applies a transform that inverts the image.
 
-        If you don't want this transform applied, then use the generic Scope optic instead.
+        If you don't want this transform applied, then use the generic [`Scope`][starplot.optic.Scope] optic instead.
 
     Args:
         focal_length: Focal length (mm) of the telescope
@@ -142,7 +144,7 @@ class Reflector(Scope):
     Warning:
         This optic applies a transform that produces an "upside-down" image.
 
-        If you don't want this transform applied, then use the generic Scope optic instead.
+        If you don't want this transform applied, then use the generic [`Scope`][starplot.optic.Scope] optic instead.
 
     Args:
         focal_length: Focal length (mm) of the telescope
@@ -167,7 +169,7 @@ class Binoculars(Optic):
 
     Args:
         magnification: Magnification of the binoculars
-        fov: Apparent field of view (FOV) of the binoculars in degrees (usually around 64)
+        fov: Apparent field of view (FOV) of the binoculars in degrees. This isn't always easy to find for binoculars, so if you can't find it in your binocular's specs, then try using `60`.
 
     Returns:
         Binoculars: A new instance of a Binoculars optic
@@ -461,7 +463,7 @@ class OpticPlot(StarPlot):
             )
             self._plotted_stars.set_clip_path(self.background_patch)
             self._add_legend_handle_marker("Star", self.style.star.marker)
-        
+
         # Plot star labels (names and bayer designations)
         stars_labeled = nearby_stars_df[
             (nearby_stars_df["magnitude"] <= self.limiting_magnitude_labels)
@@ -476,19 +478,14 @@ class OpticPlot(StarPlot):
 
             if not self.in_bounds(ra, dec):
                 continue
-    
+
             if name and self.style.star.label.visible:
                 style = self.style.star.label.matplot_kwargs(self._size_multiplier)
-                self._plot_text(
-                    ra, dec, name, ha="left", va="top", **style
-                )
+                self._plot_text(ra, dec, name, ha="left", va="top", **style)
 
             if bayer_desig and self.style.bayer_labels.visible:
                 style = self.style.bayer_labels.matplot_kwargs(self._size_multiplier)
-                self._plot_text(
-                    ra, dec, bayer_desig, ha="right", va="bottom", **style
-                )
-
+                self._plot_text(ra, dec, bayer_desig, ha="right", va="bottom", **style)
 
     def _plot_info(self):
         if not self.include_info_text:

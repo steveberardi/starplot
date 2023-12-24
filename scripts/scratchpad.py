@@ -440,8 +440,6 @@ def create_bino_plot_m45():
         include_info_text=True,
         # colorize_stars=True,
     )
-    p1.draw_reticle(ra=3.7836111111,
-        dec=24.1166666667, color="green", size=16)
 
     p2 = sp.OpticPlot(
         # M45

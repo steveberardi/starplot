@@ -65,12 +65,11 @@ optics = [
     ),
 ]
 
-dt = datetime.now(timezone("America/Los_Angeles")).replace(
-    hour=21, minute=0, second=0
-)
+dt = datetime.now(timezone("America/Los_Angeles")).replace(hour=21, minute=0, second=0)
 
-lat=32.97
-lon=-117.038611
+lat = 32.97
+lon = -117.038611
+
 
 def create_zenith():
     print("Creating whole sky chart...")
@@ -105,7 +104,6 @@ def create_map_plot():
     )
 
     for obj in sky_objects:
-        
         mp = sp.MapPlot(
             projection=Projection.MERCATOR,
             ra_min=obj.ra - 2,
@@ -130,7 +128,6 @@ def create_optic_plots():
     )
 
     for obj in sky_objects:
-
         for i, optic in enumerate(optics):
             op = sp.OpticPlot(
                 ra=obj.ra,

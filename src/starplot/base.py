@@ -139,7 +139,9 @@ class StarPlot(ABC):
             **kwargs,
         )
 
-    def draw_reticle(self, ra: float, dec: float, size: int = 6, color: str = "red") -> None:
+    def draw_reticle(
+        self, ra: float, dec: float, size: int = 6, color: str = "red"
+    ) -> None:
         """Plots a basic reticle on the map.
 
         Args:
