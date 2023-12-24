@@ -139,12 +139,14 @@ class StarPlot(ABC):
             **kwargs,
         )
 
-    def draw_reticle(self, ra: float, dec: float) -> None:
-        """Plots a reticle on the map.
+    def draw_reticle(self, ra: float, dec: float, size: int = 6, color: str = "red") -> None:
+        """Plots a basic reticle on the map.
 
         Args:
             ra: Right ascension of the reticle's center
             dec: Declination of the reticle's center
+            size: Relative size of the reticle
+            color: Color of the reticle ([Matplotlib format](https://matplotlib.org/stable/users/explain/colors/colors.html#colors-def))
 
         """
 
@@ -152,8 +154,8 @@ class StarPlot(ABC):
         self.ax.plot(
             *self._prepare_coords(ra, dec),
             marker="o",
-            markersize=6,
-            color="red",
+            markersize=size,
+            color=color,
             zorder=1024,
             **self._plot_kwargs(),
         )
@@ -161,8 +163,8 @@ class StarPlot(ABC):
             *self._prepare_coords(ra, dec),
             marker="o",
             markerfacecolor=None,
-            markersize=28,
-            color="red",
+            markersize=size * 5,
+            color=color,
             ls="dashed",
             zorder=1024,
             fillstyle="none",
