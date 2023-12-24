@@ -439,6 +439,7 @@ class PlotStyle(BaseStyle):
         family="monospace",
         line_spacing=2,
     )
+    """Styling for info text (only applies to zenith and optic plots)"""
 
     # Stars
     star: ObjectStyle = ObjectStyle(
