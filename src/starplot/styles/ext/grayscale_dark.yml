@@ -61,4 +61,4 @@ gridlines:
 tick_marks:
   font_color: hsl(136, 0%, 97%)
 legend:
-  background_color: hsl(136, 0%, 57%)
+  background_color: hsl(136, 0%, 64%)

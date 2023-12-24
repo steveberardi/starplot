@@ -412,8 +412,8 @@ def create_bino_plot_m45():
 
     p1 = sp.OpticPlot(
         # M45
-        # ra=3.7836111111,
-        # dec=24.1166666667,
+        ra=3.7836111111,
+        dec=24.1166666667,
         # double cluster
         # ra=2.33,
         # dec=57.14,
@@ -421,8 +421,8 @@ def create_bino_plot_m45():
         # ra=4.501,
         # dec=15.96,
         # Orion's belt
-        ra=5.6,
-        dec=-1.2,
+        # ra=5.6,
+        # dec=-1.2,
         lat=32.97,
         lon=-117.038611,
         # 10x binoculars
@@ -431,7 +431,7 @@ def create_bino_plot_m45():
             fov=65,
         ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=21, minute=0, second=0
+            hour=20, minute=0, second=0
         ),
         limiting_magnitude=12,
         limiting_magnitude_labels=9,

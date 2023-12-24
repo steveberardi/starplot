@@ -9,3 +9,6 @@ moon:
     visible: true
   marker:
     visible: true
+legend:
+  location: "lower center"
+  visible: false

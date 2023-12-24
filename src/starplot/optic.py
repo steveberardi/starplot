@@ -292,10 +292,10 @@ class OpticPlot(StarPlot):
         dec: Declination of target center
         lat: Latitude of observer's location
         lon: Longitude of observer's location
-        include_info_text: If True, then the plot will include a table with details of the target/observer/optic
         dt: Date/time to use for star/planet positions (*must be timezone-aware*). Default = current UTC time.
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
+        include_info_text: If True, then the plot will include a table with details of the target/observer/optic
         ephemeris: Ephemeris to use for calculating star positions
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
@@ -318,10 +318,10 @@ class OpticPlot(StarPlot):
         dec: float,
         lat: float,
         lon: float,
-        include_info_text: bool = False,
         dt: datetime = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
+        include_info_text: bool = False,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = OPTIC_BASE,
         resolution: int = 2048,
@@ -460,6 +460,7 @@ class OpticPlot(StarPlot):
                 **self._plot_kwargs(),
             )
             self._plotted_stars.set_clip_path(self.background_patch)
+            self._add_legend_handle_marker("Star", self.style.star.marker)
         
         # Plot star labels (names and bayer designations)
         stars_labeled = nearby_stars_df[
@@ -607,6 +608,8 @@ class OpticPlot(StarPlot):
         self._plot_info()
 
         self.optic.transform(self.ax)
+
+        self.refresh_legend()
 
         if self.adjust_text:
             self.adjust_labels()
