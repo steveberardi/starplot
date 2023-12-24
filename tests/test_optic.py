@@ -49,7 +49,34 @@ def test_optic_plot_binoculars(optic_style, dt_dec_16):
     filename = DATA_PATH / "actual-optic-binoculars-m45.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "8e17695545330f4d"
+    assert dhash(filename) == "8e172b552b338e4d"
+    assert colorhash(filename) == "33e00000000"
+
+
+def test_optic_plot_refractor(optic_style, dt_dec_16):
+    optic_plot = OpticPlot(
+        # double cluster
+        ra=2.33,
+        dec=57.14,
+        lat=32.97,
+        lon=-117.038611,
+        # TV-85 with ES 14mm 82deg
+        optic=optic.Refractor(
+            focal_length=600,
+            eyepiece_focal_length=14,
+            eyepiece_fov=82,
+        ),
+        dt=dt_dec_16,
+        limiting_magnitude=12,
+        style=optic_style,
+        resolution=1600,
+        include_info_text=True,
+        colorize_stars=True,
+    )
+    filename = DATA_PATH / "actual-optic-refractor-double-cluster.png"
+    optic_plot.export(filename)
+
+    assert dhash(filename) == "8e172b452b338e4d"
     assert colorhash(filename) == "33e00000000"
 
 
@@ -76,5 +103,5 @@ def test_optic_plot_camera(optic_style, dt_dec_16):
     filename = DATA_PATH / "actual-optic-camera-m45.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "4d55515575454d55"
+    assert dhash(filename) == "4171515165614975"
     assert colorhash(filename) in ["3ae00008000", "3ac00008000"]

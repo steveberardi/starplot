@@ -491,11 +491,11 @@ class OpticPlot(StarPlot):
         if not self.include_info_text:
             return
 
-        self.ax.set_xlim(-1.16 * self.optic.xlim, 1.16 * self.optic.xlim)
-        self.ax.set_ylim(-1.1 * self.optic.ylim, 1.1 * self.optic.ylim)
+        self.ax.set_xlim(-1.22 * self.optic.xlim, 1.22 * self.optic.xlim)
+        self.ax.set_ylim(-1.12 * self.optic.ylim, 1.12 * self.optic.ylim)
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        font_size = self.style.legend.font_size * self._size_multiplier * 2.16
+        font_size = self.style.info_text.font_size * self._size_multiplier * 2
 
         column_labels = [
             "Target (Alt/Az)",
@@ -525,6 +525,15 @@ class OpticPlot(StarPlot):
         table.auto_set_font_size(False)
         table.set_fontsize(font_size)
         table.scale(1, 3.1)
+
+        # Apply style to all cells
+        for row in [0, 1]:
+            for col in range(len(values)):
+                table[row, col].set_text_props(
+                    **self.style.info_text.matplot_kwargs(self._size_multiplier)
+                )
+
+        # Apply some styles only to the header row
         for col in range(len(values)):
             table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.15)
 

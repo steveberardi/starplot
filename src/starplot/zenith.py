@@ -334,16 +334,13 @@ class ZenithPlot(StarPlot):
         self.refresh_legend()
 
         if self.include_info_text:
-            font_size = self.style.legend.font_size * self._size_multiplier * 2
             dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
             info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
             self.ax.text(
                 -1.03,
                 -1.03,
                 info,
-                fontsize=font_size,
-                family="monospace",
-                linespacing=2,
+                **self.style.info_text.matplot_kwargs(self._size_multiplier),
             )
 
         if self.adjust_text:
