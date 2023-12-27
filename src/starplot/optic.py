@@ -15,6 +15,8 @@ from starplot.data import load, stars, bayer
 from starplot.styles import PlotStyle, OPTIC_BASE
 from starplot.utils import bv_to_hex_color, azimuth_to_string, in_circle
 
+import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
 
 class Optic(ABC):
     """Abstract class for defining Optics"""
@@ -60,11 +62,13 @@ class Optic(ABC):
 class Scope(Optic):
     """Creates a new generic Scope optic.
 
-    Use this class to create custom scope optics or as a generic optic that does NOT apply any transforms to the view.
+    Use this class to create custom scope optics or use it as a generic optic that does NOT apply any transforms to the view.
 
-    Also see subclasses of this optic:
-        - [`Refractor`][starplot.optic.Refractor]
-        - [`Reflector`][starplot.optic.Reflector]
+    See subclasses of this optic for more specific use cases:
+
+    - [`Refractor`][starplot.optic.Refractor] - automatically inverts the view (i.e. assumes a star diagonal is used)
+
+    - [`Reflector`][starplot.optic.Reflector] - automatically rotates the view so it's upside-down
 
     Args:
         focal_length: Focal length (mm) of the telescope
@@ -380,6 +384,9 @@ class OpticPlot(StarPlot):
 
     def in_bounds(self, ra, dec) -> bool:
         az, alt = self._prepare_coords(ra, dec)
+        return self.in_bounds_altaz(alt, az)
+
+    def in_bounds_altaz(self, alt, az) -> bool:
         x, y = self._proj.transform_point(az, alt, ccrs.Geodetic())
         return self.optic.in_bounds(x, y)
 
@@ -389,7 +396,8 @@ class OpticPlot(StarPlot):
 
         self.location = earth + wgs84.latlon(self.lat, self.lon)
         self.star = Star(ra_hours=self.ra, dec_degrees=self.dec)
-        self.position = self.location.at(self.timescale).observe(self.star)
+        self.observe = self.location.at(self.timescale).observe
+        self.position = self.observe(self.star)
 
         self.pos_apparent = self.position.apparent()
         self.pos_alt, self.pos_az, _ = self.pos_apparent.altaz()
@@ -403,12 +411,21 @@ class OpticPlot(StarPlot):
             limiting_magnitude=self.limiting_magnitude,
         )
         self._stardata = stardata
+
+        ra_min = self.ra - self.optic.true_fov / 15 * 1.08
+        ra_max = self.ra + self.optic.true_fov / 15 * 1.08
+
+        if self.dec > 70 or self.dec < -70:
+            # naive method of getting all the stars near the poles
+            ra_min = 0
+            ra_max = 24
+
         nearby_stars_df = stardata[
             (stardata["magnitude"] <= self.limiting_magnitude)
-            & (stardata["ra_hours"] < self.ra + self.optic.true_fov / 15 * 1.08)
-            & (stardata["ra_hours"] > self.ra - self.optic.true_fov / 15 * 1.08)
-            & (stardata["dec_degrees"] < self.dec + self.optic.true_fov * 1.08)
-            & (stardata["dec_degrees"] > self.dec - self.optic.true_fov * 1.08)
+            & (stardata["ra_hours"] < ra_max)
+            & (stardata["ra_hours"] > ra_min)
+            & (stardata["dec_degrees"] < self.dec + self.optic.true_fov / 2 * 1.03)
+            & (stardata["dec_degrees"] > self.dec - self.optic.true_fov / 2 * 1.03)
         ]
         x = []
         y = []
@@ -416,8 +433,17 @@ class OpticPlot(StarPlot):
         alphas = []
         colors = []
 
+        # calculate apparent position (alt/az) of stars
+        stars_apparent = self.observe(Star.from_dataframe(nearby_stars_df)).apparent()
+        nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
+        nearby_stars_df['alt'], nearby_stars_df['az'] = nearby_stars_alt.degrees, nearby_stars_az.degrees
+
         for _, star in nearby_stars_df.iterrows():
             m = star["magnitude"]
+            alt, az = star["alt"], star["az"]
+
+            if not self.in_bounds_altaz(alt, az):
+                continue
 
             if m < 4.6:
                 sizes.append((9 - m) ** 3.34 * self._star_size_multiplier)
@@ -441,13 +467,8 @@ class OpticPlot(StarPlot):
                 c = self.style.star.marker.color.as_hex()
 
             colors.append(c)
-
-            s = Star(ra_hours=star["ra_hours"], dec_degrees=star["dec_degrees"])
-            pos = self.location.at(self.timescale).observe(s)
-            app = pos.apparent()
-            alt, az, _ = app.altaz()
-            x.append(az.degrees)
-            y.append(alt.degrees)
+            x.append(az)
+            y.append(alt)
 
         # Draw stars
         if self.style.star.marker.visible:
@@ -475,8 +496,9 @@ class OpticPlot(StarPlot):
             name = stars.hip_names.get(hip_id)
             bayer_desig = bayer.hip.get(hip_id)
             ra, dec = s["ra_hours"], s["dec_degrees"]
+            alt, az = s["alt"], s["az"]
 
-            if not self.in_bounds(ra, dec):
+            if not self.in_bounds_altaz(alt, az):
                 continue
 
             if name and self.style.star.label.visible:

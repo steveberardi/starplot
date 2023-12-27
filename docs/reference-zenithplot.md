@@ -1,4 +1,4 @@
-**Zenith plots show the whole sky as seen from a specific time and place**. 
+**Zenith plots show the whole sky as seen from a specific time and place**. They're also sometimes called "star charts" but this name is used for a lot of different types of star maps, so Starplot uses the more specific name "Zenith plot" (which reflects the fact that the zenith is in the center of the chart).
 
 These plots use a [stereographic projection](https://en.wikipedia.org/wiki/Stereographic_projection), calculated by [Skyfield](https://github.com/skyfielders/python-skyfield).
 
