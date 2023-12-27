@@ -414,7 +414,6 @@ def create_bino_plot_m45():
         # M45
         # ra=3.7836111111,
         # dec=24.1166666667,
-
         # star cluster near southern pole - NGC 371
         ra=1.05,
         dec=-72.06,
@@ -429,7 +428,6 @@ def create_bino_plot_m45():
         # dec=-1.2,
         # lat=32.97,
         # lon=-117.038611,
-
         # Falkland Islands
         lat=-51.524793,
         lon=-60.118504,

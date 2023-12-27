@@ -16,7 +16,9 @@ from starplot.styles import PlotStyle, OPTIC_BASE
 from starplot.utils import bv_to_hex_color, azimuth_to_string, in_circle
 
 import pandas as pd
+
 pd.options.mode.chained_assignment = None  # default='warn'
+
 
 class Optic(ABC):
     """Abstract class for defining Optics"""
@@ -436,7 +438,10 @@ class OpticPlot(StarPlot):
         # calculate apparent position (alt/az) of stars
         stars_apparent = self.observe(Star.from_dataframe(nearby_stars_df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
-        nearby_stars_df['alt'], nearby_stars_df['az'] = nearby_stars_alt.degrees, nearby_stars_az.degrees
+        nearby_stars_df["alt"], nearby_stars_df["az"] = (
+            nearby_stars_alt.degrees,
+            nearby_stars_az.degrees,
+        )
 
         for _, star in nearby_stars_df.iterrows():
             m = star["magnitude"]
