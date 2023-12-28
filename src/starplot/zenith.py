@@ -167,7 +167,7 @@ class ZenithPlot(StarPlot):
                 x = star["x"]
                 y = star["y"]
 
-                if not in_circle(x, y):
+                if not in_circle(x, y, radius=1):
                     continue
 
                 if m < 2:
