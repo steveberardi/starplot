@@ -52,7 +52,7 @@ class Optic(ABC):
         pass
 
     @abstractmethod
-    def in_bounds(self, x, y) -> bool:
+    def in_bounds(self, x, y, scale: float = 1) -> bool:
         pass
 
     def _compute_radius(self, radius_degrees: float, x: float = 0, y: float = 0):
@@ -114,8 +114,8 @@ class Scope(Optic):
             **kwargs,
         )
 
-    def in_bounds(self, x, y) -> bool:
-        return in_circle(x, y, 0, 0, self.radius)
+    def in_bounds(self, x, y, scale: float = 1) -> bool:
+        return in_circle(x, y, 0, 0, self.radius * scale)
 
 
 class Refractor(Scope):
@@ -211,8 +211,8 @@ class Binoculars(Optic):
             **kwargs,
         )
 
-    def in_bounds(self, x, y) -> bool:
-        return in_circle(x, y, 0, 0, self.radius)
+    def in_bounds(self, x, y, scale: float = 1) -> bool:
+        return in_circle(x, y, 0, 0, self.radius * scale)
 
 
 class Camera(Optic):
@@ -285,9 +285,9 @@ class Camera(Optic):
             **kwargs,
         )
 
-    def in_bounds(self, x, y) -> bool:
-        in_bounds_x = x < self.radius_x and x > 1 - self.radius_x
-        in_bounds_y = y < self.radius_y and y > 1 - self.radius_y
+    def in_bounds(self, x, y, scale: float = 1) -> bool:
+        in_bounds_x = x < self.radius_x * scale and x > 1 - self.radius_x * scale
+        in_bounds_y = y < self.radius_y * scale and y > 1 - self.radius_y * scale
         return in_bounds_x and in_bounds_y
 
 
@@ -389,9 +389,9 @@ class OpticPlot(StarPlot):
         az, alt = self._prepare_coords(ra, dec)
         return self.in_bounds_altaz(alt, az)
 
-    def in_bounds_altaz(self, alt, az) -> bool:
+    def in_bounds_altaz(self, alt, az, scale: float = 1) -> bool:
         x, y = self._proj.transform_point(az, alt, self._geodetic)
-        return self.optic.in_bounds(x, y)
+        return self.optic.in_bounds(x, y, scale)
 
     def _calc_position(self):
         eph = load(self.ephemeris)
@@ -504,7 +504,7 @@ class OpticPlot(StarPlot):
             ra, dec = s["ra_hours"], s["dec_degrees"]
             alt, az = s["alt"], s["az"]
 
-            if not self.in_bounds_altaz(alt, az):
+            if not self.in_bounds_altaz(alt, az, scale=0.9):
                 continue
 
             if name and self.style.star.label.visible:

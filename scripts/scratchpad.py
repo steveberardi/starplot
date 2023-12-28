@@ -500,12 +500,12 @@ def create_bino_plot_m45():
 # ------------------------------------------
 
 # create_scope_plot_m45()
-# create_bino_plot_m45()
+create_bino_plot_m45()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-create_zenith()
+# create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
