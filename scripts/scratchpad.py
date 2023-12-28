@@ -115,7 +115,7 @@ def create_zenith():
         adjust_text=True,
     )
     p.refresh_legend()
-    p.export("temp/zenith-poway.png", format="png", transparent=True)
+    p.export("temp/zenith-poway.svg", format="svg", transparent=True)
 
 
 def create_map_mercator():
@@ -411,11 +411,13 @@ def create_bino_plot_m45():
 
     p1 = sp.OpticPlot(
         # M45
-        ra=3.7836111111,
-        dec=24.1166666667,
+        # ra=3.7836111111,
+        # dec=24.1166666667,
         # star cluster near southern pole - NGC 371
         # ra=1.05,
         # dec=-72.06,
+        ra=12.1,
+        dec=-61.25,
         # double cluster
         # ra=2.33,
         # dec=57.14,
@@ -425,11 +427,11 @@ def create_bino_plot_m45():
         # Orion's belt
         # ra=5.6,
         # dec=-1.2,
-        lat=32.97,
-        lon=-117.038611,
+        # lat=32.97,
+        # lon=-117.038611,
         # Falkland Islands
-        # lat=-51.524793,
-        # lon=-60.118504,
+        lat=-51.524793,
+        lon=-60.118504,
         # 10x binoculars
         optic=sp.optic.Binoculars(
             magnification=10,
@@ -498,12 +500,12 @@ def create_bino_plot_m45():
 # ------------------------------------------
 
 # create_scope_plot_m45()
-create_bino_plot_m45()
+# create_bino_plot_m45()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-# create_zenith()
+create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
