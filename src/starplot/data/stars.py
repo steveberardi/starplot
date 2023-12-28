@@ -161,22 +161,19 @@ class StarCatalog(str, Enum):
 
 
 def load_tycho1():
-    from pandas import read_csv
+    from pandas import read_parquet
 
-    df = read_csv(
-        DataFiles.TYCHO_1,
-        names=[
-            "hip",
-            "magnitude",
-            "ra_hours",
-            "dec_degrees",
-            "parallax_mas",
-            "ra_mas_per_year",
-            "dec_mas_per_year",
-            "bv",
-        ],
-        compression="gzip",
-    )
+    # columns=[
+    #     "hip",
+    #     "magnitude",
+    #     "ra_hours",
+    #     "dec_degrees",
+    #     "parallax_mas",
+    #     "ra_mas_per_year",
+    #     "dec_mas_per_year",
+    #     "bv",
+    # ]
+    df = read_parquet(DataFiles.TYCHO_1)
     df = df.assign(
         ra_degrees=df["ra_hours"] * 15.0,
         epoch_year=1991.25,

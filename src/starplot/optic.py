@@ -361,6 +361,7 @@ class OpticPlot(StarPlot):
         self.raise_on_below_horizon = raise_on_below_horizon
 
         self.optic = optic
+        self._geodetic = ccrs.Geodetic()
 
         if self.optic.true_fov > self.FIELD_OF_VIEW_MAX:
             raise ValueError(
@@ -376,20 +377,20 @@ class OpticPlot(StarPlot):
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
         point = Star(ra_hours=ra, dec_degrees=dec)
-        position = self.location.at(self.timescale).observe(point)
+        position = self.observe(point)
         pos_apparent = position.apparent()
         pos_alt, pos_az, _ = pos_apparent.altaz()
         return pos_az.degrees, pos_alt.degrees
 
     def _plot_kwargs(self) -> dict:
-        return dict(transform=ccrs.Geodetic())
+        return dict(transform=self._geodetic)
 
     def in_bounds(self, ra, dec) -> bool:
         az, alt = self._prepare_coords(ra, dec)
         return self.in_bounds_altaz(alt, az)
 
     def in_bounds_altaz(self, alt, az) -> bool:
-        x, y = self._proj.transform_point(az, alt, ccrs.Geodetic())
+        x, y = self._proj.transform_point(az, alt, self._geodetic)
         return self.optic.in_bounds(x, y)
 
     def _calc_position(self):
@@ -566,7 +567,7 @@ class OpticPlot(StarPlot):
 
     def _plot_border(self):
         x, y = self._proj.transform_point(
-            self.pos_az.degrees, self.pos_alt.degrees, ccrs.Geodetic()
+            self.pos_az.degrees, self.pos_alt.degrees, self._geodetic
         )
 
         # Background of Viewable Area

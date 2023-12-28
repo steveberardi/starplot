@@ -115,11 +115,13 @@ class MapPlot(StarPlot):
         self.star_catalog = star_catalog
         self.rasterize_stars = rasterize_stars
 
+        self._geodetic = ccrs.Geodetic()
+        self._plate_carree = ccrs.PlateCarree()
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
         # return dict(transform=ccrs.PlateCarree())
-        return dict(transform=ccrs.Geodetic())
+        return dict(transform=self._geodetic)
 
     def _prepare_coords(self, ra: float, dec: float) -> (float, float):
         return -1 * (ra * 15 - 360), dec
@@ -160,9 +162,9 @@ class MapPlot(StarPlot):
 
         # ensures constellation lines are straight in all supported projections
         if self.projection == Projection.MERCATOR:
-            transform = ccrs.PlateCarree()
+            transform = self._plate_carree
         else:
-            transform = ccrs.Geodetic()
+            transform = self._geodetic
 
         constellation_lines = gpd.read_file(DataFiles.CONSTELLATION_LINES)
         constellation_lines.plot(
@@ -182,7 +184,7 @@ class MapPlot(StarPlot):
             **self.style.constellation_borders.matplot_kwargs(
                 size_multiplier=self._size_multiplier
             ),
-            transform=ccrs.PlateCarree(),
+            transform=self._plate_carree,
         )
 
     def _plot_constellation_labels(self):
@@ -332,7 +334,7 @@ class MapPlot(StarPlot):
                 **self.style.celestial_equator.line.matplot_kwargs(
                     self._size_multiplier
                 ),
-                transform=ccrs.PlateCarree(),
+                transform=self._plate_carree,
             )
 
         if self.style.celestial_equator.label.visible:
@@ -562,7 +564,7 @@ class MapPlot(StarPlot):
         self._proj = Projection.crs(self.projection, center_lon)
         self._proj.threshold = 100
         self.ax = plt.axes(projection=self._proj)
-        self.ax.set_extent(self._latlon_bounds(), crs=ccrs.PlateCarree())
+        self.ax.set_extent(self._latlon_bounds(), crs=self._plate_carree)
         self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
 

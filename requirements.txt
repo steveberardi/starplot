@@ -10,3 +10,5 @@ geopandas==0.13.2
 pillow==10.0.0
 PyYAML==6.0.1
 PyOngc==1.0.1
+pyarrow==14.0.2
+fastparquet==2023.10.1

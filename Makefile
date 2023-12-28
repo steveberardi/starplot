@@ -7,6 +7,12 @@ else
  DR_ARGS=-it
 endif
 
+ifeq ($(PROFILE), true)
+ SCRATCH_ARGS=-m cProfile -o results.prof
+else
+ SCRATCH_ARGS=
+endif
+
 DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 
@@ -41,7 +47,7 @@ shell:
 	$(DOCKER_RUN) python
 
 scratchpad:
-	$(DOCKER_RUN) "python scripts/scratchpad.py"
+	$(DOCKER_RUN) "python $(SCRATCH_ARGS) scripts/scratchpad.py"
 
 examples:
 	$(DOCKER_RUN) "cd examples && python examples.py"
