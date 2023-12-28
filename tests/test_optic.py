@@ -105,3 +105,32 @@ def test_optic_plot_camera(optic_style, dt_dec_16):
 
     assert dhash(filename) == "4171515165614975"
     assert colorhash(filename) in ["3ae00008000", "3ac00008000"]
+
+def test_optic_plot_polaris_binoculars(dt_dec_16):
+    optic_style = styles.PlotStyle().extend(
+        styles.extensions.GRAYSCALE,
+        styles.extensions.OPTIC,
+    )
+    optic_plot = OpticPlot(
+        # Polaris
+        ra=2.51667,
+        dec=89.26,
+        lat=32.97,
+        lon=-117.038611,
+        # 10x binoculars
+        optic=optic.Binoculars(
+            magnification=10,
+            fov=65,
+        ),
+        dt=dt_dec_16,
+        limiting_magnitude=14,
+        style=optic_style,
+        resolution=1600,
+        include_info_text=True,
+        colorize_stars=False,
+    )
+    filename = DATA_PATH / "actual-optic-binoculars-polaris.png"
+    optic_plot.export(filename)
+
+    assert dhash(filename) == "063140cc48611355"
+    assert colorhash(filename) == "07000000000"
