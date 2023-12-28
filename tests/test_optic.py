@@ -106,6 +106,7 @@ def test_optic_plot_camera(optic_style, dt_dec_16):
     assert dhash(filename) == "4171515165614975"
     assert colorhash(filename) in ["3ae00008000", "3ac00008000"]
 
+
 def test_optic_plot_polaris_binoculars(dt_dec_16):
     optic_style = styles.PlotStyle().extend(
         styles.extensions.GRAYSCALE,
