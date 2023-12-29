@@ -159,8 +159,10 @@ class StarCatalog(str, Enum):
     TYCHO_1 = "tycho-1"
     """Tycho-1 Catalog = 1,055,115 stars"""
 
+
 def load_hipparcos():
     return read_parquet(DataFiles.HIPPARCOS)
+
 
 def load_tycho1():
     # columns=[

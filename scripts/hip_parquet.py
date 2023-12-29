@@ -8,7 +8,7 @@ with load.open(hipparcos.URL) as f:
     hipstars = hipparcos.load_dataframe(f)
 
 # convert to parquet
-hipstars.to_parquet('stars.hipparcos.parquet', index=True, compression="gzip")
+hipstars.to_parquet("stars.hipparcos.parquet", index=True, compression="gzip")
 
 # also save to CSV for QA
-hipstars.to_csv('stars.hipparcos.csv')
+hipstars.to_csv("stars.hipparcos.csv")
