@@ -13,4 +13,5 @@ class DataFiles(str, Enum):
     CONSTELLATION_LINES = DATA_PATH / "i.constellations.lines.json"
     CONSTELLATION_BORDERS = DATA_PATH / "i.constellations.borders.json"
     MILKY_WAY = DATA_PATH / "i.milkyway.split.json"
-    TYCHO_1 = DATA_PATH / "stars.tycho-1.csv.gz"
+    HIPPARCOS = DATA_PATH / "stars.hipparcos.parquet"
+    TYCHO_1 = DATA_PATH / "stars.tycho-1.gz.parquet"

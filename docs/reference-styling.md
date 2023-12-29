@@ -157,10 +157,12 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
 
 - **Color Schemes**
     - `GRAYSCALE` - Optimized for printing in grayscale ([details](#extensions-grayscale))
+    - `GRAYSCALE_DARK` - Like `GRAYSCALE`, but inverted (white stars, black background) ([details](#extensions-grayscale-dark))
     - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
     - `BLUE_MEDIUM` - Medium brightness bluish gray colors ([details](#extensions-blue-medium))
     - `BLUE_DARK` - Dark bluish gray colors ([details](#extensions-blue-dark))
 - **Plot types**
+    - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
     - `ZENITH` - Basic styling tailored for zenith plots ([details](#extensions-zenith))
 - **Others**
@@ -265,10 +267,12 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
 
 - **Color Schemes**
     - `GRAYSCALE` - Optimized for printing in grayscale ([details](#extensions-grayscale))
+    - `GRAYSCALE_DARK` - Like `GRAYSCALE`, but inverted (white stars, black background) ([details](#extensions-grayscale-dark))
     - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
     - `BLUE_MEDIUM` - Medium brightness bluish gray colors ([details](#extensions-blue-medium))
     - `BLUE_DARK` - Dark bluish gray colors ([details](#extensions-blue-dark))
 - **Plot types**
+    - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
     - `ZENITH` - Basic styling tailored for zenith plots ([details](#extensions-zenith))
 - **Others**
@@ -285,6 +289,18 @@ Optimized for printing in grayscale
 **Source**
 ```yaml
 {% include 'src/starplot/styles/ext/grayscale.yml' %}
+```
+</div>
+
+<!-- GRAYSCALE DARK -->
+<h2 class="doc doc-heading" id="extensions-grayscale-dark"><code>GRAYSCALE_DARK</code></h2>
+
+<div class="indent" markdown>
+Like `GRAYSCALE`, but inverted (white stars, black background)
+
+**Source**
+```yaml
+{% include 'src/starplot/styles/ext/grayscale_dark.yml' %}
 ```
 </div>
 
@@ -321,6 +337,18 @@ Dark bluish gray colors
 **Source**
 ```yaml
 {% include 'src/starplot/styles/ext/blue_dark.yml' %}
+```
+</div>
+
+<!-- OPTIC -->
+<h2 class="doc doc-heading" id="extensions-optic"><code>OPTIC</code></h2>
+
+<div class="indent" markdown>
+Basic styling tailored for optic plots
+
+**Source**
+```yaml
+{% include 'src/starplot/styles/ext/optic.yml' %}
 ```
 </div>
 

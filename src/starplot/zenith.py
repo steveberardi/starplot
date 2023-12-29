@@ -44,13 +44,13 @@ class ZenithPlot(StarPlot):
     """Creates a new zenith plot.
 
     Args:
-        lat: Latitude of viewing location
-        lon: Longitude of viewing location
-        include_info_text: If True, then the plot will include the time/location
-        dt: Date/time to use for star/planet positions (*must be timezone-aware*). Default = current UTC time.
+        lat: Latitude of observer's location
+        lon: Longitude of observer's location
+        dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
-        ephemeris: Ephemeris to use for calculating star positions
+        include_info_text: If True, then the plot will include the time/location
+        ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
@@ -65,10 +65,10 @@ class ZenithPlot(StarPlot):
         self,
         lat: float = None,
         lon: float = None,
-        include_info_text: bool = False,
         dt: datetime = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
+        include_info_text: bool = False,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = ZENITH_BASE,
         resolution: int = 2048,
@@ -144,7 +144,7 @@ class ZenithPlot(StarPlot):
                 self._maybe_remove_label(label)
 
     def _plot_stars(self):
-        stardata = stars.load(limiting_magnitude=self.limiting_magnitude)
+        stardata = stars.load(stars.StarCatalog.HIPPARCOS)
         self._stardata = stardata
 
         eph = load(self.ephemeris)
@@ -155,46 +155,52 @@ class ZenithPlot(StarPlot):
         stardata["x"], stardata["y"] = self.project_fn(star_positions)
 
         # filter stars by limiting magnitude
-        bright_stars = stardata.magnitude <= self.limiting_magnitude
+        bright_stars = stardata[(stardata["magnitude"] <= self.limiting_magnitude)]
 
-        # calculate size of each star based on magnitude
+        starpos_x = []
+        starpos_y = []
         sizes = []
-        for m in stardata["magnitude"][bright_stars]:
-            if m < 2:
-                sizes.append((8 - m) ** 2.56 * (self._size_multiplier**2))
-            elif m < 8:
-                sizes.append((8 - m) ** 1.38 * (self._size_multiplier**2))
-            else:
-                sizes.append(self._size_multiplier**2)
 
-        # Draw stars
         if self.style.star.marker.visible:
+            for _, star in bright_stars.iterrows():
+                m = star["magnitude"]
+                x = star["x"]
+                y = star["y"]
+
+                if not in_circle(x, y, radius=1):
+                    continue
+
+                if m < 2:
+                    sizes.append((8 - m) ** 2.56 * (self._size_multiplier**2))
+                elif m < 8:
+                    sizes.append((8 - m) ** 1.38 * (self._size_multiplier**2))
+                else:
+                    sizes.append(self._size_multiplier**2)
+
+                starpos_x.append(x)
+                starpos_y.append(y)
+
             self._plotted_stars = self.ax.scatter(
-                stardata["x"][bright_stars],
-                stardata["y"][bright_stars],
+                starpos_x,
+                starpos_y,
                 sizes,
                 color=self.style.star.marker.color.as_hex(),
                 clip_path=self.background_circle,
             )
 
-        starpos_x = []
-        starpos_y = []
+        self._add_legend_handle_marker("Star", self.style.star.marker)
 
         # Plot star names
         if not self.style.star.label.visible:
             return
 
-        self._add_legend_handle_marker("Star", self.style.star.marker)
-
-        stars_labeled = stardata[bright_stars]
+        stars_labeled = bright_stars[
+            (bright_stars["magnitude"] <= self.limiting_magnitude_labels)
+        ]
         stars_labeled.sort_values("magnitude")
 
         for hip_id, s in stars_labeled.iterrows():
-            if (
-                in_circle(s["x"], s["y"])
-                and hip_id in stars.ZENITH_BASE
-                and s["magnitude"] < self.limiting_magnitude_labels
-            ):
+            if in_circle(s["x"], s["y"]) and hip_id in stars.ZENITH_BASE:
                 label = self.ax.text(
                     s["x"] + 0.00984,
                     s["y"] - 0.006,
@@ -209,9 +215,6 @@ class ZenithPlot(StarPlot):
                 label.set_alpha(self.style.star.label.font_alpha)
                 label.set_clip_on(True)
                 self._maybe_remove_label(label)
-
-                starpos_x.append(s["x"])
-                starpos_y.append(s["y"])
 
     def _plot_dso_base(self):
         if not self.style.dso.marker.visible:
@@ -334,16 +337,13 @@ class ZenithPlot(StarPlot):
         self.refresh_legend()
 
         if self.include_info_text:
-            font_size = self.style.legend.font_size * self._size_multiplier * 2
             dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
             info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
             self.ax.text(
                 -1.03,
                 -1.03,
                 info,
-                fontsize=font_size,
-                family="monospace",
-                linespacing=2,
+                **self.style.info_text.matplot_kwargs(self._size_multiplier),
             )
 
         if self.adjust_text:

@@ -1,0 +1,14 @@
+
+planets:
+  label:
+    visible: true
+  marker:
+    size: 11
+moon:
+  label:
+    visible: true
+  marker:
+    visible: true
+legend:
+  location: "lower center"
+  visible: false

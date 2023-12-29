@@ -1,0 +1,64 @@
+background_color: 'hsl(136, 0%, 10%)'
+border_bg_color: 'hsl(136, 0%, 20%)'
+border_font_color: 'hsl(136, 0%, 97%)'
+border_line_color: 'hsl(136, 0%, 97%)'
+star:
+  label:
+    font_color: hsl(136, 0%, 97%)
+  marker:
+    color: hsl(136, 0%, 97%)
+bayer_labels:
+  font_color: hsl(136, 0%, 77%)
+celestial_equator:
+  label:
+    font_color: '#999'
+  line:
+    color: '#999'
+constellation:
+  label:
+    font_color: hsl(136, 0%, 77%)
+  line:
+    color: hsl(136, 0%, 42%)
+dso_double_star:
+  marker:
+    color: 'hsl(136, 0%, 97%)'
+dso_galaxy:
+  marker:
+    color: 'hsl(136, 0%, 97%)'
+    alpha: 0.8
+    symbol: D
+    fill: top
+dso_nebula:
+  marker:
+    color: 'hsl(136, 0%, 97%)'
+    alpha: 0.7
+dso_open_cluster:
+  marker:
+    edge_color: 'hsl(136, 0%, 97%)'
+    fill: none
+ecliptic:
+  label:
+    font_color: '#777'
+  line:
+    color: '#777'
+milky_way:
+  alpha: 0.1
+  color: hsl(136, 0%, 62%)
+  edge_width: 0
+planets:
+  label:
+    font_color: hsl(136, 0%, 97%)
+  marker:
+    color: hsl(136, 0%, 97%)
+    fill: bottom
+    edge_color: hsl(136, 0%, 97%)
+moon:
+  label:
+    font_color: hsl(136, 0%, 97%)
+gridlines:
+  label:
+    font_color: hsl(136, 0%, 97%)
+tick_marks:
+  font_color: hsl(136, 0%, 97%)
+legend:
+  background_color: hsl(136, 0%, 64%)

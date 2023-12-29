@@ -20,6 +20,8 @@ hip8.dat
 
 temp*
 
+*.prof
+
 # test-generated data
 tests/data/actual*.png
 

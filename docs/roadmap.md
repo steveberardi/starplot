@@ -1,9 +1,10 @@
 
 <!-- Here are some planned features coming soon to Starplot: -->
 
-- ⭐ Custom markers
-- 🔭 Scope plots - that will simulate what you'll see through a telescope eyepiece
+- 🚀 Faster plotting and exporting
+- 📷 Rotation angles for camera optic plots
 - ⚖️ Better auto font-size adjustment
 - ☄️ Better label collision detection and handling
+- 🌌 More accurate DSO outlines
 
 ✨ Clear Skies! ✨

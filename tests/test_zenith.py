@@ -58,5 +58,5 @@ def test_zenith_plot_with_info_label():
     )
     zp.export(filename)
 
-    assert dhash(filename) == "2b71ac848894790f"
+    assert dhash(filename) == "2b71ac848894794f"
     assert colorhash(filename) == "07000000000"

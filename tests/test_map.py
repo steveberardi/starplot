@@ -176,5 +176,5 @@ def test_map_plot_scope_bino_fov():
     p.ax.set_title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "0aa4d29a9ad2a480"
-    assert colorhash(filename) == "07200030000"
+    assert dhash(filename) == "0288a6dadaa68880"
+    assert colorhash(filename) == "07200038000"

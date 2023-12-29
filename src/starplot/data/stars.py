@@ -1,8 +1,8 @@
 from enum import Enum
 
-from skyfield.data import hipparcos
+from pandas import read_parquet
 
-from starplot.data import load as _load, DataFiles
+from starplot.data import DataFiles
 
 """
     Dictionary of stars that will be labeled on the plot
@@ -18,6 +18,7 @@ hip_names = {
     68702: "Hadar",
     95947: "Albireo",
     65477: "Alcor",
+    17702: "Alcyone",
     21421: "Aldebaran",
     105199: "Alderamin",
     15863: "Mirfak",
@@ -159,22 +160,22 @@ class StarCatalog(str, Enum):
     """Tycho-1 Catalog = 1,055,115 stars"""
 
 
-def load_tycho1():
-    from pandas import read_csv
+def load_hipparcos():
+    return read_parquet(DataFiles.HIPPARCOS)
 
-    df = read_csv(
-        DataFiles.TYCHO_1,
-        names=[
-            "hip",
-            "magnitude",
-            "ra_hours",
-            "dec_degrees",
-            "parallax_mas",
-            "ra_mas_per_year",
-            "dec_mas_per_year",
-        ],
-        compression="gzip",
-    )
+
+def load_tycho1():
+    # columns=[
+    #     "hip",
+    #     "magnitude",
+    #     "ra_hours",
+    #     "dec_degrees",
+    #     "parallax_mas",
+    #     "ra_mas_per_year",
+    #     "dec_mas_per_year",
+    #     "bv",
+    # ]
+    df = read_parquet(DataFiles.TYCHO_1)
     df = df.assign(
         ra_degrees=df["ra_hours"] * 15.0,
         epoch_year=1991.25,
@@ -182,18 +183,10 @@ def load_tycho1():
     return df.set_index("hip")
 
 
-def load(
-    catalog: StarCatalog = StarCatalog.HIPPARCOS,
-    limiting_magnitude: float = BASE_LIMITING_MAG,
-):
+def load(catalog: StarCatalog = StarCatalog.HIPPARCOS):
     if catalog == StarCatalog.TYCHO_1:
         return load_tycho1()
-
-    if limiting_magnitude <= BASE_LIMITING_MAG:
-        filepath = "hip8.gz"
+    elif catalog == StarCatalog.HIPPARCOS:
+        return load_hipparcos()
     else:
-        filepath = hipparcos.URL
-
-    with _load.open(filepath) as f:
-        stardata = hipparcos.load_dataframe(f)
-    return stardata
+        raise ValueError("Unrecognized star catalog.")

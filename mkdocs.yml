@@ -8,6 +8,7 @@ nav:
     - Installation: installation.md
     - Examples: examples.md
     - Reference:
+        - starplot.OpticPlot: reference-opticplot.md
         - starplot.MapPlot: reference-mapplot.md
         - starplot.ZenithPlot: reference-zenithplot.md
         - starplot.SkyObject: reference-skyobject.md

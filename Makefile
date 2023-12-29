@@ -7,10 +7,29 @@ else
  DR_ARGS=-it
 endif
 
+ifeq ($(PROFILE), true)
+ SCRATCH_ARGS=-m cProfile -o results.prof
+else
+ SCRATCH_ARGS=
+endif
+
 DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 
+DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" --target dev .
+DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-$(PYTHON_VERSION)
+
 export PYTHONPATH=./src/
+
+# ------------------------------------------------------------------
+build: PYTHON_VERSION=3.11.7
+build: DOCKER_BUILD_ARGS=-t starplot-dev
+build:
+	$(DOCKER_BUILD_PYTHON)
+
+docker-multi-arch:
+	docker buildx inspect $(DOCKER_BUILDER) && echo "Builder already exists!" || docker buildx create --name $(DOCKER_BUILDER) --bootstrap --use
+	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag sberardi/starplot-base:latest --target base .
 
 lint:
 	$(DOCKER_RUN) "ruff check src/ tests/"
@@ -21,20 +40,6 @@ format:
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
 
-docker-dev:
-	docker build -t starplot-dev --target dev .
-
-docker-base:
-	docker build -t starplot-base --target base .
-	docker tag starplot-base sberardi/starplot-base:latest
-
-docker-base-push:
-	docker push sberardi/starplot-base:latest
-
-docker-multi-arch:
-	docker buildx inspect $(DOCKER_BUILDER) && echo "Builder already exists!" || docker buildx create --name $(DOCKER_BUILDER) --bootstrap --use
-	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag sberardi/starplot-base:latest --target base .
-
 bash:
 	$(DOCKER_RUN) bash
 
@@ -42,10 +47,33 @@ shell:
 	$(DOCKER_RUN) python
 
 scratchpad:
-	$(DOCKER_RUN) "python scripts/scratchpad.py"
+	$(DOCKER_RUN) "python $(SCRATCH_ARGS) scripts/scratchpad.py"
 
 examples:
 	$(DOCKER_RUN) "cd examples && python examples.py"
+
+# ------------------------------------------------------------------
+# Python version testing
+# ------------------------------------------------------------------
+test-3.9: PYTHON_VERSION=3.9.18
+test-3.9:
+	$(DOCKER_BUILD_PYTHON)
+	$(DOCKER_RUN_PYTHON_TEST)
+
+test-3.10: PYTHON_VERSION=3.10.13
+test-3.10:
+	$(DOCKER_BUILD_PYTHON)
+	$(DOCKER_RUN_PYTHON_TEST)
+
+test-3.11: PYTHON_VERSION=3.11.7
+test-3.11:
+	$(DOCKER_BUILD_PYTHON)
+	$(DOCKER_RUN_PYTHON_TEST)
+
+test-3.12: PYTHON_VERSION=3.12.1
+test-3.12:
+	$(DOCKER_BUILD_PYTHON)
+	$(DOCKER_RUN_PYTHON_TEST)
 
 # ------------------------------------------------------------------
 # Docs
@@ -61,11 +89,11 @@ docs-publish:
 
 # ------------------------------------------------------------------
 # PyPi - build & publish
-build:
+flit-build:
 	$(DOCKER_RUN) "python -m flit build"
 
-publish: DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
-publish:
+flit-publish: DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
+flit-publish:
 	$(DOCKER_RUN) "python -m flit publish"
 
 # ------------------------------------------------------------------
@@ -74,7 +102,7 @@ ephemeris:
 	$(DOCKER_RUN) "python -m jplephem excerpt 2001/1/1 2050/1/1 $(DE421_URL) de421sub.bsp"
 
 hip8:
-	$(DOCKER_RUN) "python ./scripts/hip.py hip_main.dat hip8.dat"
+	$(DOCKER_RUN) "python ./scripts/hip.py ./src/starplot/data/library/hip_main.dat hip8.dat 15"
 
 scripts:
 	$(DOCKER_RUN) "python ./scripts/$(SCRIPT).py"
@@ -86,4 +114,4 @@ clean:
 	rm -rf site
 	rm -rf htmlcov
 
-.PHONY: install test shell build publish clean ephemeris hip8 scratchpad examples scripts
+.PHONY: install test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts

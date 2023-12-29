@@ -312,6 +312,12 @@ class LabelStyle(BaseStyle):
     font_name: Optional[str] = None
     """Name of the font to use"""
 
+    font_family: Optional[str] = None
+    """Font family (e.g. 'monospace', 'sans-serif', 'serif', etc)"""
+
+    line_spacing: Optional[int] = None
+    """Spacing between lines of text"""
+
     zorder: int = 1
     """Zorder of the label"""
 
@@ -319,7 +325,7 @@ class LabelStyle(BaseStyle):
     """If True, the label will be plotted"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
-        return dict(
+        style = dict(
             color=self.font_color.as_hex(),
             fontsize=self.font_size * size_multiplier * FONT_SCALE,
             fontstyle=self.font_style,
@@ -328,6 +334,13 @@ class LabelStyle(BaseStyle):
             alpha=self.font_alpha,
             zorder=self.zorder,
         )
+
+        if self.font_family:
+            style["family"] = self.font_family
+        if self.line_spacing:
+            style["linespacing"] = self.line_spacing
+
+        return style
 
 
 class ObjectStyle(BaseStyle):
@@ -418,6 +431,15 @@ class PlotStyle(BaseStyle):
     border_font_color: ColorStr = ColorStr("#000")
     border_line_color: ColorStr = ColorStr("#000")
     border_bg_color: ColorStr = ColorStr("#fff")
+
+    # Info text
+    info_text: LabelStyle = LabelStyle(
+        font_size=10,
+        zorder=1,
+        family="monospace",
+        line_spacing=2,
+    )
+    """Styling for info text (only applies to zenith and optic plots)"""
 
     # Stars
     star: ObjectStyle = ObjectStyle(
