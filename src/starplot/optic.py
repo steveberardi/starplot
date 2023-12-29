@@ -24,7 +24,7 @@ class OpticPlot(StarPlot):
         dec: Declination of target center
         lat: Latitude of observer's location
         lon: Longitude of observer's location
-        dt: Date/time to use for star/planet positions (*must be timezone-aware*). Default = current UTC time.
+        dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
         include_info_text: If True, then the plot will include a table with details of the target/observer/optic

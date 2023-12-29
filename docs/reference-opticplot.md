@@ -9,8 +9,6 @@ These plots use an [azimuthal equidistant projection](https://en.wikipedia.org/w
         show_root_heading: true
         docstring_section_style: list
 
-
-
 ## ::: starplot.optics.Optic
     options:
         show_root_heading: true

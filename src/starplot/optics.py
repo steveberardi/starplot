@@ -10,7 +10,7 @@ from starplot.utils import in_circle
 
 
 class Optic(ABC):
-    """Abstract class for defining Optics"""
+    """Abstract class for defining Optics."""
 
     def __init__(self) -> None:
         pass
@@ -57,9 +57,9 @@ class Scope(Optic):
 
     See subclasses of this optic for more specific use cases:
 
-    - [`Refractor`][starplot.optic.Refractor] - automatically inverts the view (i.e. assumes a star diagonal is used)
+    - [`Refractor`][starplot.optics.Refractor] - automatically inverts the view (i.e. assumes a star diagonal is used)
 
-    - [`Reflector`][starplot.optic.Reflector] - automatically rotates the view so it's upside-down
+    - [`Reflector`][starplot.optics.Reflector] - automatically rotates the view so it's upside-down
 
     Args:
         focal_length: Focal length (mm) of the telescope
@@ -113,7 +113,7 @@ class Refractor(Scope):
     Warning:
         This optic assumes a star diagonal is used, so it applies a transform that inverts the image.
 
-        If you don't want this transform applied, then use the generic [`Scope`][starplot.optic.Scope] optic instead.
+        If you don't want this transform applied, then use the generic [`Scope`][starplot.optics.Scope] optic instead.
 
     Args:
         focal_length: Focal length (mm) of the telescope
@@ -139,7 +139,7 @@ class Reflector(Scope):
     Warning:
         This optic applies a transform that produces an "upside-down" image.
 
-        If you don't want this transform applied, then use the generic [`Scope`][starplot.optic.Scope] optic instead.
+        If you don't want this transform applied, then use the generic [`Scope`][starplot.optics.Scope] optic instead.
 
     Args:
         focal_length: Focal length (mm) of the telescope
@@ -208,7 +208,7 @@ class Camera(Optic):
     """Creates a new Camera optic
 
     Note:
-        Field of view is calculated using the following formula:
+        Field of view for each dimension is calculated using the following formula:
 
         ```
         TFOV = 2 * arctan( d / (2 * f) )
@@ -216,7 +216,7 @@ class Camera(Optic):
 
         _Where_:
 
-        d = sensor size
+        d = sensor size (height or width)
 
         f = focal length of lens
 
