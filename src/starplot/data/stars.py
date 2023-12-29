@@ -1,8 +1,8 @@
 from enum import Enum
 
-from skyfield.data import hipparcos
+from pandas import read_parquet
 
-from starplot.data import load as _load, DataFiles
+from starplot.data import DataFiles
 
 """
     Dictionary of stars that will be labeled on the plot
@@ -159,10 +159,10 @@ class StarCatalog(str, Enum):
     TYCHO_1 = "tycho-1"
     """Tycho-1 Catalog = 1,055,115 stars"""
 
+def load_hipparcos():
+    return read_parquet(DataFiles.HIPPARCOS)
 
 def load_tycho1():
-    from pandas import read_parquet
-
     # columns=[
     #     "hip",
     #     "magnitude",
@@ -181,18 +181,10 @@ def load_tycho1():
     return df.set_index("hip")
 
 
-def load(
-    catalog: StarCatalog = StarCatalog.HIPPARCOS,
-    limiting_magnitude: float = BASE_LIMITING_MAG,
-):
+def load(catalog: StarCatalog = StarCatalog.HIPPARCOS):
     if catalog == StarCatalog.TYCHO_1:
         return load_tycho1()
-
-    if limiting_magnitude <= BASE_LIMITING_MAG:
-        filepath = "hip8.gz"
+    elif catalog == StarCatalog.HIPPARCOS:
+        return load_hipparcos()
     else:
-        filepath = hipparcos.URL
-
-    with _load.open(filepath) as f:
-        stardata = hipparcos.load_dataframe(f)
-    return stardata
+        raise ValueError("Unrecognized star catalog.")

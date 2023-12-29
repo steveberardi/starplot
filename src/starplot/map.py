@@ -211,9 +211,7 @@ class MapPlot(StarPlot):
         )
 
     def _plot_stars(self):
-        stardata = stars.load(
-            catalog=self.star_catalog, limiting_magnitude=self.limiting_magnitude
-        )
+        stardata = stars.load(self.star_catalog)
         eph = load(self.ephemeris)
         earth = eph["earth"]
 

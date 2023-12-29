@@ -133,10 +133,7 @@ class OpticPlot(StarPlot):
             raise ValueError("Target is below horizon at specified time/location.")
 
     def _plot_stars(self):
-        stardata = stars.load(
-            catalog=stars.StarCatalog.TYCHO_1,
-            limiting_magnitude=self.limiting_magnitude,
-        )
+        stardata = stars.load(stars.StarCatalog.TYCHO_1)
         self._stardata = stardata
 
         ra_min = self.ra - self.optic.true_fov / 15 * 1.08
