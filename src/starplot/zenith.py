@@ -44,12 +44,12 @@ class ZenithPlot(StarPlot):
     """Creates a new zenith plot.
 
     Args:
-        lat: Latitude of viewing location
-        lon: Longitude of viewing location
-        include_info_text: If True, then the plot will include the time/location
+        lat: Latitude of observer's location
+        lon: Longitude of observer's location
         dt: Date/time to use for star/planet positions (*must be timezone-aware*). Default = current UTC time.
         limiting_magnitude: Limiting magnitude of stars to plot
         limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
+        include_info_text: If True, then the plot will include the time/location
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
@@ -65,10 +65,10 @@ class ZenithPlot(StarPlot):
         self,
         lat: float = None,
         lon: float = None,
-        include_info_text: bool = False,
         dt: datetime = None,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 2.1,
+        include_info_text: bool = False,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = ZENITH_BASE,
         resolution: int = 2048,

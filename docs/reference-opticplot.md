@@ -11,35 +11,35 @@ These plots use an [azimuthal equidistant projection](https://en.wikipedia.org/w
 
 
 
-## ::: starplot.optic.Optic
+## ::: starplot.optics.Optic
     options:
         show_root_heading: true
 
-### ::: starplot.optic.Binoculars
-    options:
-        merge_init_into_class: true
-        show_root_heading: true
-        show_docstring_attributes: true
-
-### ::: starplot.optic.Scope
+### ::: starplot.optics.Binoculars
     options:
         merge_init_into_class: true
         show_root_heading: true
         show_docstring_attributes: true
 
-### ::: starplot.optic.Refractor
+### ::: starplot.optics.Scope
     options:
         merge_init_into_class: true
         show_root_heading: true
         show_docstring_attributes: true
 
-### ::: starplot.optic.Reflector
+### ::: starplot.optics.Refractor
     options:
         merge_init_into_class: true
         show_root_heading: true
         show_docstring_attributes: true
 
-### ::: starplot.optic.Camera
+### ::: starplot.optics.Reflector
+    options:
+        merge_init_into_class: true
+        show_root_heading: true
+        show_docstring_attributes: true
+
+### ::: starplot.optics.Camera
     options:
         merge_init_into_class: true
         show_root_heading: true

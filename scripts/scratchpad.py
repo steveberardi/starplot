@@ -334,24 +334,24 @@ def create_scope_plot_m45():
         lat=32.97,
         lon=-117.038611,
         # AT72EDII
-        # optic=sp.optic.Refractor(
+        # optic=sp.optics.Refractor(
         #     focal_length=430,
         #     eyepiece_focal_length=11,
         #     eyepiece_fov=82,
         # ),
         # TV-85
-        # optic=sp.optic.Refractor(
+        # optic=sp.optics.Refractor(
         #     focal_length=600,
         #     eyepiece_focal_length=9,
         #     eyepiece_fov=100,
         # ),
         # 10x binoculars
-        optic=sp.optic.Binoculars(
+        optic=sp.optics.Binoculars(
             magnification=10,
             fov=65,
         ),
         # Fuji X-T1
-        # optic=sp.optic.Camera(
+        # optic=sp.optics.Camera(
         #     sensor_height=15.6,
         #     # sensor_height=22.2,
         #     sensor_width=23.6,
@@ -433,7 +433,7 @@ def create_bino_plot_m45():
         lat=-51.524793,
         lon=-60.118504,
         # 10x binoculars
-        optic=sp.optic.Binoculars(
+        optic=sp.optics.Binoculars(
             magnification=10,
             fov=65,
         ),
@@ -461,24 +461,24 @@ def create_bino_plot_m45():
         lat=32.97,
         lon=-117.038611,
         # 10x binoculars
-        # optic=sp.optic.Binoculars(
+        # optic=sp.optics.Binoculars(
         #     magnification=10,
         #     fov=65,
         # ),
         # AT72EDII
-        # optic=sp.optic.Refractor(
+        # optic=sp.optics.Refractor(
         #     focal_length=430,
         #     eyepiece_focal_length=11,
         #     eyepiece_fov=82,
         # ),
         # TV-85
-        optic=sp.optic.Refractor(
+        optic=sp.optics.Refractor(
             focal_length=600,
             eyepiece_focal_length=14,
             eyepiece_fov=82,
         ),
         # Fuji X-T2
-        # optic=sp.optic.Camera(
+        # optic=sp.optics.Camera(
         #     sensor_height=15.6,
         #     sensor_width=23.6,
         #     lens_focal_length=430,

@@ -1,7 +1,7 @@
 from datetime import datetime
 from pytz import timezone
 from starplot import OpticPlot
-from starplot.optic import Refractor
+from starplot.optics import Refractor
 from starplot.styles import PlotStyle, extensions
 
 dt = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)

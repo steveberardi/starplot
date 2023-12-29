@@ -5,7 +5,7 @@ from pytz import timezone
 
 import pytest
 
-from starplot import styles, optic, OpticPlot
+from starplot import styles, optics, OpticPlot
 
 from .utils import colorhash, dhash
 
@@ -35,7 +35,7 @@ def test_optic_plot_binoculars(optic_style, dt_dec_16):
         lat=32.97,
         lon=-117.038611,
         # 10x binoculars
-        optic=optic.Binoculars(
+        optic=optics.Binoculars(
             magnification=10,
             fov=65,
         ),
@@ -61,7 +61,7 @@ def test_optic_plot_refractor(optic_style, dt_dec_16):
         lat=32.97,
         lon=-117.038611,
         # TV-85 with ES 14mm 82deg
-        optic=optic.Refractor(
+        optic=optics.Refractor(
             focal_length=600,
             eyepiece_focal_length=14,
             eyepiece_fov=82,
@@ -88,7 +88,7 @@ def test_optic_plot_camera(optic_style, dt_dec_16):
         lat=32.97,
         lon=-117.038611,
         # Fuji X-T2
-        optic=optic.Camera(
+        optic=optics.Camera(
             sensor_height=15.6,
             sensor_width=23.6,
             lens_focal_length=430,
@@ -119,7 +119,7 @@ def test_optic_plot_polaris_binoculars(dt_dec_16):
         lat=32.97,
         lon=-117.038611,
         # 10x binoculars
-        optic=optic.Binoculars(
+        optic=optics.Binoculars(
             magnification=10,
             fov=65,
         ),
