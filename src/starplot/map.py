@@ -117,14 +117,21 @@ class MapPlot(StarPlot):
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
+        self._crs = ccrs.CRS(
+            proj4_params=[
+                ("proj", "lonlat"),
+                ("axis", "wnu"), # invert
+            ],
+            globe=ccrs.Globe(ellipse="sphere", flattening=0)
+        )
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
         # return dict(transform=ccrs.PlateCarree())
-        return dict(transform=self._geodetic)
+        return dict(transform=self._crs)
 
     def _prepare_coords(self, ra: float, dec: float) -> (float, float):
-        return -1 * (ra * 15 - 360), dec
+        return ra * 15, dec
 
     def in_bounds(self, ra: float, dec: float) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
@@ -142,8 +149,8 @@ class MapPlot(StarPlot):
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
         return [
-            -1 * (self.ra_max * 15 - 360),
-            -1 * (self.ra_min * 15 - 360),
+            self.ra_min * 15,
+            self.ra_max * 15,
             self.dec_min,
             self.dec_max,
         ]
@@ -207,7 +214,8 @@ class MapPlot(StarPlot):
             **self.style.milky_way.matplot_kwargs(
                 size_multiplier=self._size_multiplier
             ),
-            **self._plot_kwargs(),
+            # **self._plot_kwargs(),
+            transform=self._plate_carree,
         )
 
     def _plot_stars(self):
@@ -293,7 +301,7 @@ class MapPlot(StarPlot):
         if not self.style.ecliptic.line.visible:
             return
 
-        x = [-1 * (ra * 15 - 360) for ra, dec in ecliptic.RA_DECS]
+        x = [(ra * 15) for ra, dec in ecliptic.RA_DECS]
         y = [dec for ra, dec in ecliptic.RA_DECS]
 
         self.ax.plot(
@@ -302,6 +310,7 @@ class MapPlot(StarPlot):
             dash_capstyle=self.style.ecliptic.line.dash_capstyle,
             **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
             **self._plot_kwargs(),
+            # transform=self._plate_carree,
         )
 
         if self.style.ecliptic.label.visible:
@@ -555,14 +564,14 @@ class MapPlot(StarPlot):
         if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:
             # for stereo projections, try to orient map so the pole is "up"
             bounds = self._latlon_bounds()
-            center_lon = (bounds[0] + bounds[1]) / 2
+            center_lon = -1 * (bounds[0] + bounds[1]) / 2
         else:
             center_lon = -180
 
         self._proj = Projection.crs(self.projection, center_lon)
         self._proj.threshold = 100
         self.ax = plt.axes(projection=self._proj)
-        self.ax.set_extent(self._latlon_bounds(), crs=self._plate_carree)
+        self.ax.set_extent(self._latlon_bounds(), crs=self._crs)
         self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
 

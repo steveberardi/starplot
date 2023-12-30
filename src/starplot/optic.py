@@ -85,8 +85,14 @@ class OpticPlot(StarPlot):
         self.raise_on_below_horizon = raise_on_below_horizon
 
         self.optic = optic
-        self._geodetic = ccrs.Geodetic()
-
+        # self._geodetic = ccrs.Geodetic()
+        self._crs = ccrs.CRS(
+            proj4_params=[
+                ("proj", "lonlat"),
+            ],
+            globe=ccrs.Globe(ellipse="sphere", flattening=0)
+        )
+        print(self._crs.globe.to_proj4_params())
         if self.optic.true_fov > self.FIELD_OF_VIEW_MAX:
             raise ValueError(
                 f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX})"
@@ -107,14 +113,14 @@ class OpticPlot(StarPlot):
         return pos_az.degrees, pos_alt.degrees
 
     def _plot_kwargs(self) -> dict:
-        return dict(transform=self._geodetic)
+        return dict(transform=self._crs)
 
     def in_bounds(self, ra, dec) -> bool:
         az, alt = self._prepare_coords(ra, dec)
         return self.in_bounds_altaz(alt, az)
 
     def in_bounds_altaz(self, alt, az, scale: float = 1) -> bool:
-        x, y = self._proj.transform_point(az, alt, self._geodetic)
+        x, y = self._proj.transform_point(az, alt, self._crs)
         return self.optic.in_bounds(x, y, scale)
 
     def _calc_position(self):
@@ -288,7 +294,7 @@ class OpticPlot(StarPlot):
 
     def _plot_border(self):
         x, y = self._proj.transform_point(
-            self.pos_az.degrees, self.pos_alt.degrees, self._geodetic
+            self.pos_az.degrees, self.pos_alt.degrees, self._crs
         )
 
         # Background of Viewable Area
