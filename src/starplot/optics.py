@@ -224,6 +224,7 @@ class Camera(Optic):
         sensor_height: Height of camera sensor (mm)
         sensor_width: Width of camera sensor (mm)
         lens_focal_length: Focal length of camera lens (mm)
+        rotation: Angle (degrees) to rotate camera
 
     Returns:
         Camera: A new instance of a Camera optic
@@ -231,7 +232,7 @@ class Camera(Optic):
     """
 
     def __init__(
-        self, sensor_height: float, sensor_width: float, lens_focal_length: float
+        self, sensor_height: float, sensor_width: float, lens_focal_length: float, rotation: float = 0
     ) -> None:
         self.sensor_height = sensor_height
         self.sensor_width = sensor_width
@@ -248,16 +249,19 @@ class Camera(Optic):
         self.radius_x = self._compute_radius(self.true_fov_x / 2)
         self.radius_y = self._compute_radius(self.true_fov_y / 2)
 
+        self.rotation = rotation
+
     def __str__(self):
         return f"{self.sensor_width}x{self.sensor_height} w/ {self.lens_focal_length}mm lens = {self.true_fov_x:.2f}\N{DEGREE SIGN} x {self.true_fov_y:.2f}\N{DEGREE SIGN}"
 
     @property
     def xlim(self):
-        return self.radius_x
+        return self.radius_x + (self.radius_x * self.rotation/180)
 
     @property
     def ylim(self):
-        return self.radius_y
+        y_offset = self.radius_y * math.sin(math.radians(self.rotation))
+        return self.radius_y + y_offset
 
     @property
     def label(self):
@@ -271,10 +275,17 @@ class Camera(Optic):
             (x, y),
             self.radius_x * 2 + padding,
             self.radius_y * 2 + padding,
+            angle=self.rotation,
+            rotation_point="center",
             **kwargs,
         )
 
     def in_bounds(self, x, y, scale: float = 1) -> bool:
-        in_bounds_x = x < self.radius_x * scale and x > 1 - self.radius_x * scale
-        in_bounds_y = y < self.radius_y * scale and y > 1 - self.radius_y * scale
+        radians = math.radians(180 - self.rotation)
+
+        px = x * math.cos(radians) - y * math.sin(radians)
+        py = x * math.sin(radians) + y * math.cos(radians)
+
+        in_bounds_x = px < self.radius_x * scale and px > -1 * self.radius_x * scale
+        in_bounds_y = py < self.radius_y * scale and py > -1 * self.radius_y * scale
         return in_bounds_x and in_bounds_y

@@ -346,17 +346,18 @@ def create_scope_plot_m45():
         #     eyepiece_fov=100,
         # ),
         # 10x binoculars
-        optic=sp.optics.Binoculars(
-            magnification=10,
-            fov=65,
-        ),
-        # Fuji X-T1
-        # optic=sp.optics.Camera(
-        #     sensor_height=15.6,
-        #     # sensor_height=22.2,
-        #     sensor_width=23.6,
-        #     lens_focal_length=400,
+        # optic=sp.optics.Binoculars(
+        #     magnification=10,
+        #     fov=65,
         # ),
+        # Fuji X-T1
+        optic=sp.optics.Camera(
+            sensor_height=15.6,
+            # sensor_height=22.2,
+            sensor_width=23.6,
+            lens_focal_length=400,
+            rotation=40,
+        ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=21, minute=30, second=0
         ),
@@ -472,17 +473,17 @@ def create_bino_plot_m45():
         #     eyepiece_fov=82,
         # ),
         # TV-85
-        optic=sp.optics.Refractor(
-            focal_length=600,
-            eyepiece_focal_length=14,
-            eyepiece_fov=82,
-        ),
-        # Fuji X-T2
-        # optic=sp.optics.Camera(
-        #     sensor_height=15.6,
-        #     sensor_width=23.6,
-        #     lens_focal_length=430,
+        # optic=sp.optics.Refractor(
+        #     focal_length=600,
+        #     eyepiece_focal_length=14,
+        #     eyepiece_fov=82,
         # ),
+        # Fuji X-T2
+        optic=sp.optics.Camera(
+            sensor_height=15.6,
+            sensor_width=23.6,
+            lens_focal_length=430,
+        ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=22, minute=0, second=0
         ),
@@ -499,38 +500,38 @@ def create_bino_plot_m45():
 
 # ------------------------------------------
 
-# create_scope_plot_m45()
+create_scope_plot_m45()
 # create_bino_plot_m45()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
 
 # create_zenith()
-create_map_mercator()
+# create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
+# create_map_orion()
 # create_map_sgr()
 
-p = sp.MapPlot(
-    projection=Projection.STEREO_NORTH,
-    ra_min=17,
-    ra_max=20,
-    dec_min=30,
-    dec_max=55,
-    limiting_magnitude=8.0,
-    style=sp.styles.MAP_BLUE_LIGHT,
-    resolution=2000,
-)
-p.ax.plot(
-    18.5 * 15,
-    40,
-    marker="*",
-    markersize=50,
-    color="red",
-    transform=p._crs,
-    linestyle="None",
-)
-p.export("temp/map-stereo.svg", format="svg", padding=0.3)
+# p = sp.MapPlot(
+#     projection=Projection.STEREO_NORTH,
+#     ra_min=17,
+#     ra_max=20,
+#     dec_min=30,
+#     dec_max=55,
+#     limiting_magnitude=8.0,
+#     style=sp.styles.MAP_BLUE_LIGHT,
+#     resolution=2000,
+# )
+# p.ax.plot(
+#     18.5 * 15,
+#     40,
+#     marker="*",
+#     markersize=50,
+#     color="red",
+#     transform=p._crs,
+#     linestyle="None",
+# )
+# p.export("temp/map-stereo.svg", format="svg", padding=0.3)
 
 print(f"Total run time: {time.time() - start_time}")

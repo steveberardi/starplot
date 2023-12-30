@@ -215,6 +215,7 @@ class OpticPlot(StarPlot):
                 edgecolors="none",
                 **self._plot_kwargs(),
             )
+            self._plotted_stars.set_clip_on(True)
             self._plotted_stars.set_clip_path(self.background_patch)
             self._add_legend_handle_marker("Star", self.style.star.marker)
 
@@ -293,9 +294,11 @@ class OpticPlot(StarPlot):
             table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.15)
 
     def _plot_border(self):
-        x, y = self._proj.transform_point(
-            self.pos_az.degrees, self.pos_alt.degrees, self._crs
-        )
+        # x, y = self._proj.transform_point(
+        #     self.pos_az.degrees, self.pos_alt.degrees, self._crs
+        # )
+        x = 0
+        y = 0
 
         # Background of Viewable Area
         self.background_patch = self.optic.patch(

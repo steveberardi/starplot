@@ -107,6 +107,34 @@ def test_optic_plot_camera(optic_style, dt_dec_16):
     assert colorhash(filename) in ["3ae00008000", "3ac00008000"]
 
 
+def test_optic_plot_camera_rotated(optic_style, dt_dec_16):
+    optic_plot = OpticPlot(
+        # M45
+        ra=3.7836111111,
+        dec=24.1166666667,
+        lat=32.97,
+        lon=-117.038611,
+        # Fuji X-T2
+        optic=optics.Camera(
+            sensor_height=15.6,
+            sensor_width=23.6,
+            lens_focal_length=430,
+            rotation=40,
+        ),
+        dt=dt_dec_16,
+        limiting_magnitude=12,
+        style=optic_style,
+        resolution=1600,
+        include_info_text=True,
+        colorize_stars=True,
+    )
+    filename = DATA_PATH / "actual-optic-camera-rotated-m45.png"
+    optic_plot.export(filename)
+
+    assert dhash(filename) == "26468b33261c9a75"
+    assert colorhash(filename) == "17c00008000"
+
+
 def test_optic_plot_polaris_binoculars(dt_dec_16):
     optic_style = styles.PlotStyle().extend(
         styles.extensions.GRAYSCALE,
