@@ -138,7 +138,7 @@ def create_map_mercator():
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=0,
-        ra_max=23,
+        ra_max=24,
         dec_min=-70,
         dec_max=70,
         limiting_magnitude=6,
@@ -500,38 +500,38 @@ def create_bino_plot_m45():
 
 # ------------------------------------------
 
-create_scope_plot_m45()
+# create_scope_plot_m45()
 # create_bino_plot_m45()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
 
 # create_zenith()
-# create_map_mercator()
-# create_map_stereo_north()
+create_map_mercator()
+create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_sgr()
 
-# p = sp.MapPlot(
-#     projection=Projection.STEREO_NORTH,
-#     ra_min=17,
-#     ra_max=20,
-#     dec_min=30,
-#     dec_max=55,
-#     limiting_magnitude=8.0,
-#     style=sp.styles.MAP_BLUE_LIGHT,
-#     resolution=2000,
-# )
-# p.ax.plot(
-#     18.5 * 15,
-#     40,
-#     marker="*",
-#     markersize=50,
-#     color="red",
-#     transform=p._crs,
-#     linestyle="None",
-# )
-# p.export("temp/map-stereo.svg", format="svg", padding=0.3)
+p = sp.MapPlot(
+    projection=Projection.STEREO_NORTH,
+    ra_min=17,
+    ra_max=20,
+    dec_min=30,
+    dec_max=55,
+    limiting_magnitude=8.0,
+    style=sp.styles.MAP_BLUE_LIGHT,
+    resolution=2000,
+)
+p.ax.plot(
+    18.5 * 15,
+    40,
+    marker="*",
+    markersize=50,
+    color="red",
+    transform=p._crs,
+    linestyle="None",
+)
+p.export("temp/map-stereo.svg", format="svg", padding=0.3)
 
 print(f"Total run time: {time.time() - start_time}")

@@ -120,9 +120,9 @@ class MapPlot(StarPlot):
         self._crs = ccrs.CRS(
             proj4_params=[
                 ("proj", "lonlat"),
-                ("axis", "wnu"), # invert
+                ("axis", "wnu"),  # invert
             ],
-            globe=ccrs.Globe(ellipse="sphere", flattening=0)
+            globe=ccrs.Globe(ellipse="sphere", flattening=0),
         )
         self._init_plot()
 
@@ -149,8 +149,8 @@ class MapPlot(StarPlot):
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
         return [
-            self.ra_min * 15,
-            self.ra_max * 15,
+            -1 * self.ra_min * 15,
+            -1 * self.ra_max * 15,
             self.dec_min,
             self.dec_max,
         ]
@@ -564,14 +564,14 @@ class MapPlot(StarPlot):
         if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:
             # for stereo projections, try to orient map so the pole is "up"
             bounds = self._latlon_bounds()
-            center_lon = -1 * (bounds[0] + bounds[1]) / 2
+            center_lon = (bounds[0] + bounds[1]) / 2
         else:
             center_lon = -180
 
         self._proj = Projection.crs(self.projection, center_lon)
         self._proj.threshold = 100
         self.ax = plt.axes(projection=self._proj)
-        self.ax.set_extent(self._latlon_bounds(), crs=self._crs)
+        self.ax.set_extent(self._latlon_bounds(), crs=self._plate_carree)
         self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
 

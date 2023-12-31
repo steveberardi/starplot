@@ -90,9 +90,8 @@ class OpticPlot(StarPlot):
             proj4_params=[
                 ("proj", "lonlat"),
             ],
-            globe=ccrs.Globe(ellipse="sphere", flattening=0)
+            globe=ccrs.Globe(ellipse="sphere", flattening=0),
         )
-        print(self._crs.globe.to_proj4_params())
         if self.optic.true_fov > self.FIELD_OF_VIEW_MAX:
             raise ValueError(
                 f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX})"

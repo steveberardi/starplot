@@ -232,7 +232,11 @@ class Camera(Optic):
     """
 
     def __init__(
-        self, sensor_height: float, sensor_width: float, lens_focal_length: float, rotation: float = 0
+        self,
+        sensor_height: float,
+        sensor_width: float,
+        lens_focal_length: float,
+        rotation: float = 0,
     ) -> None:
         self.sensor_height = sensor_height
         self.sensor_width = sensor_width
@@ -256,7 +260,7 @@ class Camera(Optic):
 
     @property
     def xlim(self):
-        return self.radius_x + (self.radius_x * self.rotation/180)
+        return self.radius_x + (self.radius_x * self.rotation / 180)
 
     @property
     def ylim(self):
