@@ -121,6 +121,7 @@ class MapPlot(StarPlot):
             proj4_params=[
                 ("proj", "lonlat"),
                 ("axis", "wnu"),  # invert
+                ("a", "6378137"),
             ],
             globe=ccrs.Globe(ellipse="sphere", flattening=0),
         )
@@ -500,10 +501,10 @@ class MapPlot(StarPlot):
     ):
         # FOV (degrees) = FOV eyepiece / magnification
         fov_degrees = fov / magnification
-        lon, lat = self._prepare_coords(ra, dec)
+        ra, dec = self._prepare_coords(ra, dec)
         fov_radius = fov_degrees / 2
         radius = self._compute_radius(fov_radius)
-        x, y = self._proj.transform_point(lon, lat, ccrs.Geodetic())
+        x, y = self._proj.transform_point(ra, dec, self._crs)
 
         p = patches.Circle(
             (x, y),
