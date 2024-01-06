@@ -536,7 +536,7 @@ def create_constellation():
     style.tick_marks.visible = False
     style.gridlines.line.visible = False
 
-    style.star.marker.size = 20
+    style.star.marker.size = 50
 
     style.constellation.line.visible = True
     style.constellation.line.width = 8

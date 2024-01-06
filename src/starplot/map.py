@@ -240,18 +240,19 @@ class MapPlot(StarPlot):
 
         sizes = []
         alphas = []
+        
         for m in nearby_stars_df["magnitude"]:
             if m < 1.6:
-                sizes.append((9 - m) ** 2.85 * self._size_multiplier)
+                sizes.append((9 - m) ** 2.85 * self._star_size_multiplier)
                 alphas.append(1)
             elif m < 4.6:
-                sizes.append((8 - m) ** 2.92 * self._size_multiplier)
+                sizes.append((8 - m) ** 2.92 * self._star_size_multiplier)
                 alphas.append(1)
             elif m < 5.8:
-                sizes.append((9 - m) ** 2.46 * self._size_multiplier)
+                sizes.append((9 - m) ** 2.46 * self._star_size_multiplier)
                 alphas.append(0.9)
             else:
-                sizes.append(2.23 * self._size_multiplier)
+                sizes.append(2.23 * self._star_size_multiplier)
                 alphas.append((16 - m) * 0.09)
 
         # Plot Stars
