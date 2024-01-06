@@ -80,16 +80,27 @@ def create_map_orion():
     )
     from matplotlib import patches
 
-    # sq = patches.Circle(
-    #     p._prepare_coords(6.5, 5),
-    #     radius=10,
-    #     fill=True,
-    #     color="red",
-    #     linewidth=20,
-    #     zorder=2000,
-    #     **p._plot_kwargs(),
-    # )
-    # p.ax.add_patch(sq)
+    sq = patches.Circle(
+        # p._prepare_coords(6.5, 5),
+        (6*15, 5),
+        radius=10,
+        fill=False,
+        color="red",
+        linewidth=20,
+        zorder=2000,
+        **p._plot_kwargs(),
+    )
+    rec = patches.Rectangle(
+        (5*15, 10),
+        3,
+        3,
+        fill=False,
+        color="blue",
+
+        **p._plot_kwargs(),
+    )
+    p.ax.add_patch(sq)
+    p.ax.add_patch(rec)
     # p.refresh_legend()
     p.export("temp/map-orion.svg", format="svg", padding=1)
 
@@ -401,7 +412,7 @@ def create_scope_plot_m45():
     # p.export("temp/scope-m45.png", format="png", padding=0.3)
 
 
-def create_bino_plot_m45():
+def create_optic_plot():
     style = PlotStyle().extend(
         # extensions.MINIMAL,
         extensions.GRAYSCALE_DARK,
@@ -412,8 +423,11 @@ def create_bino_plot_m45():
 
     p1 = sp.OpticPlot(
         # M45
-        ra=3.7836111111,
-        dec=24.1166666667,
+        # ra=3.7836111111,
+        # dec=24.1166666667,
+        # M44
+        ra=8.667,
+        dec=19.67,
         # star cluster near southern pole - NGC 371
         # ra=1.05,
         # dec=-72.06,
@@ -434,9 +448,15 @@ def create_bino_plot_m45():
         # lat=-51.524793,
         # lon=-60.118504,
         # 10x binoculars
-        optic=sp.optics.Binoculars(
-            magnification=10,
-            fov=65,
+        # optic=sp.optics.Binoculars(
+        #     magnification=10,
+        #     fov=65,
+        # ),
+        # TV-85
+        optic=sp.optics.Refractor(
+            focal_length=600,
+            eyepiece_focal_length=9,
+            eyepiece_fov=100,
         ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=20, minute=0, second=0
@@ -454,8 +474,11 @@ def create_bino_plot_m45():
         # ra=3.7836111111,
         # dec=24.1166666667,
         # double cluster
-        ra=2.33,
-        dec=57.14,
+        # ra=2.33,
+        # dec=57.14,
+        # M44
+        ra=8.667,
+        dec=19.67,
         # Hyades
         # ra=4.501,
         # dec=15.96,
@@ -473,38 +496,93 @@ def create_bino_plot_m45():
         #     eyepiece_fov=82,
         # ),
         # TV-85
-        # optic=sp.optics.Refractor(
-        #     focal_length=600,
-        #     eyepiece_focal_length=14,
-        #     eyepiece_fov=82,
-        # ),
+        optic=sp.optics.Refractor(
+            focal_length=600,
+            eyepiece_focal_length=9,
+            eyepiece_fov=100,
+        ),
         # Fuji X-T2
-        optic=sp.optics.Camera(
-            sensor_height=15.6,
-            sensor_width=23.6,
-            lens_focal_length=430,
-        ),
+        # optic=sp.optics.Camera(
+        #     sensor_height=15.6,
+        #     sensor_width=23.6,
+        #     lens_focal_length=430,
+        # ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=22, minute=0, second=0
+            hour=1, minute=30, second=0
         ),
-        limiting_magnitude=15,
+        limiting_magnitude=12,
         style=style,
         resolution=2000,
         include_info_text=True,
-        colorize_stars=True,
+        # colorize_stars=True,
     )
 
-    p1.export("temp/bino-m45-p1.svg", format="svg", padding=0.3)
-    p2.export("temp/bino-m45-p2.svg", format="svg", padding=0.3)
+    p1.export("temp/optic-p1.svg", format="svg", padding=0.3)
+    p2.export("temp/optic-p2.svg", format="svg", padding=0.3)
+
+
+def create_constellation():
+    style = PlotStyle().extend(
+        extensions.GRAYSCALE,
+        # extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        extensions.MINIMAL,
+        extensions.HIDE_LABELS,
+        # extensions.BLUE_DARK,
+        extensions.MAP,
+    )
+    style.ecliptic.line.visible = False
+    style.legend.visible = False
+    style.tick_marks.visible = False
+    style.gridlines.line.visible = False
+
+    style.star.marker.size = 20
+
+    style.constellation.line.visible = True
+    style.constellation.line.width = 8
+    style.dso.marker.visible = False
+    
+    p = sp.MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=17.8,
+        ra_max=20.2,
+        dec_min=-45.8,
+        dec_max=-15.43,
+        limiting_magnitude=5.4,
+        # hide_colliding_labels=False,
+        style=style,
+        resolution=1600,
+    )
+    p.ax.axis('off')
+    p.export("temp/constellation-sgr.svg", format="svg", padding=0)
+    p.export("temp/constellation-sgr.png", format="png", padding=0)
+    
+    
+    p = sp.MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=1.75,
+        ra_max=3,
+        dec_min=19,
+        dec_max=28,
+        limiting_magnitude=5.4,
+        # hide_colliding_labels=False,
+        style=style,
+        resolution=1600,
+    )
+    p.ax.axis('off')
+    p.export("temp/constellation-ari.svg", format="svg", padding=0)
+    p.export("temp/constellation-ari.png", format="png", padding=0)
 
 
 # ------------------------------------------
 
+create_constellation()
+
 # create_scope_plot_m45()
-# create_bino_plot_m45()
+# create_optic_plot()
 
 # create_scope_view_m45()
-create_scope_view_m11()
+# create_scope_view_m11()
 
 # create_zenith()
 # create_map_mercator()

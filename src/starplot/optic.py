@@ -88,7 +88,8 @@ class OpticPlot(StarPlot):
         # self._geodetic = ccrs.Geodetic()
         self._crs = ccrs.CRS(
             proj4_params=[
-                ("proj", "lonlat"),
+                ("proj", "latlong"),
+                ("a", "6378137"),
             ],
             globe=ccrs.Globe(ellipse="sphere", flattening=0),
         )

@@ -119,7 +119,7 @@ class MapPlot(StarPlot):
         self._plate_carree = ccrs.PlateCarree()
         self._crs = ccrs.CRS(
             proj4_params=[
-                ("proj", "lonlat"),
+                ("proj", "latlong"),
                 ("axis", "wnu"),  # invert
                 ("a", "6378137"),
             ],
