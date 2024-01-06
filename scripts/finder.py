@@ -168,6 +168,7 @@ def create_optic_plots():
         extensions.GRAYSCALE,
         extensions.OPTIC,
     )
+    style.star.marker.size = 30
 
     for si, obj in enumerate(sky_objects):
         for oi, optic in enumerate(optics):
