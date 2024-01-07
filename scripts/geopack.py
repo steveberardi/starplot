@@ -12,4 +12,3 @@ constellation_lines.to_file("temp/constellation_lines.gpkg", driver="GPKG")
 
 milkyway = gpd.read_file(DataFiles.MILKY_WAY.value)
 milkyway.to_file("temp/milkyway.gpkg", driver="GPKG")
-

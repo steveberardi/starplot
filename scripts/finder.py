@@ -46,7 +46,6 @@ sky_objects = [
         dec=19.67,
         style=sky_object_style,
     ),
-
     # SkyObject(
     #     name="M41",
     #     ra=6.7667,
@@ -184,7 +183,10 @@ def create_optic_plots():
                 resolution=2000,
                 include_info_text=True,
             )
-            op.export(f"temp/finder-03-optic-{str(si)}-{str(oi)}-{optic.label.lower()}.svg", format="svg")
+            op.export(
+                f"temp/finder-03-optic-{str(si)}-{str(oi)}-{optic.label.lower()}.svg",
+                format="svg",
+            )
 
 
 create_zenith()

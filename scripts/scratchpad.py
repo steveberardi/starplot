@@ -82,7 +82,7 @@ def create_map_orion():
 
     sq = patches.Circle(
         # p._prepare_coords(6.5, 5),
-        (6*15, 5),
+        (6 * 15, 5),
         radius=10,
         fill=False,
         color="red",
@@ -91,12 +91,11 @@ def create_map_orion():
         **p._plot_kwargs(),
     )
     rec = patches.Rectangle(
-        (5*15, 10),
+        (5 * 15, 10),
         3,
         3,
         fill=False,
         color="blue",
-
         **p._plot_kwargs(),
     )
     p.ax.add_patch(sq)
@@ -541,7 +540,7 @@ def create_constellation():
     style.constellation.line.visible = True
     style.constellation.line.width = 8
     style.dso.marker.visible = False
-    
+
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=17.8,
@@ -553,11 +552,10 @@ def create_constellation():
         style=style,
         resolution=1600,
     )
-    p.ax.axis('off')
+    p.ax.axis("off")
     p.export("temp/constellation-sgr.svg", format="svg", padding=0)
     p.export("temp/constellation-sgr.png", format="png", padding=0)
-    
-    
+
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=1.75,
@@ -569,7 +567,7 @@ def create_constellation():
         style=style,
         resolution=1600,
     )
-    p.ax.axis('off')
+    p.ax.axis("off")
     p.export("temp/constellation-ari.svg", format="svg", padding=0)
     p.export("temp/constellation-ari.png", format="png", padding=0)
 

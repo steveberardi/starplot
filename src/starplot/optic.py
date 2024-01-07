@@ -99,7 +99,9 @@ class OpticPlot(StarPlot):
             )
 
         self._star_size_multiplier = (
-            self._star_size_multiplier * 0.4 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
+            self._star_size_multiplier
+            * 0.4
+            * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
         )
         self._calc_position()
         self._init_plot()

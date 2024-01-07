@@ -186,7 +186,9 @@ class MapPlot(StarPlot):
         else:
             transform = self._geodetic
 
-        constellation_lines = self._read_geo_package(DataFiles.CONSTELLATION_LINES.value)
+        constellation_lines = self._read_geo_package(
+            DataFiles.CONSTELLATION_LINES.value
+        )
         constellation_lines.plot(
             ax=self.ax,
             **self.style.constellation.line.matplot_kwargs(
@@ -198,7 +200,9 @@ class MapPlot(StarPlot):
     def _plot_constellation_borders(self):
         if not self.style.constellation_borders.visible:
             return
-        constellation_borders = self._read_geo_package(DataFiles.CONSTELLATION_BORDERS.value)
+        constellation_borders = self._read_geo_package(
+            DataFiles.CONSTELLATION_BORDERS.value
+        )
         constellation_borders.plot(
             ax=self.ax,
             **self.style.constellation_borders.matplot_kwargs(
@@ -252,7 +256,7 @@ class MapPlot(StarPlot):
 
         sizes = []
         alphas = []
-        
+
         for m in nearby_stars_df["magnitude"]:
             if m < 1.6:
                 sizes.append((9 - m) ** 2.85 * self._star_size_multiplier)
