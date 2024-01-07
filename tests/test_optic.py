@@ -80,6 +80,32 @@ def test_optic_plot_refractor(optic_style, dt_dec_16):
     assert colorhash(filename) == "33e00000000"
 
 
+def test_optic_plot_scope(optic_style, dt_dec_16):
+    optic_plot = OpticPlot(
+        # M45
+        ra=3.7836111111,
+        dec=24.1166666667,
+        lat=32.97,
+        lon=-117.038611,
+        optic=optics.Scope(
+            focal_length=600,
+            eyepiece_focal_length=14,
+            eyepiece_fov=82,
+        ),
+        dt=dt_dec_16,
+        limiting_magnitude=12,
+        style=optic_style,
+        resolution=1600,
+        include_info_text=True,
+        colorize_stars=True,
+    )
+    filename = DATA_PATH / "actual-optic-scope-m45.png"
+    optic_plot.export(filename)
+
+    assert dhash(filename) == "8e173b5123238e4d"
+    assert colorhash(filename) == "33e00000000"
+
+
 def test_optic_plot_reflector(optic_style, dt_dec_16):
     optic_plot = OpticPlot(
         # M45
