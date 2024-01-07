@@ -422,11 +422,11 @@ def create_optic_plot():
 
     p1 = sp.OpticPlot(
         # M45
-        # ra=3.7836111111,
-        # dec=24.1166666667,
+        ra=3.7836111111,
+        dec=24.1166666667,
         # M44
-        ra=8.667,
-        dec=19.67,
+        # ra=8.667,
+        # dec=19.67,
         # star cluster near southern pole - NGC 371
         # ra=1.05,
         # dec=-72.06,
@@ -452,13 +452,13 @@ def create_optic_plot():
         #     fov=65,
         # ),
         # TV-85
-        optic=sp.optics.Refractor(
+        optic=sp.optics.Scope(
             focal_length=600,
             eyepiece_focal_length=9,
             eyepiece_fov=100,
         ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=20, minute=0, second=0
+            hour=21, minute=0, second=0
         ),
         limiting_magnitude=12,
         limiting_magnitude_labels=9,
@@ -470,14 +470,14 @@ def create_optic_plot():
 
     p2 = sp.OpticPlot(
         # M45
-        # ra=3.7836111111,
-        # dec=24.1166666667,
+        ra=3.7836111111,
+        dec=24.1166666667,
         # double cluster
         # ra=2.33,
         # dec=57.14,
         # M44
-        ra=8.667,
-        dec=19.67,
+        # ra=8.667,
+        # dec=19.67,
         # Hyades
         # ra=4.501,
         # dec=15.96,
@@ -495,7 +495,12 @@ def create_optic_plot():
         #     eyepiece_fov=82,
         # ),
         # TV-85
-        optic=sp.optics.Refractor(
+        # optic=sp.optics.Refractor(
+        #     focal_length=600,
+        #     eyepiece_focal_length=9,
+        #     eyepiece_fov=100,
+        # ),
+        optic=sp.optics.Reflector(
             focal_length=600,
             eyepiece_focal_length=9,
             eyepiece_fov=100,
@@ -507,7 +512,7 @@ def create_optic_plot():
         #     lens_focal_length=430,
         # ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=1, minute=30, second=0
+            hour=21, minute=0, second=0
         ),
         limiting_magnitude=12,
         style=style,
@@ -577,7 +582,7 @@ def create_constellation():
 # create_constellation()
 
 # create_scope_plot_m45()
-# create_optic_plot()
+create_optic_plot()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
@@ -586,7 +591,7 @@ def create_constellation():
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
+# create_map_orion()
 # create_map_sgr()
 
 # p = sp.MapPlot(

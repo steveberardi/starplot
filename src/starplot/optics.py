@@ -156,6 +156,7 @@ class Reflector(Scope):
         return "Reflector"
 
     def transform(self, axis) -> None:
+        axis.invert_xaxis()
         axis.invert_yaxis()
 
 
