@@ -164,6 +164,18 @@ class MapPlot(StarPlot):
             self.ra_min = 0
             self.ra_max = 24
 
+    def _read_geo_package(self, filename: str):
+        """Returns GeoDataFrame of a GeoPackage file"""
+        extent = self.ax.get_extent(crs=self._plate_carree)
+        bbox = (extent[0], extent[2], extent[1], extent[3])
+
+        return gpd.read_file(
+            filename,
+            engine="pyogrio",
+            use_arrow=True,
+            bbox=bbox,
+        )
+
     def _plot_constellation_lines(self):
         if not self.style.constellation.line.visible:
             return
@@ -174,7 +186,7 @@ class MapPlot(StarPlot):
         else:
             transform = self._geodetic
 
-        constellation_lines = gpd.read_file(DataFiles.CONSTELLATION_LINES)
+        constellation_lines = self._read_geo_package(DataFiles.CONSTELLATION_LINES.value)
         constellation_lines.plot(
             ax=self.ax,
             **self.style.constellation.line.matplot_kwargs(
@@ -186,7 +198,7 @@ class MapPlot(StarPlot):
     def _plot_constellation_borders(self):
         if not self.style.constellation_borders.visible:
             return
-        constellation_borders = gpd.read_file(DataFiles.CONSTELLATION_BORDERS)
+        constellation_borders = self._read_geo_package(DataFiles.CONSTELLATION_BORDERS.value)
         constellation_borders.plot(
             ax=self.ax,
             **self.style.constellation_borders.matplot_kwargs(
@@ -209,7 +221,7 @@ class MapPlot(StarPlot):
     def _plot_milky_way(self):
         if not self.style.milky_way.visible:
             return
-        mw = gpd.read_file(DataFiles.MILKY_WAY)
+        mw = self._read_geo_package(DataFiles.MILKY_WAY.value)
         mw.plot(
             ax=self.ax,
             **self.style.milky_way.matplot_kwargs(

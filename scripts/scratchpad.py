@@ -576,7 +576,7 @@ def create_constellation():
 
 # ------------------------------------------
 
-create_constellation()
+# create_constellation()
 
 # create_scope_plot_m45()
 # create_optic_plot()
@@ -588,7 +588,7 @@ create_constellation()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_sgr()
 
 # p = sp.MapPlot(
