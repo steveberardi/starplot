@@ -85,7 +85,6 @@ class OpticPlot(StarPlot):
         self.raise_on_below_horizon = raise_on_below_horizon
 
         self.optic = optic
-        # self._geodetic = ccrs.Geodetic()
         self._crs = ccrs.CRS(
             proj4_params=[
                 ("proj", "latlong"),
@@ -296,9 +295,7 @@ class OpticPlot(StarPlot):
             table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.15)
 
     def _plot_border(self):
-        # x, y = self._proj.transform_point(
-        #     self.pos_az.degrees, self.pos_alt.degrees, self._crs
-        # )
+        # since we're using AzimuthalEquidistant projection, the center will always be (0, 0)
         x = 0
         y = 0
 
