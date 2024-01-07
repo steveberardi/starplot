@@ -231,7 +231,6 @@ class MapPlot(StarPlot):
             **self.style.milky_way.matplot_kwargs(
                 size_multiplier=self._size_multiplier
             ),
-            # **self._plot_kwargs(),
             transform=self._plate_carree,
         )
 
