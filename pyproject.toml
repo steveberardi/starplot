@@ -32,6 +32,7 @@ dependencies = [
     "PyOngc >= 1.0.1",
     "pyarrow >= 14.0.2",
     "fastparquet >= 2023.10.1",
+    "pyogrio >= 0.7.2",
 ]
 
 [project.urls]

@@ -171,11 +171,11 @@ class ZenithPlot(StarPlot):
                     continue
 
                 if m < 2:
-                    sizes.append((8 - m) ** 2.56 * (self._size_multiplier**2))
+                    sizes.append((8 - m) ** 2.56 * (self._star_size_multiplier**2))
                 elif m < 8:
-                    sizes.append((8 - m) ** 1.38 * (self._size_multiplier**2))
+                    sizes.append((8 - m) ** 1.38 * (self._star_size_multiplier**2))
                 else:
-                    sizes.append(self._size_multiplier**2)
+                    sizes.append(self._star_size_multiplier**2)
 
                 starpos_x.append(x)
                 starpos_y.append(y)

@@ -117,14 +117,22 @@ class MapPlot(StarPlot):
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
+        self._crs = ccrs.CRS(
+            proj4_params=[
+                ("proj", "latlong"),
+                ("axis", "wnu"),  # invert
+                ("a", "6378137"),
+            ],
+            globe=ccrs.Globe(ellipse="sphere", flattening=0),
+        )
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
         # return dict(transform=ccrs.PlateCarree())
-        return dict(transform=self._geodetic)
+        return dict(transform=self._crs)
 
     def _prepare_coords(self, ra: float, dec: float) -> (float, float):
-        return -1 * (ra * 15 - 360), dec
+        return ra * 15, dec
 
     def in_bounds(self, ra: float, dec: float) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
@@ -142,8 +150,8 @@ class MapPlot(StarPlot):
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
         return [
-            -1 * (self.ra_max * 15 - 360),
-            -1 * (self.ra_min * 15 - 360),
+            -1 * self.ra_min * 15,
+            -1 * self.ra_max * 15,
             self.dec_min,
             self.dec_max,
         ]
@@ -156,6 +164,18 @@ class MapPlot(StarPlot):
             self.ra_min = 0
             self.ra_max = 24
 
+    def _read_geo_package(self, filename: str):
+        """Returns GeoDataFrame of a GeoPackage file"""
+        extent = self.ax.get_extent(crs=self._plate_carree)
+        bbox = (extent[0], extent[2], extent[1], extent[3])
+
+        return gpd.read_file(
+            filename,
+            engine="pyogrio",
+            use_arrow=True,
+            bbox=bbox,
+        )
+
     def _plot_constellation_lines(self):
         if not self.style.constellation.line.visible:
             return
@@ -166,7 +186,9 @@ class MapPlot(StarPlot):
         else:
             transform = self._geodetic
 
-        constellation_lines = gpd.read_file(DataFiles.CONSTELLATION_LINES)
+        constellation_lines = self._read_geo_package(
+            DataFiles.CONSTELLATION_LINES.value
+        )
         constellation_lines.plot(
             ax=self.ax,
             **self.style.constellation.line.matplot_kwargs(
@@ -178,7 +200,9 @@ class MapPlot(StarPlot):
     def _plot_constellation_borders(self):
         if not self.style.constellation_borders.visible:
             return
-        constellation_borders = gpd.read_file(DataFiles.CONSTELLATION_BORDERS)
+        constellation_borders = self._read_geo_package(
+            DataFiles.CONSTELLATION_BORDERS.value
+        )
         constellation_borders.plot(
             ax=self.ax,
             **self.style.constellation_borders.matplot_kwargs(
@@ -201,13 +225,13 @@ class MapPlot(StarPlot):
     def _plot_milky_way(self):
         if not self.style.milky_way.visible:
             return
-        mw = gpd.read_file(DataFiles.MILKY_WAY)
+        mw = self._read_geo_package(DataFiles.MILKY_WAY.value)
         mw.plot(
             ax=self.ax,
             **self.style.milky_way.matplot_kwargs(
                 size_multiplier=self._size_multiplier
             ),
-            **self._plot_kwargs(),
+            transform=self._plate_carree,
         )
 
     def _plot_stars(self):
@@ -231,18 +255,19 @@ class MapPlot(StarPlot):
 
         sizes = []
         alphas = []
+
         for m in nearby_stars_df["magnitude"]:
             if m < 1.6:
-                sizes.append((9 - m) ** 2.85 * self._size_multiplier)
+                sizes.append((9 - m) ** 2.85 * self._star_size_multiplier)
                 alphas.append(1)
             elif m < 4.6:
-                sizes.append((8 - m) ** 2.92 * self._size_multiplier)
+                sizes.append((8 - m) ** 2.92 * self._star_size_multiplier)
                 alphas.append(1)
             elif m < 5.8:
-                sizes.append((9 - m) ** 2.46 * self._size_multiplier)
+                sizes.append((9 - m) ** 2.46 * self._star_size_multiplier)
                 alphas.append(0.9)
             else:
-                sizes.append(2.23 * self._size_multiplier)
+                sizes.append(2.23 * self._star_size_multiplier)
                 alphas.append((16 - m) * 0.09)
 
         # Plot Stars
@@ -293,7 +318,7 @@ class MapPlot(StarPlot):
         if not self.style.ecliptic.line.visible:
             return
 
-        x = [-1 * (ra * 15 - 360) for ra, dec in ecliptic.RA_DECS]
+        x = [(ra * 15) for ra, dec in ecliptic.RA_DECS]
         y = [dec for ra, dec in ecliptic.RA_DECS]
 
         self.ax.plot(
@@ -302,6 +327,7 @@ class MapPlot(StarPlot):
             dash_capstyle=self.style.ecliptic.line.dash_capstyle,
             **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
             **self._plot_kwargs(),
+            # transform=self._plate_carree,
         )
 
         if self.style.ecliptic.label.visible:
@@ -491,10 +517,10 @@ class MapPlot(StarPlot):
     ):
         # FOV (degrees) = FOV eyepiece / magnification
         fov_degrees = fov / magnification
-        lon, lat = self._prepare_coords(ra, dec)
+        ra, dec = self._prepare_coords(ra, dec)
         fov_radius = fov_degrees / 2
         radius = self._compute_radius(fov_radius)
-        x, y = self._proj.transform_point(lon, lat, ccrs.Geodetic())
+        x, y = self._proj.transform_point(ra, dec, self._crs)
 
         p = patches.Circle(
             (x, y),

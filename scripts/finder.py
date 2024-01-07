@@ -21,46 +21,76 @@ import starplot as sp
 
 sky_object_style = {
     "marker": {
-        "size": 16,
-        "symbol": "D",
+        "size": 15,
+        "symbol": "^",
         "fill": "full",
         "color": "#000",
     },
     "label": {
         "font_size": 12,
         "font_weight": "bold",
-        "font_color": "black",
+        # "font_color": "white",
     },
 }
 
 sky_objects = [
-    # SkyObject(
-    #     name="M35",
-    #     ra=6.15,
-    #     dec=24.34,
-    #     style=sky_object_style,
-    # ),
     SkyObject(
-        name="M45",
-        ra=3.7836111111,
-        dec=24.1166666667,
+        name="M35",
+        ra=6.15,
+        dec=24.34,
         style=sky_object_style,
     ),
+    SkyObject(
+        name="M44",
+        ra=8.667,
+        dec=19.67,
+        style=sky_object_style,
+    ),
+    # SkyObject(
+    #     name="M41",
+    #     ra=6.7667,
+    #     dec=-20.75,
+    #     style=sky_object_style,
+    # ),
+    # SkyObject(
+    #     name="M46",
+    #     ra=7.7,
+    #     dec=-14.81,
+    #     style=sky_object_style,
+    # ),
+    # SkyObject(
+    #     name="M47",
+    #     ra=7.6,
+    #     dec=-14.48,
+    #     style=sky_object_style,
+    # ),
+    # SkyObject(
+    #     name="M93",
+    #     ra=7.73,
+    #     dec=-23.85,
+    #     style=sky_object_style,
+    # ),
+    # SkyObject(
+    #     name="M45",
+    #     ra=3.7836111111,
+    #     dec=24.1166666667,
+    #     style=sky_object_style,
+    # ),
 ]
 
 optics = [
-    sp.optic.Binoculars(
+    sp.optics.Binoculars(
         magnification=10,
         fov=65,
     ),
-    sp.optic.Refractor(
+    # sp.optics.Refractor(
+    #     focal_length=600,
+    #     eyepiece_focal_length=14,
+    #     eyepiece_fov=82,
+    # ),
+    sp.optics.Refractor(
         focal_length=600,
-        eyepiece_focal_length=14,
-        eyepiece_fov=82,
-    ),
-    sp.optic.Refractor(
-        focal_length=600,
-        eyepiece_focal_length=7,
+        eyepiece_focal_length=9,
         eyepiece_fov=100,
     ),
 ]
@@ -77,6 +107,9 @@ def create_zenith():
         extensions.GRAYSCALE,
         extensions.ZENITH,
     )
+    style.dso.marker.visible = False
+    style.dso.label.visible = False
+
     p = sp.ZenithPlot(
         lat=lat,
         lon=lon,
@@ -84,39 +117,47 @@ def create_zenith():
         limiting_magnitude=4.6,
         style=style,
         resolution=4000,
-        include_info_text=True,
-        adjust_text=True,
+        hide_colliding_labels=False,
+        # include_info_text=True,
+        # adjust_text=True,
     )
 
     for obj in sky_objects:
         p.plot_object(obj)
 
     p.refresh_legend()
-    p.export("temp/finder-01-overview.png", format="png", transparent=True)
+    p.adjust_labels()
+    p.export("temp/finder-01-overview.svg", format="svg", padding=0, transparent=True)
 
 
-def create_map_plot():
-    print("Creating map chart...")
+def create_map_plots():
+    print("Creating map charts...")
     style = PlotStyle().extend(
         # extensions.MINIMAL,
         extensions.GRAYSCALE,
         extensions.MAP,
     )
+    style.legend.location = "lower right"
+    style.gridlines.line.alpha = 0
+    style.milky_way.visible = False
+    style.bayer_labels.visible = False
 
-    for obj in sky_objects:
+    for i, obj in enumerate(sky_objects):
         mp = sp.MapPlot(
             projection=Projection.MERCATOR,
-            ra_min=obj.ra - 2,
-            ra_max=obj.ra + 2,
-            dec_min=obj.dec - 15,
-            dec_max=obj.dec + 15,
-            limiting_magnitude=7.2,
+            ra_min=obj.ra - 2.5,
+            ra_max=obj.ra + 2.5,
+            dec_min=obj.dec - 20,
+            dec_max=obj.dec + 20,
+            limiting_magnitude=4.68,
             style=style,
             resolution=2600,
+            hide_colliding_labels=False,
         )
         mp.plot_object(obj)
+        mp.adjust_labels()
 
-        mp.export(f"temp/finder-02-map.png", padding=0.3)
+        mp.export(f"temp/finder-02-map-{str(i)}.svg", format="svg", padding=0.3)
 
 
 def create_optic_plots():
@@ -126,9 +167,10 @@ def create_optic_plots():
         extensions.GRAYSCALE,
         extensions.OPTIC,
     )
+    style.star.marker.size = 30
 
-    for obj in sky_objects:
-        for i, optic in enumerate(optics):
+    for si, obj in enumerate(sky_objects):
+        for oi, optic in enumerate(optics):
             op = sp.OpticPlot(
                 ra=obj.ra,
                 dec=obj.dec,
@@ -141,9 +183,12 @@ def create_optic_plots():
                 resolution=2000,
                 include_info_text=True,
             )
-            op.export(f"temp/finder-03-optic-{str(i)}-{optic.label.lower()}.png")
+            op.export(
+                f"temp/finder-03-optic-{str(si)}-{str(oi)}-{optic.label.lower()}.svg",
+                format="svg",
+            )
 
 
 create_zenith()
-create_map_plot()
+create_map_plots()
 create_optic_plots()

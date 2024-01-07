@@ -85,15 +85,22 @@ class OpticPlot(StarPlot):
         self.raise_on_below_horizon = raise_on_below_horizon
 
         self.optic = optic
-        self._geodetic = ccrs.Geodetic()
-
+        self._crs = ccrs.CRS(
+            proj4_params=[
+                ("proj", "latlong"),
+                ("a", "6378137"),
+            ],
+            globe=ccrs.Globe(ellipse="sphere", flattening=0),
+        )
         if self.optic.true_fov > self.FIELD_OF_VIEW_MAX:
             raise ValueError(
                 f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX})"
             )
 
         self._star_size_multiplier = (
-            self._size_multiplier * 0.4 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
+            self._star_size_multiplier
+            * 0.4
+            * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
         )
         self._calc_position()
         self._init_plot()
@@ -107,14 +114,14 @@ class OpticPlot(StarPlot):
         return pos_az.degrees, pos_alt.degrees
 
     def _plot_kwargs(self) -> dict:
-        return dict(transform=self._geodetic)
+        return dict(transform=self._crs)
 
     def in_bounds(self, ra, dec) -> bool:
         az, alt = self._prepare_coords(ra, dec)
         return self.in_bounds_altaz(alt, az)
 
     def in_bounds_altaz(self, alt, az, scale: float = 1) -> bool:
-        x, y = self._proj.transform_point(az, alt, self._geodetic)
+        x, y = self._proj.transform_point(az, alt, self._crs)
         return self.optic.in_bounds(x, y, scale)
 
     def _calc_position(self):
@@ -209,6 +216,7 @@ class OpticPlot(StarPlot):
                 edgecolors="none",
                 **self._plot_kwargs(),
             )
+            self._plotted_stars.set_clip_on(True)
             self._plotted_stars.set_clip_path(self.background_patch)
             self._add_legend_handle_marker("Star", self.style.star.marker)
 
@@ -287,9 +295,9 @@ class OpticPlot(StarPlot):
             table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.15)
 
     def _plot_border(self):
-        x, y = self._proj.transform_point(
-            self.pos_az.degrees, self.pos_alt.degrees, self._geodetic
-        )
+        # since we're using AzimuthalEquidistant projection, the center will always be (0, 0)
+        x = 0
+        y = 0
 
         # Background of Viewable Area
         self.background_patch = self.optic.patch(

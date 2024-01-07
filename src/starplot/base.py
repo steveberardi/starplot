@@ -48,6 +48,9 @@ class StarPlot(ABC):
             foreground=self.style.background_color.as_hex(),
         )
         self._size_multiplier = self.resolution / 3000
+        self._star_size_multiplier = (
+            self._size_multiplier * self.style.star.marker.size / 10
+        )
 
         self.timescale = load.timescale().from_datetime(self.dt)
 

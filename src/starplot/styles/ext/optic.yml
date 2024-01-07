@@ -1,4 +1,6 @@
-
+star:
+  marker:
+    size: 14
 planets:
   label:
     visible: true
