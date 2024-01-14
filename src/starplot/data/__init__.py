@@ -12,6 +12,6 @@ load = Loader(DATA_PATH)
 class DataFiles(str, Enum):
     CONSTELLATION_LINES = DATA_PATH / "constellation_lines_inv.gpkg"
     CONSTELLATION_BORDERS = DATA_PATH / "constellation_borders_inv.gpkg"
-    MILKY_WAY = DATA_PATH / "milkyway_inv.gpkg"
+    MILKY_WAY = DATA_PATH / "milkyway.gpkg"
     HIPPARCOS = DATA_PATH / "stars.hipparcos.parquet"
     TYCHO_1 = DATA_PATH / "stars.tycho-1.gz.parquet"

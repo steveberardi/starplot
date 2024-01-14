@@ -39,6 +39,7 @@ def create_map_orion():
             },
         },
     )
+    # style.milky_way.visible = False
 
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
@@ -80,26 +81,26 @@ def create_map_orion():
     )
     from matplotlib import patches
 
-    sq = patches.Circle(
-        # p._prepare_coords(6.5, 5),
-        (6 * 15, 5),
-        radius=10,
-        fill=False,
-        color="red",
-        linewidth=20,
-        zorder=2000,
-        **p._plot_kwargs(),
-    )
-    rec = patches.Rectangle(
-        (5 * 15, 10),
-        3,
-        3,
-        fill=False,
-        color="blue",
-        **p._plot_kwargs(),
-    )
-    p.ax.add_patch(sq)
-    p.ax.add_patch(rec)
+    # sq = patches.Circle(
+    #     # p._prepare_coords(6.5, 5),
+    #     (6 * 15, 5),
+    #     radius=10,
+    #     fill=False,
+    #     color="red",
+    #     linewidth=20,
+    #     zorder=2000,
+    #     **p._plot_kwargs(),
+    # )
+    # rec = patches.Rectangle(
+    #     (5 * 15, 10),
+    #     3,
+    #     3,
+    #     fill=False,
+    #     color="blue",
+    #     **p._plot_kwargs(),
+    # )
+    # p.ax.add_patch(sq)
+    # p.ax.add_patch(rec)
     # p.refresh_legend()
     p.export("temp/map-orion.svg", format="svg", padding=1)
 
@@ -145,12 +146,14 @@ def create_map_mercator():
     style.star.label.font_size = 4
     style.constellation.label.font_size = 6
     style.constellation.line.width = 2
+    # style.milky_way.visible = False
+    # style.constellation.line.visible = False
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=0,
         ra_max=24,
-        dec_min=-70,
-        dec_max=70,
+        dec_min=-68,
+        dec_max=68,
         limiting_magnitude=6,
         style=style,
         resolution=8000,
@@ -582,7 +585,7 @@ def create_constellation():
 # create_constellation()
 
 # create_scope_plot_m45()
-create_optic_plot()
+# create_optic_plot()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
@@ -591,7 +594,7 @@ create_optic_plot()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_sgr()
 
 # p = sp.MapPlot(
