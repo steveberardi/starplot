@@ -16,4 +16,4 @@
 - [OpenNGC](https://github.com/mattiaverga/OpenNGC)
 
 ### **Milky Way Outline**
-- Milky Way Outline Catalog, Jose R. Vieira (via [d3-celestial](https://github.com/ofrohn/d3-celestial))
+- Created with QGIS + GDAL from NASA's [Deep Star Maps](https://svs.gsfc.nasa.gov/4851)
