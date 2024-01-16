@@ -43,6 +43,7 @@ def create_map_orion():
 
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
+        # projection=Projection.STEREO_NORTH,
         ra_min=3.6,
         ra_max=7.8,
         dec_min=-16,
@@ -152,8 +153,8 @@ def create_map_mercator():
         projection=Projection.MERCATOR,
         ra_min=0,
         ra_max=24,
-        dec_min=-68,
-        dec_max=68,
+        dec_min=-80,
+        dec_max=80,
         limiting_magnitude=6,
         style=style,
         resolution=8000,
@@ -580,6 +581,45 @@ def create_constellation():
     p.export("temp/constellation-ari.png", format="png", padding=0)
 
 
+def create_map_scratch():
+    style = PlotStyle().extend(
+        # extensions.GRAYSCALE,
+        # extensions.GRAYSCALE_DARK,
+        extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        # extensions.BLUE_DARK,
+        extensions.MAP,
+        {
+            "star": {
+                "label": {"font_size": 8},
+            },
+            "bayer_labels": {
+                "font_name": "GFS Didot",
+                "font_size": 7,
+            },
+            "legend": {
+                "location": "lower right",
+                "num_columns": 1,
+                "background_alpha": 1,
+            },
+        },
+    )
+    style.bayer_labels.visible = False
+
+    p = sp.MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=6.5,
+        ra_max=7,
+        dec_min=-22,
+        dec_max=-18,
+        limiting_magnitude=14.2,
+        style=style,
+        resolution=4600,
+        star_catalog="tycho-1",
+    )
+    p.export("temp/map-scratch.png", format="png", padding=1)
+
+
 # ------------------------------------------
 
 # create_constellation()
@@ -595,6 +635,7 @@ def create_constellation():
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
+# create_map_scratch()
 # create_map_sgr()
 
 # p = sp.MapPlot(

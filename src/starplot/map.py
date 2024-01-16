@@ -17,7 +17,7 @@ from skyfield.api import Star
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
-from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE
+from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE, MarkerSymbolEnum
 from starplot.utils import lon_to_ra, dec_str_to_float
 
 # Silence noisy cartopy warnings
@@ -69,6 +69,7 @@ class MapPlot(StarPlot):
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
         star_catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
         rasterize_stars: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
+        dso_types: List of Deep Sky Objects (DSOs) types that will be plotted
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -92,6 +93,7 @@ class MapPlot(StarPlot):
         adjust_text: bool = False,
         star_catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
         rasterize_stars: bool = False,
+        dso_types: list[dsos.DsoType] = dsos.DEFAULT_DSO_TYPES,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -114,6 +116,7 @@ class MapPlot(StarPlot):
         self.dec_max = dec_max
         self.star_catalog = star_catalog
         self.rasterize_stars = rasterize_stars
+        self.dso_types = dso_types
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -430,54 +433,43 @@ class MapPlot(StarPlot):
         )
 
     def _plot_dsos(self):
+        dso_types = [dsos.ONGC_TYPE[dtype] for dtype in self.dso_types]
         nearby_dsos = ongc.listObjects(
             minra=self.ra_min * 15,  # convert to degrees (0-360)
             maxra=self.ra_max * 15,  # convert to degrees (0-360)
             mindec=self.dec_min,
             maxdec=self.dec_max,
-            uptovmag=self.limiting_magnitude,
+            type=dso_types,
         )
 
+        # TODO : make this better
         styles = {
             # Star Clusters ----------
-            dsos.Type.OPEN_CLUSTER: self.style.dso_open_cluster,
-            dsos.Type.GLOBULAR_CLUSTER: self.style.dso_globular_cluster,
+            dsos.DsoType.OPEN_CLUSTER: self.style.dso_open_cluster,
+            dsos.DsoType.GLOBULAR_CLUSTER: self.style.dso_globular_cluster,
             # Galaxies ----------
-            dsos.Type.GALAXY: self.style.dso_galaxy,
-            dsos.Type.GALAXY_PAIR: self.style.dso_galaxy,
-            dsos.Type.GALAXY_TRIPLET: self.style.dso_galaxy,
-            dsos.Type.GROUP_OF_GALAXIES: self.style.dso_galaxy,
+            dsos.DsoType.GALAXY: self.style.dso_galaxy,
+            dsos.DsoType.GALAXY_PAIR: self.style.dso_galaxy,
+            dsos.DsoType.GALAXY_TRIPLET: self.style.dso_galaxy,
+            dsos.DsoType.GROUP_OF_GALAXIES: self.style.dso_galaxy,
             # Nebulas ----------
-            dsos.Type.NEBULA: self.style.dso_nebula,
-            dsos.Type.PLANETARY_NEBULA: self.style.dso_nebula,
-            dsos.Type.EMISSION_NEBULA: self.style.dso_nebula,
-            dsos.Type.STAR_CLUSTER_NEBULA: self.style.dso_nebula,
-            dsos.Type.REFLECTION_NEBULA: self.style.dso_nebula,
+            dsos.DsoType.NEBULA: self.style.dso_nebula,
+            dsos.DsoType.PLANETARY_NEBULA: self.style.dso_nebula,
+            dsos.DsoType.EMISSION_NEBULA: self.style.dso_nebula,
+            dsos.DsoType.STAR_CLUSTER_NEBULA: self.style.dso_nebula,
+            dsos.DsoType.REFLECTION_NEBULA: self.style.dso_nebula,
             # Stars ----------
-            dsos.Type.STAR: None,
-            dsos.Type.DOUBLE_STAR: self.style.dso_double_star,
-            dsos.Type.ASSOCIATION_OF_STARS: self.style.dso,
-            # Undefined - TODO
-            "Dark Nebula": None,
-            "HII Ionized region": None,
-            "Supernova remnant": None,
-            "Nova star": None,
-            "Nonexistent object": None,
-            "Object of other/unknown type": None,
-            "Duplicated record": None,
-        }
-        legend_labels = {
-            # Galaxies ----------
-            dsos.Type.GALAXY: "Galaxy",
-            dsos.Type.GALAXY_PAIR: "Galaxy",
-            dsos.Type.GALAXY_TRIPLET: "Galaxy",
-            dsos.Type.GROUP_OF_GALAXIES: "Galaxy",
-            # Nebulas ----------
-            dsos.Type.NEBULA: "Nebula",
-            dsos.Type.PLANETARY_NEBULA: "Nebula",
-            dsos.Type.EMISSION_NEBULA: "Nebula",
-            dsos.Type.STAR_CLUSTER_NEBULA: "Nebula",
-            dsos.Type.REFLECTION_NEBULA: "Nebula",
+            dsos.DsoType.STAR: None,
+            dsos.DsoType.DOUBLE_STAR: self.style.dso_double_star,
+            dsos.DsoType.ASSOCIATION_OF_STARS: self.style.dso,
+            # Others (hidden by default style)
+            dsos.DsoType.DARK_NEBULA: self.style.dso_dark_nebula,
+            dsos.DsoType.HII_IONIZED_REGION: self.style.dso_hii_ionized_region,
+            dsos.DsoType.SUPERNOVA_REMNANT: self.style.dso_supernova_remnant,
+            dsos.DsoType.NOVA_STAR: self.style.dso_nova_star,
+            dsos.DsoType.NONEXISTENT: self.style.dso_nonexistant,
+            dsos.DsoType.UNKNOWN: self.style.dso_unknown,
+            dsos.DsoType.DUPLICATE_RECORD: self.style.dso_duplicate,
         }
 
         for d in nearby_dsos:
@@ -487,18 +479,74 @@ class MapPlot(StarPlot):
             ra = d.coords[0][0] + d.coords[0][1] / 60 + d.coords[0][2] / 3600
             dec = dec_str_to_float(d.dec)
             style = styles.get(d.type)
+            maj_ax, min_ax, angle = d.dimensions
+            legend_label = dsos.LEGEND_LABELS.get(d.type) or d.type
 
-            # only plot DSOs with defined styles
-            if style:
+            if (
+                not style
+                or (
+                    d.magnitudes[1] is not None
+                    and d.magnitudes[1] > self.limiting_magnitude
+                )
+                or (
+                    d.magnitudes[0] is not None
+                    and d.magnitudes[0] > self.limiting_magnitude
+                )
+                or (d.magnitudes[0] is None and "Nebula" in legend_label)
+            ):
+                # print(d.name)
+                continue
+
+            if angle:
+                angle = 180 - angle
+
+            if maj_ax and style.marker.visible:
+                # If object has a major axis then plot it's actual extent
+                x, y = self._proj.transform_point(ra * 15, dec, self._crs)
+                maj_ax = self._compute_radius((maj_ax / 60) / 2)
+
+                if min_ax:
+                    min_ax = self._compute_radius((min_ax / 60) / 2)
+                else:
+                    min_ax = maj_ax
+
+                if style.marker.symbol == MarkerSymbolEnum.SQUARE:
+                    patch_class = patches.Rectangle
+                    xy = (x - min_ax, y - maj_ax)
+                    width = min_ax * 2
+                    height = maj_ax * 2
+                else:
+                    patch_class = patches.Ellipse
+                    xy = (x, y)
+                    width = maj_ax * 2
+                    height = min_ax * 2
+
+                p = patch_class(
+                    xy,
+                    width=width,
+                    height=height,
+                    angle=angle or 0,
+                    facecolor=style.marker.color.as_hex(),
+                    edgecolor=style.marker.edge_color.as_hex(),
+                    alpha=style.marker.alpha,
+                    zorder=style.marker.zorder,
+                )
+                self.ax.add_patch(p)
+
+                if style.label.visible:
+                    self._plot_text(ra, dec, d.name)
+
+            else:
+                # If no major axis, then just plot as a marker
                 obj = SkyObject(
                     name=d.name,
                     ra=ra,
                     dec=dec,
                     style=style,
                 )
-                legend_label = legend_labels.get(d.type) or d.type
-                self._add_legend_handle_marker(legend_label, obj.style.marker)
                 self.plot_object(obj)
+
+            self._add_legend_handle_marker(legend_label, style.marker)
 
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
