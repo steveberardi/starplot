@@ -16,4 +16,4 @@
 - [OpenNGC](https://github.com/mattiaverga/OpenNGC)
 
 ### **Milky Way Outline**
-- Created with QGIS + GDAL from NASA's [Deep Star Maps](https://svs.gsfc.nasa.gov/4851)
+- Created by Steve Berardi with QGIS + GDAL from NASA's [Deep Star Maps](https://svs.gsfc.nasa.gov/4851)
