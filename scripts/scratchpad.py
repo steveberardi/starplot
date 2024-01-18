@@ -608,15 +608,17 @@ def create_map_scratch():
 
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
-        ra_min=6.5,
-        ra_max=7,
-        dec_min=-22,
-        dec_max=-18,
+        ra_min=3,
+        ra_max=5,
+        dec_min=20,
+        dec_max=40,
         limiting_magnitude=14.2,
         style=style,
         resolution=4600,
         star_catalog="tycho-1",
     )
+    p._plot_ca()
+
     p.export("temp/map-scratch.png", format="png", padding=1)
 
 
@@ -634,8 +636,8 @@ def create_map_scratch():
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
-# create_map_scratch()
+# create_map_orion()
+create_map_scratch()
 # create_map_sgr()
 
 # p = sp.MapPlot(

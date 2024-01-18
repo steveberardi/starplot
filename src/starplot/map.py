@@ -178,6 +178,23 @@ class MapPlot(StarPlot):
             use_arrow=True,
             bbox=bbox,
         )
+    
+    def _plot_ca(self):
+        nebula_outline = gpd.read_file(
+            DataFiles.CA.value,
+            engine="pyogrio",
+            use_arrow=True,
+            # bbox=bbox,
+        )
+        
+        # print(nebula_outline.geometry)
+        nebula_outline.plot(
+            ax=self.ax,
+            edgecolor="green",
+            facecolor="green",
+            alpha=0.4,
+            transform=self._crs,
+        )
 
     def _plot_constellation_lines(self):
         if not self.style.constellation.line.visible:
