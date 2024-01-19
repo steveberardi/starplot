@@ -555,7 +555,11 @@ class PlotStyle(BaseStyle):
 
     dso_dark_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.TOP, visible=False, color="#000"
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
         ),
         label=LabelStyle(font_size=8, visible=False),
     )
@@ -563,7 +567,11 @@ class PlotStyle(BaseStyle):
 
     dso_hii_ionized_region: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.TOP, visible=False, color="#000"
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
         ),
         label=LabelStyle(font_size=8, visible=False),
     )
@@ -571,7 +579,11 @@ class PlotStyle(BaseStyle):
 
     dso_supernova_remnant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.TOP, visible=False, color="#000"
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
         ),
         label=LabelStyle(font_size=8, visible=False),
     )
@@ -579,7 +591,11 @@ class PlotStyle(BaseStyle):
 
     dso_nova_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.TOP, visible=False, color="#000"
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
         ),
         label=LabelStyle(font_size=8, visible=False),
     )
@@ -587,7 +603,11 @@ class PlotStyle(BaseStyle):
 
     dso_nonexistant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.TOP, visible=False, color="#000"
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
         ),
         label=LabelStyle(font_size=8, visible=False),
     )
@@ -595,7 +615,11 @@ class PlotStyle(BaseStyle):
 
     dso_unknown: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.TOP, visible=False, color="#000"
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
         ),
         label=LabelStyle(font_size=8, visible=False),
     )
@@ -603,12 +627,15 @@ class PlotStyle(BaseStyle):
 
     dso_duplicate: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.TOP, visible=False, color="#000"
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
         ),
         label=LabelStyle(font_size=8, visible=False),
     )
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects (hidden by default)"""
-
 
     # Constellations
     constellation: PathStyle = PathStyle(

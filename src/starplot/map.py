@@ -178,7 +178,7 @@ class MapPlot(StarPlot):
             use_arrow=True,
             bbox=bbox,
         )
-    
+
     def _plot_ngc(self):
         extent = self.ax.get_extent(crs=self._crs)
         bbox = (-1 * extent[0], extent[2], -1 * extent[1], extent[3])
@@ -191,7 +191,7 @@ class MapPlot(StarPlot):
             bbox=bbox,
         )
         # print(self._crs.proj4_init)
-        
+
         # print(nebula_outline.geometry)
         nebula_outline.plot(
             ax=self.ax,

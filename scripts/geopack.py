@@ -20,10 +20,8 @@ from starplot.data import DataFiles
 # milkyway.to_file("temp/mwayz.gpkg", driver="GPKG")
 
 
-
-
 # Read outline file
-df = pd.read_csv("temp/NGC1499_lv1.txt", sep='\t')
+df = pd.read_csv("temp/NGC1499_lv1.txt", sep="\t")
 print(df)
 
 # Create shapely polygon
@@ -35,4 +33,3 @@ polygon = gpd.GeoDataFrame(index=[0], geometry=[polygon_geom])
 # Simplify and write to file
 polygon.simplify(10)
 polygon.to_file("temp/canebula.gpkg", driver="GPKG", compression="zip")
-
