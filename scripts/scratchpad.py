@@ -592,6 +592,7 @@ def create_map_scratch():
         {
             "star": {
                 "label": {"font_size": 8},
+                # "marker": {"symbol": "*", "size": 30}
             },
             "bayer_labels": {
                 "font_name": "GFS Didot",
@@ -604,22 +605,24 @@ def create_map_scratch():
             },
         },
     )
-    style.bayer_labels.visible = False
+    # style.bayer_labels.visible = False
+    # style.constellation.line.zorder = 1
+    # style.constellation.line.alpha = 0.56
 
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
-        ra_min=3,
-        ra_max=5,
-        dec_min=20,
-        dec_max=40,
-        limiting_magnitude=14.2,
+        ra_min=3.6,
+        ra_max=7.8,
+        dec_min=-16,
+        dec_max=23.6,
+        limiting_magnitude=8.2,
         style=style,
-        resolution=4600,
+        resolution=2600,
         star_catalog="tycho-1",
     )
-    p._plot_ca()
+    # p._plot_ngc()
 
-    p.export("temp/map-scratch.png", format="png", padding=1)
+    p.export("temp/map-scratch.svg", format="svg", padding=1)
 
 
 # ------------------------------------------

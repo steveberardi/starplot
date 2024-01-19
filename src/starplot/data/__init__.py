@@ -15,3 +15,4 @@ class DataFiles(str, Enum):
     MILKY_WAY = DATA_PATH / "milkyway.gpkg"
     HIPPARCOS = DATA_PATH / "stars.hipparcos.parquet"
     TYCHO_1 = DATA_PATH / "stars.tycho-1.gz.parquet"
+    # NGC = DATA_PATH / "ngc.gpkg"

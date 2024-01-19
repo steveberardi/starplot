@@ -179,21 +179,27 @@ class MapPlot(StarPlot):
             bbox=bbox,
         )
     
-    def _plot_ca(self):
+    def _plot_ngc(self):
+        extent = self.ax.get_extent(crs=self._crs)
+        bbox = (-1 * extent[0], extent[2], -1 * extent[1], extent[3])
+
+        # print(bbox)
         nebula_outline = gpd.read_file(
-            DataFiles.CA.value,
+            DataFiles.NGC.value,
             engine="pyogrio",
             use_arrow=True,
-            # bbox=bbox,
+            bbox=bbox,
         )
+        # print(self._crs.proj4_init)
         
         # print(nebula_outline.geometry)
         nebula_outline.plot(
             ax=self.ax,
             edgecolor="green",
             facecolor="green",
-            alpha=0.4,
+            alpha=0.23,
             transform=self._crs,
+            zorder=-10000,
         )
 
     def _plot_constellation_lines(self):
@@ -295,6 +301,7 @@ class MapPlot(StarPlot):
             self.ax.scatter(
                 *self._prepare_coords(stars_ra.hours, stars_dec.degrees),
                 sizes,
+                marker=self.style.star.marker.symbol,
                 zorder=self.style.star.marker.zorder,
                 color=self.style.star.marker.color.as_hex(),
                 edgecolors=self.style.star.marker.edge_color.as_hex()
