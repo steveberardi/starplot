@@ -545,14 +545,6 @@ class PlotStyle(BaseStyle):
     )
     """Styling for double stars"""
 
-    # "Dark Nebula": None,
-    # "HII Ionized region": None,
-    # "Supernova remnant": None,
-    # "Nova star": None,
-    # "Nonexistent object": None,
-    # "Object of other/unknown type": None,
-    # "Duplicated record": None,
-
     dso_dark_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
