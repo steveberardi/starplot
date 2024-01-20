@@ -26,7 +26,6 @@ dso_nebula:
 dso_open_cluster:
   marker:
     edge_color: '#000'
-    face_color: 'rgba(0,0,0,0)'
     fill: none
     alpha: 0.8
 ecliptic:

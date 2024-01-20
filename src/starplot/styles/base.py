@@ -493,7 +493,7 @@ class PlotStyle(BaseStyle):
             font_weight=FontWeightEnum.LIGHT,
         ),
     )
-    """Styling for deep sky objects (DSOs)"""
+    """Styling for deep sky objects (DSOs) on zenith plots"""
 
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -508,6 +508,20 @@ class PlotStyle(BaseStyle):
         ),
     )
     """Styling for open star clusters"""
+
+    dso_association_stars: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.CIRCLE,
+            size=6,
+            fill=FillStyleEnum.NONE,
+        ),
+        label=LabelStyle(
+            font_size=8,
+            font_weight=FontWeightEnum.LIGHT,
+            visible=False,
+        ),
+    )
+    """Styling for associations of stars"""
 
     dso_globular_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(

@@ -47,8 +47,8 @@ def map_plot_stereo_north():
 def test_map_plot_mercator_base(map_plot_mercator):
     filename = DATA_PATH / "actual-mercator-base.png"
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "193b1a3e2e26644c"
-    assert colorhash(filename) == "07406040000"
+    assert dhash(filename) == "181b1a7e362c6c64"
+    assert colorhash(filename) == "07406000000"
 
 
 def test_map_plot_mercator_with_extra_object(map_plot_mercator):
@@ -77,15 +77,15 @@ def test_map_plot_mercator_with_extra_object(map_plot_mercator):
         )
     )
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "193b1a3e2e2e644c"
-    assert colorhash(filename) == "07403040000"
+    assert dhash(filename) == "181b1a7e362c6c64"
+    assert colorhash(filename) == "07403000000"
 
 
 def test_map_plot_stereo_base(map_plot_stereo_north):
     filename = DATA_PATH / "actual-stereo-north-base.png"
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "57f66464686c7467"
-    assert colorhash(filename) == "07000000000"
+    assert dhash(filename) == "6476747074343416"
+    assert colorhash(filename) == "07e00000000"
 
 
 def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
@@ -108,8 +108,8 @@ def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
         )
     )
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "57f66464686c7467"
-    assert colorhash(filename) == "07e00000000"
+    assert dhash(filename) == "6476747074341416"
+    assert colorhash(filename) == "072001c0000"
 
 
 def test_map_plot_with_planets():
@@ -139,7 +139,7 @@ def test_map_plot_with_planets():
     )
     p.export(filename)
 
-    assert dhash(filename) == "ccc871633bb68e0c"
+    assert dhash(filename) == "ccc8716332b68c1f"
     assert colorhash(filename) == "07603000000"
 
 
@@ -166,15 +166,15 @@ def test_map_plot_scope_bino_fov():
         star_catalog="tycho-1",
     )
     p.plot_scope_fov(
-        ra=3.7836111111,
-        dec=24.1166666667,
+        ra=3.7912777778,
+        dec=24.1052777778,
         scope_focal_length=600,
         eyepiece_focal_length=14,
         eyepiece_fov=82,
     )
-    p.plot_bino_fov(ra=3.7836111111, dec=24.1166666667, fov=65, magnification=10)
+    p.plot_bino_fov(ra=3.7912777778, dec=24.1052777778, fov=65, magnification=10)
     p.ax.set_title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "0288a6dadaa68880"
+    assert dhash(filename) == "0a88a49a9aa488a0"
     assert colorhash(filename) == "07200038000"

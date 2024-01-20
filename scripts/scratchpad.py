@@ -636,7 +636,7 @@ def create_map_scratch():
 # create_scope_view_m11()
 
 # create_zenith()
-# create_map_mercator()
+create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
 # create_map_orion()
