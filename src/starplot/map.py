@@ -70,6 +70,7 @@ class MapPlot(StarPlot):
         star_catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
         rasterize_stars: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
         dso_types: List of Deep Sky Objects (DSOs) types that will be plotted
+        dso_plot_null_magnitudes: If True, then DSOs without a defined magnitude will be plotted
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -94,6 +95,7 @@ class MapPlot(StarPlot):
         star_catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
         rasterize_stars: bool = False,
         dso_types: list[dsos.DsoType] = dsos.DEFAULT_DSO_TYPES,
+        dso_plot_null_magnitudes: bool = True,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -117,6 +119,7 @@ class MapPlot(StarPlot):
         self.star_catalog = star_catalog
         self.rasterize_stars = rasterize_stars
         self.dso_types = dso_types
+        self.dso_plot_null_magnitudes = dso_plot_null_magnitudes
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -179,35 +182,19 @@ class MapPlot(StarPlot):
             bbox=bbox,
         )
 
-    def _plot_ngc(self):
+    def _plot_dsos(self):
         extent = self.ax.get_extent(crs=self._crs)
         bbox = (-1 * extent[0], extent[2], -1 * extent[1], extent[3])
-
-        # print(bbox)
         ongc = gpd.read_file(
-            DataFiles.NGC.value,
+            DataFiles.ONGC.value,
             engine="pyogrio",
             use_arrow=True,
             bbox=bbox,
         )
-        # print(self._crs.proj4_init)
-    
-
-        # print(nebula_outline.geometry)
-        # ongc.plot(
-        #     ax=self.ax,
-        #     edgecolor="green",
-        #     facecolor="green",
-        #     alpha=0.23,
-        #     transform=self._crs,
-        #     zorder=-10000,
-        # )
 
         dso_types = [dsos.ONGC_TYPE[dtype] for dtype in self.dso_types]
-        nearby_dsos = ongc[ ongc["Type"].isin(dso_types) ]
+        nearby_dsos = ongc[ongc["Type"].isin(dso_types)]
 
-        # print(nearby_dsos.loc["NGC1976"])
-        # return
         styles = {
             # Star Clusters ----------
             dsos.DsoType.OPEN_CLUSTER: self.style.dso_open_cluster,
@@ -244,7 +231,7 @@ class MapPlot(StarPlot):
 
             ra = d.ra_degrees
             dec = d.dec_degrees
-    
+
             name = d["Name"]
             dso_type = dsos.ONGC_TYPE_MAP[d["Type"]]
             style = styles.get(dso_type)
@@ -256,50 +243,25 @@ class MapPlot(StarPlot):
                 magnitude = float(magnitude)
             else:
                 magnitude = None
-        
+
             if (
                 not style
-                # or (
-                #     magnitude is not None
-                #     and magnitude > self.limiting_magnitude
-                # )
-                # or (magnitude is None and "Nebula" in legend_label)
+                or (magnitude is not None and magnitude > self.limiting_magnitude)
+                or (not self.dso_plot_null_magnitudes and magnitude is None)
             ):
-                # print(d.name)
                 continue
 
-            if angle:
-                angle = 180 - angle
+            geometry_types = d["geometry"].geom_type
 
-            geometry_types = d['geometry'].geom_type
-
-            # if name == "NGC1976":
-            #     print(d)
-
-            if 'MultiPolygon' in geometry_types or 'Polygon' in geometry_types:
-                
-                # from cartopy.feature import ShapelyFeature
-                # feature = ShapelyFeature(d.geometry, crs=self._crs)
-                # print(feature.crs)
-                # self.ax.add_feature(
-                #     feature,
-                #     facecolor="green",
-                #     # crs=self._crs,
-                #     alpha=1,
-                #     zorder=100,
-                # )
-                # print(name)
+            if "MultiPolygon" in geometry_types or "Polygon" in geometry_types:
                 gs = gpd.GeoSeries(d["geometry"])
-                # gs.to_crs(self._plate_carree)
-                # print(gs.crs)
-
                 gs.plot(
                     ax=self.ax,
-                    edgecolor="green",
-                    facecolor="green",
-                    alpha=0.23,
+                    facecolor=style.marker.color.as_hex(),
+                    edgecolor=style.marker.edge_color.as_hex(),
+                    alpha=style.marker.alpha,
+                    zorder=style.marker.zorder,
                     transform=self._crs,
-                    zorder=-10000,
                 )
 
             elif maj_ax and style.marker.visible:
@@ -312,6 +274,9 @@ class MapPlot(StarPlot):
                 else:
                     min_ax = maj_ax
 
+                if angle:
+                    angle = 180 - angle
+
                 if style.marker.symbol == MarkerSymbolEnum.SQUARE:
                     patch_class = patches.Rectangle
                     xy = (x - min_ax, y - maj_ax)
@@ -323,6 +288,7 @@ class MapPlot(StarPlot):
                     width = maj_ax * 2
                     height = min_ax * 2
 
+                fill = False if style.marker.fill == "none" else True
                 p = patch_class(
                     xy,
                     width=width,
@@ -332,6 +298,7 @@ class MapPlot(StarPlot):
                     edgecolor=style.marker.edge_color.as_hex(),
                     alpha=style.marker.alpha,
                     zorder=style.marker.zorder,
+                    fill=fill,
                 )
                 self.ax.add_patch(p)
 
@@ -342,7 +309,7 @@ class MapPlot(StarPlot):
                 # If no major axis, then just plot as a marker
                 obj = SkyObject(
                     name=name,
-                    ra=ra/15,
+                    ra=ra / 15,
                     dec=dec,
                     style=style,
                 )
@@ -604,7 +571,7 @@ class MapPlot(StarPlot):
             alpha=0,  # hide the actual gridlines
         )
 
-    def _plot_dsos(self):
+    def _plot_dsos_dep(self):
         dso_types = [dsos.ONGC_TYPE[dtype] for dtype in self.dso_types]
         nearby_dsos = ongc.listObjects(
             minra=self.ra_min * 15,  # convert to degrees (0-360)
@@ -614,7 +581,6 @@ class MapPlot(StarPlot):
             type=dso_types,
         )
 
-        # TODO : make this better
         styles = {
             # Star Clusters ----------
             dsos.DsoType.OPEN_CLUSTER: self.style.dso_open_cluster,
@@ -822,7 +788,7 @@ class MapPlot(StarPlot):
         self._plot_ecliptic()
         self._plot_celestial_equator()
         # self._plot_dsos()
-        self._plot_ngc()
+        self._plot_dsos()
         self._plot_planets()
         self._plot_moon()
 

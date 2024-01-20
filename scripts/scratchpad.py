@@ -615,14 +615,14 @@ def create_map_scratch():
         ra_max=7.8,
         dec_min=-16,
         dec_max=23.6,
-        limiting_magnitude=8.2,
+        limiting_magnitude=6.2,
         style=style,
         resolution=2600,
         star_catalog="tycho-1",
+        # dso_plot_null_magnitudes=False,
     )
-    # p._plot_ngc()
 
-    p.export("temp/map-scratch.png", format="png", padding=1)
+    p.export("temp/map-scratch.svg", format="svg", padding=1)
 
 
 # ------------------------------------------
