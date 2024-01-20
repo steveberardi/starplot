@@ -16,6 +16,7 @@ IGNORE_OUTLINES = [
 ]
 MIN_SIZE = 0.1
 
+
 def read_csv():
     df = pd.read_csv(
         "raw/ongc/NGC.csv",

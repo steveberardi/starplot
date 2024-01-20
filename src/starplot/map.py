@@ -330,6 +330,10 @@ class MapPlot(StarPlot):
         constellation_lines = self._read_geo_package(
             DataFiles.CONSTELLATION_LINES.value
         )
+
+        if constellation_lines.empty:
+            return
+
         constellation_lines.plot(
             ax=self.ax,
             **self.style.constellation.line.matplot_kwargs(
@@ -344,6 +348,10 @@ class MapPlot(StarPlot):
         constellation_borders = self._read_geo_package(
             DataFiles.CONSTELLATION_BORDERS.value
         )
+
+        if constellation_borders.empty:
+            return
+
         constellation_borders.plot(
             ax=self.ax,
             **self.style.constellation_borders.matplot_kwargs(
@@ -366,7 +374,12 @@ class MapPlot(StarPlot):
     def _plot_milky_way(self):
         if not self.style.milky_way.visible:
             return
+
         mw = self._read_geo_package(DataFiles.MILKY_WAY.value)
+
+        if mw.empty:
+            return
+
         mw.plot(
             ax=self.ax,
             **self.style.milky_way.matplot_kwargs(
