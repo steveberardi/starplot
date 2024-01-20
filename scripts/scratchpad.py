@@ -622,7 +622,7 @@ def create_map_scratch():
     )
     # p._plot_ngc()
 
-    p.export("temp/map-scratch.svg", format="svg", padding=1)
+    p.export("temp/map-scratch.png", format="png", padding=1)
 
 
 # ------------------------------------------

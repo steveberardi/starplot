@@ -184,23 +184,171 @@ class MapPlot(StarPlot):
         bbox = (-1 * extent[0], extent[2], -1 * extent[1], extent[3])
 
         # print(bbox)
-        nebula_outline = gpd.read_file(
+        ongc = gpd.read_file(
             DataFiles.NGC.value,
             engine="pyogrio",
             use_arrow=True,
             bbox=bbox,
         )
         # print(self._crs.proj4_init)
+    
 
         # print(nebula_outline.geometry)
-        nebula_outline.plot(
-            ax=self.ax,
-            edgecolor="green",
-            facecolor="green",
-            alpha=0.23,
-            transform=self._crs,
-            zorder=-10000,
-        )
+        # ongc.plot(
+        #     ax=self.ax,
+        #     edgecolor="green",
+        #     facecolor="green",
+        #     alpha=0.23,
+        #     transform=self._crs,
+        #     zorder=-10000,
+        # )
+
+        dso_types = [dsos.ONGC_TYPE[dtype] for dtype in self.dso_types]
+        nearby_dsos = ongc[ ongc["Type"].isin(dso_types) ]
+
+        # print(nearby_dsos.loc["NGC1976"])
+        # return
+        styles = {
+            # Star Clusters ----------
+            dsos.DsoType.OPEN_CLUSTER: self.style.dso_open_cluster,
+            dsos.DsoType.GLOBULAR_CLUSTER: self.style.dso_globular_cluster,
+            # Galaxies ----------
+            dsos.DsoType.GALAXY: self.style.dso_galaxy,
+            dsos.DsoType.GALAXY_PAIR: self.style.dso_galaxy,
+            dsos.DsoType.GALAXY_TRIPLET: self.style.dso_galaxy,
+            dsos.DsoType.GROUP_OF_GALAXIES: self.style.dso_galaxy,
+            # Nebulas ----------
+            dsos.DsoType.NEBULA: self.style.dso_nebula,
+            dsos.DsoType.PLANETARY_NEBULA: self.style.dso_nebula,
+            dsos.DsoType.EMISSION_NEBULA: self.style.dso_nebula,
+            dsos.DsoType.STAR_CLUSTER_NEBULA: self.style.dso_nebula,
+            dsos.DsoType.REFLECTION_NEBULA: self.style.dso_nebula,
+            # Stars ----------
+            dsos.DsoType.STAR: None,
+            dsos.DsoType.DOUBLE_STAR: self.style.dso_double_star,
+            dsos.DsoType.ASSOCIATION_OF_STARS: self.style.dso,
+            # Others (hidden by default style)
+            dsos.DsoType.DARK_NEBULA: self.style.dso_dark_nebula,
+            dsos.DsoType.HII_IONIZED_REGION: self.style.dso_hii_ionized_region,
+            dsos.DsoType.SUPERNOVA_REMNANT: self.style.dso_supernova_remnant,
+            dsos.DsoType.NOVA_STAR: self.style.dso_nova_star,
+            dsos.DsoType.NONEXISTENT: self.style.dso_nonexistant,
+            dsos.DsoType.UNKNOWN: self.style.dso_unknown,
+            dsos.DsoType.DUPLICATE_RECORD: self.style.dso_duplicate,
+        }
+        nearby_dsos = nearby_dsos.replace({np.nan: None})
+
+        for n, d in nearby_dsos.iterrows():
+            if d.ra_degrees is None or d.dec_degrees is None:
+                continue
+
+            ra = d.ra_degrees
+            dec = d.dec_degrees
+    
+            name = d["Name"]
+            dso_type = dsos.ONGC_TYPE_MAP[d["Type"]]
+            style = styles.get(dso_type)
+            maj_ax, min_ax, angle = d.MajAx, d.MinAx, d.PosAng
+            legend_label = dsos.LEGEND_LABELS.get(dso_type) or dso_type
+            magnitude = d["V-Mag"] or d["B-Mag"] or None
+
+            if magnitude:
+                magnitude = float(magnitude)
+            else:
+                magnitude = None
+        
+            if (
+                not style
+                # or (
+                #     magnitude is not None
+                #     and magnitude > self.limiting_magnitude
+                # )
+                # or (magnitude is None and "Nebula" in legend_label)
+            ):
+                # print(d.name)
+                continue
+
+            if angle:
+                angle = 180 - angle
+
+            geometry_types = d['geometry'].geom_type
+
+            # if name == "NGC1976":
+            #     print(d)
+
+            if 'MultiPolygon' in geometry_types or 'Polygon' in geometry_types:
+                
+                # from cartopy.feature import ShapelyFeature
+                # feature = ShapelyFeature(d.geometry, crs=self._crs)
+                # print(feature.crs)
+                # self.ax.add_feature(
+                #     feature,
+                #     facecolor="green",
+                #     # crs=self._crs,
+                #     alpha=1,
+                #     zorder=100,
+                # )
+                # print(name)
+                gs = gpd.GeoSeries(d["geometry"])
+                # gs.to_crs(self._plate_carree)
+                # print(gs.crs)
+
+                gs.plot(
+                    ax=self.ax,
+                    edgecolor="green",
+                    facecolor="green",
+                    alpha=0.23,
+                    transform=self._crs,
+                    zorder=-10000,
+                )
+
+            elif maj_ax and style.marker.visible:
+                # If object has a major axis then plot it's actual extent
+                x, y = self._proj.transform_point(ra, dec, self._crs)
+                maj_ax = self._compute_radius((maj_ax / 60) / 2)
+
+                if min_ax:
+                    min_ax = self._compute_radius((min_ax / 60) / 2)
+                else:
+                    min_ax = maj_ax
+
+                if style.marker.symbol == MarkerSymbolEnum.SQUARE:
+                    patch_class = patches.Rectangle
+                    xy = (x - min_ax, y - maj_ax)
+                    width = min_ax * 2
+                    height = maj_ax * 2
+                else:
+                    patch_class = patches.Ellipse
+                    xy = (x, y)
+                    width = maj_ax * 2
+                    height = min_ax * 2
+
+                p = patch_class(
+                    xy,
+                    width=width,
+                    height=height,
+                    angle=angle or 0,
+                    facecolor=style.marker.color.as_hex(),
+                    edgecolor=style.marker.edge_color.as_hex(),
+                    alpha=style.marker.alpha,
+                    zorder=style.marker.zorder,
+                )
+                self.ax.add_patch(p)
+
+                if style.label.visible:
+                    self._plot_text(ra, dec, name)
+
+            else:
+                # If no major axis, then just plot as a marker
+                obj = SkyObject(
+                    name=name,
+                    ra=ra/15,
+                    dec=dec,
+                    style=style,
+                )
+                self.plot_object(obj)
+
+            self._add_legend_handle_marker(legend_label, style.marker)
 
     def _plot_constellation_lines(self):
         if not self.style.constellation.line.visible:
@@ -673,7 +821,8 @@ class MapPlot(StarPlot):
         self._plot_stars()
         self._plot_ecliptic()
         self._plot_celestial_equator()
-        self._plot_dsos()
+        # self._plot_dsos()
+        self._plot_ngc()
         self._plot_planets()
         self._plot_moon()
 

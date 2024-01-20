@@ -13,7 +13,26 @@ DATA_PATH = HERE.parent / "raw" / "ongc" / "outlines"
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 
 
+def read_csv():
+    df = pd.read_csv(
+        "raw/ongc/NGC.csv",
+        sep=';',
+    )
+    df["ra_degrees"] = df.apply(parse_ra, axis=1)
+    df["dec_degrees"] = df.apply(parse_dec, axis=1)
+
+    gdf = gpd.GeoDataFrame(
+        df,
+        geometry=gpd.points_from_xy(df.ra_degrees, df.dec_degrees),
+        crs=CRS,
+    )
+
+    gdf.to_file("build/ngc.base.gpkg", driver="GPKG", crs=CRS)
+
+    return gdf
+
 def parse_ra(row):
+    """Parses RA from ONGC CSV from HH:MM:SS to 0...360 degree float"""
     if row.Type == 'NonEx':
         print("Non Existent object, ignoring...")
         return
@@ -26,6 +45,7 @@ def parse_ra(row):
         return None
 
 def parse_dec(row):
+    """Parses DEC from ONGC CSV from HH:MM:SS to -90...90 degree float"""
     if row.Type == 'NonEx':
         print("Non Existent object, ignoring...")
         return
@@ -41,35 +61,7 @@ def parse_dec(row):
         print(row.Name)
         return None
 
-ngc_df = pd.read_csv(
-    "raw/ongc/NGC.csv",
-    # usecols=[
-    #     "Name",
-    #     "Type",
-    #     "RA",
-    #     "Dec",
-    #     "MajAx",
-    #     "MinAx",
-    #     "NGC",
-    #     "IC",
-    #     "M",
-    #     "Common names",
-    # ],
-    sep=';',
-)
-ngc_df["ra_degrees"] = ngc_df.apply(parse_ra, axis=1)
-ngc_df["dec_degrees"] = ngc_df.apply(parse_dec, axis=1)
-
-ngc_gdf = gpd.GeoDataFrame(
-    ngc_df,
-    geometry=gpd.points_from_xy(ngc_df.ra_degrees, ngc_df.dec_degrees),
-    crs=CRS,
-)
-
-ngc_gdf.to_file("build/ngc.base.gpkg", driver="GPKG", crs=CRS)
-
-
-def parse(filename):
+def parse_designation_from_filename(filename):
     designation, level = filename.split('_')
 
     if designation.startswith('IC'):
@@ -83,23 +75,27 @@ def parse(filename):
     else:
         ngc = None
 
-    return designation, ic, ngc
+    return designation, ic, ngc, level
 
 
 def walk_files(path=DATA_PATH):
     for (dirpath, dirnames, filenames) in os.walk(path):
-        for filename in filenames:
+        for filename in sorted(filenames):
             yield Path(os.path.join(dirpath, filename))
 
 
+gdf = read_csv()
+gdf = gdf.set_index('Name')
+
 d = {'designation': [], 'ic': [], 'ngc': [], 'geometry': []}
 
-
 for f in walk_files():
-    designation, ic, ngc = parse(f.name)
+    designation, ic, ngc, level = parse_designation_from_filename(f.name)
 
-    if designation in d['designation']:
+    if level == "lv3":
         continue
+    # if designation in d['designation']:
+    #     continue
 
     dso_df = pd.read_csv(f, sep='\t')
     polygons = []
@@ -130,15 +126,17 @@ for f in walk_files():
         print(designation)
     else:
         n, _ = f.name.split('_')
-        # print(ngc_gdf[ngc_gdf['Name'] == n])
-        if ngc_gdf[ngc_gdf['Name'] == n].empty:
+        if gdf.loc[n].empty:
             print(f"NGC/IC object not found: {n}")
+        else:
+            gdf.loc[n, "geometry"] = dso_geom
 
 
-gdf = gpd.GeoDataFrame(d)
+# gdf = gpd.GeoDataFrame(d)
 
-# gdf.simplify(10)
-gdf.to_file(HERE.parent / "build" / "ngc.gpkg", driver="GPKG", crs=CRS)
+gdf.simplify(100)
+print(gdf.loc["NGC1976"])
+gdf.to_file(HERE.parent / "build" / "ngc.gpkg", driver="GPKG", crs=CRS, index=True)
 
 
 # result = gpd.read_file(HERE.parent / "build" / "ngc.gpkg")

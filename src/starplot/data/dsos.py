@@ -190,6 +190,8 @@ ONGC_TYPE = {
     DsoType.DUPLICATE_RECORD: "Dup",
 }
 
+ONGC_TYPE_MAP = { v: k.value for k,v in ONGC_TYPE.items()}
+
 DEFAULT_DSO_TYPES = [
     # Star Clusters ----------
     DsoType.OPEN_CLUSTER,
