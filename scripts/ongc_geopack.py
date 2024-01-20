@@ -12,6 +12,63 @@ DATA_PATH = HERE.parent / "raw" / "ongc" / "outlines"
 
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 
+
+def parse_ra(row):
+    if row.Type == 'NonEx':
+        print("Non Existent object, ignoring...")
+        return
+    try:
+        ra = row.RA
+        h, m, s = ra.split(":")
+        return 15 * (float(h) + float(m) / 60 + float(s) / 3600)
+    except Exception as e:
+        print(row.Name)
+        return None
+
+def parse_dec(row):
+    if row.Type == 'NonEx':
+        print("Non Existent object, ignoring...")
+        return
+    try:
+        dec = row.Dec
+        if dec[0] == '-':
+            mx = -1
+        else:
+            mx = 1
+        h, m, s = dec[1:].split(":")
+        return mx * (float(h) + float(m) / 60 + float(s) / 3600)
+    except Exception as e:
+        print(row.Name)
+        return None
+
+ngc_df = pd.read_csv(
+    "raw/ongc/NGC.csv",
+    # usecols=[
+    #     "Name",
+    #     "Type",
+    #     "RA",
+    #     "Dec",
+    #     "MajAx",
+    #     "MinAx",
+    #     "NGC",
+    #     "IC",
+    #     "M",
+    #     "Common names",
+    # ],
+    sep=';',
+)
+ngc_df["ra_degrees"] = ngc_df.apply(parse_ra, axis=1)
+ngc_df["dec_degrees"] = ngc_df.apply(parse_dec, axis=1)
+
+ngc_gdf = gpd.GeoDataFrame(
+    ngc_df,
+    geometry=gpd.points_from_xy(ngc_df.ra_degrees, ngc_df.dec_degrees),
+    crs=CRS,
+)
+
+ngc_gdf.to_file("build/ngc.base.gpkg", driver="GPKG", crs=CRS)
+
+
 def parse(filename):
     designation, level = filename.split('_')
 
@@ -71,6 +128,12 @@ for f in walk_files():
 
     if not ic and not ngc:
         print(designation)
+    else:
+        n, _ = f.name.split('_')
+        # print(ngc_gdf[ngc_gdf['Name'] == n])
+        if ngc_gdf[ngc_gdf['Name'] == n].empty:
+            print(f"NGC/IC object not found: {n}")
+
 
 gdf = gpd.GeoDataFrame(d)
 
