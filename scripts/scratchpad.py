@@ -619,19 +619,41 @@ def create_map_scratch():
     # style.constellation.line.alpha = 0.56
 
     p = sp.MapPlot(
-        projection=Projection.MOLLWEIDE,
-        ra_min=0,
-        ra_max=24,
-        dec_min=-90,
-        dec_max=90,
+        projection=Projection.STEREO_NORTH,
+        ra_min=4,
+        ra_max=8,
+        dec_min=-16,
+        dec_max=24,
         limiting_magnitude=4,
         style=style,
-        resolution=6000,
+        resolution=3000,
         # star_catalog="tycho-1",
         # dso_plot_null_magnitudes=False,
-    )
+    ).export("temp/map-scratch-1.png", format="png", padding=0.1)
 
-    p.export("temp/map-scratch.png", format="png", padding=0.1)
+    sp.MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=4,
+        ra_max=8,
+        dec_min=-16,
+        dec_max=24,
+        limiting_magnitude=4,
+        style=style,
+        resolution=3000,
+        # star_catalog="tycho-1",
+        # dso_plot_null_magnitudes=False,
+    ).export("temp/map-scratch-2.png", format="png", padding=0.1)
+
+    sp.MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=17,
+        ra_max=20,
+        dec_min=30,
+        dec_max=55,
+        limiting_magnitude=8.0,
+        style=style,
+        resolution=2000,
+    ).export("temp/map-scratch-3.png", padding=0.1)
 
 
 # ------------------------------------------
@@ -648,7 +670,7 @@ def create_map_scratch():
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
+# create_map_orion()
 create_map_scratch()
 # create_map_sgr()
 
