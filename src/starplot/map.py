@@ -41,12 +41,16 @@ class Projection(str, Enum):
     MERCATOR = "mercator"
     """Good for declinations between -70 and 70, but distorts objects near the poles"""
 
+    MOLLWEIDE = "mollweide"
+    """Good for showing the entire celestial sphere in one plot"""
+
     @staticmethod
     def crs(projection, center_lon=-180):
         return {
             Projection.STEREO_NORTH: ccrs.NorthPolarStereo(center_lon),
             Projection.STEREO_SOUTH: ccrs.SouthPolarStereo(center_lon),
             Projection.MERCATOR: ccrs.Mercator(center_lon),
+            Projection.MOLLWEIDE: ccrs.Mollweide(center_lon),
         }.get(projection)
 
 

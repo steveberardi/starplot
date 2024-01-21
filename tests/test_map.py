@@ -246,3 +246,25 @@ def test_map_radec_invalid():
             dec_min=50,
             dec_max=24,
         )
+
+def test_map_mollweide():
+    filename = DATA_PATH / "map-mollweide.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.GRAYSCALE,
+        styles.extensions.MAP,
+    )
+
+    MapPlot(
+        projection=Projection.MOLLWEIDE,
+        ra_min=0,
+        ra_max=24,
+        dec_min=-90,
+        dec_max=90,
+        limiting_magnitude=4,
+        style=style,
+        resolution=3000,
+    ).export(filename, padding=0.1)
+
+    assert dhash(filename) == "0f2971633b330f06"
+    assert colorhash(filename) == "07000000000"

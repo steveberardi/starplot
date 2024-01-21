@@ -6,5 +6,7 @@
 - ![optic-p2](images/optic-p2.png)
 - ![map-lyra](images/map-lyra.png)
 - ![big-dipper](images/example_06.png)
+- ![map-mollweide](images/map-mollweide.png)
+- ![scope-fov](images/example_04.png)
 
 </div>
