@@ -5,6 +5,7 @@ This page has a few examples to get you familiar with Starplot and how it works.
 3. [Map of Orion](#map-of-orion)
 4. [Map of The Pleiades with a Scope Field of View](#map-of-the-pleiades-with-a-scope-field-of-view)
 5. [Optic plot of The Pleiades with a Refractor Telescope](#optic-plot-of-the-pleiades-with-a-refractor-telescope)
+6. [Map plot of The Big Dipper with Custom Markers](#map-plot-of-the-big-dipper-with-custom-markers)
 
 
 
@@ -65,7 +66,7 @@ The result should look like this:
     ```
 
 
-## Optic plot of The Pleiades with a Refractor Telescope
+## Optic Plot of The Pleiades with a Refractor Telescope
 
 The following code will create an optic plot that shows what The Pleiades looked like through a refractor telescope on December 16, 2023 at 9pm PT from Palomar Mountain in California.
 
@@ -78,6 +79,17 @@ The result should look like this:
 ![optic-m45](images/example_05.png)
 
 
+## Map of The Big Dipper with Custom Markers
+
+Here's a fun one 😃 Let's create a small plot of the big dipper ([Ursa Major](https://en.wikipedia.org/wiki/Ursa_Major)), but with custom star-shaped markers:
+
+```python
+--8<-- "examples/example_06.py"
+```
+
+The result should look like this:
+
+![stars-m45](images/example_06.png)
 
 ---
 

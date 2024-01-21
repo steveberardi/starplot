@@ -67,8 +67,8 @@ class MapPlot(StarPlot):
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
-        star_catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
         rasterize_stars: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
+        star_catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
         dso_types: List of Deep Sky Objects (DSOs) types that will be plotted
 
     Returns:
@@ -91,8 +91,8 @@ class MapPlot(StarPlot):
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
-        star_catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
         rasterize_stars: bool = False,
+        star_catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
         dso_types: list[dsos.DsoType] = dsos.DEFAULT_DSO_TYPES,
         *args,
         **kwargs,
@@ -106,6 +106,7 @@ class MapPlot(StarPlot):
             resolution,
             hide_colliding_labels,
             adjust_text,
+            rasterize_stars,
             *args,
             **kwargs,
         )
@@ -115,7 +116,6 @@ class MapPlot(StarPlot):
         self.dec_min = dec_min
         self.dec_max = dec_max
         self.star_catalog = star_catalog
-        self.rasterize_stars = rasterize_stars
         self.dso_types = dso_types
 
         self._geodetic = ccrs.Geodetic()

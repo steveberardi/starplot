@@ -27,7 +27,7 @@ def test_zenith_plot_base(zenith_plot):
     filename = DATA_PATH / "actual-zenith-base.png"
     zenith_plot.export(filename)
 
-    assert dhash(filename) == "2b71ac848894790f"
+    assert dhash(filename) == "0b71ac848894790f"
     assert colorhash(filename) == "07000000000"
 
 
@@ -42,7 +42,7 @@ def test_zenith_plot_with_extra_objects(zenith_plot):
     zenith_plot.plot_object(obj)
     zenith_plot.export(filename)
 
-    assert dhash(filename) == "2b71ac848894790f"
+    assert dhash(filename) == "0b71ac848894790f"
     assert colorhash(filename) == "07000038000"
 
 
@@ -58,5 +58,5 @@ def test_zenith_plot_with_info_label():
     )
     zp.export(filename)
 
-    assert dhash(filename) == "2b71ac848894794f"
+    assert dhash(filename) == "0b71ac848894794f"
     assert colorhash(filename) == "07000000000"

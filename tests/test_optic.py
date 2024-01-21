@@ -155,8 +155,8 @@ def test_optic_plot_camera(optic_style, dt_dec_16):
     filename = DATA_PATH / "actual-optic-camera-m45.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "4971517165615175"
-    assert colorhash(filename) == "3ae00010000"
+    assert dhash(filename) == "4971517175614975"
+    assert colorhash(filename) == "3ac00008000"
 
 
 def test_optic_plot_camera_rotated(optic_style, dt_dec_16):
@@ -213,7 +213,7 @@ def test_optic_plot_polaris_binoculars(dt_dec_16):
     filename = DATA_PATH / "actual-optic-binoculars-polaris.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "063141cc48610355"
+    assert dhash(filename) == "063140cc48611355"
     assert colorhash(filename) == "07000000000"
 
 

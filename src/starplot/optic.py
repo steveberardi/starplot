@@ -33,6 +33,7 @@ class OpticPlot(StarPlot):
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
+        rasterize_stars: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
         colorize_stars: If True, then stars will be filled with their BV color index
         raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
 
@@ -59,6 +60,7 @@ class OpticPlot(StarPlot):
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
+        rasterize_stars: bool = False,
         colorize_stars: bool = False,
         raise_on_below_horizon: bool = True,
         *args,
@@ -73,6 +75,7 @@ class OpticPlot(StarPlot):
             resolution,
             hide_colliding_labels,
             adjust_text,
+            rasterize_stars,
             *args,
             **kwargs,
         )
@@ -180,19 +183,19 @@ class OpticPlot(StarPlot):
                 continue
 
             if m < 4.6:
-                sizes.append((9 - m) ** 3.34 * self._star_size_multiplier)
+                sizes.append((9 - m) ** 3.76 * self._star_size_multiplier)
                 alphas.append(1)
             # elif m < 4.6:
             #     sizes.append((9 - m) ** 3.68 * self._size_multiplier)
             #     alphas.append(1)
             elif m < 5.85:
-                sizes.append((9 - m) ** 3.46 * self._star_size_multiplier)
+                sizes.append((9 - m) ** 3.72 * self._star_size_multiplier)
                 alphas.append(0.94)
             elif m < 9:
-                sizes.append((13 - m) ** 1.62 * self._star_size_multiplier)
+                sizes.append((13 - m) ** 1.91 * self._star_size_multiplier)
                 alphas.append(0.88)
             else:
-                sizes.append(3.72 * self._star_size_multiplier)
+                sizes.append(4.93 * self._star_size_multiplier)
                 alphas.append((16 - m) * 0.09)
 
             if self.colorize_stars:
@@ -211,9 +214,15 @@ class OpticPlot(StarPlot):
                 y,
                 sizes,
                 colors,
-                clip_path=self.background_patch,
                 alpha=alphas,
-                edgecolors="none",
+                marker=self.style.star.marker.symbol,
+                edgecolors=self.style.star.marker.edge_color.as_hex()
+                if self.style.star.marker.edge_color
+                else "none",
+                zorder=self.style.star.marker.zorder,
+                rasterized=self.rasterize_stars,
+
+                clip_path=self.background_patch,
                 **self._plot_kwargs(),
             )
             self._plotted_stars.set_clip_on(True)

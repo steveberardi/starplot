@@ -55,6 +55,13 @@ dso_open_cluster:
     alpha: 0.32
     color: '#d8d99c'
     edge_color: '#9d9f3c'
+dso_association_stars:
+  label:
+    visible: false
+  marker:
+    alpha: 0.32
+    color: '#d8d99c'
+    edge_color: '#9d9f3c'
 dso_globular_cluster:
   marker:
     alpha: 0.5

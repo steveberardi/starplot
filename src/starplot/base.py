@@ -23,6 +23,7 @@ class StarPlot(ABC):
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
+        rasterize_stars: bool = False,
         *args,
         **kwargs,
     ):
@@ -35,6 +36,7 @@ class StarPlot(ABC):
         self.resolution = resolution
         self.hide_colliding_labels = hide_colliding_labels
         self.adjust_text = adjust_text
+        self.rasterize_stars = rasterize_stars
 
         self.dt = dt or timezone("UTC").localize(datetime.now())
         self.ephemeris = ephemeris
@@ -49,7 +51,7 @@ class StarPlot(ABC):
         )
         self._size_multiplier = self.resolution / 3000
         self._star_size_multiplier = (
-            self._size_multiplier * self.style.star.marker.size / 10
+            self._size_multiplier * self.style.star.marker.size / 5
         )
 
         self.timescale = load.timescale().from_datetime(self.dt)

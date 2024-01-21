@@ -34,6 +34,13 @@ dso_open_cluster:
     alpha: 0.3
     color: '#fffb68'
     edge_color: '#989400'
+dso_association_stars:
+  label:
+    visible: false
+  marker:
+    alpha: 0.3
+    color: '#fffb68'
+    edge_color: '#989400'
 ecliptic:
   label:
     font_color: '#e33b3b'

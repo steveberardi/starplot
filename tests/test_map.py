@@ -47,7 +47,7 @@ def map_plot_stereo_north():
 def test_map_plot_mercator_base(map_plot_mercator):
     filename = DATA_PATH / "actual-mercator-base.png"
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "181b1a7e362c6c64"
+    assert dhash(filename) == "193b1a7e362d6474"
     assert colorhash(filename) == "07406000000"
 
 
@@ -77,14 +77,14 @@ def test_map_plot_mercator_with_extra_object(map_plot_mercator):
         )
     )
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "181b1a7e362c6c64"
+    assert dhash(filename) == "193b1a7e2e2d6474"
     assert colorhash(filename) == "07403000000"
 
 
 def test_map_plot_stereo_base(map_plot_stereo_north):
     filename = DATA_PATH / "actual-stereo-north-base.png"
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "6476747074343416"
+    assert dhash(filename) == "627664747c383416"
     assert colorhash(filename) == "07e00000000"
 
 
@@ -108,7 +108,7 @@ def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
         )
     )
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "6476747074341416"
+    assert dhash(filename) == "627664747c381416"
     assert colorhash(filename) == "072001c0000"
 
 
@@ -139,7 +139,7 @@ def test_map_plot_with_planets():
     )
     p.export(filename)
 
-    assert dhash(filename) == "ccc8716332b68c1f"
+    assert dhash(filename) == "cc6871633bb68e17"
     assert colorhash(filename) == "07603000000"
 
 
@@ -176,5 +176,31 @@ def test_map_plot_scope_bino_fov():
     p.ax.set_title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "0a88a49a9aa488a0"
+    assert dhash(filename) == "0288a69a9aa488a0"
     assert colorhash(filename) == "07200038000"
+
+def test_map_plot_custom_stars():
+    filename = DATA_PATH / "map_custom_stars.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.MINIMAL,
+        styles.extensions.GRAYSCALE,
+        styles.extensions.MAP,
+    )
+    style.star.marker.symbol = "*"
+    style.star.marker.size = 60
+
+    p = MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=3.6,
+        ra_max=7.8,
+        dec_min=-16,
+        dec_max=24,
+        limiting_magnitude=7.2,
+        style=style,
+        resolution=4000,
+    )
+    p.export(filename, padding=0.3)
+
+    assert dhash(filename) == "1dab2b8eae2e840e"
+    assert colorhash(filename) == "07000000000"
