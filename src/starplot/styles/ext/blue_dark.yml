@@ -114,5 +114,6 @@ star:
     color: '#88c0d0'
 
 legend:
-  background_color: '#a0abbf'
+  background_color: '#515e76'
   background_alpha: 1.0
+  font_color: '#d5e0f5'

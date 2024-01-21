@@ -40,6 +40,11 @@ dso_open_cluster:
     edge_color: 'hsl(136, 0%, 97%)'
     fill: none
     alpha: 0.86
+dso_association_stars:
+  marker:
+    edge_color: 'hsl(136, 0%, 97%)'
+    fill: none
+    alpha: 0.86
 ecliptic:
   label:
     font_color: '#777'

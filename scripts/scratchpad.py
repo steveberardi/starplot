@@ -591,14 +591,14 @@ def create_map_scratch():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
         # extensions.GRAYSCALE_DARK,
-        # extensions.BLUE_LIGHT,
+        extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        extensions.BLUE_DARK,
+        # extensions.BLUE_DARK,
         extensions.MAP,
         {
             "star": {
                 "label": {"font_size": 8},
-                # "marker": {"symbol": "*", "size": 30}
+                "marker": {"symbol": "*", "size": 80}
             },
             "bayer_labels": {
                 "font_name": "GFS Didot",
@@ -614,7 +614,7 @@ def create_map_scratch():
     style.bayer_labels.visible = False
     style.gridlines.label.visible = False
     style.tick_marks.visible = False
-    style.legend.visible = False
+    # style.legend.visible = False
     # style.constellation.line.zorder = 1
     # style.constellation.line.alpha = 0.56
 

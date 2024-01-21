@@ -513,7 +513,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
             size=6,
-            fill=FillStyleEnum.NONE,
+            fill=FillStyleEnum.FULL,
         ),
         label=LabelStyle(
             font_size=8,
