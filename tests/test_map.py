@@ -206,6 +206,7 @@ def test_map_plot_custom_stars():
     assert dhash(filename) == "1dab2b8eae2e840e"
     assert colorhash(filename) == "07000000000"
 
+
 def test_map_plot_wrapping():
     filename = DATA_PATH / "map-wrapping.png"
 
@@ -228,6 +229,7 @@ def test_map_plot_wrapping():
     assert dhash(filename) == "1f1e8f4747211317"
     assert colorhash(filename) == "07000000000"
 
+
 def test_map_radec_invalid():
     with pytest.raises(ValueError, match="ra_min must be less than ra_max"):
         MapPlot(
@@ -246,6 +248,7 @@ def test_map_radec_invalid():
             dec_min=50,
             dec_max=24,
         )
+
 
 def test_map_mollweide():
     filename = DATA_PATH / "map-mollweide.png"

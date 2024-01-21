@@ -625,13 +625,24 @@ class MapPlot(StarPlot):
 
     def _plot_dsos(self):
         dso_types = [dsos.ONGC_TYPE[dtype] for dtype in self.dso_types]
-        nearby_dsos = ongc.listObjects(
-            minra=self.ra_min * 15,  # convert to degrees (0-360)
-            maxra=self.ra_max * 15,  # convert to degrees (0-360)
+        base_kwargs = dict(
             mindec=self.dec_min,
             maxdec=self.dec_max,
             type=dso_types,
         )
+
+        if self.ra_max < 24:
+            nearby_dsos = ongc.listObjects(
+                minra=self.ra_min * 15,  # convert to degrees (0-360)
+                maxra=self.ra_max * 15,  # convert to degrees (0-360)
+                **base_kwargs,
+            )
+        else:
+            # handle wrapping
+            nearby_dsos = ongc.listObjects(minra=self.ra_min * 15, **base_kwargs)
+            nearby_dsos += ongc.listObjects(
+                maxra=(self.ra_max - 24) * 15, **base_kwargs
+            )
 
         styles = {
             # Star Clusters ----------

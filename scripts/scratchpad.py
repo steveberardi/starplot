@@ -634,7 +634,6 @@ def create_map_scratch():
     p.export("temp/map-scratch.png", format="png", padding=0.1)
 
 
-
 # ------------------------------------------
 
 # create_constellation()
