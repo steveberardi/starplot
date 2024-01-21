@@ -109,6 +109,10 @@ code.raw {
 }
 .cards ul li img {
     align-self: center;
+    /* object-fit: cover;
+    width: 360px;
+    height: 360px; */
+      
 }
 
 .cards figure {
