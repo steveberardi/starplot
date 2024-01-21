@@ -596,10 +596,7 @@ def create_map_scratch():
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
-            "star": {
-                "label": {"font_size": 8},
-                "marker": {"symbol": "*", "size": 80}
-            },
+            "star": {"label": {"font_size": 8}, "marker": {"symbol": "*", "size": 80}},
             "bayer_labels": {
                 "font_name": "GFS Didot",
                 "font_size": 7,
