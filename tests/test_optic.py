@@ -46,7 +46,7 @@ def test_optic_plot_binoculars(optic_style, dt_dec_16):
         include_info_text=True,
         colorize_stars=True,
     )
-    filename = DATA_PATH / "actual-optic-binoculars-m45.png"
+    filename = DATA_PATH / "optic-binoculars-m45.png"
     optic_plot.export(filename)
 
     assert dhash(filename) == "8e172b552b338e4d"
@@ -73,11 +73,46 @@ def test_optic_plot_refractor(optic_style, dt_dec_16):
         include_info_text=True,
         colorize_stars=True,
     )
-    filename = DATA_PATH / "actual-optic-refractor-double-cluster.png"
+    filename = DATA_PATH / "optic-refractor-double-cluster.png"
     optic_plot.export(filename)
 
     assert dhash(filename) == "8e172b452b338e4d"
     assert colorhash(filename) == "33e00000000"
+
+
+def test_optic_plot_wrapping(optic_style, dt_dec_16):
+    style = optic_style.extend(
+        {
+            "star": {
+                "marker": {
+                    "symbol": "*",
+                    "size": 90,
+                }
+            }
+        }
+    )
+    optic_plot = OpticPlot(
+        ra=23.99,
+        dec=17.2738888889,
+        lat=32.97,
+        lon=-117.038611,
+        # use binoculars for a wide TFOV
+        optic=optics.Binoculars(
+            magnification=8,
+            fov=65,
+        ),
+        dt=dt_dec_16,
+        limiting_magnitude=12,
+        style=style,
+        resolution=1600,
+        include_info_text=True,
+        colorize_stars=True,
+    )
+    filename = DATA_PATH / "optic-wrapping.png"
+    optic_plot.export(filename)
+
+    assert dhash(filename) == "8e172b452b338e4d"
+    assert colorhash(filename) == "1ee00000000"
 
 
 def test_optic_plot_scope(optic_style, dt_dec_16):
@@ -99,7 +134,7 @@ def test_optic_plot_scope(optic_style, dt_dec_16):
         include_info_text=True,
         colorize_stars=True,
     )
-    filename = DATA_PATH / "actual-optic-scope-m45.png"
+    filename = DATA_PATH / "optic-scope-m45.png"
     optic_plot.export(filename)
 
     assert dhash(filename) == "8e173b5123238e4d"
@@ -125,7 +160,7 @@ def test_optic_plot_reflector(optic_style, dt_dec_16):
         include_info_text=True,
         colorize_stars=True,
     )
-    filename = DATA_PATH / "actual-optic-reflector-m45.png"
+    filename = DATA_PATH / "optic-reflector-m45.png"
     optic_plot.export(filename)
 
     assert dhash(filename) == "8e172b5523338e4d"
@@ -152,7 +187,7 @@ def test_optic_plot_camera(optic_style, dt_dec_16):
         include_info_text=True,
         colorize_stars=True,
     )
-    filename = DATA_PATH / "actual-optic-camera-m45.png"
+    filename = DATA_PATH / "optic-camera-m45.png"
     optic_plot.export(filename)
 
     assert dhash(filename) == "4971517175614975"
@@ -181,7 +216,7 @@ def test_optic_plot_camera_rotated(optic_style, dt_dec_16):
         include_info_text=True,
         colorize_stars=True,
     )
-    filename = DATA_PATH / "actual-optic-camera-rotated-m45.png"
+    filename = DATA_PATH / "optic-camera-rotated-m45.png"
     optic_plot.export(filename)
 
     assert dhash(filename) == "26468b33261c9a75"
@@ -211,7 +246,7 @@ def test_optic_plot_polaris_binoculars(dt_dec_16):
         include_info_text=True,
         colorize_stars=False,
     )
-    filename = DATA_PATH / "actual-optic-binoculars-polaris.png"
+    filename = DATA_PATH / "optic-binoculars-polaris.png"
     optic_plot.export(filename)
 
     assert dhash(filename) == "063140cc48611355"

@@ -156,11 +156,22 @@ class OpticPlot(StarPlot):
 
         nearby_stars_df = stardata[
             (stardata["magnitude"] <= self.limiting_magnitude)
-            & (stardata["ra_hours"] < ra_max)
-            & (stardata["ra_hours"] > ra_min)
             & (stardata["dec_degrees"] < self.dec + self.optic.true_fov / 2 * 1.03)
             & (stardata["dec_degrees"] > self.dec - self.optic.true_fov / 2 * 1.03)
         ]
+
+        if ra_max < 24:
+            nearby_stars_df = nearby_stars_df[
+                (nearby_stars_df["ra_hours"] < ra_max)
+                & (nearby_stars_df["ra_hours"] > ra_min)
+            ]
+        else:
+            # handle wrapping
+            nearby_stars_df = nearby_stars_df[
+                (nearby_stars_df["ra_hours"] > ra_min)
+                | (nearby_stars_df["ra_hours"] < ra_max - 24)
+            ]
+
         x = []
         y = []
         sizes = []
