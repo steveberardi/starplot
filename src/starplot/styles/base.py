@@ -747,7 +747,7 @@ class PlotStyle(BaseStyle):
         """
         with open(filename, "r") as sfile:
             style = yaml.safe_load(sfile)
-            return PlotStyle().extend(**style)
+            return PlotStyle().extend(style)
 
     def dump_to_file(self, filename: str) -> None:
         """
@@ -798,5 +798,4 @@ class PlotStyle(BaseStyle):
             if not isinstance(a, dict):
                 raise TypeError("Style overrides must be dictionary types.")
             merge_dict(style_dict, a)
-
         return PlotStyle.parse_obj(style_dict)
