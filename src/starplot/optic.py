@@ -221,7 +221,6 @@ class OpticPlot(StarPlot):
                 else "none",
                 zorder=self.style.star.marker.zorder,
                 rasterized=self.rasterize_stars,
-
                 clip_path=self.background_patch,
                 **self._plot_kwargs(),
             )

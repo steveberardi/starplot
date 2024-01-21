@@ -110,6 +110,12 @@ class MapPlot(StarPlot):
             *args,
             **kwargs,
         )
+
+        if ra_min > ra_max:
+            raise ValueError("ra_min must be less than ra_max")
+        if dec_min > dec_max:
+            raise ValueError("dec_min must be less than dec_max")
+
         self.projection = projection
         self.ra_min = ra_min
         self.ra_max = ra_max
@@ -159,6 +165,17 @@ class MapPlot(StarPlot):
             self.dec_max,
         ]
 
+    def _is_global_extent(self):
+        """Returns True if the plot's RA/DEC range is the entire celestial sphere"""
+        return all(
+            [
+                self.ra_min == 0,
+                self.ra_max == 24,
+                self.dec_min == -90,
+                self.dec_max == 90,
+            ]
+        )
+
     def _adjust_radec_minmax(self):
         # adjust the RA min/max if the DEC bounds is near the poles
         if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH] and (
@@ -166,6 +183,20 @@ class MapPlot(StarPlot):
         ):
             self.ra_min = 0
             self.ra_max = 24
+
+        # adjust declination to match extent
+        extent = self.ax.get_extent(crs=self._plate_carree)
+        self.dec_min = extent[2]
+        self.dec_max = extent[3]
+
+        # TODO : adjust ra min/max too
+        # if self.ra_max < 24:
+        #     ra_min = (-1 * extent[0]) / 15
+        #     ra_max = (-1 * extent[1]) / 15
+        #     # self.ra_min = min((cx * extent[0]) / 15, (cx * extent[1]) / 15)
+        #     # self.ra_max = max((cx * extent[0]) / 15, (cx * extent[1]) / 15)
+
+        #     print(f"[ {ra_min}, {ra_max} ]")
 
     def _read_geo_package(self, filename: str):
         """Returns GeoDataFrame of a GeoPackage file"""
@@ -395,11 +426,22 @@ class MapPlot(StarPlot):
 
         nearby_stars_df = stardata[
             (stardata["magnitude"] <= self.limiting_magnitude)
-            & (stardata["ra_hours"] < self.ra_max + ra_buffer)
-            & (stardata["ra_hours"] > self.ra_min - ra_buffer)
             & (stardata["dec_degrees"] < self.dec_max + dec_buffer)
             & (stardata["dec_degrees"] > self.dec_min - dec_buffer)
         ]
+
+        if self.ra_max < 24:
+            nearby_stars_df = nearby_stars_df[
+                (nearby_stars_df["ra_hours"] < self.ra_max + ra_buffer)
+                & (nearby_stars_df["ra_hours"] > self.ra_min - ra_buffer)
+            ]
+        else:
+            # handle wrapping
+            nearby_stars_df = nearby_stars_df[
+                (nearby_stars_df["ra_hours"] > self.ra_min - ra_buffer)
+                | (nearby_stars_df["ra_hours"] < self.ra_max - 24 + ra_buffer)
+            ]
+
         nearby_stars = Star.from_dataframe(nearby_stars_df)
         astrometric = earth.at(self.timescale).observe(nearby_stars)
         stars_ra, stars_dec, _ = astrometric.radec()
@@ -441,10 +483,6 @@ class MapPlot(StarPlot):
         # Plot star labels (names and bayer designations)
         stars_labeled = nearby_stars_df[
             (nearby_stars_df["magnitude"] <= self.limiting_magnitude_labels)
-            & (nearby_stars_df["ra_hours"] <= self.ra_max)
-            & (nearby_stars_df["ra_hours"] >= self.ra_min)
-            & (nearby_stars_df["dec_degrees"] <= self.dec_max)
-            & (nearby_stars_df["dec_degrees"] >= self.dec_min)
         ]
 
         stars_labeled.sort_values("magnitude")
@@ -775,18 +813,21 @@ class MapPlot(StarPlot):
             facecolor=self.style.border_bg_color.as_hex(),
             layout="constrained",
         )
-
-        if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:
-            # for stereo projections, try to orient map so the pole is "up"
-            bounds = self._latlon_bounds()
-            center_lon = (bounds[0] + bounds[1]) / 2
-        else:
-            center_lon = -180
+        bounds = self._latlon_bounds()
+        center_lon = (bounds[0] + bounds[1]) / 2
 
         self._proj = Projection.crs(self.projection, center_lon)
         self._proj.threshold = 100
         self.ax = plt.axes(projection=self._proj)
-        self.ax.set_extent(self._latlon_bounds(), crs=self._plate_carree)
+
+        if self._is_global_extent():
+            # this cartopy function works better for setting global extents
+            self.ax.set_global()
+        else:
+            self.ax.set_extent(bounds, crs=self._plate_carree)
+
+        # print(self.ax.get_extent(crs=self._crs))
+
         self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
 

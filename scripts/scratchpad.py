@@ -618,17 +618,59 @@ def create_map_scratch():
     p = sp.MapPlot(
         projection=Projection.STEREO_NORTH,
         ra_min=18,
-        ra_max=19.5,
+        ra_max=26,
         dec_min=30,
-        dec_max=40,
-        limiting_magnitude=14.2,
+        dec_max=50,
+        limiting_magnitude=7.2,
         style=style,
-        resolution=1000,
+        resolution=2000,
         star_catalog="tycho-1",
         # dso_plot_null_magnitudes=False,
     )
 
     p.export("temp/map-scratch.png", format="png", padding=0.1)
+
+    sp.MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=17,
+        ra_max=20,
+        dec_min=30,
+        dec_max=55,
+        limiting_magnitude=8.0,
+        style=style,
+        resolution=2000,
+    ).export("temp/map-scratch-2.png")
+
+    dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+
+    style = PlotStyle().extend(
+        extensions.MINIMAL,
+        extensions.GRAYSCALE,
+        extensions.MAP,
+    )
+
+    p = sp.MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=3.4666666667,
+        ra_max=4,
+        dec_min=20,
+        dec_max=28,
+        dt=dt,
+        limiting_magnitude=12,
+        style=style,
+        resolution=1000,
+        star_catalog="tycho-1",
+    )
+    p.plot_scope_fov(
+        ra=3.7912777778,
+        dec=24.1052777778,
+        scope_focal_length=600,
+        eyepiece_focal_length=14,
+        eyepiece_fov=82,
+    )
+    p.plot_bino_fov(ra=3.7912777778, dec=24.1052777778, fov=65, magnification=10)
+    p.ax.set_title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
+    p.export("temp/map-scratch-3.png", padding=0.3)
 
 
 # ------------------------------------------
@@ -645,7 +687,7 @@ def create_map_scratch():
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 create_map_scratch()
 # create_map_sgr()
 

@@ -23,7 +23,7 @@ def map_plot_mercator():
         ra_min=3.6,
         ra_max=7.8,
         dec_min=-16,
-        dec_max=24,
+        dec_max=23.6,
         limiting_magnitude=7.2,
         style=styles.MAP_BLUE_LIGHT,
         resolution=4000,
@@ -45,14 +45,14 @@ def map_plot_stereo_north():
 
 
 def test_map_plot_mercator_base(map_plot_mercator):
-    filename = DATA_PATH / "actual-mercator-base.png"
+    filename = DATA_PATH / "map-mercator-base.png"
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "193b1a7e362d6474"
+    assert dhash(filename) == "193b1a7e3e256474"
     assert colorhash(filename) == "07406000000"
 
 
 def test_map_plot_mercator_with_extra_object(map_plot_mercator):
-    filename = DATA_PATH / "actual-mercator-extra.png"
+    filename = DATA_PATH / "map-mercator-extra.png"
     map_plot_mercator.plot_object(
         SkyObject(
             name="M42",
@@ -82,14 +82,14 @@ def test_map_plot_mercator_with_extra_object(map_plot_mercator):
 
 
 def test_map_plot_stereo_base(map_plot_stereo_north):
-    filename = DATA_PATH / "actual-stereo-north-base.png"
+    filename = DATA_PATH / "map-stereo-north-base.png"
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "627664747c383416"
+    assert dhash(filename) == "667664f47c383416"
     assert colorhash(filename) == "07e00000000"
 
 
 def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
-    filename = DATA_PATH / "actual-stereo-north-extra.png"
+    filename = DATA_PATH / "map-stereo-north-extra.png"
 
     map_plot_stereo_north.plot_object(
         SkyObject(
@@ -108,12 +108,12 @@ def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
         )
     )
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "627664747c381416"
+    assert dhash(filename) == "667664f47c381416"
     assert colorhash(filename) == "072001c0000"
 
 
 def test_map_plot_with_planets():
-    filename = DATA_PATH / "actual-mercator-planets.png"
+    filename = DATA_PATH / "map-mercator-planets.png"
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
 
     style = styles.MAP_BLUE_LIGHT
@@ -144,7 +144,7 @@ def test_map_plot_with_planets():
 
 
 def test_map_plot_scope_bino_fov():
-    filename = DATA_PATH / "actual-map-scope-bino-fov.png"
+    filename = DATA_PATH / "map-scope-bino-fov.png"
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
 
     style = styles.PlotStyle().extend(
@@ -179,8 +179,9 @@ def test_map_plot_scope_bino_fov():
     assert dhash(filename) == "0288a69a9aa488a0"
     assert colorhash(filename) == "07200038000"
 
+
 def test_map_plot_custom_stars():
-    filename = DATA_PATH / "map_custom_stars.png"
+    filename = DATA_PATH / "map-custom-stars.png"
 
     style = styles.PlotStyle().extend(
         styles.extensions.MINIMAL,
@@ -204,3 +205,44 @@ def test_map_plot_custom_stars():
 
     assert dhash(filename) == "1dab2b8eae2e840e"
     assert colorhash(filename) == "07000000000"
+
+def test_map_plot_wrapping():
+    filename = DATA_PATH / "map-wrapping.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.GRAYSCALE,
+        styles.extensions.MAP,
+    )
+
+    MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=18,
+        ra_max=26,
+        dec_min=30,
+        dec_max=50,
+        limiting_magnitude=7.2,
+        style=style,
+        resolution=2000,
+    ).export(filename, padding=0.3)
+
+    assert dhash(filename) == "1f1e8f4747211317"
+    assert colorhash(filename) == "07000000000"
+
+def test_map_radec_invalid():
+    with pytest.raises(ValueError, match="ra_min must be less than ra_max"):
+        MapPlot(
+            projection=Projection.MERCATOR,
+            ra_min=24,
+            ra_max=8,
+            dec_min=-16,
+            dec_max=24,
+        )
+
+    with pytest.raises(ValueError, match="dec_min must be less than dec_max"):
+        MapPlot(
+            projection=Projection.MERCATOR,
+            ra_min=8,
+            ra_max=24,
+            dec_min=50,
+            dec_max=24,
+        )

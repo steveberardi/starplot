@@ -24,7 +24,7 @@ raw/
 *.prof
 
 # test-generated data
-tests/data/actual*.png
+tests/data/*.png
 
 # Distribution / packaging
 .Python
