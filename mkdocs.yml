@@ -61,7 +61,8 @@ plugins:
   - macros:
       include_dir: .
       # include_dir: examples/ src/starplot/styles/ext/
-  - glightbox
+  - glightbox:
+      zoomable: false
 
 markdown_extensions:
   - admonition
