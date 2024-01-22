@@ -23,6 +23,7 @@ class StarPlot(ABC):
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
+        rasterize_stars: bool = False,
         *args,
         **kwargs,
     ):
@@ -35,6 +36,7 @@ class StarPlot(ABC):
         self.resolution = resolution
         self.hide_colliding_labels = hide_colliding_labels
         self.adjust_text = adjust_text
+        self.rasterize_stars = rasterize_stars
 
         self.dt = dt or timezone("UTC").localize(datetime.now())
         self.ephemeris = ephemeris
@@ -49,7 +51,7 @@ class StarPlot(ABC):
         )
         self._size_multiplier = self.resolution / 3000
         self._star_size_multiplier = (
-            self._size_multiplier * self.style.star.marker.size / 10
+            self._size_multiplier * self.style.star.marker.size / 5
         )
 
         self.timescale = load.timescale().from_datetime(self.dt)
@@ -69,9 +71,14 @@ class StarPlot(ABC):
     def _maybe_remove_label(self, label) -> None:
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
         ax_extent = self.ax.get_window_extent()
+        intersection = transforms.Bbox.intersection(ax_extent, extent)
 
-        if transforms.Bbox.intersection(ax_extent, extent) and not (
-            self.hide_colliding_labels and self._is_label_collision(extent)
+        if (
+            intersection is not None
+            and (
+                intersection.height * intersection.width == extent.height * extent.width
+            )
+            and not (self.hide_colliding_labels and self._is_label_collision(extent))
         ):
             self.labels.append(label)
             self._labels_extents.append(extent)
@@ -80,10 +87,12 @@ class StarPlot(ABC):
 
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
         if label not in self._legend_handles:
+            s = style.matplot_kwargs()
+            s["markersize"] = 16 * self._size_multiplier
             self._legend_handles[label] = Line2D(
                 [],
                 [],
-                **style.matplot_kwargs(size_multiplier=self._size_multiplier),
+                **s,
                 **self._plot_kwargs(),
                 linestyle="None",
                 label=label,

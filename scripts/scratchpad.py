@@ -39,9 +39,11 @@ def create_map_orion():
             },
         },
     )
+    # style.milky_way.visible = False
 
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
+        # projection=Projection.STEREO_NORTH,
         ra_min=3.6,
         ra_max=7.8,
         dec_min=-16,
@@ -80,28 +82,29 @@ def create_map_orion():
     )
     from matplotlib import patches
 
-    sq = patches.Circle(
-        # p._prepare_coords(6.5, 5),
-        (6 * 15, 5),
-        radius=10,
-        fill=False,
-        color="red",
-        linewidth=20,
-        zorder=2000,
-        **p._plot_kwargs(),
-    )
-    rec = patches.Rectangle(
-        (5 * 15, 10),
-        3,
-        3,
-        fill=False,
-        color="blue",
-        **p._plot_kwargs(),
-    )
-    p.ax.add_patch(sq)
-    p.ax.add_patch(rec)
+    # sq = patches.Circle(
+    #     # p._prepare_coords(6.5, 5),
+    #     (6 * 15, 5),
+    #     radius=10,
+    #     fill=False,
+    #     color="red",
+    #     linewidth=20,
+    #     zorder=2000,
+    #     **p._plot_kwargs(),
+    # )
+    # rec = patches.Rectangle(
+    #     (5 * 15, 10),
+    #     3,
+    #     3,
+    #     fill=False,
+    #     color="blue",
+    #     **p._plot_kwargs(),
+    # )
+    # p.ax.add_patch(sq)
+    # p.ax.add_patch(rec)
     # p.refresh_legend()
     p.export("temp/map-orion.svg", format="svg", padding=1)
+    p.export("temp/map-orion.png", padding=0.25)
 
 
 def create_zenith():
@@ -145,18 +148,22 @@ def create_map_mercator():
     style.star.label.font_size = 4
     style.constellation.label.font_size = 6
     style.constellation.line.width = 2
+    style.legend.visible = False
+    # style.milky_way.visible = False
+    # style.constellation.line.visible = False
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
         ra_min=0,
         ra_max=24,
-        dec_min=-70,
-        dec_max=70,
-        limiting_magnitude=6,
+        dec_min=-80,
+        dec_max=80,
+        limiting_magnitude=5.4,
         style=style,
-        resolution=8000,
+        resolution=4000,
         adjust_text=False,
     )
     p.export("temp/map-mercator.svg", format="svg", padding=1)
+    p.export("temp/map-mercator.png", padding=0.3)
 
 
 def create_map_stereo_north():
@@ -233,10 +240,10 @@ def create_map_sgr():
         limiting_magnitude=14,
         # hide_colliding_labels=False,
         style=style,
-        resolution=1600,
+        resolution=1200,
     )
-    p.export("temp/map-sgr.svg", format="svg", padding=0.4)
-    # p.export("temp/map-sgr.png", format="png", padding=0.3)
+    # p.export("temp/map-sgr.svg", format="svg", padding=0.4)
+    p.export("temp/map-sgr.png", format="png", padding=0.2)
 
 
 def create_scope_view_m45():
@@ -463,18 +470,18 @@ def create_optic_plot():
         limiting_magnitude=12,
         limiting_magnitude_labels=9,
         style=style,
-        resolution=2000,
+        resolution=1600,
         include_info_text=True,
         # colorize_stars=True,
     )
 
     p2 = sp.OpticPlot(
         # M45
-        ra=3.7836111111,
-        dec=24.1166666667,
+        # ra=3.7836111111,
+        # dec=24.1166666667,
         # double cluster
-        # ra=2.33,
-        # dec=57.14,
+        ra=2.33,
+        dec=57.14,
         # M44
         # ra=8.667,
         # dec=19.67,
@@ -489,22 +496,22 @@ def create_optic_plot():
         #     fov=65,
         # ),
         # AT72EDII
-        # optic=sp.optics.Refractor(
-        #     focal_length=430,
-        #     eyepiece_focal_length=11,
-        #     eyepiece_fov=82,
-        # ),
+        optic=sp.optics.Refractor(
+            focal_length=430,
+            eyepiece_focal_length=11,
+            eyepiece_fov=82,
+        ),
         # TV-85
         # optic=sp.optics.Refractor(
         #     focal_length=600,
         #     eyepiece_focal_length=9,
         #     eyepiece_fov=100,
         # ),
-        optic=sp.optics.Reflector(
-            focal_length=600,
-            eyepiece_focal_length=9,
-            eyepiece_fov=100,
-        ),
+        # optic=sp.optics.Reflector(
+        #     focal_length=600,
+        #     eyepiece_focal_length=9,
+        #     eyepiece_fov=100,
+        # ),
         # Fuji X-T2
         # optic=sp.optics.Camera(
         #     sensor_height=15.6,
@@ -516,13 +523,16 @@ def create_optic_plot():
         ),
         limiting_magnitude=12,
         style=style,
-        resolution=2000,
+        resolution=1600,
         include_info_text=True,
         # colorize_stars=True,
     )
 
-    p1.export("temp/optic-p1.svg", format="svg", padding=0.3)
-    p2.export("temp/optic-p2.svg", format="svg", padding=0.3)
+    # p1.export("temp/optic-p1.svg", format="svg", padding=0.3)
+    # p2.export("temp/optic-p2.svg", format="svg", padding=0.3)
+
+    p1.export("temp/optic-p1.png", padding=0.3)
+    p2.export("temp/optic-p2.png", padding=0.3)
 
 
 def create_constellation():
@@ -577,12 +587,78 @@ def create_constellation():
     p.export("temp/constellation-ari.png", format="png", padding=0)
 
 
+def create_map_scratch():
+    style = PlotStyle().extend(
+        # extensions.GRAYSCALE,
+        # extensions.GRAYSCALE_DARK,
+        extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        # extensions.BLUE_DARK,
+        extensions.MAP,
+        {
+            "star": {"label": {"font_size": 8}, "marker": {"symbol": "*", "size": 80}},
+            "bayer_labels": {
+                "font_name": "GFS Didot",
+                "font_size": 7,
+            },
+            "legend": {
+                "location": "lower right",
+                "num_columns": 1,
+                "background_alpha": 1,
+            },
+        },
+    )
+    style.bayer_labels.visible = False
+    style.gridlines.label.visible = False
+    style.tick_marks.visible = False
+    # style.legend.visible = False
+    # style.constellation.line.zorder = 1
+    # style.constellation.line.alpha = 0.56
+
+    p = sp.MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=4,
+        ra_max=8,
+        dec_min=-16,
+        dec_max=24,
+        limiting_magnitude=4,
+        style=style,
+        resolution=3000,
+        # star_catalog="tycho-1",
+        # dso_plot_null_magnitudes=False,
+    ).export("temp/map-scratch-1.png", format="png", padding=0.1)
+
+    sp.MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=4,
+        ra_max=8,
+        dec_min=-16,
+        dec_max=24,
+        limiting_magnitude=4,
+        style=style,
+        resolution=3000,
+        # star_catalog="tycho-1",
+        # dso_plot_null_magnitudes=False,
+    ).export("temp/map-scratch-2.png", format="png", padding=0.1)
+
+    sp.MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=17,
+        ra_max=20,
+        dec_min=30,
+        dec_max=55,
+        limiting_magnitude=8.0,
+        style=style,
+        resolution=2000,
+    ).export("temp/map-scratch-3.png", padding=0.1)
+
+
 # ------------------------------------------
 
 # create_constellation()
 
 # create_scope_plot_m45()
-create_optic_plot()
+# create_optic_plot()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
@@ -592,6 +668,7 @@ create_optic_plot()
 # create_map_stereo_north()
 # create_map_stereo_south()
 # create_map_orion()
+create_map_scratch()
 # create_map_sgr()
 
 # p = sp.MapPlot(

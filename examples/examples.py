@@ -2,7 +2,7 @@
 
 import subprocess
 
-for n in range(1, 6):
+for n in range(1, 7):
     subprocess.call(f"python example_{n:02}.py", shell=True)
     subprocess.call(f"cp {n:02}*.png ../docs/images/example_{n:02}.png", shell=True)
 

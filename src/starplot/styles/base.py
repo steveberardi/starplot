@@ -443,7 +443,7 @@ class PlotStyle(BaseStyle):
 
     # Stars
     star: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=10, edge_color=None),
+        marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=20, edge_color=None),
         label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
@@ -493,7 +493,7 @@ class PlotStyle(BaseStyle):
             font_weight=FontWeightEnum.LIGHT,
         ),
     )
-    """Styling for deep sky objects (DSOs)"""
+    """Styling for deep sky objects (DSOs) on zenith plots"""
 
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -508,6 +508,20 @@ class PlotStyle(BaseStyle):
         ),
     )
     """Styling for open star clusters"""
+
+    dso_association_stars: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.CIRCLE,
+            size=6,
+            fill=FillStyleEnum.FULL,
+        ),
+        label=LabelStyle(
+            font_size=8,
+            font_weight=FontWeightEnum.LIGHT,
+            visible=False,
+        ),
+    )
+    """Styling for associations of stars"""
 
     dso_globular_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -544,6 +558,90 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(font_size=8, visible=False),
     )
     """Styling for double stars"""
+
+    dso_dark_nebula: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
+        ),
+        label=LabelStyle(font_size=8, visible=False),
+    )
+    """Styling for dark nebulas (hidden by default)"""
+
+    dso_hii_ionized_region: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
+        ),
+        label=LabelStyle(font_size=8, visible=False),
+    )
+    """Styling for HII Ionized regions (hidden by default)"""
+
+    dso_supernova_remnant: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
+        ),
+        label=LabelStyle(font_size=8, visible=False),
+    )
+    """Styling for supernova remnants (hidden by default)"""
+
+    dso_nova_star: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
+        ),
+        label=LabelStyle(font_size=8, visible=False),
+    )
+    """Styling for nova stars (hidden by default)"""
+
+    dso_nonexistant: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
+        ),
+        label=LabelStyle(font_size=8, visible=False),
+    )
+    """Styling for 'nonexistent' (as designated by OpenNGC) deep sky objects (hidden by default)"""
+
+    dso_unknown: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
+        ),
+        label=LabelStyle(font_size=8, visible=False),
+    )
+    """Styling for 'unknown' (as designated by OpenNGC) types of deep sky objects (hidden by default)"""
+
+    dso_duplicate: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.SQUARE,
+            size=6,
+            fill=FillStyleEnum.TOP,
+            visible=False,
+            color="#000",
+        ),
+        label=LabelStyle(font_size=8, visible=False),
+    )
+    """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects (hidden by default)"""
 
     # Constellations
     constellation: PathStyle = PathStyle(

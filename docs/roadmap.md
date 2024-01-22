@@ -1,10 +1,11 @@
 
 <!-- Here are some planned features coming soon to Starplot: -->
 
-- 🚀 Faster plotting and exporting
-- 📷 Rotation angles for camera optic plots
+- ⚙️ Callables for star sizes/colors/alpha
+- ✴️ Custom markers
+- 📐 Better DSO outlines
+- 🌐 More map projection options
 - ⚖️ Better auto font-size adjustment
 - ☄️ Better label collision detection and handling
-- 🌌 More accurate DSO outlines
 
 ✨ Clear Skies! ✨

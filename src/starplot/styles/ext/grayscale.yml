@@ -22,11 +22,12 @@ dso_galaxy:
 dso_nebula:
   marker:
     color: '#000'
-    alpha: 0.5
+    alpha: 0.36
 dso_open_cluster:
   marker:
-    color: '#000'
+    edge_color: '#000'
     fill: none
+    alpha: 0.8
 ecliptic:
   label:
     font_color: '#777'

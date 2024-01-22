@@ -286,9 +286,8 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
 <div class="indent" markdown>
 Optimized for printing in grayscale
 
-**Source**
-```yaml
-{% include 'src/starplot/styles/ext/grayscale.yml' %}
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/grayscale.yml"
 ```
 </div>
 
@@ -298,9 +297,8 @@ Optimized for printing in grayscale
 <div class="indent" markdown>
 Like `GRAYSCALE`, but inverted (white stars, black background)
 
-**Source**
-```yaml
-{% include 'src/starplot/styles/ext/grayscale_dark.yml' %}
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/grayscale_dark.yml"
 ```
 </div>
 
@@ -310,9 +308,8 @@ Like `GRAYSCALE`, but inverted (white stars, black background)
 <div class="indent" markdown>
 Light and bright colors
 
-**Source**
-```yaml
-{% include 'src/starplot/styles/ext/blue_light.yml' %}
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/blue_light.yml"
 ```
 </div>
 
@@ -322,9 +319,8 @@ Light and bright colors
 <div class="indent" markdown>
 Medium brightness bluish gray colors
 
-**Source**
-```yaml
-{% include 'src/starplot/styles/ext/blue_medium.yml' %}
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/blue_medium.yml"
 ```
 </div>
 
@@ -334,9 +330,8 @@ Medium brightness bluish gray colors
 <div class="indent" markdown>
 Dark bluish gray colors
 
-**Source**
-```yaml
-{% include 'src/starplot/styles/ext/blue_dark.yml' %}
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/blue_dark.yml"
 ```
 </div>
 
@@ -346,9 +341,8 @@ Dark bluish gray colors
 <div class="indent" markdown>
 Basic styling tailored for optic plots
 
-**Source**
-```yaml
-{% include 'src/starplot/styles/ext/optic.yml' %}
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/optic.yml"
 ```
 </div>
 
@@ -358,9 +352,8 @@ Basic styling tailored for optic plots
 <div class="indent" markdown>
 Basic styling tailored for map plots
 
-**Source**
-```yaml
-{% include 'src/starplot/styles/ext/map.yml' %}
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/map.yml"
 ```
 </div>
 
@@ -370,9 +363,8 @@ Basic styling tailored for map plots
 <div class="indent" markdown>
 Basic styling tailored for zenith plots
 
-**Source**
-```yaml
-{% include 'src/starplot/styles/ext/zenith.yml' %}
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/zenith.yml"
 ```
 </div>
 
@@ -382,9 +374,8 @@ Basic styling tailored for zenith plots
 <div class="indent" markdown>
 Hides all the labels
 
-**Source**
-```yaml
-{% include 'src/starplot/styles/ext/hide_labels.yml' %}
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/hide_labels.yml"
 ```
 </div>
 
@@ -395,8 +386,7 @@ Hides all the labels
 <div class="indent" markdown>
 Hides everything except stars and DSOs. Good for plotting scope fields of view.
 
-**Source**
-```yaml
-{% include 'src/starplot/styles/ext/minimal.yml' %}
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/minimal.yml"
 ```
 </div>

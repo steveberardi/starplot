@@ -19,8 +19,8 @@ p = MapPlot(
     star_catalog="tycho-1",
 )
 p.plot_scope_fov(
-    ra=3.7836111111,
-    dec=24.1166666667,
+    ra=3.7912777778,
+    dec=24.1052777778,
     scope_focal_length=600,
     eyepiece_focal_length=14,
     eyepiece_fov=82,

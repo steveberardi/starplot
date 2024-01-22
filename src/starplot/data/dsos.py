@@ -128,32 +128,8 @@ ZENITH_BASE = [
     "M104",
 ]
 
-ongc_types = {
-    "*": "Star",
-    "**": "Double star",
-    "*Ass": "Association of stars",
-    "OCl": "Open Cluster",
-    "GCl": "Globular Cluster",
-    "Cl+N": "Star cluster + Nebula",
-    "G": "Galaxy",
-    "GPair": "Galaxy Pair",
-    "GTrpl": "Galaxy Triplet",
-    "GGroup": "Group of galaxies",
-    "PN": "Planetary Nebula",
-    "HII": "HII Ionized region",
-    "DrkN": "Dark Nebula",
-    "EmN": "Emission Nebula",
-    "Neb": "Nebula",
-    "RfN": "Reflection Nebula",
-    "SNR": "Supernova remnant",
-    "Nova": "Nova star",
-    "NonEx": "Nonexistent object",
-    "Other": "Object of other/unknown type",
-    "Dup": "Duplicated record",
-}
 
-
-class Type(str, Enum):
+class DsoType(str, Enum):
     """
     Types of deep sky objects (DSOs), as designated in OpenNGC
     """
@@ -183,3 +159,70 @@ class Type(str, Enum):
     NONEXISTENT = "Nonexistent object"
     UNKNOWN = "Object of other/unknown type"
     DUPLICATE_RECORD = "Duplicated record"
+
+
+ONGC_TYPE = {
+    # Star Clusters ----------
+    DsoType.OPEN_CLUSTER: "OCl",
+    DsoType.GLOBULAR_CLUSTER: "GCl",
+    # Galaxies ----------
+    DsoType.GALAXY: "G",
+    DsoType.GALAXY_PAIR: "GPair",
+    DsoType.GALAXY_TRIPLET: "GTrpl",
+    DsoType.GROUP_OF_GALAXIES: "GGroup",
+    # Nebulas ----------
+    DsoType.NEBULA: "Neb",
+    DsoType.PLANETARY_NEBULA: "PN",
+    DsoType.EMISSION_NEBULA: "EmN",
+    DsoType.STAR_CLUSTER_NEBULA: "Cl+N",
+    DsoType.REFLECTION_NEBULA: "RfN",
+    # Stars ----------
+    DsoType.STAR: "*",
+    DsoType.DOUBLE_STAR: "**",
+    DsoType.ASSOCIATION_OF_STARS: "*Ass",
+    # Others - not supported yet (no styles defined)
+    DsoType.HII_IONIZED_REGION: "HII",
+    DsoType.DARK_NEBULA: "DrkN",
+    DsoType.SUPERNOVA_REMNANT: "SNR",
+    DsoType.NOVA_STAR: "Nova",
+    DsoType.NONEXISTENT: "NonEx",
+    DsoType.UNKNOWN: "Other",
+    DsoType.DUPLICATE_RECORD: "Dup",
+}
+
+ONGC_TYPE_MAP = {v: k.value for k, v in ONGC_TYPE.items()}
+
+DEFAULT_DSO_TYPES = [
+    # Star Clusters ----------
+    DsoType.OPEN_CLUSTER,
+    DsoType.GLOBULAR_CLUSTER,
+    # Galaxies ----------
+    DsoType.GALAXY,
+    DsoType.GALAXY_PAIR,
+    DsoType.GALAXY_TRIPLET,
+    DsoType.GROUP_OF_GALAXIES,
+    # Nebulas ----------
+    DsoType.NEBULA,
+    DsoType.PLANETARY_NEBULA,
+    DsoType.EMISSION_NEBULA,
+    DsoType.STAR_CLUSTER_NEBULA,
+    DsoType.REFLECTION_NEBULA,
+    # Stars ----------
+    # DsoType.DOUBLE_STAR,
+    DsoType.ASSOCIATION_OF_STARS,
+]
+"""Default types of Deep Sky Objects (DSOs) that are plotted on maps"""
+
+LEGEND_LABELS = {
+    # Galaxies ----------
+    DsoType.GALAXY: "Galaxy",
+    DsoType.GALAXY_PAIR: "Galaxy",
+    DsoType.GALAXY_TRIPLET: "Galaxy",
+    DsoType.GROUP_OF_GALAXIES: "Galaxy",
+    # Nebulas ----------
+    DsoType.NEBULA: "Nebula",
+    DsoType.PLANETARY_NEBULA: "Nebula",
+    DsoType.EMISSION_NEBULA: "Nebula",
+    DsoType.STAR_CLUSTER_NEBULA: "Nebula",
+    DsoType.REFLECTION_NEBULA: "Nebula",
+}

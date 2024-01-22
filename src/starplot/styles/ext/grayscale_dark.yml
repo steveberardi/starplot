@@ -19,6 +19,9 @@ constellation:
     font_color: hsl(136, 0%, 77%)
   line:
     color: hsl(136, 0%, 42%)
+constellation_borders:
+  color: hsl(136, 0%, 42%)
+  alpha: 0.5
 dso_double_star:
   marker:
     color: 'hsl(136, 0%, 97%)'
@@ -31,11 +34,17 @@ dso_galaxy:
 dso_nebula:
   marker:
     color: 'hsl(136, 0%, 97%)'
-    alpha: 0.7
+    alpha: 0.34
 dso_open_cluster:
   marker:
     edge_color: 'hsl(136, 0%, 97%)'
     fill: none
+    alpha: 0.86
+dso_association_stars:
+  marker:
+    edge_color: 'hsl(136, 0%, 97%)'
+    fill: none
+    alpha: 0.86
 ecliptic:
   label:
     font_color: '#777'

@@ -5,6 +5,7 @@ repo_url: https://github.com/steveberardi/starplot
 nav:
     - Overview: index.md
     - Demo: demo.md
+    - Gallery: gallery.md
     - Installation: installation.md
     - Examples: examples.md
     - Reference:
@@ -17,6 +18,7 @@ nav:
     - Data Sources: data-sources.md
     - License: license.md
     - Coming Soon: roadmap.md
+    - About: about.md
 
 theme:
   name: material
@@ -59,10 +61,13 @@ plugins:
   - macros:
       include_dir: .
       # include_dir: examples/ src/starplot/styles/ext/
+  - glightbox:
+      zoomable: false
 
 markdown_extensions:
   - admonition
   - md_in_html
+  - attr_list
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span

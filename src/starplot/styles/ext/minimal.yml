@@ -29,6 +29,8 @@ ecliptic:
 celestial_equator:
   label:
     visible: false
+  line:
+    visible: false
 legend:
   visible: false
 tick_marks:

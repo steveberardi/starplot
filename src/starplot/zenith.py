@@ -55,6 +55,7 @@ class ZenithPlot(StarPlot):
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         adjust_text: If True, then the labels will be adjusted to avoid overlapping
+        rasterize_stars: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
 
     Returns:
         ZenithPlot: A new instance of a ZenithPlot
@@ -74,6 +75,7 @@ class ZenithPlot(StarPlot):
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         adjust_text: bool = False,
+        rasterize_stars: bool = False,
         *args,
         **kwargs,
     ) -> "ZenithPlot":
@@ -86,6 +88,7 @@ class ZenithPlot(StarPlot):
             resolution,
             hide_colliding_labels,
             adjust_text,
+            rasterize_stars,
             *args,
             **kwargs,
         )
@@ -171,11 +174,11 @@ class ZenithPlot(StarPlot):
                     continue
 
                 if m < 2:
-                    sizes.append((8 - m) ** 2.56 * (self._star_size_multiplier**2))
+                    sizes.append((8 - m) ** 2.56 * (self._star_size_multiplier))
                 elif m < 8:
-                    sizes.append((8 - m) ** 1.38 * (self._star_size_multiplier**2))
+                    sizes.append((8 - m) ** 1.68 * (self._star_size_multiplier))
                 else:
-                    sizes.append(self._star_size_multiplier**2)
+                    sizes.append(2 * self._star_size_multiplier)
 
                 starpos_x.append(x)
                 starpos_y.append(y)
@@ -184,7 +187,14 @@ class ZenithPlot(StarPlot):
                 starpos_x,
                 starpos_y,
                 sizes,
+                marker=self.style.star.marker.symbol,
                 color=self.style.star.marker.color.as_hex(),
+                edgecolors=self.style.star.marker.edge_color.as_hex()
+                if self.style.star.marker.edge_color
+                else "none",
+                alpha=self.style.star.marker.alpha,
+                zorder=self.style.star.marker.zorder,
+                rasterized=self.rasterize_stars,
                 clip_path=self.background_circle,
             )
 

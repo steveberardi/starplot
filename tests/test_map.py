@@ -23,7 +23,7 @@ def map_plot_mercator():
         ra_min=3.6,
         ra_max=7.8,
         dec_min=-16,
-        dec_max=24,
+        dec_max=23.6,
         limiting_magnitude=7.2,
         style=styles.MAP_BLUE_LIGHT,
         resolution=4000,
@@ -45,14 +45,14 @@ def map_plot_stereo_north():
 
 
 def test_map_plot_mercator_base(map_plot_mercator):
-    filename = DATA_PATH / "actual-mercator-base.png"
+    filename = DATA_PATH / "map-mercator-base.png"
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "193b1a3e2e26644c"
-    assert colorhash(filename) == "07406040000"
+    assert dhash(filename) == "193b1a7e3e256464"
+    assert colorhash(filename) == "07406000000"
 
 
 def test_map_plot_mercator_with_extra_object(map_plot_mercator):
-    filename = DATA_PATH / "actual-mercator-extra.png"
+    filename = DATA_PATH / "map-mercator-extra.png"
     map_plot_mercator.plot_object(
         SkyObject(
             name="M42",
@@ -77,19 +77,19 @@ def test_map_plot_mercator_with_extra_object(map_plot_mercator):
         )
     )
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "193b1a3e2e2e644c"
-    assert colorhash(filename) == "07403040000"
+    assert dhash(filename) == "193b1a7e2e2d6464"
+    assert colorhash(filename) == "07403000000"
 
 
 def test_map_plot_stereo_base(map_plot_stereo_north):
-    filename = DATA_PATH / "actual-stereo-north-base.png"
+    filename = DATA_PATH / "map-stereo-north-base.png"
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "57f66464686c7467"
-    assert colorhash(filename) == "07000000000"
+    assert dhash(filename) == "667664f47c383416"
+    assert colorhash(filename) == "07e00000000"
 
 
 def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
-    filename = DATA_PATH / "actual-stereo-north-extra.png"
+    filename = DATA_PATH / "map-stereo-north-extra.png"
 
     map_plot_stereo_north.plot_object(
         SkyObject(
@@ -108,12 +108,12 @@ def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
         )
     )
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "57f66464686c7467"
-    assert colorhash(filename) == "07e00000000"
+    assert dhash(filename) == "667664f47c381416"
+    assert colorhash(filename) == "072001c0000"
 
 
 def test_map_plot_with_planets():
-    filename = DATA_PATH / "actual-mercator-planets.png"
+    filename = DATA_PATH / "map-mercator-planets.png"
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
 
     style = styles.MAP_BLUE_LIGHT
@@ -139,12 +139,12 @@ def test_map_plot_with_planets():
     )
     p.export(filename)
 
-    assert dhash(filename) == "ccc871633bb68e0c"
-    assert colorhash(filename) == "07603000000"
+    assert dhash(filename) == "cc6871633bb68e17"
+    assert colorhash(filename) == "07c03000000"
 
 
 def test_map_plot_scope_bino_fov():
-    filename = DATA_PATH / "actual-map-scope-bino-fov.png"
+    filename = DATA_PATH / "map-scope-bino-fov.png"
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
 
     style = styles.PlotStyle().extend(
@@ -166,15 +166,108 @@ def test_map_plot_scope_bino_fov():
         star_catalog="tycho-1",
     )
     p.plot_scope_fov(
-        ra=3.7836111111,
-        dec=24.1166666667,
+        ra=3.7912777778,
+        dec=24.1052777778,
         scope_focal_length=600,
         eyepiece_focal_length=14,
         eyepiece_fov=82,
     )
-    p.plot_bino_fov(ra=3.7836111111, dec=24.1166666667, fov=65, magnification=10)
+    p.plot_bino_fov(ra=3.7912777778, dec=24.1052777778, fov=65, magnification=10)
     p.ax.set_title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "0288a6dadaa68880"
+    assert dhash(filename) == "0288a69a9aa488a0"
     assert colorhash(filename) == "07200038000"
+
+
+def test_map_plot_custom_stars():
+    filename = DATA_PATH / "map-custom-stars.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.MINIMAL,
+        styles.extensions.GRAYSCALE,
+        styles.extensions.MAP,
+    )
+    style.star.marker.symbol = "*"
+    style.star.marker.size = 60
+
+    p = MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=3.6,
+        ra_max=7.8,
+        dec_min=-16,
+        dec_max=24,
+        limiting_magnitude=7.2,
+        style=style,
+        resolution=4000,
+    )
+    p.export(filename, padding=0.3)
+
+    assert dhash(filename) == "1dab2b8eae2e840e"
+    assert colorhash(filename) == "07000000000"
+
+
+def test_map_plot_wrapping():
+    filename = DATA_PATH / "map-wrapping.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.GRAYSCALE,
+        styles.extensions.MAP,
+    )
+
+    MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=18,
+        ra_max=26,
+        dec_min=30,
+        dec_max=50,
+        limiting_magnitude=7.2,
+        style=style,
+        resolution=2000,
+    ).export(filename, padding=0.3)
+
+    assert dhash(filename) == "1f1e8f4743211117"
+    assert colorhash(filename) == "07000000000"
+
+
+def test_map_radec_invalid():
+    with pytest.raises(ValueError, match="ra_min must be less than ra_max"):
+        MapPlot(
+            projection=Projection.MERCATOR,
+            ra_min=24,
+            ra_max=8,
+            dec_min=-16,
+            dec_max=24,
+        )
+
+    with pytest.raises(ValueError, match="dec_min must be less than dec_max"):
+        MapPlot(
+            projection=Projection.MERCATOR,
+            ra_min=8,
+            ra_max=24,
+            dec_min=50,
+            dec_max=24,
+        )
+
+
+def test_map_mollweide():
+    filename = DATA_PATH / "map-mollweide.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.GRAYSCALE,
+        styles.extensions.MAP,
+    )
+
+    MapPlot(
+        projection=Projection.MOLLWEIDE,
+        ra_min=0,
+        ra_max=24,
+        dec_min=-90,
+        dec_max=90,
+        limiting_magnitude=4,
+        style=style,
+        resolution=3000,
+    ).export(filename, padding=0.1)
+
+    assert dhash(filename) == "0f2971633b330f06"
+    assert colorhash(filename) == "07000000000"
