@@ -198,13 +198,13 @@ class MapPlot(StarPlot):
             ra_min = (-1 * extent[1]) / 15
             ra_max = (-1 * extent[0]) / 15
 
-            if ra_min < 0:
+            if ra_min < 0 and ra_max < 0:
                 ra_min += 24
-            if ra_max < 0:
                 ra_max += 24
 
             self.ra_min = ra_min
             self.ra_max = ra_max
+            # print(f"[ {ra_min} , {ra_max} ]")
 
     def _read_geo_package(self, filename: str):
         """Returns GeoDataFrame of a GeoPackage file"""

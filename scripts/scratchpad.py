@@ -653,6 +653,38 @@ def create_map_scratch():
     ).export("temp/map-scratch-3.png", padding=0.1)
 
 
+def test_ex():
+    from starplot import MapPlot, Projection
+    from starplot.styles import PlotStyle, extensions, MarkerSymbolEnum
+
+    style = PlotStyle().extend(
+        extensions.MINIMAL,
+        extensions.GRAYSCALE,
+        extensions.MAP,
+    )
+
+    style.star.marker.symbol = MarkerSymbolEnum.STAR
+
+    # Star sizes are calculated based on their magnitude first,
+    # but then that result will be multiplied by the star's marker size in the PlotStyle
+    # so, adjusting the star marker size is a way to make all stars bigger or smaller
+    style.star.marker.size = 50
+
+    p = MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=10.8,
+        ra_max=14,
+        dec_min=48,
+        dec_max=64,
+        limiting_magnitude=3.6,
+        style=style,
+        resolution=1400,
+        dso_types=[],  # this is one way to hide all deep sky objects
+    )
+
+    p.export("temp/06_big_dipper_stars.png", padding=0.2)
+
+
 # ------------------------------------------
 
 # create_constellation()
@@ -667,9 +699,10 @@ def create_map_scratch():
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 create_map_scratch()
 # create_map_sgr()
+test_ex()
 
 # p = sp.MapPlot(
 #     projection=Projection.STEREO_NORTH,
