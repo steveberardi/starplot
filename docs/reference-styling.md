@@ -178,6 +178,9 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     options:
         show_root_heading: true
         show_docstring_attributes: true
+        separate_signature: true
+        show_signature_annotations: true
+        signature_crossrefs: true
         members: true
 
 
@@ -186,7 +189,6 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     options:
         show_root_heading: true
         show_docstring_attributes: true
-
 
 ::: starplot.styles.LineStyle
     options:
