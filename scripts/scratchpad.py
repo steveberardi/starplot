@@ -652,6 +652,7 @@ def create_map_scratch():
         resolution=2000,
     ).export("temp/map-scratch-3.png", padding=0.1)
 
+
 def test_ex():
     from starplot import MapPlot, Projection
     from starplot.styles import PlotStyle, extensions, MarkerSymbolEnum
@@ -682,6 +683,8 @@ def test_ex():
     )
 
     p.export("temp/06_big_dipper_stars.png", padding=0.2)
+
+
 # ------------------------------------------
 
 # create_constellation()
