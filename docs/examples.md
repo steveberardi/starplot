@@ -56,6 +56,8 @@ The result should look like this:
 
 ![map-pleiades-scope](images/example_04.png)
 
+_The solid black circle in this plot is the extent of the Pleiades as defined in [OpenNGC](https://github.com/mattiaverga/OpenNGC)._
+
 !!! tip "Binocular Field of View"
 
     You can also plot a circle showing the field of view of binoculars with the `plot_bino_fov` function:
@@ -88,13 +90,13 @@ Here's a fun one 😃 Let's create a small plot of the big dipper ([Ursa Major](
 
 The result should look like this:
 
-![stars-m45](images/example_06.png)
+![map-big-dipper](images/example_06.png)
 
 
 
 ## Map of Hale-Bopp in 1997
 
-Here's an example that uses [Skyfield](https://rhodesmill.org/skyfield/) to get some data on the [Hale-Bopp comet](https://en.wikipedia.org/wiki/Comet_Hale%E2%80%93Bopp) ☄️ and then uses that data to plot the comet's location in the sky in March and April of 1997 (when the comet was at its brightest in the sky):
+Here's an example that uses [Skyfield](https://rhodesmill.org/skyfield/) to get some data on the comet [Hale-Bopp](https://en.wikipedia.org/wiki/Comet_Hale%E2%80%93Bopp) ☄️ and then uses that data to plot the comet's location in the sky in March and April of 1997 (when the comet was at its brightest in the sky):
 
 !!! note
 
@@ -107,7 +109,7 @@ Here's an example that uses [Skyfield](https://rhodesmill.org/skyfield/) to get 
 
 The result should look like this:
 
-![stars-m45](images/example_07.png)
+![map-hale-bopp](images/example_07.png)
 
 
 ---

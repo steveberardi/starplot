@@ -161,7 +161,9 @@ class MapPlot(StarPlot):
         if self.ra_max < 24:
             return self.ra_min < ra < self.ra_max and self.dec_min < dec < self.dec_max
         else:
-            return (ra > self.ra_min or ra < self.ra_max - 24) and self.dec_min < dec < self.dec_max
+            return (
+                ra > self.ra_min or ra < self.ra_max - 24
+            ) and self.dec_min < dec < self.dec_max
 
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds

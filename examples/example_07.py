@@ -12,16 +12,19 @@ with load.open(mpc.COMET_URL) as f:
 
 # Keep only the most recent orbit for each comet,
 # and index by designation for fast lookup.
-comets = (comets.sort_values('reference')
-        .groupby('designation', as_index=False).last()
-        .set_index('designation', drop=False))
+comets = (
+    comets.sort_values("reference")
+    .groupby("designation", as_index=False)
+    .last()
+    .set_index("designation", drop=False)
+)
 
 # Find Hale-Bopp
-row = comets.loc['C/1995 O1 (Hale-Bopp)']
+row = comets.loc["C/1995 O1 (Hale-Bopp)"]
 
 ts = load.timescale()
-eph = load('de421.bsp')
-sun, earth = eph['sun'], eph['earth']
+eph = load("de421.bsp")
+sun, earth = eph["sun"], eph["earth"]
 comet = sun + mpc.comet_orbit(row, ts, GM_SUN)
 
 # Find the RA/DEC of comet for every 4 days starting on March 20, 1997
@@ -41,7 +44,7 @@ style.legend.num_columns = 1
 
 p = MapPlot(
     projection=Projection.STEREO_NORTH,
-    # to make plots that are centered around the 0h equinox, you can 
+    # to make plots that are centered around the 0h equinox, you can
     # set the max RA to a number over 24 which will determine how
     # far past 0h the plot will extend. For example, here we set
     # the max RA to 28, so this plot will have an RA extent from 23h to 4h
