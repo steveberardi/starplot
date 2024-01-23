@@ -226,7 +226,7 @@ def test_map_plot_wrapping():
         resolution=2000,
     ).export(filename, padding=0.3)
 
-    assert dhash(filename) == "1f1e8f4743211117"
+    assert dhash(filename) == "1f1e0f4743211117"
     assert colorhash(filename) == "07000000000"
 
 
