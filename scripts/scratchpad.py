@@ -658,7 +658,7 @@ def test_ex():
     from starplot.styles import PlotStyle, extensions, MarkerSymbolEnum
 
     style = PlotStyle().extend(
-        extensions.MINIMAL,
+        # extensions.MINIMAL,
         extensions.GRAYSCALE,
         extensions.MAP,
     )
@@ -668,12 +668,12 @@ def test_ex():
     # Star sizes are calculated based on their magnitude first,
     # but then that result will be multiplied by the star's marker size in the PlotStyle
     # so, adjusting the star marker size is a way to make all stars bigger or smaller
-    style.star.marker.size = 50
+    style.star.marker.size = 20
 
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
-        ra_min=10.8,
-        ra_max=14,
+        ra_min=10,
+        ra_max=18,
         dec_min=48,
         dec_max=64,
         limiting_magnitude=3.6,
@@ -699,8 +699,8 @@ def test_ex():
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
-create_map_scratch()
+# create_map_orion()
+# create_map_scratch()
 # create_map_sgr()
 test_ex()
 

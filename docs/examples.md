@@ -5,9 +5,8 @@ This page has a few examples to get you familiar with Starplot and how it works.
 3. [Map of Orion](#map-of-orion)
 4. [Map of The Pleiades with a Scope Field of View](#map-of-the-pleiades-with-a-scope-field-of-view)
 5. [Optic plot of The Pleiades with a Refractor Telescope](#optic-plot-of-the-pleiades-with-a-refractor-telescope)
-6. [Map plot of The Big Dipper with Custom Markers](#map-of-the-big-dipper-with-custom-markers)
-
-
+6. [Map of The Big Dipper with Custom Markers](#map-of-the-big-dipper-with-custom-markers)
+7. [Map of Hale-Bopp in 1997](#map-of-hale-bopp-in-1997)
 
 ## Star Chart for Time/Location
 To create a star chart for the sky as seen from [Palomar Mountain](https://en.wikipedia.org/wiki/Palomar_Mountain) in California on July 13, 2023 at 10pm PT:
@@ -57,6 +56,8 @@ The result should look like this:
 
 ![map-pleiades-scope](images/example_04.png)
 
+_The solid black circle in this plot is the extent of the Pleiades as defined in [OpenNGC](https://github.com/mattiaverga/OpenNGC)._
+
 !!! tip "Binocular Field of View"
 
     You can also plot a circle showing the field of view of binoculars with the `plot_bino_fov` function:
@@ -89,7 +90,27 @@ Here's a fun one 😃 Let's create a small plot of the big dipper ([Ursa Major](
 
 The result should look like this:
 
-![stars-m45](images/example_06.png)
+![map-big-dipper](images/example_06.png)
+
+
+
+## Map of Hale-Bopp in 1997
+
+Here's an example that uses [Skyfield](https://rhodesmill.org/skyfield/) to get some data on the comet [Hale-Bopp](https://en.wikipedia.org/wiki/Comet_Hale%E2%80%93Bopp) ☄️ and then uses that data to plot the comet's location in the sky in March and April of 1997 (when the comet was at its brightest in the sky):
+
+!!! note
+
+    Skyfield is a required dependency of Starplot (and a very important one!), so if you have Starplot installed, then Skyfield should be installed too.
+
+
+```python
+--8<-- "examples/example_07.py"
+```
+
+The result should look like this:
+
+![map-hale-bopp](images/example_07.png)
+
 
 ---
 
