@@ -10,6 +10,7 @@ from matplotlib.ticker import FuncFormatter, FixedLocator
 import geopandas as gpd
 import numpy as np
 import pyproj
+from shapely.geometry import Polygon
 
 from pyongc import ongc
 from skyfield.api import Star
@@ -164,6 +165,14 @@ class MapPlot(StarPlot):
             return (
                 ra > self.ra_min or ra < self.ra_max - 24
             ) and self.dec_min < dec < self.dec_max
+
+    def plot_polygon(self, points: list, *args, **kwargs):
+        poly = Polygon(points)
+        gpd.GeoSeries([poly]).plot(
+            ax=self.ax,
+            transform=self._crs,
+            **kwargs,
+        )
 
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds

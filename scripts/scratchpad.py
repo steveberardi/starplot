@@ -42,8 +42,8 @@ def create_map_orion():
     # style.milky_way.visible = False
 
     p = sp.MapPlot(
-        projection=Projection.MERCATOR,
-        # projection=Projection.STEREO_NORTH,
+        # projection=Projection.MERCATOR,
+        projection=Projection.STEREO_NORTH,
         ra_min=3.6,
         ra_max=7.8,
         dec_min=-16,
@@ -100,10 +100,26 @@ def create_map_orion():
     #     color="blue",
     #     **p._plot_kwargs(),
     # )
+    points = [
+        (5 * 15, 10),
+        (6 * 15, 10),
+        (6 * 15, 0),
+        (5 * 15, 0),
+        (5 * 15, 10),
+    ]
+
+    p.plot_polygon(
+        points,
+        facecolor="blue",
+        edgecolor="black",
+        zorder=1000,
+        alpha=0.24,
+    )
+
     # p.ax.add_patch(sq)
     # p.ax.add_patch(rec)
     # p.refresh_legend()
-    p.export("temp/map-orion.svg", format="svg", padding=1)
+    # p.export("temp/map-orion.svg", format="svg", padding=1)
     p.export("temp/map-orion.png", padding=0.25)
 
 
@@ -699,10 +715,10 @@ def test_ex():
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_scratch()
 # create_map_sgr()
-test_ex()
+# test_ex()
 
 # p = sp.MapPlot(
 #     projection=Projection.STEREO_NORTH,
