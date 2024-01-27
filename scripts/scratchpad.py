@@ -48,6 +48,10 @@ def create_map_orion():
         ra_max=7.8,
         dec_min=-16,
         dec_max=23.6,
+        # ra_min=0,
+        # ra_max=24,
+        # dec_min=0,
+        # dec_max=90,
         limiting_magnitude=7.2,
         style=style,
         resolution=2600,
@@ -100,6 +104,7 @@ def create_map_orion():
     #     color="blue",
     #     **p._plot_kwargs(),
     # )
+    from starplot.styles import MarkerSymbolEnum
     points = [
         (5 * 15, 10),
         (6 * 15, 10),
@@ -108,12 +113,20 @@ def create_map_orion():
         (5 * 15, 10),
     ]
 
-    p.plot_polygon(
-        points,
-        facecolor="blue",
-        edgecolor="black",
-        zorder=1000,
-        alpha=0.24,
+    # p.plot_polygon(
+    #     points,
+    #     facecolor="blue",
+    #     edgecolor="black",
+    #     zorder=1000,
+    #     alpha=0.24,
+    # )
+    p.plot_circle(
+        (5.919524774, 0),
+        7.40703634,
+        # (0, 90),
+        # 10,
+        color="red",
+
     )
 
     # p.ax.add_patch(sq)
@@ -612,7 +625,7 @@ def create_map_scratch():
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
-            "star": {"label": {"font_size": 8}, "marker": {"symbol": "*", "size": 80}},
+            # "star": {"label": {"font_size": 8}, "marker": {"symbol": "*", "size": 80}},
             "bayer_labels": {
                 "font_name": "GFS Didot",
                 "font_size": 7,
@@ -624,81 +637,31 @@ def create_map_scratch():
             },
         },
     )
-    style.bayer_labels.visible = False
-    style.gridlines.label.visible = False
-    style.tick_marks.visible = False
-    # style.legend.visible = False
-    # style.constellation.line.zorder = 1
-    # style.constellation.line.alpha = 0.56
 
     p = sp.MapPlot(
-        projection=Projection.STEREO_NORTH,
-        ra_min=4,
-        ra_max=8,
-        dec_min=-16,
-        dec_max=24,
-        limiting_magnitude=4,
-        style=style,
-        resolution=3000,
-        # star_catalog="tycho-1",
-        # dso_plot_null_magnitudes=False,
-    ).export("temp/map-scratch-1.png", format="png", padding=0.1)
-
-    sp.MapPlot(
+        # projection=Projection.STEREO_NORTH,
         projection=Projection.MERCATOR,
-        ra_min=4,
-        ra_max=8,
-        dec_min=-16,
-        dec_max=24,
-        limiting_magnitude=4,
+        ra_min=16,
+        ra_max=20,
+        dec_min=-40,
+        dec_max=0,
+        limiting_magnitude=6,
         style=style,
         resolution=3000,
         # star_catalog="tycho-1",
         # dso_plot_null_magnitudes=False,
-    ).export("temp/map-scratch-2.png", format="png", padding=0.1)
-
-    sp.MapPlot(
-        projection=Projection.STEREO_NORTH,
-        ra_min=17,
-        ra_max=20,
-        dec_min=30,
-        dec_max=55,
-        limiting_magnitude=8.0,
-        style=style,
-        resolution=2000,
-    ).export("temp/map-scratch-3.png", padding=0.1)
-
-
-def test_ex():
-    from starplot import MapPlot, Projection
-    from starplot.styles import PlotStyle, extensions, MarkerSymbolEnum
-
-    style = PlotStyle().extend(
-        # extensions.MINIMAL,
-        extensions.GRAYSCALE,
-        extensions.MAP,
     )
 
-    style.star.marker.symbol = MarkerSymbolEnum.STAR
+    p.plot_circle(
+        (18.4666666667, -25.42),
+        4,
+        # (0, 90),
+        # 10,
+        color="red",
 
-    # Star sizes are calculated based on their magnitude first,
-    # but then that result will be multiplied by the star's marker size in the PlotStyle
-    # so, adjusting the star marker size is a way to make all stars bigger or smaller
-    style.star.marker.size = 20
-
-    p = MapPlot(
-        projection=Projection.STEREO_NORTH,
-        ra_min=10,
-        ra_max=18,
-        dec_min=48,
-        dec_max=64,
-        limiting_magnitude=3.6,
-        style=style,
-        resolution=1400,
-        dso_types=[],  # this is one way to hide all deep sky objects
     )
 
-    p.export("temp/06_big_dipper_stars.png", padding=0.2)
+    p.export("temp/map-scratch-1.png", format="png", padding=0.1)
 
 
 # ------------------------------------------
@@ -715,30 +678,11 @@ def test_ex():
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
-# create_map_scratch()
-# create_map_sgr()
-# test_ex()
+# create_map_orion()
+create_map_scratch()
 
-# p = sp.MapPlot(
-#     projection=Projection.STEREO_NORTH,
-#     ra_min=17,
-#     ra_max=20,
-#     dec_min=30,
-#     dec_max=55,
-#     limiting_magnitude=8.0,
-#     style=sp.styles.MAP_BLUE_LIGHT,
-#     resolution=2000,
-# )
-# p.ax.plot(
-#     18.5 * 15,
-#     40,
-#     marker="*",
-#     markersize=50,
-#     color="red",
-#     transform=p._crs,
-#     linestyle="None",
-# )
-# p.export("temp/map-stereo.svg", format="svg", padding=0.3)
+# create_map_sgr()
+
+
 
 print(f"Total run time: {time.time() - start_time}")

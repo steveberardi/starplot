@@ -46,13 +46,15 @@ class Projection(str, Enum):
     """Good for showing the entire celestial sphere in one plot"""
 
     @staticmethod
-    def crs(projection, center_lon=-180):
-        return {
-            Projection.STEREO_NORTH: ccrs.NorthPolarStereo(center_lon),
-            Projection.STEREO_SOUTH: ccrs.SouthPolarStereo(center_lon),
-            Projection.MERCATOR: ccrs.Mercator(center_lon),
-            Projection.MOLLWEIDE: ccrs.Mollweide(center_lon),
-        }.get(projection)
+    def crs(projection, center_lon=-180, **kwargs):
+        projections = {
+            Projection.STEREO_NORTH: ccrs.NorthPolarStereo,
+            Projection.STEREO_SOUTH: ccrs.SouthPolarStereo,
+            Projection.MERCATOR: ccrs.Mercator,
+            Projection.MOLLWEIDE: ccrs.Mollweide,
+        }
+        proj_class = projections.get(projection)
+        return proj_class(center_lon, **kwargs)
 
 
 class MapPlot(StarPlot):
@@ -173,6 +175,53 @@ class MapPlot(StarPlot):
             transform=self._crs,
             **kwargs,
         )
+    
+    def plot_circle(self, center: tuple, radius_degrees: float, *args, **kwargs):
+        self.plot_ellipse(center, radius_degrees * 2, radius_degrees * 2)
+
+        # this works, but only for circles
+        # self.ax.tissot(rad_km=height/1000, lons=[-15 * ra], lats=[dec], n_samples=36,
+        #      facecolor='red', edgecolor='black', linewidth=0.15, alpha = 0.1, zorder=-100)
+
+    def plot_ellipse(self, center: tuple, height_degrees: float, width_degrees: float, angle: float=0, *args, **kwargs):
+        ra, dec = center
+
+        if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:
+            # (self.dec_min + self.dec_max)/2
+            # need to create a 'true scale' projection at every decension plotted??
+            proj = Projection.crs(self.projection, self._center_lon, true_scale_latitude=dec)
+            
+        else:
+            proj = self._proj
+        
+            proj = ccrs.Mercator(
+                # central_latitude=dec, 
+                # central_longitude=-15 * ra,
+                latitude_true_scale=dec
+            )
+
+        # get projected coords
+        x, y = proj.transform_point(ra * 15, dec, self._crs)
+        
+        height = self._compute_radius(height_degrees)
+        width = self._compute_radius(width_degrees)
+
+        p = patches.Ellipse(
+            (x, y),
+            width=height, 
+            height=width,
+            angle=angle,
+            fill=True,
+            facecolor="blue",
+            alpha=0.15,
+            linewidth=8,
+            edgecolor='green',
+            zorder=-200,
+            # **kwargs,
+            transform=proj,
+        )
+        self.ax.add_patch(p)
+        
 
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
@@ -848,6 +897,7 @@ class MapPlot(StarPlot):
         )
         bounds = self._latlon_bounds()
         center_lon = (bounds[0] + bounds[1]) / 2
+        self._center_lon = center_lon
 
         self._proj = Projection.crs(self.projection, center_lon)
         self._proj.threshold = 100
