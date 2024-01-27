@@ -1,6 +1,8 @@
+import json
+
 from skyfield.data import stellarium
 
-from starplot.data import load as _load
+from starplot.data import DataFiles, load as _load
 
 
 """
@@ -117,3 +119,8 @@ def get(constellation_id: str):
 def iterator():
     for c in properties.keys():
         yield c
+
+
+def lines():
+    with open(DataFiles.CONSTELLATION_LINES_HIP, "r") as conlines:
+        return json.loads(conlines.read())
