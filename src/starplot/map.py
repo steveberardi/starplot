@@ -175,7 +175,7 @@ class MapPlot(StarPlot):
             transform=self._crs,
             **kwargs,
         )
-    
+
     def plot_circle(self, center: tuple, radius_degrees: float, *args, **kwargs):
         self.plot_ellipse(center, radius_degrees * 2, radius_degrees * 2)
 
@@ -183,45 +183,84 @@ class MapPlot(StarPlot):
         # self.ax.tissot(rad_km=height/1000, lons=[-15 * ra], lats=[dec], n_samples=36,
         #      facecolor='red', edgecolor='black', linewidth=0.15, alpha = 0.1, zorder=-100)
 
-    def plot_ellipse(self, center: tuple, height_degrees: float, width_degrees: float, angle: float=0, *args, **kwargs):
+    def plot_ellipse(
+        self,
+        center: tuple,
+        height_degrees: float,
+        width_degrees: float,
+        angle: float = 0,
+        *args,
+        **kwargs,
+    ):
         ra, dec = center
 
-        if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:
-            # (self.dec_min + self.dec_max)/2
-            # need to create a 'true scale' projection at every decension plotted??
-            proj = Projection.crs(self.projection, self._center_lon, true_scale_latitude=dec)
-            
-        else:
-            proj = self._proj
-        
-            proj = ccrs.Mercator(
-                # central_latitude=dec, 
-                # central_longitude=-15 * ra,
-                latitude_true_scale=dec
-            )
-
         # get projected coords
-        x, y = proj.transform_point(ra * 15, dec, self._crs)
-        
+        x, y = self._ts_crs.transform_point(ra * 15, dec, self._crs)
+
         height = self._compute_radius(height_degrees)
         width = self._compute_radius(width_degrees)
 
         p = patches.Ellipse(
             (x, y),
-            width=height, 
+            width=height,
             height=width,
             angle=angle,
-            fill=True,
-            facecolor="blue",
-            alpha=0.15,
-            linewidth=8,
-            edgecolor='green',
-            zorder=-200,
-            # **kwargs,
-            transform=proj,
+            transform=self._ts_crs,
+            **kwargs,
         )
         self.ax.add_patch(p)
-        
+
+    def plot_rectangle(
+        self,
+        center: tuple,
+        height_degrees: float,
+        width_degrees: float,
+        angle: float = 0,
+        *args,
+        **kwargs,
+    ):
+        ra, dec = center
+
+        # get projected coords
+        x, y = self._ts_crs.transform_point(ra * 15, dec, self._crs)
+
+        height = self._compute_radius(height_degrees)
+        width = self._compute_radius(width_degrees)
+
+        p = patches.Rectangle(
+            (x, y),
+            width=height,
+            height=width,
+            angle=angle,
+            transform=self._ts_crs,
+            **kwargs,
+        )
+        self.ax.add_patch(p)
+
+    def _init_true_scale_crs(self):
+        dec_extent = abs(self.dec_max - self.dec_min)
+        dec_midpoint = (self.dec_min + self.dec_max) / 2
+
+        if dec_extent < 60:
+            # Good for small extent, bad for large extent
+            proj = ccrs.AzimuthalEquidistant(
+                central_longitude=self._center_lon,
+                central_latitude=dec_midpoint,
+            )
+        elif self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:
+            proj = Projection.crs(
+                self.projection, self._center_lon, true_scale_latitude=dec_midpoint
+            )
+        else:
+            proj = self._proj
+
+            proj = ccrs.Mercator(
+                # central_latitude=dec,
+                # central_longitude=-15 * ra,
+                latitude_true_scale=dec_midpoint
+            )
+
+        self._ts_crs = proj
 
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
@@ -770,38 +809,38 @@ class MapPlot(StarPlot):
 
             if maj_ax and style.marker.visible:
                 # If object has a major axis then plot it's actual extent
-                x, y = self._proj.transform_point(ra * 15, dec, self._crs)
-                maj_ax = self._compute_radius((maj_ax / 60) / 2)
+
+                maj_ax_degrees = (maj_ax / 60) / 2
 
                 if min_ax:
-                    min_ax = self._compute_radius((min_ax / 60) / 2)
+                    min_ax_degrees = (min_ax / 60) / 2
                 else:
-                    min_ax = maj_ax
+                    min_ax_degrees = maj_ax_degrees
 
-                if style.marker.symbol == MarkerSymbolEnum.SQUARE:
-                    patch_class = patches.Rectangle
-                    xy = (x - min_ax, y - maj_ax)
-                    width = min_ax * 2
-                    height = maj_ax * 2
-                else:
-                    patch_class = patches.Ellipse
-                    xy = (x, y)
-                    width = maj_ax * 2
-                    height = min_ax * 2
-
-                fill = False if style.marker.fill == "none" else True
-                p = patch_class(
-                    xy,
-                    width=width,
-                    height=height,
-                    angle=angle or 0,
+                style_kwargs = dict(
+                    fill=False if style.marker.fill == "none" else True,
                     facecolor=style.marker.color.as_hex(),
                     edgecolor=style.marker.edge_color.as_hex(),
                     alpha=style.marker.alpha,
                     zorder=style.marker.zorder,
-                    fill=fill,
                 )
-                self.ax.add_patch(p)
+
+                if style.marker.symbol == MarkerSymbolEnum.SQUARE:
+                    self.plot_rectangle(
+                        (ra, dec),
+                        min_ax_degrees * 2,
+                        maj_ax_degrees * 2,
+                        angle or 0,
+                        **style_kwargs,
+                    )
+                else:
+                    self.plot_ellipse(
+                        (ra, dec),
+                        min_ax_degrees * 2,
+                        maj_ax_degrees * 2,
+                        angle or 0,
+                        **style_kwargs,
+                    )
 
                 if style.label.visible:
                     self._plot_text(ra, dec, d.name)
@@ -900,7 +939,7 @@ class MapPlot(StarPlot):
         self._center_lon = center_lon
 
         self._proj = Projection.crs(self.projection, center_lon)
-        self._proj.threshold = 100
+        self._proj.threshold = 1000
         self.ax = plt.axes(projection=self._proj)
 
         if self._is_global_extent():
@@ -913,6 +952,7 @@ class MapPlot(StarPlot):
 
         self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
+        self._init_true_scale_crs()
 
         self._plot_gridlines()
         self._plot_tick_marks()

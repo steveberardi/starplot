@@ -91,7 +91,7 @@ class MarkerSymbolEnum(str, Enum):
     STAR = "*"
     DIAMOND = "D"
     TRIANGLE = "^"
-    CIRCLE_CROSS = r'$\bigoplus$'
+    CIRCLE_CROSS = r"$\bigoplus$"
 
 
 class LineStyleEnum(str, Enum):

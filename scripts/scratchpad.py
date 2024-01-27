@@ -105,6 +105,7 @@ def create_map_orion():
     #     **p._plot_kwargs(),
     # )
     from starplot.styles import MarkerSymbolEnum
+
     points = [
         (5 * 15, 10),
         (6 * 15, 10),
@@ -121,12 +122,11 @@ def create_map_orion():
     #     alpha=0.24,
     # )
     p.plot_circle(
-        (5.919524774, 0),
-        7.40703634,
-        # (0, 90),
-        # 10,
+        # (5.919524774, 0),
+        # 7.40703634,
+        (0, 90),
+        10,
         color="red",
-
     )
 
     # p.ax.add_patch(sq)
@@ -658,7 +658,6 @@ def create_map_scratch():
         # (0, 90),
         # 10,
         color="red",
-
     )
 
     p.export("temp/map-scratch-1.png", format="png", padding=0.1)
@@ -678,11 +677,10 @@ def create_map_scratch():
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
-create_map_scratch()
+create_map_orion()
+# create_map_scratch()
 
 # create_map_sgr()
-
 
 
 print(f"Total run time: {time.time() - start_time}")
