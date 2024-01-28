@@ -15,5 +15,8 @@
 ### **Deep Sky Objects (DSOs)**
 - [OpenNGC](https://github.com/mattiaverga/OpenNGC)
 
+### **Planet Sizes**
+- [NASA - Solar System Sizes](https://science.nasa.gov/resource/solar-system-sizes/)
+
 ### **Milky Way Outline**
 - Created by Steve Berardi with QGIS + GDAL from NASA's [Deep Star Maps](https://svs.gsfc.nasa.gov/4851)

@@ -251,7 +251,7 @@ class StarPlot(ABC):
         planets = get_planet_positions(self.timescale, ephemeris=self.ephemeris)
 
         for name, pos in planets.items():
-            ra, dec = pos
+            ra, dec, apparent_size_degrees = pos
 
             if self.in_bounds(ra, dec):
                 self._add_legend_handle_marker("Planet", self.style.planets.marker)

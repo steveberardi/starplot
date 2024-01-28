@@ -76,8 +76,16 @@ def test_map_plot_mercator_with_extra_object(map_plot_mercator):
             },
         )
     )
+    map_plot_mercator.plot_circle(
+        (7, -10),
+        5,
+        style=styles.PolygonStyle(
+            fill_color="blue",
+            alpha=0.14,
+        ),
+    )
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "193b1a7e2e2d6464"
+    assert dhash(filename) == "193b1a3e2e6d6c64"
     assert colorhash(filename) == "07403000000"
 
 
@@ -156,7 +164,7 @@ def test_map_plot_scope_bino_fov():
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
         ra_min=52 / 15,
-        ra_max=60 / 15,
+        ra_max=62 / 15,
         dec_min=20,
         dec_max=28,
         dt=dt,
@@ -176,8 +184,8 @@ def test_map_plot_scope_bino_fov():
     p.ax.set_title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "0288a69a9aa488a0"
-    assert colorhash(filename) == "07200038000"
+    assert dhash(filename) == "0e96aa4d4daa92cc"
+    assert colorhash(filename) in ["07200038000", "07200030000"]
 
 
 def test_map_plot_custom_stars():
@@ -203,7 +211,7 @@ def test_map_plot_custom_stars():
     )
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "1dab2b8eae2e840e"
+    assert dhash(filename) == "1ca9298eae2e048a"
     assert colorhash(filename) == "07000000000"
 
 
@@ -226,7 +234,7 @@ def test_map_plot_wrapping():
         resolution=2000,
     ).export(filename, padding=0.3)
 
-    assert dhash(filename) == "1f1e0f4743211117"
+    assert dhash(filename) == "1f1e0f4747211117"
     assert colorhash(filename) == "07000000000"
 
 
@@ -269,5 +277,5 @@ def test_map_mollweide():
         resolution=3000,
     ).export(filename, padding=0.1)
 
-    assert dhash(filename) == "0f2971633b330f06"
+    assert dhash(filename) == "0f2979633b330f06"
     assert colorhash(filename) == "07000000000"

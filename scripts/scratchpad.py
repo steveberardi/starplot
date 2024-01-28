@@ -224,17 +224,21 @@ def create_map_mercator():
 
 
 def create_map_stereo_north():
+    style = PlotStyle().extend(
+        extensions.BLUE_LIGHT,
+        extensions.MAP,
+    )
     p = sp.MapPlot(
         projection=Projection.STEREO_NORTH,
         ra_min=0,
-        ra_max=24,
-        dec_min=10,
-        dec_max=90,
-        limiting_magnitude=6,
-        style=sp.styles.MAP_BLUE_DARK.extend(),  # sp.styles.extensions.HIDE_LABELS),
+        ra_max=2,
+        dec_min=25,
+        dec_max=45,
+        limiting_magnitude=8,
+        style=style,
         resolution=4000,
     )
-    p.export("temp/temp-map-north.svg", format="svg", padding=0.5)
+    p.export("temp/temp-map-north.png", padding=0.5)
 
 
 def create_map_stereo_south():
@@ -689,14 +693,14 @@ def create_map_scratch():
 # create_constellation()
 
 # create_scope_plot_m45()
-create_optic_plot()
+# create_optic_plot()
 
-create_scope_view_m45()
+# create_scope_view_m45()
 # create_scope_view_m11()
 
 # create_zenith()
 # create_map_mercator()
-# create_map_stereo_north()
+create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
 # create_map_scratch()

@@ -711,8 +711,8 @@ class MapPlot(StarPlot):
                 # print(d.name)
                 continue
 
-            if angle:
-                angle = 180 - angle
+            # if angle:
+            #     angle = 180 - angle
 
             if maj_ax and style.marker.visible:
                 # If object has a major axis then plot it's actual extent
