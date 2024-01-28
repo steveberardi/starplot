@@ -143,7 +143,6 @@ class MapPlot(StarPlot):
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
-        # return dict(transform=ccrs.PlateCarree())
         return dict(transform=self._crs)
 
     def _prepare_coords(self, ra: float, dec: float) -> (float, float):
@@ -167,96 +166,8 @@ class MapPlot(StarPlot):
                 ra > self.ra_min or ra < self.ra_max - 24
             ) and self.dec_min < dec < self.dec_max
 
-    def plot_polygon(self, points: list, *args, **kwargs):
-        """Plots a polygon of points
-
-        Args:
-            points: List of polygon points `[(ra, dec), ...]`
-            style: Style of polygon
-        """
-        p = patches.Polygon(
-            points,
-            transform=self._crs,
-            **kwargs,
-        )
-        self.ax.add_patch(p)
-
-    def plot_ellipse(
-        self,
-        center: tuple,
-        height_degrees: float,
-        width_degrees: float,
-        angle: float = 0,
-        num_pts: int = 100,
-        *args,
-        **kwargs,
-    ):
-        """Plots an ellipse
-
-        Args:
-            center: Center of ellipse (ra, dec)
-            height_degrees: Height of ellipse (degrees)
-            width_degrees: Width of ellipse (degrees)
-            angle: Angle of rotation clockwise (degrees)
-            num_pts: Number of points to calculate for the ellipse polygon
-        """
-        # TODO: handle near poles
-        # TODO: add PolygonStyle
-
-        points = geod.ellipse(
-            center,
-            height_degrees,
-            width_degrees,
-            angle,
-            num_pts,
-        )
-        p = patches.Polygon(
-            points,
-            transform=self._crs,
-            **kwargs,
-        )
-        self.ax.add_patch(p)
-
-    def plot_circle(
-        self, center: tuple, radius_degrees: float, num_pts: int = 100, *args, **kwargs
-    ):
-        """Plots a circle
-
-        Args:
-            center: Center of circle (ra, dec)
-            radius_degrees: Radius of circle (degrees)
-            num_pts: Number of points to calculate for the circle polygon
-        """
-        self.plot_ellipse(
-            center,
-            radius_degrees * 2,
-            radius_degrees * 2,
-            angle=0,
-            num_pts=num_pts,
-            **kwargs,
-        )
-
-    def plot_rectangle(
-        self,
-        center: tuple,
-        height_degrees: float,
-        width_degrees: float,
-        angle: float = 0,
-        *args,
-        **kwargs,
-    ):
-        points = geod.rectangle(
-            center,
-            height_degrees,
-            width_degrees,
-            angle,
-        )
-        p = patches.Polygon(
-            points,
-            transform=self._crs,
-            **kwargs,
-        )
-        self.ax.add_patch(p)
+    def _plot_polygon(self, points, style, **kwargs):
+        super()._plot_polygon(points, style, transform=self._crs)
 
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
@@ -813,10 +724,9 @@ class MapPlot(StarPlot):
                 else:
                     min_ax_degrees = maj_ax_degrees
 
-                style_kwargs = dict(
-                    fill=False if style.marker.fill == "none" else True,
-                    facecolor=style.marker.color.as_hex(),
-                    edgecolor=style.marker.edge_color.as_hex(),
+                poly_style = PolygonStyle(
+                    fill_color=style.marker.color.as_hex(),
+                    edge_color=style.marker.edge_color.as_hex(),
                     alpha=style.marker.alpha,
                     zorder=style.marker.zorder,
                 )
@@ -826,16 +736,16 @@ class MapPlot(StarPlot):
                         (ra, dec),
                         min_ax_degrees * 2,
                         maj_ax_degrees * 2,
+                        poly_style,
                         angle or 0,
-                        **style_kwargs,
                     )
                 else:
                     self.plot_ellipse(
                         (ra, dec),
                         min_ax_degrees * 2,
                         maj_ax_degrees * 2,
+                        poly_style,
                         angle or 0,
-                        **style_kwargs,
                     )
 
                 if style.label.visible:

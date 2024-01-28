@@ -7,13 +7,20 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot.styles import PlotStyle, extensions
+from starplot.styles import PlotStyle, extensions, PolygonStyle
 from starplot.models import SkyObject
 from starplot.map import Projection
 
 import starplot as sp
 
 start_time = time.time()
+
+pstyle = PolygonStyle(
+    fill_color="blue",
+    alpha=0.36,
+    edge_width=0,
+    zorder=-100,
+)
 
 
 def create_map_orion():
@@ -116,28 +123,23 @@ def create_map_orion():
 
     p.plot_polygon(
         points,
-        facecolor="blue",
-        edgecolor="black",
-        zorder=1000,
-        alpha=0.24,
+        pstyle,
     )
     p.plot_rectangle(
         (6, 20),
         5,
         10,
+        style=pstyle,
         angle=45,
         # (0, 90),
         # 10,
-        facecolor="blue",
-        alpha=0.13,
     )
     p.plot_circle(
-        # (7, -5),
-        # 5,
-        (0, 80),
-        10,
-        facecolor="green",
-        alpha=0.13,
+        (7, -5),
+        5,
+        # (0, 80),
+        # 10,
+        style=pstyle,
     )
 
     p.plot_ellipse(
@@ -147,8 +149,7 @@ def create_map_orion():
         angle=45,
         # (0, 90),
         # 10,
-        facecolor="red",
-        alpha=0.13,
+        style=pstyle,
     )
 
     # p.ax.add_patch(sq)
@@ -177,6 +178,11 @@ def create_zenith():
         resolution=4000,
         include_info_text=True,
         adjust_text=True,
+    )
+    p.plot_circle(
+        (7, -5),
+        5,
+        style=pstyle,
     )
     p.refresh_legend()
     p.export("temp/zenith-poway.svg", format="svg", transparent=True)
@@ -472,8 +478,8 @@ def create_scope_plot_m45():
 def create_optic_plot():
     style = PlotStyle().extend(
         # extensions.MINIMAL,
-        extensions.GRAYSCALE_DARK,
-        # extensions.GRAYSCALE,
+        # extensions.GRAYSCALE_DARK,
+        extensions.GRAYSCALE,
         # extensions.BLUE_DARK,
         extensions.OPTIC,
     )
@@ -524,6 +530,11 @@ def create_optic_plot():
         resolution=1600,
         include_info_text=True,
         # colorize_stars=True,
+    )
+    p1.plot_circle(
+        (3.7836111111, 24.1166666667),
+        0.5,
+        pstyle,
     )
 
     p2 = sp.OpticPlot(
@@ -690,12 +701,12 @@ def create_map_scratch():
 # create_constellation()
 
 # create_scope_plot_m45()
-# create_optic_plot()
+create_optic_plot()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-# create_zenith()
+create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()

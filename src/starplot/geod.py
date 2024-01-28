@@ -1,8 +1,6 @@
-import datetime
 import math
 
 import pyproj
-from shapely.geometry import Polygon
 
 
 GEOD = pyproj.Geod("+a=6378137 +f=0.0", sphere=True)
@@ -11,6 +9,10 @@ GEOD = pyproj.Geod("+a=6378137 +f=0.0", sphere=True)
 def distance_m(distance_degrees: float, lat: float = 0, lon: float = 0):
     _, _, distance = GEOD.inv(lon, lat, lon + distance_degrees, lat)
     return distance
+
+
+def to_radec(p) -> tuple:
+    return (p[0] / 15, p[1])
 
 
 def rectangle(
