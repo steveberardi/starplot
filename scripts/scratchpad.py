@@ -114,19 +114,41 @@ def create_map_orion():
         (5 * 15, 10),
     ]
 
-    # p.plot_polygon(
-    #     points,
-    #     facecolor="blue",
-    #     edgecolor="black",
-    #     zorder=1000,
-    #     alpha=0.24,
-    # )
-    p.plot_circle(
-        # (5.919524774, 0),
-        # 7.40703634,
-        (0, 90),
+    p.plot_polygon(
+        points,
+        facecolor="blue",
+        edgecolor="black",
+        zorder=1000,
+        alpha=0.24,
+    )
+    p.plot_rectangle(
+        (6, 20),
+        5,
         10,
-        color="red",
+        angle=45,
+        # (0, 90),
+        # 10,
+        facecolor="blue",
+        alpha=0.13,
+    )
+    p.plot_circle(
+        # (7, -5),
+        # 5,
+        (0, 80),
+        10,
+        facecolor="green",
+        alpha=0.13,
+    )
+
+    p.plot_ellipse(
+        (6, 20),
+        5,
+        10,
+        angle=45,
+        # (0, 90),
+        # 10,
+        facecolor="red",
+        alpha=0.13,
     )
 
     # p.ax.add_patch(sq)

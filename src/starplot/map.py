@@ -9,12 +9,11 @@ from matplotlib import patches
 from matplotlib.ticker import FuncFormatter, FixedLocator
 import geopandas as gpd
 import numpy as np
-import pyproj
-from shapely.geometry import Polygon
 
 from pyongc import ongc
 from skyfield.api import Star
 
+from starplot import geod
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
@@ -169,19 +168,18 @@ class MapPlot(StarPlot):
             ) and self.dec_min < dec < self.dec_max
 
     def plot_polygon(self, points: list, *args, **kwargs):
-        poly = Polygon(points)
-        gpd.GeoSeries([poly]).plot(
-            ax=self.ax,
+        """Plots a polygon of points
+
+        Args:
+            points: List of polygon points `[(ra, dec), ...]`
+            style: Style of polygon
+        """
+        p = patches.Polygon(
+            points,
             transform=self._crs,
             **kwargs,
         )
-
-    def plot_circle(self, center: tuple, radius_degrees: float, *args, **kwargs):
-        self.plot_ellipse(center, radius_degrees * 2, radius_degrees * 2)
-
-        # this works, but only for circles
-        # self.ax.tissot(rad_km=height/1000, lons=[-15 * ra], lats=[dec], n_samples=36,
-        #      facecolor='red', edgecolor='black', linewidth=0.15, alpha = 0.1, zorder=-100)
+        self.ax.add_patch(p)
 
     def plot_ellipse(
         self,
@@ -189,26 +187,54 @@ class MapPlot(StarPlot):
         height_degrees: float,
         width_degrees: float,
         angle: float = 0,
+        num_pts: int = 100,
         *args,
         **kwargs,
     ):
-        ra, dec = center
+        """Plots an ellipse
 
-        # get projected coords
-        x, y = self._ts_crs.transform_point(ra * 15, dec, self._crs)
+        Args:
+            center: Center of ellipse (ra, dec)
+            height_degrees: Height of ellipse (degrees)
+            width_degrees: Width of ellipse (degrees)
+            angle: Angle of rotation clockwise (degrees)
+            num_pts: Number of points to calculate for the ellipse polygon
+        """
+        # TODO: handle near poles
+        # TODO: add PolygonStyle
 
-        height = self._compute_radius(height_degrees)
-        width = self._compute_radius(width_degrees)
-
-        p = patches.Ellipse(
-            (x, y),
-            width=height,
-            height=width,
-            angle=angle,
-            transform=self._ts_crs,
+        points = geod.ellipse(
+            center,
+            height_degrees,
+            width_degrees,
+            angle,
+            num_pts,
+        )
+        p = patches.Polygon(
+            points,
+            transform=self._crs,
             **kwargs,
         )
         self.ax.add_patch(p)
+
+    def plot_circle(
+        self, center: tuple, radius_degrees: float, num_pts: int = 100, *args, **kwargs
+    ):
+        """Plots a circle
+
+        Args:
+            center: Center of circle (ra, dec)
+            radius_degrees: Radius of circle (degrees)
+            num_pts: Number of points to calculate for the circle polygon
+        """
+        self.plot_ellipse(
+            center,
+            radius_degrees * 2,
+            radius_degrees * 2,
+            angle=0,
+            num_pts=num_pts,
+            **kwargs,
+        )
 
     def plot_rectangle(
         self,
@@ -219,48 +245,18 @@ class MapPlot(StarPlot):
         *args,
         **kwargs,
     ):
-        ra, dec = center
-
-        # get projected coords
-        x, y = self._ts_crs.transform_point(ra * 15, dec, self._crs)
-
-        height = self._compute_radius(height_degrees)
-        width = self._compute_radius(width_degrees)
-
-        p = patches.Rectangle(
-            (x, y),
-            width=height,
-            height=width,
-            angle=angle,
-            transform=self._ts_crs,
+        points = geod.rectangle(
+            center,
+            height_degrees,
+            width_degrees,
+            angle,
+        )
+        p = patches.Polygon(
+            points,
+            transform=self._crs,
             **kwargs,
         )
         self.ax.add_patch(p)
-
-    def _init_true_scale_crs(self):
-        dec_extent = abs(self.dec_max - self.dec_min)
-        dec_midpoint = (self.dec_min + self.dec_max) / 2
-
-        if dec_extent < 60:
-            # Good for small extent, bad for large extent
-            proj = ccrs.AzimuthalEquidistant(
-                central_longitude=self._center_lon,
-                central_latitude=dec_midpoint,
-            )
-        elif self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH]:
-            proj = Projection.crs(
-                self.projection, self._center_lon, true_scale_latitude=dec_midpoint
-            )
-        else:
-            proj = self._proj
-
-            proj = ccrs.Mercator(
-                # central_latitude=dec,
-                # central_longitude=-15 * ra,
-                latitude_true_scale=dec_midpoint
-            )
-
-        self._ts_crs = proj
 
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
@@ -865,9 +861,7 @@ class MapPlot(StarPlot):
         self.fig.set_size_inches(width, height)
 
     def _compute_radius(self, radius_degrees: float, x: float = 0, y: float = 0):
-        geod = pyproj.Geod("+a=6378137 +f=0.0", sphere=True)
-        _, _, distance = geod.inv(x, y, x + radius_degrees, y)
-        return distance
+        return geod.distance_m(radius_degrees, y, x)
 
     def _plot_fov_circle(
         self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
@@ -952,7 +946,6 @@ class MapPlot(StarPlot):
 
         self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
-        self._init_true_scale_crs()
 
         self._plot_gridlines()
         self._plot_tick_marks()
