@@ -312,10 +312,10 @@ class MapPlot(StarPlot):
             elif maj_ax and style.marker.visible:
                 # If object has a major axis then plot it's actual extent
                 x, y = self._proj.transform_point(ra, dec, self._crs)
-                maj_ax = self._compute_radius((maj_ax / 60) / 2)
+                maj_ax = geod.distance_m((maj_ax / 60) / 2)
 
                 if min_ax:
-                    min_ax = self._compute_radius((min_ax / 60) / 2)
+                    min_ax = geod.distance_m((min_ax / 60) / 2)
                 else:
                     min_ax = maj_ax
 
@@ -770,25 +770,17 @@ class MapPlot(StarPlot):
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
 
-    def _compute_radius(self, radius_degrees: float, x: float = 0, y: float = 0):
-        return geod.distance_m(radius_degrees, y, x)
-
     def _plot_fov_circle(
         self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
     ):
         # FOV (degrees) = FOV eyepiece / magnification
         fov_degrees = fov / magnification
-        ra, dec = self._prepare_coords(ra, dec)
         fov_radius = fov_degrees / 2
-        radius = self._compute_radius(fov_radius)
-        x, y = self._proj.transform_point(ra, dec, self._crs)
-
-        p = patches.Circle(
-            (x, y),
-            radius=radius,
-            **style.matplot_kwargs(self._size_multiplier),
+        self.plot_circle(
+            (ra, dec),
+            fov_radius,
+            style,
         )
-        self.ax.add_patch(p)
 
     def plot_scope_fov(
         self,
