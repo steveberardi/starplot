@@ -51,15 +51,15 @@ def create_map_orion():
     p = sp.MapPlot(
         # projection=Projection.MERCATOR,
         projection=Projection.STEREO_NORTH,
-        ra_min=3.6,
-        ra_max=7.8,
-        dec_min=-16,
-        dec_max=23.6,
-        # ra_min=0,
-        # ra_max=24,
-        # dec_min=0,
-        # dec_max=90,
-        limiting_magnitude=7.2,
+        # ra_min=3.6,
+        # ra_max=7.8,
+        # dec_min=-16,
+        # dec_max=23.6,
+        ra_min=0,
+        ra_max=24,
+        dec_min=40,
+        dec_max=90,
+        limiting_magnitude=6.2,
         style=style,
         resolution=2600,
     )
@@ -126,19 +126,22 @@ def create_map_orion():
         pstyle,
     )
     p.plot_rectangle(
-        (6, 20),
-        5,
+        # (6, 20),
+        # 5,
+        # 10,
+        (0, 70),
+        10,
         10,
         style=pstyle,
-        angle=45,
-        # (0, 90),
-        # 10,
+        angle=0,
     )
     p.plot_circle(
-        (7, -5),
-        5,
+        # (7, -5),
+        # 5,
         # (0, 80),
         # 10,
+        (0, 90),
+        5,
         style=pstyle,
     )
 
@@ -147,8 +150,6 @@ def create_map_orion():
         5,
         10,
         angle=45,
-        # (0, 90),
-        # 10,
         style=pstyle,
     )
 

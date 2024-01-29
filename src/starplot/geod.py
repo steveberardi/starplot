@@ -25,6 +25,11 @@ def rectangle(
     ra = ra * 15
     angle = 180 - angle
 
+    if dec == 90:
+        dec -= 0.00000001
+    if dec == -90:
+        dec += 0.00000001
+
     height_m = distance_m(height_degrees)
     width_m = distance_m(width_degrees)
 
@@ -54,11 +59,14 @@ def ellipse(
     angle: float = 0,
     num_pts: int = 100,
 ) -> list:
-    # TODO: handle near poles
-
     ra, dec = center
     ra = ra * 15
     angle = 180 - angle
+
+    if dec == 90:
+        dec -= 0.00000001
+    if dec == -90:
+        dec += 0.00000001
 
     height = distance_m(height_degrees / 2)  # b
     width = distance_m(width_degrees / 2)  # a

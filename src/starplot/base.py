@@ -302,6 +302,7 @@ class StarPlot(ABC):
         points = [self._prepare_coords(*p) for p in points]
         patch = patches.Polygon(
             points,
+            # closed=False, # needs to be false for circles at poles?
             **style.matplot_kwargs(size_multiplier=self._size_multiplier),
             **kwargs,
         )
