@@ -17,7 +17,7 @@ To create a star chart for the sky as seen from [Palomar Mountain](https://en.wi
 
 The created file should look like this:
 
-![starchart-blue](images/example_01.png)
+![starchart-blue](images/examples/example_01.png)
 
 
 ## Star Chart with an Extra Object Plotted
@@ -28,7 +28,7 @@ Building on the first example, you can also plot additional objects and even cus
 --8<-- "examples/example_02.py"
 ```
 
-![zenith-coma](images/example_02.png)
+![zenith-coma](images/examples/example_02.png)
 
 
 ## Map of Orion
@@ -41,7 +41,7 @@ The following code will create a simple map plot that shows the area around the 
 
 The result should look like this:
 
-![map-orion](images/example_03.png)
+![map-orion](images/examples/example_03.png)
 
 
 ## Map of The Pleiades with a Scope Field of View
@@ -54,7 +54,7 @@ The following code will create a minimal map plot that shows the field of view (
 
 The result should look like this:
 
-![map-pleiades-scope](images/example_04.png)
+![map-pleiades-scope](images/examples/example_04.png)
 
 _The solid black circle in this plot is the extent of the Pleiades as defined in [OpenNGC](https://github.com/mattiaverga/OpenNGC)._
 
@@ -77,7 +77,7 @@ The following code will create an optic plot that shows what The Pleiades looked
 
 The result should look like this:
 
-![optic-m45](images/example_05.png)
+![optic-m45](images/examples/example_05.png)
 
 
 ## Map of The Big Dipper with Custom Markers
@@ -90,7 +90,7 @@ Here's a fun one 😃 Let's create a small plot of the big dipper ([Ursa Major](
 
 The result should look like this:
 
-![map-big-dipper](images/example_06.png)
+![map-big-dipper](images/examples/example_06.png)
 
 
 
@@ -109,7 +109,7 @@ Here's an example that uses [Skyfield](https://rhodesmill.org/skyfield/) to get 
 
 The result should look like this:
 
-![map-hale-bopp](images/example_07.png)
+![map-hale-bopp](images/examples/example_07.png)
 
 
 ---

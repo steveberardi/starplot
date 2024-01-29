@@ -9,11 +9,11 @@ from matplotlib import patches
 from matplotlib.ticker import FuncFormatter, FixedLocator
 import geopandas as gpd
 import numpy as np
-import pyproj
 
 from pyongc import ongc
 from skyfield.api import Star
 
+from starplot import geod
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
@@ -45,13 +45,15 @@ class Projection(str, Enum):
     """Good for showing the entire celestial sphere in one plot"""
 
     @staticmethod
-    def crs(projection, center_lon=-180):
-        return {
-            Projection.STEREO_NORTH: ccrs.NorthPolarStereo(center_lon),
-            Projection.STEREO_SOUTH: ccrs.SouthPolarStereo(center_lon),
-            Projection.MERCATOR: ccrs.Mercator(center_lon),
-            Projection.MOLLWEIDE: ccrs.Mollweide(center_lon),
-        }.get(projection)
+    def crs(projection, center_lon=-180, **kwargs):
+        projections = {
+            Projection.STEREO_NORTH: ccrs.NorthPolarStereo,
+            Projection.STEREO_SOUTH: ccrs.SouthPolarStereo,
+            Projection.MERCATOR: ccrs.Mercator,
+            Projection.MOLLWEIDE: ccrs.Mollweide,
+        }
+        proj_class = projections.get(projection)
+        return proj_class(center_lon, **kwargs)
 
 
 class MapPlot(StarPlot):
@@ -141,7 +143,6 @@ class MapPlot(StarPlot):
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
-        # return dict(transform=ccrs.PlateCarree())
         return dict(transform=self._crs)
 
     def _prepare_coords(self, ra: float, dec: float) -> (float, float):
@@ -164,6 +165,9 @@ class MapPlot(StarPlot):
             return (
                 ra > self.ra_min or ra < self.ra_max - 24
             ) and self.dec_min < dec < self.dec_max
+
+    def _plot_polygon(self, points, style, **kwargs):
+        super()._plot_polygon(points, style, transform=self._crs)
 
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
@@ -308,10 +312,10 @@ class MapPlot(StarPlot):
             elif maj_ax and style.marker.visible:
                 # If object has a major axis then plot it's actual extent
                 x, y = self._proj.transform_point(ra, dec, self._crs)
-                maj_ax = self._compute_radius((maj_ax / 60) / 2)
+                maj_ax = geod.distance_m((maj_ax / 60) / 2)
 
                 if min_ax:
-                    min_ax = self._compute_radius((min_ax / 60) / 2)
+                    min_ax = geod.distance_m((min_ax / 60) / 2)
                 else:
                     min_ax = maj_ax
 
@@ -421,11 +425,14 @@ class MapPlot(StarPlot):
         if mw.empty:
             return
 
+        style_kwargs = self.style.milky_way.matplot_kwargs(
+            size_multiplier=self._size_multiplier
+        )
+        style_kwargs.pop("fill", None)
+
         mw.plot(
             ax=self.ax,
-            **self.style.milky_way.matplot_kwargs(
-                size_multiplier=self._size_multiplier
-            ),
+            **style_kwargs,
             transform=self._plate_carree,
         )
 
@@ -707,43 +714,41 @@ class MapPlot(StarPlot):
                 # print(d.name)
                 continue
 
-            if angle:
-                angle = 180 - angle
-
             if maj_ax and style.marker.visible:
                 # If object has a major axis then plot it's actual extent
-                x, y = self._proj.transform_point(ra * 15, dec, self._crs)
-                maj_ax = self._compute_radius((maj_ax / 60) / 2)
+
+                maj_ax_degrees = (maj_ax / 60) / 2
 
                 if min_ax:
-                    min_ax = self._compute_radius((min_ax / 60) / 2)
+                    min_ax_degrees = (min_ax / 60) / 2
                 else:
-                    min_ax = maj_ax
+                    min_ax_degrees = maj_ax_degrees
 
-                if style.marker.symbol == MarkerSymbolEnum.SQUARE:
-                    patch_class = patches.Rectangle
-                    xy = (x - min_ax, y - maj_ax)
-                    width = min_ax * 2
-                    height = maj_ax * 2
-                else:
-                    patch_class = patches.Ellipse
-                    xy = (x, y)
-                    width = maj_ax * 2
-                    height = min_ax * 2
-
-                fill = False if style.marker.fill == "none" else True
-                p = patch_class(
-                    xy,
-                    width=width,
-                    height=height,
-                    angle=angle or 0,
-                    facecolor=style.marker.color.as_hex(),
-                    edgecolor=style.marker.edge_color.as_hex(),
+                poly_style = PolygonStyle(
+                    fill_color=style.marker.color.as_hex()
+                    if style.marker.color
+                    else None,
+                    edge_color=style.marker.edge_color.as_hex(),
                     alpha=style.marker.alpha,
                     zorder=style.marker.zorder,
-                    fill=fill,
                 )
-                self.ax.add_patch(p)
+
+                if style.marker.symbol == MarkerSymbolEnum.SQUARE:
+                    self.plot_rectangle(
+                        (ra, dec),
+                        min_ax_degrees * 2,
+                        maj_ax_degrees * 2,
+                        poly_style,
+                        angle or 0,
+                    )
+                else:
+                    self.plot_ellipse(
+                        (ra, dec),
+                        min_ax_degrees * 2,
+                        maj_ax_degrees * 2,
+                        poly_style,
+                        angle or 0,
+                    )
 
                 if style.label.visible:
                     self._plot_text(ra, dec, d.name)
@@ -767,27 +772,17 @@ class MapPlot(StarPlot):
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
 
-    def _compute_radius(self, radius_degrees: float, x: float = 0, y: float = 0):
-        geod = pyproj.Geod("+a=6378137 +f=0.0", sphere=True)
-        _, _, distance = geod.inv(x, y, x + radius_degrees, y)
-        return distance
-
     def _plot_fov_circle(
         self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
     ):
         # FOV (degrees) = FOV eyepiece / magnification
         fov_degrees = fov / magnification
-        ra, dec = self._prepare_coords(ra, dec)
         fov_radius = fov_degrees / 2
-        radius = self._compute_radius(fov_radius)
-        x, y = self._proj.transform_point(ra, dec, self._crs)
-
-        p = patches.Circle(
-            (x, y),
-            radius=radius,
-            **style.matplot_kwargs(self._size_multiplier),
+        self.plot_circle(
+            (ra, dec),
+            fov_radius,
+            style,
         )
-        self.ax.add_patch(p)
 
     def plot_scope_fov(
         self,
@@ -839,9 +834,10 @@ class MapPlot(StarPlot):
         )
         bounds = self._latlon_bounds()
         center_lon = (bounds[0] + bounds[1]) / 2
+        self._center_lon = center_lon
 
         self._proj = Projection.crs(self.projection, center_lon)
-        self._proj.threshold = 100
+        self._proj.threshold = 1000
         self.ax = plt.axes(projection=self._proj)
 
         if self._is_global_extent():

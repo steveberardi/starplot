@@ -127,6 +127,9 @@ class OpticPlot(StarPlot):
         x, y = self._proj.transform_point(az, alt, self._crs)
         return self.optic.in_bounds(x, y, scale)
 
+    def _plot_polygon(self, points, style, **kwargs):
+        super()._plot_polygon(points, style, transform=self._crs)
+
     def _calc_position(self):
         eph = load(self.ephemeris)
         earth = eph["earth"]

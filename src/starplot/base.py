@@ -2,14 +2,22 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 from adjustText import adjust_text as _adjust_text
+from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects, transforms
 from matplotlib.lines import Line2D
 from pytz import timezone
 
+from starplot import geod
 from starplot.data import load
 from starplot.models import SkyObject
 from starplot.planets import get_planet_positions
-from starplot.styles import PlotStyle, BASE, MarkerStyle, LegendLocationEnum
+from starplot.styles import (
+    PlotStyle,
+    BASE,
+    MarkerStyle,
+    LegendLocationEnum,
+    PolygonStyle,
+)
 
 
 class StarPlot(ABC):
@@ -243,7 +251,7 @@ class StarPlot(ABC):
         planets = get_planet_positions(self.timescale, ephemeris=self.ephemeris)
 
         for name, pos in planets.items():
-            ra, dec = pos
+            ra, dec, apparent_size_degrees = pos
 
             if self.in_bounds(ra, dec):
                 self._add_legend_handle_marker("Planet", self.style.planets.marker)
@@ -288,3 +296,103 @@ class StarPlot(ABC):
 
         """
         raise NotImplementedError
+
+    def _plot_polygon(self, points: list, style: PolygonStyle, **kwargs):
+        points = [geod.to_radec(p) for p in points]
+        points = [self._prepare_coords(*p) for p in points]
+        patch = patches.Polygon(
+            points,
+            # closed=False, # needs to be false for circles at poles?
+            **style.matplot_kwargs(size_multiplier=self._size_multiplier),
+            **kwargs,
+        )
+        self.ax.add_patch(patch)
+
+    def plot_polygon(self, points: list, style: PolygonStyle):
+        """Plots a polygon of points
+
+        Args:
+            points: List of polygon points `[(ra, dec), ...]`
+            style: Style of polygon
+        """
+        self._plot_polygon(points, style)
+
+    def plot_rectangle(
+        self,
+        center: tuple,
+        height_degrees: float,
+        width_degrees: float,
+        style: PolygonStyle,
+        angle: float = 0,
+        *args,
+        **kwargs,
+    ):
+        """Plots a rectangle
+
+        Args:
+            center: Center of rectangle (ra, dec)
+            height_degrees: Height of rectangle (degrees)
+            width_degrees: Width of rectangle (degrees)
+            angle: Angle of rotation clockwise (degrees)
+            style: Style of rectangle
+        """
+        points = geod.rectangle(
+            center,
+            height_degrees,
+            width_degrees,
+            angle,
+        )
+        self._plot_polygon(points, style)
+
+    def plot_ellipse(
+        self,
+        center: tuple,
+        height_degrees: float,
+        width_degrees: float,
+        style: PolygonStyle,
+        angle: float = 0,
+        num_pts: int = 100,
+    ):
+        """Plots an ellipse
+
+        Args:
+            center: Center of ellipse (ra, dec)
+            height_degrees: Height of ellipse (degrees)
+            width_degrees: Width of ellipse (degrees)
+            style: Style of ellipse
+            angle: Angle of rotation clockwise (degrees)
+            num_pts: Number of points to calculate for the ellipse polygon
+        """
+
+        points = geod.ellipse(
+            center,
+            height_degrees,
+            width_degrees,
+            angle,
+            num_pts,
+        )
+        self._plot_polygon(points, style)
+
+    def plot_circle(
+        self,
+        center: tuple,
+        radius_degrees: float,
+        style: PolygonStyle,
+        num_pts: int = 100,
+    ):
+        """Plots a circle
+
+        Args:
+            center: Center of circle (ra, dec)
+            radius_degrees: Radius of circle (degrees)
+            style: Style of circle
+            num_pts: Number of points to calculate for the circle polygon
+        """
+        self.plot_ellipse(
+            center,
+            radius_degrees * 2,
+            radius_degrees * 2,
+            style,
+            angle=0,
+            num_pts=num_pts,
+        )

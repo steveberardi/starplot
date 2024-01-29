@@ -21,6 +21,7 @@ CometEls.txt
 
 temp*
 raw/
+examples/*.png
 
 *.prof
 
