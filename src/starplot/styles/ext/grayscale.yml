@@ -25,6 +25,7 @@ dso_nebula:
     alpha: 0.36
 dso_open_cluster:
   marker:
+    color: null
     edge_color: '#000'
     fill: none
     alpha: 0.8

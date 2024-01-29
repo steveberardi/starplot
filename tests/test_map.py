@@ -184,8 +184,8 @@ def test_map_plot_scope_bino_fov():
     p.ax.set_title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "0e96aa4d4daa92cc"
-    assert colorhash(filename) in ["07200038000", "07200030000"]
+    assert dhash(filename) == "0e86aaccccaa96cc"
+    assert colorhash(filename) == "07400038000"
 
 
 def test_map_plot_custom_stars():
@@ -211,7 +211,7 @@ def test_map_plot_custom_stars():
     )
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "1ca9298eae2e048a"
+    assert dhash(filename) == "1dab2b8eae2e840a"
     assert colorhash(filename) == "07000000000"
 
 
@@ -234,7 +234,7 @@ def test_map_plot_wrapping():
         resolution=2000,
     ).export(filename, padding=0.3)
 
-    assert dhash(filename) == "1f1e0f4747211117"
+    assert dhash(filename) == "1f1e0f4743211117"
     assert colorhash(filename) == "07000000000"
 
 
@@ -277,5 +277,5 @@ def test_map_mollweide():
         resolution=3000,
     ).export(filename, padding=0.1)
 
-    assert dhash(filename) == "0f2979633b330f06"
+    assert dhash(filename) == "0f2971633b330f06"
     assert colorhash(filename) == "07000000000"

@@ -425,11 +425,14 @@ class MapPlot(StarPlot):
         if mw.empty:
             return
 
+        style_kwargs = self.style.milky_way.matplot_kwargs(
+            size_multiplier=self._size_multiplier
+        )
+        style_kwargs.pop("fill", None)
+
         mw.plot(
             ax=self.ax,
-            **self.style.milky_way.matplot_kwargs(
-                size_multiplier=self._size_multiplier
-            ),
+            **style_kwargs,
             transform=self._plate_carree,
         )
 
@@ -722,7 +725,9 @@ class MapPlot(StarPlot):
                     min_ax_degrees = maj_ax_degrees
 
                 poly_style = PolygonStyle(
-                    fill_color=style.marker.color.as_hex(),
+                    fill_color=style.marker.color.as_hex()
+                    if style.marker.color
+                    else None,
                     edge_color=style.marker.edge_color.as_hex(),
                     alpha=style.marker.alpha,
                     zorder=style.marker.zorder,

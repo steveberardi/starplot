@@ -12,7 +12,10 @@ from typing_extensions import Annotated
 
 
 ColorStr = Annotated[
-    Color, PlainSerializer(lambda c: c.as_hex() if c else None, return_type=str)
+    Color,
+    PlainSerializer(
+        lambda c: c.as_hex() if c and c != "none" else None, return_type=str
+    ),
 ]
 
 
@@ -139,7 +142,7 @@ class MarkerStyle(BaseStyle):
         ```
     """
 
-    color: ColorStr = ColorStr("#000")
+    color: Optional[ColorStr] = ColorStr("#000")
     """Fill color of marker. Can be a hex, rgb, hsl, or word string."""
 
     edge_color: Optional[ColorStr] = ColorStr("#000")
@@ -165,7 +168,7 @@ class MarkerStyle(BaseStyle):
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
-            color=self.color.as_hex(),
+            color=self.color.as_hex() if self.color else "none",
             markeredgecolor=self.edge_color.as_hex() if self.edge_color else "none",
             marker=self.symbol,
             markersize=self.size * size_multiplier * FONT_SCALE,
@@ -269,6 +272,7 @@ class PolygonStyle(BaseStyle):
         styles = dict(
             edgecolor=self.edge_color.as_hex() if self.edge_color else "none",
             facecolor=self.fill_color.as_hex() if self.fill_color else "none",
+            fill=True if self.fill_color else False,
             linewidth=self.edge_width * size_multiplier,
             linestyle=self.line_style,
             alpha=self.alpha,
