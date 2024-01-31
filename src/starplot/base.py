@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+import numpy as np
 from adjustText import adjust_text as _adjust_text
 from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects, transforms
 from matplotlib.lines import Line2D
 from pytz import timezone
+from skyfield.api import Angle
 
 from starplot import geod
 from starplot.data import load
@@ -250,17 +252,15 @@ class StarPlot(ABC):
 
         planets = get_planet_positions(self.timescale, ephemeris=self.ephemeris)
 
-        for name, pos in planets.items():
-            ra, dec, apparent_size_degrees = pos
-
-            if self.in_bounds(ra, dec):
-                self._add_legend_handle_marker("Planet", self.style.planets.marker)
+        for name, planet_data in planets.items():
+            ra, dec, apparent_size_degrees = planet_data
 
             obj = SkyObject(
                 name=name.upper(),
                 ra=ra,
                 dec=dec,
                 style=self.style.planets,
+                legend_label="Planet",
             )
             self.plot_object(obj)
 
@@ -272,16 +272,53 @@ class StarPlot(ABC):
         earth, moon = eph["earth"], eph["moon"]
 
         astrometric = earth.at(self.timescale).observe(moon)
-        ra, dec, _ = astrometric.radec()
+        ra, dec, distance = astrometric.radec()
 
-        obj = SkyObject(
-            name="MOON",
-            ra=ra.hours,
-            dec=dec.degrees,
-            style=self.style.moon,
-            legend_label="Moon",
+        ra = ra.hours
+        dec = dec.degrees
+
+        if not self.in_bounds(ra, dec):
+            return
+
+        radius_km = 1_740
+        apparent_diameter_degrees = Angle(
+            radians=np.arcsin(radius_km / distance.km) * 2.0
+        ).degrees
+
+        poly_style = PolygonStyle(
+            fill_color=self.style.moon.marker.color.as_hex()
+            if self.style.moon.marker.color
+            else None,
+            edge_color=self.style.moon.marker.edge_color.as_hex(),
+            alpha=self.style.moon.marker.alpha,
+            zorder=self.style.moon.marker.zorder,
         )
-        self.plot_object(obj)
+        
+        self.plot_circle(
+            (ra, dec),
+            apparent_diameter_degrees,
+            poly_style,
+        )
+
+        self._add_legend_handle_marker("Moon", self.style.moon.marker)
+
+        if self.style.moon.label.visible:
+            self._plot_text(
+                ra,
+                dec,
+                "MOON",
+                **self.style.moon.label.matplot_kwargs(
+                    size_multiplier=self._size_multiplier
+                ),
+            )
+        # obj = SkyObject(
+        #     name="MOON",
+        #     ra=ra.hours,
+        #     dec=dec.degrees,
+        #     style=self.style.moon,
+        #     legend_label="Moon",
+        # )
+        # self.plot_object(obj)
 
     @abstractmethod
     def in_bounds(self, ra: float, dec: float) -> bool:
