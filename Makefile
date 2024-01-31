@@ -114,4 +114,4 @@ clean:
 	rm -rf site
 	rm -rf htmlcov
 
-.PHONY: install test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts
+.PHONY: build test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts

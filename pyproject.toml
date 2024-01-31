@@ -33,6 +33,7 @@ dependencies = [
     "pyarrow >= 14.0.2",
     "fastparquet >= 2023.10.1",
     "pyogrio >= 0.7.2",
+    "rtree >= 1.2.0",
 ]
 
 [project.urls]

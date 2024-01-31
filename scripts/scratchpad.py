@@ -51,14 +51,14 @@ def create_map_orion():
     p = sp.MapPlot(
         # projection=Projection.MERCATOR,
         projection=Projection.STEREO_NORTH,
-        # ra_min=3.6,
-        # ra_max=7.8,
-        # dec_min=-16,
-        # dec_max=23.6,
-        ra_min=0,
-        ra_max=24,
-        dec_min=40,
-        dec_max=90,
+        ra_min=3.6,
+        ra_max=7.8,
+        dec_min=-16,
+        dec_max=23.6,
+        # ra_min=0,
+        # ra_max=24,
+        # dec_min=40,
+        # dec_max=90,
         limiting_magnitude=6.2,
         style=style,
         resolution=2600,
@@ -699,11 +699,11 @@ def create_map_scratch():
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-create_zenith()
+# create_zenith()
 # create_map_mercator()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_scratch()
 
 # create_map_sgr()

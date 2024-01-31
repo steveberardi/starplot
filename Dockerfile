@@ -3,7 +3,7 @@ FROM python:${PYTHON_VERSION}-bookworm AS base
 
 WORKDIR /starplot
 
-RUN apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
+RUN apt-get clean && apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
 
 # Install fonts
 # not required, but make the maps look better (especially greek letters)

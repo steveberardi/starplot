@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 import numpy as np
+import rtree
 from adjustText import adjust_text as _adjust_text
 from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects, transforms
@@ -52,9 +53,11 @@ class StarPlot(ABC):
         self.ephemeris = ephemeris
 
         self.labels = []
-        self._labels_extents = []
-        self._legend_handles = {}
+        self._labels_rtree = rtree.index.Index()
+
         self.legend = None
+        self._legend_handles = {}
+
         self.text_border = patheffects.withStroke(
             linewidth=self.style.text_border_width,
             foreground=self.style.background_color.as_hex(),
@@ -73,10 +76,12 @@ class StarPlot(ABC):
         return ra, dec
 
     def _is_label_collision(self, extent) -> bool:
-        for e in self._labels_extents:
-            if transforms.Bbox.intersection(e, extent):
-                return True
-        return False
+        ix = list(
+            self._labels_rtree.intersection(
+                (extent.x0, extent.y0, extent.x1, extent.y1)
+            )
+        )
+        return len(ix) > 0
 
     def _maybe_remove_label(self, label) -> None:
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
@@ -91,7 +96,7 @@ class StarPlot(ABC):
             and not (self.hide_colliding_labels and self._is_label_collision(extent))
         ):
             self.labels.append(label)
-            self._labels_extents.append(extent)
+            self._labels_rtree.insert(0, (extent.x0, extent.y0, extent.x1, extent.y1))
         else:
             label.remove()
 
@@ -293,7 +298,7 @@ class StarPlot(ABC):
             alpha=self.style.moon.marker.alpha,
             zorder=self.style.moon.marker.zorder,
         )
-        
+
         self.plot_circle(
             (ra, dec),
             apparent_diameter_degrees,
