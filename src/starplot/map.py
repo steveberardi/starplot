@@ -7,6 +7,7 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
 from matplotlib import patches
 from matplotlib.ticker import FuncFormatter, FixedLocator
+from shapely.geometry.polygon import Polygon
 import geopandas as gpd
 import numpy as np
 
@@ -167,7 +168,7 @@ class MapPlot(StarPlot):
             ) and self.dec_min < dec < self.dec_max
 
     def _plot_polygon(self, points, style, **kwargs):
-        super()._plot_polygon(points, style, transform=self._crs)
+        super()._plot_polygon(points, style, transform=self._crs, **kwargs)
 
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
@@ -298,57 +299,98 @@ class MapPlot(StarPlot):
 
             geometry_types = d["geometry"].geom_type
 
-            if "MultiPolygon" in geometry_types or "Polygon" in geometry_types:
-                gs = gpd.GeoSeries(d["geometry"])
-                gs.plot(
-                    ax=self.ax,
-                    facecolor=style.marker.color.as_hex(),
-                    edgecolor=style.marker.edge_color.as_hex(),
+            if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
+                # continue
+
+                # GeoPandas is very slow at plotting
+                # gs = gpd.GeoSeries(d["geometry"])
+                # gs.plot(
+                #     ax=self.ax,
+                #     facecolor=style.marker.color.as_hex(),
+                #     edgecolor=style.marker.edge_color.as_hex(),
+                #     alpha=style.marker.alpha,
+                #     zorder=style.marker.zorder,
+                #     transform=self._crs,
+                # )
+
+                polygon = d.geometry
+                coords = list(zip(*polygon.exterior.coords.xy))
+                coords = [(ra * -1, dec) for ra, dec in coords]
+                p = Polygon(coords)
+
+                poly_style = PolygonStyle(
+                    fill_color=style.marker.color.as_hex()
+                    if style.marker.color
+                    else None,
+                    edge_color=style.marker.edge_color.as_hex(),
                     alpha=style.marker.alpha,
                     zorder=style.marker.zorder,
-                    transform=self._crs,
                 )
+                pstyle = poly_style.matplot_kwargs(size_multiplier=self._size_multiplier)
+                pstyle.pop("fill", None)
+                self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
+                # self._plot_polygon(coords, poly_style)
+
+            elif "MultiPolygon" in geometry_types:
+                # continue
+                for polygon in d.geometry.geoms:
+                    coords = list(zip(*polygon.exterior.coords.xy))
+                    coords = [(ra * -1, dec) for ra, dec in coords]
+                    p = Polygon(coords)
+                    
+                    poly_style = PolygonStyle(
+                        fill_color=style.marker.color.as_hex()
+                        if style.marker.color
+                        else None,
+                        edge_color=style.marker.edge_color.as_hex(),
+                        alpha=style.marker.alpha,
+                        zorder=style.marker.zorder,
+                    )
+                    pstyle = poly_style.matplot_kwargs(size_multiplier=self._size_multiplier)
+                    pstyle.pop("fill", None)
+                    self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
+
+                    # self._plot_polygon(coords, poly_style, closed=True)
+
 
             elif maj_ax and style.marker.visible:
-                # If object has a major axis then plot it's actual extent
-                x, y = self._proj.transform_point(ra, dec, self._crs)
-                maj_ax = geod.distance_m((maj_ax / 60) / 2)
+                 # If object has a major axis then plot it's actual extent
+
+                maj_ax_degrees = (maj_ax / 60) / 2
 
                 if min_ax:
-                    min_ax = geod.distance_m((min_ax / 60) / 2)
+                    min_ax_degrees = (min_ax / 60) / 2
                 else:
-                    min_ax = maj_ax
+                    min_ax_degrees = maj_ax_degrees
 
-                if angle:
-                    angle = 180 - angle
-
-                if style.marker.symbol == MarkerSymbolEnum.SQUARE:
-                    patch_class = patches.Rectangle
-                    xy = (x - min_ax, y - maj_ax)
-                    width = min_ax * 2
-                    height = maj_ax * 2
-                else:
-                    patch_class = patches.Ellipse
-                    xy = (x, y)
-                    width = maj_ax * 2
-                    height = min_ax * 2
-
-                fill = False if style.marker.fill == "none" else True
-                p = patch_class(
-                    xy,
-                    width=width,
-                    height=height,
-                    angle=angle or 0,
-                    facecolor=style.marker.color.as_hex(),
-                    edgecolor=style.marker.edge_color.as_hex(),
+                poly_style = PolygonStyle(
+                    fill_color=style.marker.color.as_hex()
+                    if style.marker.color
+                    else None,
+                    edge_color=style.marker.edge_color.as_hex(),
                     alpha=style.marker.alpha,
                     zorder=style.marker.zorder,
-                    fill=fill,
                 )
-                self.ax.add_patch(p)
+
+                if style.marker.symbol == MarkerSymbolEnum.SQUARE:
+                    self.plot_rectangle(
+                        (ra / 15, dec),
+                        min_ax_degrees * 2,
+                        maj_ax_degrees * 2,
+                        poly_style,
+                        angle or 0,
+                    )
+                else:
+                    self.plot_ellipse(
+                        (ra / 15, dec),
+                        min_ax_degrees * 2,
+                        maj_ax_degrees * 2,
+                        poly_style,
+                        angle or 0,
+                    )
 
                 if style.label.visible:
-                    self._plot_text(ra, dec, name)
+                    self._plot_text(ra, dec, d.name)
 
             else:
                 # If no major axis, then just plot as a marker
@@ -367,10 +409,10 @@ class MapPlot(StarPlot):
             return
 
         # ensures constellation lines are straight in all supported projections
-        if self.projection == Projection.MERCATOR:
-            transform = self._plate_carree
-        else:
-            transform = self._geodetic
+        # if self.projection == Projection.MERCATOR:
+        #     transform = self._plate_carree
+        # else:
+        #     transform = self._geodetic
 
         constellation_lines = self._read_geo_package(
             DataFiles.CONSTELLATION_LINES.value
@@ -384,7 +426,7 @@ class MapPlot(StarPlot):
             **self.style.constellation.line.matplot_kwargs(
                 size_multiplier=self._size_multiplier
             ),
-            transform=transform,
+            transform=self._plate_carree,
         )
 
     def _plot_constellation_borders(self):
@@ -860,8 +902,8 @@ class MapPlot(StarPlot):
         self._plot_stars()
         self._plot_ecliptic()
         self._plot_celestial_equator()
-        self._plot_dsos()
-        # self._plot_dso_outlines_experimental()
+        # self._plot_dsos()
+        self._plot_dso_outlines_experimental()
         self._plot_planets()
         self._plot_moon()
 
