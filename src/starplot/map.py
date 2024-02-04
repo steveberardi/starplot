@@ -8,13 +8,14 @@ from matplotlib import pyplot as plt
 from matplotlib import patches
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely.geometry.polygon import Polygon
+from shapely import LineString, MultiLineString, MultiPolygon
+from shapely.ops import unary_union, split
 import geopandas as gpd
 import numpy as np
 
 from pyongc import ongc
 from skyfield.api import Star
 
-from starplot import geod
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
@@ -228,14 +229,27 @@ class MapPlot(StarPlot):
             bbox=bbox,
         )
 
-    def _plot_dso_outlines_experimental(self):
-        extent = self.ax.get_extent(crs=self._crs)
-        bbox = (180 + extent[0], extent[2], 180 + extent[1], extent[3])
+    def extent_bbox(self):
+        # extent = self.ax.get_extent(crs=self._crs)
+        # x0 = 360 + extent[0] * -1
+        # x1 = 360 + extent[1] * -1
+
+        # if x0 >= 360 and x1 >= 360:
+        #     x0 -= 360
+        #     x1 -= 360
+
+        x0 = self.ra_min * 15
+        x1 = self.ra_max * 15
+        return (x0, self.dec_min, x1, self.dec_max)
+
+    def plot_dsos(self):
+        # extent = self.ax.get_extent(crs=self._crs)
+        # bbox = (180 + extent[0], extent[2], 180 + extent[1], extent[3])
         ongc = gpd.read_file(
             DataFiles.ONGC.value,
             engine="pyogrio",
             use_arrow=True,
-            bbox=bbox,
+            bbox=self.extent_bbox(),
         )
 
         dso_types = [dsos.ONGC_TYPE[dtype] for dtype in self.dso_types]
@@ -293,26 +307,13 @@ class MapPlot(StarPlot):
             if (
                 not style
                 or (magnitude is not None and magnitude > self.limiting_magnitude)
-                # or (not self.dso_plot_null_magnitudes and magnitude is None)
+                # or (magnitude is None and "Nebula" in legend_label)
             ):
                 continue
 
             geometry_types = d["geometry"].geom_type
 
             if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
-                # continue
-
-                # GeoPandas is very slow at plotting
-                # gs = gpd.GeoSeries(d["geometry"])
-                # gs.plot(
-                #     ax=self.ax,
-                #     facecolor=style.marker.color.as_hex(),
-                #     edgecolor=style.marker.edge_color.as_hex(),
-                #     alpha=style.marker.alpha,
-                #     zorder=style.marker.zorder,
-                #     transform=self._crs,
-                # )
-
                 polygon = d.geometry
                 coords = list(zip(*polygon.exterior.coords.xy))
                 coords = [(ra * -1, dec) for ra, dec in coords]
@@ -326,7 +327,9 @@ class MapPlot(StarPlot):
                     alpha=style.marker.alpha,
                     zorder=style.marker.zorder,
                 )
-                pstyle = poly_style.matplot_kwargs(size_multiplier=self._size_multiplier)
+                pstyle = poly_style.matplot_kwargs(
+                    size_multiplier=self._size_multiplier
+                )
                 pstyle.pop("fill", None)
                 self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
                 # self._plot_polygon(coords, poly_style)
@@ -337,7 +340,7 @@ class MapPlot(StarPlot):
                     coords = list(zip(*polygon.exterior.coords.xy))
                     coords = [(ra * -1, dec) for ra, dec in coords]
                     p = Polygon(coords)
-                    
+
                     poly_style = PolygonStyle(
                         fill_color=style.marker.color.as_hex()
                         if style.marker.color
@@ -346,15 +349,16 @@ class MapPlot(StarPlot):
                         alpha=style.marker.alpha,
                         zorder=style.marker.zorder,
                     )
-                    pstyle = poly_style.matplot_kwargs(size_multiplier=self._size_multiplier)
+                    pstyle = poly_style.matplot_kwargs(
+                        size_multiplier=self._size_multiplier
+                    )
                     pstyle.pop("fill", None)
                     self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
 
                     # self._plot_polygon(coords, poly_style, closed=True)
 
-
             elif maj_ax and style.marker.visible:
-                 # If object has a major axis then plot it's actual extent
+                # If object has a major axis then plot it's actual extent
 
                 maj_ax_degrees = (maj_ax / 60) / 2
 
@@ -447,6 +451,89 @@ class MapPlot(StarPlot):
             transform=self._plate_carree,
         )
 
+    def plot_constellation_borders(self):
+        if not self.style.constellation_borders.visible:
+            return
+
+        constellation_borders = gpd.read_file(
+            DataFiles.CONSTELLATIONS.value,
+            engine="pyogrio",
+            use_arrow=True,
+            bbox=self.extent_bbox(),
+        )
+
+        if constellation_borders.empty:
+            return
+
+        geometries = []
+
+        for i, c in constellation_borders.iterrows():
+            polygon = c.geometry
+            equinox = LineString([[0, 90], [0, -90]])
+            polygons = list(split(polygon, equinox).geoms)
+
+            for p in polygons:
+                coords = list(zip(*p.exterior.coords.xy))
+                # coords = [(ra * -1, dec) for ra, dec in coords]
+
+                ls = LineString(coords)
+                geometries.append(ls)
+
+        mls = MultiLineString(geometries)
+        geometries = unary_union(mls)
+
+        style_kwargs = self.style.constellation_borders.matplot_kwargs(
+            size_multiplier=self._size_multiplier
+        )
+        # style_kwargs["edgecolor"] = style_kwargs.pop("color", None)
+        # style_kwargs["facecolor"] = "none"
+
+        for ls in list(geometries.geoms):
+            x, y = ls.xy
+            self.ax.plot(
+                list(x),
+                list(y),
+                transform=self._crs,
+                **style_kwargs,
+            )
+
+    def plot_constellations(self):
+        if not self.style.constellation.line.visible:
+            return
+
+        constellations_gdf = gpd.read_file(
+            DataFiles.CONSTELLATIONS.value,
+            engine="pyogrio",
+            use_arrow=True,
+            bbox=self.extent_bbox(),
+        )
+
+        if constellations_gdf.empty:
+            return
+
+        conline_hips = constellations.lines()
+        style_kwargs = self.style.constellation.line.matplot_kwargs(
+            size_multiplier=self._size_multiplier
+        )
+
+        for i, c in constellations_gdf.iterrows():
+            hiplines = conline_hips[c.id]
+
+            for s1_hip, s2_hip in hiplines:
+                s1 = self.stars_df.loc[s1_hip]
+                s2 = self.stars_df.loc[s2_hip]
+
+                s1_ra = s1.ra_hours * 15
+                s2_ra = s2.ra_hours * 15
+
+                self.ax.plot(
+                    [s1_ra, s2_ra],
+                    [s1.dec_degrees, s2.dec_degrees],
+                    **self._plot_kwargs(),
+                    **style_kwargs,
+                )
+
+
     def _plot_constellation_labels(self):
         if not self.style.constellation.label.visible:
             return
@@ -458,7 +545,7 @@ class MapPlot(StarPlot):
             if self.in_bounds(ra, dec):
                 self._plot_text(ra, dec, con.upper(), **style)
 
-    def _plot_milky_way(self):
+    def plot_milky_way(self):
         if not self.style.milky_way.visible:
             return
 
@@ -472,16 +559,22 @@ class MapPlot(StarPlot):
         )
         style_kwargs.pop("fill", None)
 
-        mw.plot(
-            ax=self.ax,
+        # create union of all Milky Way patches
+        gs = mw.geometry.to_crs(self._plate_carree)
+        mw_union = gs.buffer(0.1).unary_union.buffer(-0.1)
+
+        self.ax.add_geometries(
+            [mw_union],
+            crs=self._plate_carree,
             **style_kwargs,
-            transform=self._plate_carree,
         )
 
     def _plot_stars(self):
         stardata = stars.load(self.star_catalog)
         eph = load(self.ephemeris)
         earth = eph["earth"]
+
+        self.stars_df = stardata
 
         ra_buffer = (self.ra_max - self.ra_min) / 4
         dec_buffer = (self.dec_max - self.dec_min) / 4
@@ -895,15 +988,21 @@ class MapPlot(StarPlot):
 
         self._plot_gridlines()
         self._plot_tick_marks()
-        self._plot_constellation_lines()
+        # self._plot_constellation_lines()
         self._plot_constellation_borders()
-        self._plot_constellation_labels()
-        self._plot_milky_way()
         self._plot_stars()
+        self._plot_constellation_labels()
+
+        # New
+        self.plot_milky_way()
+        self.plot_constellations()
+        # self.plot_constellation_borders()
+        self.plot_dsos()
+
         self._plot_ecliptic()
         self._plot_celestial_equator()
         # self._plot_dsos()
-        self._plot_dso_outlines_experimental()
+
         self._plot_planets()
         self._plot_moon()
 

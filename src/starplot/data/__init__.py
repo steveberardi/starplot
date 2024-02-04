@@ -17,3 +17,4 @@ class DataFiles(str, Enum):
     HIPPARCOS = DATA_PATH / "stars.hipparcos.parquet"
     TYCHO_1 = DATA_PATH / "stars.tycho-1.gz.parquet"
     ONGC = DATA_PATH / "ongc.gpkg.zip"
+    CONSTELLATIONS = DATA_PATH / "constellations.gpkg"
