@@ -266,35 +266,6 @@ class MapPlot(StarPlot):
 
         dso_types = [dsos.ONGC_TYPE[dtype] for dtype in self.dso_types]
         nearby_dsos = ongc[ongc["Type"].isin(dso_types)]
-
-        styles = {
-            # Star Clusters ----------
-            dsos.DsoType.OPEN_CLUSTER: self.style.dso_open_cluster,
-            dsos.DsoType.GLOBULAR_CLUSTER: self.style.dso_globular_cluster,
-            # Galaxies ----------
-            dsos.DsoType.GALAXY: self.style.dso_galaxy,
-            dsos.DsoType.GALAXY_PAIR: self.style.dso_galaxy,
-            dsos.DsoType.GALAXY_TRIPLET: self.style.dso_galaxy,
-            dsos.DsoType.GROUP_OF_GALAXIES: self.style.dso_galaxy,
-            # Nebulas ----------
-            dsos.DsoType.NEBULA: self.style.dso_nebula,
-            dsos.DsoType.PLANETARY_NEBULA: self.style.dso_nebula,
-            dsos.DsoType.EMISSION_NEBULA: self.style.dso_nebula,
-            dsos.DsoType.STAR_CLUSTER_NEBULA: self.style.dso_nebula,
-            dsos.DsoType.REFLECTION_NEBULA: self.style.dso_nebula,
-            # Stars ----------
-            dsos.DsoType.STAR: None,
-            dsos.DsoType.DOUBLE_STAR: self.style.dso_double_star,
-            dsos.DsoType.ASSOCIATION_OF_STARS: self.style.dso_association_stars,
-            # Others (hidden by default style)
-            dsos.DsoType.DARK_NEBULA: self.style.dso_dark_nebula,
-            dsos.DsoType.HII_IONIZED_REGION: self.style.dso_hii_ionized_region,
-            dsos.DsoType.SUPERNOVA_REMNANT: self.style.dso_supernova_remnant,
-            dsos.DsoType.NOVA_STAR: self.style.dso_nova_star,
-            dsos.DsoType.NONEXISTENT: self.style.dso_nonexistant,
-            dsos.DsoType.UNKNOWN: self.style.dso_unknown,
-            dsos.DsoType.DUPLICATE_RECORD: self.style.dso_duplicate,
-        }
         nearby_dsos = nearby_dsos.replace({np.nan: None})
 
         for n, d in nearby_dsos.iterrows():
@@ -304,9 +275,9 @@ class MapPlot(StarPlot):
             ra = d.ra_degrees
             dec = d.dec_degrees
 
-            name = d["Name"]
-            dso_type = dsos.ONGC_TYPE_MAP[d["Type"]]
-            style = styles.get(dso_type)
+            name = d.Name
+            dso_type = dsos.ONGC_TYPE_MAP[d.Type]
+            style = self.style.get_dso_style(dso_type)
             maj_ax, min_ax, angle = d.MajAx, d.MinAx, d.PosAng
             legend_label = dsos.LEGEND_LABELS.get(dso_type) or dso_type
             magnitude = d["V-Mag"] or d["B-Mag"] or None
@@ -766,42 +737,13 @@ class MapPlot(StarPlot):
                 maxra=(self.ra_max - 24) * 15, **base_kwargs
             )
 
-        styles = {
-            # Star Clusters ----------
-            dsos.DsoType.OPEN_CLUSTER: self.style.dso_open_cluster,
-            dsos.DsoType.GLOBULAR_CLUSTER: self.style.dso_globular_cluster,
-            # Galaxies ----------
-            dsos.DsoType.GALAXY: self.style.dso_galaxy,
-            dsos.DsoType.GALAXY_PAIR: self.style.dso_galaxy,
-            dsos.DsoType.GALAXY_TRIPLET: self.style.dso_galaxy,
-            dsos.DsoType.GROUP_OF_GALAXIES: self.style.dso_galaxy,
-            # Nebulas ----------
-            dsos.DsoType.NEBULA: self.style.dso_nebula,
-            dsos.DsoType.PLANETARY_NEBULA: self.style.dso_nebula,
-            dsos.DsoType.EMISSION_NEBULA: self.style.dso_nebula,
-            dsos.DsoType.STAR_CLUSTER_NEBULA: self.style.dso_nebula,
-            dsos.DsoType.REFLECTION_NEBULA: self.style.dso_nebula,
-            # Stars ----------
-            dsos.DsoType.STAR: None,
-            dsos.DsoType.DOUBLE_STAR: self.style.dso_double_star,
-            dsos.DsoType.ASSOCIATION_OF_STARS: self.style.dso_association_stars,
-            # Others (hidden by default style)
-            dsos.DsoType.DARK_NEBULA: self.style.dso_dark_nebula,
-            dsos.DsoType.HII_IONIZED_REGION: self.style.dso_hii_ionized_region,
-            dsos.DsoType.SUPERNOVA_REMNANT: self.style.dso_supernova_remnant,
-            dsos.DsoType.NOVA_STAR: self.style.dso_nova_star,
-            dsos.DsoType.NONEXISTENT: self.style.dso_nonexistant,
-            dsos.DsoType.UNKNOWN: self.style.dso_unknown,
-            dsos.DsoType.DUPLICATE_RECORD: self.style.dso_duplicate,
-        }
-
         for d in nearby_dsos:
             if d.coords is None:
                 continue
 
             ra = d.coords[0][0] + d.coords[0][1] / 60 + d.coords[0][2] / 3600
             dec = dec_str_to_float(d.dec)
-            style = styles.get(d.type)
+            style = self.style.get_dso_style(d.type)
             maj_ax, min_ax, angle = d.dimensions
             legend_label = dsos.LEGEND_LABELS.get(d.type) or d.type
 

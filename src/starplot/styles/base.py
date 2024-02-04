@@ -10,6 +10,7 @@ from pydantic.color import Color
 from pydantic.functional_serializers import PlainSerializer
 from typing_extensions import Annotated
 
+from starplot.data.dsos import DsoType
 
 ColorStr = Annotated[
     Color,
@@ -746,6 +747,38 @@ class PlotStyle(BaseStyle):
         ),
     )
     """Styling for the Celestial Equator"""
+
+    def get_dso_style(self, dso_type: DsoType):
+        """Returns the style for a DSO type"""
+        styles_by_type = {
+            # Star Clusters ----------
+            DsoType.OPEN_CLUSTER: self.dso_open_cluster,
+            DsoType.GLOBULAR_CLUSTER: self.dso_globular_cluster,
+            # Galaxies ----------
+            DsoType.GALAXY: self.dso_galaxy,
+            DsoType.GALAXY_PAIR: self.dso_galaxy,
+            DsoType.GALAXY_TRIPLET: self.dso_galaxy,
+            DsoType.GROUP_OF_GALAXIES: self.dso_galaxy,
+            # Nebulas ----------
+            DsoType.NEBULA: self.dso_nebula,
+            DsoType.PLANETARY_NEBULA: self.dso_nebula,
+            DsoType.EMISSION_NEBULA: self.dso_nebula,
+            DsoType.STAR_CLUSTER_NEBULA: self.dso_nebula,
+            DsoType.REFLECTION_NEBULA: self.dso_nebula,
+            # Stars ----------
+            DsoType.STAR: None,
+            DsoType.DOUBLE_STAR: self.dso_double_star,
+            DsoType.ASSOCIATION_OF_STARS: self.dso_association_stars,
+            # Others (hidden by default style)
+            DsoType.DARK_NEBULA: self.dso_dark_nebula,
+            DsoType.HII_IONIZED_REGION: self.dso_hii_ionized_region,
+            DsoType.SUPERNOVA_REMNANT: self.dso_supernova_remnant,
+            DsoType.NOVA_STAR: self.dso_nova_star,
+            DsoType.NONEXISTENT: self.dso_nonexistant,
+            DsoType.UNKNOWN: self.dso_unknown,
+            DsoType.DUPLICATE_RECORD: self.dso_duplicate,
+        }
+        return styles_by_type.get(dso_type)
 
     @staticmethod
     def load_from_file(filename: str) -> "PlotStyle":
