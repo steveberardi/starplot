@@ -242,6 +242,18 @@ class MapPlot(StarPlot):
         x1 = self.ra_max * 15
         return (x0, self.dec_min, x1, self.dec_max)
 
+    def _plot_dso_polygon(self, polygon, style):
+        coords = list(zip(*polygon.exterior.coords.xy))
+        coords = [(ra * -1, dec) for ra, dec in coords]
+        p = Polygon(coords)
+
+        poly_style = style.marker.to_polygon_style()
+        pstyle = poly_style.matplot_kwargs(
+            size_multiplier=self._size_multiplier
+        )
+        pstyle.pop("fill", None)
+        self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
+        
     def plot_dsos(self):
         # extent = self.ax.get_extent(crs=self._crs)
         # bbox = (180 + extent[0], extent[2], 180 + extent[1], extent[3])
@@ -273,7 +285,7 @@ class MapPlot(StarPlot):
             # Stars ----------
             dsos.DsoType.STAR: None,
             dsos.DsoType.DOUBLE_STAR: self.style.dso_double_star,
-            dsos.DsoType.ASSOCIATION_OF_STARS: self.style.dso,
+            dsos.DsoType.ASSOCIATION_OF_STARS: self.style.dso_association_stars,
             # Others (hidden by default style)
             dsos.DsoType.DARK_NEBULA: self.style.dso_dark_nebula,
             dsos.DsoType.HII_IONIZED_REGION: self.style.dso_hii_ionized_region,
@@ -306,6 +318,7 @@ class MapPlot(StarPlot):
 
             if (
                 not style
+                or not style.marker.visible
                 or (magnitude is not None and magnitude > self.limiting_magnitude)
                 # or (magnitude is None and "Nebula" in legend_label)
             ):
@@ -314,50 +327,15 @@ class MapPlot(StarPlot):
             geometry_types = d["geometry"].geom_type
 
             if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
-                polygon = d.geometry
-                coords = list(zip(*polygon.exterior.coords.xy))
-                coords = [(ra * -1, dec) for ra, dec in coords]
-                p = Polygon(coords)
-
-                poly_style = PolygonStyle(
-                    fill_color=style.marker.color.as_hex()
-                    if style.marker.color
-                    else None,
-                    edge_color=style.marker.edge_color.as_hex(),
-                    alpha=style.marker.alpha,
-                    zorder=style.marker.zorder,
-                )
-                pstyle = poly_style.matplot_kwargs(
-                    size_multiplier=self._size_multiplier
-                )
-                pstyle.pop("fill", None)
-                self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
-                # self._plot_polygon(coords, poly_style)
+                
+                self._plot_dso_polygon(d.geometry, style)
 
             elif "MultiPolygon" in geometry_types:
-                # continue
+
                 for polygon in d.geometry.geoms:
-                    coords = list(zip(*polygon.exterior.coords.xy))
-                    coords = [(ra * -1, dec) for ra, dec in coords]
-                    p = Polygon(coords)
-
-                    poly_style = PolygonStyle(
-                        fill_color=style.marker.color.as_hex()
-                        if style.marker.color
-                        else None,
-                        edge_color=style.marker.edge_color.as_hex(),
-                        alpha=style.marker.alpha,
-                        zorder=style.marker.zorder,
-                    )
-                    pstyle = poly_style.matplot_kwargs(
-                        size_multiplier=self._size_multiplier
-                    )
-                    pstyle.pop("fill", None)
-                    self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
-
-                    # self._plot_polygon(coords, poly_style, closed=True)
-
-            elif maj_ax and style.marker.visible:
+                    self._plot_dso_polygon(polygon, style)
+                    
+            elif maj_ax:
                 # If object has a major axis then plot it's actual extent
 
                 maj_ax_degrees = (maj_ax / 60) / 2
@@ -367,14 +345,7 @@ class MapPlot(StarPlot):
                 else:
                     min_ax_degrees = maj_ax_degrees
 
-                poly_style = PolygonStyle(
-                    fill_color=style.marker.color.as_hex()
-                    if style.marker.color
-                    else None,
-                    edge_color=style.marker.edge_color.as_hex(),
-                    alpha=style.marker.alpha,
-                    zorder=style.marker.zorder,
-                )
+                poly_style = style.marker.to_polygon_style()
 
                 if style.marker.symbol == MarkerSymbolEnum.SQUARE:
                     self.plot_rectangle(
