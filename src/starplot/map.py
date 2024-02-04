@@ -1,11 +1,8 @@
 import datetime
 import warnings
 
-from enum import Enum
-
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
-from matplotlib import patches
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely.geometry.polygon import Polygon
 from shapely import LineString, MultiLineString, MultiPolygon
@@ -19,43 +16,18 @@ from skyfield.api import Star
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
 from starplot.models import SkyObject
+from starplot.projections import Projection
 from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE, MarkerSymbolEnum
 from starplot.utils import lon_to_ra, dec_str_to_float
 
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
+warnings.filterwarnings("ignore", module="shapely")
 
 DEFAULT_FOV_STYLE = PolygonStyle(
     fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
 )
 """Default style for plotting scope and bino views"""
-
-
-class Projection(str, Enum):
-    """Supported projections for MapPlots"""
-
-    STEREO_NORTH = "stereo_north"
-    """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""
-
-    STEREO_SOUTH = "stereo_south"
-    """Good for objects near the south celestial pole, but distorts objects near the mid declinations"""
-
-    MERCATOR = "mercator"
-    """Good for declinations between -70 and 70, but distorts objects near the poles"""
-
-    MOLLWEIDE = "mollweide"
-    """Good for showing the entire celestial sphere in one plot"""
-
-    @staticmethod
-    def crs(projection, center_lon=-180, **kwargs):
-        projections = {
-            Projection.STEREO_NORTH: ccrs.NorthPolarStereo,
-            Projection.STEREO_SOUTH: ccrs.SouthPolarStereo,
-            Projection.MERCATOR: ccrs.Mercator,
-            Projection.MOLLWEIDE: ccrs.Mollweide,
-        }
-        proj_class = projections.get(projection)
-        return proj_class(center_lon, **kwargs)
 
 
 class MapPlot(StarPlot):
@@ -253,15 +225,47 @@ class MapPlot(StarPlot):
         )
         pstyle.pop("fill", None)
         self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
+    
+    def _extent_mask(self):
+        """
+        Returns shapely geometry objects of extent (RA = 0...360)
+        
+        If the extent crosses equinox, then two Polygons will be returned
+        """
+        if self.ra_max < 24:
+            coords = [
+                [self.ra_min * 15, self.dec_min],
+                [self.ra_max * 15, self.dec_min],
+                [self.ra_min * 15, self.dec_max],
+                [self.ra_max * 15, self.dec_max],
+            ]
+            return Polygon(coords)
+            
+        else:
+            coords_1 = [
+                [self.ra_min * 15, self.dec_min],
+                [360, self.dec_min],
+                [self.ra_min * 15, self.dec_max],
+                [360, self.dec_max],
+            ]
+            coords_2 = [
+                [0, self.dec_min],
+                [(self.ra_max - 24) * 15, self.dec_min],
+                [0, self.dec_max],
+                [(self.ra_max - 24) * 15, self.dec_max],
+            ]
+
+            return MultiPolygon([
+                Polygon(coords_1),
+                Polygon(coords_2),
+            ])
         
     def plot_dsos(self):
-        # extent = self.ax.get_extent(crs=self._crs)
-        # bbox = (180 + extent[0], extent[2], 180 + extent[1], extent[3])
         ongc = gpd.read_file(
             DataFiles.ONGC.value,
             engine="pyogrio",
             use_arrow=True,
-            bbox=self.extent_bbox(),
+            bbox=self._extent_mask(),
         )
 
         dso_types = [dsos.ONGC_TYPE[dtype] for dtype in self.dso_types]
@@ -435,7 +439,7 @@ class MapPlot(StarPlot):
             self.ax.plot(
                 list(x),
                 list(y),
-                transform=self._crs,
+                **self._plot_kwargs(),
                 **style_kwargs,
             )
 
@@ -447,7 +451,7 @@ class MapPlot(StarPlot):
             DataFiles.CONSTELLATIONS.value,
             engine="pyogrio",
             use_arrow=True,
-            bbox=self.extent_bbox(),
+            bbox=self._extent_mask(),
         )
 
         if constellations_gdf.empty:

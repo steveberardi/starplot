@@ -47,8 +47,8 @@ def map_plot_stereo_north():
 def test_map_plot_mercator_base(map_plot_mercator):
     filename = DATA_PATH / "map-mercator-base.png"
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "193b1a7e3e256464"
-    assert colorhash(filename) == "07406000000"
+    assert dhash(filename) == "183b1a3e2e2d646c"
+    assert colorhash(filename) == "07443000000"
 
 
 def test_map_plot_mercator_with_extra_object(map_plot_mercator):
@@ -85,15 +85,15 @@ def test_map_plot_mercator_with_extra_object(map_plot_mercator):
         ),
     )
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "193b1a3e2e6d6c64"
+    assert dhash(filename) == "183b1a3e2e6d646c"
     assert colorhash(filename) == "07403000000"
 
 
 def test_map_plot_stereo_base(map_plot_stereo_north):
     filename = DATA_PATH / "map-stereo-north-base.png"
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "667664f47c383416"
-    assert colorhash(filename) == "07e00000000"
+    assert dhash(filename) == "626674747c383412"
+    assert colorhash(filename) == "07cc0000000"
 
 
 def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
@@ -116,8 +116,8 @@ def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
         )
     )
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "667664f47c381416"
-    assert colorhash(filename) == "072001c0000"
+    assert dhash(filename) == "626674747c381412"
+    assert colorhash(filename) == "07200180000"
 
 
 def test_map_plot_with_planets():
@@ -147,8 +147,8 @@ def test_map_plot_with_planets():
     )
     p.export(filename)
 
-    assert dhash(filename) == "cc6871633bb68e17"
-    assert colorhash(filename) == "07c03000000"
+    assert dhash(filename) == "cc6871633bb68e0b"
+    assert colorhash(filename) == "07642000000"
 
 
 def test_map_plot_scope_bino_fov():
@@ -184,8 +184,8 @@ def test_map_plot_scope_bino_fov():
     p.ax.set_title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "0e86aaccccaa96cc"
-    assert colorhash(filename) == "07400038000"
+    assert dhash(filename) == "0ed65a0c9c928688"
+    assert colorhash(filename) == "07200038000"
 
 
 def test_map_plot_custom_stars():
@@ -211,7 +211,7 @@ def test_map_plot_custom_stars():
     )
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "1dab2b8eae2e840a"
+    assert dhash(filename) == "1cab2b8eae0e0468"
     assert colorhash(filename) == "07000000000"
 
 
@@ -234,7 +234,7 @@ def test_map_plot_wrapping():
         resolution=2000,
     ).export(filename, padding=0.3)
 
-    assert dhash(filename) == "1f1e0f4743211117"
+    assert dhash(filename) == "1f1c0f4747a11117"
     assert colorhash(filename) == "07000000000"
 
 
@@ -277,5 +277,5 @@ def test_map_mollweide():
         resolution=3000,
     ).export(filename, padding=0.1)
 
-    assert dhash(filename) == "0f2971633b330f06"
+    assert dhash(filename) == "0f29716333330706"
     assert colorhash(filename) == "07000000000"
