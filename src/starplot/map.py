@@ -10,15 +10,14 @@ from shapely.ops import unary_union, split
 import geopandas as gpd
 import numpy as np
 
-from pyongc import ongc
 from skyfield.api import Star
 
 from starplot.base import StarPlot
-from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
+from starplot.data import load, DataFiles, bayer, constellations, stars, dsos
 from starplot.models import SkyObject
 from starplot.projections import Projection
 from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE, MarkerSymbolEnum
-from starplot.utils import lon_to_ra, dec_str_to_float
+from starplot.utils import lon_to_ra
 
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
@@ -126,8 +125,8 @@ class MapPlot(StarPlot):
         """Determine if a coordinate is within the bounds of the plot.
 
         Args:
-            ra: Right ascension
-            dec: Declination
+            ra: Right ascension (0...24)
+            dec: Declination (-90...90)
 
         Returns:
             True if the coordinate is in bounds, otherwise False
@@ -187,7 +186,6 @@ class MapPlot(StarPlot):
 
             self.ra_min = ra_min
             self.ra_max = ra_max
-            # print(f"[ {ra_min} , {ra_max} ]")
 
     def _read_geo_package(self, filename: str):
         """Returns GeoDataFrame of a GeoPackage file"""
@@ -220,16 +218,14 @@ class MapPlot(StarPlot):
         p = Polygon(coords)
 
         poly_style = style.marker.to_polygon_style()
-        pstyle = poly_style.matplot_kwargs(
-            size_multiplier=self._size_multiplier
-        )
+        pstyle = poly_style.matplot_kwargs(size_multiplier=self._size_multiplier)
         pstyle.pop("fill", None)
         self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
-    
+
     def _extent_mask(self):
         """
         Returns shapely geometry objects of extent (RA = 0...360)
-        
+
         If the extent crosses equinox, then two Polygons will be returned
         """
         if self.ra_max < 24:
@@ -240,7 +236,7 @@ class MapPlot(StarPlot):
                 [self.ra_max * 15, self.dec_max],
             ]
             return Polygon(coords)
-            
+
         else:
             coords_1 = [
                 [self.ra_min * 15, self.dec_min],
@@ -255,11 +251,13 @@ class MapPlot(StarPlot):
                 [(self.ra_max - 24) * 15, self.dec_max],
             ]
 
-            return MultiPolygon([
-                Polygon(coords_1),
-                Polygon(coords_2),
-            ])
-        
+            return MultiPolygon(
+                [
+                    Polygon(coords_1),
+                    Polygon(coords_2),
+                ]
+            )
+
     def plot_dsos(self):
         ongc = gpd.read_file(
             DataFiles.ONGC.value,
@@ -302,14 +300,12 @@ class MapPlot(StarPlot):
             geometry_types = d["geometry"].geom_type
 
             if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
-                
                 self._plot_dso_polygon(d.geometry, style)
 
             elif "MultiPolygon" in geometry_types:
-
                 for polygon in d.geometry.geoms:
                     self._plot_dso_polygon(polygon, style)
-                    
+
             elif maj_ax:
                 # If object has a major axis then plot it's actual extent
 
@@ -354,31 +350,6 @@ class MapPlot(StarPlot):
 
             self._add_legend_handle_marker(legend_label, style.marker)
 
-    def _plot_constellation_lines(self):
-        if not self.style.constellation.line.visible:
-            return
-
-        # ensures constellation lines are straight in all supported projections
-        # if self.projection == Projection.MERCATOR:
-        #     transform = self._plate_carree
-        # else:
-        #     transform = self._geodetic
-
-        constellation_lines = self._read_geo_package(
-            DataFiles.CONSTELLATION_LINES.value
-        )
-
-        if constellation_lines.empty:
-            return
-
-        constellation_lines.plot(
-            ax=self.ax,
-            **self.style.constellation.line.matplot_kwargs(
-                size_multiplier=self._size_multiplier
-            ),
-            transform=self._plate_carree,
-        )
-
     def _plot_constellation_borders(self):
         if not self.style.constellation_borders.visible:
             return
@@ -386,18 +357,17 @@ class MapPlot(StarPlot):
             DataFiles.CONSTELLATION_BORDERS.value
         )
 
-        if constellation_borders.empty:
-            return
-
-        constellation_borders.plot(
-            ax=self.ax,
-            **self.style.constellation_borders.matplot_kwargs(
-                size_multiplier=self._size_multiplier
-            ),
-            transform=self._plate_carree,
-        )
+        if not constellation_borders.empty:
+            constellation_borders.plot(
+                ax=self.ax,
+                **self.style.constellation_borders.matplot_kwargs(
+                    size_multiplier=self._size_multiplier
+                ),
+                transform=self._plate_carree,
+            )
 
     def plot_constellation_borders(self):
+        """work in progress"""
         if not self.style.constellation_borders.visible:
             return
 
@@ -431,8 +401,6 @@ class MapPlot(StarPlot):
         style_kwargs = self.style.constellation_borders.matplot_kwargs(
             size_multiplier=self._size_multiplier
         )
-        # style_kwargs["edgecolor"] = style_kwargs.pop("color", None)
-        # style_kwargs["facecolor"] = "none"
 
         for ls in list(geometries.geoms):
             x, y = ls.xy
@@ -479,7 +447,6 @@ class MapPlot(StarPlot):
                     **style_kwargs,
                 )
 
-
     def _plot_constellation_labels(self):
         if not self.style.constellation.label.visible:
             return
@@ -491,29 +458,27 @@ class MapPlot(StarPlot):
             if self.in_bounds(ra, dec):
                 self._plot_text(ra, dec, con.upper(), **style)
 
-    def plot_milky_way(self):
+    def plot_milky_way(self, style: PolygonStyle = None):
+        style = style or self.style.milky_way
+
         if not self.style.milky_way.visible:
             return
 
         mw = self._read_geo_package(DataFiles.MILKY_WAY.value)
 
-        if mw.empty:
-            return
+        if not mw.empty:
+            style_kwargs = style.matplot_kwargs(size_multiplier=self._size_multiplier)
+            style_kwargs.pop("fill", None)
 
-        style_kwargs = self.style.milky_way.matplot_kwargs(
-            size_multiplier=self._size_multiplier
-        )
-        style_kwargs.pop("fill", None)
+            # create union of all Milky Way patches
+            gs = mw.geometry.to_crs(self._plate_carree)
+            mw_union = gs.buffer(0.1).unary_union.buffer(-0.1)
 
-        # create union of all Milky Way patches
-        gs = mw.geometry.to_crs(self._plate_carree)
-        mw_union = gs.buffer(0.1).unary_union.buffer(-0.1)
-
-        self.ax.add_geometries(
-            [mw_union],
-            crs=self._plate_carree,
-            **style_kwargs,
-        )
+            self.ax.add_geometries(
+                [mw_union],
+                crs=self._plate_carree,
+                **style_kwargs,
+            )
 
     def _plot_stars(self):
         stardata = stars.load(self.star_catalog)
@@ -549,6 +514,8 @@ class MapPlot(StarPlot):
 
         sizes = []
         alphas = []
+
+        # nearby_stars_df.sort_values("magnitude")
 
         for m in nearby_stars_df["magnitude"]:
             if m < 1.6:
@@ -604,42 +571,6 @@ class MapPlot(StarPlot):
                 self._plot_text(
                     ra + 0.01, dec, bayer_desig, ha="right", va="bottom", **style
                 )
-
-    def _plot_ecliptic(self):
-        if not self.style.ecliptic.line.visible:
-            return
-
-        x = [(ra * 15) for ra, dec in ecliptic.RA_DECS]
-        y = [dec for ra, dec in ecliptic.RA_DECS]
-
-        self.ax.plot(
-            x,
-            y,
-            dash_capstyle=self.style.ecliptic.line.dash_capstyle,
-            **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
-            **self._plot_kwargs(),
-            # transform=self._plate_carree,
-        )
-
-        if self.style.ecliptic.label.visible:
-            inbounds = []
-            for ra, dec in ecliptic.RA_DECS:
-                if self.in_bounds(ra, dec):
-                    inbounds.append((ra, dec))
-
-            if len(inbounds) > 4:
-                label_spacing = int(len(inbounds) / 3) or 1
-
-                for i in range(0, len(inbounds), label_spacing):
-                    ra, dec = inbounds[i]
-                    self._plot_text(
-                        ra,
-                        dec - 0.4,
-                        "ECLIPTIC",
-                        **self.style.ecliptic.label.matplot_kwargs(
-                            self._size_multiplier
-                        ),
-                    )
 
     def _plot_celestial_equator(self):
         if self.style.celestial_equator.line.visible:
@@ -719,103 +650,6 @@ class MapPlot(StarPlot):
             ylabel_style=tick_style,
             alpha=0,  # hide the actual gridlines
         )
-
-    def _plot_dsos(self):
-        dso_types = [dsos.ONGC_TYPE[dtype] for dtype in self.dso_types]
-        base_kwargs = dict(
-            mindec=self.dec_min,
-            maxdec=self.dec_max,
-            type=dso_types,
-        )
-
-        if self.ra_max < 24:
-            nearby_dsos = ongc.listObjects(
-                minra=self.ra_min * 15,  # convert to degrees (0-360)
-                maxra=self.ra_max * 15,  # convert to degrees (0-360)
-                **base_kwargs,
-            )
-        else:
-            # handle wrapping
-            nearby_dsos = ongc.listObjects(minra=self.ra_min * 15, **base_kwargs)
-            nearby_dsos += ongc.listObjects(
-                maxra=(self.ra_max - 24) * 15, **base_kwargs
-            )
-
-        for d in nearby_dsos:
-            if d.coords is None:
-                continue
-
-            ra = d.coords[0][0] + d.coords[0][1] / 60 + d.coords[0][2] / 3600
-            dec = dec_str_to_float(d.dec)
-            style = self.style.get_dso_style(d.type)
-            maj_ax, min_ax, angle = d.dimensions
-            legend_label = dsos.LEGEND_LABELS.get(d.type) or d.type
-
-            if (
-                not style
-                or (
-                    d.magnitudes[1] is not None
-                    and d.magnitudes[1] > self.limiting_magnitude
-                )
-                or (
-                    d.magnitudes[0] is not None
-                    and d.magnitudes[0] > self.limiting_magnitude
-                )
-                or (d.magnitudes[0] is None and "Nebula" in legend_label)
-            ):
-                # print(d.name)
-                continue
-
-            if maj_ax and style.marker.visible:
-                # If object has a major axis then plot it's actual extent
-
-                maj_ax_degrees = (maj_ax / 60) / 2
-
-                if min_ax:
-                    min_ax_degrees = (min_ax / 60) / 2
-                else:
-                    min_ax_degrees = maj_ax_degrees
-
-                poly_style = PolygonStyle(
-                    fill_color=style.marker.color.as_hex()
-                    if style.marker.color
-                    else None,
-                    edge_color=style.marker.edge_color.as_hex(),
-                    alpha=style.marker.alpha,
-                    zorder=style.marker.zorder,
-                )
-
-                if style.marker.symbol == MarkerSymbolEnum.SQUARE:
-                    self.plot_rectangle(
-                        (ra, dec),
-                        min_ax_degrees * 2,
-                        maj_ax_degrees * 2,
-                        poly_style,
-                        angle or 0,
-                    )
-                else:
-                    self.plot_ellipse(
-                        (ra, dec),
-                        min_ax_degrees * 2,
-                        maj_ax_degrees * 2,
-                        poly_style,
-                        angle or 0,
-                    )
-
-                if style.label.visible:
-                    self._plot_text(ra, dec, d.name)
-
-            else:
-                # If no major axis, then just plot as a marker
-                obj = SkyObject(
-                    name=d.name,
-                    ra=ra,
-                    dec=dec,
-                    style=style,
-                )
-                self.plot_object(obj)
-
-            self._add_legend_handle_marker(legend_label, style.marker)
 
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
@@ -898,8 +732,6 @@ class MapPlot(StarPlot):
         else:
             self.ax.set_extent(bounds, crs=self._plate_carree)
 
-        # print(self.ax.get_extent(crs=self._crs))
-
         self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
 
@@ -907,18 +739,17 @@ class MapPlot(StarPlot):
         self._plot_tick_marks()
         # self._plot_constellation_lines()
         self._plot_constellation_borders()
-        self._plot_stars()
         self._plot_constellation_labels()
+        self._plot_stars()
 
         # New
+        self.plot_dsos()
         self.plot_milky_way()
         self.plot_constellations()
         # self.plot_constellation_borders()
-        self.plot_dsos()
+        self.plot_ecliptic()
 
-        self._plot_ecliptic()
         self._plot_celestial_equator()
-        # self._plot_dsos()
 
         self._plot_planets()
         self._plot_moon()

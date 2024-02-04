@@ -49,8 +49,8 @@ def create_map_orion():
     # style.milky_way.visible = False
 
     p = sp.MapPlot(
-        # projection=Projection.MERCATOR,
-        projection=Projection.STEREO_NORTH,
+        projection=Projection.MERCATOR,
+        # projection=Projection.STEREO_NORTH,
         ra_min=3.6,
         ra_max=7.8,
         dec_min=-16,
@@ -61,7 +61,7 @@ def create_map_orion():
         # dec_max=90,
         limiting_magnitude=6.2,
         style=style,
-        resolution=2600,
+        resolution=3200,
     )
     # marker for M42
     p.plot_object(
@@ -91,27 +91,6 @@ def create_map_orion():
             legend_label="Messier Object",
         )
     )
-    from matplotlib import patches
-
-    # sq = patches.Circle(
-    #     # p._prepare_coords(6.5, 5),
-    #     (6 * 15, 5),
-    #     radius=10,
-    #     fill=False,
-    #     color="red",
-    #     linewidth=20,
-    #     zorder=2000,
-    #     **p._plot_kwargs(),
-    # )
-    # rec = patches.Rectangle(
-    #     (5 * 15, 10),
-    #     3,
-    #     3,
-    #     fill=False,
-    #     color="blue",
-    #     **p._plot_kwargs(),
-    # )
-    from starplot.styles import MarkerSymbolEnum
 
     points = [
         (5 * 15, 10),
@@ -160,6 +139,45 @@ def create_map_orion():
     p.export("temp/map-orion.png", padding=0.25)
 
 
+def create_map_orion2():
+    style = PlotStyle().extend(
+        # extensions.GRAYSCALE,
+        # extensions.GRAYSCALE_DARK,
+        extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        # extensions.BLUE_DARK,
+        extensions.MAP,
+        {
+            "star": {
+                "label": {"font_size": 9},
+            },
+            "bayer_labels": {
+                "font_name": "GFS Didot",
+                "font_size": 7,
+            },
+        },
+    )
+    style.planets.marker.visible = False
+    style.legend.visible = False
+    style.star.marker.size = 50
+    style.tick_marks.font_size = 13
+    style.gridlines.label.font_size = 17
+
+    p = sp.MapPlot(
+        projection=Projection.MILLER,
+        # projection=Projection.STEREO_NORTH,
+        ra_min=1.8,
+        ra_max=9.4,
+        dec_min=-34,
+        dec_max=36,
+        limiting_magnitude=8.2,
+        style=style,
+        resolution=9400,
+    )
+
+    p.export("temp/map-orion-2.png", padding=0.5)
+
+
 def create_zenith():
     """Create zenith plot for tonight's sky in Poway"""
     style = PlotStyle().extend(
@@ -169,6 +187,7 @@ def create_zenith():
         extensions.BLUE_DARK,
         extensions.ZENITH,
     )
+    style.ecliptic.line.visible = True
     p = sp.ZenithPlot(
         lat=32.97,
         lon=-117.038611,
@@ -185,24 +204,30 @@ def create_zenith():
         5,
         style=pstyle,
     )
+    p.plot_ecliptic()
     p.refresh_legend()
     p.export("temp/zenith-poway.svg", format="svg", transparent=True)
 
 
-def create_map_mercator():
-    """Create near full extent of map with mercator projection"""
-    style = sp.styles.MAP_BLUE_DARK.extend(
-        # sp.styles.extensions.HIDE_LABELS,
+def create_map_miller():
+    """Create near full extent of map with miller projection"""
+    style = PlotStyle().extend(
+        # extensions.GRAYSCALE,
+        # extensions.GRAYSCALE_DARK,
+        extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        # extensions.BLUE_DARK,
+        extensions.MAP,
         {
             "bayer_labels": {
-                "font_name": "GFS Didot",
-                "font_size": 4,
-                "font_alpha": 0.9,
-                "visible": False,
+                "visible": False
+                # "font_name": "GFS Didot",
+                # "font_size": 7,
             },
-            "constellation_borders": {"visible": False},
+            "constellation_borders": {"visible": True},
         },
     )
+
     style.star.label.font_size = 4
     style.constellation.label.font_size = 6
     style.constellation.line.width = 2
@@ -210,18 +235,19 @@ def create_map_mercator():
     # style.milky_way.visible = False
     # style.constellation.line.visible = False
     p = sp.MapPlot(
-        projection=Projection.MERCATOR,
+        # projection=Projection.MERCATOR,
+        projection=Projection.MILLER,
         ra_min=0,
         ra_max=24,
-        dec_min=-80,
-        dec_max=80,
-        limiting_magnitude=5.4,
+        dec_min=-70,
+        dec_max=70,
+        limiting_magnitude=6,
         style=style,
-        resolution=4000,
+        resolution=8000,
         adjust_text=False,
     )
-    p.export("temp/map-mercator.svg", format="svg", padding=1)
-    p.export("temp/map-mercator.png", padding=0.3)
+    # p.export("temp/map-mercator.svg", format="svg", padding=1)
+    p.export("temp/map-miller.png", padding=0.3)
 
 
 def create_map_stereo_north():
@@ -666,24 +692,17 @@ def create_map_scratch():
 
     p = sp.MapPlot(
         # projection=Projection.STEREO_NORTH,
-        projection=Projection.MERCATOR,
-        ra_min=16,
+        projection=Projection.STEREO_SOUTH,
+        # projection=Projection.MERCATOR,
+        ra_min=17,
         ra_max=20,
         dec_min=-40,
-        dec_max=0,
+        dec_max=10,
         limiting_magnitude=6,
         style=style,
         resolution=3000,
         # star_catalog="tycho-1",
         # dso_plot_null_magnitudes=False,
-    )
-
-    p.plot_circle(
-        (18.4666666667, -25.42),
-        4,
-        # (0, 90),
-        # 10,
-        color="red",
     )
 
     p.export("temp/map-scratch-1.png", format="png", padding=0.1)
@@ -699,11 +718,11 @@ def create_map_scratch():
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-# create_zenith()
-# create_map_mercator()
+create_zenith()
+create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
+# create_map_orion2()
 # create_map_scratch()
 
 # create_map_sgr()

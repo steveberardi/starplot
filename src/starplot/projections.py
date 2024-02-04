@@ -2,6 +2,7 @@ from enum import Enum
 
 from cartopy import crs as ccrs
 
+
 class Projection(str, Enum):
     """Supported projections for MapPlots"""
 
@@ -31,4 +32,3 @@ class Projection(str, Enum):
         }
         proj_class = projections.get(projection)
         return proj_class(center_lon, **kwargs)
-

@@ -177,12 +177,10 @@ class MarkerStyle(BaseStyle):
             alpha=self.alpha,
             zorder=self.zorder,
         )
-    
+
     def to_polygon_style(self):
         return PolygonStyle(
-            fill_color=self.color.as_hex()
-            if self.color
-            else None,
+            fill_color=self.color.as_hex() if self.color else None,
             edge_color=self.edge_color.as_hex(),
             alpha=self.alpha,
             zorder=self.zorder,

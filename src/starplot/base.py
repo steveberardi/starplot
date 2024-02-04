@@ -11,9 +11,10 @@ from pytz import timezone
 from skyfield.api import Angle
 
 from starplot import geod
-from starplot.data import load
+from starplot.data import load, ecliptic
 from starplot.models import SkyObject
 from starplot.planets import get_planet_positions
+from starplot.plotters import EclipticPlotter
 from starplot.styles import (
     PlotStyle,
     BASE,
@@ -438,3 +439,43 @@ class StarPlot(ABC):
             angle=0,
             num_pts=num_pts,
         )
+
+    def plot_ecliptic(self):
+        """Plot the ecliptic"""
+        if not self.style.ecliptic.line.visible:
+            return
+
+        x = []
+        y = []
+        inbounds = []
+
+        for ra, dec in ecliptic.RA_DECS:
+            x0, y0 = self._prepare_coords(ra, dec)
+            x.append(x0)
+            y.append(y0)
+            if self.in_bounds(ra, dec):
+                inbounds.append((ra, dec))
+
+        self.ax.plot(
+            x,
+            y,
+            dash_capstyle=self.style.ecliptic.line.dash_capstyle,
+            clip_path=getattr(self, 'background_circle', None),
+            **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
+            **self._plot_kwargs(),
+        )
+
+        if self.style.ecliptic.label.visible:
+            if len(inbounds) > 4:
+                label_spacing = int(len(inbounds) / 3) or 1
+
+                for i in range(0, len(inbounds), label_spacing):
+                    ra, dec = inbounds[i]
+                    self._plot_text(
+                        ra,
+                        dec - 0.4,
+                        "ECLIPTIC",
+                        **self.style.ecliptic.label.matplot_kwargs(
+                            self._size_multiplier
+                        ),
+                    )

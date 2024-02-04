@@ -302,28 +302,6 @@ class ZenithPlot(StarPlot):
         )
         self.ax.add_patch(outer_border)
 
-    def _plot_ecliptic(self):
-        if not self.style.ecliptic.line.visible:
-            return
-
-        xs = []
-        ys = []
-
-        for ra, dec in ecliptic.RA_DECS:
-            x, y = self.project_fn(position_of_radec(ra, dec))
-
-            xs.append(x)
-            ys.append(y)
-
-        self.ax.plot(
-            xs,
-            ys,
-            dash_capstyle=self.style.ecliptic.line.dash_capstyle,
-            clip_path=self.background_circle,
-            **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
-            **self._plot_kwargs(),
-        )
-
     def _init_plot(self):
         self.fig = plt.figure(figsize=(self.figure_size, self.figure_size))
         self.ax = plt.axes()
@@ -340,9 +318,11 @@ class ZenithPlot(StarPlot):
         self._plot_constellation_lines()
         self._plot_constellation_labels()
         self._plot_dso_base()
-        self._plot_ecliptic()
         self._plot_planets()
         self._plot_moon()
+
+        # New
+        self.plot_ecliptic()
 
         self.refresh_legend()
 
