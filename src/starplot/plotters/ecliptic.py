@@ -1,7 +1,7 @@
-from starplot.data import load, DataFiles, bayer, constellations, stars, ecliptic, dsos
+from starplot.data import ecliptic
+
 
 class EclipticPlotter:
-
     def plot_ecliptic2(self):
         if not self.style.ecliptic.line.visible:
             return

@@ -1,1 +1,0 @@
-from .ecliptic import EclipticPlotter

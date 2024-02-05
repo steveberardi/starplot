@@ -132,50 +132,12 @@ def create_map_orion():
         style=pstyle,
     )
 
+    p.plot_bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
     # p.ax.add_patch(sq)
     # p.ax.add_patch(rec)
     # p.refresh_legend()
     # p.export("temp/map-orion.svg", format="svg", padding=1)
     p.export("temp/map-orion.png", padding=0.25)
-
-
-def create_map_orion2():
-    style = PlotStyle().extend(
-        # extensions.GRAYSCALE,
-        # extensions.GRAYSCALE_DARK,
-        extensions.BLUE_LIGHT,
-        # extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
-        extensions.MAP,
-        {
-            "star": {
-                "label": {"font_size": 9},
-            },
-            "bayer_labels": {
-                "font_name": "GFS Didot",
-                "font_size": 7,
-            },
-        },
-    )
-    style.planets.marker.visible = False
-    style.legend.visible = False
-    style.star.marker.size = 50
-    style.tick_marks.font_size = 13
-    style.gridlines.label.font_size = 17
-
-    p = sp.MapPlot(
-        projection=Projection.MILLER,
-        # projection=Projection.STEREO_NORTH,
-        ra_min=1.8,
-        ra_max=9.4,
-        dec_min=-34,
-        dec_max=36,
-        limiting_magnitude=8.2,
-        style=style,
-        resolution=9400,
-    )
-
-    p.export("temp/map-orion-2.png", padding=0.5)
 
 
 def create_zenith():
@@ -367,35 +329,6 @@ def create_scope_view_m45():
     p.export("temp/map-scope-fov-m45.png", format="png", padding=0.3)
 
 
-def create_scope_view_m11():
-    style = PlotStyle().extend(
-        extensions.MINIMAL,
-        extensions.GRAYSCALE,
-        extensions.MAP,
-    )
-
-    p = sp.MapPlot(
-        projection=Projection.MERCATOR,
-        ra_min=18.6,
-        ra_max=19.16,
-        dec_min=-8,
-        dec_max=-3,
-        limiting_magnitude=11,
-        style=style,
-        resolution=2000,
-        star_catalog="tycho-1",
-    )
-    p.plot_scope_fov(
-        ra=18.85,
-        dec=-6.27,
-        scope_focal_length=600,
-        eyepiece_focal_length=8,
-        eyepiece_fov=100,
-    )
-    p.ax.set_title("TV-85 / 8mm @ 100deg / M11")
-    p.export("temp/map-m11.svg", format="svg", padding=0.3)
-
-
 def create_scope_plot_m45():
     style = PlotStyle().extend(
         extensions.MINIMAL,
@@ -461,33 +394,6 @@ def create_scope_plot_m45():
         colorize_stars=True,
         # adjust_text=True,
     )
-    # p.plot_object(
-    #     SkyObject(
-    #         name="M45",
-    #         ra=3.7836111111,
-    #         dec=24.116666666,
-    #         style={
-    #             "marker": {
-    #                 "size": 10,
-    #                 "symbol": "s",
-    #                 "fill": "full",
-    #                 # "color": "#ff6868",
-    #                 "color": "red",
-    #                 "alpha": 0.7,
-    #                 "zorder": 4096,
-    #             },
-    #             "label": {
-    #                 "font_size": 12,
-    #                 "font_weight": "bold",
-    #                 # "font_color": "blue",
-    #                 # "font_name": "GFS Didot",
-    #                 "font_color": "darkred",
-    #                 "zorder": 4096,
-    #             },
-    #         },
-    #         legend_label="Messier Object",
-    #     )
-    # )
 
     # p.ax.set_title("M45 through 10x binoculars", fontsize=24)
     p.export("temp/scope-m45.svg", format="svg", padding=0.3)
@@ -718,11 +624,11 @@ def create_map_scratch():
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-create_zenith()
-create_map_miller()
+# create_zenith()
+# create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion2()
+create_map_orion()
 # create_map_scratch()
 
 # create_map_sgr()

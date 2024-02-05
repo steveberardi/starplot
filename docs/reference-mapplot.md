@@ -6,6 +6,7 @@ There are four supported projections for map plots:
 - Stereographic North
 - Stereographic South
 - Mollweide
+- Miller
 
 ::: starplot.MapPlot
     options:
@@ -20,7 +21,7 @@ There are four supported projections for map plots:
         show_root_heading: true
         show_docstring_attributes: true
 
-::: starplot.map.DEFAULT_FOV_STYLE
+::: starplot.base.DEFAULT_FOV_STYLE
     options:
         show_root_heading: true
         show_docstring_attributes: true

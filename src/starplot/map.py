@@ -23,11 +23,6 @@ from starplot.utils import lon_to_ra
 warnings.filterwarnings("ignore", module="cartopy")
 warnings.filterwarnings("ignore", module="shapely")
 
-DEFAULT_FOV_STYLE = PolygonStyle(
-    fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
-)
-"""Default style for plotting scope and bino views"""
-
 
 class MapPlot(StarPlot):
     """Creates a new map plot.
@@ -657,60 +652,6 @@ class MapPlot(StarPlot):
         )
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
-
-    def _plot_fov_circle(
-        self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
-    ):
-        # FOV (degrees) = FOV eyepiece / magnification
-        fov_degrees = fov / magnification
-        fov_radius = fov_degrees / 2
-        self.plot_circle(
-            (ra, dec),
-            fov_radius,
-            style,
-        )
-
-    def plot_scope_fov(
-        self,
-        ra: float,
-        dec: float,
-        scope_focal_length: float,
-        eyepiece_focal_length: float,
-        eyepiece_fov: float,
-        style: PolygonStyle = DEFAULT_FOV_STYLE,
-    ):
-        """Draws a circle representing the field of view for a telescope and eyepiece.
-
-        Args:
-            ra: Right ascension of the center of view
-            dec: Declination of the center of view
-            scope_focal_length: focal length (mm) of the scope
-            eyepiece_focal_length: focal length (mm) of the eyepiece
-            eyepiece_fov: field of view (degrees) of the eyepiece
-            style: style of the polygon
-        """
-        # FOV (degrees) = FOV eyepiece / magnification
-        magnification = scope_focal_length / eyepiece_focal_length
-        self._plot_fov_circle(ra, dec, eyepiece_fov, magnification, style)
-
-    def plot_bino_fov(
-        self,
-        ra: float,
-        dec: float,
-        fov: float,
-        magnification: float,
-        style: PolygonStyle = DEFAULT_FOV_STYLE,
-    ):
-        """Draws a circle representing the field of view for binoculars.
-
-        Args:
-            ra: Right ascension of the center of view
-            dec: Declination of the center of view
-            fov: field of view (degrees) of the binoculars
-            magnification: magnification of the binoculars
-            style: style of the polygon
-        """
-        self._plot_fov_circle(ra, dec, fov, magnification, style)
 
     def _init_plot(self):
         self.fig = plt.figure(

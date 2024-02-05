@@ -9,7 +9,7 @@ from skyfield.positionlib import position_of_radec
 from skyfield.projections import build_stereographic_projection
 
 from starplot.base import StarPlot
-from starplot.data import load, constellations, stars, dsos, ecliptic
+from starplot.data import load, constellations, stars, dsos
 from starplot.styles import PlotStyle, ZENITH_BASE
 from starplot.utils import in_circle
 

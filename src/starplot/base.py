@@ -14,7 +14,6 @@ from starplot import geod
 from starplot.data import load, ecliptic
 from starplot.models import SkyObject
 from starplot.planets import get_planet_positions
-from starplot.plotters import EclipticPlotter
 from starplot.styles import (
     PlotStyle,
     BASE,
@@ -22,6 +21,11 @@ from starplot.styles import (
     LegendLocationEnum,
     PolygonStyle,
 )
+
+DEFAULT_FOV_STYLE = PolygonStyle(
+    fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
+)
+"""Default style for plotting scope and bino views"""
 
 
 class StarPlot(ABC):
@@ -440,6 +444,60 @@ class StarPlot(ABC):
             num_pts=num_pts,
         )
 
+    def _plot_fov_circle(
+        self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
+    ):
+        # FOV (degrees) = FOV eyepiece / magnification
+        fov_degrees = fov / magnification
+        fov_radius = fov_degrees / 2
+        self.plot_circle(
+            (ra, dec),
+            fov_radius,
+            style,
+        )
+
+    def plot_scope_fov(
+        self,
+        ra: float,
+        dec: float,
+        scope_focal_length: float,
+        eyepiece_focal_length: float,
+        eyepiece_fov: float,
+        style: PolygonStyle = DEFAULT_FOV_STYLE,
+    ):
+        """Draws a circle representing the field of view for a telescope and eyepiece.
+
+        Args:
+            ra: Right ascension of the center of view
+            dec: Declination of the center of view
+            scope_focal_length: focal length (mm) of the scope
+            eyepiece_focal_length: focal length (mm) of the eyepiece
+            eyepiece_fov: field of view (degrees) of the eyepiece
+            style: style of the polygon
+        """
+        # FOV (degrees) = FOV eyepiece / magnification
+        magnification = scope_focal_length / eyepiece_focal_length
+        self._plot_fov_circle(ra, dec, eyepiece_fov, magnification, style)
+
+    def plot_bino_fov(
+        self,
+        ra: float,
+        dec: float,
+        fov: float,
+        magnification: float,
+        style: PolygonStyle = DEFAULT_FOV_STYLE,
+    ):
+        """Draws a circle representing the field of view for binoculars.
+
+        Args:
+            ra: Right ascension of the center of view
+            dec: Declination of the center of view
+            fov: field of view (degrees) of the binoculars
+            magnification: magnification of the binoculars
+            style: style of the polygon
+        """
+        self._plot_fov_circle(ra, dec, fov, magnification, style)
+
     def plot_ecliptic(self):
         """Plot the ecliptic"""
         if not self.style.ecliptic.line.visible:
@@ -460,7 +518,7 @@ class StarPlot(ABC):
             x,
             y,
             dash_capstyle=self.style.ecliptic.line.dash_capstyle,
-            clip_path=getattr(self, 'background_circle', None),
+            clip_path=getattr(self, "background_circle", None),
             **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
             **self._plot_kwargs(),
         )

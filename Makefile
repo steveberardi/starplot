@@ -32,7 +32,7 @@ docker-multi-arch:
 	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag sberardi/starplot-base:latest --target base .
 
 lint:
-	$(DOCKER_RUN) "ruff check src/ tests/"
+	$(DOCKER_RUN) "ruff check src/ tests/ $(ARGS)"
 
 format:
 	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ $(ARGS)"
