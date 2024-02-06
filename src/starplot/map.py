@@ -278,12 +278,8 @@ class MapPlot(StarPlot):
             maj_ax, min_ax, angle = d.MajAx, d.MinAx, d.PosAng
             legend_label = dsos.LEGEND_LABELS.get(dso_type) or dso_type
             magnitude = d["V-Mag"] or d["B-Mag"] or None
-
-            if magnitude:
-                magnitude = float(magnitude)
-            else:
-                magnitude = None
-
+            magnitude = float(magnitude) if magnitude else None
+            
             if (
                 not style
                 or not style.marker.visible
@@ -567,26 +563,6 @@ class MapPlot(StarPlot):
                     ra + 0.01, dec, bayer_desig, ha="right", va="bottom", **style
                 )
 
-    def _plot_celestial_equator(self):
-        if self.style.celestial_equator.line.visible:
-            self.ax.plot(
-                [0, 360],
-                [0, 0],
-                **self.style.celestial_equator.line.matplot_kwargs(
-                    self._size_multiplier
-                ),
-                transform=self._plate_carree,
-            )
-
-        if self.style.celestial_equator.label.visible:
-            style = self.style.celestial_equator.label.matplot_kwargs(
-                self._size_multiplier
-            )
-
-            label_spacing = (self.ra_max - self.ra_min) / 3
-            for ra in np.arange(self.ra_min, self.ra_max, label_spacing):
-                self._plot_text(ra, 0.25, "CELESTIAL EQUATOR", **style)
-
     def _plot_gridlines(self):
         labels_visible = self.style.gridlines.label.visible
         lines_visible = self.style.gridlines.line.visible
@@ -689,8 +665,7 @@ class MapPlot(StarPlot):
         self.plot_constellations()
         # self.plot_constellation_borders()
         self.plot_ecliptic()
-
-        self._plot_celestial_equator()
+        self.plot_celestial_equator()
 
         self._plot_planets()
         self._plot_moon()

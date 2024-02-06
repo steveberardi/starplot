@@ -235,11 +235,11 @@ class OpticPlot(StarPlot):
                 else "none",
                 zorder=self.style.star.marker.zorder,
                 rasterized=self.rasterize_stars,
-                clip_path=self.background_patch,
+                clip_path=self._background_clip_path,
                 **self._plot_kwargs(),
             )
             self._plotted_stars.set_clip_on(True)
-            self._plotted_stars.set_clip_path(self.background_patch)
+            self._plotted_stars.set_clip_path(self._background_clip_path)
             self._add_legend_handle_marker("Star", self.style.star.marker)
 
         # Plot star labels (names and bayer designations)
@@ -322,7 +322,7 @@ class OpticPlot(StarPlot):
         y = 0
 
         # Background of Viewable Area
-        self.background_patch = self.optic.patch(
+        self._background_clip_path = self.optic.patch(
             x,
             y,
             facecolor=self.style.background_color.as_hex(),
@@ -330,7 +330,7 @@ class OpticPlot(StarPlot):
             fill=True,
             zorder=-100,
         )
-        self.ax.add_patch(self.background_patch)
+        self.ax.add_patch(self._background_clip_path)
 
         # Inner Border
         inner_border = self.optic.patch(

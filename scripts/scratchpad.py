@@ -59,7 +59,7 @@ def create_map_orion():
         # ra_max=24,
         # dec_min=40,
         # dec_max=90,
-        limiting_magnitude=6.2,
+        limiting_magnitude=8.2,
         style=style,
         resolution=3200,
     )
@@ -145,11 +145,12 @@ def create_zenith():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
-        # extensions.BLUE_MEDIUM,
-        extensions.BLUE_DARK,
+        extensions.BLUE_MEDIUM,
+        # extensions.BLUE_DARK,
         extensions.ZENITH,
     )
     style.ecliptic.line.visible = True
+    style.celestial_equator.line.visible = True
     p = sp.ZenithPlot(
         lat=32.97,
         lon=-117.038611,
@@ -167,8 +168,9 @@ def create_zenith():
         style=pstyle,
     )
     p.plot_ecliptic()
+    p.plot_celestial_equator()
     p.refresh_legend()
-    p.export("temp/zenith-poway.svg", format="svg", transparent=True)
+    p.export("temp/zenith-poway.png", format="png", transparent=True)
 
 
 def create_map_miller():
@@ -624,7 +626,7 @@ def create_map_scratch():
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-# create_zenith()
+create_zenith()
 # create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()

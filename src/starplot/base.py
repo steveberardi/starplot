@@ -29,6 +29,9 @@ DEFAULT_FOV_STYLE = PolygonStyle(
 
 
 class StarPlot(ABC):
+
+    _background_clip_path = None
+
     def __init__(
         self,
         dt: datetime = None,
@@ -518,7 +521,7 @@ class StarPlot(ABC):
             x,
             y,
             dash_capstyle=self.style.ecliptic.line.dash_capstyle,
-            clip_path=getattr(self, "background_circle", None),
+            clip_path=self._background_clip_path,
             **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
             **self._plot_kwargs(),
         )
@@ -537,3 +540,40 @@ class StarPlot(ABC):
                             self._size_multiplier
                         ),
                     )
+
+    def plot_celestial_equator(self):
+        """Plot the celestial equator"""
+
+        x = []
+        y = []
+
+        # TODO : handle wrapping
+
+        ra_start = max(0, int(self.ra_min) - 2) * 100
+        ra_end = min(24, int(self.ra_max) + 2) * 100
+
+        for ra in range(ra_start, ra_end, 2):
+            # if self.in_bounds(ra/100, 0):
+            x0, y0 = self._prepare_coords(ra/100, 0)
+            x.append(x0)
+            y.append(y0)
+        
+        if self.style.celestial_equator.line.visible:
+            self.ax.plot(
+                x,
+                y,
+                clip_path=self._background_clip_path,
+                **self.style.celestial_equator.line.matplot_kwargs(
+                    self._size_multiplier
+                ),
+                **self._plot_kwargs(),
+            )
+
+        if self.style.celestial_equator.label.visible:
+            style = self.style.celestial_equator.label.matplot_kwargs(
+                self._size_multiplier
+            )
+
+            label_spacing = (self.ra_max - self.ra_min) / 3
+            for ra in np.arange(self.ra_min, self.ra_max, label_spacing):
+                self._plot_text(ra, 0.25, "CELESTIAL EQUATOR", **style)

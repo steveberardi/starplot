@@ -62,6 +62,11 @@ class ZenithPlot(StarPlot):
 
     """
 
+    ra_min = 0
+    ra_max = 24
+    dec_min = -90
+    dec_max = 90
+    
     def __init__(
         self,
         lat: float = None,
@@ -122,7 +127,7 @@ class ZenithPlot(StarPlot):
             **self.style.constellation.line.matplot_kwargs(
                 size_multiplier=self._size_multiplier
             ),
-            clip_path=self.background_circle,
+            clip_path=self._background_clip_path,
         )
         self._plotted_conlines = self.ax.add_collection(constellations)
 
@@ -195,7 +200,7 @@ class ZenithPlot(StarPlot):
                 alpha=self.style.star.marker.alpha,
                 zorder=self.style.star.marker.zorder,
                 rasterized=self.rasterize_stars,
-                clip_path=self.background_circle,
+                clip_path=self._background_clip_path,
             )
 
         self._add_legend_handle_marker("Star", self.style.star.marker)
@@ -269,7 +274,7 @@ class ZenithPlot(StarPlot):
         self.ax.text(0, -1.045, "S", **border_font_kwargs)
 
         # Background Circle
-        self.background_circle = plt.Circle(
+        self._background_clip_path = plt.Circle(
             (0, 0),
             facecolor=self.style.background_color.as_hex(),
             radius=1.0,
@@ -277,7 +282,7 @@ class ZenithPlot(StarPlot):
             fill=True,
             zorder=-100,
         )
-        self.ax.add_patch(self.background_circle)
+        self.ax.add_patch(self._background_clip_path)
 
         # Border Circles
         inner_border = plt.Circle(

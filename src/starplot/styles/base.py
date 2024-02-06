@@ -458,7 +458,7 @@ class PlotStyle(BaseStyle):
     # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            fill=FillStyleEnum.FULL, zorder=1, size=20, edge_color="#fff"
+            fill=FillStyleEnum.FULL, zorder=1, size=20, edge_color=None
         ),
         label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1),
     )
@@ -737,7 +737,7 @@ class PlotStyle(BaseStyle):
             width=2,
             style=LineStyleEnum.DASHED_DOTS,
             alpha=0.65,
-            zorder=-1024,
+            zorder=-20,
         ),
         label=LabelStyle(
             font_size=6,
