@@ -416,6 +416,11 @@ class MapPlot(StarPlot):
         if constellations_gdf.empty:
             return
 
+        if self.projection in [Projection.MERCATOR, Projection.MILLER]:
+            transform = self._plate_carree
+        else:
+            transform = self._geodetic
+        
         conline_hips = constellations.lines()
         style_kwargs = self.style.constellation.line.matplot_kwargs(
             size_multiplier=self._size_multiplier
@@ -431,10 +436,30 @@ class MapPlot(StarPlot):
                 s1_ra = s1.ra_hours * 15
                 s2_ra = s2.ra_hours * 15
 
+                s1_dec = s1.dec_degrees
+                s2_dec = s2.dec_degrees
+
+                if s1_ra - s2_ra > 60:
+                    s2_ra += 360
+                    # print(f"{s1_ra} {s2_ra}")
+
+                elif s2_ra - s1_ra > 60:
+                    s1_ra += 360
+                    # print(f"{c.id} : {s1_ra} {s2_ra}")
+
+                s1_ra *= -1
+                s2_ra *= -1
+            
+                # make lines straight
+                # s1_ra, s1_dec = self._proj.transform_point(s1_ra, s1.dec_degrees, self._geodetic)
+                # s2_ra, s2_dec = self._proj.transform_point(s2_ra, s2.dec_degrees, self._geodetic)
+
                 self.ax.plot(
                     [s1_ra, s2_ra],
-                    [s1.dec_degrees, s2.dec_degrees],
-                    **self._plot_kwargs(),
+                    [s1_dec, s2_dec],
+                    # **self._plot_kwargs(),
+                    # transform=self._geodetic,
+                    transform=transform,
                     **style_kwargs,
                 )
 
