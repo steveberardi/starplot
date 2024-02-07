@@ -5,6 +5,11 @@
         show_root_heading: true
         show_docstring_attributes: true
 
+::: starplot.data.planets.Planet
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
 
 ::: starplot.data.dsos.DsoType
     options:

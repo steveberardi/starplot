@@ -66,7 +66,7 @@ class ZenithPlot(StarPlot):
     ra_max = 24
     dec_min = -90
     dec_max = 90
-    
+
     def __init__(
         self,
         lat: float = None,
@@ -323,8 +323,9 @@ class ZenithPlot(StarPlot):
         self._plot_constellation_lines()
         self._plot_constellation_labels()
         self._plot_dso_base()
-        self._plot_planets()
-        self._plot_moon()
+        
+        self.plot_planets()
+        self.plot_moon()
 
         # New
         self.plot_ecliptic()

@@ -412,9 +412,11 @@ def create_optic_plot():
     )
 
     p1 = sp.OpticPlot(
+        ra=2.3774370927640605,
+        dec=13.123794519262857,
         # M45
-        ra=3.7836111111,
-        dec=24.1166666667,
+        # ra=3.7836111111,
+        # dec=24.1166666667,
         # M44
         # ra=8.667,
         # dec=19.67,
@@ -445,11 +447,11 @@ def create_optic_plot():
         # TV-85
         optic=sp.optics.Scope(
             focal_length=600,
-            eyepiece_focal_length=9,
-            eyepiece_fov=100,
+            eyepiece_focal_length=5,
+            eyepiece_fov=50,
         ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=21, minute=0, second=0
+            hour=19, minute=16, second=0
         ),
         limiting_magnitude=12,
         limiting_magnitude_labels=9,
@@ -602,10 +604,10 @@ def create_map_scratch():
         # projection=Projection.STEREO_NORTH,
         projection=Projection.STEREO_SOUTH,
         # projection=Projection.MERCATOR,
-        ra_min=17,
-        ra_max=20,
-        dec_min=-40,
-        dec_max=10,
+        ra_min=0,
+        ra_max=24,
+        dec_min=-90,
+        dec_max=-10,
         limiting_magnitude=6,
         style=style,
         resolution=3000,
@@ -621,16 +623,16 @@ def create_map_scratch():
 # create_constellation()
 
 # create_scope_plot_m45()
-# create_optic_plot()
+create_optic_plot()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-create_zenith()
+# create_zenith()
 # create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
+# create_map_orion()
 # create_map_scratch()
 
 # create_map_sgr()

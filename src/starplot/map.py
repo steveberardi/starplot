@@ -691,9 +691,8 @@ class MapPlot(StarPlot):
         # self.plot_constellation_borders()
         self.plot_ecliptic()
         self.plot_celestial_equator()
-
-        self._plot_planets()
-        self._plot_moon()
+        self.plot_planets()
+        self.plot_moon()
 
         self._fit_to_ax()
 

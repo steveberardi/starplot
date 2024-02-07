@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
+from typing import Dict
 
 import numpy as np
 import rtree
@@ -12,12 +13,13 @@ from skyfield.api import Angle
 
 from starplot import geod
 from starplot.data import load, ecliptic
+from starplot.data.planets import Planet, get_planet_positions
 from starplot.models import SkyObject
-from starplot.planets import get_planet_positions
 from starplot.styles import (
     PlotStyle,
     BASE,
     MarkerStyle,
+    ObjectStyle,
     LegendLocationEnum,
     PolygonStyle,
 )
@@ -259,26 +261,64 @@ class StarPlot(ABC):
         label.set_clip_on(True)
         self._maybe_remove_label(label)
 
-    def _plot_planets(self):
-        if not self.style.planets.marker.visible:
+    def plot_planets(self, style: ObjectStyle = None, true_size: bool = False, labels: Dict[Planet, str] = None) -> None:
+        """Plots the planets
+
+        Args:
+            style: Styling of the planets. If None, then the plot's style (specified when creating the plot) will be used
+            true_size: If True, then each planet's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
+            labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.data.planets.Planet])
+        """
+        style = style or self.style.planets
+        labels = labels or {}
+
+        if not style.marker.visible:
             return
 
         planets = get_planet_positions(self.timescale, ephemeris=self.ephemeris)
 
-        for name, planet_data in planets.items():
+        for p, planet_data in planets.items():
             ra, dec, apparent_size_degrees = planet_data
+            label = labels.get(p) or p.value
 
-            obj = SkyObject(
-                name=name.upper(),
-                ra=ra,
-                dec=dec,
-                style=self.style.planets,
-                legend_label="Planet",
-            )
-            self.plot_object(obj)
+            if true_size:
+                self.plot_circle(
+                    (ra, dec),
+                    apparent_size_degrees,
+                    style.marker.to_polygon_style(),
+                )
+                self._add_legend_handle_marker("Planet", style.marker)
 
-    def _plot_moon(self):
-        if not self.style.moon.marker.visible:
+                if style.label.visible:
+                    self._plot_text(
+                        ra,
+                        dec,
+                        label.upper(),
+                        **style.label.matplot_kwargs(
+                            size_multiplier=self._size_multiplier
+                        ),
+                    )
+            else:
+                obj = SkyObject(
+                    name=label.upper(),
+                    ra=ra,
+                    dec=dec,
+                    style=style,
+                    legend_label="Planet",
+                )
+                self.plot_object(obj)
+
+    def plot_moon(self, style: ObjectStyle = None, true_size: bool = False, label: str = "Moon") -> None:
+        """Plots the Moon
+
+        Args:
+            style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
+            true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
+            label: How the Moon will be labeled on the plot and legend
+        """
+        style = style or self.style.moon
+
+        if not style.marker.visible:
             return
 
         eph = load(self.ephemeris)
@@ -293,45 +333,41 @@ class StarPlot(ABC):
         if not self.in_bounds(ra, dec):
             return
 
-        radius_km = 1_740
-        apparent_diameter_degrees = Angle(
-            radians=np.arcsin(radius_km / distance.km) * 2.0
-        ).degrees
+        if true_size:
+            radius_km = 1_740
+            apparent_diameter_degrees = Angle(
+                radians=np.arcsin(radius_km / distance.km) * 2.0
+            ).degrees
 
-        poly_style = PolygonStyle(
-            fill_color=self.style.moon.marker.color.as_hex()
-            if self.style.moon.marker.color
-            else None,
-            edge_color=self.style.moon.marker.edge_color.as_hex(),
-            alpha=self.style.moon.marker.alpha,
-            zorder=self.style.moon.marker.zorder,
-        )
-
-        self.plot_circle(
-            (ra, dec),
-            apparent_diameter_degrees,
-            poly_style,
-        )
-
-        self._add_legend_handle_marker("Moon", self.style.moon.marker)
-
-        if self.style.moon.label.visible:
-            self._plot_text(
-                ra,
-                dec,
-                "MOON",
-                **self.style.moon.label.matplot_kwargs(
-                    size_multiplier=self._size_multiplier
-                ),
+            self.plot_circle(
+                (ra, dec),
+                apparent_diameter_degrees,
+                style.marker.to_polygon_style(),
             )
-        # obj = SkyObject(
-        #     name="MOON",
-        #     ra=ra.hours,
-        #     dec=dec.degrees,
-        #     style=self.style.moon,
-        #     legend_label="Moon",
-        # )
-        # self.plot_object(obj)
+
+            self._add_legend_handle_marker(label, style.marker)
+
+            if style.label.visible:
+                self._plot_text(
+                    ra,
+                    dec,
+                    label,
+                    **style.label.matplot_kwargs(
+                        size_multiplier=self._size_multiplier
+                    ),
+                )
+
+        else:
+            obj = SkyObject(
+                name=label,
+                ra=ra.hours,
+                dec=dec.degrees,
+                style=style,
+                legend_label=label,
+            )
+            self.plot_object(obj)
+
+        
 
     @abstractmethod
     def in_bounds(self, ra: float, dec: float) -> bool:

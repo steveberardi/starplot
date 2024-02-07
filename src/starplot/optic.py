@@ -382,8 +382,8 @@ class OpticPlot(StarPlot):
 
         self._plot_border()
         self._plot_stars()
-        self._plot_planets()
-        self._plot_moon()
+        self.plot_planets()
+        self.plot_moon()
 
         self._fit_to_ax()
 
