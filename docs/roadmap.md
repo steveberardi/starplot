@@ -3,7 +3,7 @@
 
 - ⚙️ Callables for star sizes/colors/alpha
 - ✴️ Custom markers
-- 📐 Better DSO outlines
+- 📐 Nebula outlines
 - 🌐 More map projection options
 - ⚖️ Better auto font-size adjustment
 - ☄️ Better label collision detection and handling
