@@ -3,6 +3,7 @@ from datetime import datetime
 from matplotlib import pyplot as plt
 from matplotlib.collections import LineCollection
 import numpy as np
+import pandas as pd
 
 from skyfield.api import Star, wgs84
 from skyfield.positionlib import position_of_radec
@@ -36,6 +37,24 @@ def create_projected_constellation_lines(stardata_projected):
 
     xy1 = stardata_projected[["x", "y"]].loc[stars_1].values
     xy2 = stardata_projected[["x", "y"]].loc[stars_2].values
+
+    return np.rollaxis(np.array([xy1, xy2]), 1)
+
+
+def create_projected__constellation_borders(bordersdata_projected):
+    xy1 = pd.DataFrame(columns=['x', 'y'])
+    xy2 = pd.DataFrame(columns=['x', 'y'])
+    for segm, line in bordersdata_projected:
+        p1 = []
+        p2 = []
+        for i, point in enumerate(line.iterrows()):
+            if i == 0:
+                p1 = [point[1]['x'], point[1]['y']]
+            else:
+                p2 = [point[1]['x'], point[1]['y']]
+                xy1.loc[len(xy1)] = p1
+                xy2.loc[len(xy2)] = p2
+                p1 = p2
 
     return np.rollaxis(np.array([xy1, xy2]), 1)
 
@@ -130,6 +149,27 @@ class ZenithPlot(StarPlot):
             clip_path=self._background_clip_path,
         )
         self._plotted_conlines = self.ax.add_collection(constellations)
+
+    def _plot_constellation_borders(self):
+        if not self.style.constellation_borders.visible:
+            return
+
+        eph = load(self.ephemeris)
+        earth = eph["earth"]
+
+        bordersdata = constellations.load_borders()
+        borders_projection = earth.at(self.timescale).observe(Star.from_dataframe(bordersdata))
+        bordersdata['x'], bordersdata['y'] = self.project_fn(borders_projection)
+        bordersegments = bordersdata.groupby('segment')
+
+        constellation_borders = LineCollection(
+            create_projected__constellation_borders(bordersegments),
+            **self.style.constellation_borders.matplot_kwargs(
+                size_multiplier=self._size_multiplier
+            ),
+            clip_path=self._background_clip_path,
+        )
+        self._plotted_conlines = self.ax.add_collection(constellation_borders)
 
     def _plot_constellation_labels(self):
         if not self.style.constellation.label.visible:
@@ -321,6 +361,7 @@ class ZenithPlot(StarPlot):
         self._plot_border()
         self._plot_stars()
         self._plot_constellation_lines()
+        self._plot_constellation_borders()
         self._plot_constellation_labels()
         self._plot_dso_base()
         
