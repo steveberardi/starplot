@@ -323,7 +323,7 @@ class ZenithPlot(StarPlot):
         self._plot_constellation_lines()
         self._plot_constellation_labels()
         self._plot_dso_base()
-        
+
         # New
         self.plot_planets()
         self.plot_moon()

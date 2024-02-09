@@ -44,6 +44,12 @@ def create_map_orion():
                 "num_columns": 1,
                 "background_alpha": 1,
             },
+            "dso_open_cluster": {
+                "label": {
+                    "font_color": "red",
+                    "visible": True,
+                }
+            },
         },
     )
     # style.milky_way.visible = False

@@ -38,7 +38,9 @@ Retrieved on 28-Jan-2024
 """
 
 
-def get_planet_positions(timescale, ephemeris: str = "de421_2001.bsp") -> Dict[Planet, tuple]:
+def get_planet_positions(
+    timescale, ephemeris: str = "de421_2001.bsp"
+) -> Dict[Planet, tuple]:
     result = {}
 
     eph = load(ephemeris)

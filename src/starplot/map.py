@@ -279,7 +279,7 @@ class MapPlot(StarPlot):
             legend_label = dsos.LEGEND_LABELS.get(dso_type) or dso_type
             magnitude = d["V-Mag"] or d["B-Mag"] or None
             magnitude = float(magnitude) if magnitude else None
-            
+
             if (
                 not style
                 or not style.marker.visible
@@ -327,7 +327,12 @@ class MapPlot(StarPlot):
                     )
 
                 if style.label.visible:
-                    self._plot_text(ra, dec, d.name)
+                    self._plot_text(
+                        ra,
+                        dec,
+                        d.name,
+                        **style.label.matplot_kwargs(self._size_multiplier),
+                    )
 
             else:
                 # If no major axis, then just plot as a marker
@@ -420,7 +425,7 @@ class MapPlot(StarPlot):
             transform = self._plate_carree
         else:
             transform = self._geodetic
-        
+
         conline_hips = constellations.lines()
         style_kwargs = self.style.constellation.line.matplot_kwargs(
             size_multiplier=self._size_multiplier
@@ -449,7 +454,7 @@ class MapPlot(StarPlot):
 
                 s1_ra *= -1
                 s2_ra *= -1
-            
+
                 # make lines straight
                 # s1_ra, s1_dec = self._proj.transform_point(s1_ra, s1.dec_degrees, self._geodetic)
                 # s2_ra, s2_dec = self._proj.transform_point(s2_ra, s2.dec_degrees, self._geodetic)

@@ -31,7 +31,6 @@ DEFAULT_FOV_STYLE = PolygonStyle(
 
 
 class StarPlot(ABC):
-
     _background_clip_path = None
 
     def __init__(
@@ -261,7 +260,12 @@ class StarPlot(ABC):
         label.set_clip_on(True)
         self._maybe_remove_label(label)
 
-    def plot_planets(self, style: ObjectStyle = None, true_size: bool = False, labels: Dict[Planet, str] = None) -> None:
+    def plot_planets(
+        self,
+        style: ObjectStyle = None,
+        true_size: bool = False,
+        labels: Dict[Planet, str] = None,
+    ) -> None:
         """Plots the planets
 
         Args:
@@ -308,7 +312,9 @@ class StarPlot(ABC):
                 )
                 self.plot_object(obj)
 
-    def plot_moon(self, style: ObjectStyle = None, true_size: bool = False, label: str = "Moon") -> None:
+    def plot_moon(
+        self, style: ObjectStyle = None, true_size: bool = False, label: str = "Moon"
+    ) -> None:
         """Plots the Moon
 
         Args:
@@ -352,9 +358,7 @@ class StarPlot(ABC):
                     ra,
                     dec,
                     label,
-                    **style.label.matplot_kwargs(
-                        size_multiplier=self._size_multiplier
-                    ),
+                    **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
                 )
 
         else:
@@ -366,8 +370,6 @@ class StarPlot(ABC):
                 legend_label=label,
             )
             self.plot_object(obj)
-
-        
 
     @abstractmethod
     def in_bounds(self, ra: float, dec: float) -> bool:
@@ -590,10 +592,10 @@ class StarPlot(ABC):
 
         for ra in range(ra_start, ra_end, 2):
             # if self.in_bounds(ra/100, 0):
-            x0, y0 = self._prepare_coords(ra/100, 0)
+            x0, y0 = self._prepare_coords(ra / 100, 0)
             x.append(x0)
             y.append(y0)
-        
+
         if self.style.celestial_equator.line.visible:
             self.ax.plot(
                 x,
