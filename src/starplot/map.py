@@ -3,6 +3,7 @@ import warnings
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
+from matplotlib import path
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely.geometry.polygon import Polygon
 from shapely import LineString, MultiLineString, MultiPolygon
@@ -97,6 +98,8 @@ class MapPlot(StarPlot):
         self.dec_max = dec_max
         self.star_catalog = star_catalog
         self.dso_types = dso_types
+        self.lat = kwargs.get("lat", 45.0)
+        self.lon = kwargs.get("lon", 0.0)
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -496,6 +499,23 @@ class MapPlot(StarPlot):
                 **style_kwargs,
             )
 
+    def plot_horizon(
+            self,
+            style: PolygonStyle = PolygonStyle(
+                fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
+            ),
+    ):
+        """Draws a circle representing the horizon for the given lat lon.
+
+        Args:
+            style: style of the polygon
+        """
+        self.plot_circle(
+            ((self.timescale.gmst + self.lon / 15.0) % 24, self.lat),
+            90,
+            style,
+        )
+
     def _plot_stars(self):
         stardata = stars.load(self.star_catalog)
         eph = load(self.ephemeris)
@@ -664,13 +684,27 @@ class MapPlot(StarPlot):
         center_lon = (bounds[0] + bounds[1]) / 2
         self._center_lon = center_lon
 
-        self._proj = Projection.crs(self.projection, center_lon)
+        if self.projection in [Projection.ORTHOGRAPHIC, Projection.STEREOGRAPHIC, Projection.ZENITH]:
+            # Calculate LST to shift RA DEC to be in line with current date and time
+            lst = -(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
+            self._proj = Projection.crs(self.projection, lon=lst, lat=self.lat)
+        else:
+            self._proj = Projection.crs(self.projection, center_lon)
         self._proj.threshold = 1000
         self.ax = plt.axes(projection=self._proj)
 
         if self._is_global_extent():
-            # this cartopy function works better for setting global extents
-            self.ax.set_global()
+            if self.projection == Projection.ZENITH:
+                theta = np.linspace(0, 2 * np.pi, 100)
+                center, radius = [0.5, 0.5], 0.5
+                verts = np.vstack([np.sin(theta), np.cos(theta)]).T
+                circle = path.Path(verts * radius + center)
+                extent = self.ax.get_extent(crs=self._proj)
+                self.ax.set_extent((p/3.75 for p in extent), crs=self._proj)
+                self.ax.set_boundary(circle, transform=self.ax.transAxes)
+            else:
+                # this cartopy function works better for setting global extents
+                self.ax.set_global()
         else:
             self.ax.set_extent(bounds, crs=self._plate_carree)
 
