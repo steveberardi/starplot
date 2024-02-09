@@ -751,7 +751,12 @@ class MapPlot(StarPlot):
                     )
 
                 if style.label.visible:
-                    self._plot_text(ra, dec, d.name)
+                    self._plot_text(
+                        ra,
+                        dec,
+                        d.name,
+                        **style.label.matplot_kwargs(self._size_multiplier),
+                    )
 
             else:
                 # If no major axis, then just plot as a marker
