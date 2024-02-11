@@ -21,6 +21,15 @@ class Projection(str, Enum):
     MILLER = "miller"
     """Similar to Mercator: good for declinations between -70 and 70, but distorts objects near the poles"""
 
+    ORTHOGRAPHIC = "orthographic"
+    """Test"""
+
+    STEREOGRAPHIC = "stereographic"
+    """Test"""
+
+    ZENITH = "zenith"
+    """Test"""
+
     @staticmethod
     def crs(projection, center_lon=-180, **kwargs):
         projections = {
@@ -29,6 +38,12 @@ class Projection(str, Enum):
             Projection.MERCATOR: ccrs.Mercator,
             Projection.MOLLWEIDE: ccrs.Mollweide,
             Projection.MILLER: ccrs.Miller,
+            Projection.ORTHOGRAPHIC: ccrs.Orthographic,
+            Projection.STEREOGRAPHIC: ccrs.Stereographic,
+            Projection.ZENITH: ccrs.Stereographic
         }
         proj_class = projections.get(projection)
-        return proj_class(center_lon, **kwargs)
+        if projection in [Projection.ORTHOGRAPHIC, Projection.STEREOGRAPHIC,Projection.ZENITH]:
+            return proj_class(central_longitude=kwargs['lon'], central_latitude=kwargs['lat'])
+        else:
+            return proj_class(center_lon, **kwargs)
