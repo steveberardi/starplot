@@ -199,9 +199,6 @@ class OpticPlot(StarPlot):
             if m < 4.6:
                 sizes.append((9 - m) ** 3.76 * self._star_size_multiplier)
                 alphas.append(1)
-            # elif m < 4.6:
-            #     sizes.append((9 - m) ** 3.68 * self._size_multiplier)
-            #     alphas.append(1)
             elif m < 5.85:
                 sizes.append((9 - m) ** 3.72 * self._star_size_multiplier)
                 alphas.append(0.94)
