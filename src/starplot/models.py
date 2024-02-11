@@ -44,3 +44,9 @@ class SkyObject(BaseModel):
     dec: float
     style: ObjectStyle = ObjectStyle()
     legend_label: str = None
+
+
+class SimpleObject(BaseModel):
+    ra: float
+    dec: float
+    magnitude: float

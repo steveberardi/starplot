@@ -14,6 +14,7 @@ nav:
         - starplot.ZenithPlot: reference-zenithplot.md
         - starplot.SkyObject: reference-skyobject.md
         - Styling: reference-styling.md
+        - Callables: reference-callables.md
         - Data: reference-data.md
     - Data Sources: data-sources.md
     - License: license.md

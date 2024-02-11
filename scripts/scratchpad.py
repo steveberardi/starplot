@@ -7,7 +7,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot.styles import PlotStyle, extensions, PolygonStyle
+from starplot.styles import PlotStyle, extensions, PolygonStyle, MarkerSymbolEnum
 from starplot.models import SkyObject
 from starplot.map import Projection
 
@@ -57,31 +57,32 @@ def create_map_orion():
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
         # projection=Projection.STEREO_NORTH,
-        ra_min=3.6,
-        ra_max=7.8,
+        ra_min=3.4,
+        ra_max=8,
         dec_min=-16,
-        dec_max=23.6,
+        dec_max=25.6,
         # ra_min=0,
         # ra_max=24,
         # dec_min=40,
         # dec_max=90,
-        limiting_magnitude=8.2,
+        limiting_magnitude=12,
         style=style,
         resolution=3200,
     )
     # marker for M42
     p.plot_object(
         SkyObject(
-            name="M42",
-            ra=5.58333,
-            dec=-4.61,
+            name="",
+            ra=4.5,
+            dec=5,
             style={
                 "marker": {
-                    "size": 10,
-                    "symbol": "s",
+                    "size": 12,
+                    "symbol": MarkerSymbolEnum.CIRCLE_CROSS,
                     "fill": "full",
                     # "color": "#ff6868",
-                    "color": "blue",
+                    "color": "red",
+                    "edge_color": "black",
                     "alpha": 0.7,
                     "zorder": 4096,
                 },
@@ -94,7 +95,7 @@ def create_map_orion():
                     "zorder": 4096,
                 },
             },
-            legend_label="Messier Object",
+            legend_label="",
         )
     )
 
@@ -593,7 +594,7 @@ def create_map_scratch():
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
-            # "star": {"label": {"font_size": 8}, "marker": {"symbol": "*", "size": 80}},
+            "star": {"label": {"font_size": 8}, "marker": {"size": 80}},
             "bayer_labels": {
                 "font_name": "GFS Didot",
                 "font_size": 7,
@@ -608,16 +609,16 @@ def create_map_scratch():
 
     p = sp.MapPlot(
         # projection=Projection.STEREO_NORTH,
-        projection=Projection.STEREO_SOUTH,
-        # projection=Projection.MERCATOR,
-        ra_min=0,
-        ra_max=24,
-        dec_min=-90,
-        dec_max=-10,
-        limiting_magnitude=6,
+        # projection=Projection.STEREO_SOUTH,
+        projection=Projection.MERCATOR,
+        ra_min=15,
+        ra_max=17,
+        dec_min=25,
+        dec_max=32,
+        limiting_magnitude=16,
         style=style,
-        resolution=3000,
-        # star_catalog="tycho-1",
+        resolution=1800,
+        star_catalog="tycho-1",
         # dso_plot_null_magnitudes=False,
     )
 
@@ -629,7 +630,7 @@ def create_map_scratch():
 # create_constellation()
 
 # create_scope_plot_m45()
-create_optic_plot()
+# create_optic_plot()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
@@ -639,7 +640,7 @@ create_optic_plot()
 # create_map_stereo_north()
 # create_map_stereo_south()
 # create_map_orion()
-# create_map_scratch()
+create_map_scratch()
 
 # create_map_sgr()
 

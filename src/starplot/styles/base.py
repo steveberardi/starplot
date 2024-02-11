@@ -99,10 +99,10 @@ class MarkerSymbolEnum(str, Enum):
     CIRCLE_CROSS = "$\u2295$"
     """\u2295 (`U+2295`)"""
 
-    COMET = '$\u2604$'
+    COMET = "$\u2604$"
     """\u2604 (`U+2604`)"""
 
-    STAR_8 = '$\u2734$'
+    STAR_8 = "$\u2734$"
     """\u2734 (`U+2734`)"""
 
 

@@ -1,6 +1,8 @@
 import datetime
 import warnings
 
+from typing import Callable
+
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
 from matplotlib import path
@@ -13,9 +15,10 @@ import numpy as np
 
 from skyfield.api import Star
 
+from starplot import callables
 from starplot.base import StarPlot
 from starplot.data import load, DataFiles, bayer, constellations, stars, dsos
-from starplot.models import SkyObject
+from starplot.models import SkyObject, SimpleObject
 from starplot.projections import Projection
 from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE, MarkerSymbolEnum
 from starplot.utils import lon_to_ra
@@ -521,12 +524,63 @@ class MapPlot(StarPlot):
             style,
         )
 
-    def _plot_stars(self):
+    def _scatter_stars(self, ras, decs, sizes, alphas, **kwargs):
+        edge_colors = kwargs.get("edgecolors")
+
+        if not edge_colors:
+            if self.style.star.marker.edge_color:
+                edge_colors = self.style.star.marker.edge_color.as_hex()
+            else:
+                edge_colors = "none"
+
+        self.ax.scatter(
+            ras,
+            decs,
+            sizes,
+            marker=kwargs.get("symbol") or self.style.star.marker.symbol,
+            zorder=kwargs.get("zorder") or self.style.star.marker.zorder,
+            color=kwargs.get("colors") or self.style.star.marker.color.as_hex(),
+            edgecolors=edge_colors,
+            rasterized=self.rasterize_stars,
+            alpha=alphas,
+            **self._plot_kwargs(),
+        )
+
+    def plot_stars(
+        self,
+        size_fn: Callable[[SimpleObject], float] = callables.size_by_magnitude,
+        alpha_fn: Callable[[SimpleObject], float] = callables.alpha_by_magnitude,
+        *args,
+        **kwargs,
+    ):
+        """Plots stars
+        
+        Args:
+            size_fn: Callable for calculating the marker size of each star
+            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star
+        
+        
+        """
         stardata = stars.load(self.star_catalog)
         eph = load(self.ephemeris)
         earth = eph["earth"]
 
-        self.stars_df = stardata
+        num_buckets = kwargs.pop("num_buckets", 40)
+        buckets = {}
+        buckets_deferred = {}
+        bucket_area = ((self.ra_max - self.ra_min) / num_buckets) * (
+            abs(self.dec_max - self.dec_min) / num_buckets
+        )
+        size_threshold = 168 * bucket_area
+
+        def calc_bucket(ra, dec):
+            b_ra = int((ra - self.ra_min) / (self.ra_max - self.ra_min) * num_buckets)
+            b_dec = int(
+                (dec - self.dec_min) / (self.dec_max - self.dec_min) * num_buckets
+            )
+            return (b_ra, b_dec)
+
+        self.stars_df = stars.load("hipparcos")
 
         ra_buffer = (self.ra_max - self.ra_min) / 4
         dec_buffer = (self.dec_max - self.dec_min) / 4
@@ -549,45 +603,72 @@ class MapPlot(StarPlot):
                 | (nearby_stars_df["ra_hours"] < self.ra_max - 24 + ra_buffer)
             ]
 
+        # nearby_stars_df.sort_values("magnitude")
+
         nearby_stars = Star.from_dataframe(nearby_stars_df)
         astrometric = earth.at(self.timescale).observe(nearby_stars)
         stars_ra, stars_dec, _ = astrometric.radec()
+        nearby_stars_df["ra"], nearby_stars_df["dec"] = (
+            stars_ra.hours * 15,
+            stars_dec.degrees,
+        )
 
         sizes = []
         alphas = []
+        biggest_bucket_size = 0
+        
+        for _, star in nearby_stars_df.iterrows():
+            m = star.magnitude
+            ra, dec = star.ra, star.dec
+            b = calc_bucket(ra, dec)
 
-        # nearby_stars_df.sort_values("magnitude")
+            obj = SimpleObject(ra=ra, dec=dec, magnitude=m)
+            size = size_fn(obj) * self._star_size_multiplier
+            alpha = alpha_fn(obj)
 
-        for m in nearby_stars_df["magnitude"]:
-            if m < 1.6:
-                sizes.append((9 - m) ** 2.85 * self._star_size_multiplier)
-                alphas.append(1)
-            elif m < 4.6:
-                sizes.append((8 - m) ** 2.92 * self._star_size_multiplier)
-                alphas.append(1)
-            elif m < 5.8:
-                sizes.append((9 - m) ** 2.46 * self._star_size_multiplier)
-                alphas.append(0.9)
+            if b not in buckets:
+                buckets[b] = [(ra, dec, size, alpha)]
+            elif b in buckets_deferred:
+                buckets_deferred[b].append((ra, dec, size, alpha))
+                biggest_bucket_size = max(biggest_bucket_size, len(buckets_deferred[b]))
             else:
-                sizes.append(2.23 * self._star_size_multiplier)
-                alphas.append((16 - m) * 0.09)
+                _, _, sizes, _ = zip(*buckets[b])
+
+                if size > max(sizes) and size > size_threshold:
+                    # ensure the biggest star is always plotted first
+                    buckets_deferred[b] = [s for s in buckets[b]]
+                    buckets[b] = [(ra, dec, size, alpha)]
+
+                elif size < size_threshold and max(sizes) < size_threshold:
+                    # if the star is small and stars in the bucket are small then just put it in base bucket
+                    buckets[b].append((ra, dec, size, alpha))
+
+                else:
+                    buckets_deferred[b] = [(ra, dec, size, alpha)]
+                    biggest_bucket_size = max(biggest_bucket_size, 1)
+
+        ra, dec, sizes, alphas = zip(*sum(buckets.values(), []))
+
+        print(len(buckets_deferred.keys()))
 
         # Plot Stars
         if self.style.star.marker.visible:
-            self.ax.scatter(
-                *self._prepare_coords(stars_ra.hours, stars_dec.degrees),
-                sizes,
-                marker=self.style.star.marker.symbol,
-                zorder=self.style.star.marker.zorder,
-                color=self.style.star.marker.color.as_hex(),
-                edgecolors=self.style.star.marker.edge_color.as_hex()
-                if self.style.star.marker.edge_color
-                else "none",
-                rasterized=self.rasterize_stars,
-                alpha=alphas,
-                **self._plot_kwargs(),
-            )
+            self._scatter_stars(ra, dec, sizes, alphas)
             self._add_legend_handle_marker("Star", self.style.star.marker)
+
+        # Plot deferred stars
+        for idx in range(biggest_bucket_size):
+            bucket_stars = []
+            for b in buckets_deferred.values():
+                if idx < len(b):
+                    bucket_stars.append(b[idx])
+
+            ra, dec, sizes, alphas = zip(*bucket_stars)
+            zorder = self.style.star.marker.zorder + (idx + 1) * 5
+            edgecolors = self.style.background_color.as_hex()
+            self._scatter_stars(
+                ra, dec, sizes, alphas, zorder=zorder, edgecolors=edgecolors
+            )
 
         # Plot star labels (names and bayer designations)
         stars_labeled = nearby_stars_df[
@@ -721,9 +802,9 @@ class MapPlot(StarPlot):
         # self._plot_constellation_lines()
         self._plot_constellation_borders()
         self._plot_constellation_labels()
-        self._plot_stars()
 
         # New
+        self.plot_stars()
         self.plot_dsos()
         self.plot_milky_way()
         self.plot_constellations()
