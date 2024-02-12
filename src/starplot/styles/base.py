@@ -5,7 +5,7 @@ from typing import Optional
 
 import yaml
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_serializer
 from pydantic.color import Color
 from pydantic.functional_serializers import PlainSerializer
 from typing_extensions import Annotated
@@ -89,21 +89,46 @@ class FontStyleEnum(str, Enum):
 class MarkerSymbolEnum(str, Enum):
     """Options for marker symbols"""
 
-    POINT = "."
-    CIRCLE = "o"
-    SQUARE = "s"
-    STAR = "*"
-    DIAMOND = "D"
-    TRIANGLE = "^"
+    POINT = "point"
+    """\u00B7"""
+    
+    CIRCLE = "circle"
+    """\u25CF"""
 
-    CIRCLE_CROSS = "$\u2295$"
+    SQUARE = "square"
+    """\u25A0"""
+
+    STAR = "star"
+    """\u2605"""
+    
+    DIAMOND = "diamond"
+    """\u25C6"""
+    
+    TRIANGLE = "triangle"
+    """\u23F6"""
+
+    CIRCLE_CROSS = "circle_cross"
     """\u2295 (`U+2295`)"""
 
-    COMET = "$\u2604$"
+    COMET = "comet"
     """\u2604 (`U+2604`)"""
 
-    STAR_8 = "$\u2734$"
+    STAR_8 = "star_8"
     """\u2734 (`U+2734`)"""
+
+    def to_matplot(self) -> str:
+        """Returns the matplotlib value of this marker"""
+        return {
+            MarkerSymbolEnum.POINT: ".",
+            MarkerSymbolEnum.CIRCLE: "o",
+            MarkerSymbolEnum.SQUARE: "s",
+            MarkerSymbolEnum.STAR: "*",
+            MarkerSymbolEnum.DIAMOND: "D",
+            MarkerSymbolEnum.TRIANGLE: "^",
+            MarkerSymbolEnum.CIRCLE_CROSS: "$\u2295$",
+            MarkerSymbolEnum.COMET: "$\u2604$",
+            MarkerSymbolEnum.STAR_8: "$\u2734$",
+        }.get(self.value)
 
 
 class LineStyleEnum(str, Enum):
@@ -175,11 +200,15 @@ class MarkerStyle(BaseStyle):
     visible: bool = True
     """If true, the marker will be plotted"""
 
+    @property
+    def symbol_matplot(self) -> str:
+        return MarkerSymbolEnum(self.symbol).to_matplot()
+
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex() if self.color else "none",
             markeredgecolor=self.edge_color.as_hex() if self.edge_color else "none",
-            marker=self.symbol,
+            marker= MarkerSymbolEnum(self.symbol).to_matplot(),
             markersize=self.size * size_multiplier * FONT_SCALE,
             fillstyle=self.fill,
             alpha=self.alpha,

@@ -226,7 +226,7 @@ class OpticPlot(StarPlot):
                 sizes,
                 colors,
                 alpha=alphas,
-                marker=self.style.star.marker.symbol,
+                marker=self.style.star.marker.symbol_matplot,
                 edgecolors=self.style.star.marker.edge_color.as_hex()
                 if self.style.star.marker.edge_color
                 else "none",

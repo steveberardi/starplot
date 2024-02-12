@@ -132,3 +132,9 @@ code.raw {
 .md-nav--integrated>.md-nav__list>.md-nav__item--active:not(.md-nav__item--nested) {
     padding: 0 !important;
 }
+
+[id="starplot.styles.MarkerSymbolEnum"] ~ div .doc-attribute .doc-contents {
+    font-size: 1.6em;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}

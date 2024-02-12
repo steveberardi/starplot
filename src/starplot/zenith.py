@@ -192,7 +192,7 @@ class ZenithPlot(StarPlot):
                 starpos_x,
                 starpos_y,
                 sizes,
-                marker=self.style.star.marker.symbol,
+                marker=self.style.star.marker.symbol_matplot,
                 color=self.style.star.marker.color.as_hex(),
                 edgecolors=self.style.star.marker.edge_color.as_hex()
                 if self.style.star.marker.edge_color

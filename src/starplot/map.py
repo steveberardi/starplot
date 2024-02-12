@@ -537,7 +537,7 @@ class MapPlot(StarPlot):
             ras,
             decs,
             sizes,
-            marker=kwargs.get("symbol") or self.style.star.marker.symbol,
+            marker=kwargs.get("symbol") or self.style.star.marker.symbol_matplot,
             zorder=kwargs.get("zorder") or self.style.star.marker.zorder,
             color=kwargs.get("colors") or self.style.star.marker.color.as_hex(),
             edgecolors=edge_colors,
