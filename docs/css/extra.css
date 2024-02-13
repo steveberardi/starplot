@@ -137,4 +137,6 @@ code.raw {
     font-size: 1.6em;
     margin-bottom: 0;
     padding-bottom: 0;
+    padding-left: 12px;
+    /* border-bottom: 1px solid rgb(126, 126, 126); */
 }

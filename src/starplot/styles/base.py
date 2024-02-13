@@ -108,13 +108,13 @@ class MarkerSymbolEnum(str, Enum):
     """\u23F6"""
 
     CIRCLE_CROSS = "circle_cross"
-    """\u2295 (`U+2295`)"""
+    """\u2295"""
 
     COMET = "comet"
-    """\u2604 (`U+2604`)"""
+    """\u2604"""
 
     STAR_8 = "star_8"
-    """\u2734 (`U+2734`)"""
+    """\u2734"""
 
     def to_matplot(self) -> str:
         """Returns the matplotlib value of this marker"""

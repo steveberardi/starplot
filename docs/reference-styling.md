@@ -123,13 +123,13 @@ star:
   label:
     font_color: '#0e69b8'
   marker:
-    symbol: *
+    symbol: star
 
 # make nebulas green and their markers diamonds
 dso_nebula:
   marker:
     color: green
-    symbol: D
+    symbol: diamond
 
 ```
 

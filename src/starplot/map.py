@@ -550,14 +550,16 @@ class MapPlot(StarPlot):
         self,
         size_fn: Callable[[SimpleObject], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[SimpleObject], float] = callables.alpha_by_magnitude,
+        color_fn: Callable[[SimpleObject], float] = None,
         *args,
         **kwargs,
     ):
         """Plots stars
         
         Args:
-            size_fn: Callable for calculating the marker size of each star
-            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star
+            size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
+            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
+            color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
         
         
         """
@@ -615,6 +617,7 @@ class MapPlot(StarPlot):
 
         sizes = []
         alphas = []
+        colors = []
         biggest_bucket_size = 0
         
         for _, star in nearby_stars_df.iterrows():

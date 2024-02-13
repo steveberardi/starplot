@@ -3,7 +3,7 @@ import math
 from typing import Callable
 
 from starplot.models import SimpleObject
-
+from starplot.utils import bv_to_hex_color
 
 def size_by_magnitude_factory(threshold: float, under_threshold_size: float) -> Callable[[SimpleObject], float]:
     """
@@ -75,3 +75,11 @@ def alpha_by_magnitude(obj):
         return 0.9
 
     return (16 - m) * 0.09
+
+def color_by_bv(obj) -> str:
+    """
+    Calculates color by the object's [B-V index](https://en.wikipedia.org/wiki/Color_index)
+    
+    Color hex values obtained from: [http://www.vendian.org/mncharity/dir3/starcolor/details.html](http://www.vendian.org/mncharity/dir3/starcolor/details.html)
+    """
+    return bv_to_hex_color(obj.bv)
