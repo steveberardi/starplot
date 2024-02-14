@@ -620,6 +620,8 @@ class MapPlot(StarPlot):
         colors = []
         biggest_bucket_size = 0
         
+        ctr =0
+        
         for _, star in nearby_stars_df.iterrows():
             m = star.magnitude
             ra, dec = star.ra, star.dec
@@ -629,6 +631,10 @@ class MapPlot(StarPlot):
             size = size_fn(obj) * self._star_size_multiplier
             alpha = alpha_fn(obj)
 
+            # if ctr < 20:
+            #     print(astrometric[ctr].separation_from(astrometric[23]))
+            
+            ctr += 1
             if b not in buckets:
                 buckets[b] = [(ra, dec, size, alpha)]
             elif b in buckets_deferred:
