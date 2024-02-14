@@ -116,7 +116,7 @@ class MarkerSymbolEnum(str, Enum):
     STAR_8 = "star_8"
     """\u2734"""
 
-    def to_matplot(self) -> str:
+    def as_matplot(self) -> str:
         """Returns the matplotlib value of this marker"""
         return {
             MarkerSymbolEnum.POINT: ".",
@@ -202,13 +202,13 @@ class MarkerStyle(BaseStyle):
 
     @property
     def symbol_matplot(self) -> str:
-        return MarkerSymbolEnum(self.symbol).to_matplot()
+        return MarkerSymbolEnum(self.symbol).as_matplot()
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex() if self.color else "none",
             markeredgecolor=self.edge_color.as_hex() if self.edge_color else "none",
-            marker= MarkerSymbolEnum(self.symbol).to_matplot(),
+            marker= MarkerSymbolEnum(self.symbol).as_matplot(),
             markersize=self.size * size_multiplier * FONT_SCALE,
             fillstyle=self.fill,
             alpha=self.alpha,

@@ -364,8 +364,8 @@ class StarPlot(ABC):
         else:
             obj = SkyObject(
                 name=label,
-                ra=ra.hours,
-                dec=dec.degrees,
+                ra=ra,
+                dec=dec,
                 style=style,
                 legend_label=label,
             )

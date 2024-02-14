@@ -417,16 +417,17 @@ def create_optic_plot():
         # extensions.BLUE_DARK,
         extensions.OPTIC,
     )
+    style.star.marker.size = 40
 
     p1 = sp.OpticPlot(
-        ra=2.3774370927640605,
-        dec=13.123794519262857,
+        # ra=2.3774370927640605,
+        # dec=13.123794519262857,
         # M45
         # ra=3.7836111111,
         # dec=24.1166666667,
         # M44
-        # ra=8.667,
-        # dec=19.67,
+        ra=8.667,
+        dec=19.67,
         # star cluster near southern pole - NGC 371
         # ra=1.05,
         # dec=-72.06,
@@ -447,20 +448,20 @@ def create_optic_plot():
         # lat=-51.524793,
         # lon=-60.118504,
         # 10x binoculars
-        # optic=sp.optics.Binoculars(
-        #     magnification=10,
-        #     fov=65,
-        # ),
+        optic=sp.optics.Binoculars(
+            magnification=10,
+            fov=65,
+        ),
         # TV-85
-        optic=sp.optics.Scope(
-            focal_length=600,
-            eyepiece_focal_length=5,
-            eyepiece_fov=50,
-        ),
+        # optic=sp.optics.Scope(
+        #     focal_length=600,
+        #     eyepiece_focal_length=5,
+        #     eyepiece_fov=50,
+        # ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
-            hour=19, minute=16, second=0
+            hour=20, minute=30, second=0
         ),
-        limiting_magnitude=12,
+        limiting_magnitude=9.6,
         limiting_magnitude_labels=9,
         style=style,
         resolution=1600,

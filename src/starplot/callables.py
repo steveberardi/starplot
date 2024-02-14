@@ -80,6 +80,6 @@ def color_by_bv(obj) -> str:
     """
     Calculates color by the object's [B-V index](https://en.wikipedia.org/wiki/Color_index)
     
-    Color hex values obtained from: [http://www.vendian.org/mncharity/dir3/starcolor/details.html](http://www.vendian.org/mncharity/dir3/starcolor/details.html)
+    Color hex values obtained from: [Mitchell Charity](http://www.vendian.org/mncharity/dir3/starcolor/details.html)
     """
     return bv_to_hex_color(obj.bv)

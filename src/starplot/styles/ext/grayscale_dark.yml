@@ -29,7 +29,7 @@ dso_galaxy:
   marker:
     color: 'hsl(136, 0%, 97%)'
     alpha: 0.8
-    symbol: D
+    symbol: diamond
     fill: top
 dso_nebula:
   marker:

@@ -61,7 +61,7 @@ def test_map_plot_mercator_with_extra_object(map_plot_mercator):
             style={
                 "marker": {
                     "size": 10,
-                    "symbol": "s",
+                    "symbol": "square",
                     "fill": "full",
                     "color": "#ff6868",
                     "alpha": 1,
@@ -107,7 +107,7 @@ def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
             style={
                 "marker": {
                     "size": 10,
-                    "symbol": "s",
+                    "symbol": "square",
                     "fill": "full",
                     "color": "red",
                     "alpha": 0.6,

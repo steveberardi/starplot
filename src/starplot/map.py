@@ -200,29 +200,6 @@ class MapPlot(StarPlot):
             bbox=bbox,
         )
 
-    def extent_bbox(self):
-        # extent = self.ax.get_extent(crs=self._crs)
-        # x0 = 360 + extent[0] * -1
-        # x1 = 360 + extent[1] * -1
-
-        # if x0 >= 360 and x1 >= 360:
-        #     x0 -= 360
-        #     x1 -= 360
-
-        x0 = self.ra_min * 15
-        x1 = self.ra_max * 15
-        return (x0, self.dec_min, x1, self.dec_max)
-
-    def _plot_dso_polygon(self, polygon, style):
-        coords = list(zip(*polygon.exterior.coords.xy))
-        coords = [(ra * -1, dec) for ra, dec in coords]
-        p = Polygon(coords)
-
-        poly_style = style.marker.to_polygon_style()
-        pstyle = poly_style.matplot_kwargs(size_multiplier=self._size_multiplier)
-        pstyle.pop("fill", None)
-        self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
-
     def _extent_mask(self):
         """
         Returns shapely geometry objects of extent (RA = 0...360)
@@ -258,6 +235,16 @@ class MapPlot(StarPlot):
                     Polygon(coords_2),
                 ]
             )
+
+    def _plot_dso_polygon(self, polygon, style):
+        coords = list(zip(*polygon.exterior.coords.xy))
+        coords = [(ra * -1, dec) for ra, dec in coords]
+        p = Polygon(coords)
+
+        poly_style = style.marker.to_polygon_style()
+        pstyle = poly_style.matplot_kwargs(size_multiplier=self._size_multiplier)
+        pstyle.pop("fill", None)
+        self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
 
     def plot_dsos(self):
         ongc = gpd.read_file(
@@ -377,7 +364,7 @@ class MapPlot(StarPlot):
             DataFiles.CONSTELLATIONS.value,
             engine="pyogrio",
             use_arrow=True,
-            bbox=self.extent_bbox(),
+            bbox=self._extent_mask(),
         )
 
         if constellation_borders.empty:
@@ -621,7 +608,7 @@ class MapPlot(StarPlot):
         biggest_bucket_size = 0
         
         ctr =0
-        
+
         for _, star in nearby_stars_df.iterrows():
             m = star.magnitude
             ra, dec = star.ra, star.dec

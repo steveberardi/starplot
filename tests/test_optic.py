@@ -85,7 +85,7 @@ def test_optic_plot_wrapping(optic_style, dt_dec_16):
         {
             "star": {
                 "marker": {
-                    "symbol": "*",
+                    "symbol": "star",
                     "size": 90,
                 }
             }
