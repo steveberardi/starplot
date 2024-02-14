@@ -112,7 +112,7 @@ class StarPlot(ABC):
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
         if label not in self._legend_handles:
             s = style.matplot_kwargs()
-            s["markersize"] = 16 * self._size_multiplier
+            s["markersize"] = self.style.legend.symbol_size * self._size_multiplier
             self._legend_handles[label] = Line2D(
                 [],
                 [],

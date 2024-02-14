@@ -435,6 +435,9 @@ class LegendStyle(BaseStyle):
     label_padding: float = 1.6
     """Padding between legend labels"""
 
+    symbol_size: int = 16
+    """Relative size of symbols in the legend"""
+
     symbol_padding: float = 0.2
     """Padding between each symbol and its label"""
 
