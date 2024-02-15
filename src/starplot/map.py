@@ -536,15 +536,24 @@ class MapPlot(StarPlot):
 
     def plot_stars(
         self,
+        limiting_magnitude: float = 6.0,
+        limiting_magnitude_labels: float = 6.0,
+        catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
+        rasterize: bool = False,
         size_fn: Callable[[SimpleObject], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[SimpleObject], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[SimpleObject], float] = callables.color_by_bv,
         *args,
         **kwargs,
     ):
-        """Plots stars
+        """
+        Plots stars
 
         Args:
+            limiting_magnitude: Limiting magnitude of stars to plot
+            limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
+            catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
+            rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
@@ -648,7 +657,7 @@ class MapPlot(StarPlot):
 
         ra, dec, sizes, alphas, colors = zip(*sum(buckets.values(), []))
 
-        print(len(buckets_deferred.keys()))
+        # print(len(buckets_deferred.keys()))
 
         # Plot Stars
         if self.style.star.marker.visible:
