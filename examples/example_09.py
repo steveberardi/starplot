@@ -20,7 +20,7 @@ p = MapPlot(
     projection=Projection.STEREOGRAPHIC,
     lat=0,
     lon=0,
-    dt = dt,
+    dt=dt,
     ra_min=0,
     ra_max=6,
     dec_min=-40,
@@ -31,5 +31,5 @@ p = MapPlot(
     dso_types=[],  # this is one way to hide all deep sky objects
 )
 
-p.plot_horizon() # plot a circle on the map where the horizon is for this (lat, lon)
+p.plot_horizon()  # plot a circle on the map where the horizon is for this (lat, lon)
 p.export("09_stereographic.png", padding=0.2)

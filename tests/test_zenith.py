@@ -37,7 +37,9 @@ def test_zenith_plot_with_extra_objects(zenith_plot):
         name="Mel 111",
         ra=12.36,
         dec=25.85,
-        style={"marker": {"size": 10, "symbol": "star", "fill": "full", "color": "red"}},
+        style={
+            "marker": {"size": 10, "symbol": "star", "fill": "full", "color": "red"}
+        },
     )
     zenith_plot.plot_object(obj)
     zenith_plot.export(filename)

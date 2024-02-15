@@ -495,10 +495,10 @@ class MapPlot(StarPlot):
             )
 
     def plot_horizon(
-            self,
-            style: PolygonStyle = PolygonStyle(
-                fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
-            ),
+        self,
+        style: PolygonStyle = PolygonStyle(
+            fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
+        ),
     ):
         """Draws a circle representing the horizon for the given lat lon.
 
@@ -511,7 +511,7 @@ class MapPlot(StarPlot):
             style,
         )
 
-    def _scatter_stars(self, ras, decs, sizes, alphas, **kwargs):
+    def _scatter_stars(self, ras, decs, sizes, alphas, colors, **kwargs):
         edge_colors = kwargs.get("edgecolors")
 
         if not edge_colors:
@@ -524,9 +524,10 @@ class MapPlot(StarPlot):
             ras,
             decs,
             sizes,
+            colors,
             marker=kwargs.get("symbol") or self.style.star.marker.symbol_matplot,
             zorder=kwargs.get("zorder") or self.style.star.marker.zorder,
-            color=kwargs.get("colors") or self.style.star.marker.color.as_hex(),
+            # color=kwargs.get("colors") or self.style.star.marker.color.as_hex(),
             edgecolors=edge_colors,
             rasterized=self.rasterize_stars,
             alpha=alphas,
@@ -537,19 +538,20 @@ class MapPlot(StarPlot):
         self,
         size_fn: Callable[[SimpleObject], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[SimpleObject], float] = callables.alpha_by_magnitude,
-        color_fn: Callable[[SimpleObject], float] = None,
+        color_fn: Callable[[SimpleObject], float] = callables.color_by_bv,
         *args,
         **kwargs,
     ):
         """Plots stars
-        
+
         Args:
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
-        
-        
+
+
         """
+        color_fn = color_fn or (lambda d: self.style.star.marker.color.as_hex())
         stardata = stars.load(self.star_catalog)
         eph = load(self.ephemeris)
         earth = eph["earth"]
@@ -606,50 +608,51 @@ class MapPlot(StarPlot):
         alphas = []
         colors = []
         biggest_bucket_size = 0
-        
-        ctr =0
+
+        ctr = 0
 
         for _, star in nearby_stars_df.iterrows():
             m = star.magnitude
             ra, dec = star.ra, star.dec
             b = calc_bucket(ra, dec)
 
-            obj = SimpleObject(ra=ra, dec=dec, magnitude=m)
+            obj = SimpleObject(ra=ra, dec=dec, magnitude=m, bv=star.get("bv"))
             size = size_fn(obj) * self._star_size_multiplier
             alpha = alpha_fn(obj)
+            color = color_fn(obj) or self.style.star.marker.color.as_hex()
 
             # if ctr < 20:
             #     print(astrometric[ctr].separation_from(astrometric[23]))
-            
+
             ctr += 1
             if b not in buckets:
-                buckets[b] = [(ra, dec, size, alpha)]
+                buckets[b] = [(ra, dec, size, alpha, color)]
             elif b in buckets_deferred:
-                buckets_deferred[b].append((ra, dec, size, alpha))
+                buckets_deferred[b].append((ra, dec, size, alpha, color))
                 biggest_bucket_size = max(biggest_bucket_size, len(buckets_deferred[b]))
             else:
-                _, _, sizes, _ = zip(*buckets[b])
+                _, _, sizes, _, _ = zip(*buckets[b])
 
                 if size > max(sizes) and size > size_threshold:
                     # ensure the biggest star is always plotted first
                     buckets_deferred[b] = [s for s in buckets[b]]
-                    buckets[b] = [(ra, dec, size, alpha)]
+                    buckets[b] = [(ra, dec, size, alpha, color)]
 
                 elif size < size_threshold and max(sizes) < size_threshold:
                     # if the star is small and stars in the bucket are small then just put it in base bucket
-                    buckets[b].append((ra, dec, size, alpha))
+                    buckets[b].append((ra, dec, size, alpha, color))
 
                 else:
-                    buckets_deferred[b] = [(ra, dec, size, alpha)]
+                    buckets_deferred[b] = [(ra, dec, size, alpha, color)]
                     biggest_bucket_size = max(biggest_bucket_size, 1)
 
-        ra, dec, sizes, alphas = zip(*sum(buckets.values(), []))
+        ra, dec, sizes, alphas, colors = zip(*sum(buckets.values(), []))
 
         print(len(buckets_deferred.keys()))
 
         # Plot Stars
         if self.style.star.marker.visible:
-            self._scatter_stars(ra, dec, sizes, alphas)
+            self._scatter_stars(ra, dec, sizes, alphas, colors)
             self._add_legend_handle_marker("Star", self.style.star.marker)
 
         # Plot deferred stars
@@ -659,11 +662,11 @@ class MapPlot(StarPlot):
                 if idx < len(b):
                     bucket_stars.append(b[idx])
 
-            ra, dec, sizes, alphas = zip(*bucket_stars)
+            ra, dec, sizes, alphas, colors = zip(*bucket_stars)
             zorder = self.style.star.marker.zorder + (idx + 1) * 5
             edgecolors = self.style.background_color.as_hex()
             self._scatter_stars(
-                ra, dec, sizes, alphas, zorder=zorder, edgecolors=edgecolors
+                ra, dec, sizes, alphas, colors, zorder=zorder, edgecolors=edgecolors
             )
 
         # Plot star labels (names and bayer designations)
@@ -766,7 +769,11 @@ class MapPlot(StarPlot):
         center_lon = (bounds[0] + bounds[1]) / 2
         self._center_lon = center_lon
 
-        if self.projection in [Projection.ORTHOGRAPHIC, Projection.STEREOGRAPHIC, Projection.ZENITH]:
+        if self.projection in [
+            Projection.ORTHOGRAPHIC,
+            Projection.STEREOGRAPHIC,
+            Projection.ZENITH,
+        ]:
             # Calculate LST to shift RA DEC to be in line with current date and time
             lst = -(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
             self._proj = Projection.crs(self.projection, lon=lst, lat=self.lat)
@@ -782,7 +789,7 @@ class MapPlot(StarPlot):
                 verts = np.vstack([np.sin(theta), np.cos(theta)]).T
                 circle = path.Path(verts * radius + center)
                 extent = self.ax.get_extent(crs=self._proj)
-                self.ax.set_extent((p/3.75 for p in extent), crs=self._proj)
+                self.ax.set_extent((p / 3.75 for p in extent), crs=self._proj)
                 self.ax.set_boundary(circle, transform=self.ax.transAxes)
             else:
                 # this cartopy function works better for setting global extents

@@ -91,7 +91,7 @@ class MarkerSymbolEnum(str, Enum):
 
     POINT = "point"
     """\u00B7"""
-    
+
     CIRCLE = "circle"
     """\u25CF"""
 
@@ -100,10 +100,10 @@ class MarkerSymbolEnum(str, Enum):
 
     STAR = "star"
     """\u2605"""
-    
+
     DIAMOND = "diamond"
     """\u25C6"""
-    
+
     TRIANGLE = "triangle"
     """\u23F6"""
 
@@ -208,7 +208,7 @@ class MarkerStyle(BaseStyle):
         return dict(
             color=self.color.as_hex() if self.color else "none",
             markeredgecolor=self.edge_color.as_hex() if self.edge_color else "none",
-            marker= MarkerSymbolEnum(self.symbol).as_matplot(),
+            marker=MarkerSymbolEnum(self.symbol).as_matplot(),
             markersize=self.size * size_multiplier * FONT_SCALE,
             fillstyle=self.fill,
             alpha=self.alpha,
@@ -449,6 +449,9 @@ class LegendStyle(BaseStyle):
 
     font_color: ColorStr = ColorStr("#000")
     """Font color for legend labels"""
+
+    zorder: int = 2_000
+    """Zorder of the legend"""
 
     visible: bool = True
     """If True, the legend will be plotted"""

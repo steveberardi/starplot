@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 from starplot.styles import ObjectStyle
@@ -50,3 +52,4 @@ class SimpleObject(BaseModel):
     ra: float
     dec: float
     magnitude: float
+    bv: Optional[float] = None

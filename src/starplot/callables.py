@@ -5,18 +5,22 @@ from typing import Callable
 from starplot.models import SimpleObject
 from starplot.utils import bv_to_hex_color
 
-def size_by_magnitude_factory(threshold: float, under_threshold_size: float) -> Callable[[SimpleObject], float]:
+
+def size_by_magnitude_factory(
+    threshold: float, under_threshold_size: float
+) -> Callable[[SimpleObject], float]:
     """
     Creates a new version of `size_by_magnitude` with a custom threshold
 
     Args:
         threshold: The threshold at which size will be a constant value. In other words, if an object's magnitude is more than or equal to this number, then its size will be the constant `under_threshold_size`
         under_threshold_size: Size for objects that have a magnitude greater than or equal to the treshold
-        
+
     Returns:
         A callable for calculating size based on magnitude
 
     """
+
     def size_fn(obj: SimpleObject) -> float:
         m = obj.magnitude
         if m >= threshold:
@@ -28,7 +32,9 @@ def size_by_magnitude_factory(threshold: float, under_threshold_size: float) -> 
 
     return size_fn
 
+
 _size_by_magnitude_default = size_by_magnitude_factory(7.6, 2.36)
+
 
 def size_by_magnitude(obj: SimpleObject) -> float:
     """
@@ -42,6 +48,7 @@ def size_by_magnitude(obj: SimpleObject) -> float:
     ```
     """
     return _size_by_magnitude_default(obj)
+
 
 def size_by_magnitude_simple(obj):
     m = obj.magnitude
@@ -66,7 +73,7 @@ def alpha_by_magnitude(obj):
         alpha = 0.9
     else:
         alpha = (16 - m) * 0.09
-    ```    
+    ```
     """
     m = obj.magnitude
     if m < 4.6:
@@ -76,10 +83,15 @@ def alpha_by_magnitude(obj):
 
     return (16 - m) * 0.09
 
+
 def color_by_bv(obj) -> str:
     """
     Calculates color by the object's [B-V index](https://en.wikipedia.org/wiki/Color_index)
-    
+
     Color hex values obtained from: [Mitchell Charity](http://www.vendian.org/mncharity/dir3/starcolor/details.html)
     """
-    return bv_to_hex_color(obj.bv)
+    if math.isnan(obj.bv):
+        bv = 0
+    else:
+        bv = obj.bv
+    return bv_to_hex_color(bv)

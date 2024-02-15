@@ -145,6 +145,9 @@ class StarPlot(ABC):
         self.legend = target.legend(
             handles=self._legend_handles.values(),
             **self.style.legend.matplot_kwargs(size_multiplier=self._size_multiplier),
+        ).set_zorder(
+            # zorder is not a valid kwarg to legend(), so we have to set it afterwards
+            self.style.legend.zorder
         )
 
     def adjust_labels(self) -> None:

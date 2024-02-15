@@ -28,5 +28,5 @@ p = MapPlot(
     dso_types=[],  # this is one way to hide all deep sky objects
 )
 
-p.plot_horizon() # plot a circle on the map where the horizon is for this (lat, lon)
+p.plot_horizon()  # plot a circle on the map where the horizon is for this (lat, lon)
 p.export("10_zenith.png", padding=0.2)

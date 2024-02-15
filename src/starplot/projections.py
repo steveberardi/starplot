@@ -40,10 +40,16 @@ class Projection(str, Enum):
             Projection.MILLER: ccrs.Miller,
             Projection.ORTHOGRAPHIC: ccrs.Orthographic,
             Projection.STEREOGRAPHIC: ccrs.Stereographic,
-            Projection.ZENITH: ccrs.Stereographic
+            Projection.ZENITH: ccrs.Stereographic,
         }
         proj_class = projections.get(projection)
-        if projection in [Projection.ORTHOGRAPHIC, Projection.STEREOGRAPHIC,Projection.ZENITH]:
-            return proj_class(central_longitude=kwargs['lon'], central_latitude=kwargs['lat'])
+        if projection in [
+            Projection.ORTHOGRAPHIC,
+            Projection.STEREOGRAPHIC,
+            Projection.ZENITH,
+        ]:
+            return proj_class(
+                central_longitude=kwargs["lon"], central_latitude=kwargs["lat"]
+            )
         else:
             return proj_class(center_lon, **kwargs)

@@ -26,8 +26,8 @@ pstyle = PolygonStyle(
 def create_map_orion():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
-        # extensions.GRAYSCALE_DARK,
-        extensions.BLUE_LIGHT,
+        extensions.GRAYSCALE_DARK,
+        # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
@@ -43,12 +43,6 @@ def create_map_orion():
                 "location": "lower right",
                 "num_columns": 1,
                 "background_alpha": 1,
-            },
-            "dso_open_cluster": {
-                "label": {
-                    "font_color": "red",
-                    "visible": True,
-                }
             },
         },
     )
