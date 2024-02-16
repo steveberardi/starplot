@@ -9,3 +9,5 @@ mkdocstrings[python]==0.24.0
 mkdocs-macros-plugin==1.0.4
 mkdocs-glightbox==0.3.5
 ruff==0.0.282
+ipython==7.12.0
+pygments==2.17.2

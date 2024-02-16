@@ -44,7 +44,7 @@ bash:
 	$(DOCKER_RUN) bash
 
 shell:
-	$(DOCKER_RUN) python
+	$(DOCKER_RUN) ipython
 
 scratchpad:
 	$(DOCKER_RUN) "python $(SCRATCH_ARGS) scripts/scratchpad.py"
