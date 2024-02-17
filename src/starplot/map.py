@@ -372,16 +372,46 @@ class MapPlot(StarPlot):
 
         geometries = []
 
-        for i, c in constellation_borders.iterrows():
-            polygon = c.geometry
-            equinox = LineString([[0, 90], [0, -90]])
-            polygons = list(split(polygon, equinox).geoms)
+        for i, constellation in constellation_borders.iterrows():
+            
+            geometry_types = constellation.geometry.geom_type
+            
+            # equinox = LineString([[0, 90], [0, -90]])
+            """
+            Problems:
+                - Need to handle multipolygon borders too (SER)
+                - Shapely's union doesn't handle geodesy (e.g. TRI + AND)
+                - ^^ TRI is plotted with ra < 360, but AND has ra > 360
+                - ^^ idea: create union first and then remove duplicate lines?
+            
+                TODO: create new static data file of constellation border lines
+            """
+
+            if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
+                polygons = [constellation.geometry]
+
+            elif "MultiPolygon" in geometry_types:
+                polygons = constellation.geometry.geoms
+
 
             for p in polygons:
                 coords = list(zip(*p.exterior.coords.xy))
                 # coords = [(ra * -1, dec) for ra, dec in coords]
 
-                ls = LineString(coords)
+                new_coords = []
+
+                for i, c in enumerate(coords):
+                    ra, dec = c
+                    if i > 0:
+                        if new_coords[i-1][0] - ra > 60:
+                            ra += 360
+
+                        elif ra - new_coords[i-1][0] > 60:
+                            new_coords[i-1][0] += 360
+                    
+                    new_coords.append([ra, dec])
+
+                ls = LineString(new_coords)
                 geometries.append(ls)
 
         mls = MultiLineString(geometries)
@@ -392,11 +422,16 @@ class MapPlot(StarPlot):
         )
 
         for ls in list(geometries.geoms):
+            # print(ls)
             x, y = ls.xy
+            newx = [xx * -1 for xx in list(x)]
             self.ax.plot(
-                list(x),
+                # list(x),
+                newx,
                 list(y),
-                **self._plot_kwargs(),
+                # **self._plot_kwargs(),
+                # transform=self._geodetic,
+                transform=self._plate_carree,
                 **style_kwargs,
             )
 
@@ -541,7 +576,7 @@ class MapPlot(StarPlot):
         rasterize: bool = False,
         size_fn: Callable[[SimpleObject], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[SimpleObject], float] = callables.alpha_by_magnitude,
-        color_fn: Callable[[SimpleObject], float] = callables.color_by_bv,
+        color_fn: Callable[[SimpleObject], float] = None,
         *args,
         **kwargs,
     ):
@@ -590,16 +625,21 @@ class MapPlot(StarPlot):
             & (stardata["dec_degrees"] > self.dec_min - dec_buffer)
         ]
 
-        if self.ra_max < 24:
+        if self.ra_max < 24 and self.ra_min > 0:
             nearby_stars_df = nearby_stars_df[
                 (nearby_stars_df["ra_hours"] < self.ra_max + ra_buffer)
                 & (nearby_stars_df["ra_hours"] > self.ra_min - ra_buffer)
             ]
-        else:
+        elif self.ra_max > 24:
             # handle wrapping
             nearby_stars_df = nearby_stars_df[
                 (nearby_stars_df["ra_hours"] > self.ra_min - ra_buffer)
                 | (nearby_stars_df["ra_hours"] < self.ra_max - 24 + ra_buffer)
+            ]
+        elif self.ra_min < 0:
+            nearby_stars_df = nearby_stars_df[
+                (nearby_stars_df["ra_hours"] > 24 + self.ra_min - ra_buffer)
+                | (nearby_stars_df["ra_hours"] < self.ra_max + ra_buffer)
             ]
 
         # nearby_stars_df.sort_values("magnitude")
@@ -811,7 +851,7 @@ class MapPlot(StarPlot):
         self._plot_gridlines()
         self._plot_tick_marks()
         # self._plot_constellation_lines()
-        self._plot_constellation_borders()
+        # self._plot_constellation_borders()
         self._plot_constellation_labels()
 
         # New
@@ -819,7 +859,7 @@ class MapPlot(StarPlot):
         self.plot_dsos()
         self.plot_milky_way()
         self.plot_constellations()
-        # self.plot_constellation_borders()
+        self.plot_constellation_borders()
         self.plot_ecliptic()
         self.plot_celestial_equator()
         self.plot_planets()
