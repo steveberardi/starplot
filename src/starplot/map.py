@@ -339,23 +339,36 @@ class MapPlot(StarPlot):
 
             self._add_legend_handle_marker(legend_label, style.marker)
 
-    def _plot_constellation_borders(self):
+    def plot_constellation_borders(self):
         if not self.style.constellation_borders.visible:
             return
         constellation_borders = self._read_geo_package(
             DataFiles.CONSTELLATION_BORDERS.value
         )
 
-        if not constellation_borders.empty:
-            constellation_borders.plot(
-                ax=self.ax,
-                **self.style.constellation_borders.matplot_kwargs(
-                    size_multiplier=self._size_multiplier
-                ),
+        if constellation_borders.empty:
+            return
+
+        style_kwargs = self.style.constellation_borders.matplot_kwargs(
+            size_multiplier=self._size_multiplier
+        )
+
+        geometries = []
+
+        for _, c in constellation_borders.iterrows():
+            for ls in c.geometry.geoms:
+                geometries.append(ls)
+
+        for ls in geometries:
+            x, y = ls.xy
+            self.ax.plot(
+                list(x),
+                list(y),
                 transform=self._plate_carree,
+                **style_kwargs,
             )
 
-    def plot_constellation_borders(self):
+    def _plot_constellation_borders(self):
         """work in progress"""
         if not self.style.constellation_borders.visible:
             return
@@ -373,9 +386,8 @@ class MapPlot(StarPlot):
         geometries = []
 
         for i, constellation in constellation_borders.iterrows():
-            
             geometry_types = constellation.geometry.geom_type
-            
+
             # equinox = LineString([[0, 90], [0, -90]])
             """
             Problems:
@@ -393,7 +405,6 @@ class MapPlot(StarPlot):
             elif "MultiPolygon" in geometry_types:
                 polygons = constellation.geometry.geoms
 
-
             for p in polygons:
                 coords = list(zip(*p.exterior.coords.xy))
                 # coords = [(ra * -1, dec) for ra, dec in coords]
@@ -403,12 +414,12 @@ class MapPlot(StarPlot):
                 for i, c in enumerate(coords):
                     ra, dec = c
                     if i > 0:
-                        if new_coords[i-1][0] - ra > 60:
+                        if new_coords[i - 1][0] - ra > 60:
                             ra += 360
 
-                        elif ra - new_coords[i-1][0] > 60:
-                            new_coords[i-1][0] += 360
-                    
+                        elif ra - new_coords[i - 1][0] > 60:
+                            new_coords[i - 1][0] += 360
+
                     new_coords.append([ra, dec])
 
                 ls = LineString(new_coords)
