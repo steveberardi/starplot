@@ -181,7 +181,7 @@ class MapPlot(StarPlot):
             ra_min = (-1 * extent[1]) / 15
             ra_max = (-1 * extent[0]) / 15
 
-            if ra_min < 0 and ra_max < 0:
+            if ra_min < 0 or ra_max < 0:
                 ra_min += 24
                 ra_max += 24
 
@@ -238,13 +238,14 @@ class MapPlot(StarPlot):
 
     def _plot_dso_polygon(self, polygon, style):
         coords = list(zip(*polygon.exterior.coords.xy))
-        coords = [(ra * -1, dec) for ra, dec in coords]
-        p = Polygon(coords)
+        self._plot_polygon(coords, style.marker.to_polygon_style(), closed=False)
 
-        poly_style = style.marker.to_polygon_style()
-        pstyle = poly_style.matplot_kwargs(size_multiplier=self._size_multiplier)
-        pstyle.pop("fill", None)
-        self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
+        # coords = [(ra * -1, dec) for ra, dec in coords]
+        # p = Polygon(coords)
+        # poly_style = style.marker.to_polygon_style()
+        # pstyle = poly_style.matplot_kwargs(size_multiplier=self._size_multiplier)
+        # pstyle.pop("fill", None)
+        # self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
 
     def plot_dsos(self):
         ongc = gpd.read_file(
