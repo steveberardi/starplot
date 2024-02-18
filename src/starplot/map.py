@@ -1,5 +1,6 @@
 import datetime
 import warnings
+import math
 
 from typing import Callable
 
@@ -588,6 +589,7 @@ class MapPlot(StarPlot):
         limiting_magnitude_labels: float = 6.0,
         catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
         rasterize: bool = False,
+        separation_tolerance: float = 60 / 3600,
         size_fn: Callable[[SimpleObject], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[SimpleObject], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[SimpleObject], float] = None,
@@ -602,6 +604,7 @@ class MapPlot(StarPlot):
             limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
             catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
+            separation_tolerance: Tolerance for determining if nearby stars should be plotted with separate z-orders (to prevent them from overlapping)
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
@@ -613,42 +616,41 @@ class MapPlot(StarPlot):
         eph = load(self.ephemeris)
         earth = eph["earth"]
 
-        # pixels/RA
-        # > pixels/RA means less buckets
-        num_buckets = kwargs.pop("num_buckets", 2)
+        # More pixels/RA means less buckets
+        ra_size = (self.ra_max - self.ra_min) * 15
+        dec_size = self.dec_max - self.dec_min
+        area = ra_size * dec_size
+        pixels_per_radec = self.resolution**2 / area
 
-        extent = self.ax.get_extent(crs=self._plate_carree)
-        ra_size = abs(extent[0] - extent[1])
-        dec_size = abs(extent[2] - extent[3])
-
-        print(f"RA min/max: {self.ra_min} ... {self.ra_max}")
-
-        ra_size = self.ra_max - self.ra_min
-        pixels_per_ra = self.resolution / ra_size
-
-        # print(pixels_per_ra)
-        # print(pixels_per_ra ** -1)
-
-        # maybe no buckets and just separation from? + size
+        pixels_per_radec = math.sqrt(pixels_per_radec)
+        
         # separation_from tolerance should be based on size of each star
-
-
-        num_buckets = (1/pixels_per_ra) * 100_000
-        print(f"Buckets: {num_buckets}")
+        num_buckets = (1 / pixels_per_radec) * 1_000
+        
+        self.logger.debug(f"Pixels per RADEC: {pixels_per_radec}")
+        self.logger.debug(f"Buckets: {num_buckets}")
 
         buckets = {}
         buckets_deferred = {}
-        bucket_area = ((self.ra_max - self.ra_min) / num_buckets) * (
-            abs(self.dec_max - self.dec_min) / num_buckets
-        )
-        size_threshold = 168 * bucket_area
 
         def calc_bucket(ra, dec):
-            b_ra = int((ra - self.ra_min) / (self.ra_max - self.ra_min) * num_buckets)
-            b_dec = int(
-                (dec - self.dec_min) / (self.dec_max - self.dec_min) * num_buckets
-            )
-            return (b_ra, b_dec)
+            extent_ra = self.ra_max - self.ra_min
+            extent_dec = self.dec_max - self.dec_min
+
+            b_ra = (ra - self.ra_min) / extent_ra * num_buckets
+            b_dec = (dec - self.dec_min) / extent_dec * num_buckets
+
+            if round(b_ra) > b_ra:
+                nn_ra = b_ra + 1
+            else:
+                nn_ra = b_ra - 1
+
+            if round(b_dec) > b_dec:
+                nn_dec = b_dec + 1
+            else:
+                nn_dec = b_dec - 1
+
+            return (int(b_ra), int(b_dec)), (int(nn_ra), int(nn_dec))
 
         self.stars_df = stars.load("hipparcos")
 
@@ -678,8 +680,6 @@ class MapPlot(StarPlot):
                 | (nearby_stars_df["ra_hours"] < self.ra_max + ra_buffer)
             ]
 
-        # nearby_stars_df.sort_values("magnitude")
-
         nearby_stars = Star.from_dataframe(nearby_stars_df)
         astrometric = earth.at(self.timescale).observe(nearby_stars)
         stars_ra, stars_dec, _ = astrometric.radec()
@@ -693,46 +693,81 @@ class MapPlot(StarPlot):
         colors = []
         biggest_bucket_size = 0
 
-        ctr = 0
+        close_nn = 0
+        idx = 0
 
         for _, star in nearby_stars_df.iterrows():
             m = star.magnitude
             ra, dec = star.ra, star.dec
-            b = calc_bucket(ra, dec)
+            b, nn = calc_bucket(ra, dec)
 
             obj = SimpleObject(ra=ra, dec=dec, magnitude=m, bv=star.get("bv"))
             size = size_fn(obj) * self._star_size_multiplier
             alpha = alpha_fn(obj)
             color = color_fn(obj) or self.style.star.marker.color.as_hex()
 
-            # if ctr < 20:
-            #     print(astrometric[ctr].separation_from(astrometric[23]))
+            size_px = math.sqrt(size * self.pixels_per_point)  # marker size in pixels
+            rep = (idx, ra, dec, size, alpha, color, size_px)
 
-            ctr += 1
             if b not in buckets:
-                buckets[b] = [(ra, dec, size, alpha, color)]
-            elif b in buckets_deferred:
-                buckets_deferred[b].append((ra, dec, size, alpha, color))
-                biggest_bucket_size = max(biggest_bucket_size, len(buckets_deferred[b]))
-            else:
-                _, _, sizes, _, _ = zip(*buckets[b])
+                buckets[b] = [rep]
 
-                if size > max(sizes) and size > size_threshold:
+            else:
+                indices, _, _, sizes, _, _, sizes_px = zip(*buckets[b])
+                seps_degrees = [
+                    astrometric[idx].separation_from(astrometric[i]).degrees
+                    for i in indices
+                ]
+
+                if buckets.get(nn):
+                    nn_indices, _, _, nn_sizes, _, _, nn_sizes_px = zip(*buckets[nn])
+                    nn_seps_degrees = [
+                        astrometric[idx].separation_from(astrometric[i]).degrees
+                        for i in nn_indices
+                    ]
+                    close_to_neighbor = min(nn_seps_degrees) < separation_tolerance * 4
+                else:
+                    close_to_neighbor = False
+
+                if close_to_neighbor:
+                    close_nn += 1
+                # figure out if we need to defer this star
+                # based on:
+                #   min separation
+                #   size of biggest
+                #   size of bucket (pixels)
+
+                if min(seps_degrees) < separation_tolerance * 4 and size_px > max(
+                    sizes_px
+                ):
                     # ensure the biggest star is always plotted first
                     buckets_deferred[b] = [s for s in buckets[b]]
-                    buckets[b] = [(ra, dec, size, alpha, color)]
+                    buckets[b] = [rep]
 
-                elif size < size_threshold and max(sizes) < size_threshold:
+                elif (
+                    min(seps_degrees) > separation_tolerance * 10
+                    and not close_to_neighbor
+                ):
                     # if the star is small and stars in the bucket are small then just put it in base bucket
-                    buckets[b].append((ra, dec, size, alpha, color))
+                    buckets[b].append(rep)
+
+                elif b in buckets_deferred:
+                    buckets_deferred[b].append(rep)
+                    biggest_bucket_size = max(
+                        biggest_bucket_size, len(buckets_deferred[b])
+                    )
 
                 else:
-                    buckets_deferred[b] = [(ra, dec, size, alpha, color)]
+                    buckets_deferred[b] = [rep]
                     biggest_bucket_size = max(biggest_bucket_size, 1)
 
-        ra, dec, sizes, alphas, colors = zip(*sum(buckets.values(), []))
+            idx += 1
 
-        # print(len(buckets_deferred.keys()))
+        _, ra, dec, sizes, alphas, colors, _ = zip(*sum(buckets.values(), []))
+
+        self.logger.debug(
+            f"Deferred Stars: {len(buckets_deferred.keys())} | NN: {close_nn}"
+        )
 
         # Plot Stars
         if self.style.star.marker.visible:
@@ -746,7 +781,7 @@ class MapPlot(StarPlot):
                 if idx < len(b):
                     bucket_stars.append(b[idx])
 
-            ra, dec, sizes, alphas, colors = zip(*bucket_stars)
+            _, ra, dec, sizes, alphas, colors, _ = zip(*bucket_stars)
             zorder = self.style.star.marker.zorder + (idx + 1) * 5
             edgecolors = self.style.background_color.as_hex()
             self._scatter_stars(
@@ -883,6 +918,12 @@ class MapPlot(StarPlot):
 
         self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
+
+        self.logger.debug("------------------------------")
+        self.logger.debug(f"Map - {self.projection.value.upper()}")
+        self.logger.debug(
+            f"Extent | RA = [{self.ra_min:.2f}, {self.ra_max:.2f}] DEC = [{self.dec_min:.2f}, {self.dec_max:.2f}]"
+        )
 
         self._plot_gridlines()
         self._plot_tick_marks()

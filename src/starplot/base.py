@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Dict
+import logging
 
 import numpy as np
 import rtree
@@ -23,6 +24,15 @@ from starplot.styles import (
     LegendLocationEnum,
     PolygonStyle,
 )
+
+LOGGER = logging.getLogger("starplot")
+LOG_HANDLER = logging.StreamHandler()
+LOG_FORMATTER = logging.Formatter(
+    "\033[1;34m%(name)s\033[0m:[%(levelname)s]: %(message)s"
+)
+LOG_HANDLER.setFormatter(LOG_FORMATTER)
+LOGGER.addHandler(LOG_HANDLER)
+
 
 DEFAULT_FOV_STYLE = PolygonStyle(
     fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
@@ -49,6 +59,8 @@ class StarPlot(ABC):
     ):
         px = 1 / plt.rcParams["figure.dpi"]  # pixel in inches
 
+        self.pixels_per_point = plt.rcParams["figure.dpi"] / 72
+
         self.limiting_magnitude = limiting_magnitude
         self.limiting_magnitude_labels = limiting_magnitude_labels
         self.style = style
@@ -66,6 +78,10 @@ class StarPlot(ABC):
 
         self.legend = None
         self._legend_handles = {}
+
+        self.log_level = logging.DEBUG if kwargs.get("debug") else logging.ERROR
+        self.logger = LOGGER
+        self.logger.setLevel(self.log_level)
 
         self.text_border = patheffects.withStroke(
             linewidth=self.style.text_border_width,
