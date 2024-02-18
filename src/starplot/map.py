@@ -238,6 +238,9 @@ class MapPlot(StarPlot):
 
     def _plot_dso_polygon(self, polygon, style):
         coords = list(zip(*polygon.exterior.coords.xy))
+        # close the polygon - for some reason matplotlib needs the coord twice
+        coords.append(coords[0])
+        coords.append(coords[0])
         self._plot_polygon(coords, style.marker.to_polygon_style(), closed=False)
 
         # coords = [(ra * -1, dec) for ra, dec in coords]
@@ -245,7 +248,7 @@ class MapPlot(StarPlot):
         # poly_style = style.marker.to_polygon_style()
         # pstyle = poly_style.matplot_kwargs(size_multiplier=self._size_multiplier)
         # pstyle.pop("fill", None)
-        # self.ax.add_geometries([p], crs=self._plate_carree, **pstyle)
+        # self.ax.add_geometries([polygon], crs=self._plate_carree, **pstyle)
 
     def plot_dsos(self):
         ongc = gpd.read_file(
@@ -290,7 +293,6 @@ class MapPlot(StarPlot):
             elif "MultiPolygon" in geometry_types:
                 for polygon in d.geometry.geoms:
                     self._plot_dso_polygon(polygon, style)
-
             elif maj_ax:
                 # If object has a major axis then plot it's actual extent
 
@@ -611,7 +613,29 @@ class MapPlot(StarPlot):
         eph = load(self.ephemeris)
         earth = eph["earth"]
 
-        num_buckets = kwargs.pop("num_buckets", 40)
+        # pixels/RA
+        # > pixels/RA means less buckets
+        num_buckets = kwargs.pop("num_buckets", 2)
+
+        extent = self.ax.get_extent(crs=self._plate_carree)
+        ra_size = abs(extent[0] - extent[1])
+        dec_size = abs(extent[2] - extent[3])
+
+        print(f"RA min/max: {self.ra_min} ... {self.ra_max}")
+
+        ra_size = self.ra_max - self.ra_min
+        pixels_per_ra = self.resolution / ra_size
+
+        # print(pixels_per_ra)
+        # print(pixels_per_ra ** -1)
+
+        # maybe no buckets and just separation from? + size
+        # separation_from tolerance should be based on size of each star
+
+
+        num_buckets = (1/pixels_per_ra) * 100_000
+        print(f"Buckets: {num_buckets}")
+
         buckets = {}
         buckets_deferred = {}
         bucket_area = ((self.ra_max - self.ra_min) / num_buckets) * (
