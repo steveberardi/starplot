@@ -570,7 +570,7 @@ class MapPlot(StarPlot):
             else:
                 edge_colors = "none"
 
-        self.ax.scatter(
+        return self.ax.scatter(
             ras,
             decs,
             sizes,
@@ -613,18 +613,13 @@ class MapPlot(StarPlot):
         """
         color_fn = color_fn or (lambda d: self.style.star.marker.color.as_hex())
         stardata = stars.load(self.star_catalog)
-        eph = load(self.ephemeris)
-        earth = eph["earth"]
+        earth = self.ephemeris["earth"]
 
         # More pixels/RA means less buckets
         ra_size = (self.ra_max - self.ra_min) * 15
         dec_size = self.dec_max - self.dec_min
         area = ra_size * dec_size
-        pixels_per_radec = self.resolution**2 / area
-
-        pixels_per_radec = math.sqrt(pixels_per_radec)
-        
-        # separation_from tolerance should be based on size of each star
+        pixels_per_radec = math.sqrt(self.resolution**2 / area)
         num_buckets = (1 / pixels_per_radec) * 1_000
         
         self.logger.debug(f"Pixels per RADEC: {pixels_per_radec}")

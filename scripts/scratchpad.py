@@ -26,8 +26,8 @@ pstyle = PolygonStyle(
 def create_map_orion():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
-        extensions.GRAYSCALE_DARK,
-        # extensions.BLUE_LIGHT,
+        # extensions.GRAYSCALE_DARK,
+        extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
@@ -62,6 +62,7 @@ def create_map_orion():
         limiting_magnitude=12,
         style=style,
         resolution=3200,
+        debug=True,
     )
     # marker for M42
     p.plot_object(
@@ -223,9 +224,9 @@ def create_map_stereo_north():
     p = sp.MapPlot(
         projection=Projection.STEREO_NORTH,
         ra_min=0,
-        ra_max=2,
-        dec_min=25,
-        dec_max=45,
+        ra_max=6,
+        dec_min=30,
+        dec_max=80,
         limiting_magnitude=8,
         style=style,
         resolution=4000,
@@ -583,13 +584,13 @@ def create_constellation():
 def create_map_scratch():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
-        # extensions.GRAYSCALE_DARK,
-        extensions.BLUE_LIGHT,
+        extensions.GRAYSCALE_DARK,
+        # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
-            "star": {"label": {"font_size": 8}, "marker": {"size": 80}},
+            "star": {"label": {"font_size": 8}, "marker": {"size": 140}},
             "bayer_labels": {
                 "font_name": "GFS Didot",
                 "font_size": 7,
@@ -606,15 +607,26 @@ def create_map_scratch():
         # projection=Projection.STEREO_NORTH,
         # projection=Projection.STEREO_SOUTH,
         projection=Projection.MERCATOR,
+        # Corona Borealis
         ra_min=15,
-        ra_max=17,
-        dec_min=25,
-        dec_max=32,
-        limiting_magnitude=16,
+        ra_max=16.4,
+        dec_min=21,
+        dec_max=34,
+        # ra_min=5.4,
+        # ra_max=16,
+        # dec_min=23,
+        # dec_max=80,
+        # ra_min=20,
+        # ra_max=24,
+        # dec_min=45,
+        # dec_max=65,
+        limiting_magnitude=14.8,
+        limiting_magnitude_labels=0,
         style=style,
         resolution=1800,
         star_catalog="tycho-1",
         # dso_plot_null_magnitudes=False,
+        debug=True,
     )
 
     p.export("temp/map-scratch-1.png", format="png", padding=0.1)
@@ -635,7 +647,7 @@ def create_map_scratch():
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
-# create_map_scratch()
+create_map_scratch()
 
 # create_map_sgr()
 

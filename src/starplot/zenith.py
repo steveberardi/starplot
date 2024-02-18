@@ -155,8 +155,7 @@ class ZenithPlot(StarPlot):
         stardata = stars.load(stars.StarCatalog.HIPPARCOS)
         self._stardata = stardata
 
-        eph = load(self.ephemeris)
-        earth = eph["earth"]
+        earth = self.ephemeris["earth"]
 
         # project stars to stereographic plot
         star_positions = earth.at(self.timescale).observe(Star.from_dataframe(stardata))

@@ -38,16 +38,12 @@ Retrieved on 28-Jan-2024
 """
 
 
-def get_planet_positions(
-    timescale, ephemeris: str = "de421_2001.bsp"
-) -> Dict[Planet, tuple]:
+def get_planet_positions(timescale, ephemeris) -> Dict[Planet, tuple]:
     result = {}
-
-    eph = load(ephemeris)
-    earth = eph["earth"]
+    earth = ephemeris["earth"]
 
     for p in Planet:
-        planet = eph[f"{p.value} barycenter"]
+        planet = ephemeris[f"{p.value} barycenter"]
         astrometric = earth.at(timescale).observe(planet)
         ra, dec, distance = astrometric.radec()
 

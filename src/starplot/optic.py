@@ -131,8 +131,7 @@ class OpticPlot(StarPlot):
         super()._plot_polygon(points, style, transform=self._crs)
 
     def _calc_position(self):
-        eph = load(self.ephemeris)
-        earth = eph["earth"]
+        earth = self.ephemeris["earth"]
 
         self.location = earth + wgs84.latlon(self.lat, self.lon)
         self.star = Star(ra_hours=self.ra, dec_degrees=self.dec)
@@ -144,6 +143,28 @@ class OpticPlot(StarPlot):
 
         if self.pos_alt.degrees < 0 and self.raise_on_below_horizon:
             raise ValueError("Target is below horizon at specified time/location.")
+
+    def _scatter_stars(self, ras, decs, sizes, alphas, colors, **kwargs):
+        edge_colors = kwargs.get("edgecolors")
+
+        if not edge_colors:
+            if self.style.star.marker.edge_color:
+                edge_colors = self.style.star.marker.edge_color.as_hex()
+            else:
+                edge_colors = "none"
+
+        self.ax.scatter(
+            ras,
+            decs,
+            sizes,
+            colors,
+            marker=kwargs.get("symbol") or self.style.star.marker.symbol_matplot,
+            zorder=kwargs.get("zorder") or self.style.star.marker.zorder,
+            edgecolors=edge_colors,
+            rasterized=self.rasterize_stars,
+            alpha=alphas,
+            **self._plot_kwargs(),
+        )
 
     def _plot_stars(self):
         stardata = stars.load(stars.StarCatalog.TYCHO_1)

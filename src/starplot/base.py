@@ -71,7 +71,7 @@ class StarPlot(ABC):
         self.rasterize_stars = rasterize_stars
 
         self.dt = dt or timezone("UTC").localize(datetime.now())
-        self.ephemeris = ephemeris
+        self.ephemeris = load(ephemeris)
 
         self.labels = []
         self._labels_rtree = rtree.index.Index()
@@ -346,8 +346,7 @@ class StarPlot(ABC):
         if not style.marker.visible:
             return
 
-        eph = load(self.ephemeris)
-        earth, moon = eph["earth"], eph["moon"]
+        earth, moon = self.ephemeris["earth"], self.ephemeris["moon"]
 
         astrometric = earth.at(self.timescale).observe(moon)
         ra, dec, distance = astrometric.radec()

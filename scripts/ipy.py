@@ -4,8 +4,8 @@ c = Config()
 
 c.InteractiveShellApp.exec_lines = [
     'print("\\nimporting some things\\n")',
-    'import math',
-    "math"
+    "import math",
+    "math",
 ]
 # c.InteractiveShell.colors = 'LightBG'
 # c.InteractiveShell.color_info = True
