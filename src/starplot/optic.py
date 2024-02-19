@@ -10,12 +10,12 @@ from shapely import Polygon, MultiPolygon
 
 from starplot import callables
 from starplot.base import BasePlot
-from starplot.data import stars, bayer
-from starplot.models import SkyObject, SimpleObject
+from starplot.data import stars
+from starplot.models import SimpleObject
 from starplot.optics import Optic
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.styles import PlotStyle, OPTIC_BASE, MarkerStyle
-from starplot.utils import bv_to_hex_color, azimuth_to_string
+from starplot.utils import azimuth_to_string
 
 import pandas as pd
 
