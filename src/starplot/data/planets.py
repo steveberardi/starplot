@@ -5,8 +5,6 @@ import numpy as np
 
 from skyfield.api import Angle
 
-from starplot.data import load
-
 
 class Planet(str, Enum):
     """Planets ... Coming Soon: Pluto :)"""

@@ -5,7 +5,7 @@ from typing import Optional
 
 import yaml
 
-from pydantic import BaseModel, field_serializer
+from pydantic import BaseModel
 from pydantic.color import Color
 from pydantic.functional_serializers import PlainSerializer
 from typing_extensions import Annotated

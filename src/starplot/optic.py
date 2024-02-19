@@ -1,11 +1,11 @@
 from datetime import datetime
 from typing import Callable
 
+import pandas as pd
+
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
 from skyfield.api import Star, wgs84
-import pandas as pd
-
 from shapely import Polygon, MultiPolygon
 
 from starplot import callables
@@ -16,8 +16,6 @@ from starplot.optics import Optic
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.styles import PlotStyle, OPTIC_BASE, MarkerStyle
 from starplot.utils import azimuth_to_string
-
-import pandas as pd
 
 pd.options.mode.chained_assignment = None  # default='warn'
 

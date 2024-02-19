@@ -3,7 +3,7 @@ import numpy as np
 
 from starplot.data import DataFiles, dsos
 from starplot.models import SkyObject
-from starplot.styles import PlotStyle, PolygonStyle, MarkerSymbolEnum
+from starplot.styles import PolygonStyle, MarkerSymbolEnum
 
 
 class DsoPlotterMixin:
