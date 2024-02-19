@@ -5,14 +5,14 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
 from matplotlib import path
 from matplotlib.ticker import FuncFormatter, FixedLocator
-from shapely.geometry.polygon import Polygon
-from shapely import LineString, MultiLineString, MultiPolygon
+from shapely import LineString, MultiLineString
 from shapely.ops import unary_union
 import geopandas as gpd
 import numpy as np
 
 from starplot.base import BasePlot
 from starplot.data import DataFiles, constellations, stars, dsos
+from starplot.mixins import ExtentMaskMixin
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.projections import Projection
 from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE
@@ -23,7 +23,7 @@ warnings.filterwarnings("ignore", module="cartopy")
 warnings.filterwarnings("ignore", module="shapely")
 
 
-class MapPlot(BasePlot, StarPlotterMixin, DsoPlotterMixin):
+class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new map plot.
 
     Args:
@@ -150,17 +150,6 @@ class MapPlot(BasePlot, StarPlotterMixin, DsoPlotterMixin):
             self.dec_max,
         ]
 
-    def _is_global_extent(self):
-        """Returns True if the plot's RA/DEC range is the entire celestial sphere"""
-        return all(
-            [
-                self.ra_min == 0,
-                self.ra_max == 24,
-                self.dec_min == -90,
-                self.dec_max == 90,
-            ]
-        )
-
     def _adjust_radec_minmax(self):
         # adjust the RA min/max if the DEC bounds is near the poles
         if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH] and (
@@ -201,42 +190,6 @@ class MapPlot(BasePlot, StarPlotterMixin, DsoPlotterMixin):
             use_arrow=True,
             bbox=bbox,
         )
-
-    def _extent_mask(self):
-        """
-        Returns shapely geometry objects of extent (RA = 0...360)
-
-        If the extent crosses equinox, then two Polygons will be returned
-        """
-        if self.ra_max < 24:
-            coords = [
-                [self.ra_min * 15, self.dec_min],
-                [self.ra_max * 15, self.dec_min],
-                [self.ra_min * 15, self.dec_max],
-                [self.ra_max * 15, self.dec_max],
-            ]
-            return Polygon(coords)
-
-        else:
-            coords_1 = [
-                [self.ra_min * 15, self.dec_min],
-                [360, self.dec_min],
-                [self.ra_min * 15, self.dec_max],
-                [360, self.dec_max],
-            ]
-            coords_2 = [
-                [0, self.dec_min],
-                [(self.ra_max - 24) * 15, self.dec_min],
-                [0, self.dec_max],
-                [(self.ra_max - 24) * 15, self.dec_max],
-            ]
-
-            return MultiPolygon(
-                [
-                    Polygon(coords_1),
-                    Polygon(coords_2),
-                ]
-            )
 
     def plot_constellation_borders(self):
         if not self.style.constellation_borders.visible:
