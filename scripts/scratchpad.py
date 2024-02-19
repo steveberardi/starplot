@@ -47,7 +47,6 @@ def create_map_orion():
             },
         },
     )
-    # style.milky_way.visible = False
 
     p = sp.MapPlot(
         projection=Projection.MERCATOR,
@@ -60,7 +59,6 @@ def create_map_orion():
         # ra_max=24,
         # dec_min=40,
         # dec_max=90,
-        limiting_magnitude=12,
         style=style,
         resolution=3200,
         debug=True,
@@ -73,10 +71,14 @@ def create_map_orion():
         limiting_magnitude=12,
         plot_null_magnitudes=True,
     )
-    # marker for M42
+    
+    p.plot_constellations()
+    p.plot_milky_way()
+    p.plot_ecliptic()
+
     p.plot_object(
         SkyObject(
-            name="",
+            name="hello",
             ra=4.5,
             dec=5,
             style={
@@ -99,7 +101,7 @@ def create_map_orion():
                     "zorder": 4096,
                 },
             },
-            legend_label="",
+            legend_label="crossmarker",
         )
     )
 
@@ -144,9 +146,8 @@ def create_map_orion():
     )
 
     p.plot_bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
-    # p.ax.add_patch(sq)
-    # p.ax.add_patch(rec)
-    # p.refresh_legend()
+
+    p.refresh_legend()
     # p.export("temp/map-orion.svg", format="svg", padding=1)
     p.export("temp/map-orion.png", padding=0.25)
 
@@ -537,10 +538,10 @@ def create_optic_plot():
         style=style,
         resolution=1600,
         include_info_text=True,
-        # colorize_stars=True,
         debug=True,
     )
-    p2.plot_stars(limiting_magnitude=12)
+    # p2.plot_stars(limiting_magnitude=12)
+    p2.plot_info()
 
     # p1.export("temp/optic-p1.svg", format="svg", padding=0.3)
     # p2.export("temp/optic-p2.svg", format="svg", padding=0.3)
@@ -663,7 +664,7 @@ create_optic_plot()
 # create_scope_view_m11()
 
 # create_zenith()
-create_map_miller()
+# create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()

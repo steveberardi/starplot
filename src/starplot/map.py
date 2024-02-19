@@ -33,16 +33,10 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         dec_min: Minimum declination (degrees) of the map
         dec_max: Maximum declination (degrees) of the map
         dt: Date/time to use for star/planet positions, (*must be timezone-aware*). Default = current UTC time.
-        limiting_magnitude: Limiting magnitude of stars to plot
-        limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
-        adjust_text: If True, then the labels will be adjusted to avoid overlapping
-        rasterize_stars: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
-        star_catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
-        dso_types: List of Deep Sky Objects (DSOs) types that will be plotted
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -57,29 +51,19 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         dec_min: float,
         dec_max: float,
         dt: datetime = None,
-        limiting_magnitude: float = 6.0,
-        limiting_magnitude_labels: float = 6.0,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = MAP_BASE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
-        adjust_text: bool = False,
-        rasterize_stars: bool = False,
-        star_catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
-        dso_types: list[dsos.DsoType] = dsos.DEFAULT_DSO_TYPES,
         *args,
         **kwargs,
     ) -> "MapPlot":
         super().__init__(
             dt,
-            limiting_magnitude,
-            limiting_magnitude_labels,
             ephemeris,
             style,
             resolution,
             hide_colliding_labels,
-            adjust_text,
-            rasterize_stars,
             *args,
             **kwargs,
         )
@@ -95,8 +79,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.ra_max = ra_max
         self.dec_min = dec_min
         self.dec_max = dec_max
-        self.star_catalog = star_catalog
-        self.dso_types = dso_types
         self.lat = kwargs.get("lat", 45.0)
         self.lon = kwargs.get("lon", 0.0)
 
@@ -358,6 +340,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                     transform=transform,
                     **style_kwargs,
                 )
+    
+        self._plot_constellation_labels()
 
     def _plot_constellation_labels(self):
         if not self.style.constellation.label.visible:
@@ -522,22 +506,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self._plot_tick_marks()
         # self._plot_constellation_lines()
         # self._plot_constellation_borders()
-        self._plot_constellation_labels()
-
-        # New
-        # self.plot_stars()
-
-        self.plot_milky_way()
-        self.plot_constellations()
-        self.plot_constellation_borders()
-        self.plot_ecliptic()
-        self.plot_celestial_equator()
-        self.plot_planets()
-        self.plot_moon()
+        # self._plot_constellation_labels()
 
         self._fit_to_ax()
 
-        self.refresh_legend()
+        # self.refresh_legend()
 
-        if self.adjust_text:
-            self.adjust_labels()

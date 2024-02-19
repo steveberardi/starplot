@@ -86,20 +86,20 @@ class ZenithPlot(BasePlot):
     ) -> "ZenithPlot":
         super().__init__(
             dt,
-            limiting_magnitude,
-            limiting_magnitude_labels,
             ephemeris,
             style,
             resolution,
             hide_colliding_labels,
-            adjust_text,
-            rasterize_stars,
             *args,
             **kwargs,
         )
         self.lat = lat
         self.lon = lon
+        self.limiting_magnitude = limiting_magnitude
+        self.limiting_magnitude_labels = limiting_magnitude_labels
         self.include_info_text = include_info_text
+        self._adjust_text = adjust_text
+        self.rasterize_stars = rasterize_stars
 
         self._calc_position()
         self.project_fn = build_stereographic_projection(self.position)
@@ -340,5 +340,5 @@ class ZenithPlot(BasePlot):
                 **self.style.info_text.matplot_kwargs(self._size_multiplier),
             )
 
-        if self.adjust_text:
-            self.adjust_labels()
+        if self._adjust_text:
+            self.adjust_text()

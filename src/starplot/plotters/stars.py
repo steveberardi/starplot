@@ -125,7 +125,6 @@ class StarPlotterMixin:
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
 
-
         """
         self.logger.debug("Plotting stars...")
 

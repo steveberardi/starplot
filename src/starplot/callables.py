@@ -61,6 +61,19 @@ def size_by_magnitude_simple(obj):
 
     return 2.23
 
+def size_by_magnitude_for_optic(obj):
+    m = obj.magnitude
+
+    if m < 4.6:
+        return (9 - m) ** 3.76
+
+    elif m < 5.85:
+        return (9 - m) ** 3.72
+    elif m < 9:
+        return (13 - m) ** 1.91
+
+    return 4.93
+
 
 def alpha_by_magnitude(obj):
     """
@@ -88,7 +101,7 @@ def color_by_bv(obj) -> str:
     """
     Calculates color by the object's [B-V index](https://en.wikipedia.org/wiki/Color_index)
 
-    Color hex values obtained from: [Mitchell Charity](http://www.vendian.org/mncharity/dir3/starcolor/details.html)
+    Color hex values from: [Mitchell Charity](http://www.vendian.org/mncharity/dir3/starcolor/details.html)
     """
     if math.isnan(obj.bv):
         bv = 0

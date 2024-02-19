@@ -14,24 +14,10 @@ from starplot.mixins import ExtentMaskMixin
 from starplot.models import SimpleObject
 from starplot.optics import Optic
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
-from starplot.styles import PlotStyle, OPTIC_BASE, MarkerStyle
+from starplot.styles import PlotStyle, OPTIC_BASE, MarkerStyle, LabelStyle
 from starplot.utils import azimuth_to_string
 
 pd.options.mode.chained_assignment = None  # default='warn'
-
-
-def size_by_magnitude_optic(obj):
-    m = obj.magnitude
-
-    if m < 4.6:
-        return (9 - m) ** 3.76
-
-    elif m < 5.85:
-        return (9 - m) ** 3.72
-    elif m < 9:
-        return (13 - m) ** 1.91
-
-    return 4.93
 
 
 class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
@@ -44,16 +30,10 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         lat: Latitude of observer's location
         lon: Longitude of observer's location
         dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
-        limiting_magnitude: Limiting magnitude of stars to plot
-        limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
-        include_info_text: If True, then the plot will include a table with details of the target/observer/optic
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
-        adjust_text: If True, then the labels will be adjusted to avoid overlapping
-        rasterize_stars: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
-        colorize_stars: If True, then stars will be filled with their BV color index
         raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
 
     Returns:
@@ -71,30 +51,20 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         lat: float,
         lon: float,
         dt: datetime = None,
-        limiting_magnitude: float = 6.0,
-        limiting_magnitude_labels: float = 2.1,
-        include_info_text: bool = False,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = OPTIC_BASE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
-        adjust_text: bool = False,
-        rasterize_stars: bool = False,
-        colorize_stars: bool = False,
         raise_on_below_horizon: bool = True,
         *args,
         **kwargs,
     ) -> "OpticPlot":
         super().__init__(
             dt,
-            limiting_magnitude,
-            limiting_magnitude_labels,
             ephemeris,
             style,
             resolution,
             hide_colliding_labels,
-            adjust_text,
-            rasterize_stars,
             *args,
             **kwargs,
         )
@@ -103,8 +73,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.dec = dec
         self.lat = lat
         self.lon = lon
-        self.include_info_text = include_info_text
-        self.colorize_stars = colorize_stars
         self.raise_on_below_horizon = raise_on_below_horizon
 
         self.optic = optic
@@ -218,7 +186,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         style: MarkerStyle = None,
         rasterize: bool = False,
         separation_tolerance: float = 10 / 3600,
-        size_fn: Callable[[SimpleObject], float] = callables.size_by_magnitude,
+        size_fn: Callable[[SimpleObject], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[SimpleObject], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[SimpleObject], float] = None,
         *args,
@@ -231,17 +199,14 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             limiting_magnitude: Limiting magnitude of stars to plot
             limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
             catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
+            style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             separation_tolerance: Tolerance for determining if nearby stars should be plotted with separate z-orders (to prevent them from overlapping)
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
 
-
         """
-
-        size_fn = size_by_magnitude_optic
-
         super().plot_stars(
             limiting_magnitude,
             limiting_magnitude_labels,
@@ -261,15 +226,23 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             ra, dec, text, clip_path=self._background_clip_path, *args, **kwargs
         )
 
-    def _plot_info(self):
-        if not self.include_info_text:
-            return
+    def plot_info(self, style: LabelStyle = None):
+        """
+        Plots a table with info about the plot, including:
 
+        - Target's position (alt/az and ra/dec)
+        - Observer's position (lat/lon and date/time)
+        - Optic details (type, magnification, FOV)
+        
+        Args:
+            style: If `None`, then the plot's style for info text will be used
+        """
+        style = style or self.style.info_text
         self.ax.set_xlim(-1.22 * self.optic.xlim, 1.22 * self.optic.xlim)
         self.ax.set_ylim(-1.12 * self.optic.ylim, 1.12 * self.optic.ylim)
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        font_size = self.style.info_text.font_size * self._size_multiplier * 2
+        font_size = style.font_size * self._size_multiplier * 2
 
         column_labels = [
             "Target (Alt/Az)",
@@ -304,7 +277,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         for row in [0, 1]:
             for col in range(len(values)):
                 table[row, col].set_text_props(
-                    **self.style.info_text.matplot_kwargs(self._size_multiplier)
+                    **style.matplot_kwargs(self._size_multiplier)
                 )
 
         # Apply some styles only to the header row
@@ -374,21 +347,12 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.ax.axis("off")
 
         self._plot_border()
-
-        # self.plot_stars(limiting_magnitude=12)
-        self.plot_planets()
-        self.plot_moon()
-
         self._fit_to_ax()
 
         self.ax.set_xlim(-1.03 * self.optic.xlim, 1.03 * self.optic.xlim)
         self.ax.set_ylim(-1.03 * self.optic.ylim, 1.03 * self.optic.ylim)
 
-        self._plot_info()
-
         self.optic.transform(self.ax)
-
-        self.refresh_legend()
-
-        if self.adjust_text:
-            self.adjust_labels()
+        # self.refresh_legend()
+        # if self.adjust_text:
+        #     self.adjust_labels()

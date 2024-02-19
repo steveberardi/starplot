@@ -46,14 +46,10 @@ class BasePlot(ABC):
     def __init__(
         self,
         dt: datetime = None,
-        limiting_magnitude: float = 6.0,
-        limiting_magnitude_labels: float = 2.1,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = BASE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
-        adjust_text: bool = False,
-        rasterize_stars: bool = False,
         *args,
         **kwargs,
     ):
@@ -61,14 +57,10 @@ class BasePlot(ABC):
 
         self.pixels_per_point = plt.rcParams["figure.dpi"] / 72
 
-        self.limiting_magnitude = limiting_magnitude
-        self.limiting_magnitude_labels = limiting_magnitude_labels
         self.style = style
         self.figure_size = resolution * px
         self.resolution = resolution
         self.hide_colliding_labels = hide_colliding_labels
-        self.adjust_text = adjust_text
-        self.rasterize_stars = rasterize_stars
 
         self.dt = dt or timezone("UTC").localize(datetime.now())
         self.ephemeris = load(ephemeris)
@@ -139,10 +131,7 @@ class BasePlot(ABC):
             )
 
     def refresh_legend(self):
-        """Redraws the legend.
-
-        This is useful if you want to include objects in the legend that were plotted AFTER creating the plot (via `plot_object`)
-        """
+        """Redraws the legend."""
         if not self.style.legend.visible or not self._legend_handles:
             return
 
@@ -166,7 +155,7 @@ class BasePlot(ABC):
             self.style.legend.zorder
         )
 
-    def adjust_labels(self) -> None:
+    def adjust_text(self) -> None:
         """Adjust all the labels to avoid overlapping."""
         _adjust_text(self.labels, ax=self.ax, ensure_inside_axes=False)
 
@@ -192,40 +181,6 @@ class BasePlot(ABC):
             pad_inches=padding,
             dpi=144,  # (self.resolution / self.figure_size * 1.28),
             **kwargs,
-        )
-
-    def draw_reticle(
-        self, ra: float, dec: float, size: int = 6, color: str = "red"
-    ) -> None:
-        """Plots a basic reticle on the map.
-
-        Args:
-            ra: Right ascension of the reticle's center
-            dec: Declination of the reticle's center
-            size: Relative size of the reticle
-            color: Color of the reticle ([Matplotlib format](https://matplotlib.org/stable/users/explain/colors/colors.html#colors-def))
-
-        """
-
-        # Plot as a marker to avoid projection distortion
-        self.ax.plot(
-            *self._prepare_coords(ra, dec),
-            marker="o",
-            markersize=size,
-            color=color,
-            zorder=1024,
-            **self._plot_kwargs(),
-        )
-        self.ax.plot(
-            *self._prepare_coords(ra, dec),
-            marker="o",
-            markerfacecolor=None,
-            markersize=size * 5,
-            color=color,
-            ls="dashed",
-            zorder=1024,
-            fillstyle="none",
-            **self._plot_kwargs(),
         )
 
     def plot_object(self, obj: SkyObject) -> None:
