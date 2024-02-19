@@ -98,7 +98,7 @@ class OpticPlot(BasePlot, StarPlotterMixin):
             *args,
             **kwargs,
         )
-        self.logger.debug("Creating Optic Plot...")
+        self.logger.debug("Creating OpticPlot...")
         self.ra = ra
         self.dec = dec
         self.lat = lat
@@ -175,7 +175,7 @@ class OpticPlot(BasePlot, StarPlotterMixin):
             # naive method of getting all the stars near the poles
             self.ra_min = 0
             self.ra_max = 24
-        
+
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
@@ -255,124 +255,6 @@ class OpticPlot(BasePlot, StarPlotterMixin):
             *args,
             **kwargs,
         )
-
-    def _plot_stars(self):
-        stardata = stars.load(stars.StarCatalog.TYCHO_1)
-        self._stardata = stardata
-
-        ra_min = self.ra - self.optic.true_fov / 15 * 1.08
-        ra_max = self.ra + self.optic.true_fov / 15 * 1.08
-
-        if self.dec > 70 or self.dec < -70:
-            # naive method of getting all the stars near the poles
-            ra_min = 0
-            ra_max = 24
-
-        nearby_stars_df = stardata[
-            (stardata["magnitude"] <= self.limiting_magnitude)
-            & (stardata["dec_degrees"] < self.dec + self.optic.true_fov / 2 * 1.03)
-            & (stardata["dec_degrees"] > self.dec - self.optic.true_fov / 2 * 1.03)
-        ]
-
-        if ra_max < 24:
-            nearby_stars_df = nearby_stars_df[
-                (nearby_stars_df["ra_hours"] < ra_max)
-                & (nearby_stars_df["ra_hours"] > ra_min)
-            ]
-        else:
-            # handle wrapping
-            nearby_stars_df = nearby_stars_df[
-                (nearby_stars_df["ra_hours"] > ra_min)
-                | (nearby_stars_df["ra_hours"] < ra_max - 24)
-            ]
-
-        x = []
-        y = []
-        sizes = []
-        alphas = []
-        colors = []
-
-        # calculate apparent position (alt/az) of stars
-        stars_apparent = self.observe(Star.from_dataframe(nearby_stars_df)).apparent()
-        nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
-        nearby_stars_df["alt"], nearby_stars_df["az"] = (
-            nearby_stars_alt.degrees,
-            nearby_stars_az.degrees,
-        )
-
-        for _, star in nearby_stars_df.iterrows():
-            m = star["magnitude"]
-            alt, az = star["alt"], star["az"]
-
-            if not self.in_bounds_altaz(alt, az):
-                continue
-
-            if m < 4.6:
-                sizes.append((9 - m) ** 3.76 * self._star_size_multiplier)
-                alphas.append(1)
-            elif m < 5.85:
-                sizes.append((9 - m) ** 3.72 * self._star_size_multiplier)
-                alphas.append(0.94)
-            elif m < 9:
-                sizes.append((13 - m) ** 1.91 * self._star_size_multiplier)
-                alphas.append(0.88)
-            else:
-                sizes.append(4.93 * self._star_size_multiplier)
-                alphas.append((16 - m) * 0.09)
-
-            if self.colorize_stars:
-                c = bv_to_hex_color(star["bv"]) or self.style.star.marker.color.as_hex()
-            else:
-                c = self.style.star.marker.color.as_hex()
-
-            colors.append(c)
-            x.append(az)
-            y.append(alt)
-
-        # Draw stars
-        if self.style.star.marker.visible:
-            self._plotted_stars = self.ax.scatter(
-                x,
-                y,
-                sizes,
-                colors,
-                alpha=alphas,
-                marker=self.style.star.marker.symbol_matplot,
-                edgecolors=self.style.star.marker.edge_color.as_hex()
-                if self.style.star.marker.edge_color
-                else "none",
-                zorder=self.style.star.marker.zorder,
-                rasterized=self.rasterize_stars,
-                clip_path=self._background_clip_path,
-                **self._plot_kwargs(),
-            )
-            self._plotted_stars.set_clip_on(True)
-            self._plotted_stars.set_clip_path(self._background_clip_path)
-            self._add_legend_handle_marker("Star", self.style.star.marker)
-
-        # Plot star labels (names and bayer designations)
-        stars_labeled = nearby_stars_df[
-            (nearby_stars_df["magnitude"] <= self.limiting_magnitude_labels)
-        ]
-
-        stars_labeled.sort_values("magnitude")
-
-        for hip_id, s in stars_labeled.iterrows():
-            name = stars.hip_names.get(hip_id)
-            bayer_desig = bayer.hip.get(hip_id)
-            ra, dec = s["ra_hours"], s["dec_degrees"]
-            alt, az = s["alt"], s["az"]
-
-            if not self.in_bounds_altaz(alt, az, scale=0.9):
-                continue
-
-            if name and self.style.star.label.visible:
-                style = self.style.star.label.matplot_kwargs(self._size_multiplier)
-                self._plot_text(ra, dec, name, ha="left", va="top", **style)
-
-            if bayer_desig and self.style.bayer_labels.visible:
-                style = self.style.bayer_labels.matplot_kwargs(self._size_multiplier)
-                self._plot_text(ra, dec, bayer_desig, ha="right", va="bottom", **style)
 
     def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
         super()._plot_text(
@@ -490,7 +372,6 @@ class OpticPlot(BasePlot, StarPlotterMixin):
         self.ax.xaxis.set_visible(False)
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")
-
 
         self._plot_border()
 
