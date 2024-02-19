@@ -180,14 +180,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
 
-    def _plot_dso_polygon(self, polygon, style):
-        coords = list(zip(*polygon.exterior.coords.xy))
-        # close the polygon - for some reason matplotlib needs the coord twice
-        coords.append(coords[0])
-        coords.append(coords[0])
-
-        self._plot_polygon(coords, style.marker.to_polygon_style(), closed=False)
-
     def _scatter_stars(
         self, ras, decs, sizes, alphas, colors, style=None, epoch_year=None, **kwargs
     ):
