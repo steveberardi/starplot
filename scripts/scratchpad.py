@@ -166,7 +166,7 @@ def create_zenith():
     p = sp.ZenithPlot(
         lat=32.97,
         lon=-117.038611,
-        dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=23),
+        dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21),
         limiting_magnitude=4.6,
         # style=sp.styles.ZENITH_BLUE_MEDIUM,
         style=style,
@@ -658,16 +658,16 @@ def create_map_scratch():
 # create_constellation()
 
 # create_scope_plot_m45()
-create_optic_plot()
+# create_optic_plot()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-# create_zenith()
+create_zenith()
 # create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
+# create_map_orion()
 # create_map_scratch()
 
 # create_map_sgr()

@@ -32,6 +32,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         ra_max: Maximum right ascension (hours) of the map
         dec_min: Minimum declination (degrees) of the map
         dec_max: Maximum declination (degrees) of the map
+        lat: Latitude for location-dependent projections: Orthographic, Stereographic, and Zenith
+        lon: Longitude for location-dependent projections: Orthographic, Stereographic, and Zenith
         dt: Date/time to use for star/planet positions, (*must be timezone-aware*). Default = current UTC time.
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
@@ -50,6 +52,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         ra_max: float,
         dec_min: float,
         dec_max: float,
+        lat: float = None,
+        lon: float = None,
         dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = MAP_BASE,
@@ -79,8 +83,15 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.ra_max = ra_max
         self.dec_min = dec_min
         self.dec_max = dec_max
-        self.lat = kwargs.get("lat", 45.0)
-        self.lon = kwargs.get("lon", 0.0)
+        self.lat = lat
+        self.lon = lon
+
+        if self.projection in [
+            Projection.ORTHOGRAPHIC,
+            Projection.STEREOGRAPHIC,
+            Projection.ZENITH,
+        ] and lat is None or lon is None:
+            raise ValueError(f"lat and lon are required for the {self.projection.value.upper()} projection")
 
         self.stars_df = stars.load("hipparcos")
 

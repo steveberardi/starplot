@@ -22,13 +22,24 @@ class Projection(str, Enum):
     """Similar to Mercator: good for declinations between -70 and 70, but distorts objects near the poles"""
 
     ORTHOGRAPHIC = "orthographic"
-    """Test"""
+    """
+    Shows the celestial sphere as a 3D-looking globe. Objects near the edges will be distorted.
+
+    **This is a _perspective_ projection, so it requires the following `kwargs` when creating the plot: `lat`, `lon`, and `dt`**. _The persepctive of the globe will be based on these values._
+    """
 
     STEREOGRAPHIC = "stereographic"
-    """Test"""
+    """
+    Similar to the North/South Stereographic projection, but this version is location-dependent.
+
+    **This is a _perspective_ projection, so it requires the following `kwargs` when creating the plot: `lat`, `lon`, and `dt`**. _The persepctive of the map will be based on these values._
+    """
 
     ZENITH = "zenith"
-    """Test"""
+    """Experimental
+    
+    **This is a _perspective_ projection, so it requires the following `kwargs` when creating the plot: `lat`, `lon`, and `dt`**. _The persepctive of the map will be based on these values._
+    """
 
     @staticmethod
     def crs(projection, center_lon=-180, **kwargs):

@@ -1,4 +1,4 @@
-**Map plots are general purpose maps of the sky.** They're not dependent on an observer's location, but they are dependent on time if you want to include the planets and/or the moon in the plot.
+**Map plots are general-purpose maps of the sky.** They're not dependent on an observer's location, but they are dependent on time if you want to include the planets and/or the moon in the plot.
 
 There are four supported projections for map plots: 
 

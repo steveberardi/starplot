@@ -26,6 +26,11 @@ Starplot is a Python library for creating star charts and maps.
 
 - 🧭 **Label Collision Avoidance**
 
+???+ warning "Upgrading from `v0.8.x` to `v0.9.0`"
+
+    The latest version of Starplot (`v0.9.0`) has some major changes from the previous version (`v0.8.x`). If you've been using Starplot since before v0.9.0, then please check out the examples/reference to see what's changed. The major change is that everything must be explicitly plotted now.
+
+
 *Example charts and maps created with Starplot:*
 <figure markdown>
   <img src="images/examples/example_01.png" height="900" width="900">
