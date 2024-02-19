@@ -222,6 +222,7 @@ def create_map_miller():
         adjust_text=False,
     )
     p.plot_stars(limiting_magnitude=8)
+    p.plot_dsos(limiting_magnitude=8, plot_null_magnitudes=True)
     # p.export("temp/map-mercator.svg", format="svg", padding=1)
     p.export("temp/map-miller.png", padding=0.3)
 
@@ -662,7 +663,7 @@ create_optic_plot()
 # create_scope_view_m11()
 
 # create_zenith()
-# create_map_miller()
+create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
