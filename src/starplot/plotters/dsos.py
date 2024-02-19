@@ -21,15 +21,20 @@ class DsoPlotterMixin:
         # pstyle.pop("fill", None)
         # self.ax.add_geometries([polygon], crs=self._plate_carree, **pstyle)
 
-    def plot_dsos(self, limiting_magnitude: float = 8.0, types: list[dsos.DsoType] = dsos.DEFAULT_DSO_TYPES, plot_null_magnitudes: bool = False):
+    def plot_dsos(
+        self,
+        limiting_magnitude: float = 8.0,
+        types: list[dsos.DsoType] = dsos.DEFAULT_DSO_TYPES,
+        plot_null_magnitudes: bool = False,
+    ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
-        
+
         Args:
             limiting_magnitude: Limiting magnitude of DSOs to plot
             types: List of DSO types to plot
             plot_null_magnitudes: If True, then DSOs without a defined magnitude will be plotted
-        
+
         """
         ongc = gpd.read_file(
             DataFiles.ONGC.value,

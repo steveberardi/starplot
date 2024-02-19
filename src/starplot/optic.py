@@ -217,7 +217,7 @@ class OpticPlot(BasePlot, StarPlotterMixin, DsoPlotterMixin):
                     Polygon(coords_2),
                 ]
             )
-    
+
     def _plot_dso_polygon(self, polygon, style):
         coords = list(zip(*polygon.exterior.coords.xy))
         # close the polygon - for some reason matplotlib needs the coord twice
@@ -225,7 +225,7 @@ class OpticPlot(BasePlot, StarPlotterMixin, DsoPlotterMixin):
         coords.append(coords[0])
 
         self._plot_polygon(coords, style.marker.to_polygon_style(), closed=False)
-        
+
     def _scatter_stars(
         self, ras, decs, sizes, alphas, colors, style=None, epoch_year=None, **kwargs
     ):

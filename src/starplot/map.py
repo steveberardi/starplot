@@ -573,7 +573,7 @@ class MapPlot(BasePlot, StarPlotterMixin, DsoPlotterMixin):
 
         # New
         # self.plot_stars()
-        
+
         self.plot_milky_way()
         self.plot_constellations()
         self.plot_constellation_borders()
