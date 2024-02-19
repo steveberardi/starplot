@@ -20,10 +20,8 @@ p = MapPlot(
     ra_max=14,
     dec_min=48,
     dec_max=64,
-    limiting_magnitude=3.6,
     style=style,
     resolution=1400,
-    dso_types=[],  # this is one way to hide all deep sky objects
 )
-
+p.plot_stars(limiting_magnitude=3.6)
 p.export("06_big_dipper_stars.png", padding=0.2)

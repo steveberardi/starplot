@@ -25,10 +25,17 @@ p = MapPlot(
     ra_max=7.8,
     dec_min=-16,
     dec_max=23.6,
-    limiting_magnitude=7.2,
     style=style,
     resolution=3600,
 )
+
+p.plot_stars(limiting_magnitude=9)
+p.plot_dsos(limiting_magnitude=9, plot_null_magnitudes=True)
+p.plot_constellations()
+p.plot_constellation_borders()
+p.plot_milky_way()
+p.plot_ecliptic()
+
 p.plot_object(
     SkyObject(
         name="M42",
@@ -37,7 +44,7 @@ p.plot_object(
         style={
             "marker": {
                 "size": 10,
-                "symbol": "s",
+                "symbol": "circle_cross",
                 "fill": "full",
                 "color": "#ff6868",
                 "alpha": 1,
@@ -52,4 +59,7 @@ p.plot_object(
         },
     )
 )
+
+p.refresh_legend()
+
 p.export("03_map_orion.png", padding=0.5)

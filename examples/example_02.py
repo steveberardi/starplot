@@ -25,8 +25,8 @@ p.plot_object(
         dec=25.85,
         style={
             "marker": {
-                "size": 10,
-                "symbol": "*",
+                "size": 12,
+                "symbol": "star",
                 "fill": "full",
                 "color": "red",
                 "edge_color": "red",

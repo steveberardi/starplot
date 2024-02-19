@@ -185,7 +185,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         catalog: stars.StarCatalog = stars.StarCatalog.TYCHO_1,
         style: MarkerStyle = None,
         rasterize: bool = False,
-        separation_tolerance: float = 10 / 3600,
+        separation_tolerance: float = 60 / 3600,
         size_fn: Callable[[SimpleObject], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[SimpleObject], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[SimpleObject], float] = None,

@@ -27,10 +27,10 @@ eph = load("de421.bsp")
 sun, earth = eph["sun"], eph["earth"]
 comet = sun + mpc.comet_orbit(row, ts, GM_SUN)
 
-# Find the RA/DEC of comet for every 4 days starting on March 20, 1997
+# Find the RA/DEC of comet for every 7 days starting on March 18, 1997
 radecs = []
-for day in range(0, 28, 4):
-    t = ts.utc(1997, 3, 20 + day)
+for day in range(0, 30, 7):
+    t = ts.utc(1997, 3, 18 + day)
     ra, dec, distance = earth.at(t).observe(comet).radec()
     radecs.append((t, ra.hours, dec.degrees))
 
@@ -39,6 +39,7 @@ style = PlotStyle().extend(
     extensions.BLUE_LIGHT,
     extensions.MAP,
 )
+style.bayer_labels.visible = False
 style.legend.location = "lower right"
 style.legend.num_columns = 1
 
@@ -50,12 +51,15 @@ p = MapPlot(
     # the max RA to 28, so this plot will have an RA extent from 23h to 4h
     ra_min=23,
     ra_max=28,
-    dec_min=30,
-    dec_max=50,
-    limiting_magnitude=6.2,
+    dec_min=20,
+    dec_max=56,
     style=style,
     resolution=2000,
 )
+p.plot_stars(limiting_magnitude=8)
+p.plot_constellations()
+p.plot_constellation_borders()
+p.plot_dsos(limiting_magnitude=8)
 
 for t, ra, dec in radecs:
     label = f"{t.utc.month}/{t.utc.day}/{t.utc.year % 100}"
@@ -67,15 +71,16 @@ for t, ra, dec in radecs:
             dec=dec,
             style={
                 "marker": {
-                    "size": 12,
-                    "symbol": "o",
+                    "size": 40,
+                    "symbol": "comet",
                     "fill": "full",
-                    "color": "#ff6868",
-                    "alpha": 0.8,
+                    "color": "#b51f1f",
+                    "edge_color": "#b51f1f",
+                    "alpha": 0.9,
                     "zorder": 4096,
                 },
                 "label": {
-                    "font_size": 13,
+                    "font_size": 17,
                     "font_weight": "bold",
                     "font_color": "#3c6daa",
                     "zorder": 4096,

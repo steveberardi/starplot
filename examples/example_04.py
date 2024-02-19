@@ -1,11 +1,13 @@
 from starplot import MapPlot, Projection
 from starplot.styles import PlotStyle, extensions
+from starplot.data.dsos import DsoType
 
 style = PlotStyle().extend(
     extensions.MINIMAL,
     extensions.GRAYSCALE,
     extensions.MAP,
 )
+style.star.marker.size = 60
 
 p = MapPlot(
     projection=Projection.STEREO_NORTH,
@@ -13,10 +15,12 @@ p = MapPlot(
     ra_max=58.5 / 15,
     dec_min=22.5,
     dec_max=25.5,
-    limiting_magnitude=12,
     style=style,
     resolution=1400,
-    star_catalog="tycho-1",
+)
+p.plot_stars(
+    limiting_magnitude=14,
+    catalog="tycho-1",
 )
 p.plot_scope_fov(
     ra=3.7912777778,
