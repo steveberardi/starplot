@@ -10,6 +10,7 @@ from pytz import timezone
 from starplot.styles import PlotStyle, extensions, PolygonStyle, MarkerSymbolEnum
 from starplot.models import SkyObject
 from starplot.map import Projection
+from starplot import callables
 
 import starplot as sp
 
@@ -67,6 +68,10 @@ def create_map_orion():
     p.plot_stars(
         # catalog="tycho-1",
         limiting_magnitude=12,
+    )
+    p.plot_dsos(
+        limiting_magnitude=12,
+        plot_null_magnitudes=True,
     )
     # marker for M42
     p.plot_object(
@@ -216,6 +221,7 @@ def create_map_miller():
         resolution=8000,
         adjust_text=False,
     )
+    p.plot_stars(limiting_magnitude=8)
     # p.export("temp/map-mercator.svg", format="svg", padding=1)
     p.export("temp/map-miller.png", padding=0.3)
 
@@ -413,10 +419,11 @@ def create_optic_plot():
         # extensions.MINIMAL,
         extensions.GRAYSCALE_DARK,
         # extensions.GRAYSCALE,
-        # extensions.BLUE_DARK,
+        # extensions.BLUE_LIGHT,
         extensions.OPTIC,
     )
     # style.star.marker.size = 20
+    # style.dso_nebula.marker.color = None
 
     p1 = sp.OpticPlot(
         # ra=2.3774370927640605,
@@ -425,8 +432,8 @@ def create_optic_plot():
         # ra=3.7836111111,
         # dec=24.1166666667,
         # M44
-        ra=8.667,
-        dec=19.67,
+        # ra=8.667,
+        # dec=19.67,
         # star cluster near southern pole - NGC 371
         # ra=1.05,
         # dec=-72.06,
@@ -441,6 +448,9 @@ def create_optic_plot():
         # Orion's belt
         # ra=5.6,
         # dec=-1.2,
+        # Orion Nebula
+        ra=5.583,
+        dec=-5.383,
         lat=32.97,
         lon=-117.038611,
         # Falkland Islands
@@ -473,7 +483,8 @@ def create_optic_plot():
     #     0.5,
     #     pstyle,
     # )
-    p1.plot_stars(limiting_magnitude=9.6)
+    p1.plot_stars(limiting_magnitude=9.6, color_fn=callables.color_by_bv)
+    p1.plot_dsos(limiting_magnitude=4.1)
 
     p2 = sp.OpticPlot(
         # M45
@@ -650,7 +661,7 @@ create_optic_plot()
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-create_zenith()
+# create_zenith()
 # create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()

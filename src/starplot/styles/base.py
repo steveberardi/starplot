@@ -218,7 +218,7 @@ class MarkerStyle(BaseStyle):
     def to_polygon_style(self):
         return PolygonStyle(
             fill_color=self.color.as_hex() if self.color else None,
-            edge_color=self.edge_color.as_hex(),
+            edge_color=self.edge_color.as_hex() if self.edge_color else None,
             alpha=self.alpha,
             zorder=self.zorder,
         )

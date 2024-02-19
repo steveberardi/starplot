@@ -34,17 +34,17 @@ dso_galaxy:
 dso_nebula:
   marker:
     color: 'hsl(136, 0%, 97%)'
-    alpha: 0.34
+    alpha: 0.28
 dso_open_cluster:
   marker:
     edge_color: 'hsl(136, 0%, 97%)'
     fill: none
-    alpha: 0.86
+    alpha: 0.8
 dso_association_stars:
   marker:
     edge_color: 'hsl(136, 0%, 97%)'
     fill: none
-    alpha: 0.86
+    alpha: 0.8
 ecliptic:
   label:
     font_color: '#777'

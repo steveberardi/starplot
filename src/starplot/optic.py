@@ -6,12 +6,14 @@ from matplotlib import pyplot as plt
 from skyfield.api import Star, wgs84
 import pandas as pd
 
+from shapely import Polygon, MultiPolygon
+
 from starplot import callables
 from starplot.base import BasePlot
 from starplot.data import stars, bayer
 from starplot.models import SkyObject, SimpleObject
 from starplot.optics import Optic
-from starplot.plotters import StarPlotterMixin
+from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.styles import PlotStyle, OPTIC_BASE, MarkerStyle
 from starplot.utils import bv_to_hex_color, azimuth_to_string
 
@@ -34,7 +36,7 @@ def size_by_magnitude_optic(obj):
     return 4.93
 
 
-class OpticPlot(BasePlot, StarPlotterMixin):
+class OpticPlot(BasePlot, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new optic plot.
 
     Args:
@@ -149,7 +151,7 @@ class OpticPlot(BasePlot, StarPlotterMixin):
         return self.optic.in_bounds(x, y, scale)
 
     def _plot_polygon(self, points, style, **kwargs):
-        super()._plot_polygon(points, style, transform=self._crs)
+        super()._plot_polygon(points, style, transform=self._crs, **kwargs)
 
     def _calc_position(self):
         earth = self.ephemeris["earth"]
@@ -180,6 +182,50 @@ class OpticPlot(BasePlot, StarPlotterMixin):
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
 
+    def _extent_mask(self):
+        """
+        Returns shapely geometry objects of extent (RA = 0...360)
+
+        If the extent crosses equinox, then two Polygons will be returned
+        """
+        if self.ra_max < 24:
+            coords = [
+                [self.ra_min * 15, self.dec_min],
+                [self.ra_max * 15, self.dec_min],
+                [self.ra_min * 15, self.dec_max],
+                [self.ra_max * 15, self.dec_max],
+            ]
+            return Polygon(coords)
+
+        else:
+            coords_1 = [
+                [self.ra_min * 15, self.dec_min],
+                [360, self.dec_min],
+                [self.ra_min * 15, self.dec_max],
+                [360, self.dec_max],
+            ]
+            coords_2 = [
+                [0, self.dec_min],
+                [(self.ra_max - 24) * 15, self.dec_min],
+                [0, self.dec_max],
+                [(self.ra_max - 24) * 15, self.dec_max],
+            ]
+
+            return MultiPolygon(
+                [
+                    Polygon(coords_1),
+                    Polygon(coords_2),
+                ]
+            )
+    
+    def _plot_dso_polygon(self, polygon, style):
+        coords = list(zip(*polygon.exterior.coords.xy))
+        # close the polygon - for some reason matplotlib needs the coord twice
+        coords.append(coords[0])
+        coords.append(coords[0])
+
+        self._plot_polygon(coords, style.marker.to_polygon_style(), closed=False)
+        
     def _scatter_stars(
         self, ras, decs, sizes, alphas, colors, style=None, epoch_year=None, **kwargs
     ):

@@ -22,7 +22,7 @@ dso_galaxy:
 dso_nebula:
   marker:
     color: '#000'
-    alpha: 0.36
+    alpha: 0.28
 dso_open_cluster:
   marker:
     color: null

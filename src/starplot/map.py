@@ -19,7 +19,7 @@ from starplot import callables
 from starplot.base import BasePlot
 from starplot.data import DataFiles, bayer, constellations, stars, dsos
 from starplot.models import SkyObject, SimpleObject
-from starplot.plotters import StarPlotterMixin
+from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.projections import Projection
 from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE, MarkerSymbolEnum
 from starplot.utils import lon_to_ra
@@ -29,7 +29,7 @@ warnings.filterwarnings("ignore", module="cartopy")
 warnings.filterwarnings("ignore", module="shapely")
 
 
-class MapPlot(BasePlot, StarPlotterMixin):
+class MapPlot(BasePlot, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new map plot.
 
     Args:
@@ -244,7 +244,7 @@ class MapPlot(BasePlot, StarPlotterMixin):
                 ]
             )
 
-    def _plot_dso_polygon(self, polygon, style):
+    def ___plot_dso_polygon(self, polygon, style):
         coords = list(zip(*polygon.exterior.coords.xy))
         # close the polygon - for some reason matplotlib needs the coord twice
         coords.append(coords[0])
@@ -258,7 +258,7 @@ class MapPlot(BasePlot, StarPlotterMixin):
         # pstyle.pop("fill", None)
         # self.ax.add_geometries([polygon], crs=self._plate_carree, **pstyle)
 
-    def plot_dsos(self):
+    def __plot_dsos(self):
         ongc = gpd.read_file(
             DataFiles.ONGC.value,
             engine="pyogrio",
@@ -685,7 +685,7 @@ class MapPlot(BasePlot, StarPlotterMixin):
 
         # New
         # self.plot_stars()
-        self.plot_dsos()
+        
         self.plot_milky_way()
         self.plot_constellations()
         self.plot_constellation_borders()
