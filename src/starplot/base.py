@@ -40,7 +40,7 @@ DEFAULT_FOV_STYLE = PolygonStyle(
 """Default style for plotting scope and bino views"""
 
 
-class StarPlot(ABC):
+class BasePlot(ABC):
     _background_clip_path = None
 
     def __init__(
@@ -277,6 +277,10 @@ class StarPlot(ABC):
             **self._plot_kwargs(),
         )
         label.set_clip_on(True)
+
+        if kwargs.get("clip_path"):
+            label.set_clip_path(kwargs.get("clip_path"))
+
         self._maybe_remove_label(label)
 
     def plot_planets(

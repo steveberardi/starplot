@@ -64,6 +64,10 @@ def create_map_orion():
         resolution=3200,
         debug=True,
     )
+    p.plot_stars(
+        # catalog="tycho-1",
+        limiting_magnitude=12,
+    )
     # marker for M42
     p.plot_object(
         SkyObject(
@@ -407,12 +411,12 @@ def create_scope_plot_m45():
 def create_optic_plot():
     style = PlotStyle().extend(
         # extensions.MINIMAL,
-        # extensions.GRAYSCALE_DARK,
-        extensions.GRAYSCALE,
+        extensions.GRAYSCALE_DARK,
+        # extensions.GRAYSCALE,
         # extensions.BLUE_DARK,
         extensions.OPTIC,
     )
-    style.star.marker.size = 40
+    # style.star.marker.size = 20
 
     p1 = sp.OpticPlot(
         # ra=2.3774370927640605,
@@ -462,12 +466,14 @@ def create_optic_plot():
         resolution=1600,
         include_info_text=True,
         # colorize_stars=True,
+        debug=True,
     )
     # p1.plot_circle(
     #     (3.7836111111, 24.1166666667),
     #     0.5,
     #     pstyle,
     # )
+    p1.plot_stars(limiting_magnitude=9.6)
 
     p2 = sp.OpticPlot(
         # M45
@@ -520,7 +526,9 @@ def create_optic_plot():
         resolution=1600,
         include_info_text=True,
         # colorize_stars=True,
+        debug=True,
     )
+    p2.plot_stars(limiting_magnitude=12)
 
     # p1.export("temp/optic-p1.svg", format="svg", padding=0.3)
     # p2.export("temp/optic-p2.svg", format="svg", padding=0.3)
@@ -637,17 +645,17 @@ def create_map_scratch():
 # create_constellation()
 
 # create_scope_plot_m45()
-# create_optic_plot()
+create_optic_plot()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-# create_zenith()
+create_zenith()
 # create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
-create_map_scratch()
+# create_map_scratch()
 
 # create_map_sgr()
 

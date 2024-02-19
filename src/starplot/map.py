@@ -17,9 +17,10 @@ import numpy as np
 from skyfield.api import Star
 
 from starplot import callables
-from starplot.base import StarPlot
-from starplot.data import load, DataFiles, bayer, constellations, stars, dsos
+from starplot.base import BasePlot
+from starplot.data import DataFiles, bayer, constellations, stars, dsos
 from starplot.models import SkyObject, SimpleObject
+from starplot.plotters import StarPlotterMixin
 from starplot.projections import Projection
 from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE, MarkerSymbolEnum
 from starplot.utils import lon_to_ra
@@ -29,7 +30,7 @@ warnings.filterwarnings("ignore", module="cartopy")
 warnings.filterwarnings("ignore", module="shapely")
 
 
-class MapPlot(StarPlot):
+class MapPlot(BasePlot, StarPlotterMixin):
     """Creates a new map plot.
 
     Args:
@@ -104,6 +105,8 @@ class MapPlot(StarPlot):
         self.dso_types = dso_types
         self.lat = kwargs.get("lat", 45.0)
         self.lon = kwargs.get("lon", 0.0)
+
+        self.stars_df = stars.load("hipparcos")
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -561,7 +564,7 @@ class MapPlot(StarPlot):
             style,
         )
 
-    def _scatter_stars(self, ras, decs, sizes, alphas, colors, **kwargs):
+    def __scatter_stars(self, ras, decs, sizes, alphas, colors, **kwargs):
         edge_colors = kwargs.get("edgecolors")
 
         if not edge_colors:
@@ -583,7 +586,7 @@ class MapPlot(StarPlot):
             **self._plot_kwargs(),
         )
 
-    def plot_stars(
+    def __plot_stars(
         self,
         limiting_magnitude: float = 6.0,
         limiting_magnitude_labels: float = 6.0,
@@ -621,7 +624,7 @@ class MapPlot(StarPlot):
         area = ra_size * dec_size
         pixels_per_radec = math.sqrt(self.resolution**2 / area)
         num_buckets = (1 / pixels_per_radec) * 1_000
-        
+
         self.logger.debug(f"Pixels per RADEC: {pixels_per_radec}")
         self.logger.debug(f"Buckets: {num_buckets}")
 
@@ -927,7 +930,7 @@ class MapPlot(StarPlot):
         self._plot_constellation_labels()
 
         # New
-        self.plot_stars()
+        # self.plot_stars()
         self.plot_dsos()
         self.plot_milky_way()
         self.plot_constellations()

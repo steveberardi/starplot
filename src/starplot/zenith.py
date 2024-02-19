@@ -8,8 +8,8 @@ from skyfield.api import Star, wgs84
 from skyfield.positionlib import position_of_radec
 from skyfield.projections import build_stereographic_projection
 
-from starplot.base import StarPlot
-from starplot.data import load, constellations, stars, dsos
+from starplot.base import BasePlot
+from starplot.data import constellations, stars, dsos
 from starplot.styles import PlotStyle, ZENITH_BASE
 from starplot.utils import in_circle
 
@@ -40,7 +40,7 @@ def create_projected_constellation_lines(stardata_projected):
     return np.rollaxis(np.array([xy1, xy2]), 1)
 
 
-class ZenithPlot(StarPlot):
+class ZenithPlot(BasePlot):
     """Creates a new zenith plot.
 
     Args:
