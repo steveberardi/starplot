@@ -141,6 +141,12 @@ class StarPlotterMixin:
         buckets = {}
         buckets_deferred = {}
 
+        self.logger.debug(f"Pixels per RADEC: {pixels_per_radec}")
+        self.logger.debug(
+            f"Buckets: {num_buckets}"
+        )
+        self.logger.debug(f"SEP: {separation_tolerance}")
+
         def calc_bucket(ra, dec):
             extent_ra = self.ra_max - self.ra_min
             extent_dec = self.dec_max - self.dec_min
@@ -225,6 +231,9 @@ class StarPlotterMixin:
                     # ensure the biggest star is always plotted first
                     buckets_deferred[b] = [s for s in buckets[b]]
                     buckets[b] = [rep]
+                    biggest_bucket_size = max(
+                        biggest_bucket_size, len(buckets_deferred[b])
+                    )
 
                 elif (
                     min(seps_degrees) > separation_tolerance * 10
@@ -247,9 +256,9 @@ class StarPlotterMixin:
 
         _, ra, dec, sizes, alphas, colors, _ = zip(*sum(buckets.values(), []))
 
-        # self.logger.debug(
-        #     f"Deferred Stars: {len(buckets_deferred.keys())} | NN: {close_nn}"
-        # )
+        self.logger.debug(
+            f"Deferred Stars: {len(buckets_deferred.keys())} | NN: {close_nn}"
+        )
 
         # Plot Stars
         if style.marker.visible:

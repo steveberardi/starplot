@@ -170,18 +170,18 @@ def create_zenith():
         limiting_magnitude=4.6,
         # style=sp.styles.ZENITH_BLUE_MEDIUM,
         style=style,
-        resolution=4000,
+        resolution=2000,
         include_info_text=True,
-        adjust_text=True,
+        # adjust_text=True,
     )
-    p.plot_circle(
-        (7, -5),
-        5,
-        style=pstyle,
-    )
+    # p.plot_circle(
+    #     (7, -5),
+    #     5,
+    #     style=pstyle,
+    # )
     p.plot_ecliptic()
     p.plot_celestial_equator()
-    p.refresh_legend()
+    # p.refresh_legend()
     p.export("temp/zenith-poway.png", format="png", transparent=True)
 
 
