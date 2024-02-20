@@ -19,7 +19,7 @@ class SkyObject(BaseModel):
             style={
                 "marker": {
                     "size": 10,
-                    "symbol": "s",
+                    "symbol": "square",
                     "fill": "full",
                     "color": "#ff6868",
                 },

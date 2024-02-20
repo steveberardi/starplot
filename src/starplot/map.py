@@ -26,14 +26,16 @@ warnings.filterwarnings("ignore", module="shapely")
 class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new map plot.
 
+    **If you're using a perspective projection (`Orthographic`, `Stereographic`, or `Zenith`), then the following `kwargs` are required: `lat`, `lon`, and `dt`**
+
     Args:
         projection: Projection of the map
         ra_min: Minimum right ascension (hours) of the map
         ra_max: Maximum right ascension (hours) of the map
         dec_min: Minimum declination (degrees) of the map
         dec_max: Maximum declination (degrees) of the map
-        lat: Latitude for location-dependent projections: Orthographic, Stereographic, and Zenith
-        lon: Longitude for location-dependent projections: Orthographic, Stereographic, and Zenith
+        lat: Latitude for perspective projections: Orthographic, Stereographic, and Zenith
+        lon: Longitude for perspective projections: Orthographic, Stereographic, and Zenith
         dt: Date/time to use for star/planet positions, (*must be timezone-aware*). Default = current UTC time.
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
