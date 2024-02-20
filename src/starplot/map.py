@@ -92,7 +92,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             Projection.ORTHOGRAPHIC,
             Projection.STEREOGRAPHIC,
             Projection.ZENITH,
-        ] and lat is None or lon is None:
+        ] and (lat is None or lon is None):
             raise ValueError(f"lat and lon are required for the {self.projection.value.upper()} projection")
 
         self.stars_df = stars.load("hipparcos")

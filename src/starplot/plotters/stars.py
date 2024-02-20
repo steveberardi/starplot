@@ -23,7 +23,7 @@ class StarPlotterMixin:
             & (stardata["dec_degrees"] > self.dec_min - dec_buffer)
         ]
 
-        if self.ra_max < 24 and self.ra_min > 0:
+        if self.ra_max <= 24 and self.ra_min >= 0:
             stardata = stardata[
                 (stardata["ra_hours"] < self.ra_max + ra_buffer)
                 & (stardata["ra_hours"] > self.ra_min - ra_buffer)
