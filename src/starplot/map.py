@@ -186,6 +186,28 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             bbox=bbox,
         )
 
+    def _load_stars(self, catalog, limiting_magnitude):
+        df = super()._load_stars(catalog, limiting_magnitude)
+        from skyfield.api import Star, wgs84
+        import time
+        # TODO : clean up!!
+        start = time.time()
+        if self.projection == Projection.ZENITH:
+            earth = self.ephemeris["earth"]
+            self.location = earth + wgs84.latlon(self.lat, self.lon)
+            
+            stars_apparent = self.location.at(self.timescale).observe(Star.from_dataframe(df)).apparent()
+
+            nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
+
+            df["alt"], df["az"] = (
+                nearby_stars_alt.degrees,
+                nearby_stars_az.degrees,
+            )
+            df = df[ df["alt"] > 0 ]
+        print(time.time() - start)
+        return df
+
     def plot_constellation_borders(self):
         if not self.style.constellation_borders.visible:
             return
