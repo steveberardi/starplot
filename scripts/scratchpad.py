@@ -71,7 +71,7 @@ def create_map_orion():
         limiting_magnitude=12,
         plot_null_magnitudes=True,
     )
-    
+
     p.plot_constellations()
     p.plot_milky_way()
     p.plot_ecliptic()

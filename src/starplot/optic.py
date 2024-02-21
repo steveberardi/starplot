@@ -186,7 +186,9 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         style: MarkerStyle = None,
         rasterize: bool = False,
         separation_tolerance: float = 60 / 3600,
-        size_fn: Callable[[SimpleObject], float] = callables.size_by_magnitude_for_optic,
+        size_fn: Callable[
+            [SimpleObject], float
+        ] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[SimpleObject], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[SimpleObject], float] = None,
         *args,
@@ -233,7 +235,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         - Target's position (alt/az and ra/dec)
         - Observer's position (lat/lon and date/time)
         - Optic details (type, magnification, FOV)
-        
+
         Args:
             style: If `None`, then the plot's style for info text will be used
         """

@@ -155,9 +155,17 @@ class BasePlot(ABC):
             self.style.legend.zorder
         )
 
-    def adjust_text(self) -> None:
-        """Adjust all the labels to avoid overlapping."""
-        _adjust_text(self.labels, ax=self.ax, ensure_inside_axes=False)
+    def adjust_text(self, ensure_inside_axes: bool = False, **kwargs) -> None:
+        """Adjust all the labels to avoid overlapping. This function uses the [adjustText](https://adjusttext.readthedocs.io/) library.
+
+        Args:
+            ensure_inside_axes: If True, then labels will be forced to stay within the axes
+            **kwargs: Any keyword arguments to pass through to [adjustText](https://adjusttext.readthedocs.io/en/latest/#adjustText.adjust_text)
+
+        """
+        _adjust_text(
+            self.labels, ax=self.ax, ensure_inside_axes=ensure_inside_axes, **kwargs
+        )
 
     def close_fig(self) -> None:
         """Closes the underlying matplotlib figure."""

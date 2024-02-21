@@ -142,9 +142,7 @@ class StarPlotterMixin:
         buckets_deferred = {}
 
         self.logger.debug(f"Pixels per RADEC: {pixels_per_radec}")
-        self.logger.debug(
-            f"Buckets: {num_buckets}"
-        )
+        self.logger.debug(f"Buckets: {num_buckets}")
         self.logger.debug(f"SEP: {separation_tolerance}")
 
         def calc_bucket(ra, dec):

@@ -61,6 +61,7 @@ def size_by_magnitude_simple(obj):
 
     return 2.23
 
+
 def size_by_magnitude_for_optic(obj):
     m = obj.magnitude
 

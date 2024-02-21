@@ -93,7 +93,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             Projection.STEREOGRAPHIC,
             Projection.ZENITH,
         ] and (lat is None or lon is None):
-            raise ValueError(f"lat and lon are required for the {self.projection.value.upper()} projection")
+            raise ValueError(
+                f"lat and lon are required for the {self.projection.value.upper()} projection"
+            )
 
         self.stars_df = stars.load("hipparcos")
 
@@ -195,8 +197,12 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if self.projection == Projection.ZENITH:
             earth = self.ephemeris["earth"]
             self.location = earth + wgs84.latlon(self.lat, self.lon)
-            
-            stars_apparent = self.location.at(self.timescale).observe(Star.from_dataframe(df)).apparent()
+
+            stars_apparent = (
+                self.location.at(self.timescale)
+                .observe(Star.from_dataframe(df))
+                .apparent()
+            )
 
             nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
 
@@ -204,7 +210,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 nearby_stars_alt.degrees,
                 nearby_stars_az.degrees,
             )
-            df = df[ df["alt"] > 0 ]
+            df = df[df["alt"] > 0]
 
         return df
 
@@ -375,7 +381,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                     transform=transform,
                     **style_kwargs,
                 )
-    
+
         self._plot_constellation_labels()
 
     def _plot_constellation_labels(self):
@@ -546,4 +552,3 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self._fit_to_ax()
 
         # self.refresh_legend()
-
