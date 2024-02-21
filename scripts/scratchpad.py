@@ -663,7 +663,7 @@ def create_map_scratch():
 # create_scope_view_m45()
 # create_scope_view_m11()
 
-create_zenith()
+# create_zenith()
 # create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
