@@ -527,7 +527,7 @@ class BasePlot(ABC):
 
     def ecliptic(self, style: PathStyle = None, label: str = "ECLIPTIC"):
         """Plot the ecliptic
-        
+
         Args:
             style: Styling of the ecliptic. If None, then the plot's style will be used
             label: How the ecliptic will be labeled on the plot
@@ -572,10 +572,12 @@ class BasePlot(ABC):
                         ),
                     )
 
-    def celestial_equator(self, style: PathStyle = None, label: str = "CELESTIAL EQUATOR"):
+    def celestial_equator(
+        self, style: PathStyle = None, label: str = "CELESTIAL EQUATOR"
+    ):
         """
         Plot the celestial equator
-        
+
         Args:
             style: Styling of the celestial equator. If None, then the plot's style will be used
             label: How the celestial equator will be labeled on the plot

@@ -1,9 +1,10 @@
 import geopandas as gpd
 import numpy as np
 
-from starplot.data import DataFiles, dsos
+from starplot.data import DataFiles
+from starplot.data.dsos import DsoType, DEFAULT_DSO_TYPES, ONGC_TYPE, ONGC_TYPE_MAP, LEGEND_LABELS
 from starplot.models import SkyObject
-from starplot.styles import PolygonStyle, MarkerSymbolEnum
+from starplot.styles import MarkerSymbolEnum
 
 
 class DsoPlotterMixin:
@@ -21,19 +22,49 @@ class DsoPlotterMixin:
         # pstyle.pop("fill", None)
         # self.ax.add_geometries([polygon], crs=self._plate_carree, **pstyle)
 
-    def plot_dsos(
+    def open_clusters(self, *args, **kwargs):
+        self.dsos(types=[DsoType.OPEN_CLUSTER], **kwargs)
+
+    def globular_clusters(self, *args, **kwargs):
+        self.dsos(types=[DsoType.GLOBULAR_CLUSTER], **kwargs)
+
+    def galaxies(self, *args, **kwargs):
+        self.dsos(
+            types=[
+                DsoType.GALAXY,
+                DsoType.GALAXY_PAIR,
+                DsoType.GALAXY_TRIPLET,
+            ],
+            **kwargs,
+        )
+
+    def nebula(self, *args, **kwargs):
+        self.dsos(
+            types=[
+                DsoType.NEBULA,
+                DsoType.PLANETARY_NEBULA,
+                DsoType.EMISSION_NEBULA,
+                DsoType.STAR_CLUSTER_NEBULA,
+                DsoType.REFLECTION_NEBULA,
+            ],
+            **kwargs,
+        )
+
+    def dsos(
         self,
-        limiting_magnitude: float = 8.0,
-        types: list[dsos.DsoType] = dsos.DEFAULT_DSO_TYPES,
-        plot_null_magnitudes: bool = False,
+        mag: float = 8.0,
+        types: list[DsoType] = DEFAULT_DSO_TYPES,
+        null: bool = False,
+        true_size: bool = True,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
 
         Args:
-            limiting_magnitude: Limiting magnitude of DSOs to plot
+            mag: Limiting magnitude of DSOs to plot
             types: List of DSO types to plot
-            plot_null_magnitudes: If True, then DSOs without a defined magnitude will be plotted
+            null: If True, then DSOs without a defined magnitude will be plotted
+            true_size: If True, then each DSO's size will be its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used.
 
         """
         ongc = gpd.read_file(
@@ -43,9 +74,11 @@ class DsoPlotterMixin:
             bbox=self._extent_mask(),
         )
 
-        dso_types = [dsos.ONGC_TYPE[dtype] for dtype in types]
+        dso_types = [ONGC_TYPE[dtype] for dtype in types]
         nearby_dsos = ongc[ongc["Type"].isin(dso_types)]
         nearby_dsos = nearby_dsos.replace({np.nan: None})
+
+        # TODO: sort by type, and plot markers together 
 
         for n, d in nearby_dsos.iterrows():
             if d.ra_degrees is None or d.dec_degrees is None:
@@ -55,30 +88,30 @@ class DsoPlotterMixin:
             dec = d.dec_degrees
 
             name = d.Name
-            dso_type = dsos.ONGC_TYPE_MAP[d.Type]
+            dso_type = ONGC_TYPE_MAP[d.Type]
             style = self.style.get_dso_style(dso_type)
             maj_ax, min_ax, angle = d.MajAx, d.MinAx, d.PosAng
-            legend_label = dsos.LEGEND_LABELS.get(dso_type) or dso_type
+            legend_label = LEGEND_LABELS.get(dso_type) or dso_type
             magnitude = d["V-Mag"] or d["B-Mag"] or None
             magnitude = float(magnitude) if magnitude else None
 
             if (
                 not style
                 or not style.marker.visible
-                or (magnitude is not None and magnitude > limiting_magnitude)
-                or (magnitude is None and not plot_null_magnitudes)
+                or (magnitude is not None and magnitude > mag)
+                or (magnitude is None and not null)
             ):
                 continue
 
             geometry_types = d["geometry"].geom_type
 
-            if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
+            if true_size and "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
                 self._plot_dso_polygon(d.geometry, style)
 
-            elif "MultiPolygon" in geometry_types:
+            elif true_size and "MultiPolygon" in geometry_types:
                 for polygon in d.geometry.geoms:
                     self._plot_dso_polygon(polygon, style)
-            elif maj_ax:
+            elif true_size and maj_ax:
                 # If object has a major axis then plot it's actual extent
 
                 maj_ax_degrees = (maj_ax / 60) / 2
