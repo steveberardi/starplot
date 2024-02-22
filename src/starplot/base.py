@@ -525,7 +525,7 @@ class BasePlot(ABC):
         """
         self._plot_fov_circle(ra, dec, fov, magnification, style)
 
-    def plot_ecliptic(self, style: PathStyle = None, label: str = "ECLIPTIC"):
+    def ecliptic(self, style: PathStyle = None, label: str = "ECLIPTIC"):
         """Plot the ecliptic
         
         Args:
