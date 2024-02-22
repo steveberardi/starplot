@@ -59,6 +59,10 @@ plugins:
             show_source: false
             show_bases: false
             docstring_section_style: list
+            annotations_path: brief
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
   - macros:
       include_dir: .
       # include_dir: examples/ src/starplot/styles/ext/

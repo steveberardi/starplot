@@ -29,6 +29,7 @@ class DsoPlotterMixin:
         self.dsos(types=[DsoType.GLOBULAR_CLUSTER], **kwargs)
 
     def galaxies(self, *args, **kwargs):
+        """Plots galaxy DSO types"""
         self.dsos(
             types=[
                 DsoType.GALAXY,
@@ -39,6 +40,7 @@ class DsoPlotterMixin:
         )
 
     def nebula(self, *args, **kwargs):
+        """Plots nebula DSO types"""
         self.dsos(
             types=[
                 DsoType.NEBULA,

@@ -6,6 +6,7 @@ from skyfield.api import Star
 
 from starplot import callables
 from starplot.data import bayer, stars
+from starplot.data.stars import StarCatalog
 from starplot.models import SimpleObject
 from starplot.styles import MarkerStyle
 
@@ -101,7 +102,7 @@ class StarPlotterMixin:
         self,
         mag: float = 6.0,
         mag_labels: float = 6.0,
-        catalog: stars.StarCatalog = stars.StarCatalog.HIPPARCOS,
+        catalog: StarCatalog = StarCatalog.HIPPARCOS,
         style: MarkerStyle = None,
         rasterize: bool = False,
         layers: int = 4,
