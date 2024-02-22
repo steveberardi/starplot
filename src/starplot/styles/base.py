@@ -501,7 +501,7 @@ class PlotStyle(BaseStyle):
     # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=20, edge_color=None),
-        label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1),
+        label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=400),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
@@ -703,7 +703,7 @@ class PlotStyle(BaseStyle):
     # Constellations
     constellation: PathStyle = PathStyle(
         line=LineStyle(color="#c8c8c8"),
-        label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT),
+        label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT, zorder=400),
     )
     """Styling for constellations"""
 

@@ -63,10 +63,15 @@ def create_map_orion():
         resolution=3200,
         debug=True,
     )
-    p.plot_stars(
+    p.stars(
         # catalog="tycho-1",
-        limiting_magnitude=12,
+        mag=11,
+        layers=1,
     )
+    # p.plot_stars(
+    #     # catalog="tycho-1",
+    #     limiting_magnitude=12,
+    # )
     p.plot_dsos(
         limiting_magnitude=12,
         plot_null_magnitudes=True,
