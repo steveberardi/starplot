@@ -395,10 +395,10 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             if self.in_bounds(ra, dec):
                 self._plot_text(ra, dec, con.upper(), **style)
 
-    def plot_milky_way(self, style: PolygonStyle = None):
+    def milky_way(self, style: PolygonStyle = None):
         style = style or self.style.milky_way
 
-        if not self.style.milky_way.visible:
+        if not style.visible:
             return
 
         mw = self._read_geo_package(DataFiles.MILKY_WAY.value)
@@ -417,13 +417,14 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 **style_kwargs,
             )
 
-    def plot_horizon(
+    def horizon(
         self,
         style: PolygonStyle = PolygonStyle(
             fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
         ),
     ):
-        """Draws a circle representing the horizon for the given lat lon.
+        """
+        Draws a circle representing the horizon for the given lat lon.
 
         Args:
             style: style of the polygon

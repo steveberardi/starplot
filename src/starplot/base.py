@@ -22,6 +22,7 @@ from starplot.styles import (
     MarkerStyle,
     ObjectStyle,
     LegendLocationEnum,
+    PathStyle,
     PolygonStyle,
 )
 
@@ -524,9 +525,16 @@ class BasePlot(ABC):
         """
         self._plot_fov_circle(ra, dec, fov, magnification, style)
 
-    def plot_ecliptic(self):
-        """Plot the ecliptic"""
-        if not self.style.ecliptic.line.visible:
+    def plot_ecliptic(self, style: PathStyle = None, label: str = "ECLIPTIC"):
+        """Plot the ecliptic
+        
+        Args:
+            style: Styling of the ecliptic. If None, then the plot's style will be used
+            label: How the ecliptic will be labeled on the plot
+        """
+        style = style or self.style.ecliptic
+
+        if not style.line.visible:
             return
 
         x = []
@@ -543,13 +551,13 @@ class BasePlot(ABC):
         self.ax.plot(
             x,
             y,
-            dash_capstyle=self.style.ecliptic.line.dash_capstyle,
+            dash_capstyle=style.line.dash_capstyle,
             clip_path=self._background_clip_path,
-            **self.style.ecliptic.line.matplot_kwargs(self._size_multiplier),
+            **style.line.matplot_kwargs(self._size_multiplier),
             **self._plot_kwargs(),
         )
 
-        if self.style.ecliptic.label.visible:
+        if style.label.visible:
             if len(inbounds) > 4:
                 label_spacing = int(len(inbounds) / 3) or 1
 
@@ -558,15 +566,21 @@ class BasePlot(ABC):
                     self._plot_text(
                         ra,
                         dec - 0.4,
-                        "ECLIPTIC",
+                        label,
                         **self.style.ecliptic.label.matplot_kwargs(
                             self._size_multiplier
                         ),
                     )
 
-    def plot_celestial_equator(self):
-        """Plot the celestial equator"""
-
+    def celestial_equator(self, style: PathStyle = None, label: str = "CELESTIAL EQUATOR"):
+        """
+        Plot the celestial equator
+        
+        Args:
+            style: Styling of the celestial equator. If None, then the plot's style will be used
+            label: How the celestial equator will be labeled on the plot
+        """
+        style = style or self.style.celestial_equator
         x = []
         y = []
 
@@ -576,27 +590,21 @@ class BasePlot(ABC):
         ra_end = min(24, int(self.ra_max) + 2) * 100
 
         for ra in range(ra_start, ra_end, 2):
-            # if self.in_bounds(ra/100, 0):
             x0, y0 = self._prepare_coords(ra / 100, 0)
             x.append(x0)
             y.append(y0)
 
-        if self.style.celestial_equator.line.visible:
+        if style.line.visible:
             self.ax.plot(
                 x,
                 y,
                 clip_path=self._background_clip_path,
-                **self.style.celestial_equator.line.matplot_kwargs(
-                    self._size_multiplier
-                ),
+                **style.line.matplot_kwargs(self._size_multiplier),
                 **self._plot_kwargs(),
             )
 
-        if self.style.celestial_equator.label.visible:
-            style = self.style.celestial_equator.label.matplot_kwargs(
-                self._size_multiplier
-            )
-
+        if style.label.visible:
+            label_style_kwargs = style.label.matplot_kwargs(self._size_multiplier)
             label_spacing = (self.ra_max - self.ra_min) / 3
             for ra in np.arange(self.ra_min, self.ra_max, label_spacing):
-                self._plot_text(ra, 0.25, "CELESTIAL EQUATOR", **style)
+                self._plot_text(ra, 0.25, label, **label_style_kwargs)
