@@ -464,16 +464,16 @@ def create_optic_plot():
         # lat=-51.524793,
         # lon=-60.118504,
         # 10x binoculars
-        optic=sp.optics.Binoculars(
-            magnification=10,
-            fov=65,
-        ),
-        # TV-85
-        # optic=sp.optics.Scope(
-        #     focal_length=600,
-        #     eyepiece_focal_length=5,
-        #     eyepiece_fov=50,
+        # optic=sp.optics.Binoculars(
+        #     magnification=10,
+        #     fov=65,
         # ),
+        # TV-85
+        optic=sp.optics.Scope(
+            focal_length=600,
+            eyepiece_focal_length=11,
+            eyepiece_fov=100,
+        ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=20, minute=30, second=0
         ),
@@ -490,8 +490,8 @@ def create_optic_plot():
     #     0.5,
     #     pstyle,
     # )
-    p1.plot_stars(limiting_magnitude=9.6, color_fn=callables.color_by_bv)
-    p1.plot_dsos(limiting_magnitude=4.1)
+    p1.stars(mag=15, color_fn=callables.color_by_bv)
+    p1.dsos(mag=4.1)
 
     p2 = sp.OpticPlot(
         # M45
@@ -663,7 +663,7 @@ def create_map_scratch():
 # create_constellation()
 
 # create_scope_plot_m45()
-# create_optic_plot()
+create_optic_plot()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
@@ -672,7 +672,7 @@ def create_map_scratch():
 # create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
+# create_map_orion()
 # create_map_scratch()
 
 # create_map_sgr()
