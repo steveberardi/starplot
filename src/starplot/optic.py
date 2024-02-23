@@ -200,7 +200,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Args:
             mag: Limiting magnitude of stars to plot
             mag_labels: Limiting magnitude of stars to label on the plot
-            catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
+            catalog: The catalog of stars to use: "hipparcos" or "tycho-1"
             style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             layers: Tolerance for determining if nearby stars should be plotted with separate z-orders (to prevent them from overlapping). Greater values mean more separation is allowed before stars are plotted with higher z-orders.
