@@ -1,6 +1,7 @@
 
 ::: starplot.SkyObject
     options:
+        show_root_heading: true
         merge_init_into_class: true
         docstring_section_style: list
 

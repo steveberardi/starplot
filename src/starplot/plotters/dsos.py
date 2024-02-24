@@ -37,7 +37,7 @@ class DsoPlotterMixin:
     def galaxies(self, *args, **kwargs):
         """
         Plots galaxy DSO types
-        
+
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         self.dsos(
@@ -51,7 +51,7 @@ class DsoPlotterMixin:
 
     def nebula(self, *args, **kwargs):
         """Plots nebula DSO types
-        
+
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         self.dsos(

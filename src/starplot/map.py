@@ -325,7 +325,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         """
         Plots constellations
 
-        TODO: labels, style, 
+        TODO: labels, style,
 
         Args:
 
@@ -586,7 +586,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.ax.text(0.972, 0.5, "W", **border_font_kwargs)
         self.ax.text(0.005, 0.5, "E", **border_font_kwargs)
         self.ax.text(0.5, 0.005, "S", **border_font_kwargs)
-        
+
         circle = patches.Circle(
             (0.5, 0.5),
             radius=0.5,
@@ -597,4 +597,3 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             transform=self.ax.transAxes,
         )
         self.ax.add_patch(circle)
-

@@ -12,7 +12,7 @@ nav:
         - starplot.OpticPlot: reference-opticplot.md
         - starplot.MapPlot: reference-mapplot.md
         - starplot.ZenithPlot: reference-zenithplot.md
-        - starplot.SkyObject: reference-skyobject.md
+        - Models: reference-models.md
         - Styling: reference-styling.md
         - Callables: reference-callables.md
         - Data: reference-data.md

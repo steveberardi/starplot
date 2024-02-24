@@ -5,13 +5,13 @@ import pandas as pd
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
-from skyfield.api import Star, wgs84
+from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot import callables
 from starplot.base import BasePlot
 from starplot.data.stars import StarCatalog
 from starplot.mixins import ExtentMaskMixin
-from starplot.models import SimpleObject
+from starplot.models import Star
 from starplot.optics import Optic
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.styles import PlotStyle, OPTIC_BASE, MarkerStyle, LabelStyle
@@ -157,7 +157,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         df = pd.DataFrame({"ra_hours": ra_hours, "dec_degrees": decs})
         df["epoch_year"] = epoch_year
 
-        stars_apparent = self.observe(Star.from_dataframe(df)).apparent()
+        stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
 
         df["alt"], df["az"] = (
@@ -186,11 +186,9 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         style: MarkerStyle = None,
         rasterize: bool = False,
         layers: int = 1,
-        size_fn: Callable[
-            [SimpleObject], float
-        ] = callables.size_by_magnitude_for_optic,
-        alpha_fn: Callable[[SimpleObject], float] = callables.alpha_by_magnitude,
-        color_fn: Callable[[SimpleObject], float] = None,
+        size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
+        alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
+        color_fn: Callable[[Star], float] = None,
         *args,
         **kwargs,
     ):
