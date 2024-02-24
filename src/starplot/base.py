@@ -202,10 +202,17 @@ class BasePlot(ABC):
         style: Union[dict, ObjectStyle],
         legend_label: str = None,
     ) -> None:
-        x, y = self._prepare_coords(ra, dec)
+        """Plots a marker
 
-        if isinstance(style, dict):
-            style = ObjectStyle(**style)
+        Args:
+            ra: Right ascension of the marker
+            dec: Declination of the marker
+            label: Label for the marker
+            style: Styling for the marker
+            legend_label: How to label the marker in the legend. If `None`, then the marker will not be added to the legend
+
+        """
+        x, y = self._prepare_coords(ra, dec)
 
         if self.in_bounds(ra, dec):
             self.ax.plot(
@@ -230,43 +237,6 @@ class BasePlot(ABC):
                 )
                 plotted_label.set_clip_on(True)
                 self._maybe_remove_label(plotted_label)
-
-    def plot_object(self, obj: SkyObject) -> None:
-        """Plots an object (see SkyObject for details).
-
-        Args:
-            obj: The object to plot
-
-        """
-        x, y = self._prepare_coords(obj.ra, obj.dec)
-
-        if self.in_bounds(obj.ra, obj.dec):
-            self.ax.plot(
-                x,
-                y,
-                **obj.style.marker.matplot_kwargs(
-                    size_multiplier=self._size_multiplier
-                ),
-                **self._plot_kwargs(),
-                linestyle="None",
-            )
-
-            if obj.legend_label is not None:
-                self._add_legend_handle_marker(obj.legend_label, obj.style.marker)
-
-            if obj.style.label.visible:
-                label = self.ax.text(
-                    x,
-                    y,
-                    obj.name,
-                    **obj.style.label.matplot_kwargs(
-                        size_multiplier=self._size_multiplier
-                    ),
-                    **self._plot_kwargs(),
-                    path_effects=[self.text_border],
-                )
-                label.set_clip_on(True)
-                self._maybe_remove_label(label)
 
     def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
         x, y = self._prepare_coords(ra, dec)

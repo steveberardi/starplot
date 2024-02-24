@@ -169,12 +169,11 @@ class DsoPlotterMixin:
 
             else:
                 # If no major axis, then just plot as a marker
-                obj = SkyObject(
-                    name=name,
+                self.marker(
                     ra=ra / 15,
                     dec=dec,
+                    label=name,
                     style=style,
                 )
-                self.plot_object(obj)
 
             self._add_legend_handle_marker(legend_label, style.marker)
