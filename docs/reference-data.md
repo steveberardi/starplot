@@ -21,3 +21,13 @@
     options:
         show_root_heading: true
         show_docstring_attributes: true
+
+::: starplot.data.constellations.CONSTELLATIONS_FULL_NAMES
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
+::: starplot.data.constellations.CONSTELLATIONS_ABBREVIATIONS
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true

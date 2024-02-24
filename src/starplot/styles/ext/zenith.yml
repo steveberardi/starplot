@@ -21,6 +21,4 @@ star:
   label:
     font_size: 9
   marker:
-    size: 9
-  
-# figure_background_color: null
+    size: 10

@@ -12,11 +12,22 @@ import numpy as np
 
 from starplot.base import BasePlot
 from starplot.data import DataFiles, constellations as condata, stars
-from starplot.data.constellations import CONSTELLATIONS_ABBREVIATIONS, CONSTELLATIONS_FULL_NAMES
+from starplot.data.constellations import (
+    CONSTELLATIONS_ABBREVIATIONS,
+    CONSTELLATIONS_FULL_NAMES,
+)
 from starplot.mixins import ExtentMaskMixin
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.projections import Projection
-from starplot.styles import PlotStyle, PolygonStyle, PathStyle, MAP_BASE
+from starplot.styles import (
+    LabelStyle,
+    LineStyle,
+    PlotStyle,
+    PolygonStyle,
+    PathStyle,
+    MAP_BASE,
+)
+from starplot.styles.helpers import use_style
 from starplot.utils import lon_to_ra
 
 # Silence noisy cartopy warnings
@@ -215,9 +226,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         return df
 
-    def constellation_borders(self):
-        if not self.style.constellation_borders.visible:
-            return
+    @use_style(LineStyle, "constellation_borders")
+    def constellation_borders(self, style: LineStyle = None):
         constellation_borders = self._read_geo_package(
             DataFiles.CONSTELLATION_BORDERS.value
         )
@@ -225,9 +235,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if constellation_borders.empty:
             return
 
-        style_kwargs = self.style.constellation_borders.matplot_kwargs(
-            size_multiplier=self._size_multiplier
-        )
+        style_kwargs = style.matplot_kwargs(self._size_multiplier)
 
         geometries = []
 
@@ -322,17 +330,18 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 **style_kwargs,
             )
 
-    def constellations(self, style: PathStyle = None, labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS):
-        """
-        Plots constellations
-
-        TODO: labels, style,
+    @use_style(PathStyle, "constellation")
+    def constellations(
+        self,
+        style: PathStyle = None,
+        labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS,
+    ):
+        """Plots the constellation lines and/or labels
 
         Args:
-            style:
-            labels:
+            style: Styling of the constellations. If None, then the plot's style (specified when creating the plot) will be used
+            labels: A dictionary where the keys are each constellation's 3-letter abbreviation, and the values are how the constellation will be labeled on the plot.
         """
-        style = style or self.style.constellation
 
         constellations_gdf = gpd.read_file(
             DataFiles.CONSTELLATIONS.value,
@@ -350,9 +359,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             transform = self._geodetic
 
         conline_hips = condata.lines()
-        style_kwargs = style.line.matplot_kwargs(
-            size_multiplier=self._size_multiplier
-        )
+        style_kwargs = style.line.matplot_kwargs(size_multiplier=self._size_multiplier)
 
         for i, c in constellations_gdf.iterrows():
             hiplines = conline_hips[c.id]
@@ -391,28 +398,31 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         self._plot_constellation_labels(style, labels)
 
-    def _plot_constellation_labels(self, style: PathStyle = None, labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS):
+    def _plot_constellation_labels(
+        self,
+        style: PathStyle = None,
+        labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS,
+    ):
         style = style or self.style.constellation
 
         if not style.label.visible:
             return
-        
-        style_kwargs = style.label.matplot_kwargs(
-            size_multiplier=self._size_multiplier
-        )
-        
+
+        style_kwargs = style.label.matplot_kwargs(size_multiplier=self._size_multiplier)
+
         for con in condata.iterator():
             _, ra, dec = condata.get(con)
             text = labels.get(con.lower()) or con.upper()
             if self.in_bounds(ra, dec):
                 self._plot_text(ra, dec, text, **style_kwargs)
 
+    @use_style(PolygonStyle, "milky_way")
     def milky_way(self, style: PolygonStyle = None):
-        style = style or self.style.milky_way
+        """Plots the Milky Way
 
-        if not style.visible:
-            return
-
+        Args:
+            style: Styling of the Milky Way. If None, then the plot's style (specified when creating the plot) will be used
+        """
         mw = self._read_geo_package(DataFiles.MILKY_WAY.value)
 
         if not mw.empty:
@@ -429,6 +439,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 **style_kwargs,
             )
 
+    @use_style(PolygonStyle)
     def horizon(
         self,
         style: PolygonStyle = PolygonStyle(
@@ -447,11 +458,16 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             style,
         )
 
-    def gridlines(self):
-        """Plots gridlines"""
+    @use_style(PathStyle, "gridlines")
+    def gridlines(self, style: PathStyle = None):
+        """Plots gridlines
 
-        labels_visible = self.style.gridlines.label.visible
-        lines_visible = self.style.gridlines.line.visible
+        Args:
+            style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
+        """
+
+        labels_visible = style.label.visible
+        lines_visible = style.line.visible
 
         def ra_formatter(x, pos) -> str:
             hour, minutes, seconds = lon_to_ra(x)
@@ -468,17 +484,17 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 rotate_labels=False,
                 xpadding=12,
                 ypadding=12,
-                **self.style.gridlines.line.matplot_kwargs(),
+                **style.line.matplot_kwargs(),
             )
 
             # use a fixed locator for right ascension so gridlines are only drawn at whole numbers
             hour_locations = [x for x in range(-180, 180, 15)]
             gridlines.xlocator = FixedLocator(hour_locations)
             gridlines.xformatter = FuncFormatter(ra_formatter)
-            gridlines.xlabel_style = self.style.gridlines.label.matplot_kwargs()
+            gridlines.xlabel_style = style.label.matplot_kwargs()
 
             gridlines.yformatter = FuncFormatter(dec_formatter)
-            gridlines.ylabel_style = self.style.gridlines.label.matplot_kwargs()
+            gridlines.ylabel_style = style.label.matplot_kwargs()
 
     def _plot_tick_marks(self):
         if not self.style.tick_marks.visible:
@@ -561,12 +577,10 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if self.projection == Projection.ZENITH:
             self._plot_border()
 
-        # self._plot_gridlines()
-        # self._plot_tick_marks()
-
         self._fit_to_ax()
 
-    def info(self):
+    @use_style(LabelStyle, "info_text")
+    def info(self, style: LabelStyle = None):
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
         info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
         self.ax.text(
@@ -574,7 +588,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             0.03,
             info,
             transform=self.ax.transAxes,
-            **self.style.info_text.matplot_kwargs(self._size_multiplier * 1.36),
+            **style.matplot_kwargs(self._size_multiplier * 1.36),
         )
 
     def _plot_border(self):

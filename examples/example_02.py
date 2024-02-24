@@ -49,7 +49,7 @@ p.marker(
             "zorder": 200,
             "font_size": 12,
             "font_weight": "bold",
-        }
+        },
     },
 )
 

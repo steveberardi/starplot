@@ -111,6 +111,7 @@ CONSTELLATIONS_FULL_NAMES = {k.lower(): v[0].upper() for k, v in properties.item
 CONSTELLATIONS_ABBREVIATIONS = {k.lower(): k.upper() for k in properties.keys()}
 """Constellation 3-letter abbreviations"""
 
+
 def load():
     with _load.open("constellations_hip.fab") as f:
         consdata = stellarium.parse_constellations(f)

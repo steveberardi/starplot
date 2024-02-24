@@ -1,4 +1,5 @@
 from starplot.styles import PlotStyle, extensions
+from functools import wraps
 
 BASE = PlotStyle()
 
@@ -24,3 +25,21 @@ BLUE_LIGHT = BASE.extend(extensions.BLUE_LIGHT)
 BLUE_MEDIUM = BASE.extend(extensions.BLUE_MEDIUM)
 BLUE_DARK = BASE.extend(extensions.BLUE_DARK)
 GRAYSCALE = BASE.extend(extensions.GRAYSCALE)
+
+
+def use_style(style_class, style_attr: str = None):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            style = kwargs.get("style")
+
+            if style and isinstance(style, dict):
+                kwargs["style"] = style_class(**style)
+            elif style is None and style_attr is not None:
+                kwargs["style"] = getattr(args[0].style, style_attr, None)
+
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator

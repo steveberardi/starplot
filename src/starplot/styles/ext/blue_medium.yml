@@ -16,7 +16,7 @@ constellation:
     font_size: 7
     font_weight: light
   line:
-    alpha: 0.2
+    alpha: 0.23
     color: '#6ba832'
     width: 3
 ecliptic:

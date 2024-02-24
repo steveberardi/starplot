@@ -46,7 +46,6 @@ p.ellipse(
         alpha=0.32,
     ),
     angle=-22,
-
 )
 
 p.refresh_legend()

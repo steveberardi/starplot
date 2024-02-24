@@ -25,6 +25,7 @@ from starplot.styles import (
     PathStyle,
     PolygonStyle,
 )
+from starplot.styles.helpers import use_style
 
 LOGGER = logging.getLogger("starplot")
 LOG_HANDLER = logging.StreamHandler()
@@ -192,19 +193,25 @@ class BasePlot(ABC):
             **kwargs,
         )
 
-    def marker(self, ra: float, dec: float, label: str, style: Union[dict, ObjectStyle], legend_label: str = None) -> None:
+    @use_style(ObjectStyle)
+    def marker(
+        self,
+        ra: float,
+        dec: float,
+        label: str,
+        style: Union[dict, ObjectStyle],
+        legend_label: str = None,
+    ) -> None:
         x, y = self._prepare_coords(ra, dec)
 
         if isinstance(style, dict):
             style = ObjectStyle(**style)
-        
+
         if self.in_bounds(ra, dec):
             self.ax.plot(
                 x,
                 y,
-                **style.marker.matplot_kwargs(
-                    size_multiplier=self._size_multiplier
-                ),
+                **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
                 **self._plot_kwargs(),
                 linestyle="None",
             )
@@ -217,9 +224,7 @@ class BasePlot(ABC):
                     x,
                     y,
                     label,
-                    **style.label.matplot_kwargs(
-                        size_multiplier=self._size_multiplier
-                    ),
+                    **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
                     **self._plot_kwargs(),
                     path_effects=[self.text_border],
                 )
@@ -281,6 +286,7 @@ class BasePlot(ABC):
 
         self._maybe_remove_label(label)
 
+    @use_style(ObjectStyle, "planets")
     def planets(
         self,
         style: ObjectStyle = None,
@@ -294,7 +300,6 @@ class BasePlot(ABC):
             true_size: If True, then each planet's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.data.planets.Planet])
         """
-        style = style or self.style.planets
         labels = labels or {}
 
         if not style.marker.visible:
@@ -333,6 +338,7 @@ class BasePlot(ABC):
                 )
                 self.plot_object(obj)
 
+    @use_style(ObjectStyle, "moon")
     def moon(
         self, style: ObjectStyle = None, true_size: bool = False, label: str = "Moon"
     ) -> None:
@@ -343,8 +349,6 @@ class BasePlot(ABC):
             true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             label: How the Moon will be labeled on the plot and legend
         """
-        style = style or self.style.moon
-
         if not style.marker.visible:
             return
 
@@ -416,6 +420,7 @@ class BasePlot(ABC):
         )
         self.ax.add_patch(patch)
 
+    @use_style(PolygonStyle)
     def polygon(self, points: list, style: PolygonStyle):
         """Plots a polygon of points
 
@@ -425,6 +430,7 @@ class BasePlot(ABC):
         """
         self._polygon(points, style)
 
+    @use_style(PolygonStyle)
     def rectangle(
         self,
         center: tuple,
@@ -452,6 +458,7 @@ class BasePlot(ABC):
         )
         self._polygon(points, style)
 
+    @use_style(PolygonStyle)
     def ellipse(
         self,
         center: tuple,
@@ -481,6 +488,7 @@ class BasePlot(ABC):
         )
         self._polygon(points, style)
 
+    @use_style(PolygonStyle)
     def circle(
         self,
         center: tuple,
@@ -517,6 +525,7 @@ class BasePlot(ABC):
             style,
         )
 
+    @use_style(PolygonStyle)
     def scope_fov(
         self,
         ra: float,
@@ -540,6 +549,7 @@ class BasePlot(ABC):
         magnification = scope_focal_length / eyepiece_focal_length
         self._fov_circle(ra, dec, eyepiece_fov, magnification, style)
 
+    @use_style(PolygonStyle)
     def bino_fov(
         self,
         ra: float,
@@ -559,6 +569,7 @@ class BasePlot(ABC):
         """
         self._fov_circle(ra, dec, fov, magnification, style)
 
+    @use_style(PathStyle, "ecliptic")
     def ecliptic(self, style: PathStyle = None, label: str = "ECLIPTIC"):
         """Plot the ecliptic
 
@@ -566,8 +577,6 @@ class BasePlot(ABC):
             style: Styling of the ecliptic. If None, then the plot's style will be used
             label: How the ecliptic will be labeled on the plot
         """
-        style = style or self.style.ecliptic
-
         if not style.line.visible:
             return
 
@@ -606,6 +615,7 @@ class BasePlot(ABC):
                         ),
                     )
 
+    @use_style(PathStyle, "celestial_equator")
     def celestial_equator(
         self, style: PathStyle = None, label: str = "CELESTIAL EQUATOR"
     ):
@@ -616,7 +626,6 @@ class BasePlot(ABC):
             style: Styling of the celestial equator. If None, then the plot's style will be used
             label: How the celestial equator will be labeled on the plot
         """
-        style = style or self.style.celestial_equator
         x = []
         y = []
 
