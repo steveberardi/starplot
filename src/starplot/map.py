@@ -3,7 +3,7 @@ import warnings
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
-from matplotlib import path
+from matplotlib import path, patches
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import LineString, MultiLineString
 from shapely.ops import unary_union
@@ -544,52 +544,47 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         self.logger.debug(f"Projection = {self.projection.value.upper()}")
 
+        if self.projection == Projection.ZENITH:
+            self._plot_border()
+            
         self._plot_gridlines()
         self._plot_tick_marks()
-        # self._plot_constellation_lines()
-        # self._plot_constellation_borders()
-        # self._plot_constellation_labels()
 
         self._fit_to_ax()
 
-        # self.refresh_legend()
+    def info(self):
+        dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
+        info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
+        self.ax.text(
+            0.03,
+            0.03,
+            info,
+            transform=self.ax.transAxes,
+            **self.style.info_text.matplot_kwargs(self._size_multiplier * 1.36),
+        )
 
     def _plot_border(self):
-        # Plot border text
-        center = ((self.timescale.gmst + self.lon / 15.0) % 24, self.lat)
-        ra, dec = center
+        """Plots circle border for Zenith projections"""
         border_font_kwargs = dict(
-            fontsize=self.style.border_font_size * self._size_multiplier * 2,
+            fontsize=self.style.border_font_size * self._size_multiplier * 2.26,
             weight=self.style.border_font_weight,
             color=self.style.border_font_color.as_hex(),
-            # color="red",
             transform=self.ax.transAxes,
-            # transform=self._plate_carree,
-            zorder=10000,
+            zorder=5200,
         )
-        self.ax.text(0.5, 0.98, "N", **border_font_kwargs)
-        self.ax.text(0.975, 0.5, "W", **border_font_kwargs)
-        self.ax.text(0.006, 0.5, "E", **border_font_kwargs)
-        self.ax.text(0.5, 0.006, "S", **border_font_kwargs)
+        self.ax.text(0.5, 0.975, "N", **border_font_kwargs)
+        self.ax.text(0.972, 0.5, "W", **border_font_kwargs)
+        self.ax.text(0.005, 0.5, "E", **border_font_kwargs)
+        self.ax.text(0.5, 0.005, "S", **border_font_kwargs)
         
-        # self.ax.text(
-        #     ra, 
-        #     dec + 90,
-        #     "N",
-        #     **border_font_kwargs
-        # )
-        # TODO : plot text at ra/dec coords (use geod)
-
-        # Border Circles
-        self.plot_circle(
-            (ra, dec),
-            92,
-            PolygonStyle(
-                fill=False,
-                edge_color=self.style.border_line_color.as_hex(),
-                line_style="solid",
-                edge_width=int(68 * self._size_multiplier),
-                zorder=1000,
-            ),
-            num_pts=360,
+        circle = patches.Circle(
+            (0.5, 0.5),
+            radius=0.5,
+            fill=False,
+            edgecolor=self.style.border_line_color.as_hex(),
+            linewidth=100 * self._size_multiplier,
+            zorder=5000,
+            transform=self.ax.transAxes,
         )
+        self.ax.add_patch(circle)
+
