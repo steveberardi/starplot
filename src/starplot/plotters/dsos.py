@@ -19,7 +19,7 @@ class DsoPlotterMixin:
         # close the polygon - for some reason matplotlib needs the coord twice
         coords.append(coords[0])
         coords.append(coords[0])
-        self._plot_polygon(coords, style.marker.to_polygon_style(), closed=False)
+        self._polygon(coords, style.marker.to_polygon_style(), closed=False)
 
         # coords = [(ra * -1, dec) for ra, dec in coords]
         # p = Polygon(coords)
@@ -143,7 +143,7 @@ class DsoPlotterMixin:
                 poly_style = style.marker.to_polygon_style()
 
                 if style.marker.symbol == MarkerSymbolEnum.SQUARE:
-                    self.plot_rectangle(
+                    self.rectangle(
                         (ra / 15, dec),
                         min_ax_degrees * 2,
                         maj_ax_degrees * 2,
@@ -151,7 +151,7 @@ class DsoPlotterMixin:
                         angle or 0,
                     )
                 else:
-                    self.plot_ellipse(
+                    self.ellipse(
                         (ra / 15, dec),
                         min_ax_degrees * 2,
                         maj_ax_degrees * 2,

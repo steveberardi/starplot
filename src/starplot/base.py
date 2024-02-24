@@ -247,7 +247,7 @@ class BasePlot(ABC):
 
         self._maybe_remove_label(label)
 
-    def plot_planets(
+    def planets(
         self,
         style: ObjectStyle = None,
         true_size: bool = False,
@@ -299,7 +299,7 @@ class BasePlot(ABC):
                 )
                 self.plot_object(obj)
 
-    def plot_moon(
+    def moon(
         self, style: ObjectStyle = None, true_size: bool = False, label: str = "Moon"
     ) -> None:
         """Plots the Moon
@@ -371,7 +371,7 @@ class BasePlot(ABC):
         """
         raise NotImplementedError
 
-    def _plot_polygon(self, points: list, style: PolygonStyle, **kwargs):
+    def _polygon(self, points: list, style: PolygonStyle, **kwargs):
         points = [geod.to_radec(p) for p in points]
         points = [self._prepare_coords(*p) for p in points]
         patch = patches.Polygon(
@@ -382,16 +382,16 @@ class BasePlot(ABC):
         )
         self.ax.add_patch(patch)
 
-    def plot_polygon(self, points: list, style: PolygonStyle):
+    def polygon(self, points: list, style: PolygonStyle):
         """Plots a polygon of points
 
         Args:
             points: List of polygon points `[(ra, dec), ...]`
             style: Style of polygon
         """
-        self._plot_polygon(points, style)
+        self._polygon(points, style)
 
-    def plot_rectangle(
+    def rectangle(
         self,
         center: tuple,
         height_degrees: float,
@@ -416,9 +416,9 @@ class BasePlot(ABC):
             width_degrees,
             angle,
         )
-        self._plot_polygon(points, style)
+        self._polygon(points, style)
 
-    def plot_ellipse(
+    def ellipse(
         self,
         center: tuple,
         height_degrees: float,
@@ -445,9 +445,9 @@ class BasePlot(ABC):
             angle,
             num_pts,
         )
-        self._plot_polygon(points, style)
+        self._polygon(points, style)
 
-    def plot_circle(
+    def circle(
         self,
         center: tuple,
         radius_degrees: float,
@@ -462,7 +462,7 @@ class BasePlot(ABC):
             style: Style of circle
             num_pts: Number of points to calculate for the circle polygon
         """
-        self.plot_ellipse(
+        self.ellipse(
             center,
             radius_degrees * 2,
             radius_degrees * 2,
@@ -471,19 +471,19 @@ class BasePlot(ABC):
             num_pts=num_pts,
         )
 
-    def _plot_fov_circle(
+    def _fov_circle(
         self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
     ):
         # FOV (degrees) = FOV eyepiece / magnification
         fov_degrees = fov / magnification
         fov_radius = fov_degrees / 2
-        self.plot_circle(
+        self.circle(
             (ra, dec),
             fov_radius,
             style,
         )
 
-    def plot_scope_fov(
+    def scope_fov(
         self,
         ra: float,
         dec: float,
@@ -504,9 +504,9 @@ class BasePlot(ABC):
         """
         # FOV (degrees) = FOV eyepiece / magnification
         magnification = scope_focal_length / eyepiece_focal_length
-        self._plot_fov_circle(ra, dec, eyepiece_fov, magnification, style)
+        self._fov_circle(ra, dec, eyepiece_fov, magnification, style)
 
-    def plot_bino_fov(
+    def bino_fov(
         self,
         ra: float,
         dec: float,
@@ -523,7 +523,7 @@ class BasePlot(ABC):
             magnification: magnification of the binoculars
             style: style of the polygon
         """
-        self._plot_fov_circle(ra, dec, fov, magnification, style)
+        self._fov_circle(ra, dec, fov, magnification, style)
 
     def ecliptic(self, style: PathStyle = None, label: str = "ECLIPTIC"):
         """Plot the ecliptic

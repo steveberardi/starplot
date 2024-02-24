@@ -135,8 +135,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 ra > self.ra_min or ra < self.ra_max - 24
             ) and self.dec_min < dec < self.dec_max
 
-    def _plot_polygon(self, points, style, **kwargs):
-        super()._plot_polygon(points, style, transform=self._crs, **kwargs)
+    def _polygon(self, points, style, **kwargs):
+        super()._polygon(points, style, transform=self._crs, **kwargs)
 
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
@@ -437,7 +437,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Args:
             style: style of the polygon
         """
-        self.plot_circle(
+        self.circle(
             ((self.timescale.gmst + self.lon / 15.0) % 24, self.lat),
             90,
             style,
