@@ -62,6 +62,57 @@
     border-left: 1px solid rgb(201, 201, 201);
 }
 
+[data-md-color-scheme=default] {
+    .doc-function .doc-heading {
+        background-color: hsl(209, 53%, 81%);
+    }
+
+    .doc-attribute .doc-heading {
+        background-color: hsl(209, 43%, 92%);
+    }
+    
+    .doc-class h2.doc-heading {
+        color: #fff;
+        background-color:hsl(209, 53%, 37%);
+    }
+}
+[data-md-color-scheme=slate] {
+    .doc-function .doc-heading {
+        background-color: hsl(209, 53%, 21%);
+    }
+
+    .doc-attribute .doc-heading {
+        background-color: hsl(209, 43%, 32%);
+    }
+    
+    .doc-class h2.doc-heading {
+        color: #fff;
+        background-color:hsl(209, 53%, 37%);
+    }
+}
+.doc-function .doc-heading {
+    margin-bottom: 0;
+    padding: 5px;
+}
+.doc-function,.doc-attribute  {
+    .doc-signature pre {
+        margin-top: 0;
+    }
+}
+
+.doc-attribute .doc-heading {
+    margin-bottom: 0;
+    padding: 5px;
+}
+
+.doc-class h2.doc-heading {
+    margin-bottom: 0;
+    padding: 5px;
+}
+.doc-class .doc-signature pre {
+    margin-top: 0;
+}
+
 .doc-contents.first {
     /* border-top: 2px solid rgba(200, 200, 200, 0.6);
     margin-left: 1rem;
