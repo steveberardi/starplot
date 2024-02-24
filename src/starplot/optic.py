@@ -15,6 +15,7 @@ from starplot.models import Star
 from starplot.optics import Optic
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.styles import PlotStyle, OPTIC_BASE, MarkerStyle, LabelStyle
+from starplot.styles.helpers import use_style
 from starplot.utils import azimuth_to_string
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -226,6 +227,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             ra, dec, text, clip_path=self._background_clip_path, *args, **kwargs
         )
 
+    @use_style(LabelStyle, "info_text")
     def info(self, style: LabelStyle = None):
         """
         Plots a table with info about the plot, including:
@@ -237,9 +239,9 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Args:
             style: If `None`, then the plot's style for info text will be used
         """
-        style = style or self.style.info_text
         self.ax.set_xlim(-1.22 * self.optic.xlim, 1.22 * self.optic.xlim)
         self.ax.set_ylim(-1.12 * self.optic.ylim, 1.12 * self.optic.ylim)
+        self.optic.transform(self.ax) # apply transform again because new xy limits will undo the transform
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
         font_size = style.font_size * self._size_multiplier * 2
@@ -351,8 +353,4 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         self.ax.set_xlim(-1.03 * self.optic.xlim, 1.03 * self.optic.xlim)
         self.ax.set_ylim(-1.03 * self.optic.ylim, 1.03 * self.optic.ylim)
-
         self.optic.transform(self.ax)
-        # self.refresh_legend()
-        # if self.adjust_text:
-        #     self.adjust_labels()
