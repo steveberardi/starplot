@@ -1,8 +1,35 @@
-Callables allow you to define your own functions for calculating a few of the style properties for stars: size, alpha (opacity), and color. Starplot has a few basic callables built-in, but you can also create your own!
+Callables allow you to define your own functions for calculating a few of the style properties for stars: size, alpha (opacity), and color. Starplot has a few basic callables built-in, but you can also create your own.
 
 ???- tip "What's a Callable?"
 
     In Python, a "callable" is anything that can be "called" — e.g. a function or a class with `__call__` implemented.
+
+    As a simple example, here's how you can pass a callable to Python's `sorted` function to sort a list of strings by their lengths:
+    ```python
+
+    >>> animals = ["elephant","cat", "dog", "tiger"]
+
+    >>> sorted(animals, key=lambda a: len(a))
+    
+    ['cat', 'dog', 'tiger', 'elephant']
+    
+    ```
+    In the example above, the value of `key` is the callable — in this case, a lambda function.
+
+    Here's another way to write the code above:
+
+    ```python
+
+    >>> animals = ["elephant","cat", "dog", "tiger"]
+
+    >>> def length(a):
+    ...   return len(a)
+    ...
+    >>> sorted(animals, key=length)
+    
+    ['cat', 'dog', 'tiger', 'elephant']
+    
+    ```
 
 
 ## Example
@@ -26,21 +53,21 @@ p = sp.MapPlot(
     dec_min=-16,
     dec_max=25.6,
     style=style,
-    resolution=2600,
+    resolution=2000,
 )
-p.plot_stars(
-    limiting_magnitude=12,
+p.stars(
+    mag=12,
     color_fn=sp.callables.color_by_bv
 )
-p.plot_dsos(
-    limiting_magnitude=12,
-    plot_null_magnitudes=True,
-)
-p.plot_constellations()
+p.dsos(mag=12, null=True)
+p.constellations()
 
 p.export("orion_colored_stars.png", padding=0.25)
 ```
 
+## Creating Your Own Callable
+
+TODO
 
 
 ## Built-In Callables

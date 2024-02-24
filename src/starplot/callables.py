@@ -2,13 +2,13 @@ import math
 
 from typing import Callable
 
-from starplot.models import SimpleObject
+from starplot.models import Star
 from starplot.utils import bv_to_hex_color
 
 
 def size_by_magnitude_factory(
     threshold: float, under_threshold_size: float
-) -> Callable[[SimpleObject], float]:
+) -> Callable[[Star], float]:
     """
     Creates a new version of `size_by_magnitude` with a custom threshold
 
@@ -21,8 +21,8 @@ def size_by_magnitude_factory(
 
     """
 
-    def size_fn(obj: SimpleObject) -> float:
-        m = obj.magnitude
+    def size_fn(star: Star) -> float:
+        m = star.magnitude
         if m >= threshold:
             size = under_threshold_size
         else:
@@ -36,7 +36,7 @@ def size_by_magnitude_factory(
 _size_by_magnitude_default = size_by_magnitude_factory(7.6, 2.36)
 
 
-def size_by_magnitude(obj: SimpleObject) -> float:
+def size_by_magnitude(star: Star) -> float:
     """
     Calculates size by logarithmic scale of magnitude:
 
@@ -47,11 +47,11 @@ def size_by_magnitude(obj: SimpleObject) -> float:
         size = 20 ** math.log(8 - magnitude)
     ```
     """
-    return _size_by_magnitude_default(obj)
+    return _size_by_magnitude_default(star)
 
 
-def size_by_magnitude_simple(obj):
-    m = obj.magnitude
+def size_by_magnitude_simple(star: Star):
+    m = star.magnitude
     if m < 1.6:
         return (9 - m) ** 2.85
     elif m < 4.6:
@@ -62,8 +62,8 @@ def size_by_magnitude_simple(obj):
     return 2.23
 
 
-def size_by_magnitude_for_optic(obj):
-    m = obj.magnitude
+def size_by_magnitude_for_optic(star: Star):
+    m = star.magnitude
 
     if m < 4.6:
         return (9 - m) ** 3.76
@@ -76,7 +76,7 @@ def size_by_magnitude_for_optic(obj):
     return 4.93
 
 
-def alpha_by_magnitude(obj):
+def alpha_by_magnitude(star: Star):
     """
     Basic calculator for alpha, based on magnitude:
 
@@ -89,7 +89,7 @@ def alpha_by_magnitude(obj):
         alpha = (16 - m) * 0.09
     ```
     """
-    m = obj.magnitude
+    m = star.magnitude
     if m < 4.6:
         return 1
     elif m < 5.8:
@@ -98,14 +98,14 @@ def alpha_by_magnitude(obj):
     return (16 - m) * 0.09
 
 
-def color_by_bv(obj) -> str:
+def color_by_bv(star: Star) -> str:
     """
     Calculates color by the object's [B-V index](https://en.wikipedia.org/wiki/Color_index)
 
     Color hex values from: [Mitchell Charity](http://www.vendian.org/mncharity/dir3/starcolor/details.html)
     """
-    if math.isnan(obj.bv):
+    if math.isnan(star.bv):
         bv = 0
     else:
-        bv = obj.bv
+        bv = star.bv
     return bv_to_hex_color(bv)
