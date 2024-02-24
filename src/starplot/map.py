@@ -11,7 +11,7 @@ import geopandas as gpd
 import numpy as np
 
 from starplot.base import BasePlot
-from starplot.data import DataFiles, constellations, stars, dsos
+from starplot.data import DataFiles, constellations, stars
 from starplot.mixins import ExtentMaskMixin
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.projections import Projection
@@ -214,7 +214,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         return df
 
-    def plot_constellation_borders(self):
+    def constellation_borders(self):
         if not self.style.constellation_borders.visible:
             return
         constellation_borders = self._read_geo_package(
@@ -321,7 +321,15 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 **style_kwargs,
             )
 
-    def plot_constellations(self):
+    def constellations(self):
+        """
+        Plots constellations
+
+        TODO: labels, style, 
+
+        Args:
+
+        """
         if not self.style.constellation.line.visible:
             return
 
@@ -435,7 +443,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             style,
         )
 
-    def _plot_gridlines(self):
+    def gridlines(self):
+        """Plots gridlines"""
+
         labels_visible = self.style.gridlines.label.visible
         lines_visible = self.style.gridlines.line.visible
 
@@ -546,9 +556,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         if self.projection == Projection.ZENITH:
             self._plot_border()
-            
-        self._plot_gridlines()
-        self._plot_tick_marks()
+
+        # self._plot_gridlines()
+        # self._plot_tick_marks()
 
         self._fit_to_ax()
 
