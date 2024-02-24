@@ -23,5 +23,5 @@ p = MapPlot(
     style=style,
     resolution=1400,
 )
-p.plot_stars(limiting_magnitude=3.6)
+p.stars(mag=3.6)
 p.export("06_big_dipper_stars.png", padding=0.2)

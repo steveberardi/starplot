@@ -123,7 +123,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         earth = self.ephemeris["earth"]
 
         self.location = earth + wgs84.latlon(self.lat, self.lon)
-        self.star = Star(ra_hours=self.ra, dec_degrees=self.dec)
+        self.star = SkyfieldStar(ra_hours=self.ra, dec_degrees=self.dec)
         self.observe = self.location.at(self.timescale).observe
         self.position = self.observe(self.star)
 
@@ -226,7 +226,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             ra, dec, text, clip_path=self._background_clip_path, *args, **kwargs
         )
 
-    def plot_info(self, style: LabelStyle = None):
+    def info(self, style: LabelStyle = None):
         """
         Plots a table with info about the plot, including:
 

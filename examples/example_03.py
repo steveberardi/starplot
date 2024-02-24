@@ -1,5 +1,5 @@
 from starplot import MapPlot, Projection, SkyObject
-from starplot.styles import PlotStyle, extensions
+from starplot.styles import PlotStyle, PolygonStyle, extensions
 
 style = PlotStyle().extend(
     extensions.BLUE_LIGHT,
@@ -28,36 +28,25 @@ p = MapPlot(
     style=style,
     resolution=3600,
 )
+p.gridlines()
+p.stars(mag=9)
+p.dsos(mag=9, null=True)
+p.constellations()
+p.constellation_borders()
+p.milky_way()
+p.ecliptic()
 
-p.plot_stars(limiting_magnitude=9)
-p.plot_dsos(limiting_magnitude=9, plot_null_magnitudes=True)
-p.plot_constellations()
-p.plot_constellation_borders()
-p.plot_milky_way()
-p.plot_ecliptic()
+p.ellipse(
+    (5.6, -1.2),
+    height_degrees=3,
+    width_degrees=5,
+    style=PolygonStyle(
+        fill_color="#ed7eed",
+        edge_color="#000",
+        alpha=0.32,
+    ),
+    angle=-22,
 
-p.plot_object(
-    SkyObject(
-        name="M42",
-        ra=5.58333,
-        dec=-4.61,
-        style={
-            "marker": {
-                "size": 10,
-                "symbol": "circle_cross",
-                "fill": "full",
-                "color": "#ff6868",
-                "alpha": 1,
-                "zorder": 4096,
-            },
-            "label": {
-                "font_size": 10,
-                "font_weight": "bold",
-                "font_color": "darkred",
-                "zorder": 4096,
-            },
-        },
-    )
 )
 
 p.refresh_legend()

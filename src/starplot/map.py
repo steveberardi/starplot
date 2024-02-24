@@ -11,11 +11,12 @@ import geopandas as gpd
 import numpy as np
 
 from starplot.base import BasePlot
-from starplot.data import DataFiles, constellations, stars
+from starplot.data import DataFiles, constellations as condata, stars
+from starplot.data.constellations import CONSTELLATIONS_ABBREVIATIONS, CONSTELLATIONS_FULL_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.projections import Projection
-from starplot.styles import PlotStyle, PolygonStyle, MAP_BASE
+from starplot.styles import PlotStyle, PolygonStyle, PathStyle, MAP_BASE
 from starplot.utils import lon_to_ra
 
 # Silence noisy cartopy warnings
@@ -321,17 +322,17 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 **style_kwargs,
             )
 
-    def constellations(self):
+    def constellations(self, style: PathStyle = None, labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS):
         """
         Plots constellations
 
         TODO: labels, style,
 
         Args:
-
+            style:
+            labels:
         """
-        if not self.style.constellation.line.visible:
-            return
+        style = style or self.style.constellation
 
         constellations_gdf = gpd.read_file(
             DataFiles.CONSTELLATIONS.value,
@@ -348,8 +349,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         else:
             transform = self._geodetic
 
-        conline_hips = constellations.lines()
-        style_kwargs = self.style.constellation.line.matplot_kwargs(
+        conline_hips = condata.lines()
+        style_kwargs = style.line.matplot_kwargs(
             size_multiplier=self._size_multiplier
         )
 
@@ -368,11 +369,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
                 if s1_ra - s2_ra > 60:
                     s2_ra += 360
-                    # print(f"{s1_ra} {s2_ra}")
 
                 elif s2_ra - s1_ra > 60:
                     s1_ra += 360
-                    # print(f"{c.id} : {s1_ra} {s2_ra}")
 
                 s1_ra *= -1
                 s2_ra *= -1
@@ -390,18 +389,23 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                     **style_kwargs,
                 )
 
-        self._plot_constellation_labels()
+        self._plot_constellation_labels(style, labels)
 
-    def _plot_constellation_labels(self):
-        if not self.style.constellation.label.visible:
+    def _plot_constellation_labels(self, style: PathStyle = None, labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS):
+        style = style or self.style.constellation
+
+        if not style.label.visible:
             return
-        style = self.style.constellation.label.matplot_kwargs(
+        
+        style_kwargs = style.label.matplot_kwargs(
             size_multiplier=self._size_multiplier
         )
-        for con in constellations.iterator():
-            fullname, ra, dec = constellations.get(con)
+        
+        for con in condata.iterator():
+            _, ra, dec = condata.get(con)
+            text = labels.get(con.lower()) or con.upper()
             if self.in_bounds(ra, dec):
-                self._plot_text(ra, dec, con.upper(), **style)
+                self._plot_text(ra, dec, text, **style_kwargs)
 
     def milky_way(self, style: PolygonStyle = None):
         style = style or self.style.milky_way
@@ -514,7 +518,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def _init_plot(self):
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
-            facecolor=self.style.border_bg_color.as_hex(),
+            facecolor=self.style.figure_background_color.as_hex(),
             layout="constrained",
         )
         bounds = self._latlon_bounds()
@@ -537,7 +541,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if self._is_global_extent():
             if self.projection == Projection.ZENITH:
                 theta = np.linspace(0, 2 * np.pi, 100)
-                center, radius = [0.5, 0.5], 0.5
+                center, radius = [0.5, 0.5], 0.51
                 verts = np.vstack([np.sin(theta), np.cos(theta)]).T
                 circle = path.Path(verts * radius + center)
                 extent = self.ax.get_extent(crs=self._proj)
@@ -582,18 +586,41 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             transform=self.ax.transAxes,
             zorder=5200,
         )
-        self.ax.text(0.5, 0.975, "N", **border_font_kwargs)
-        self.ax.text(0.972, 0.5, "W", **border_font_kwargs)
-        self.ax.text(0.005, 0.5, "E", **border_font_kwargs)
-        self.ax.text(0.5, 0.005, "S", **border_font_kwargs)
+        self.ax.text(0.5, 0.98, "N", **border_font_kwargs)
+        self.ax.text(0.975, 0.5, "W", **border_font_kwargs)
+        self.ax.text(0.0046, 0.5, "E", **border_font_kwargs)
+        self.ax.text(0.5, 0.0046, "S", **border_font_kwargs)
 
-        circle = patches.Circle(
+        background_circle = patches.Circle(
+            (0.5, 0.5),
+            radius=0.474,
+            fill=False,
+            # facecolor=self.style.background_color.as_hex(),
+            edgecolor=self.style.border_line_color.as_hex(),
+            linewidth=8 * self._size_multiplier,
+            zorder=4800,
+            transform=self.ax.transAxes,
+        )
+        self.ax.add_patch(background_circle)
+
+        border_circle = patches.Circle(
             (0.5, 0.5),
             radius=0.5,
             fill=False,
-            edgecolor=self.style.border_line_color.as_hex(),
-            linewidth=100 * self._size_multiplier,
+            edgecolor=self.style.border_bg_color.as_hex(),
+            linewidth=90 * self._size_multiplier,
             zorder=5000,
             transform=self.ax.transAxes,
         )
-        self.ax.add_patch(circle)
+        self.ax.add_patch(border_circle)
+
+        border_line_circle = patches.Circle(
+            (0.5, 0.5),
+            radius=0.51,
+            fill=False,
+            edgecolor=self.style.border_line_color.as_hex(),
+            linewidth=8 * self._size_multiplier,
+            zorder=5200,
+            transform=self.ax.transAxes,
+        )
+        self.ax.add_patch(border_line_circle)

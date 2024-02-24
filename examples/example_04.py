@@ -18,11 +18,11 @@ p = MapPlot(
     style=style,
     resolution=1400,
 )
-p.plot_stars(
-    limiting_magnitude=14,
+p.stars(
+    mag=14,
     catalog="tycho-1",
 )
-p.plot_scope_fov(
+p.scope_fov(
     ra=3.7912777778,
     dec=24.1052777778,
     scope_focal_length=600,

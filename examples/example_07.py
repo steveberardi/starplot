@@ -56,37 +56,37 @@ p = MapPlot(
     style=style,
     resolution=2000,
 )
-p.plot_stars(limiting_magnitude=8)
-p.plot_constellations()
-p.plot_constellation_borders()
-p.plot_dsos(limiting_magnitude=8)
+p.gridlines()
+p.stars(mag=8)
+p.constellations()
+p.constellation_borders()
+p.dsos(mag=8)
+p.milky_way()
 
 for t, ra, dec in radecs:
     label = f"{t.utc.month}/{t.utc.day}/{t.utc.year % 100}"
-    p.plot_object(
-        SkyObject(
-            name=label,
-            legend_label="Hale-Bopp Comet",
-            ra=ra,
-            dec=dec,
-            style={
-                "marker": {
-                    "size": 40,
-                    "symbol": "comet",
-                    "fill": "full",
-                    "color": "#b51f1f",
-                    "edge_color": "#b51f1f",
-                    "alpha": 0.9,
-                    "zorder": 4096,
-                },
-                "label": {
-                    "font_size": 17,
-                    "font_weight": "bold",
-                    "font_color": "#3c6daa",
-                    "zorder": 4096,
-                },
+    p.marker(
+        ra=ra,
+        dec=dec,
+        label=label,
+        legend_label="Hale-Bopp Comet",
+        style={
+            "marker": {
+                "size": 16,
+                "symbol": "circle",
+                "fill": "full",
+                "color": "#b51f1f",
+                "edge_color": "#b51f1f",
+                "alpha": 0.5,
+                "zorder": 4096,
             },
-        )
+            "label": {
+                "font_size": 17,
+                "font_weight": "bold",
+                "font_color": "#3c6daa",
+                "zorder": 4096,
+            },
+        },
     )
 
 # refresh the legend so the Hale-Bopp marker is included

@@ -20,9 +20,9 @@ The created file should look like this:
 ![starchart-blue](images/examples/example_01.png)
 
 
-## Star Chart with an Extra Object Plotted
+## Star Chart with More Detail
 
-Building on the first example, you can also plot additional objects and even customize their style. Here's an example that plots the [Coma Star Cluster](https://en.wikipedia.org/wiki/Coma_Star_Cluster) (Melotte 111) as a red star and also changes the plot style to `GRAYSCALE`:
+Building on the first example, you can also plot additional objects and even customize their style. Here's an example that plots a bunch of extra stuff (including the Milky Way, constellation borders, Deep Sky Objects, and more). It also demonstrates how you can plot your own markers, like the purple circle around the [Coma Star Cluster](https://en.wikipedia.org/wiki/Coma_Star_Cluster) (Melotte 111):
 
 ```python
 --8<-- "examples/example_02.py"
@@ -33,7 +33,7 @@ Building on the first example, you can also plot additional objects and even cus
 
 ## Map of Orion
 
-The following code will create a simple map plot that shows the area around the constellation Orion, including a legend and an extra marker for M42 - [The Great Orion Nebula](https://en.wikipedia.org/wiki/Orion_Nebula):
+The following code will create a simple map plot that shows the area around the constellation Orion, including a legend and an ellipse around [Orion's belt](https://en.wikipedia.org/wiki/Orion%27s_Belt):
 
 ```python
 --8<-- "examples/example_03.py"

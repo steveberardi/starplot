@@ -105,6 +105,11 @@ properties = {
     "Vul": ("Vulpecula", 20.13, 22.21),
 }
 
+CONSTELLATIONS_FULL_NAMES = {k.lower(): v[0].upper() for k, v in properties.items()}
+"""Constellation full names"""
+
+CONSTELLATIONS_ABBREVIATIONS = {k.lower(): k.upper() for k in properties.keys()}
+"""Constellation 3-letter abbreviations"""
 
 def load():
     with _load.open("constellations_hip.fab") as f:

@@ -1,19 +1,26 @@
+bayer_labels:
+  visible: false
+constellation:
+  label:
+    font_size: 7
+    font_weight: light
+  line:
+    width: 3
 ecliptic:
+  line:
+    alpha: 0.8
+    width: 2
+gridlines:
   label:
     visible: false
   line:
-    visible: false
-celestial_equator:
+    alpha: 0.8
+    width: 1
+    zorder: -10000
+star:
   label:
-    visible: false
-  line:
-    visible: false
-milky_way:
-  visible: false
-legend:
-  visible: false
-moon:
+    font_size: 9
   marker:
-    visible: true
-  label:
-    visible: true
+    size: 9
+  
+# figure_background_color: null

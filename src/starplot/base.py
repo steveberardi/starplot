@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Dict
+from typing import Dict, Union
 import logging
 
 import numpy as np
@@ -191,6 +191,40 @@ class BasePlot(ABC):
             dpi=144,  # (self.resolution / self.figure_size * 1.28),
             **kwargs,
         )
+
+    def marker(self, ra: float, dec: float, label: str, style: Union[dict, ObjectStyle], legend_label: str = None) -> None:
+        x, y = self._prepare_coords(ra, dec)
+
+        if isinstance(style, dict):
+            style = ObjectStyle(**style)
+        
+        if self.in_bounds(ra, dec):
+            self.ax.plot(
+                x,
+                y,
+                **style.marker.matplot_kwargs(
+                    size_multiplier=self._size_multiplier
+                ),
+                **self._plot_kwargs(),
+                linestyle="None",
+            )
+
+            if legend_label is not None:
+                self._add_legend_handle_marker(legend_label, style.marker)
+
+            if label is not None:
+                plotted_label = self.ax.text(
+                    x,
+                    y,
+                    label,
+                    **style.label.matplot_kwargs(
+                        size_multiplier=self._size_multiplier
+                    ),
+                    **self._plot_kwargs(),
+                    path_effects=[self.text_border],
+                )
+                plotted_label.set_clip_on(True)
+                self._maybe_remove_label(plotted_label)
 
     def plot_object(self, obj: SkyObject) -> None:
         """Plots an object (see SkyObject for details).

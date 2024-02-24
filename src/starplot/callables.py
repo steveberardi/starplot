@@ -33,7 +33,7 @@ def size_by_magnitude_factory(
     return size_fn
 
 
-_size_by_magnitude_default = size_by_magnitude_factory(7.6, 2.36)
+_size_by_magnitude_default = size_by_magnitude_factory(7.6, 4)
 
 
 def size_by_magnitude(star: Star) -> float:

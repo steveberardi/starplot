@@ -29,10 +29,9 @@ p = OpticPlot(
     style=style,
     resolution=1600,
 )
-p.plot_stars(
-    limiting_magnitude=12,
+p.stars(
+    mag=12,
     color_fn=color_by_bv,
-    # separation_tolerance=1/3600,
 )
-p.plot_info()
+p.info()
 p.export("05_optic_m45.png", padding=0.3)
