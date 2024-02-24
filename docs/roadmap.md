@@ -4,7 +4,6 @@
 - ✴️ Custom markers
 - 📋 List of objects plotted
 - 📐 More Nebula outline levels
-- 🌐 More map projection options
 - ⚖️ Better auto font-size adjustment
 - ☄️ Better label collision detection and handling
 

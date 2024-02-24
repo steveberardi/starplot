@@ -2,12 +2,12 @@ from typing import Callable
 
 import numpy as np
 
-from skyfield.api import Star
+from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
 from starplot.data import bayer, stars
 from starplot.data.stars import StarCatalog
-from starplot.models import SimpleObject
+from starplot.models import Star
 from starplot.styles import MarkerStyle
 
 
@@ -106,9 +106,9 @@ class StarPlotterMixin:
         style: MarkerStyle = None,
         rasterize: bool = False,
         layers: int = 4,
-        size_fn: Callable[[SimpleObject], float] = callables.size_by_magnitude,
-        alpha_fn: Callable[[SimpleObject], float] = callables.alpha_by_magnitude,
-        color_fn: Callable[[SimpleObject], float] = None,
+        size_fn: Callable[[Star], float] = callables.size_by_magnitude,
+        alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
+        color_fn: Callable[[Star], float] = None,
         *args,
         **kwargs,
     ):
@@ -134,7 +134,7 @@ class StarPlotterMixin:
         earth = self.ephemeris["earth"]
 
         nearby_stars_df = self._load_stars(catalog, mag)
-        nearby_stars = Star.from_dataframe(nearby_stars_df)
+        nearby_stars = SkyfieldStar.from_dataframe(nearby_stars_df)
         astrometric = earth.at(self.timescale).observe(nearby_stars)
         stars_ra, stars_dec, _ = astrometric.radec()
         nearby_stars_df["ra"], nearby_stars_df["dec"] = (
@@ -151,7 +151,7 @@ class StarPlotterMixin:
             m = star.magnitude
             ra, dec = star.ra, star.dec
 
-            obj = SimpleObject(ra=ra, dec=dec, magnitude=m, bv=star.get("bv"))
+            obj = Star(ra=ra, dec=dec, magnitude=m, bv=star.get("bv"))
             size = size_fn(obj) * self._star_size_multiplier
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()

@@ -30,6 +30,8 @@ Starplot is a Python library for creating star charts and maps.
 
     The latest version of Starplot (`v0.9.0`) has some major changes from the previous version (`v0.8.x`). If you've been using Starplot since before v0.9.0, then please check out the examples/reference to see what's changed. The major change is that everything must be explicitly plotted now.
 
+    [Docs for v0.8.4 available here](https://archives.starplot.dev/0.8.4/)
+
 
 *Example charts and maps created with Starplot:*
 <figure markdown>

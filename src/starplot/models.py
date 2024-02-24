@@ -53,3 +53,21 @@ class SimpleObject(BaseModel):
     dec: float
     magnitude: float
     bv: Optional[float] = None
+
+class Star(BaseModel):
+    """Star model"""
+
+    ra: float
+    """Right Ascension"""
+
+    dec: float
+    """Declination"""
+
+    magnitude: float
+    """Magnitude"""
+
+    bv: Optional[float] = None
+    """B-V Color Index, if available"""
+
+    hip: Optional[int] = None
+    """Hipparcos Catalog ID, if available"""
