@@ -2,7 +2,13 @@ import geopandas as gpd
 import numpy as np
 
 from starplot.data import DataFiles
-from starplot.data.dsos import DsoType, DEFAULT_DSO_TYPES, ONGC_TYPE, ONGC_TYPE_MAP, LEGEND_LABELS
+from starplot.data.dsos import (
+    DsoType,
+    DEFAULT_DSO_TYPES,
+    ONGC_TYPE,
+    ONGC_TYPE_MAP,
+    LEGEND_LABELS,
+)
 from starplot.models import SkyObject
 from starplot.styles import MarkerSymbolEnum
 
@@ -29,7 +35,11 @@ class DsoPlotterMixin:
         self.dsos(types=[DsoType.GLOBULAR_CLUSTER], **kwargs)
 
     def galaxies(self, *args, **kwargs):
-        """Plots galaxy DSO types"""
+        """
+        Plots galaxy DSO types
+        
+        This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
+        """
         self.dsos(
             types=[
                 DsoType.GALAXY,
@@ -40,7 +50,10 @@ class DsoPlotterMixin:
         )
 
     def nebula(self, *args, **kwargs):
-        """Plots nebula DSO types"""
+        """Plots nebula DSO types
+        
+        This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
+        """
         self.dsos(
             types=[
                 DsoType.NEBULA,
@@ -66,7 +79,7 @@ class DsoPlotterMixin:
             mag: Limiting magnitude of DSOs to plot
             types: List of DSO types to plot
             null: If True, then DSOs without a defined magnitude will be plotted
-            true_size: If True, then each DSO's size will be its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used.
+            true_size: If True, then each DSO will be plotted as its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used. Also, keep in mind not all DSOs have a defined size (according to OpenNGC) -- so these will use the style's marker size.
 
         """
         ongc = gpd.read_file(
@@ -80,7 +93,7 @@ class DsoPlotterMixin:
         nearby_dsos = ongc[ongc["Type"].isin(dso_types)]
         nearby_dsos = nearby_dsos.replace({np.nan: None})
 
-        # TODO: sort by type, and plot markers together 
+        # TODO: sort by type, and plot markers together
 
         for n, d in nearby_dsos.iterrows():
             if d.ra_degrees is None or d.dec_degrees is None:
@@ -107,7 +120,11 @@ class DsoPlotterMixin:
 
             geometry_types = d["geometry"].geom_type
 
-            if true_size and "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
+            if (
+                true_size
+                and "Polygon" in geometry_types
+                and "MultiPolygon" not in geometry_types
+            ):
                 self._plot_dso_polygon(d.geometry, style)
 
             elif true_size and "MultiPolygon" in geometry_types:

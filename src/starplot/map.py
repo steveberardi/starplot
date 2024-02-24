@@ -553,3 +553,43 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self._fit_to_ax()
 
         # self.refresh_legend()
+
+    def _plot_border(self):
+        # Plot border text
+        center = ((self.timescale.gmst + self.lon / 15.0) % 24, self.lat)
+        ra, dec = center
+        border_font_kwargs = dict(
+            fontsize=self.style.border_font_size * self._size_multiplier * 2,
+            weight=self.style.border_font_weight,
+            color=self.style.border_font_color.as_hex(),
+            # color="red",
+            transform=self.ax.transAxes,
+            # transform=self._plate_carree,
+            zorder=10000,
+        )
+        self.ax.text(0.5, 0.98, "N", **border_font_kwargs)
+        self.ax.text(0.975, 0.5, "W", **border_font_kwargs)
+        self.ax.text(0.006, 0.5, "E", **border_font_kwargs)
+        self.ax.text(0.5, 0.006, "S", **border_font_kwargs)
+        
+        # self.ax.text(
+        #     ra, 
+        #     dec + 90,
+        #     "N",
+        #     **border_font_kwargs
+        # )
+        # TODO : plot text at ra/dec coords (use geod)
+
+        # Border Circles
+        self.plot_circle(
+            (ra, dec),
+            92,
+            PolygonStyle(
+                fill=False,
+                edge_color=self.style.border_line_color.as_hex(),
+                line_style="solid",
+                edge_width=int(68 * self._size_multiplier),
+                zorder=1000,
+            ),
+            num_pts=360,
+        )
