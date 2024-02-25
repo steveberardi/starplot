@@ -9,7 +9,6 @@ from starplot.data.dsos import (
     ONGC_TYPE_MAP,
     LEGEND_LABELS,
 )
-from starplot.models import SkyObject
 from starplot.styles import MarkerSymbolEnum
 
 
@@ -20,13 +19,6 @@ class DsoPlotterMixin:
         coords.append(coords[0])
         coords.append(coords[0])
         self._polygon(coords, style.marker.to_polygon_style(), closed=False)
-
-        # coords = [(ra * -1, dec) for ra, dec in coords]
-        # p = Polygon(coords)
-        # poly_style = style.marker.to_polygon_style()
-        # pstyle = poly_style.matplot_kwargs(size_multiplier=self._size_multiplier)
-        # pstyle.pop("fill", None)
-        # self.ax.add_geometries([polygon], crs=self._plate_carree, **pstyle)
 
     def open_clusters(self, *args, **kwargs):
         self.dsos(types=[DsoType.OPEN_CLUSTER], **kwargs)
@@ -82,6 +74,7 @@ class DsoPlotterMixin:
             true_size: If True, then each DSO will be plotted as its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used. Also, keep in mind not all DSOs have a defined size (according to OpenNGC) -- so these will use the style's marker size.
 
         """
+        self.logger.debug("Plotting DSOs...")
         ongc = gpd.read_file(
             DataFiles.ONGC.value,
             engine="pyogrio",

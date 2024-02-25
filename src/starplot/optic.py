@@ -14,8 +14,7 @@ from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
 from starplot.optics import Optic
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
-from starplot.styles import PlotStyle, MarkerStyle, LabelStyle, extensions
-from starplot.styles.helpers import use_style
+from starplot.styles import PlotStyle, MarkerStyle, LabelStyle, extensions, use_style
 from starplot.utils import azimuth_to_string
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -101,7 +100,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
-        point = Star(ra_hours=ra, dec_degrees=dec)
+        point = SkyfieldStar(ra_hours=ra, dec_degrees=dec)
         position = self.observe(point)
         pos_apparent = position.apparent()
         pos_alt, pos_az, _ = pos_apparent.altaz()
@@ -118,8 +117,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         x, y = self._proj.transform_point(az, alt, self._crs)
         return self.optic.in_bounds(x, y, scale)
 
-    def _plot_polygon(self, points, style, **kwargs):
-        super()._plot_polygon(points, style, transform=self._crs, **kwargs)
+    def _polygon(self, points, style, **kwargs):
+        super()._polygon(points, style, transform=self._crs, **kwargs)
 
     def _calc_position(self):
         earth = self.ephemeris["earth"]
@@ -180,6 +179,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         plotted.set_clip_on(True)
         plotted.set_clip_path(self._background_clip_path)
 
+    @use_style(MarkerStyle, "star")
     def stars(
         self,
         mag: float = 8.0,
@@ -210,15 +210,15 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         """
         super().stars(
-            mag,
-            mag_labels,
-            catalog,
-            style,
-            rasterize,
-            layers,
-            size_fn,
-            alpha_fn,
-            color_fn,
+            mag=mag,
+            mag_labels=mag_labels,
+            catalog=catalog,
+            style=style,
+            rasterize=rasterize,
+            layers=layers,
+            size_fn=size_fn,
+            alpha_fn=alpha_fn,
+            color_fn=color_fn,
             *args,
             **kwargs,
         )

@@ -398,19 +398,10 @@ def create_optic_plot():
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=20, minute=30, second=0
         ),
-        limiting_magnitude=9.6,
-        limiting_magnitude_labels=9,
         style=style,
-        resolution=1600,
-        include_info_text=True,
-        # colorize_stars=True,
+        resolution=1800,
         debug=True,
     )
-    # p1.plot_circle(
-    #     (3.7836111111, 24.1166666667),
-    #     0.5,
-    #     pstyle,
-    # )
     p1.stars(mag=15, color_fn=callables.color_by_bv)
     p1.dsos(mag=4.1)
 
@@ -460,14 +451,12 @@ def create_optic_plot():
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=21, minute=0, second=0
         ),
-        limiting_magnitude=12,
         style=style,
         resolution=1600,
-        include_info_text=True,
         debug=True,
     )
     # p2.plot_stars(limiting_magnitude=12)
-    p2.plot_info()
+    p2.info()
 
     # p1.export("temp/optic-p1.svg", format="svg", padding=0.3)
     # p2.export("temp/optic-p2.svg", format="svg", padding=0.3)
@@ -584,7 +573,7 @@ def create_map_scratch():
 # create_constellation()
 
 # create_scope_plot_m45()
-# create_optic_plot()
+create_optic_plot()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
@@ -593,7 +582,7 @@ def create_map_scratch():
 # create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
-create_map_orion()
+# create_map_orion()
 # create_map_scratch()
 
 # create_map_sgr()
