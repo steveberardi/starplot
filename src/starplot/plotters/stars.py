@@ -6,7 +6,7 @@ from starplot import callables
 from starplot.data import bayer, stars
 from starplot.data.stars import StarCatalog
 from starplot.models import Star
-from starplot.styles import MarkerStyle, LabelStyle
+from starplot.styles import MarkerStyle, LabelStyle, use_style
 
 
 class StarPlotterMixin:
@@ -95,6 +95,7 @@ class StarPlotterMixin:
                     **self.style.bayer_labels.matplot_kwargs(self._size_multiplier),
                 )
 
+    @use_style(MarkerStyle, "star")
     def stars(
         self,
         mag: float = 6.0,
@@ -126,8 +127,11 @@ class StarPlotterMixin:
         """
         self.logger.debug("Plotting stars...")
 
-        style = style or self.style.star
+        # fallback to style if callables are None
+        size_fn = size_fn or (lambda d: style.marker.size)
+        alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
         color_fn = color_fn or (lambda d: style.marker.color.as_hex())
+        
         earth = self.ephemeris["earth"]
 
         nearby_stars_df = self._load_stars(catalog, mag)

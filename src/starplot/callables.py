@@ -7,14 +7,22 @@ from starplot.utils import bv_to_hex_color
 
 
 def size_by_magnitude_factory(
-    threshold: float, under_threshold_size: float
+    threshold: float, over_threshold_size: float, base: float = 20,
 ) -> Callable[[Star], float]:
     """
-    Creates a new version of `size_by_magnitude` with a custom threshold
+    Creates a new version of `size_by_magnitude` with a custom threshold and base multiplier:
+
+    ```python
+    if magnitude >= threshold:
+        size = over_threshold_size
+    else:
+        size = base ** math.log(threshold - magnitude)
+    ```
 
     Args:
         threshold: The threshold at which size will be a constant value. In other words, if an object's magnitude is more than or equal to this number, then its size will be the constant `under_threshold_size`
-        under_threshold_size: Size for objects that have a magnitude greater than or equal to the treshold
+        over_threshold_size: Size for objects that have a magnitude greater than or equal to the treshold
+        base: Base for objects that have a magnitude less than the threshold
 
     Returns:
         A callable for calculating size based on magnitude
@@ -24,9 +32,9 @@ def size_by_magnitude_factory(
     def size_fn(star: Star) -> float:
         m = star.magnitude
         if m >= threshold:
-            size = under_threshold_size
+            size = over_threshold_size
         else:
-            size = 20 ** math.log(threshold - m)
+            size = base ** math.log(threshold - m)
 
         return size
 
@@ -50,7 +58,8 @@ def size_by_magnitude(star: Star) -> float:
     return _size_by_magnitude_default(star)
 
 
-def size_by_magnitude_simple(star: Star):
+def size_by_magnitude_simple(star: Star) -> float:
+    """Very simple sizer by magnitude for map plots"""
     m = star.magnitude
     if m < 1.6:
         return (9 - m) ** 2.85
@@ -62,12 +71,12 @@ def size_by_magnitude_simple(star: Star):
     return 2.23
 
 
-def size_by_magnitude_for_optic(star: Star):
+def size_by_magnitude_for_optic(star: Star) -> float:
+    """Very simple sizer by magnitude for optic plots"""
     m = star.magnitude
 
     if m < 4.6:
         return (9 - m) ** 3.76
-
     elif m < 5.85:
         return (9 - m) ** 3.72
     elif m < 9:
@@ -76,7 +85,7 @@ def size_by_magnitude_for_optic(star: Star):
     return 4.93
 
 
-def alpha_by_magnitude(star: Star):
+def alpha_by_magnitude(star: Star) -> float:
     """
     Basic calculator for alpha, based on magnitude:
 
