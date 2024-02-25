@@ -18,12 +18,12 @@ from starplot.data.planets import Planet, get_planet_positions
 from starplot.models import SkyObject
 from starplot.styles import (
     PlotStyle,
-    BASE,
     MarkerStyle,
     ObjectStyle,
     LegendLocationEnum,
     PathStyle,
     PolygonStyle,
+    extensions,
 )
 from starplot.styles.helpers import use_style
 
@@ -41,6 +41,7 @@ DEFAULT_FOV_STYLE = PolygonStyle(
 )
 """Default style for plotting scope and bino field of view circles"""
 
+DEFAULT_STYLE = PlotStyle()
 
 class BasePlot(ABC):
     _background_clip_path = None
@@ -49,7 +50,7 @@ class BasePlot(ABC):
         self,
         dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
-        style: PlotStyle = BASE,
+        style: PlotStyle = DEFAULT_STYLE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         *args,

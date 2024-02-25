@@ -25,7 +25,7 @@ from starplot.styles import (
     PlotStyle,
     PolygonStyle,
     PathStyle,
-    MAP_BASE,
+    extensions,
 )
 from starplot.styles.helpers import use_style
 from starplot.utils import lon_to_ra
@@ -34,6 +34,7 @@ from starplot.utils import lon_to_ra
 warnings.filterwarnings("ignore", module="cartopy")
 warnings.filterwarnings("ignore", module="shapely")
 
+DEFAULT_MAP_STYLE = PlotStyle().extend(extensions.MAP)
 
 class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new map plot.
@@ -70,7 +71,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         lon: float = None,
         dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
-        style: PlotStyle = MAP_BASE,
+        style: PlotStyle = DEFAULT_MAP_STYLE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         *args,

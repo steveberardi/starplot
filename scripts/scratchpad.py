@@ -231,7 +231,7 @@ def create_map_miller():
     p.dsos(mag=8, null=True)
     p.gridlines()
     p.milky_way()
-    p.ecliptic()
+    p.ecliptic(style={"line": { "style": "solid"}})
     p.celestial_equator()
     p.export("temp/map-miller.png", padding=0.3)
 

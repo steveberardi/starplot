@@ -11,6 +11,7 @@ from pydantic.functional_serializers import PlainSerializer
 from typing_extensions import Annotated
 
 from starplot.data.dsos import DsoType
+from starplot.styles.helpers import merge_dict
 
 ColorStr = Annotated[
     Color,
@@ -23,23 +24,6 @@ ColorStr = Annotated[
 FONT_SCALE = 2
 
 HERE = Path(__file__).resolve().parent
-
-
-def merge_dict(dict_1: dict, dict_2: dict) -> None:
-    """
-
-    Args:
-        dict_1: Base dictionary to merge into
-        dict_2: Dictionary to merge into the base (dict_1)
-
-    Returns:
-        None (dict_1 is modified directly)
-    """
-    for k in dict_2.keys():
-        if k in dict_1 and isinstance(dict_1[k], dict) and isinstance(dict_2[k], dict):
-            merge_dict(dict_1[k], dict_2[k])
-        else:
-            dict_1[k] = dict_2[k]
 
 
 class BaseStyle(BaseModel):

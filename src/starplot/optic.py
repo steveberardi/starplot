@@ -14,12 +14,13 @@ from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
 from starplot.optics import Optic
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
-from starplot.styles import PlotStyle, OPTIC_BASE, MarkerStyle, LabelStyle
+from starplot.styles import PlotStyle, MarkerStyle, LabelStyle, extensions
 from starplot.styles.helpers import use_style
 from starplot.utils import azimuth_to_string
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
+DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
 
 class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new optic plot.
@@ -53,7 +54,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         lon: float,
         dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
-        style: PlotStyle = OPTIC_BASE,
+        style: PlotStyle = DEFAULT_OPTIC_STYLE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         raise_on_below_horizon: bool = True,
