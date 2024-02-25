@@ -52,6 +52,9 @@ scratchpad:
 examples:
 	$(DOCKER_RUN) "cd examples && python examples.py"
 
+gallery:
+	$(DOCKER_RUN) "python scripts/gallery.py"
+
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------

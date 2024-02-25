@@ -23,6 +23,7 @@ temp*
 raw/
 examples/*.png
 docs/images/examples/*.png
+docs/images/gallery/*.png
 
 *.prof
 

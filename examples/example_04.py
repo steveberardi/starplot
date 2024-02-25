@@ -22,9 +22,7 @@ p.stars(
     mag=14,
     catalog="tycho-1",
 )
-p.dsos(
-    mag=8
-)
+p.dsos(mag=8)
 p.scope_fov(
     ra=3.7912777778,
     dec=24.1052777778,

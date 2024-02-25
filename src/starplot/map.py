@@ -36,6 +36,7 @@ warnings.filterwarnings("ignore", module="shapely")
 
 DEFAULT_MAP_STYLE = PlotStyle().extend(extensions.MAP)
 
+
 class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new map plot.
 

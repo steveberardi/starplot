@@ -7,7 +7,9 @@ from starplot.utils import bv_to_hex_color
 
 
 def size_by_magnitude_factory(
-    threshold: float, over_threshold_size: float, base: float = 20,
+    threshold: float,
+    over_threshold_size: float,
+    base: float = 20,
 ) -> Callable[[Star], float]:
     """
     Creates a new version of `size_by_magnitude` with a custom threshold and base multiplier:

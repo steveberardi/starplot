@@ -21,6 +21,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
 
+
 class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new optic plot.
 
@@ -242,7 +243,9 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         """
         self.ax.set_xlim(-1.22 * self.optic.xlim, 1.22 * self.optic.xlim)
         self.ax.set_ylim(-1.12 * self.optic.ylim, 1.12 * self.optic.ylim)
-        self.optic.transform(self.ax) # apply transform again because new xy limits will undo the transform
+        self.optic.transform(
+            self.ax
+        )  # apply transform again because new xy limits will undo the transform
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
         font_size = style.font_size * self._size_multiplier * 2

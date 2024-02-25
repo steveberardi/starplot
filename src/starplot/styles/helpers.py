@@ -2,6 +2,7 @@ import json
 
 from functools import wraps
 
+
 def merge_dict(dict_1: dict, dict_2: dict) -> None:
     """
 
@@ -26,14 +27,13 @@ def use_style(style_class, style_attr: str = None):
             style = kwargs.get("style")
 
             if style and isinstance(style, dict):
-
                 if style_attr is not None:
                     # if style is a dict and there's a base style, then we just want to merge the changes
                     base_style = getattr(args[0].style, style_attr).model_dump_json()
                     base_style = json.loads(base_style)
-                    
+
                     merge_dict(base_style, style)
-                    
+
                     kwargs["style"] = style_class(**base_style)
                 else:
                     kwargs["style"] = style_class(**style)

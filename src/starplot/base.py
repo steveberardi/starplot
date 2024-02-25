@@ -43,6 +43,7 @@ DEFAULT_FOV_STYLE = PolygonStyle(
 
 DEFAULT_STYLE = PlotStyle()
 
+
 class BasePlot(ABC):
     _background_clip_path = None
 
@@ -302,14 +303,13 @@ class BasePlot(ABC):
                         ),
                     )
             else:
-                obj = SkyObject(
-                    name=label.upper(),
+                self.marker(
                     ra=ra,
                     dec=dec,
+                    label=label.upper(),
                     style=style,
                     legend_label="Planet",
                 )
-                self.plot_object(obj)
 
     @use_style(ObjectStyle, "moon")
     def moon(
@@ -359,14 +359,13 @@ class BasePlot(ABC):
                 )
 
         else:
-            obj = SkyObject(
-                name=label,
+            self.marker(
                 ra=ra,
                 dec=dec,
+                label=label,
                 style=style,
                 legend_label=label,
             )
-            self.plot_object(obj)
 
     @abstractmethod
     def in_bounds(self, ra: float, dec: float) -> bool:

@@ -67,7 +67,10 @@ def create_map_orion():
         # catalog="tycho-1",
         mag=11,
     )
-    p.dsos(mag=12,null=True,)
+    p.dsos(
+        mag=12,
+        null=True,
+    )
 
     p.constellations()
     p.milky_way()
@@ -221,7 +224,7 @@ def create_map_miller():
     p.dsos(mag=8, null=True)
     p.gridlines()
     p.milky_way()
-    p.ecliptic(style={"line": { "style": "solid"}})
+    p.ecliptic(style={"line": {"style": "solid"}})
     p.celestial_equator()
     p.export("temp/map-miller.png", padding=0.3)
 
@@ -341,6 +344,7 @@ def create_scope_view_m45():
     )
 
     p.export("temp/map-scope-fov-m45.png", format="png", padding=0.3)
+
 
 def create_optic_plot():
     style = PlotStyle().extend(
@@ -579,7 +583,7 @@ create_optic_plot()
 # create_scope_view_m11()
 
 # create_zenith()
-# create_map_miller()
+create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
 # create_map_orion()
