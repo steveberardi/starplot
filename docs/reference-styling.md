@@ -32,15 +32,15 @@ style = PlotStyle()
 # Step 2: extend the style with a few built-in extensions
 style = style.extend(
     extensions.MAP,
-    extensions.BLUE_DARK
+    extensions.BLUE_LIGHT,
 )
 
 # Step 3: apply the style in a new map plot
 mp = MapPlot(
-    ra_min=3.6,
-    ra_max=7.8,
-    dec_min=-16,
-    dec_max=23.6,
+    ra_min=4,
+    ra_max=8,
+    dec_min=0,
+    dec_max=20,
     style=style,
 )
 
@@ -141,10 +141,10 @@ from starplot import PlotStyle, MapPlot
 style = PlotStyle.load_from_file("style.yml")
 
 p = MapPlot(
-    ra_min=3.6,
-    ra_max=7.8,
-    dec_min=-16,
-    dec_max=23.6,
+    ra_min=4,
+    ra_max=8,
+    dec_min=0,
+    dec_max=20,
     style=style,
 )
 

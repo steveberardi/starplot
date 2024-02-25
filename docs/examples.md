@@ -1,7 +1,7 @@
 This page has a few examples to get you familiar with Starplot and how it works.
 
 1. [Star Chart for Time/Location](#star-chart-for-timelocation)
-2. [Star Chart with an Extra Object Plotted](#star-chart-with-an-extra-object-plotted)
+2. [Star Chart with More Detail](#star-chart-with-more-detail)
 3. [Map of Orion](#map-of-orion)
 4. [Map of The Pleiades with a Scope Field of View](#map-of-the-pleiades-with-a-scope-field-of-view)
 5. [Optic plot of The Pleiades with a Refractor Telescope](#optic-plot-of-the-pleiades-with-a-refractor-telescope)
