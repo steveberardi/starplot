@@ -33,7 +33,7 @@ Building on the first example, you can also plot additional objects and even cus
 
 ## Map of Orion
 
-The following code will create a simple map plot that shows the area around the constellation Orion, including a legend and an ellipse around [Orion's belt](https://en.wikipedia.org/wiki/Orion%27s_Belt):
+The following code will create a simple map plot that shows the area around the constellation Orion, including a legend and an ellipse around [Orion's Belt](https://en.wikipedia.org/wiki/Orion%27s_Belt):
 
 ```python
 --8<-- "examples/example_03.py"
@@ -60,10 +60,10 @@ _The solid black circle in this plot is the extent of the Pleiades as defined in
 
 !!! tip "Binocular Field of View"
 
-    You can also plot a circle showing the field of view of binoculars with the `plot_bino_fov` function:
+    You can also plot a circle showing the field of view of binoculars with the `bino_fov` function:
 
     ```python
-    p.plot_bino_fov(ra=3.78361, dec=24.11667, fov=65, magnification=10)
+    p.bino_fov(ra=3.78361, dec=24.11667, fov=65, magnification=10)
     ```
 
 

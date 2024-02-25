@@ -43,7 +43,7 @@ p.ellipse(
     style=PolygonStyle(
         fill_color="#ed7eed",
         edge_color="#000",
-        alpha=0.32,
+        alpha=0.2,
     ),
     angle=-22,
 )

@@ -41,7 +41,7 @@ Starplot is a Python library for creating star charts and maps.
 
 <figure markdown>
   <img src="images/examples/example_03.png" width="900">
-  <figcaption>Map around the constellation Orion, with M42 marked (<a href="examples/#map-of-orion">source code</a>)</figcaption>
+  <figcaption>Map around the constellation Orion, with an ellipse around Orion's Belt (<a href="examples/#map-of-orion">source code</a>)</figcaption>
 </figure>
 
 
