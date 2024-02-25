@@ -1,14 +1,12 @@
 from typing import Callable
 
-import numpy as np
-
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
 from starplot.data import bayer, stars
 from starplot.data.stars import StarCatalog
 from starplot.models import Star
-from starplot.styles import MarkerStyle
+from starplot.styles import MarkerStyle, LabelStyle
 
 
 class StarPlotterMixin:
@@ -68,9 +66,8 @@ class StarPlotterMixin:
             **kwargs,
         )
 
-    def _plot_star_labels(self, stars_df, limiting_magnitude_labels, style):
-        stars_df = stars_df[(stars_df["magnitude"] <= limiting_magnitude_labels)]
-
+    def _star_labels(self, stars_df, mag: float, style: LabelStyle):
+        stars_df = stars_df[(stars_df["magnitude"] <= mag)]
         stars_df.sort_values("magnitude")
 
         for hip_id, s in stars_df.iterrows():
@@ -78,19 +75,19 @@ class StarPlotterMixin:
             bayer_desig = bayer.hip.get(hip_id)
             ra, dec = s["ra_hours"], s["dec_degrees"]
 
-            if name and style.label.visible:
+            if name and style.visible:
                 self._plot_text(
-                    ra - 0.01,
-                    dec - 0.12,
+                    ra,
+                    dec,
                     name,
                     ha="left",
                     va="top",
-                    **style.label.matplot_kwargs(self._size_multiplier),
+                    **style.matplot_kwargs(self._size_multiplier),
                 )
 
             if bayer_desig and self.style.bayer_labels.visible:
                 self._plot_text(
-                    ra + 0.01,
+                    ra,
                     dec,
                     bayer_desig,
                     ha="right",
@@ -105,7 +102,7 @@ class StarPlotterMixin:
         catalog: StarCatalog = StarCatalog.HIPPARCOS,
         style: MarkerStyle = None,
         rasterize: bool = False,
-        layers: int = 4,
+        layers: int = 1,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], float] = None,
@@ -163,9 +160,6 @@ class StarPlotterMixin:
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 
         ra, dec, sizes, alphas, colors = zip(*starz)
-
-        # std = np.std(sizes)
-
         step_size = (max_size - min_size) / layers
 
         current_min = max_size - step_size
@@ -173,6 +167,7 @@ class StarPlotterMixin:
         zorder = style.marker.zorder
         edgecolors = self.style.background_color.as_hex()
 
+        self.logger.debug(f"Layers: {layers}")
         self.logger.debug(f"Step: {step_size}")
         self.logger.debug(f"Max size: {max_size}")
 
@@ -203,4 +198,4 @@ class StarPlotterMixin:
 
             self._add_legend_handle_marker("Star", style.marker)
 
-        self._plot_star_labels(nearby_stars_df, mag_labels, style)
+        self._star_labels(nearby_stars_df, mag_labels, style.label)

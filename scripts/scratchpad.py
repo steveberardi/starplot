@@ -66,48 +66,38 @@ def create_map_orion():
     p.stars(
         # catalog="tycho-1",
         mag=11,
-        layers=1,
     )
-    # p.plot_stars(
-    #     # catalog="tycho-1",
-    #     limiting_magnitude=12,
-    # )
-    p.plot_dsos(
-        limiting_magnitude=12,
-        plot_null_magnitudes=True,
-    )
+    p.dsos(mag=12,null=True,)
 
-    p.plot_constellations()
-    p.plot_milky_way()
-    p.plot_ecliptic()
+    p.constellations()
+    p.milky_way()
+    p.ecliptic()
 
-    p.plot_object(
-        SkyObject(
-            name="hello",
-            ra=4.5,
-            dec=5,
-            style={
-                "marker": {
-                    "size": 12,
-                    "symbol": MarkerSymbolEnum.CIRCLE_CROSS,
-                    "fill": "full",
-                    # "color": "#ff6868",
-                    "color": "red",
-                    "edge_color": "black",
-                    "alpha": 0.7,
-                    "zorder": 4096,
-                },
-                "label": {
-                    "font_size": 12,
-                    "font_weight": "bold",
-                    # "font_color": "blue",
-                    # "font_name": "GFS Didot",
-                    "font_color": "darkred",
-                    "zorder": 4096,
-                },
+    p.marker(
+        ra=4.5,
+        dec=5,
+        label="hello",
+        style={
+            "marker": {
+                "size": 10,
+                "symbol": MarkerSymbolEnum.CIRCLE_CROSS,
+                "fill": "full",
+                # "color": "#ff6868",
+                "color": "red",
+                "edge_color": "black",
+                "alpha": 0.7,
+                "zorder": 4096,
             },
-            legend_label="crossmarker",
-        )
+            "label": {
+                "font_size": 12,
+                "font_weight": "bold",
+                # "font_color": "blue",
+                # "font_name": "GFS Didot",
+                "font_color": "darkred",
+                "zorder": 4096,
+            },
+        },
+        legend_label="crossmarker",
     )
 
     points = [
@@ -118,11 +108,11 @@ def create_map_orion():
         (5 * 15, 10),
     ]
 
-    p.plot_polygon(
+    p.polygon(
         points,
         pstyle,
     )
-    p.plot_rectangle(
+    p.rectangle(
         # (6, 20),
         # 5,
         # 10,
@@ -132,7 +122,7 @@ def create_map_orion():
         style=pstyle,
         angle=0,
     )
-    p.plot_circle(
+    p.circle(
         # (7, -5),
         # 5,
         # (0, 80),
@@ -142,15 +132,15 @@ def create_map_orion():
         style=pstyle,
     )
 
-    p.plot_ellipse(
+    p.ellipse(
         (6, 20),
         5,
         10,
         angle=45,
         style=pstyle,
     )
-
-    p.plot_bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
+    p.gridlines()
+    p.bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
 
     p.refresh_legend()
     # p.export("temp/map-orion.svg", format="svg", padding=1)
@@ -600,10 +590,10 @@ def create_map_scratch():
 # create_scope_view_m11()
 
 # create_zenith()
-create_map_miller()
+# create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_scratch()
 
 # create_map_sgr()

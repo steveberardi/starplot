@@ -235,6 +235,8 @@ class BasePlot(ABC):
                     **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
                     **self._plot_kwargs(),
                     path_effects=[self.text_border],
+                    va="bottom",
+                    ha="left",
                 )
                 plotted_label.set_clip_on(True)
                 self._maybe_remove_label(plotted_label)
