@@ -11,6 +11,7 @@ celestial_equator:
     font_color: '#2d5ec2'
   line:
     color: '#2d5ec2'
+    alpha: 0.6
 constellation:
   label:
     font_size: 7
@@ -24,6 +25,7 @@ ecliptic:
     font_color: '#e33b3b'
   line:
     color: '#e33b3b'
+    alpha: 0.6
 planets:
   marker:
     alpha: 0.4
@@ -36,7 +38,7 @@ milky_way:
 gridlines:
   label:
     font_alpha: 0.8
-    font_color: '#f1f6ff'
+    font_color: '#2f4358'
     font_size: 8
     font_weight: light
   line:

@@ -226,7 +226,7 @@ class BasePlot(ABC):
             if legend_label is not None:
                 self._add_legend_handle_marker(legend_label, style.marker)
 
-            if label is not None:
+            if label is not None and style.label.visible:
                 plotted_label = self.ax.text(
                     x,
                     y,
