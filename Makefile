@@ -82,7 +82,7 @@ test-3.12:
 # Docs
 docs-serve: DR_ARGS=-it -p 8000:8000
 docs-serve:
-	$(DOCKER_RUN) "mkdocs serve -a 0.0.0.0:8000 --watch src/"
+	$(DOCKER_RUN) "mkdocs serve -a 0.0.0.0:8000 -q --watch src/"
 
 docs-build:
 	$(DOCKER_RUN) "mkdocs build"
