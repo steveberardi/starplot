@@ -31,12 +31,12 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
       
-    - name: 'Set up Cloud SDK'
+    - name: 'Set up Google Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
       with:
         version: '>= 363.0.0'
 
-    - name: 'Use gcloud CLI'
+    - name: 'Sync docs to Cloud Storage Bucket'
       run: 'gsutil -m rsync -R -d site gs://starplot.dev'
 
     
