@@ -12,7 +12,7 @@ from starplot.utils import in_circle
 class Optic(ABC):
     """Abstract class for defining Optics."""
 
-    def __init__(self) -> None:
+    def __init__(self) -> "Optic":
         pass
 
     def __str__(self):
@@ -72,7 +72,7 @@ class Scope(Optic):
 
     def __init__(
         self, focal_length: float, eyepiece_focal_length: float, eyepiece_fov: float
-    ) -> None:
+    ) -> "Scope":
         self.focal_length = focal_length
         self.eyepiece_focal_length = eyepiece_focal_length
         self.eyepiece_fov = eyepiece_fov
@@ -172,7 +172,7 @@ class Binoculars(Optic):
 
     """
 
-    def __init__(self, magnification: float, fov: float) -> None:
+    def __init__(self, magnification: float, fov: float) -> "Binoculars":
         self.magnification = magnification
         self.apparent_fov = fov
         self.true_fov = self.apparent_fov / self.magnification
@@ -238,7 +238,7 @@ class Camera(Optic):
         sensor_width: float,
         lens_focal_length: float,
         rotation: float = 0,
-    ) -> None:
+    ) -> "Camera":
         self.sensor_height = sensor_height
         self.sensor_width = sensor_width
         self.lens_focal_length = lens_focal_length

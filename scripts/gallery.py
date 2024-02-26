@@ -91,6 +91,7 @@ def orion():
     p.refresh_legend()
     p.export(IMAGE_PATH + "orion.png")
 
+
 def lmc():
     print("Creating Large Magellanic Cloud...")
     style = PlotStyle().extend(
@@ -120,7 +121,7 @@ def lmc():
                     "alpha": 0.2,
                     "zorder": -200,
                 }
-            }
+            },
         },
     )
     style.constellation.label.visible = False
@@ -146,6 +147,7 @@ def lmc():
     p.gridlines()
     p.refresh_legend()
     p.export(IMAGE_PATH + "magellanic_cloud.png")
+
 
 def sgr():
     print("Creating Sagittarius...")
@@ -173,6 +175,7 @@ def sgr():
     p.milky_way()
     p.gridlines()
     p.export(IMAGE_PATH + "sagittarius.png")
+
 
 def optics():
     print("Creating Optics...")

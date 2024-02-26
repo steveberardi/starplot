@@ -454,6 +454,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Args:
             style: style of the polygon
         """
+        if self.lat is None or self.lon is None or self.dt is None:
+            raise ValueError(f"lat, lon, and dt are required for plotting the horizon")
+
         self.circle(
             ((self.timescale.gmst + self.lon / 15.0) % 24, self.lat),
             90,
