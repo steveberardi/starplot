@@ -19,6 +19,9 @@ jobs:
 
     - name: Build Examples
       run: make examples
+    
+    - name: Build Gallery
+      run: make gallery
 
     - name: Build Docs
       run: make docs-build
