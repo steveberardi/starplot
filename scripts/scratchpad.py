@@ -70,6 +70,7 @@ def create_map_orion():
     p.dsos(
         mag=12,
         null=True,
+        # names=["NGC1976", "Mel022", "C041"],
     )
 
     p.constellations()
@@ -577,16 +578,16 @@ def create_map_scratch():
 # create_constellation()
 
 # create_scope_plot_m45()
-create_optic_plot()
+# create_optic_plot()
 
 # create_scope_view_m45()
 # create_scope_view_m11()
 
 # create_zenith()
-create_map_miller()
+# create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
-# create_map_orion()
+create_map_orion()
 # create_map_scratch()
 
 # create_map_sgr()

@@ -61,6 +61,7 @@ class DsoPlotterMixin:
         self,
         mag: float = 8.0,
         types: list[DsoType] = DEFAULT_DSO_TYPES,
+        names: list[str] = None,
         null: bool = False,
         true_size: bool = True,
     ):
@@ -70,6 +71,7 @@ class DsoPlotterMixin:
         Args:
             mag: Limiting magnitude of DSOs to plot
             types: List of DSO types to plot
+            names: List of DSO names (as specified in OpenNGC) to filter by (case sensitive!). If `None`, then the DSOs will not be filtered by name.
             null: If True, then DSOs without a defined magnitude will be plotted
             true_size: If True, then each DSO will be plotted as its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used. Also, keep in mind not all DSOs have a defined size (according to OpenNGC) -- so these will use the style's marker size.
 
@@ -85,6 +87,9 @@ class DsoPlotterMixin:
         dso_types = [ONGC_TYPE[dtype] for dtype in types]
         nearby_dsos = ongc[ongc["Type"].isin(dso_types)]
         nearby_dsos = nearby_dsos.replace({np.nan: None})
+
+        if names:
+            nearby_dsos = nearby_dsos[nearby_dsos["Name"].isin(names)]
 
         # TODO: sort by type, and plot markers together
 
