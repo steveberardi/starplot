@@ -525,14 +525,15 @@ def create_constellation():
 def create_map_scratch():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
-        extensions.GRAYSCALE_DARK,
-        # extensions.BLUE_LIGHT,
+        # extensions.GRAYSCALE_DARK,
+        extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
-            "star": {"label": {"font_size": 8}, "marker": {"size": 140}},
+            # "star": {"label": {"font_size": 8}, "marker": {"size": 140}},
             "bayer_labels": {
+                "visible": False, 
                 "font_name": "GFS Didot",
                 "font_size": 7,
             },
@@ -547,12 +548,12 @@ def create_map_scratch():
     p = sp.MapPlot(
         # projection=Projection.STEREO_NORTH,
         # projection=Projection.STEREO_SOUTH,
-        projection=Projection.MERCATOR,
+        projection=Projection.ZENITH,
         # Corona Borealis
-        ra_min=15,
-        ra_max=16.4,
-        dec_min=21,
-        dec_max=34,
+        # ra_min=15,
+        # ra_max=16.4,
+        # dec_min=21,
+        # dec_max=34,
         # ra_min=5.4,
         # ra_max=16,
         # dec_min=23,
@@ -561,14 +562,18 @@ def create_map_scratch():
         # ra_max=24,
         # dec_min=45,
         # dec_max=65,
-        limiting_magnitude=14.8,
-        limiting_magnitude_labels=0,
+        lat=32.97,
+        lon=-117.038611,
+        dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21),
         style=style,
-        resolution=1800,
-        star_catalog="tycho-1",
-        # dso_plot_null_magnitudes=False,
+        resolution=3200,
         debug=True,
     )
+    p.stars(mag=4.6) #, catalog="tycho-1")
+    p.dsos(mag=8, true_size=False)
+    p.constellations()
+    p.gridlines()
+    p.milky_way()
 
     p.export("temp/map-scratch-1.png", format="png", padding=0.1)
 
@@ -588,7 +593,7 @@ def create_map_scratch():
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
-# create_map_scratch()
+create_map_scratch()
 
 # create_map_sgr()
 
