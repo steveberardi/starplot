@@ -195,3 +195,14 @@ code.raw {
     padding-left: 12px;
     /* border-bottom: 1px solid rgb(126, 126, 126); */
 }
+
+[data-md-color-scheme=slate] {
+    .gridjs-th, .gridjs-footer, .gridjs-pagination, .gridjs-pages button {
+        color: #c6c6c6;
+        background-color: hsl(210, 20%, 24%) !important;
+    }
+    .gridjs-td, .gridjs-input, .gridjs-input::placeholder {
+        color: #c6c6c6;
+        background-color: hsl(210, 20%, 30%) !important;
+    }
+}

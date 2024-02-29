@@ -23,6 +23,7 @@ GRAYSCALE_DARK = load("grayscale_dark.yml")
 BLUE_LIGHT = load("blue_light.yml")
 BLUE_MEDIUM = load("blue_medium.yml")
 BLUE_DARK = load("blue_dark.yml")
+BROWN = load("brown.yml")
 
 # Helpers
 HIDE_LABELS = load("hide_labels.yml")

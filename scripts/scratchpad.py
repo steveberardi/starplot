@@ -28,7 +28,8 @@ def create_map_orion():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
         # extensions.GRAYSCALE_DARK,
-        extensions.BLUE_LIGHT,
+        # extensions.BLUE_LIGHT,
+        extensions.BROWN,
         # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
@@ -112,39 +113,39 @@ def create_map_orion():
         (5 * 15, 10),
     ]
 
-    p.polygon(
-        points,
-        pstyle,
-    )
-    p.rectangle(
-        # (6, 20),
-        # 5,
-        # 10,
-        (0, 70),
-        10,
-        10,
-        style=pstyle,
-        angle=0,
-    )
-    p.circle(
-        # (7, -5),
-        # 5,
-        # (0, 80),
-        # 10,
-        (0, 90),
-        5,
-        style=pstyle,
-    )
+    # p.polygon(
+    #     points,
+    #     pstyle,
+    # )
+    # p.rectangle(
+    #     # (6, 20),
+    #     # 5,
+    #     # 10,
+    #     (0, 70),
+    #     10,
+    #     10,
+    #     style=pstyle,
+    #     angle=0,
+    # )
+    # p.circle(
+    #     # (7, -5),
+    #     # 5,
+    #     # (0, 80),
+    #     # 10,
+    #     (0, 90),
+    #     5,
+    #     style=pstyle,
+    # )
 
-    p.ellipse(
-        (6, 20),
-        5,
-        10,
-        angle=45,
-        style=pstyle,
-    )
+    # p.ellipse(
+    #     (6, 20),
+    #     5,
+    #     10,
+    #     angle=45,
+    #     style=pstyle,
+    # )
     p.gridlines()
-    p.bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
+    # p.bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
 
     p.refresh_legend()
     # p.export("temp/map-orion.svg", format="svg", padding=1)
@@ -526,14 +527,15 @@ def create_map_scratch():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
         # extensions.GRAYSCALE_DARK,
-        extensions.BLUE_LIGHT,
+        # extensions.BLUE_LIGHT,
+        extensions.BROWN,
         # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
             # "star": {"label": {"font_size": 8}, "marker": {"size": 140}},
             "bayer_labels": {
-                "visible": False, 
+                "visible": False,
                 "font_name": "GFS Didot",
                 "font_size": 7,
             },
@@ -548,7 +550,7 @@ def create_map_scratch():
     p = sp.MapPlot(
         # projection=Projection.STEREO_NORTH,
         # projection=Projection.STEREO_SOUTH,
-        projection=Projection.ZENITH,
+        projection=Projection.ORTHOGRAPHIC,
         # Corona Borealis
         # ra_min=15,
         # ra_max=16.4,
@@ -569,11 +571,13 @@ def create_map_scratch():
         resolution=3200,
         debug=True,
     )
-    p.stars(mag=4.6) #, catalog="tycho-1")
-    p.dsos(mag=8, true_size=False)
+    p.stars(mag=5.6)  # , catalog="tycho-1")
+    p.dsos(mag=9, true_size=True)
     p.constellations()
+    p.constellation_borders()
     p.gridlines()
     p.milky_way()
+    p.adjust_text()
 
     p.export("temp/map-scratch-1.png", format="png", padding=0.1)
 
