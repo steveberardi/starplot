@@ -225,7 +225,7 @@ class LineStyle(BaseStyle):
         ```
     """
 
-    width: int = 2
+    width: float = 2
     """Width of line"""
 
     color: ColorStr = ColorStr("#000")

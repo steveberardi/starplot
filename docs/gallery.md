@@ -14,6 +14,8 @@
 
 - ![Optic - 3](images/gallery/optic_03.png)
 
+- ![Big Miller](images/gallery/miller_big.png)
+
 - ![Hale Bopp Comet](images/examples/example_07.png)
 
 

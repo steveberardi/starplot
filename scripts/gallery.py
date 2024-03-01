@@ -302,6 +302,43 @@ def orthographic():
 
         p.export(IMAGE_PATH + f"orthographic_0{i+1}.png")
 
+def miller_big():
+    print("Creating Big Miller...")
+    style = PlotStyle().extend(
+        # extensions.GRAYSCALE,
+        # extensions.GRAYSCALE_DARK,
+        # extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        extensions.BROWN,
+        extensions.MAP,
+        {
+            "bayer_labels": {
+                "visible": False
+            },
+        },
+    )
+
+    style.star.label.font_size = 4
+    style.constellation.label.font_size = 6
+    style.constellation.line.width = 2
+    style.legend.visible = False
+    p = sp.MapPlot(
+        projection=Projection.MILLER,
+        ra_min=0,
+        ra_max=24,
+        dec_min=-80,
+        dec_max=80,
+        style=style,
+        resolution=6000,
+    )
+    p.stars(mag=8)
+    p.dsos(mag=8, null=True)
+    p.gridlines()
+    p.milky_way()
+    p.ecliptic(style={"line": {"style": "dashed"}})
+    p.celestial_equator()
+
+    p.export(IMAGE_PATH + "miller_big.png")
 
 zenith()
 orion()
@@ -309,6 +346,7 @@ sgr()
 lmc()
 optics()
 orthographic()
+miller_big()
 
 # functions = [
 #     zenith,

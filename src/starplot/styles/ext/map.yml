@@ -1,10 +1,10 @@
 bayer_labels:
   font_size: 7
 constellation:
-  label:
-    font_alpha: 0.75
-    font_size: 12
-    font_weight: light
+  # label:
+    # font_alpha: 0.75
+    # font_size: 10
+    # font_weight: light
   line:
     width: 3
 ecliptic:

@@ -7,6 +7,7 @@ from matplotlib import path, patches
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import LineString, MultiLineString
 from shapely.ops import unary_union
+from skyfield.api import Star as SkyfieldStar, wgs84
 import geopandas as gpd
 import numpy as np
 
@@ -93,6 +94,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             raise ValueError("ra_min must be less than ra_max")
         if dec_min > dec_max:
             raise ValueError("dec_min must be less than dec_max")
+        if dec_min < -90 or dec_max > 90:
+            raise ValueError("Declination out of range (must be -90...90)")
 
         self.projection = projection
         self.ra_min = ra_min
@@ -204,26 +207,20 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
     def _load_stars(self, catalog, limiting_magnitude):
         df = super()._load_stars(catalog, limiting_magnitude)
-        from skyfield.api import Star, wgs84
-
-        # TODO : clean up!!
 
         if self.projection == Projection.ZENITH:
+            # filter stars for zenith plots to only include those above horizon
             earth = self.ephemeris["earth"]
             self.location = earth + wgs84.latlon(self.lat, self.lon)
 
             stars_apparent = (
                 self.location.at(self.timescale)
-                .observe(Star.from_dataframe(df))
+                .observe(SkyfieldStar.from_dataframe(df))
                 .apparent()
             )
-
-            nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
-
-            df["alt"], df["az"] = (
-                nearby_stars_alt.degrees,
-                nearby_stars_az.degrees,
-            )
+            # we only need altitude
+            stars_alt, _, _ = stars_apparent.altaz()
+            df["alt"] = stars_alt.degrees
             df = df[df["alt"] > 0]
 
         return df
@@ -336,7 +333,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def constellations(
         self,
         style: PathStyle = None,
-        labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS,
+        # labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS,
+        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
     ):
         """Plots the constellation lines and/or labels
 
@@ -403,7 +401,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def _plot_constellation_labels(
         self,
         style: PathStyle = None,
-        labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS,
+        # labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS,
+        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
     ):
         style = style or self.style.constellation
 

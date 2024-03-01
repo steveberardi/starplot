@@ -75,35 +75,36 @@ def create_map_orion():
     )
 
     p.constellations()
+    p.constellation_borders()
     p.milky_way()
     p.ecliptic()
 
-    p.marker(
-        ra=4.5,
-        dec=5,
-        label="hello",
-        style={
-            "marker": {
-                "size": 10,
-                "symbol": MarkerSymbolEnum.CIRCLE_CROSS,
-                "fill": "full",
-                # "color": "#ff6868",
-                "color": "red",
-                "edge_color": "black",
-                "alpha": 0.7,
-                "zorder": 4096,
-            },
-            "label": {
-                "font_size": 12,
-                "font_weight": "bold",
-                # "font_color": "blue",
-                # "font_name": "GFS Didot",
-                "font_color": "darkred",
-                "zorder": 4096,
-            },
-        },
-        legend_label="crossmarker",
-    )
+    # p.marker(
+    #     ra=4.5,
+    #     dec=5,
+    #     label="hello",
+    #     style={
+    #         "marker": {
+    #             "size": 10,
+    #             "symbol": MarkerSymbolEnum.CIRCLE_CROSS,
+    #             "fill": "full",
+    #             # "color": "#ff6868",
+    #             "color": "red",
+    #             "edge_color": "black",
+    #             "alpha": 0.7,
+    #             "zorder": 4096,
+    #         },
+    #         "label": {
+    #             "font_size": 12,
+    #             "font_weight": "bold",
+    #             # "font_color": "blue",
+    #             # "font_name": "GFS Didot",
+    #             "font_color": "darkred",
+    #             "zorder": 4096,
+    #         },
+    #     },
+    #     legend_label="crossmarker",
+    # )
 
     points = [
         (5 * 15, 10),
@@ -157,7 +158,8 @@ def create_zenith():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
-        extensions.BLUE_MEDIUM,
+        # extensions.BLUE_MEDIUM,
+        extensions.BROWN,
         # extensions.BLUE_DARK,
         extensions.ZENITH,
     )
@@ -179,10 +181,36 @@ def create_zenith():
     #     5,
     #     style=pstyle,
     # )
-    p.plot_ecliptic()
-    p.plot_celestial_equator()
+    p.ecliptic()
+    p.celestial_equator()
     # p.refresh_legend()
     p.export("temp/zenith-poway.png", format="png", transparent=True)
+
+def create_zenith_new():
+    """Create zenith plot for tonight's sky in Poway"""
+    style = PlotStyle().extend(
+        # extensions.GRAYSCALE,
+        # extensions.BLUE_LIGHT,
+        # extensions.BLUE_MEDIUM,
+        extensions.BROWN,
+        # extensions.BLUE_DARK,
+        extensions.ZENITH,
+    )
+    p = sp.MapPlot(
+        projection=Projection.ZENITH,
+        lat=32.97,
+        lon=-117.038611,
+        dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21),
+        style=style,
+        resolution=2000,
+    )
+    p.stars(mag=4.6)
+    p.constellations()
+    p.constellation_borders()
+    p.ecliptic()
+    p.celestial_equator()
+    # p.refresh_legend()
+    p.export("temp/zenith-poway.png", format="png", transparent=False)
 
 
 def create_map_miller():
@@ -191,7 +219,8 @@ def create_map_miller():
         # extensions.GRAYSCALE,
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
-        extensions.BLUE_MEDIUM,
+        # extensions.BLUE_MEDIUM,
+        extensions.BROWN,
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
@@ -211,22 +240,19 @@ def create_map_miller():
     # style.milky_way.visible = False
     # style.constellation.line.visible = False
     p = sp.MapPlot(
-        # projection=Projection.MERCATOR,
         projection=Projection.MILLER,
         ra_min=0,
         ra_max=24,
-        dec_min=-70,
-        dec_max=70,
-        limiting_magnitude=6,
+        dec_min=-80,
+        dec_max=80,
         style=style,
         resolution=8000,
-        adjust_text=False,
     )
     p.stars(mag=8)
     p.dsos(mag=8, null=True)
     p.gridlines()
     p.milky_way()
-    p.ecliptic(style={"line": {"style": "solid"}})
+    p.ecliptic(style={"line": {"style": "dashed"}})
     p.celestial_equator()
     p.export("temp/map-miller.png", padding=0.3)
 
@@ -593,7 +619,8 @@ def create_map_scratch():
 # create_scope_view_m11()
 
 # create_zenith()
-# create_map_miller()
+create_zenith_new()
+create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
