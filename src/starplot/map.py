@@ -41,7 +41,8 @@ DEFAULT_MAP_STYLE = PlotStyle().extend(extensions.MAP)
 class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new map plot.
 
-    **If you're using a perspective projection (`Orthographic`, `Stereographic`, or `Zenith`), then the following `kwargs` are required: `lat`, `lon`, and `dt`**
+    !!! note
+        **`lat`, `lon`, and `dt` are required for perspective projections (`Orthographic`, `Stereographic`, or `Zenith`)**
 
     Args:
         projection: Projection of the map

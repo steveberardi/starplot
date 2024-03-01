@@ -206,3 +206,12 @@ code.raw {
         background-color: hsl(210, 20%, 30%) !important;
     }
 }
+
+.md-typeset .admonition, .md-typeset details {
+    summary {
+        font-size: 0.8rem;
+    }
+    p {
+        font-size: 0.75rem;
+    }
+}
