@@ -65,8 +65,24 @@ def create_map_orion():
         debug=True,
     )
     p.stars(
+        mag=2.3,
+        style={
+            "marker": {
+                "size": 40,
+                "symbol": "star_8",
+                "zorder": 50,
+            }
+        },
+        legend_label=None,
+    )
+    p.stars(
         # catalog="tycho-1",
         mag=11,
+        style={
+            "marker": {
+                "size": 10,
+            }
+        }
     )
     p.dsos(
         mag=12,

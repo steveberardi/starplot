@@ -6,7 +6,7 @@ from starplot import callables
 from starplot.data import bayer, stars
 from starplot.data.stars import StarCatalog
 from starplot.models import Star
-from starplot.styles import MarkerStyle, LabelStyle, use_style
+from starplot.styles import ObjectStyle, LabelStyle, use_style
 
 
 class StarPlotterMixin:
@@ -95,18 +95,19 @@ class StarPlotterMixin:
                     **self.style.bayer_labels.matplot_kwargs(self._size_multiplier),
                 )
 
-    @use_style(MarkerStyle, "star")
+    @use_style(ObjectStyle, "star")
     def stars(
         self,
         mag: float = 6.0,
         mag_labels: float = 6.0,
         catalog: StarCatalog = StarCatalog.HIPPARCOS,
-        style: MarkerStyle = None,
+        style: ObjectStyle = None,
         rasterize: bool = False,
         layers: int = 1,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], float] = None,
+        legend_label: str = "Star",
         *args,
         **kwargs,
     ):
@@ -132,6 +133,10 @@ class StarPlotterMixin:
         alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
         color_fn = color_fn or (lambda d: style.marker.color.as_hex())
 
+        star_size_multiplier = (
+            self._size_multiplier * style.marker.size / 5
+        )
+
         earth = self.ephemeris["earth"]
 
         nearby_stars_df = self._load_stars(catalog, mag)
@@ -153,7 +158,7 @@ class StarPlotterMixin:
             ra, dec = star.ra, star.dec
 
             obj = Star(ra=ra, dec=dec, magnitude=m, bv=star.get("bv"))
-            size = size_fn(obj) * self._star_size_multiplier
+            size = size_fn(obj) * star_size_multiplier
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()
 
@@ -200,6 +205,6 @@ class StarPlotterMixin:
                     current_min = current_min - step_size
                     zorder += 5
 
-            self._add_legend_handle_marker("Star", style.marker)
+            self._add_legend_handle_marker(legend_label, style.marker)
 
         self._star_labels(nearby_stars_df, mag_labels, style.label)
