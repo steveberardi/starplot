@@ -263,11 +263,13 @@ def create_map_miller():
         dec_max=80,
         style=style,
         resolution=8000,
+        debug=True,
     )
     p.stars(mag=8)
     p.dsos(mag=8, null=True)
     p.gridlines()
     p.milky_way()
+    p.planets()
     p.ecliptic(style={"line": {"style": "dashed"}})
     p.celestial_equator()
     p.export("temp/map-miller.png", padding=0.3)
@@ -635,12 +637,12 @@ def create_map_scratch():
 # create_scope_view_m11()
 
 # create_zenith()
-create_zenith_new()
+# create_zenith_new()
 create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
-create_map_scratch()
+# create_map_scratch()
 
 # create_map_sgr()
 

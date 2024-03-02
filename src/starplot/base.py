@@ -14,8 +14,7 @@ from skyfield.api import Angle
 
 from starplot import geod
 from starplot.data import load, ecliptic
-from starplot.data.planets import Planet, get_planet_positions
-from starplot.models import SkyObject
+from starplot.data.planets import Planet, get_planet_positions, PLANET_LABELS_DEFAULT
 from starplot.styles import (
     PlotStyle,
     MarkerStyle,
@@ -261,7 +260,8 @@ class BasePlot(ABC):
         self,
         style: ObjectStyle = None,
         true_size: bool = False,
-        labels: Dict[Planet, str] = None,
+        labels: Dict[Planet, str] = PLANET_LABELS_DEFAULT,
+        legend_label: str = "Planet",
     ) -> None:
         """Plots the planets
 
@@ -269,18 +269,14 @@ class BasePlot(ABC):
             style: Styling of the planets. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then each planet's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.data.planets.Planet])
+            legend_label: How to label the planets in the legend. If `None`, then the planets will not be added to the legend
         """
         labels = labels or {}
-
-        if not style.marker.visible:
-            return
-
         planets = get_planet_positions(self.timescale, ephemeris=self.ephemeris)
 
         for p, planet_data in planets.items():
             ra, dec, apparent_size_degrees = planet_data
-            label = labels.get(p) or p.value
-            # TODO : make default func param planet label dict
+            label = labels.get(p)
 
             if true_size:
                 self.plot_circle(
@@ -288,7 +284,7 @@ class BasePlot(ABC):
                     apparent_size_degrees,
                     style.marker.to_polygon_style(),
                 )
-                self._add_legend_handle_marker("Planet", style.marker)
+                self._add_legend_handle_marker(legend_label, style.marker)
 
                 if label:
                     self._plot_text(
@@ -305,7 +301,7 @@ class BasePlot(ABC):
                     dec=dec,
                     label=label.upper() if label else None,
                     style=style,
-                    legend_label="Planet",
+                    legend_label=legend_label,
                 )
 
     @use_style(ObjectStyle, "moon")
@@ -319,11 +315,7 @@ class BasePlot(ABC):
             true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             label: How the Moon will be labeled on the plot and legend
         """
-        if not style.marker.visible:
-            return
-
         earth, moon = self.ephemeris["earth"], self.ephemeris["moon"]
-
         astrometric = earth.at(self.timescale).observe(moon)
         ra, dec, distance = astrometric.radec()
 
