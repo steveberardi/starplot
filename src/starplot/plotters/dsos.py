@@ -64,6 +64,7 @@ class DsoPlotterMixin:
         names: list[str] = None,
         null: bool = False,
         true_size: bool = True,
+        plot_labels: bool = False,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
@@ -91,7 +92,7 @@ class DsoPlotterMixin:
         if names:
             nearby_dsos = nearby_dsos[nearby_dsos["Name"].isin(names)]
 
-        # TODO: sort by type, and plot markers together
+        # TODO: sort by type, and plot markers together (for better performance)
 
         for n, d in nearby_dsos.iterrows():
             if d.ra_degrees is None or d.dec_degrees is None:
@@ -157,7 +158,7 @@ class DsoPlotterMixin:
                         angle or 0,
                     )
 
-                if style.label.visible:
+                if plot_labels:
                     self._plot_text(
                         ra,
                         dec,
@@ -167,10 +168,11 @@ class DsoPlotterMixin:
 
             else:
                 # If no major axis, then just plot as a marker
+                label = name if plot_labels else None
                 self.marker(
                     ra=ra / 15,
                     dec=dec,
-                    label=name,
+                    label=label,
                     style=style,
                 )
 

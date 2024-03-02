@@ -211,7 +211,7 @@ DEFAULT_DSO_TYPES = [
     # DsoType.DOUBLE_STAR,
     DsoType.ASSOCIATION_OF_STARS,
 ]
-"""Default types of Deep Sky Objects (DSOs) that are plotted on maps"""
+"""Default types of Deep Sky Objects (DSOs) that are plotted when you call `dsos()` on a plot"""
 
 LEGEND_LABELS = {
     # Galaxies ----------

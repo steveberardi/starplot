@@ -2,10 +2,7 @@ Starplot is available on [PyPI](https://pypi.org/project/starplot/), but it's ba
 
 Supported Python versions: 3.9+
 
-## Required Dependencies
-
-- GEOS
-- GDAL
+Required Dependencies: [GEOS](https://libgeos.org/), [GDAL](https://gdal.org/)
 
 ## macOS
 
