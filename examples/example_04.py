@@ -1,6 +1,5 @@
 from starplot import MapPlot, Projection
 from starplot.styles import PlotStyle, extensions
-from starplot.data.dsos import DsoType
 
 style = PlotStyle().extend(
     extensions.MINIMAL,

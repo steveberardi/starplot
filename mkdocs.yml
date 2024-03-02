@@ -9,9 +9,8 @@ nav:
     - Installation: installation.md
     - Examples: examples.md
     - Reference:
-        - starplot.OpticPlot: reference-opticplot.md
-        - starplot.MapPlot: reference-mapplot.md
-        - starplot.ZenithPlot: reference-zenithplot.md
+        - MapPlot: reference-mapplot.md
+        - OpticPlot: reference-opticplot.md
         - Models: reference-models.md
         - Styling: reference-styling.md
         - Callables: reference-callables.md
