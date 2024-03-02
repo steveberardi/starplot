@@ -124,7 +124,7 @@ class StarPlotterMixin:
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
-
+            legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
         """
         self.logger.debug("Plotting stars...")
 

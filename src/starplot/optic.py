@@ -192,6 +192,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], float] = None,
+        legend_label: str = "Star",
         *args,
         **kwargs,
     ):
@@ -208,8 +209,10 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
-
+            legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
         """
+        mx = 0.4 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
+        size_fn_mx = lambda d: size_fn(d) * mx
         super().stars(
             mag=mag,
             mag_labels=mag_labels,
@@ -217,9 +220,10 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             style=style,
             rasterize=rasterize,
             layers=layers,
-            size_fn=size_fn,
+            size_fn=size_fn_mx,
             alpha_fn=alpha_fn,
             color_fn=color_fn,
+            legend_label,
             *args,
             **kwargs,
         )
