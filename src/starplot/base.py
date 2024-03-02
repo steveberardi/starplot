@@ -224,7 +224,7 @@ class BasePlot(ABC):
             if legend_label is not None:
                 self._add_legend_handle_marker(legend_label, style.marker)
 
-            if label is not None and style.label.visible:
+            if label:
                 plotted_label = self.ax.text(
                     x,
                     y,
@@ -280,6 +280,7 @@ class BasePlot(ABC):
         for p, planet_data in planets.items():
             ra, dec, apparent_size_degrees = planet_data
             label = labels.get(p) or p.value
+            # TODO : make default func param planet label dict
 
             if true_size:
                 self.plot_circle(
@@ -289,7 +290,7 @@ class BasePlot(ABC):
                 )
                 self._add_legend_handle_marker("Planet", style.marker)
 
-                if style.label.visible:
+                if label:
                     self._plot_text(
                         ra,
                         dec,
@@ -302,7 +303,7 @@ class BasePlot(ABC):
                 self.marker(
                     ra=ra,
                     dec=dec,
-                    label=label.upper(),
+                    label=label.upper() if label else None,
                     style=style,
                     legend_label="Planet",
                 )
@@ -346,7 +347,7 @@ class BasePlot(ABC):
 
             self._add_legend_handle_marker(label, style.marker)
 
-            if style.label.visible:
+            if label:
                 self._plot_text(
                     ra,
                     dec,
@@ -568,7 +569,7 @@ class BasePlot(ABC):
             **self._plot_kwargs(),
         )
 
-        if style.label.visible:
+        if label:
             if len(inbounds) > 4:
                 label_spacing = int(len(inbounds) / 3) or 1
 
@@ -616,7 +617,7 @@ class BasePlot(ABC):
                 **self._plot_kwargs(),
             )
 
-        if style.label.visible:
+        if label:
             label_style_kwargs = style.label.matplot_kwargs(self._size_multiplier)
             label_spacing = (self.ra_max - self.ra_min) / 3
             for ra in np.arange(self.ra_min, self.ra_max, label_spacing):
