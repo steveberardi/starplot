@@ -87,6 +87,8 @@ def create_map_orion():
     p.dsos(
         mag=12,
         null=True,
+        labels={"NGC2260": "2260www"},
+        # labels=None,
         # names=["NGC1976", "Mel022", "C041"],
     )
 
@@ -638,7 +640,7 @@ def create_map_scratch():
 
 # create_zenith()
 # create_zenith_new()
-create_map_miller()
+# create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()

@@ -1,3 +1,5 @@
+from typing import Mapping
+
 import geopandas as gpd
 import numpy as np
 
@@ -8,6 +10,8 @@ from starplot.data.dsos import (
     ONGC_TYPE,
     ONGC_TYPE_MAP,
     LEGEND_LABELS,
+    DSO_LABELS_DEFAULT,
+    DsoLabelMaker,
 )
 from starplot.styles import MarkerSymbolEnum
 
@@ -64,7 +68,7 @@ class DsoPlotterMixin:
         names: list[str] = None,
         null: bool = False,
         true_size: bool = True,
-        plot_labels: bool = False,
+        labels: Mapping[str, str] = DSO_LABELS_DEFAULT,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
@@ -75,7 +79,7 @@ class DsoPlotterMixin:
             names: List of DSO names (as specified in OpenNGC) to filter by (case sensitive!). If `None`, then the DSOs will not be filtered by name.
             null: If True, then DSOs without a defined magnitude will be plotted
             true_size: If True, then each DSO will be plotted as its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used. Also, keep in mind not all DSOs have a defined size (according to OpenNGC) -- so these will use the style's marker size.
-
+            labels: A dictionary that maps DSO names (as specified in OpenNGC) to the label that'll be plotted for that object. By default, the DSO's name in OpenNGC will be used as the label. If you want to hide all labels, then set this arg to `None`.
         """
         self.logger.debug("Plotting DSOs...")
         ongc = gpd.read_file(
@@ -84,6 +88,11 @@ class DsoPlotterMixin:
             use_arrow=True,
             bbox=self._extent_mask(),
         )
+
+        if labels is None:
+            labels = {}
+        elif type(labels) != DsoLabelMaker:
+            labels = DsoLabelMaker(overrides=labels)
 
         dso_types = [ONGC_TYPE[dtype] for dtype in types]
         nearby_dsos = ongc[ongc["Type"].isin(dso_types)]
@@ -102,6 +111,7 @@ class DsoPlotterMixin:
             dec = d.dec_degrees
 
             name = d.Name
+            label = labels.get(name)
             dso_type = ONGC_TYPE_MAP[d.Type]
             style = self.style.get_dso_style(dso_type)
             maj_ax, min_ax, angle = d.MajAx, d.MinAx, d.PosAng
@@ -158,17 +168,16 @@ class DsoPlotterMixin:
                         angle or 0,
                     )
 
-                if plot_labels:
+                if label:
                     self._plot_text(
                         ra,
                         dec,
-                        d.name,
+                        label,
                         **style.label.matplot_kwargs(self._size_multiplier),
                     )
 
             else:
                 # If no major axis, then just plot as a marker
-                label = name if plot_labels else None
                 self.marker(
                     ra=ra / 15,
                     dec=dec,

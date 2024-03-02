@@ -226,3 +226,22 @@ LEGEND_LABELS = {
     DsoType.STAR_CLUSTER_NEBULA: "Nebula",
     DsoType.REFLECTION_NEBULA: "Nebula",
 }
+
+class DsoLabelMaker(dict):
+    """
+    This is pretty hacky, but it helps keep a consistent interface for plotting labels and any overrides.
+
+    Basically this is just a dictionary that returns the key itself for any get() call, unless
+    the key is present in the 'overrides' dict that's passed on init
+    """
+
+    def __init__(self, *args, **kwargs):
+        self._overrides = kwargs.get("overrides") or {}
+    
+    def __getitem__(self, key):
+        return self.get(key)
+
+    def get(self, key):
+        return self._overrides.get(key) or key
+
+DSO_LABELS_DEFAULT = DsoLabelMaker()
