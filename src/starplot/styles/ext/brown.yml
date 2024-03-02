@@ -61,6 +61,17 @@ star:
     color: hsl(60, 3%, 32%)
   label:
     font_color: hsl(60, 3%, 42%)
+planets:
+  marker:
+    size: 8
+    symbol: circle
+    alpha: 0.68
+    fill: full
+    color: hsl(339, 33%, 74%)
+    edge_color: hsl(339, 33%, 50%)
+  label:
+    font_size: 7
+    font_color: hsl(60, 3%, 42%)
 
 # DSOs
 dso_double_star:

@@ -91,8 +91,11 @@ class MarkerSymbolEnum(str, Enum):
     TRIANGLE = "triangle"
     """\u23F6"""
 
-    CIRCLE_CROSS = "circle_cross"
+    CIRCLE_PLUS = "circle_plus"
     """\u2295"""
+
+    CIRCLE_CROSS = "circle_cross"
+    """\u1AA0"""
 
     COMET = "comet"
     """\u2604"""

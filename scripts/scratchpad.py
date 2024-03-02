@@ -264,7 +264,7 @@ def create_map_miller():
         debug=True,
     )
     p.stars(mag=8)
-    p.dsos(mag=8, null=True)
+    p.dsos(mag=8, null=True, labels=None)
     p.gridlines()
     p.milky_way()
     p.planets()
@@ -636,7 +636,7 @@ def create_map_scratch():
 
 # create_zenith()
 # create_zenith_new()
-# create_map_miller()
+create_map_miller()
 # create_map_stereo_north()
 # create_map_stereo_south()
 create_map_orion()
