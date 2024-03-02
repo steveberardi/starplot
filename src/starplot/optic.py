@@ -89,12 +89,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             raise ValueError(
                 f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX})"
             )
-
-        self._star_size_multiplier = (
-            self._star_size_multiplier
-            * 0.4
-            * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
-        )
         self._calc_position()
         self._adjust_radec_minmax()
         self._init_plot()
@@ -223,7 +217,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             size_fn=size_fn_mx,
             alpha_fn=alpha_fn,
             color_fn=color_fn,
-            legend_label,
+            legend_label=legend_label,
             *args,
             **kwargs,
         )
