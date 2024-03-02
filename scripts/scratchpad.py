@@ -56,10 +56,6 @@ def create_map_orion():
         ra_max=8,
         dec_min=-16,
         dec_max=25.6,
-        # ra_min=0,
-        # ra_max=24,
-        # dec_min=40,
-        # dec_max=90,
         style=style,
         resolution=3200,
         debug=True,
@@ -87,15 +83,15 @@ def create_map_orion():
     p.dsos(
         mag=12,
         null=True,
-        labels={"NGC2260": "2260www"},
-        # labels=None,
+        # labels={"NGC2260": "2260www"},
+        labels=None,
         # names=["NGC1976", "Mel022", "C041"],
     )
 
     p.constellations()
     p.constellation_borders()
     p.milky_way()
-    p.ecliptic()
+    p.ecliptic(label=None)
 
     # p.marker(
     #     ra=4.5,

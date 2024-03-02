@@ -343,7 +343,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             style: Styling of the constellations. If None, then the plot's style (specified when creating the plot) will be used
             labels: A dictionary where the keys are each constellation's 3-letter abbreviation, and the values are how the constellation will be labeled on the plot.
         """
-
+        labels = labels or {}
         constellations_gdf = gpd.read_file(
             DataFiles.CONSTELLATIONS.value,
             engine="pyogrio",
@@ -406,16 +406,12 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
     ):
         style = style or self.style.constellation
-
-        if not style.label.visible:
-            return
-
         style_kwargs = style.label.matplot_kwargs(size_multiplier=self._size_multiplier)
 
         for con in condata.iterator():
             _, ra, dec = condata.get(con)
-            text = labels.get(con.lower()) or con.upper()
-            if self.in_bounds(ra, dec):
+            text = labels.get(con.lower())
+            if text and self.in_bounds(ra, dec):
                 self._plot_text(ra, dec, text, **style_kwargs)
 
     @use_style(PolygonStyle, "milky_way")

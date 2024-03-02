@@ -81,6 +81,9 @@ class DsoPlotterMixin:
             true_size: If True, then each DSO will be plotted as its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used. Also, keep in mind not all DSOs have a defined size (according to OpenNGC) -- so these will use the style's marker size.
             labels: A dictionary that maps DSO names (as specified in OpenNGC) to the label that'll be plotted for that object. By default, the DSO's name in OpenNGC will be used as the label. If you want to hide all labels, then set this arg to `None`.
         """
+        
+        # TODO: add args mag_labels, legend_labels
+
         self.logger.debug("Plotting DSOs...")
         ongc = gpd.read_file(
             DataFiles.ONGC.value,
