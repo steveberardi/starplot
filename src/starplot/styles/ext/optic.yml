@@ -1,4 +1,6 @@
 star:
+  label:
+    font_size: 10
   marker:
     size: 16
 planets:
@@ -14,3 +16,5 @@ moon:
 legend:
   location: "lower center"
   visible: false
+bayer_labels:
+  font_size: 10

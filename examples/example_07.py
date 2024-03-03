@@ -54,13 +54,13 @@ p = MapPlot(
     dec_min=20,
     dec_max=56,
     style=style,
-    resolution=2000,
+    resolution=2600,
 )
 p.gridlines()
 p.stars(mag=8)
 p.constellations()
 p.constellation_borders()
-p.dsos(mag=8)
+p.dsos(mag=8, labels=None)
 p.milky_way()
 
 for t, ra, dec in radecs:

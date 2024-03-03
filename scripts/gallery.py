@@ -27,10 +27,6 @@ def zenith():
         lat=33.363484,
         lon=-116.836394,
         dt=dt,
-        ra_min=0,
-        ra_max=24,
-        dec_min=-90,
-        dec_max=90,
         style=PlotStyle().extend(
             extensions.BLUE_MEDIUM,
             extensions.ZENITH,
@@ -39,7 +35,7 @@ def zenith():
     )
     p.constellations(labels=constellations.CONSTELLATIONS_FULL_NAMES)
     p.stars(mag=5.6, mag_labels=2.1)
-    p.dsos(mag=9, null=True, true_size=True)
+    p.dsos(mag=9, null=True, true_size=True, labels=None)
     p.constellation_borders()
     p.ecliptic()
     p.celestial_equator()
@@ -81,8 +77,8 @@ def orion():
         resolution=RESOLUTION,
     )
     p.constellations()
-    p.stars(mag=10)
-    p.dsos(mag=10, null=True, true_size=True)
+    p.stars(mag=10, bayer_labels=True)
+    p.dsos(mag=10, null=True, true_size=True, labels=None)
     p.constellation_borders()
     p.ecliptic()
     p.celestial_equator()
@@ -136,10 +132,10 @@ def lmc():
     )
     p.constellations()
     p.stars(mag=13)
-    p.galaxies(mag=12, null=True)
-    p.nebula(mag=12, null=True)
-    p.open_clusters(mag=12, null=True, true_size=False)
-    p.globular_clusters(mag=12, null=True, true_size=False)
+    p.galaxies(mag=12, null=True, labels=None)
+    p.nebula(mag=12, null=True, labels=None)
+    p.open_clusters(mag=12, null=True, true_size=False, labels=None)
+    p.globular_clusters(mag=12, null=True, true_size=False, labels=None)
     p.constellation_borders()
     p.ecliptic()
     p.celestial_equator()
@@ -167,8 +163,8 @@ def sgr():
         resolution=RESOLUTION,
     )
     p.constellations()
-    p.stars(mag=13)
-    p.dsos(mag=13, null=True, true_size=True)
+    p.stars(mag=13, bayer_labels=True)
+    p.dsos(mag=13, null=True, true_size=True, labels=None)
     p.constellation_borders()
     p.ecliptic()
     p.celestial_equator()
@@ -207,8 +203,8 @@ def optics():
         style=style,
         resolution=RESOLUTION,
     )
-    p1.stars(mag=15, color_fn=callables.color_by_bv)
-    p1.dsos(mag=4.1)
+    p1.stars(mag=15, color_fn=callables.color_by_bv, bayer_labels=True)
+    p1.dsos(mag=4.1, labels=None)
     p1.info()
 
     p2 = sp.OpticPlot(
@@ -227,7 +223,7 @@ def optics():
         style=style,
         resolution=RESOLUTION,
     )
-    p2.stars(mag=15, color_fn=callables.color_by_bv)
+    p2.stars(mag=15, color_fn=callables.color_by_bv, bayer_labels=True)
     p2.info()
 
     p3 = sp.OpticPlot(
@@ -245,7 +241,7 @@ def optics():
         style=style.extend({"star": {"marker": {"size": 64}}}),
         resolution=RESOLUTION,
     )
-    p3.stars(mag=11, color_fn=callables.color_by_bv)
+    p3.stars(mag=11, color_fn=callables.color_by_bv, bayer_labels=True)
     p3.info()
 
     p1.export(IMAGE_PATH + "optic_01.png")
@@ -270,7 +266,6 @@ def orthographic():
 
         style.gridlines.label.visible = False
         style.tick_marks.visible = False
-        style.bayer_labels.visible = False
 
         p = MapPlot(
             projection=Projection.ORTHOGRAPHIC,
@@ -286,9 +281,9 @@ def orthographic():
         )
         p.gridlines()
         p.stars(mag=7.86, mag_labels=6)
-        p.open_clusters(mag=8, null=True, true_size=False)
-        p.galaxies(mag=8, null=True, true_size=False)
-        p.nebula(mag=8, null=True, true_size=True)
+        p.open_clusters(mag=8, null=True, true_size=False, labels=None)
+        p.galaxies(mag=8, null=True, true_size=False, labels=None)
+        p.nebula(mag=8, null=True, true_size=True, labels=None)
         p.constellations(
             labels=constellations.CONSTELLATIONS_FULL_NAMES,
             style={"label": {"font_size": 9, "font_alpha": 0.8}},
@@ -302,6 +297,7 @@ def orthographic():
 
         p.export(IMAGE_PATH + f"orthographic_0{i+1}.png")
 
+
 def miller_big():
     print("Creating Big Miller...")
     style = PlotStyle().extend(
@@ -312,9 +308,7 @@ def miller_big():
         extensions.BROWN,
         extensions.MAP,
         {
-            "bayer_labels": {
-                "visible": False
-            },
+            "bayer_labels": {"visible": False},
         },
     )
 
@@ -332,13 +326,14 @@ def miller_big():
         resolution=6000,
     )
     p.stars(mag=8)
-    p.dsos(mag=8, null=True)
+    p.dsos(mag=8, null=True, labels=None)
     p.gridlines()
     p.milky_way()
     p.ecliptic(style={"line": {"style": "dashed"}})
     p.celestial_equator()
 
     p.export(IMAGE_PATH + "miller_big.png")
+
 
 zenith()
 orion()

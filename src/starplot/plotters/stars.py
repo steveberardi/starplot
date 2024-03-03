@@ -66,7 +66,14 @@ class StarPlotterMixin:
             **kwargs,
         )
 
-    def _star_labels(self, stars_df, mag: float, style: LabelStyle, labels: Mapping[str, str], bayer_labels: bool):
+    def _star_labels(
+        self,
+        stars_df,
+        mag: float,
+        style: LabelStyle,
+        labels: Mapping[str, str],
+        bayer_labels: bool,
+    ):
         stars_df = stars_df[(stars_df["magnitude"] <= mag)]
         stars_df.sort_values("magnitude")
 
@@ -142,9 +149,7 @@ class StarPlotterMixin:
         else:
             labels = {**STAR_NAMES, **labels}
 
-        star_size_multiplier = (
-            self._size_multiplier * style.marker.size / 5
-        )
+        star_size_multiplier = self._size_multiplier * style.marker.size / 5
 
         earth = self.ephemeris["earth"]
 
@@ -216,4 +221,6 @@ class StarPlotterMixin:
 
             self._add_legend_handle_marker(legend_label, style.marker)
 
-        self._star_labels(nearby_stars_df, mag_labels, style.label, labels, bayer_labels)
+        self._star_labels(
+            nearby_stars_df, mag_labels, style.label, labels, bayer_labels
+        )

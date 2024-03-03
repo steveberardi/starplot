@@ -17,6 +17,7 @@ class Planet(str, Enum):
     URANUS = "uranus"
     NEPTUNE = "neptune"
 
+
 PLANET_LABELS_DEFAULT = {p: p.value.upper() for p in Planet}
 
 PLANET_SIZE_KM = {

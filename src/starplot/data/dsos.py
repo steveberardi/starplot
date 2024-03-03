@@ -230,13 +230,14 @@ DSO_LEGEND_LABELS = {
     DsoType.GLOBULAR_CLUSTER: "Globular Cluster",
     # Stars ----------
     DsoType.DOUBLE_STAR: "Double Star",
-    DsoType.ASSOCIATION_OF_STARS:  "Association of stars",
+    DsoType.ASSOCIATION_OF_STARS: "Association of stars",
     DsoType.NOVA_STAR: "Nova Star",
     # Others
     DsoType.HII_IONIZED_REGION: "HII Ionized Region",
     DsoType.DARK_NEBULA: "Dark Nebula",
     DsoType.SUPERNOVA_REMNANT: "Supernova Remnant",
 }
+
 
 class DsoLabelMaker(dict):
     """
@@ -248,11 +249,12 @@ class DsoLabelMaker(dict):
 
     def __init__(self, *args, **kwargs):
         self._overrides = kwargs.get("overrides") or {}
-    
+
     def __getitem__(self, key):
         return self.get(key)
 
     def get(self, key):
         return self._overrides.get(key) or key
+
 
 DSO_LABELS_DEFAULT = DsoLabelMaker()

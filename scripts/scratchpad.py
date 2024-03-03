@@ -85,9 +85,7 @@ def create_map_orion():
         null=True,
         # labels={"NGC2260": "2260www"},
         labels=None,
-        legend_labels={
-            sp.data.dsos.DsoType.OPEN_CLUSTER: None
-        }
+        legend_labels={sp.data.dsos.DsoType.OPEN_CLUSTER: None}
         # names=["NGC1976", "Mel022", "C041"],
     )
 
@@ -169,6 +167,7 @@ def create_map_orion():
     # p.export("temp/map-orion.svg", format="svg", padding=1)
     p.export("temp/map-orion.png", padding=0.25)
 
+
 def create_zenith():
     """Create zenith plot for tonight's sky in Poway"""
     style = PlotStyle().extend(
@@ -240,6 +239,7 @@ def create_map_miller():
     p.ecliptic(style={"line": {"style": "dashed"}})
     p.celestial_equator()
     p.export("temp/map-miller.png", padding=0.3)
+
 
 def create_optic_plot():
     style = PlotStyle().extend(

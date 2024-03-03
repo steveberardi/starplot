@@ -21,4 +21,4 @@ gridlines:
     zorder: -10000
 star:
   label:
-    font_size: 8
+    font_size: 11

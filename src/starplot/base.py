@@ -22,7 +22,6 @@ from starplot.styles import (
     LegendLocationEnum,
     PathStyle,
     PolygonStyle,
-    extensions,
 )
 from starplot.styles.helpers import use_style
 

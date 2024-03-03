@@ -101,7 +101,7 @@ class DsoPlotterMixin:
             labels = {}
         elif type(labels) != DsoLabelMaker:
             labels = DsoLabelMaker(overrides=labels)
-        
+
         if legend_labels is None:
             legend_labels = {}
         else:

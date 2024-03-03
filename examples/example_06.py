@@ -12,7 +12,7 @@ style.star.marker.symbol = MarkerSymbolEnum.STAR
 # Star sizes are calculated based on their magnitude first,
 # but then that result will be multiplied by the star's marker size in the PlotStyle
 # so, adjusting the star marker size is a way to make all stars bigger or smaller
-style.star.marker.size = 50
+style.star.marker.size = 70
 
 p = MapPlot(
     projection=Projection.STEREO_NORTH,

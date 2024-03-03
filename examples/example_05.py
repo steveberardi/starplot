@@ -15,8 +15,8 @@ style = PlotStyle().extend(
 
 p = OpticPlot(
     # M45
-    ra=3.7912777778,
-    dec=24.1052777778,
+    ra=3.7912778,
+    dec=24.1052778,
     lat=33.363484,
     lon=-116.836394,
     # Refractor Telescope

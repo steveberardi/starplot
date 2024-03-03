@@ -15,12 +15,12 @@ p = MapPlot(
         extensions.BLUE_MEDIUM,
         extensions.ZENITH,
     ),
-    resolution=2000,
+    resolution=2600,
 )
 p.constellations()
 p.stars(mag=5.6, mag_labels=2.1)
 
-p.dsos(mag=9, null=True, true_size=True)
+p.dsos(mag=9, null=True, true_size=True, labels=None)
 p.constellation_borders()
 p.ecliptic()
 p.celestial_equator()

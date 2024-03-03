@@ -13,10 +13,7 @@ import numpy as np
 
 from starplot.base import BasePlot
 from starplot.data import DataFiles, constellations as condata, stars
-from starplot.data.constellations import (
-    CONSTELLATIONS_ABBREVIATIONS,
-    CONSTELLATIONS_FULL_NAMES,
-)
+from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.projections import Projection
@@ -451,7 +448,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             style: style of the polygon
         """
         if self.lat is None or self.lon is None or self.dt is None:
-            raise ValueError(f"lat, lon, and dt are required for plotting the horizon")
+            raise ValueError("lat, lon, and dt are required for plotting the horizon")
 
         self.circle(
             ((self.timescale.gmst + self.lon / 15.0) % 24, self.lat),
