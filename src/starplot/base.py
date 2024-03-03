@@ -147,15 +147,13 @@ class BasePlot(ABC):
             # to plot legends outside the map area, you have to target the figure
             target = self.fig
             bbox_kwargs = dict(
-                bbox_to_anchor=(0.5, 0.13),
-                bbox_transform=self.fig.transFigure
+                bbox_to_anchor=(0.5, 0.13), bbox_transform=self.fig.transFigure
             )
 
         elif style.location == LegendLocationEnum.OUTSIDE_TOP:
             target = self.fig
             bbox_kwargs = dict(
-                bbox_to_anchor=(0.5, 0.87),
-                bbox_transform=self.fig.transFigure
+                bbox_to_anchor=(0.5, 0.87), bbox_transform=self.fig.transFigure
             )
         else:
             target = self.ax

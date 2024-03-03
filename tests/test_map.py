@@ -20,6 +20,7 @@ STYLE = styles.PlotStyle().extend(
 )
 RESOLUTION = 3200
 
+
 @pytest.fixture()
 def map_plot_mercator():
     # returns a mercator plot of Orion
@@ -265,6 +266,7 @@ def test_map_mollweide():
 
     assert dhash(filename) == "0b2b7b632b331707"
     assert colorhash(filename) == "07000000000"
+
 
 # TODO : Add orthographic
 # TODO : Add Zenith

@@ -4,7 +4,7 @@ from typing import Callable
 import pandas as pd
 
 from cartopy import crs as ccrs
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot import callables
@@ -168,11 +168,16 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             alphas,
             colors,
             style,
-            clip_path=self._background_clip_path,
             **kwargs,
         )
         plotted.set_clip_on(True)
-        plotted.set_clip_path(self._background_clip_path)
+
+        if type(self._background_clip_path) == patches.Rectangle:
+            # convert to generic path to handle possible rotation angle:
+            clip_path = path.Path(self._background_clip_path.get_corners())
+            plotted.set_clip_path(clip_path, transform=self.ax.transData)
+        else:
+            plotted.set_clip_path(self._background_clip_path)
 
     @use_style(MarkerStyle, "star")
     def stars(
@@ -356,6 +361,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self._plot_border()
         self._fit_to_ax()
 
-        self.ax.set_xlim(-1.03 * self.optic.xlim, 1.03 * self.optic.xlim)
-        self.ax.set_ylim(-1.03 * self.optic.ylim, 1.03 * self.optic.ylim)
+        self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
+        self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
         self.optic.transform(self.ax)
