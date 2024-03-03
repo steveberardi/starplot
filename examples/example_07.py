@@ -2,7 +2,7 @@ from skyfield.api import load
 from skyfield.data import mpc
 from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
 
-from starplot import MapPlot, Projection, SkyObject
+from starplot import MapPlot, Projection
 from starplot.styles import PlotStyle, extensions
 
 # First, we use Skyfield to get comet data
@@ -88,7 +88,6 @@ for t, ra, dec in radecs:
         },
     )
 
-# refresh the legend so the Hale-Bopp marker is included
-p.refresh_legend()
+p.legend()
 
 p.export("07_map_hale_bopp.png", padding=0.2)

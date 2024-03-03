@@ -7,7 +7,6 @@ import pytest
 
 from starplot import styles
 from starplot.map import MapPlot, Projection
-from starplot.models import SkyObject
 
 from .utils import colorhash, dhash
 
@@ -15,68 +14,80 @@ HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
 
 
+STYLE = styles.PlotStyle().extend(
+    styles.extensions.BLUE_LIGHT,
+    styles.extensions.MAP,
+)
+RESOLUTION = 3200
+
 @pytest.fixture()
 def map_plot_mercator():
     # returns a mercator plot of Orion
-    yield MapPlot(
+    p = MapPlot(
         projection=Projection.MERCATOR,
         ra_min=3.6,
         ra_max=7.8,
         dec_min=-16,
         dec_max=23.6,
-        limiting_magnitude=7.2,
-        style=styles.MAP_BLUE_LIGHT,
-        resolution=4000,
+        style=STYLE,
+        resolution=RESOLUTION,
     )
+    p.stars(mag=7.6, bayer_labels=True)
+    p.dsos(mag=8, null=True, labels=None)
+    p.milky_way()
+    p.gridlines()
+    p.ecliptic()
+    p.celestial_equator()
+    p.constellations()
+    p.constellation_borders()
+
+    yield p
 
 
 @pytest.fixture()
 def map_plot_stereo_north():
-    yield MapPlot(
+    p = MapPlot(
         projection=Projection.STEREO_NORTH,
         ra_min=17,
         ra_max=20,
         dec_min=30,
         dec_max=55,
-        limiting_magnitude=8.0,
-        style=styles.MAP_BLUE_LIGHT,
-        resolution=2000,
+        style=STYLE,
+        resolution=RESOLUTION,
     )
+    p.stars(mag=7.6, bayer_labels=True)
+    p.dsos(mag=8, null=True, labels=None)
+    p.milky_way()
+    p.gridlines()
+    p.constellations()
+    p.constellation_borders()
+    yield p
 
 
 def test_map_plot_mercator_base(map_plot_mercator):
     filename = DATA_PATH / "map-mercator-base.png"
     map_plot_mercator.export(filename)
-    assert dhash(filename) == "183b1a3e2e2d646c"
+    assert dhash(filename) == "183b3a6e6e2e6c6c"
     assert colorhash(filename) == "07443000000"
 
 
-def test_map_plot_mercator_with_extra_object(map_plot_mercator):
+def test_map_plot_mercator_extra(map_plot_mercator):
     filename = DATA_PATH / "map-mercator-extra.png"
-    map_plot_mercator.plot_object(
-        SkyObject(
-            name="M42",
-            ra=5.58333,
-            dec=-4.61,
-            style={
-                "marker": {
-                    "size": 10,
-                    "symbol": "square",
-                    "fill": "full",
-                    "color": "#ff6868",
-                    "alpha": 1,
-                    "zorder": 4096,
-                },
-                "label": {
-                    "font_size": 10,
-                    "font_weight": "bold",
-                    "font_color": "darkred",
-                    "zorder": 4096,
-                },
+    map_plot_mercator.marker(
+        ra=4.5,
+        dec=5,
+        label="hello worldzz",
+        style={
+            "marker": {
+                "size": 30,
+                "symbol": "square",
+                "fill": "full",
+                "color": "#ff6868",
             },
-        )
+        },
+        legend_label="hello legend",
     )
-    map_plot_mercator.plot_circle(
+    map_plot_mercator.circle(
         (7, -10),
         5,
         style=styles.PolygonStyle(
@@ -84,71 +95,42 @@ def test_map_plot_mercator_with_extra_object(map_plot_mercator):
             alpha=0.14,
         ),
     )
-    map_plot_mercator.export(filename)
-    assert dhash(filename) == "183b1a3e2e6d646c"
-    assert colorhash(filename) == "07403000000"
+    map_plot_mercator.legend()
+    map_plot_mercator.export(filename, padding=0.5)
+    assert dhash(filename) == "1c1b1a6b2e6c6c17"
+    assert colorhash(filename) == "07c02000000"
 
 
 def test_map_plot_stereo_base(map_plot_stereo_north):
     filename = DATA_PATH / "map-stereo-north-base.png"
     map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "626674747c383412"
-    assert colorhash(filename) == "07cc0000000"
-
-
-def test_map_plot_stereo_with_extra_object(map_plot_stereo_north):
-    filename = DATA_PATH / "map-stereo-north-extra.png"
-
-    map_plot_stereo_north.plot_object(
-        SkyObject(
-            name="M57",
-            ra=18.885,
-            dec=33.03,
-            style={
-                "marker": {
-                    "size": 10,
-                    "symbol": "square",
-                    "fill": "full",
-                    "color": "red",
-                    "alpha": 0.6,
-                }
-            },
-        )
-    )
-    map_plot_stereo_north.export(filename)
-    assert dhash(filename) == "626674747c381412"
-    assert colorhash(filename) == "07200180000"
+    assert dhash(filename) == "627666f02c383416"
+    assert colorhash(filename) == "071c0000000"
 
 
 def test_map_plot_with_planets():
     filename = DATA_PATH / "map-mercator-planets.png"
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
 
-    style = styles.MAP_BLUE_LIGHT
-    style.bayer_labels.visible = False
-    style.star.label.visible = False
-    style.constellation.label.visible = False
-    style.ecliptic.label.visible = False
-    style.celestial_equator.label.visible = False
-    style.planets.marker.visible = True
-    style.planets.label.visible = True
-
     p = MapPlot(
-        projection=Projection.MERCATOR,
+        projection=Projection.MILLER,
         ra_min=0,
         ra_max=24,
         dec_min=-70,
         dec_max=70,
         dt=dt,
-        limiting_magnitude=3,
         hide_colliding_labels=False,
-        style=style,
-        resolution=2600,
+        style=STYLE,
+        resolution=RESOLUTION,
     )
+    p.stars(mag=3, labels=None)
+    p.planets()
+    p.ecliptic()
+    p.gridlines()
     p.export(filename)
 
-    assert dhash(filename) == "cc6871633bb68e0b"
-    assert colorhash(filename) == "07642000000"
+    assert dhash(filename) == "4c681185cbb28a0c"
+    assert colorhash(filename) == "07e00000000"
 
 
 def test_map_plot_scope_bino_fov():
@@ -156,7 +138,6 @@ def test_map_plot_scope_bino_fov():
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
 
     style = styles.PlotStyle().extend(
-        styles.extensions.MINIMAL,
         styles.extensions.GRAYSCALE,
         styles.extensions.MAP,
     )
@@ -168,35 +149,34 @@ def test_map_plot_scope_bino_fov():
         dec_min=20,
         dec_max=28,
         dt=dt,
-        limiting_magnitude=12,
         style=style,
         resolution=1000,
         star_catalog="tycho-1",
     )
-    p.plot_scope_fov(
-        ra=3.7912777778,
-        dec=24.1052777778,
+    p.stars(mag=12)
+    p.scope_fov(
+        ra=3.791278,
+        dec=24.105278,
         scope_focal_length=600,
         eyepiece_focal_length=14,
         eyepiece_fov=82,
     )
-    p.plot_bino_fov(ra=3.7912777778, dec=24.1052777778, fov=65, magnification=10)
-    p.ax.set_title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
+    p.bino_fov(ra=3.791278, dec=24.105278, fov=65, magnification=10)
+    p.title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "0ed65a0c9c928688"
-    assert colorhash(filename) == "07200038000"
+    assert dhash(filename) == "0e96a2cccca2928c"
+    assert colorhash(filename) == "07400038000"
 
 
 def test_map_plot_custom_stars():
     filename = DATA_PATH / "map-custom-stars.png"
 
     style = styles.PlotStyle().extend(
-        styles.extensions.MINIMAL,
         styles.extensions.GRAYSCALE,
         styles.extensions.MAP,
     )
-    style.star.marker.symbol = "*"
+    style.star.marker.symbol = "star_8"
     style.star.marker.size = 60
 
     p = MapPlot(
@@ -205,13 +185,13 @@ def test_map_plot_custom_stars():
         ra_max=7.8,
         dec_min=-16,
         dec_max=24,
-        limiting_magnitude=7.2,
         style=style,
-        resolution=4000,
+        resolution=RESOLUTION,
     )
+    p.stars(mag=6)
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "1cab2b8eae0e0468"
+    assert dhash(filename) == "5cb129ceae0e8408"
     assert colorhash(filename) == "07000000000"
 
 
@@ -223,18 +203,23 @@ def test_map_plot_wrapping():
         styles.extensions.MAP,
     )
 
-    MapPlot(
+    p = MapPlot(
         projection=Projection.STEREO_NORTH,
         ra_min=18,
         ra_max=26,
         dec_min=30,
         dec_max=50,
-        limiting_magnitude=7.2,
         style=style,
-        resolution=2000,
-    ).export(filename, padding=0.3)
+        resolution=RESOLUTION,
+    )
+    p.stars(mag=9)
+    p.dsos(mag=9, null=True)
+    p.gridlines()
+    p.constellations()
+    p.title("Andromeda + nebula + Vega")
+    p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "1f1c0f4747a11117"
+    assert dhash(filename) == "0b56a56d46493199"
     assert colorhash(filename) == "07000000000"
 
 
@@ -266,16 +251,20 @@ def test_map_mollweide():
         styles.extensions.MAP,
     )
 
-    MapPlot(
+    p = MapPlot(
         projection=Projection.MOLLWEIDE,
-        ra_min=0,
-        ra_max=24,
-        dec_min=-90,
-        dec_max=90,
-        limiting_magnitude=4,
         style=style,
-        resolution=3000,
-    ).export(filename, padding=0.1)
+        resolution=RESOLUTION,
+    )
+    p.stars(mag=4.2, mag_labels=1.8)
+    p.constellations()
+    p.dsos(mag=4, null=True, labels=None)
+    p.milky_way()
+    p.gridlines(labels=False)
+    p.export(filename, padding=0.1)
 
-    assert dhash(filename) == "0f29716333330706"
+    assert dhash(filename) == "0b2b7b632b331707"
     assert colorhash(filename) == "07000000000"
+
+# TODO : Add orthographic
+# TODO : Add Zenith

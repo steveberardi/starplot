@@ -47,6 +47,6 @@ p.ellipse(
     angle=-22,
 )
 
-p.refresh_legend()
+p.legend()
 
 p.export("03_map_orion.png", padding=0.5)

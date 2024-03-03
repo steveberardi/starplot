@@ -20,6 +20,7 @@ from starplot.styles import (
     MarkerStyle,
     ObjectStyle,
     LegendLocationEnum,
+    LegendStyle,
     PathStyle,
     PolygonStyle,
 )
@@ -70,7 +71,7 @@ class BasePlot(ABC):
         self.labels = []
         self._labels_rtree = rtree.index.Index()
 
-        self.legend = None
+        self._legend = None
         self._legend_handles = {}
 
         self.log_level = logging.DEBUG if kwargs.get("debug") else logging.ERROR
@@ -128,29 +129,44 @@ class BasePlot(ABC):
                 label=label,
             )
 
-    def refresh_legend(self):
-        """Redraws the legend."""
+    def title(self, text: str):
+        self.ax.set_title(text)
+
+    @use_style(LegendStyle, "legend")
+    def legend(self, style: LegendStyle = None):
+        """Plots the legend."""
         if not self._legend_handles:
             return
 
-        if self.legend is not None:
-            self.legend.remove()
+        if self._legend is not None:
+            self._legend.remove()
 
-        if self.style.legend.location in [
-            LegendLocationEnum.OUTSIDE_BOTTOM,
-            LegendLocationEnum.OUTSIDE_TOP,
-        ]:
+        bbox_kwargs = {}
+
+        if style.location == LegendLocationEnum.OUTSIDE_BOTTOM:
             # to plot legends outside the map area, you have to target the figure
             target = self.fig
+            bbox_kwargs = dict(
+                bbox_to_anchor=(0.5, 0.13),
+                bbox_transform=self.fig.transFigure
+            )
+
+        elif style.location == LegendLocationEnum.OUTSIDE_TOP:
+            target = self.fig
+            bbox_kwargs = dict(
+                bbox_to_anchor=(0.5, 0.87),
+                bbox_transform=self.fig.transFigure
+            )
         else:
             target = self.ax
 
-        self.legend = target.legend(
+        self._legend = target.legend(
             handles=self._legend_handles.values(),
-            **self.style.legend.matplot_kwargs(size_multiplier=self._size_multiplier),
+            **style.matplot_kwargs(size_multiplier=self._size_multiplier),
+            **bbox_kwargs,
         ).set_zorder(
             # zorder is not a valid kwarg to legend(), so we have to set it afterwards
-            self.style.legend.zorder
+            style.zorder
         )
 
     def adjust_text(self, ensure_inside_axes: bool = False, **kwargs) -> None:

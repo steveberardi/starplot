@@ -38,6 +38,7 @@ format:
 	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ $(ARGS)"
 
 test:
+	rm tests/data/*.png
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
 
 bash:

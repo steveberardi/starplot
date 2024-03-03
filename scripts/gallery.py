@@ -84,7 +84,7 @@ def orion():
     p.celestial_equator()
     p.milky_way()
     p.gridlines()
-    p.refresh_legend()
+    p.legend()
     p.export(IMAGE_PATH + "orion.png")
 
 
@@ -140,7 +140,7 @@ def lmc():
     p.celestial_equator()
     p.milky_way()
     p.gridlines()
-    p.refresh_legend()
+    p.legend()
     p.export(IMAGE_PATH + "magellanic_cloud.png")
 
 

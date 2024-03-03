@@ -16,7 +16,6 @@ DATA_PATH = HERE / "data"
 @pytest.fixture()
 def optic_style():
     yield styles.PlotStyle().extend(
-        styles.extensions.MINIMAL,
         styles.extensions.GRAYSCALE_DARK,
         styles.extensions.OPTIC,
     )
@@ -40,12 +39,11 @@ def test_optic_plot_binoculars(optic_style, dt_dec_16):
             fov=65,
         ),
         dt=dt_dec_16,
-        limiting_magnitude=12,
         style=optic_style,
         resolution=1600,
-        include_info_text=True,
-        colorize_stars=True,
     )
+    optic_plot.stars(mag=12)
+    optic_plot.info()
     filename = DATA_PATH / "optic-binoculars-m45.png"
     optic_plot.export(filename)
 
@@ -67,12 +65,11 @@ def test_optic_plot_refractor(optic_style, dt_dec_16):
             eyepiece_fov=82,
         ),
         dt=dt_dec_16,
-        limiting_magnitude=12,
         style=optic_style,
         resolution=1600,
-        include_info_text=True,
-        colorize_stars=True,
     )
+    optic_plot.stars(mag=12)
+    optic_plot.info()
     filename = DATA_PATH / "optic-refractor-double-cluster.png"
     optic_plot.export(filename)
 
@@ -102,12 +99,11 @@ def test_optic_plot_wrapping(optic_style, dt_dec_16):
             fov=65,
         ),
         dt=dt_dec_16,
-        limiting_magnitude=12,
         style=style,
         resolution=1600,
-        include_info_text=True,
-        colorize_stars=True,
     )
+    optic_plot.stars(mag=12)
+    optic_plot.info()
     filename = DATA_PATH / "optic-wrapping.png"
     optic_plot.export(filename)
 
@@ -128,12 +124,11 @@ def test_optic_plot_scope(optic_style, dt_dec_16):
             eyepiece_fov=82,
         ),
         dt=dt_dec_16,
-        limiting_magnitude=12,
         style=optic_style,
         resolution=1600,
-        include_info_text=True,
-        colorize_stars=True,
     )
+    optic_plot.stars(mag=12)
+    optic_plot.info()
     filename = DATA_PATH / "optic-scope-m45.png"
     optic_plot.export(filename)
 
@@ -154,12 +149,11 @@ def test_optic_plot_reflector(optic_style, dt_dec_16):
             eyepiece_fov=82,
         ),
         dt=dt_dec_16,
-        limiting_magnitude=12,
         style=optic_style,
         resolution=1600,
-        include_info_text=True,
-        colorize_stars=True,
     )
+    optic_plot.stars(mag=12)
+    optic_plot.info()
     filename = DATA_PATH / "optic-reflector-m45.png"
     optic_plot.export(filename)
 
@@ -181,12 +175,11 @@ def test_optic_plot_camera(optic_style, dt_dec_16):
             lens_focal_length=430,
         ),
         dt=dt_dec_16,
-        limiting_magnitude=12,
         style=optic_style,
         resolution=1600,
-        include_info_text=True,
-        colorize_stars=True,
     )
+    optic_plot.stars(mag=12)
+    optic_plot.info()
     filename = DATA_PATH / "optic-camera-m45.png"
     optic_plot.export(filename)
 
@@ -210,12 +203,11 @@ def test_optic_plot_camera_rotated(optic_style, dt_dec_16):
             rotation=40,
         ),
         dt=dt_dec_16,
-        limiting_magnitude=12,
         style=optic_style,
         resolution=1600,
-        include_info_text=True,
-        colorize_stars=True,
     )
+    optic_plot.stars(mag=12)
+    optic_plot.info()
     filename = DATA_PATH / "optic-camera-rotated-m45.png"
     optic_plot.export(filename)
 
@@ -240,12 +232,11 @@ def test_optic_plot_polaris_binoculars(dt_dec_16):
             fov=65,
         ),
         dt=dt_dec_16,
-        limiting_magnitude=14,
         style=optic_style,
         resolution=1600,
-        include_info_text=True,
-        colorize_stars=False,
     )
+    optic_plot.stars(mag=14)
+    optic_plot.info()
     filename = DATA_PATH / "optic-binoculars-polaris.png"
     optic_plot.export(filename)
 

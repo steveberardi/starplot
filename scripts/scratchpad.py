@@ -42,7 +42,7 @@ def create_map_orion():
             },
             "legend": {
                 "location": "lower right",
-                "num_columns": 1,
+                "num_columns": 8,
                 "background_alpha": 1,
             },
         },
@@ -59,6 +59,7 @@ def create_map_orion():
         resolution=3200,
         debug=True,
     )
+
     p.stars(
         mag=2.3,
         style={
@@ -101,9 +102,7 @@ def create_map_orion():
         style={
             "marker": {
                 "size": 10,
-                "symbol": "square_crosshair",
-                # "fill": "full",
-                # "color": "#ff6868",
+                "symbol": "circle_plus",
                 "color": "black",
                 "edge_color": "black",
                 "alpha": 0.7,
@@ -163,9 +162,10 @@ def create_map_orion():
     p.gridlines()
     # p.bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
 
-    p.refresh_legend()
+    p.legend()
+
     # p.export("temp/map-orion.svg", format="svg", padding=1)
-    p.export("temp/map-orion.png", padding=0.25)
+    p.export("temp/map-orion.png", padding=0.5)
 
 
 def create_zenith():
@@ -191,7 +191,7 @@ def create_zenith():
     p.constellation_borders()
     p.ecliptic()
     p.celestial_equator()
-    # p.refresh_legend()
+    # p.legend()
     p.export("temp/zenith-poway.png", format="png", transparent=False)
 
 

@@ -381,7 +381,7 @@ class LabelStyle(BaseStyle):
 
 
 class ObjectStyle(BaseStyle):
-    """Defines the style for a SkyObject"""
+    """Defines the style for a sky object (e.g. star, DSO)"""
 
     marker: MarkerStyle = MarkerStyle()
     """Style for the object's marker (see [MarkerStyle][starplot.styles.MarkerStyle])"""
@@ -739,10 +739,11 @@ class PlotStyle(BaseStyle):
             zorder=-20,
         ),
         label=LabelStyle(
-            font_size=4,
+            font_size=6,
             font_color="#777",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
+            zorder=-20,
         ),
     )
     """Styling for the Ecliptic"""
@@ -757,10 +758,11 @@ class PlotStyle(BaseStyle):
             zorder=-20,
         ),
         label=LabelStyle(
-            font_size=4,
+            font_size=6,
             font_color="#999",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=0.65,
+            zorder=-20,
         ),
     )
     """Styling for the Celestial Equator"""
