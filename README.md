@@ -35,13 +35,21 @@ import starplot as sp
 
 tz = timezone("America/Los_Angeles")
 
-p = sp.ZenithPlot(
-    lat=33.363484, 
+p = sp.MapPlot(
+    projection=Projection.ZENITH,
+    lat=33.363484,
     lon=-116.836394,
     dt=datetime.now(tz).replace(hour=22),
-    limiting_magnitude=4.6,
+    style=sp.styles.PlotStyle().extend(
+        sp.styles.extensions.BLUE_MEDIUM,
+        sp.styles.extensions.ZENITH,
+    ),
     resolution=2000,
 )
+p.constellations()
+p.stars(mag=4.6, mag_labels=2.1)
+
+
 p.export("starchart.png")
 ```
 
@@ -67,10 +75,9 @@ For a demo of Starplot's zenith plots, check out:
 - adjustText
 
 ## Coming Soon
-- ⚙️ Callables for star sizes/colors/alpha
 - ✴️ Custom markers
-- 📐 Nebula outlines
-- 🌐 More map projection options
+- 📋 List of objects plotted
+- 📐 More Nebula outline levels
 - ⚖️ Better auto font-size adjustment
 - ☄️ Better label collision detection and handling
 

@@ -42,7 +42,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new map plot.
 
     !!! note
-        **`lat`, `lon`, and `dt` are required for perspective projections (`Orthographic`, `Stereographic`, or `Zenith`)**
+        **`lat`, `lon`, and `dt` are required for perspective projections (`Orthographic`, `Stereographic`, and `Zenith`)**
 
     Args:
         projection: Projection of the map

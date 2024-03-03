@@ -7,8 +7,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot.styles import PlotStyle, extensions, PolygonStyle, MarkerSymbolEnum
-from starplot.models import SkyObject
+from starplot.styles import PlotStyle, extensions, PolygonStyle
 from starplot.map import Projection
 from starplot import callables
 
@@ -170,41 +169,7 @@ def create_map_orion():
     # p.export("temp/map-orion.svg", format="svg", padding=1)
     p.export("temp/map-orion.png", padding=0.25)
 
-
 def create_zenith():
-    """Create zenith plot for tonight's sky in Poway"""
-    style = PlotStyle().extend(
-        # extensions.GRAYSCALE,
-        # extensions.BLUE_LIGHT,
-        # extensions.BLUE_MEDIUM,
-        extensions.BROWN,
-        # extensions.BLUE_DARK,
-        extensions.ZENITH,
-    )
-    style.ecliptic.line.visible = True
-    style.celestial_equator.line.visible = True
-    p = sp.ZenithPlot(
-        lat=32.97,
-        lon=-117.038611,
-        dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21),
-        limiting_magnitude=4.6,
-        # style=sp.styles.ZENITH_BLUE_MEDIUM,
-        style=style,
-        resolution=2000,
-        include_info_text=True,
-        # adjust_text=True,
-    )
-    # p.plot_circle(
-    #     (7, -5),
-    #     5,
-    #     style=pstyle,
-    # )
-    p.ecliptic()
-    p.celestial_equator()
-    # p.refresh_legend()
-    p.export("temp/zenith-poway.png", format="png", transparent=True)
-
-def create_zenith_new():
     """Create zenith plot for tonight's sky in Poway"""
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
@@ -275,124 +240,6 @@ def create_map_miller():
     p.ecliptic(style={"line": {"style": "dashed"}})
     p.celestial_equator()
     p.export("temp/map-miller.png", padding=0.3)
-
-
-def create_map_stereo_north():
-    style = PlotStyle().extend(
-        extensions.BLUE_LIGHT,
-        extensions.MAP,
-    )
-    p = sp.MapPlot(
-        projection=Projection.STEREO_NORTH,
-        ra_min=0,
-        ra_max=6,
-        dec_min=30,
-        dec_max=80,
-        limiting_magnitude=8,
-        style=style,
-        resolution=4000,
-    )
-    p.export("temp/temp-map-north.png", padding=0.5)
-
-
-def create_map_stereo_south():
-    p = sp.MapPlot(
-        projection=Projection.STEREO_SOUTH,
-        ra_min=9,
-        ra_max=15,
-        dec_min=-90,
-        dec_max=-40,
-        limiting_magnitude=8,
-        style=sp.styles.MAP_BLUE_DARK,
-        resolution=8000,
-        adjust_text=False,
-    )
-    p.export("temp-map-south.svg", format="svg")
-
-
-def create_map_sgr():
-    style = PlotStyle().extend(
-        # sp.styles.extensions.HIDE_LABELS,
-        # extensions.GRAYSCALE,
-        # extensions.BLUE_LIGHT,
-        # extensions.BLUE_MEDIUM,
-        # extensions.MINIMAL,
-        extensions.HIDE_LABELS,
-        extensions.BLUE_DARK,
-        extensions.MAP,
-        {
-            "bayer_labels": {
-                "font_name": "GFS Didot",
-                "font_size": 8,
-            },
-            "constellation_borders": {"visible": False},
-            "milky_way": {
-                "visible": True,
-                "alpha": 0.06,
-            },
-        },
-    )
-    style.ecliptic.line.visible = False
-    style.legend.visible = False
-    style.tick_marks.visible = False
-    style.gridlines.line.visible = False
-
-    style.constellation.line.width = 12
-
-    style.dso_open_cluster.marker.size = 12
-    style.dso_globular_cluster.marker.size = 12
-    style.dso.marker.size = 12
-    style.dso_galaxy.marker.size = 12
-    style.dso_nebula.marker.size = 12
-
-    p = sp.MapPlot(
-        projection=Projection.STEREO_SOUTH,
-        star_catalog="tycho-1",
-        ra_min=17.8,
-        ra_max=19.4,
-        dec_min=-36,
-        dec_max=-23,
-        limiting_magnitude=14,
-        # hide_colliding_labels=False,
-        style=style,
-        resolution=1200,
-    )
-    # p.export("temp/map-sgr.svg", format="svg", padding=0.4)
-    p.export("temp/map-sgr.png", format="png", padding=0.2)
-
-
-def create_scope_view_m45():
-    style = PlotStyle().extend(
-        # extensions.MINIMAL,
-        # extensions.GRAYSCALE_DARK,
-        extensions.BLUE_LIGHT,
-        # extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
-        extensions.MAP,
-    )
-
-    p = sp.MapPlot(
-        # projection=Projection.MERCATOR,
-        projection=Projection.STEREO_NORTH,
-        ra_min=3.5,
-        ra_max=4,  # 3.9
-        dec_min=22,
-        dec_max=26,
-        limiting_magnitude=12,
-        style=style,
-        resolution=2000,
-        star_catalog="tycho-1",
-    )
-    p.plot_scope_fov(
-        ra=3.7836111111,
-        dec=24.1166666667,
-        scope_focal_length=600,
-        eyepiece_focal_length=9,
-        eyepiece_fov=100,
-    )
-
-    p.export("temp/map-scope-fov-m45.png", format="png", padding=0.3)
-
 
 def create_optic_plot():
     style = PlotStyle().extend(
@@ -517,58 +364,6 @@ def create_optic_plot():
     p2.export("temp/optic-p2.png", padding=0.3)
 
 
-def create_constellation():
-    style = PlotStyle().extend(
-        extensions.GRAYSCALE,
-        # extensions.BLUE_LIGHT,
-        # extensions.BLUE_MEDIUM,
-        extensions.MINIMAL,
-        extensions.HIDE_LABELS,
-        # extensions.BLUE_DARK,
-        extensions.MAP,
-    )
-    style.ecliptic.line.visible = False
-    style.legend.visible = False
-    style.tick_marks.visible = False
-    style.gridlines.line.visible = False
-
-    style.star.marker.size = 50
-
-    style.constellation.line.visible = True
-    style.constellation.line.width = 8
-    style.dso.marker.visible = False
-
-    p = sp.MapPlot(
-        projection=Projection.MERCATOR,
-        ra_min=17.8,
-        ra_max=20.2,
-        dec_min=-45.8,
-        dec_max=-15.43,
-        limiting_magnitude=5.4,
-        # hide_colliding_labels=False,
-        style=style,
-        resolution=1600,
-    )
-    p.ax.axis("off")
-    p.export("temp/constellation-sgr.svg", format="svg", padding=0)
-    p.export("temp/constellation-sgr.png", format="png", padding=0)
-
-    p = sp.MapPlot(
-        projection=Projection.MERCATOR,
-        ra_min=1.75,
-        ra_max=3,
-        dec_min=19,
-        dec_max=28,
-        limiting_magnitude=5.4,
-        # hide_colliding_labels=False,
-        style=style,
-        resolution=1600,
-    )
-    p.ax.axis("off")
-    p.export("temp/constellation-ari.svg", format="svg", padding=0)
-    p.export("temp/constellation-ari.png", format="png", padding=0)
-
-
 def create_map_scratch():
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
@@ -630,23 +425,15 @@ def create_map_scratch():
 
 # ------------------------------------------
 
-# create_constellation()
-
-# create_scope_plot_m45()
 # create_optic_plot()
 
-# create_scope_view_m45()
-# create_scope_view_m11()
-
 # create_zenith()
-# create_zenith_new()
-create_map_miller()
-# create_map_stereo_north()
-# create_map_stereo_south()
-create_map_orion()
-# create_map_scratch()
 
-# create_map_sgr()
+create_map_miller()
+
+create_map_orion()
+
+# create_map_scratch()
 
 
 print(f"Total run time: {time.time() - start_time}")
