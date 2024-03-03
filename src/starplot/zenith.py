@@ -214,7 +214,7 @@ class ZenithPlot(BasePlot):
         stars_labeled.sort_values("magnitude")
 
         for hip_id, s in stars_labeled.iterrows():
-            if in_circle(s["x"], s["y"]) and hip_id in stars.ZENITH_BASE:
+            if in_circle(s["x"], s["y"]):
                 label = self.ax.text(
                     s["x"] + 0.00984,
                     s["y"] - 0.006,

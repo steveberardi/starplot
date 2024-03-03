@@ -1,10 +1,10 @@
-from typing import Callable
+from typing import Callable, Mapping
 
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
 from starplot.data import bayer, stars
-from starplot.data.stars import StarCatalog
+from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.models import Star
 from starplot.styles import ObjectStyle, LabelStyle, use_style
 
@@ -66,16 +66,16 @@ class StarPlotterMixin:
             **kwargs,
         )
 
-    def _star_labels(self, stars_df, mag: float, style: LabelStyle):
+    def _star_labels(self, stars_df, mag: float, style: LabelStyle, labels: Mapping[str, str], bayer_labels: bool):
         stars_df = stars_df[(stars_df["magnitude"] <= mag)]
         stars_df.sort_values("magnitude")
 
         for hip_id, s in stars_df.iterrows():
-            name = stars.hip_names.get(hip_id)
+            name = labels.get(hip_id)
             bayer_desig = bayer.hip.get(hip_id)
             ra, dec = s["ra_hours"], s["dec_degrees"]
 
-            if name and style.visible:
+            if name:
                 self._plot_text(
                     ra,
                     dec,
@@ -85,7 +85,7 @@ class StarPlotterMixin:
                     **style.matplot_kwargs(self._size_multiplier),
                 )
 
-            if bayer_desig and self.style.bayer_labels.visible:
+            if bayer_labels and bayer_desig:
                 self._plot_text(
                     ra,
                     dec,
@@ -107,7 +107,9 @@ class StarPlotterMixin:
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], float] = None,
+        labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
+        bayer_labels: bool = False,
         *args,
         **kwargs,
     ):
@@ -124,7 +126,9 @@ class StarPlotterMixin:
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
+            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
+            bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
         """
         self.logger.debug("Plotting stars...")
 
@@ -132,6 +136,11 @@ class StarPlotterMixin:
         size_fn = size_fn or (lambda d: style.marker.size)
         alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
         color_fn = color_fn or (lambda d: style.marker.color.as_hex())
+
+        if labels is None:
+            labels = {}
+        else:
+            labels = {**STAR_NAMES, **labels}
 
         star_size_multiplier = (
             self._size_multiplier * style.marker.size / 5
@@ -207,4 +216,4 @@ class StarPlotterMixin:
 
             self._add_legend_handle_marker(legend_label, style.marker)
 
-        self._star_labels(nearby_stars_df, mag_labels, style.label)
+        self._star_labels(nearby_stars_df, mag_labels, style.label, labels, bayer_labels)

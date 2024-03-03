@@ -78,7 +78,8 @@ def create_map_orion():
             "marker": {
                 "size": 10,
             }
-        }
+        },
+        bayer_labels=True,
     )
     p.dsos(
         mag=12,
@@ -263,7 +264,7 @@ def create_map_miller():
         resolution=8000,
         debug=True,
     )
-    p.stars(mag=8)
+    p.stars(mag=8, labels=None)
     p.dsos(mag=8, null=True, labels=None)
     p.gridlines()
     p.milky_way()
