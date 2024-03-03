@@ -11,7 +11,7 @@ jobs:
   test-lint-build:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Build Docker Image
       run: make build
     - name: Check Lint
@@ -25,24 +25,24 @@ jobs:
   test-python-3-9:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Run Tests - Python 3.9
       run: make test-3.9 CI=true
   test-python-3-10:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Run Tests - Python 3.10
       run: make test-3.10 CI=true
   test-python-3-11:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Run Tests - Python 3.11
       run: make test-3.11 CI=true
   test-python-3-12:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Run Tests - Python 3.12
       run: make test-3.12 CI=true
