@@ -205,22 +205,12 @@ def create_map_miller():
         extensions.BROWN,
         # extensions.BLUE_DARK,
         extensions.MAP,
-        {
-            "bayer_labels": {
-                "visible": False
-                # "font_name": "GFS Didot",
-                # "font_size": 7,
-            },
-            "constellation_borders": {"visible": True},
-        },
     )
 
     style.star.label.font_size = 4
     style.constellation.label.font_size = 6
     style.constellation.line.width = 2
-    style.legend.visible = False
-    # style.milky_way.visible = False
-    # style.constellation.line.visible = False
+
     p = sp.MapPlot(
         projection=Projection.MILLER,
         ra_min=0,
@@ -374,12 +364,6 @@ def create_map_scratch():
         # extensions.BLUE_DARK,
         extensions.MAP,
         {
-            # "star": {"label": {"font_size": 8}, "marker": {"size": 140}},
-            "bayer_labels": {
-                "visible": False,
-                "font_name": "GFS Didot",
-                "font_size": 7,
-            },
             "legend": {
                 "location": "lower right",
                 "num_columns": 1,

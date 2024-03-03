@@ -4,17 +4,9 @@ star:
   marker:
     size: 16
 planets:
-  label:
-    visible: true
   marker:
     size: 11
-moon:
-  label:
-    visible: true
-  marker:
-    visible: true
 legend:
   location: "lower center"
-  visible: false
 bayer_labels:
   font_size: 10

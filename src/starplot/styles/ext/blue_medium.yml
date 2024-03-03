@@ -63,15 +63,11 @@ dso_nebula:
     color: hsl(91, 62%, 82%)
     edge_color: hsl(91, 53%, 40%)
 dso_open_cluster:
-  label:
-    visible: false
   marker:
     alpha: 0.4
     color: '#fffb68'
     edge_color: '#989400'
 dso_association_stars:
-  label:
-    visible: false
   marker:
     alpha: 0.4
     color: '#fffb68'

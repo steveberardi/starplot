@@ -130,7 +130,7 @@ class BasePlot(ABC):
 
     def refresh_legend(self):
         """Redraws the legend."""
-        if not self.style.legend.visible or not self._legend_handles:
+        if not self._legend_handles:
             return
 
         if self.legend is not None:
@@ -537,9 +537,6 @@ class BasePlot(ABC):
             style: Styling of the ecliptic. If None, then the plot's style will be used
             label: How the ecliptic will be labeled on the plot
         """
-        if not style.line.visible:
-            return
-
         x = []
         y = []
         inbounds = []
@@ -599,14 +596,13 @@ class BasePlot(ABC):
             x.append(x0)
             y.append(y0)
 
-        if style.line.visible:
-            self.ax.plot(
-                x,
-                y,
-                clip_path=self._background_clip_path,
-                **style.line.matplot_kwargs(self._size_multiplier),
-                **self._plot_kwargs(),
-            )
+        self.ax.plot(
+            x,
+            y,
+            clip_path=self._background_clip_path,
+            **style.line.matplot_kwargs(self._size_multiplier),
+            **self._plot_kwargs(),
+        )
 
         if label:
             label_style_kwargs = style.label.matplot_kwargs(self._size_multiplier)

@@ -132,7 +132,6 @@ class DsoPlotterMixin:
 
             if (
                 not style
-                or not style.marker.visible
                 or (magnitude is not None and magnitude > mag)
                 or (magnitude is None and not null)
             ):

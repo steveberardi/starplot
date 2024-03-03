@@ -107,8 +107,6 @@ def create_zenith():
         extensions.GRAYSCALE,
         extensions.ZENITH,
     )
-    style.dso.marker.visible = False
-    style.dso.label.visible = False
 
     p = sp.ZenithPlot(
         lat=lat,
@@ -139,8 +137,6 @@ def create_map_plots():
     )
     style.legend.location = "lower right"
     style.gridlines.line.alpha = 0
-    style.milky_way.visible = False
-    style.bayer_labels.visible = False
 
     for i, obj in enumerate(sky_objects):
         mp = sp.MapPlot(

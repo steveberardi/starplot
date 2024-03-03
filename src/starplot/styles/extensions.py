@@ -25,6 +25,3 @@ BLUE_MEDIUM = load("blue_medium.yml")
 BLUE_DARK = load("blue_dark.yml")
 BROWN = load("brown.yml")
 
-# Helpers
-HIDE_LABELS = load("hide_labels.yml")
-MINIMAL = load("minimal.yml")

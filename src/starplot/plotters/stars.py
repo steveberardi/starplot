@@ -195,31 +195,30 @@ class StarPlotterMixin:
         self.logger.debug(f"Max size: {max_size}")
 
         # Plot Stars
-        if style.marker.visible:
-            for i, s in enumerate(starz):
-                ra, dec, size, alpha, color = s
-                if size > current_min and i != len(starz) - 1:
-                    current_layer.append(s)
-                else:
-                    self.logger.debug(f"Plotting layer: {current_min}")
-                    ras, decs, sizes, alphas, colors = zip(*starz)
-                    self._scatter_stars(
-                        ras,
-                        decs,
-                        sizes,
-                        alphas,
-                        colors,
-                        style=style,
-                        zorder=zorder,
-                        edgecolors=edgecolors,
-                        rasterized=rasterize,
-                        epoch_year=epoch_year,
-                    )
-                    current_layer = []
-                    current_min = current_min - step_size
-                    zorder += 5
+        for i, s in enumerate(starz):
+            ra, dec, size, alpha, color = s
+            if size > current_min and i != len(starz) - 1:
+                current_layer.append(s)
+            else:
+                self.logger.debug(f"Plotting layer: {current_min}")
+                ras, decs, sizes, alphas, colors = zip(*starz)
+                self._scatter_stars(
+                    ras,
+                    decs,
+                    sizes,
+                    alphas,
+                    colors,
+                    style=style,
+                    zorder=zorder,
+                    edgecolors=edgecolors,
+                    rasterized=rasterize,
+                    epoch_year=epoch_year,
+                )
+                current_layer = []
+                current_min = current_min - step_size
+                zorder += 5
 
-            self._add_legend_handle_marker(legend_label, style.marker)
+        self._add_legend_handle_marker(legend_label, style.marker)
 
         self._star_labels(
             nearby_stars_df, mag_labels, style.label, labels, bayer_labels

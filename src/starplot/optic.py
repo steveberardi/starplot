@@ -206,7 +206,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
         """
         optic_star_multiplier = 0.4 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
-        
+
         def size_fn_mx(st: Star) -> float:
             return size_fn(st) * optic_star_multiplier
 

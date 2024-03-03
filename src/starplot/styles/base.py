@@ -157,7 +157,6 @@ class MarkerStyle(BaseStyle):
             size=8,
             fill=FillStyleEnum.FULL,
             alpha=1.0,
-            visible=True,
             zorder=100,
         )
         ```
@@ -183,9 +182,6 @@ class MarkerStyle(BaseStyle):
 
     zorder: int = -1
     """Zorder of marker"""
-
-    visible: bool = True
-    """If true, the marker will be plotted"""
 
     @property
     def symbol_matplot(self) -> str:
@@ -246,9 +242,6 @@ class LineStyle(BaseStyle):
     zorder: int = -1
     """Zorder of the line"""
 
-    visible: bool = True
-    """If True, the line will be plotted"""
-
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         result = dict(
             color=self.color.as_hex(),
@@ -297,9 +290,6 @@ class PolygonStyle(BaseStyle):
 
     zorder: int = -1
     """Zorder of the polygon"""
-
-    visible: bool = True
-    """If True, the polygon will be plotted"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         styles = dict(
@@ -358,9 +348,6 @@ class LabelStyle(BaseStyle):
 
     zorder: int = 1
     """Zorder of the label"""
-
-    visible: bool = True
-    """If True, the label will be plotted"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         style = dict(
@@ -440,9 +427,6 @@ class LegendStyle(BaseStyle):
     zorder: int = 2_000
     """Zorder of the legend"""
 
-    visible: bool = True
-    """If True, the legend will be plotted"""
-
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             loc=self.location,
@@ -521,12 +505,10 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
             color="#c8c8c8",
             alpha=0.5,
-            visible=False,
         ),
         label=LabelStyle(
             font_size=8,
             font_weight=FontWeightEnum.BOLD,
-            visible=False,
         ),
     )
     """Styling for the moon"""
@@ -552,7 +534,6 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=8,
             font_weight=FontWeightEnum.LIGHT,
-            visible=False,
         ),
     )
     """Styling for open star clusters"""
@@ -566,7 +547,6 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=8,
             font_weight=FontWeightEnum.LIGHT,
-            visible=False,
         ),
     )
     """Styling for associations of stars"""
@@ -579,7 +559,7 @@ class PlotStyle(BaseStyle):
             color="#555",
             alpha=0.8,
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for globular star clusters"""
 
@@ -587,7 +567,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for galaxies"""
 
@@ -595,7 +575,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for nebulas"""
 
@@ -603,7 +583,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.TOP
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for double stars"""
 
@@ -612,10 +592,9 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for dark nebulas (hidden by default)"""
 
@@ -624,10 +603,9 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for HII Ionized regions (hidden by default)"""
 
@@ -636,10 +614,9 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for supernova remnants (hidden by default)"""
 
@@ -648,10 +625,9 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for nova stars (hidden by default)"""
 
@@ -660,10 +636,9 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for 'nonexistent' (as designated by OpenNGC) deep sky objects (hidden by default)"""
 
@@ -672,10 +647,9 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for 'unknown' (as designated by OpenNGC) types of deep sky objects (hidden by default)"""
 
@@ -684,10 +658,9 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects (hidden by default)"""
 
@@ -851,8 +824,8 @@ class PlotStyle(BaseStyle):
         from the last style (similar to how CSS works).
 
         Example Usage:
-            Create an extension of the default style with map optimizations, light blue color scheme,
-            and hide the constellation borders and Milky Way:
+            Create an extension of the default style with the light blue color scheme, map optimizations,
+            and change the constellation line color to red:
 
             ```python
 
@@ -860,8 +833,7 @@ class PlotStyle(BaseStyle):
                 styles.extensions.MAP,
                 styles.extensions.BLUE_LIGHT,
                 {
-                    "constellation_borders": {"visible": False},
-                    "milky_way": {"visible": False},
+                    "constellation": {"line": {"color": "#e12d2d"}},
                 },
             )
             ```

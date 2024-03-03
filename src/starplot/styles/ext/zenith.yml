@@ -1,5 +1,3 @@
-bayer_labels:
-  visible: false
 constellation:
   label:
     font_size: 7
@@ -11,8 +9,6 @@ ecliptic:
     alpha: 0.8
     width: 2
 gridlines:
-  label:
-    visible: false
   line:
     alpha: 0.8
     width: 1

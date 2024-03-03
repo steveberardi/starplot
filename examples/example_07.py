@@ -39,7 +39,6 @@ style = PlotStyle().extend(
     extensions.BLUE_LIGHT,
     extensions.MAP,
 )
-style.bayer_labels.visible = False
 style.legend.location = "lower right"
 style.legend.num_columns = 1
 

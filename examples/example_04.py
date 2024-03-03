@@ -2,7 +2,6 @@ from starplot import MapPlot, Projection
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.MINIMAL,
     extensions.GRAYSCALE,
     extensions.MAP,
 )

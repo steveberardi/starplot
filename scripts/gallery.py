@@ -120,7 +120,6 @@ def lmc():
             },
         },
     )
-    style.constellation.label.visible = False
     p = MapPlot(
         projection=Projection.STEREO_SOUTH,
         ra_min=4,
@@ -264,9 +263,6 @@ def orthographic():
         tz = timezone("America/Los_Angeles")
         dt = datetime(2024, 10, 19, 21, 00, tzinfo=tz)
 
-        style.gridlines.label.visible = False
-        style.tick_marks.visible = False
-
         p = MapPlot(
             projection=Projection.ORTHOGRAPHIC,
             lat=32.97,
@@ -307,15 +303,11 @@ def miller_big():
         # extensions.BLUE_MEDIUM,
         extensions.BROWN,
         extensions.MAP,
-        {
-            "bayer_labels": {"visible": False},
-        },
     )
 
     style.star.label.font_size = 4
     style.constellation.label.font_size = 6
     style.constellation.line.width = 2
-    style.legend.visible = False
     p = sp.MapPlot(
         projection=Projection.MILLER,
         ra_min=0,

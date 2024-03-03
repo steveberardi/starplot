@@ -62,7 +62,7 @@ After creating the style, you can modify properties of the style directly:
 
 ```python
 style.star.marker.color = "red"
-style.star.label.visible = False
+style.star.label.font_size = 20
 ```
 
 This works well when you only want to change a couple properties, but for more complex styling it's easier to use PlotStyle's `extend` method which is explained in the next section.
@@ -104,13 +104,6 @@ Example:
 
 ```yaml
 # style.yml
-
-# hide the constellation labels/lines:
-constellation:
-  label:
-    visible: false
-  line:
-    visible: false
 
 # make the Milky Way gray
 milky_way:
@@ -165,9 +158,6 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
     - `ZENITH` - Basic styling tailored for zenith plots ([details](#extensions-zenith))
-- **Others**
-    - `HIDE_LABELS` - Hides all the labels ([details](#extensions-hide-labels))
-    - `MINIMAL` - Hides everything except stars and DSOs ([details](#extensions-minimal))
 
 ---
 

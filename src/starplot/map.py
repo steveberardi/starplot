@@ -111,9 +111,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             raise ValueError(
                 f"lat and lon are required for the {self.projection.value.upper()} projection"
             )
-        
+
         if self.projection == Projection.ZENITH and not self._is_global_extent():
-            raise ValueError("Zenith projection requires a global extent: ra_min=0, ra_max=24, dec_min=-90, dec_max=90")
+            raise ValueError(
+                "Zenith projection requires a global extent: ra_min=0, ra_max=24, dec_min=-90, dec_max=90"
+            )
 
         self.stars_df = stars.load("hipparcos")
 
@@ -254,9 +256,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
     def _plot_constellation_borders(self):
         """work in progress"""
-        if not self.style.constellation_borders.visible:
-            return
-
         constellation_borders = gpd.read_file(
             DataFiles.CONSTELLATIONS.value,
             engine="pyogrio",
@@ -460,15 +459,16 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         )
 
     @use_style(PathStyle, "gridlines")
-    def gridlines(self, style: PathStyle = None):
+    def gridlines(
+        self, style: PathStyle = None, labels: bool = True, tick_marks: bool = False
+    ):
         """Plots gridlines
 
         Args:
             style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
+            labels: If True, then labels for each gridline will be plotted.
+            tick_marks: If True, then minor tick marks will be plotted outside the axis between the major gridlines.
         """
-
-        labels_visible = style.label.visible
-        lines_visible = style.line.visible
 
         def ra_formatter(x, pos) -> str:
             hour, minutes, seconds = lon_to_ra(x)
@@ -477,30 +477,29 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         def dec_formatter(x, pos) -> str:
             return f"{round(x)}\u00b0"
 
-        if lines_visible:
-            gridlines = self.ax.gridlines(
-                draw_labels=labels_visible,
-                x_inline=False,
-                y_inline=False,
-                rotate_labels=False,
-                xpadding=12,
-                ypadding=12,
-                **style.line.matplot_kwargs(),
-            )
+        gridlines = self.ax.gridlines(
+            draw_labels=labels,
+            x_inline=False,
+            y_inline=False,
+            rotate_labels=False,
+            xpadding=12,
+            ypadding=12,
+            **style.line.matplot_kwargs(),
+        )
 
-            # use a fixed locator for right ascension so gridlines are only drawn at whole numbers
-            hour_locations = [x for x in range(-180, 180, 15)]
-            gridlines.xlocator = FixedLocator(hour_locations)
-            gridlines.xformatter = FuncFormatter(ra_formatter)
-            gridlines.xlabel_style = style.label.matplot_kwargs()
+        # use a fixed locator for right ascension so gridlines are only drawn at whole numbers
+        hour_locations = [x for x in range(-180, 180, 15)]
+        gridlines.xlocator = FixedLocator(hour_locations)
+        gridlines.xformatter = FuncFormatter(ra_formatter)
+        gridlines.xlabel_style = style.label.matplot_kwargs()
 
-            gridlines.yformatter = FuncFormatter(dec_formatter)
-            gridlines.ylabel_style = style.label.matplot_kwargs()
+        gridlines.yformatter = FuncFormatter(dec_formatter)
+        gridlines.ylabel_style = style.label.matplot_kwargs()
+
+        if tick_marks:
+            self._plot_tick_marks()
 
     def _plot_tick_marks(self):
-        if not self.style.tick_marks.visible:
-            return
-
         xticks = [x for x in np.arange(-180, 180, 3.75)]
         yticks = [x for x in np.arange(-90, 90, 1)]
         tick_style = self.style.tick_marks.matplot_kwargs()
