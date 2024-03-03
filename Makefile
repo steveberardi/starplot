@@ -38,7 +38,7 @@ format:
 	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ $(ARGS)"
 
 test:
-	$(DOCKER_RUN) "[ -d tests/data ] && rm tests/data/*.png && python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
+	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
 
 bash:
 	$(DOCKER_RUN) bash
@@ -116,5 +116,6 @@ clean:
 	rm -rf dist
 	rm -rf site
 	rm -rf htmlcov
+	rm -f tests/data/*.png
 
 .PHONY: build test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts
