@@ -111,6 +111,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             raise ValueError(
                 f"lat and lon are required for the {self.projection.value.upper()} projection"
             )
+        
+        if self.projection == Projection.ZENITH and not self._is_global_extent():
+            raise ValueError("Zenith projection requires a global extent: ra_min=0, ra_max=24, dec_min=-90, dec_max=90")
 
         self.stars_df = stars.load("hipparcos")
 

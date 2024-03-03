@@ -427,7 +427,7 @@ def create_map_scratch():
 
 # create_optic_plot()
 
-# create_zenith()
+create_zenith()
 
 create_map_miller()
 
