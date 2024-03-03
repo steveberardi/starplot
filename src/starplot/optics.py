@@ -261,7 +261,7 @@ class Camera(Optic):
 
     @property
     def xlim(self):
-        x_offset = (self.radius_x * self.rotation / 180)
+        x_offset = self.radius_x * self.rotation / 180
         if self.rotation:
             x_offset *= 1.1
         return self.radius_x + x_offset
