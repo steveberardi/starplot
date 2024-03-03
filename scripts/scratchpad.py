@@ -94,32 +94,32 @@ def create_map_orion():
     p.milky_way()
     p.ecliptic(label=None)
 
-    # p.marker(
-    #     ra=4.5,
-    #     dec=5,
-    #     label="hello",
-    #     style={
-    #         "marker": {
-    #             "size": 10,
-    #             "symbol": MarkerSymbolEnum.CIRCLE_CROSS,
-    #             "fill": "full",
-    #             # "color": "#ff6868",
-    #             "color": "red",
-    #             "edge_color": "black",
-    #             "alpha": 0.7,
-    #             "zorder": 4096,
-    #         },
-    #         "label": {
-    #             "font_size": 12,
-    #             "font_weight": "bold",
-    #             # "font_color": "blue",
-    #             # "font_name": "GFS Didot",
-    #             "font_color": "darkred",
-    #             "zorder": 4096,
-    #         },
-    #     },
-    #     legend_label="crossmarker",
-    # )
+    p.marker(
+        ra=4.5,
+        dec=5,
+        label="hello",
+        style={
+            "marker": {
+                "size": 10,
+                "symbol": "square_crosshair",
+                # "fill": "full",
+                # "color": "#ff6868",
+                "color": "black",
+                "edge_color": "black",
+                "alpha": 0.7,
+                "zorder": 4096,
+            },
+            "label": {
+                "font_size": 12,
+                "font_weight": "bold",
+                # "font_color": "blue",
+                # "font_name": "GFS Didot",
+                "font_color": "darkred",
+                "zorder": 4096,
+            },
+        },
+        legend_label="crossmarker",
+    )
 
     points = [
         (5 * 15, 10),
@@ -411,9 +411,9 @@ def create_map_scratch():
 
 # create_optic_plot()
 
-create_zenith()
+# create_zenith()
 
-create_map_miller()
+# create_map_miller()
 
 create_map_orion()
 

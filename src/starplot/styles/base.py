@@ -82,6 +82,12 @@ class MarkerSymbolEnum(str, Enum):
     SQUARE = "square"
     """\u25A0"""
 
+    SQUARE_STRIPES_DIAGONAL = "square_stripes_diagonal"
+    """\u25A8"""
+
+    # SQUARE_CROSSHAIR = "square_crosshair"
+    # """\u2BD0"""
+
     STAR = "star"
     """\u2605"""
 
@@ -97,6 +103,9 @@ class MarkerSymbolEnum(str, Enum):
     CIRCLE_CROSS = "circle_cross"
     """\u1AA0"""
 
+    CIRCLE_DOTTED_EDGE = "circle_dotted_edge"
+    """\u25CC"""
+
     COMET = "comet"
     """\u2604"""
 
@@ -109,10 +118,13 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.POINT: ".",
             MarkerSymbolEnum.CIRCLE: "o",
             MarkerSymbolEnum.SQUARE: "s",
+            MarkerSymbolEnum.SQUARE_STRIPES_DIAGONAL: "$\u25A8$",
             MarkerSymbolEnum.STAR: "*",
             MarkerSymbolEnum.DIAMOND: "D",
             MarkerSymbolEnum.TRIANGLE: "^",
-            MarkerSymbolEnum.CIRCLE_CROSS: "$\u2295$",
+            MarkerSymbolEnum.CIRCLE_PLUS: "$\u2295$",
+            MarkerSymbolEnum.CIRCLE_CROSS: "$\u1AA0$",
+            MarkerSymbolEnum.CIRCLE_DOTTED_EDGE: "$\u25CC$",
             MarkerSymbolEnum.COMET: "$\u2604$",
             MarkerSymbolEnum.STAR_8: "$\u2734$",
         }.get(self.value)
