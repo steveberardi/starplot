@@ -86,6 +86,9 @@ def create_map_orion():
         null=True,
         # labels={"NGC2260": "2260www"},
         labels=None,
+        legend_labels={
+            sp.data.dsos.DsoType.OPEN_CLUSTER: None
+        }
         # names=["NGC1976", "Mel022", "C041"],
     )
 
