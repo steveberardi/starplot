@@ -275,7 +275,7 @@ def orthographic():
             style=style,
             resolution=RESOLUTION,
         )
-        p.gridlines()
+        p.gridlines(labels=False)
         p.stars(mag=7.86, mag_labels=6)
         p.open_clusters(mag=8, null=True, true_size=False, labels=None)
         p.galaxies(mag=8, null=True, true_size=False, labels=None)

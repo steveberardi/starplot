@@ -415,8 +415,10 @@ def create_map_scratch():
 
 # create_map_miller()
 
-create_map_orion()
+# create_map_orion()
 
 # create_map_scratch()
+
+#  2 ** math.log(20-mag) / math.log(20)
 
 print(f"Total run time: {time.time() - start_time}")
