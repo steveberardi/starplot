@@ -43,6 +43,7 @@ theme:
   features:
     - content.code.copy
     - toc.integrate
+    - navigation.footer
   
 extra_css:
   - css/extra.css

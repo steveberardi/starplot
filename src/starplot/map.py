@@ -38,7 +38,7 @@ DEFAULT_MAP_STYLE = PlotStyle().extend(extensions.MAP)
 class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new map plot.
 
-    !!! note
+    !!! star "Note"
         **`lat`, `lon`, and `dt` are required for perspective projections (`Orthographic`, `Stereographic`, and `Zenith`)**
 
     Args:

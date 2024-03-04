@@ -58,7 +58,7 @@ The result should look like this:
 
 _The solid black circle in this plot is the extent of the Pleiades as defined in [OpenNGC](https://github.com/mattiaverga/OpenNGC)._
 
-!!! tip "Binocular Field of View"
+!!! star "Binocular Field of View"
 
     You can also plot a circle showing the field of view of binoculars with the `bino_fov` function:
 
