@@ -25,7 +25,7 @@ The table below shows all the deep sky objects (DSOs) available through OpenNGC.
             'Geometry'
         ],
         server: {
-            url: '/data/ongc.json',
+            url: '../data/ongc.json',
             then: data => data.map(dso => [
                 dso.Name,
                 dso.Type,
