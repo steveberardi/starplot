@@ -69,7 +69,7 @@ def test_map_plot_mercator_base(map_plot_mercator):
     filename = DATA_PATH / "map-mercator-base.png"
     map_plot_mercator.export(filename)
     assert dhash(filename) == "183b3a6e6e2e6c6c"
-    assert colorhash(filename) == "07443000000"
+    assert colorhash(filename) == "07403000000"
 
 
 def test_map_plot_mercator_extra(map_plot_mercator):
@@ -220,7 +220,7 @@ def test_map_plot_wrapping():
     p.title("Andromeda + nebula + Vega")
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "0b56a56d46493199"
+    assert dhash(filename) == "1d5e8d6d46432511"
     assert colorhash(filename) == "07000000000"
 
 
@@ -264,7 +264,7 @@ def test_map_mollweide():
     p.gridlines(labels=False)
     p.export(filename, padding=0.1)
 
-    assert dhash(filename) == "0b2b7b632b331707"
+    assert dhash(filename) == "0b2b1b632b331707"
     assert colorhash(filename) == "07000000000"
 
 

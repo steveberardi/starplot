@@ -139,48 +139,45 @@ class DsoPlotterMixin:
 
             geometry_types = d["geometry"].geom_type
 
-            if (
-                true_size
-                and "Polygon" in geometry_types
-                and "MultiPolygon" not in geometry_types
-            ):
-                self._plot_dso_polygon(d.geometry, style)
+            if true_size:
+                if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
+                    self._plot_dso_polygon(d.geometry, style)
 
-            elif true_size and "MultiPolygon" in geometry_types:
-                for polygon in d.geometry.geoms:
-                    self._plot_dso_polygon(polygon, style)
-            elif true_size and maj_ax:
-                # if object has a major axis then plot its actual extent
+                elif "MultiPolygon" in geometry_types:
+                    for polygon in d.geometry.geoms:
+                        self._plot_dso_polygon(polygon, style)
+                elif maj_ax:
+                    # if object has a major axis then plot its actual extent
 
-                maj_ax_degrees = (maj_ax / 60) / 2
+                    maj_ax_degrees = (maj_ax / 60) / 2
 
-                if min_ax:
-                    min_ax_degrees = (min_ax / 60) / 2
-                else:
-                    min_ax_degrees = maj_ax_degrees
+                    if min_ax:
+                        min_ax_degrees = (min_ax / 60) / 2
+                    else:
+                        min_ax_degrees = maj_ax_degrees
 
-                poly_style = style.marker.to_polygon_style()
+                    poly_style = style.marker.to_polygon_style()
 
-                if style.marker.symbol == MarkerSymbolEnum.SQUARE:
-                    self.rectangle(
-                        (ra / 15, dec),
-                        min_ax_degrees * 2,
-                        maj_ax_degrees * 2,
-                        poly_style,
-                        angle or 0,
-                    )
-                else:
-                    self.ellipse(
-                        (ra / 15, dec),
-                        min_ax_degrees * 2,
-                        maj_ax_degrees * 2,
-                        poly_style,
-                        angle or 0,
-                    )
+                    if style.marker.symbol == MarkerSymbolEnum.SQUARE:
+                        self.rectangle(
+                            (ra / 15, dec),
+                            min_ax_degrees * 2,
+                            maj_ax_degrees * 2,
+                            poly_style,
+                            angle or 0,
+                        )
+                    else:
+                        self.ellipse(
+                            (ra / 15, dec),
+                            min_ax_degrees * 2,
+                            maj_ax_degrees * 2,
+                            poly_style,
+                            angle or 0,
+                        )
 
                 if label:
                     self._plot_text(
-                        ra,
+                        ra / 15,
                         dec,
                         label,
                         **style.label.matplot_kwargs(self._size_multiplier),

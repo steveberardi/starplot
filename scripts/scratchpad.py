@@ -85,7 +85,7 @@ def create_map_orion():
         mag=12,
         null=True,
         # labels={"NGC2260": "2260www"},
-        # labels=None,
+        labels=None,
         legend_labels={sp.data.dsos.DsoType.OPEN_CLUSTER: None}
         # names=["NGC1976", "Mel022", "C041"],
     )
@@ -418,6 +418,5 @@ def create_map_scratch():
 create_map_orion()
 
 # create_map_scratch()
-
 
 print(f"Total run time: {time.time() - start_time}")
