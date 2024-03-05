@@ -160,14 +160,14 @@ class MarkerStyle(BaseStyle):
     """
     Styling properties for markers.
 
-    Example Usage:
+    ???- tip "Example Usage"
         Creates a style for a red triangle marker:
         ```python
         m = MarkerStyle(
             color="#b13737",
-            symbol=MarkerStyleSymbolEnum.TRIANGLE,
+            symbol="triangle",
             size=8,
-            fill=FillStyleEnum.FULL,
+            fill="full",
             alpha=1.0,
             zorder=100,
         )
@@ -223,13 +223,13 @@ class LineStyle(BaseStyle):
     """
     Styling properties for lines.
 
-    Example Usage:
+    ???- tip "Example Usage"
         Creates a style for a dashed green line:
         ```python
         ls = LineStyle(
             width=2,
             color="#6ba832",
-            style=LineStyleEnum.DASHED,
+            style="dashed",
             alpha=0.2,
             zorder=-10,
         )
@@ -270,7 +270,7 @@ class PolygonStyle(BaseStyle):
     """
     Styling properties for polygons.
 
-    Example Usage:
+    ???- tip "Example Usage"
         Creates a style for a partially transparent blue polygon:
         ```python
         ps = PolygonStyle(
@@ -323,12 +323,12 @@ class LabelStyle(BaseStyle):
     """
     Styling properties for a label.
 
-    Example Usage:
+    ???- tip "Example Usage"
         Creates a style for a bold blue label:
         ```python
         ls = LabelStyle(
                 font_color="blue",
-                font_weight=FontWeightEnum.BOLD,
+                font_weight="bold",
                 zorder=1,
         )
         ```
@@ -837,15 +837,15 @@ class PlotStyle(BaseStyle):
         that is also in the last style arg, then the resulting style will have the value
         from the last style (similar to how CSS works).
 
-        Example Usage:
+        ???- tip "Example Usage"
             Create an extension of the default style with the light blue color scheme, map optimizations,
             and change the constellation line color to red:
 
             ```python
 
             new_style = PlotStyle().extend(
-                styles.extensions.MAP,
                 styles.extensions.BLUE_LIGHT,
+                styles.extensions.MAP,
                 {
                     "constellation": {"line": {"color": "#e12d2d"}},
                 },

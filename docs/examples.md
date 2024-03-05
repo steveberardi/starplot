@@ -98,7 +98,7 @@ The result should look like this:
 
 Here's an example that uses [Skyfield](https://rhodesmill.org/skyfield/) to get some data on the comet [Hale-Bopp](https://en.wikipedia.org/wiki/Comet_Hale%E2%80%93Bopp) ☄️ and then uses that data to plot the comet's location in the sky in March and April of 1997 (when the comet was at its brightest in the sky):
 
-!!! note
+!!! star "Note"
 
     Skyfield is a required dependency of Starplot (and a very important one!), so if you have Starplot installed, then Skyfield should be installed too.
 

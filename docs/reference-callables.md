@@ -57,7 +57,7 @@ p = sp.MapPlot(
 )
 p.stars(
     mag=12,
-    color_fn=sp.callables.color_by_bv
+    color_fn=sp.callables.color_by_bv, # <-- here's where we specify the callable
 )
 p.dsos(mag=12, null=True)
 p.constellations()
@@ -66,9 +66,24 @@ p.export("orion_colored_stars.png", padding=0.25)
 ```
 
 ## Creating Your Own Callable
+Let's say you wanted to create a plot where the stars brighter than magnitude 4 should be colored blue and stars dimmer than that should be colored red. Here's a way to do that with a custom callable:
 
-TODO
+```python
+# first we define the callable:
+def color_by_mag(star: Star) -> str:
+    if star.magnitude <= 4:
+        return "#218fef"
+    else:
+        return "#d52727"
 
+# then to use your callable:
+p = MapPlot(...)
+p.stars(
+    mag=12,
+    color_fn=color_by_mag,
+)
+```
+Every callable for stars is passed an instance of [`Star`][starplot.Star], so you can reference various properties of stars in your callables.
 
 ## Built-In Callables
 
