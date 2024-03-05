@@ -415,7 +415,7 @@ def create_map_scratch():
 
 # create_map_miller()
 
-# create_map_orion()
+create_map_orion()
 
 # create_map_scratch()
 

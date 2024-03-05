@@ -187,7 +187,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         catalog: StarCatalog = StarCatalog.TYCHO_1,
         style: MarkerStyle = None,
         rasterize: bool = False,
-        layers: int = 1,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], float] = None,
@@ -204,7 +203,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             catalog: The catalog of stars to use: "hipparcos" or "tycho-1"
             style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
-            layers: Tolerance for determining if nearby stars should be plotted with separate z-orders (to prevent them from overlapping). Greater values mean more separation is allowed before stars are plotted with higher z-orders.
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
@@ -221,7 +219,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             catalog=catalog,
             style=style,
             rasterize=rasterize,
-            layers=layers,
             size_fn=size_fn_mx,
             alpha_fn=alpha_fn,
             color_fn=color_fn,

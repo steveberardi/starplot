@@ -134,7 +134,14 @@ class BasePlot(ABC):
 
     @use_style(LegendStyle, "legend")
     def legend(self, style: LegendStyle = None):
-        """Plots the legend."""
+        """
+        Plots the legend.
+
+        If the legend is already plotted, then it'll be removed first and then plotted again. So, it's safe to call this function multiple times if you need to 'refresh' the legend.
+
+        Args:
+            style: Styling of the legend. If None, then the plot's style (specified when creating the plot) will be used
+        """
         if not self._legend_handles:
             return
 
