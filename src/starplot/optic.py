@@ -189,7 +189,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
-        color_fn: Callable[[Star], float] = None,
+        color_fn: Callable[[Star], str] = None,
         legend_label: str = "Star",
         *args,
         **kwargs,

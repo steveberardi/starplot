@@ -112,7 +112,7 @@ class StarPlotterMixin:
         rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
-        color_fn: Callable[[Star], float] = None,
+        color_fn: Callable[[Star], str] = None,
         labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
         bayer_labels: bool = False,
