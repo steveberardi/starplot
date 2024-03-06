@@ -146,7 +146,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         Returns:
             True if the coordinate is in bounds, otherwise False
-
         """
         if self.ra_max < 24:
             return self.ra_min < ra < self.ra_max and self.dec_min < dec < self.dec_max
@@ -333,7 +332,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def constellations(
         self,
         style: PathStyle = None,
-        # labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS,
         labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
     ):
         """Plots the constellation lines and/or labels
@@ -390,8 +388,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 self.ax.plot(
                     [s1_ra, s2_ra],
                     [s1_dec, s2_dec],
-                    # **self._plot_kwargs(),
-                    # transform=self._geodetic,
                     transform=transform,
                     **style_kwargs,
                 )
@@ -401,7 +397,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def _plot_constellation_labels(
         self,
         style: PathStyle = None,
-        # labels: dict[str, str] = CONSTELLATIONS_ABBREVIATIONS,
         labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
     ):
         style = style or self.style.constellation
@@ -447,7 +442,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Draws a [great circle](https://en.wikipedia.org/wiki/Great_circle) representing the horizon for the given `lat`, `lon` at time `dt` (so you must define these when creating the plot to use this function)
 
         Args:
-            style: style of the polygon
+            style: Style of the polygon
         """
         if self.lat is None or self.lon is None or self.dt is None:
             raise ValueError("lat, lon, and dt are required for plotting the horizon")
@@ -581,6 +576,15 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
     @use_style(LabelStyle, "info_text")
     def info(self, style: LabelStyle = None):
+        """Plots info text in the lower left corner, including date/time and lat/lon.
+
+        _Only available for ZENITH projections_
+
+        Args:
+            style: Styling of the info text. If None, then the plot's style definition will be used.
+        """
+        if not self.projection == Projection.ZENITH:
+            raise NotImplementedError("info text only available for zenith projections")
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
         info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
         self.ax.text(

@@ -105,10 +105,28 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         return dict(transform=self._crs)
 
     def in_bounds(self, ra, dec) -> bool:
+        """Determine if a coordinate is within the bounds of the plot.
+
+        Args:
+            ra: Right ascension (0...24)
+            dec: Declination (-90...90)
+
+        Returns:
+            True if the coordinate is in bounds, otherwise False
+        """
         az, alt = self._prepare_coords(ra, dec)
         return self.in_bounds_altaz(alt, az)
 
     def in_bounds_altaz(self, alt, az, scale: float = 1) -> bool:
+        """Determine if a coordinate is within the bounds of the plot.
+
+        Args:
+            alt: Altitude angle in degrees (0...90)
+            az: Azimuth angle in degrees (0...360)
+
+        Returns:
+            True if the coordinate is in bounds, otherwise False
+        """
         x, y = self._proj.transform_point(az, alt, self._crs)
         return self.optic.in_bounds(x, y, scale)
 

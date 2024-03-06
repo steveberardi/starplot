@@ -187,6 +187,7 @@ def create_zenith():
     p.ecliptic()
     p.celestial_equator()
     # p.legend()
+    p.info()
     p.export("temp/zenith-poway.png", format="png", transparent=False)
 
 
