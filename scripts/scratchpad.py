@@ -224,7 +224,7 @@ def create_map_miller():
     p.planets()
     p.ecliptic(style={"line": {"style": "dashed"}})
     p.celestial_equator()
-    p.export("temp/map-miller.png", padding=0.3)
+    p.export("temp/map-miller.png", padding=0.5)
 
 
 def create_optic_plot():

@@ -324,7 +324,7 @@ def miller_big():
     p.ecliptic(style={"line": {"style": "dashed"}})
     p.celestial_equator()
 
-    p.export(IMAGE_PATH + "miller_big.png")
+    p.export(IMAGE_PATH + "miller_big.png", padding=0.5)
 
 
 zenith()
