@@ -301,7 +301,7 @@ def miller_big():
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        extensions.BROWN,
+        extensions.ANTIQUE,
         extensions.MAP,
     )
 

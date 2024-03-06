@@ -28,10 +28,10 @@ def create_map_orion():
         # extensions.GRAYSCALE,
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
-        extensions.BROWN,
         # extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
+        extensions.BLUE_DARK,
         extensions.MAP,
+        # extensions.ANTIQUE,
         {
             "star": {
                 "label": {"font_size": 8},
@@ -74,11 +74,6 @@ def create_map_orion():
     p.stars(
         # catalog="tycho-1",
         mag=11,
-        style={
-            "marker": {
-                "size": 10,
-            }
-        },
         bayer_labels=True,
     )
     p.dsos(
@@ -174,8 +169,8 @@ def create_zenith():
         # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        extensions.BROWN,
-        # extensions.BLUE_DARK,
+        # extensions.ANTIQUE,
+        extensions.BLUE_DARK,
         extensions.ZENITH,
     )
     p = sp.MapPlot(
@@ -202,8 +197,8 @@ def create_map_miller():
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        extensions.BROWN,
         # extensions.BLUE_DARK,
+        extensions.ANTIQUE,
         extensions.MAP,
     )
 
@@ -359,7 +354,7 @@ def create_map_scratch():
         # extensions.GRAYSCALE,
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
-        extensions.BROWN,
+        extensions.ANTIQUE,
         # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
@@ -411,13 +406,13 @@ def create_map_scratch():
 
 # create_optic_plot()
 
-# create_zenith()
+create_zenith()
 
 # create_map_miller()
 
 create_map_orion()
 
-# create_map_scratch()
+create_map_scratch()
 
 #  2 ** math.log(20-mag) / math.log(20)
 

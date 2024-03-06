@@ -153,7 +153,9 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     - `GRAYSCALE_DARK` - Like `GRAYSCALE`, but inverted (white stars, black background) ([details](#extensions-grayscale-dark))
     - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
     - `BLUE_MEDIUM` - Medium brightness bluish gray colors ([details](#extensions-blue-medium))
-    - `BLUE_DARK` - Dark bluish gray colors ([details](#extensions-blue-dark))
+    - `BLUE_DARK` - Dark blue colors ([details](#extensions-blue-dark))
+    - `ANTIQUE` - Antique map inspired colors ([details](#extensions-antique))
+    - `NORD` - Nord-inspired colors ([details](#extensions-nord))
 - **Plot types**
     - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
@@ -327,6 +329,29 @@ Dark bluish gray colors
 ```
 </div>
 
+<!-- ANTIQUE -->
+<h2 class="doc doc-heading" id="extensions-antique"><code>ANTIQUE</code></h2>
+
+<div class="indent" markdown>
+Antique map inspired colors
+
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/antique.yml"
+```
+</div>
+
+<!-- NORD -->
+<h2 class="doc doc-heading" id="extensions-nord"><code>NORD</code></h2>
+
+<div class="indent" markdown>
+Nord inspired colors
+
+```yaml title="Source"
+--8<-- "src/starplot/styles/ext/nord.yml"
+```
+</div>
+
+
 <!-- OPTIC -->
 <h2 class="doc doc-heading" id="extensions-optic"><code>OPTIC</code></h2>
 
@@ -360,25 +385,4 @@ Basic styling tailored for zenith plots
 ```
 </div>
 
-<!-- HIDE_LABELS -->
-<h2 class="doc doc-heading" id="extensions-hide-labels"><code>HIDE_LABELS</code></h2>
-
-<div class="indent" markdown>
-Hides all the labels
-
-```yaml title="Source"
---8<-- "src/starplot/styles/ext/hide_labels.yml"
-```
-</div>
-
-
-<!-- MINIMAL -->
-<h2 class="doc doc-heading" id="extensions-minimal"><code>MINIMAL</code></h2>
-
-<div class="indent" markdown>
-Hides everything except stars and DSOs. Good for plotting scope fields of view.
-
-```yaml title="Source"
---8<-- "src/starplot/styles/ext/minimal.yml"
-```
 </div>
