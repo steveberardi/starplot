@@ -1,8 +1,9 @@
 background_color: hsl(209, 50%, 24%)
+figure_background_color: hsl(209, 43%, 15%)
 bayer_labels:
   font_alpha: 0.8
   font_color: hsl(209, 53%, 78%)
-border_bg_color: hsl(209, 53%, 18%)
+border_bg_color: hsl(209, 50%, 20%)
 border_font_color: hsl(209, 56%, 86%)
 border_line_color: hsl(209, 38%, 50%)
 celestial_equator:
@@ -18,7 +19,7 @@ ecliptic:
     color: hsl(209, 30%, 80%)
 constellation:
   label:
-    font_alpha: 0.4
+    font_alpha: 0.37
     font_color: hsl(209, 23%, 76%)
     font_size: 7
     font_weight: light
@@ -33,7 +34,7 @@ constellation_borders:
 dso:
   label:
     font_alpha: 0.6
-    font_color: rgb(230, 204, 147)
+    font_color: hsl(209, 23%, 66%)
     font_size: 7
     font_weight: light
   marker:
@@ -43,22 +44,30 @@ dso:
     fill: full
     size: 4
 dso_double_star:
+  label:
+    font_color: hsl(209, 23%, 66%)
   marker:
     alpha: 0.8
     color: '#88c0d0'
     edge_color: '#88c0d0'
 dso_galaxy:
+  label:
+    font_color: hsl(209, 23%, 66%)
   marker:
-    alpha: 0.3
-    color: hsl(209, 20%, 78%)
+    alpha: 0.27
+    color: hsl(209, 20%, 76%)
     edge_color: hsl(209, 20%, 78%)
 dso_nebula:
+  label:
+    font_color: hsl(209, 23%, 66%)
   marker:
     alpha: 0.36
     color: hsl(209, 50%, 78%)
-    edge_color: hsl(209, 50%, 8%)
+    edge_color: hsl(209, 50%, 20%)
     zorder: -1000
 dso_open_cluster:
+  label:
+    font_color: hsl(209, 23%, 66%)
   marker:
     alpha: 0.26
     fill: none
@@ -66,6 +75,8 @@ dso_open_cluster:
     edge_color: hsl(209, 50%, 80%)
     zorder: -1000
 dso_association_stars:
+  label:
+    font_color: hsl(209, 23%, 66%)
   marker:
     alpha: 0.26
     fill: none
@@ -73,16 +84,20 @@ dso_association_stars:
     edge_color: hsl(209, 50%, 80%)
     zorder: -1000
 dso_globular_cluster:
+  label:
+    font_color: hsl(209, 23%, 66%)
   marker:
     alpha: 0.5
     color: '#c7c7c7'
     edge_color: '#444'
 
+info_text:
+  font_color: hsl(209, 53%, 90%)
 
 gridlines:
   label:
     font_alpha: 1
-    font_color: hsl(209, 53%, 27%)
+    font_color: hsl(209, 53%, 94%)
     font_weight: light
   line:
     alpha: 0.7
@@ -91,7 +106,7 @@ gridlines:
     width: 1
     zorder: -10000
 tick_marks:
-  font_color: '#888'
+  font_color: hsl(209, 23%, 66%)
 milky_way:
   alpha: 0.26
   color: hsl(209, 50%, 54%)

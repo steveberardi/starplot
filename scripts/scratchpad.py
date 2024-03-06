@@ -154,8 +154,8 @@ def create_map_orion():
     #     angle=45,
     #     style=pstyle,
     # )
-    p.gridlines()
-    # p.bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
+    p.gridlines(tick_marks=True)
+    p.bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
 
     p.legend()
 
@@ -169,8 +169,8 @@ def create_zenith():
         # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        extensions.ANTIQUE,
-        # extensions.BLUE_DARK,
+        # extensions.ANTIQUE,
+        extensions.BLUE_DARK,
         extensions.ZENITH,
     )
     p = sp.MapPlot(
@@ -179,7 +179,7 @@ def create_zenith():
         lon=-117.038611,
         dt=datetime.now(timezone("America/Los_Angeles")).replace(hour=21),
         style=style,
-        resolution=2000,
+        resolution=2400,
     )
     p.stars(mag=4.6)
     p.constellations()
@@ -188,7 +188,7 @@ def create_zenith():
     p.celestial_equator()
     # p.legend()
     p.info()
-    p.export("temp/zenith-poway.png", format="png", transparent=False)
+    p.export("temp/zenith-poway.png", format="png", transparent=False, padding=0.4)
 
 
 def create_map_miller():
@@ -233,6 +233,7 @@ def create_optic_plot():
         extensions.GRAYSCALE_DARK,
         # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
+        # extensions.BLUE_DARK,
         extensions.OPTIC,
     )
     # style.star.marker.size = 20
@@ -288,7 +289,7 @@ def create_optic_plot():
         debug=True,
     )
     p1.stars(mag=15, color_fn=callables.color_by_bv)
-    p1.dsos(mag=4.1)
+    p1.dsos(mag=4.1, labels=None)
 
     p2 = sp.OpticPlot(
         # M45
@@ -396,16 +397,16 @@ def create_map_scratch():
     p.dsos(mag=9, true_size=True)
     p.constellations()
     p.constellation_borders()
-    p.gridlines()
+    p.gridlines(labels=False)
     p.milky_way()
     p.adjust_text()
 
-    p.export("temp/map-scratch-1.png", format="png", padding=0.1)
+    p.export("temp/map-scratch-1.png", format="png", padding=0.5)
 
 
 # ------------------------------------------
 
-# create_optic_plot()
+create_optic_plot()
 
 create_zenith()
 
