@@ -129,6 +129,24 @@ class BasePlot(ABC):
                 label=label,
             )
 
+    def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
+        x, y = self._prepare_coords(ra, dec)
+        kwargs["path_effects"] = kwargs.get("path_effects") or [self.text_border]
+        label = self.ax.text(
+            x,
+            y,
+            text,
+            *args,
+            **kwargs,
+            **self._plot_kwargs(),
+        )
+        label.set_clip_on(True)
+
+        if kwargs.get("clip_path"):
+            label.set_clip_path(kwargs.get("clip_path"))
+
+        self._maybe_remove_label(label)
+
     def title(self, text: str):
         self.ax.set_title(text)
 
@@ -257,24 +275,6 @@ class BasePlot(ABC):
                 plotted_label.set_clip_on(True)
                 self._maybe_remove_label(plotted_label)
 
-    def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
-        x, y = self._prepare_coords(ra, dec)
-        kwargs["path_effects"] = kwargs.get("path_effects") or [self.text_border]
-        label = self.ax.text(
-            x,
-            y,
-            text,
-            *args,
-            **kwargs,
-            **self._plot_kwargs(),
-        )
-        label.set_clip_on(True)
-
-        if kwargs.get("clip_path"):
-            label.set_clip_path(kwargs.get("clip_path"))
-
-        self._maybe_remove_label(label)
-
     @use_style(ObjectStyle, "planets")
     def planets(
         self,
@@ -326,7 +326,11 @@ class BasePlot(ABC):
 
     @use_style(ObjectStyle, "moon")
     def moon(
-        self, style: ObjectStyle = None, true_size: bool = False, label: str = "Moon"
+        self,
+        style: ObjectStyle = None,
+        true_size: bool = False,
+        label: str = "Moon",
+        legend_label: str = "Moon",
     ) -> None:
         """Plots the Moon
 
@@ -357,7 +361,7 @@ class BasePlot(ABC):
                 style.marker.to_polygon_style(),
             )
 
-            self._add_legend_handle_marker(label, style.marker)
+            self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
                 self._plot_text(
@@ -373,7 +377,7 @@ class BasePlot(ABC):
                 dec=dec,
                 label=label,
                 style=style,
-                legend_label=label,
+                legend_label=legend_label,
             )
 
     @abstractmethod
