@@ -4,13 +4,6 @@ from pandas import read_parquet
 
 from starplot.data import DataFiles
 
-"""
-    Dictionary of stars that will be labeled on the plot
-
-    Keys: Hipparcos ID
-    Values: Common Name
-"""
-
 STAR_NAMES = {
     7588: "Achernar",
     60718: "Acrux",
