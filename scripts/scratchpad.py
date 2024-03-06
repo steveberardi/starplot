@@ -73,7 +73,7 @@ def create_map_orion():
     )
     p.stars(
         # catalog="tycho-1",
-        mag=11,
+        mag=10,
         bayer_labels=True,
     )
     p.dsos(
@@ -90,30 +90,30 @@ def create_map_orion():
     p.milky_way()
     p.ecliptic(label=None)
 
-    p.marker(
-        ra=4.5,
-        dec=5,
-        label="hello",
-        style={
-            "marker": {
-                "size": 10,
-                "symbol": "circle_plus",
-                "color": "black",
-                "edge_color": "black",
-                "alpha": 0.7,
-                "zorder": 4096,
-            },
-            "label": {
-                "font_size": 12,
-                "font_weight": "bold",
-                # "font_color": "blue",
-                # "font_name": "GFS Didot",
-                "font_color": "darkred",
-                "zorder": 4096,
-            },
-        },
-        legend_label="crossmarker",
-    )
+    # p.marker(
+    #     ra=4.5,
+    #     dec=5,
+    #     label="hello",
+    #     style={
+    #         "marker": {
+    #             "size": 10,
+    #             "symbol": "circle_plus",
+    #             "color": "black",
+    #             "edge_color": "black",
+    #             "alpha": 0.7,
+    #             "zorder": 4096,
+    #         },
+    #         "label": {
+    #             "font_size": 12,
+    #             "font_weight": "bold",
+    #             # "font_color": "blue",
+    #             # "font_name": "GFS Didot",
+    #             "font_color": "darkred",
+    #             "zorder": 4096,
+    #         },
+    #     },
+    #     legend_label="crossmarker",
+    # )
 
     points = [
         (5 * 15, 10),
@@ -169,8 +169,8 @@ def create_zenith():
         # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        # extensions.ANTIQUE,
-        extensions.BLUE_DARK,
+        extensions.ANTIQUE,
+        # extensions.BLUE_DARK,
         extensions.ZENITH,
     )
     p = sp.MapPlot(
@@ -198,8 +198,8 @@ def create_map_miller():
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
-        extensions.ANTIQUE,
+        extensions.BLUE_DARK,
+        # extensions.ANTIQUE,
         extensions.MAP,
     )
 
@@ -355,9 +355,9 @@ def create_map_scratch():
         # extensions.GRAYSCALE,
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
-        extensions.ANTIQUE,
+        # extensions.ANTIQUE,
         # extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
+        extensions.BLUE_DARK,
         extensions.MAP,
         {
             "legend": {
@@ -409,7 +409,7 @@ def create_map_scratch():
 
 create_zenith()
 
-# create_map_miller()
+create_map_miller()
 
 create_map_orion()
 
