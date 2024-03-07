@@ -50,7 +50,6 @@ gridlines:
     color: hsl(68, 11%, 71%)
     style: solid
     width: 1
-    zorder: -10000
 star:
   marker:
     color: hsl(60, 3%, 32%)

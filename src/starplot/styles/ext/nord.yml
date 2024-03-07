@@ -80,14 +80,12 @@ gridlines:
     color: '#888'
     style: solid
     width: 1
-    zorder: -10000
 tick_marks:
   font_color: '#888'
 milky_way:
   alpha: 0.14
   color: '#95a3bf'
   edge_width: 0
-  zorder: -10000
 planets:
   label:
     font_color: '#D99CCF'

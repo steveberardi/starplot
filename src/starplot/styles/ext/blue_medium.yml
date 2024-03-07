@@ -46,7 +46,6 @@ gridlines:
     color: '#888'
     style: solid
     width: 1
-    zorder: -10000
 
 # DSOs
 dso_double_star:

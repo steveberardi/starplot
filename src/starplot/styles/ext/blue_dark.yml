@@ -64,7 +64,7 @@ dso_nebula:
     alpha: 0.36
     color: hsl(209, 50%, 78%)
     edge_color: hsl(209, 50%, 20%)
-    zorder: -1000
+    zorder: -500
 dso_open_cluster:
   label:
     font_color: hsl(209, 23%, 66%)
@@ -73,7 +73,7 @@ dso_open_cluster:
     fill: none
     # color: hsl(209, 50%, 68%)
     edge_color: hsl(209, 50%, 80%)
-    zorder: -1000
+    zorder: -500
 dso_association_stars:
   label:
     font_color: hsl(209, 23%, 66%)
@@ -82,7 +82,7 @@ dso_association_stars:
     fill: none
     # color: hsl(209, 50%, 68%)
     edge_color: hsl(209, 50%, 80%)
-    zorder: -1000
+    zorder: -500
 dso_globular_cluster:
   label:
     font_color: hsl(209, 23%, 66%)
@@ -112,7 +112,7 @@ milky_way:
   edge_width: 0
 planets:
   label:
-    font_color: hsl(209, 20%, 78%)
+    font_color: hsl(209, 20%, 80%)
   marker:
     alpha: 0.8
     color: hsl(209, 20%, 78%)

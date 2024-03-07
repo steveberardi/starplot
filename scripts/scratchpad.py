@@ -413,7 +413,7 @@ def create_map_scratch():
 
 create_zenith()
 
-# create_map_miller()
+create_map_miller()
 
 create_map_orion()
 

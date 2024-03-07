@@ -48,8 +48,6 @@ p = sp.MapPlot(
 )
 p.constellations()
 p.stars(mag=4.6, mag_labels=2.1)
-
-
 p.export("starchart.png")
 ```
 
