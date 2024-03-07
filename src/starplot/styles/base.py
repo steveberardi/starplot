@@ -693,7 +693,7 @@ class PlotStyle(BaseStyle):
         color="#d9d9d9",
         alpha=0.36,
         edge_width=0,
-        zorder=-10000,
+        zorder=-1_000,
     )
     """Styling for the Milky Way (only applies to map plots)"""
 
@@ -708,7 +708,7 @@ class PlotStyle(BaseStyle):
             width=1,
             style=LineStyleEnum.SOLID,
             alpha=0.8,
-            zorder=-10_000,
+            zorder=-1_000,
         ),
         label=LabelStyle(
             font_size=11,

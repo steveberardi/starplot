@@ -104,14 +104,12 @@ gridlines:
     color: hsl(209, 53%, 37%)
     style: solid
     width: 1
-    zorder: -10000
 tick_marks:
   font_color: hsl(209, 23%, 66%)
 milky_way:
   alpha: 0.26
   color: hsl(209, 50%, 54%)
   edge_width: 0
-  zorder: -10000
 planets:
   label:
     font_color: hsl(209, 20%, 78%)
