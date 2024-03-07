@@ -612,11 +612,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         background_circle = patches.Circle(
             (0.5, 0.5),
             radius=0.474,
-            fill=False,
-            # facecolor=self.style.background_color.as_hex(),
+            fill=True,
+            facecolor=self.style.background_color.as_hex(),
             edgecolor=self.style.border_line_color.as_hex(),
             linewidth=8 * self._size_multiplier,
-            zorder=4800,
+            zorder=-10_00,
             transform=self.ax.transAxes,
         )
         self.ax.add_patch(background_circle)

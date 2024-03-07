@@ -29,9 +29,9 @@ def create_map_orion():
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        extensions.BLUE_DARK,
+        # extensions.BLUE_DARK,
         extensions.MAP,
-        # extensions.ANTIQUE,
+        extensions.ANTIQUE,
         {
             "star": {
                 "label": {"font_size": 8},
@@ -64,17 +64,19 @@ def create_map_orion():
         mag=2.3,
         style={
             "marker": {
-                "size": 40,
+                "size": 46,
                 "symbol": "star_8",
                 "zorder": 50,
             }
         },
         legend_label=None,
+        labels=None,
     )
     p.stars(
         # catalog="tycho-1",
         mag=10,
         bayer_labels=True,
+        labels=None,
     )
     p.dsos(
         mag=12,
@@ -155,7 +157,7 @@ def create_map_orion():
     #     style=pstyle,
     # )
     p.gridlines(tick_marks=True)
-    p.bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
+    # p.bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
 
     p.legend()
 
@@ -187,8 +189,9 @@ def create_zenith():
     p.ecliptic()
     p.celestial_equator()
     # p.legend()
+    p.milky_way()
     p.info()
-    p.export("temp/zenith-poway.png", format="png", transparent=False, padding=0.4)
+    p.export("temp/zenith-poway.png", format="png", transparent=True, padding=0.4)
 
 
 def create_map_miller():
@@ -406,11 +409,11 @@ def create_map_scratch():
 
 # ------------------------------------------
 
-create_optic_plot()
+# create_optic_plot()
 
 create_zenith()
 
-create_map_miller()
+# create_map_miller()
 
 create_map_orion()
 

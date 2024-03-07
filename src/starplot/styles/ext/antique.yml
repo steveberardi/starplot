@@ -7,7 +7,7 @@
 # red - hsl(26, 93%, 82%)
 
 background_color: hsl(48, 80%, 96%)
-figure_background_color: '#fff'
+figure_background_color: hsl(60, 9%, 29%)
 border_bg_color: hsl(60, 3%, 32%)
 border_font_color: hsl(60, 20%, 93%)
 border_line_color: hsl(60, 20%, 53%)
@@ -49,7 +49,7 @@ milky_way:
 gridlines:
   label:
     font_alpha: 0.8
-    font_color: '#2f4358'
+    font_color: hsl(60, 3%, 92%)
     font_size: 8
     font_weight: light
   line:
