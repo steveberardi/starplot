@@ -29,9 +29,9 @@ def create_map_orion():
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
+        extensions.BLUE_DARK,
         extensions.MAP,
-        extensions.ANTIQUE,
+        # extensions.ANTIQUE,
         {
             "star": {
                 "label": {"font_size": 8},
@@ -169,6 +169,7 @@ def create_zenith():
     """Create zenith plot for tonight's sky in Poway"""
     style = PlotStyle().extend(
         # extensions.GRAYSCALE,
+        # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
         # extensions.ANTIQUE,

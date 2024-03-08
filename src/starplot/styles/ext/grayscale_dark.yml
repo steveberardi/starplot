@@ -1,4 +1,5 @@
 background_color: 'hsl(136, 0%, 10%)'
+figure_background_color: hsl(136, 0%, 30%)
 border_bg_color: 'hsl(136, 0%, 20%)'
 border_font_color: 'hsl(136, 0%, 97%)'
 border_line_color: 'hsl(136, 0%, 97%)'
