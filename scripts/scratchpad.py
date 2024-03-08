@@ -173,7 +173,8 @@ def create_zenith():
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
         # extensions.ANTIQUE,
-        extensions.BLUE_DARK,
+        # extensions.BLUE_DARK,
+        extensions.EXP,
         extensions.ZENITH,
     )
     p = sp.MapPlot(
@@ -202,7 +203,8 @@ def create_map_miller():
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        extensions.BLUE_DARK,
+        # extensions.BLUE_DARK,
+        extensions.EXP,
         # extensions.ANTIQUE,
         extensions.MAP,
     )
