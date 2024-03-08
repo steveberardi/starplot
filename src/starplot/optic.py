@@ -323,7 +323,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             facecolor=self.style.background_color.as_hex(),
             linewidth=0,
             fill=True,
-            zorder=-100,
+            zorder=-1000,
         )
         self.ax.add_patch(self._background_clip_path)
 

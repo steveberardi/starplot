@@ -29,9 +29,9 @@ def create_map_orion():
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        extensions.BLUE_DARK,
+        # extensions.BLUE_DARK,
         extensions.MAP,
-        # extensions.ANTIQUE,
+        extensions.ANTIQUE,
         {
             "star": {
                 "label": {"font_size": 8},
@@ -173,8 +173,7 @@ def create_zenith():
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
         # extensions.ANTIQUE,
-        # extensions.BLUE_DARK,
-        extensions.EXP,
+        extensions.BLUE_DARK,
         extensions.ZENITH,
     )
     p = sp.MapPlot(
@@ -203,8 +202,7 @@ def create_map_miller():
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
-        extensions.EXP,
+        extensions.BLUE_DARK,
         # extensions.ANTIQUE,
         extensions.MAP,
     )
@@ -236,10 +234,10 @@ def create_map_miller():
 def create_optic_plot():
     style = PlotStyle().extend(
         # extensions.MINIMAL,
-        extensions.GRAYSCALE_DARK,
+        # extensions.GRAYSCALE_DARK,
         # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
-        # extensions.BLUE_DARK,
+        extensions.BLUE_DARK,
         extensions.OPTIC,
     )
     # style.star.marker.size = 20
@@ -412,7 +410,7 @@ def create_map_scratch():
 
 # ------------------------------------------
 
-# create_optic_plot()
+create_optic_plot()
 
 create_zenith()
 

@@ -27,4 +27,3 @@ BROWN = load("brown.yml")
 ANTIQUE = load("antique.yml")
 NORD = load("nord.yml")
 
-EXP = load("satcolors.yml")
