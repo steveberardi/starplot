@@ -495,7 +495,7 @@ class PlotStyle(BaseStyle):
     bayer_labels: LabelStyle = LabelStyle(
         font_size=8, font_weight=FontWeightEnum.LIGHT, zorder=1
     )
-    """Styling for Bayer labels of stars *(see [`LabelStyle`][starplot.styles.LabelStyle])* - *only applies to map plots*"""
+    """Styling for Bayer labels of stars"""
 
     planets: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -526,17 +526,6 @@ class PlotStyle(BaseStyle):
     """Styling for the moon"""
 
     # Deep Sky Objects (DSOs)
-    dso: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
-        ),
-        label=LabelStyle(
-            font_size=8,
-            font_weight=FontWeightEnum.LIGHT,
-        ),
-    )
-    """Styling for deep sky objects (DSOs) on zenith plots"""
-
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
@@ -608,7 +597,7 @@ class PlotStyle(BaseStyle):
         ),
         label=LabelStyle(font_size=8),
     )
-    """Styling for dark nebulas (hidden by default)"""
+    """Styling for dark nebulas"""
 
     dso_hii_ionized_region: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -619,7 +608,7 @@ class PlotStyle(BaseStyle):
         ),
         label=LabelStyle(font_size=8),
     )
-    """Styling for HII Ionized regions (hidden by default)"""
+    """Styling for HII Ionized regions"""
 
     dso_supernova_remnant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -630,7 +619,7 @@ class PlotStyle(BaseStyle):
         ),
         label=LabelStyle(font_size=8),
     )
-    """Styling for supernova remnants (hidden by default)"""
+    """Styling for supernova remnants"""
 
     dso_nova_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -641,7 +630,7 @@ class PlotStyle(BaseStyle):
         ),
         label=LabelStyle(font_size=8),
     )
-    """Styling for nova stars (hidden by default)"""
+    """Styling for nova stars"""
 
     dso_nonexistant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -652,7 +641,7 @@ class PlotStyle(BaseStyle):
         ),
         label=LabelStyle(font_size=8),
     )
-    """Styling for 'nonexistent' (as designated by OpenNGC) deep sky objects (hidden by default)"""
+    """Styling for 'nonexistent' (as designated by OpenNGC) deep sky objects"""
 
     dso_unknown: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -663,7 +652,7 @@ class PlotStyle(BaseStyle):
         ),
         label=LabelStyle(font_size=8),
     )
-    """Styling for 'unknown' (as designated by OpenNGC) types of deep sky objects (hidden by default)"""
+    """Styling for 'unknown' (as designated by OpenNGC) types of deep sky objects"""
 
     dso_duplicate: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -674,14 +663,14 @@ class PlotStyle(BaseStyle):
         ),
         label=LabelStyle(font_size=8),
     )
-    """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects (hidden by default)"""
+    """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
     # Constellations
     constellation: PathStyle = PathStyle(
         line=LineStyle(color="#c8c8c8"),
         label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT, zorder=400),
     )
-    """Styling for constellations"""
+    """Styling for constellation lines and labels (only applies to map plots)"""
 
     constellation_borders: LineStyle = LineStyle(
         color="#000", width=2, style=LineStyleEnum.DASHED, alpha=0.2, zorder=-100
@@ -699,7 +688,7 @@ class PlotStyle(BaseStyle):
 
     # Legend
     legend: LegendStyle = LegendStyle()
-    """Styling for legend - *(see [`LegendStyle`][starplot.styles.LegendStyle])* """
+    """Styling for legend"""
 
     # Gridlines
     gridlines: PathStyle = PathStyle(

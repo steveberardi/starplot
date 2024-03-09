@@ -31,8 +31,8 @@ style = PlotStyle()
 
 # Step 2: extend the style with a few built-in extensions
 style = style.extend(
-    extensions.MAP,
     extensions.BLUE_LIGHT,
+    extensions.MAP,
 )
 
 # Step 3: apply the style in a new map plot
@@ -71,7 +71,7 @@ This works well when you only want to change a couple properties, but for more c
 
 Once you have an instance of a PlotStyle, then you can customize it with the PlotStyle's [`extend`](#starplot.PlotStyle.extend) method. This method takes in one or more args of dictionaries and applies them to the original style in sequential order. In other words, when extending a PlotStyle, **you only have to define style properties that you want to override from the current style** — similar to how Cascading Style Sheets (CSS) work.
 
-Starplot has a few [built-in extensions](#built-in-style-extensions) for applying color schemes, hiding labels, etc. But, you can also easily create your own extensions.
+Starplot has a few [built-in extensions](#built-in-style-extensions) for applying color schemes and optimizing different plot types. But, you can also easily create your own extensions.
 
 ### Basic Example
 Here's a simple example of extending a style to use a different font for Bayer labels of stars:
@@ -153,7 +153,7 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     - `GRAYSCALE_DARK` - Like `GRAYSCALE`, but inverted (white stars, black background) ([details](#extensions-grayscale-dark))
     - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
     - `BLUE_MEDIUM` - Medium brightness bluish gray colors ([details](#extensions-blue-medium))
-    - `BLUE_DARK` - Dark blue colors ([details](#extensions-blue-dark))
+    - `BLUE_DARK` - Dark "Starplot blue" colors ([details](#extensions-blue-dark))
     - `ANTIQUE` - Antique map inspired colors ([details](#extensions-antique))
     - `NORD` - Nord-inspired colors ([details](#extensions-nord))
 - **Plot types**
