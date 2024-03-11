@@ -108,8 +108,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         """Determine if a coordinate is within the bounds of the plot.
 
         Args:
-            ra: Right ascension (0...24)
-            dec: Declination (-90...90)
+            ra: Right ascension, in hours (0...24)
+            dec: Declination, in degrees (-90...90)
 
         Returns:
             True if the coordinate is in bounds, otherwise False

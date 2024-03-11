@@ -43,10 +43,10 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
     Args:
         projection: Projection of the map
-        ra_min: Minimum right ascension (hours) of the map
-        ra_max: Maximum right ascension (hours) of the map
-        dec_min: Minimum declination (degrees) of the map
-        dec_max: Maximum declination (degrees) of the map
+        ra_min: Minimum right ascension of the map's extent, in hours (0...24)
+        ra_max: Maximum right ascension of the map's extent, in hours (0...24)
+        dec_min: Minimum declination of the map's extent, in degrees (-90...90)
+        dec_max: Maximum declination of the map's extent, in degrees (-90...90)
         lat: Latitude for perspective projections: Orthographic, Stereographic, and Zenith
         lon: Longitude for perspective projections: Orthographic, Stereographic, and Zenith
         dt: Date/time to use for star/planet positions, (*must be timezone-aware*). Default = current UTC time.
@@ -141,8 +141,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         """Determine if a coordinate is within the bounds of the plot.
 
         Args:
-            ra: Right ascension (0...24)
-            dec: Declination (-90...90)
+            ra: Right ascension, in hours (0...24)
+            dec: Declination, in degrees (-90...90)
 
         Returns:
             True if the coordinate is in bounds, otherwise False
@@ -229,6 +229,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
     @use_style(LineStyle, "constellation_borders")
     def constellation_borders(self, style: LineStyle = None):
+        """Plots the constellation borders
+
+        Args:
+            style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
+        """
         constellation_borders = self._read_geo_package(
             DataFiles.CONSTELLATION_BORDERS.value
         )
@@ -585,6 +590,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         """
         if not self.projection == Projection.ZENITH:
             raise NotImplementedError("info text only available for zenith projections")
+
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
         info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
         self.ax.text(

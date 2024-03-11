@@ -556,7 +556,7 @@ class BasePlot(ABC):
 
     @use_style(PathStyle, "ecliptic")
     def ecliptic(self, style: PathStyle = None, label: str = "ECLIPTIC"):
-        """Plot the ecliptic
+        """Plots the ecliptic
 
         Args:
             style: Styling of the ecliptic. If None, then the plot's style will be used
@@ -602,7 +602,7 @@ class BasePlot(ABC):
         self, style: PathStyle = None, label: str = "CELESTIAL EQUATOR"
     ):
         """
-        Plot the celestial equator
+        Plots the celestial equator
 
         Args:
             style: Styling of the celestial equator. If None, then the plot's style will be used
