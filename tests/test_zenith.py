@@ -43,5 +43,5 @@ def test_zenith_base(zenith_plot):
     filename = DATA_PATH / "zenith-base.png"
     zenith_plot.export(filename)
 
-    assert dhash(filename) == "137984a692dc7937"
-    assert colorhash(filename) == "07007000000"
+    assert dhash(filename) == "1359cca68a946927"
+    assert colorhash(filename) == "06007000000"

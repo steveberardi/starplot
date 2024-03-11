@@ -166,7 +166,7 @@ def test_map_plot_scope_bino_fov():
     p.title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "0e96a2cccca2928c"
+    assert dhash(filename) == "0b86a2cccca2928c"
     assert colorhash(filename) == "07400038000"
 
 
@@ -220,7 +220,7 @@ def test_map_plot_wrapping():
     p.title("Andromeda + nebula + Vega")
     p.export(filename, padding=0.3)
 
-    assert dhash(filename) == "1d5e8d6d46432511"
+    assert dhash(filename) == "175fce6d46432511"
     assert colorhash(filename) == "07000000000"
 
 

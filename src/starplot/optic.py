@@ -365,8 +365,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self._proj.threshold = 1000
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
-            # facecolor=self.style.background_color.as_hex(),
-            layout="tight",
+            facecolor=self.style.figure_background_color.as_hex(),
+            layout="constrained",
         )
         self.ax = plt.axes(projection=self._proj)
         self.ax.xaxis.set_visible(False)

@@ -47,7 +47,7 @@ def test_optic_plot_binoculars_m45(optic_style, dt_dec_16):
     filename = DATA_PATH / "optic-binoculars-m45.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "8e172b552b338e4d"
+    assert dhash(filename) == "8e17231333238e6a"
     assert colorhash(filename) == "33000000000"
 
 
@@ -76,7 +76,7 @@ def test_optic_plot_polaris_binoculars(dt_dec_16):
     filename = DATA_PATH / "optic-binoculars-polaris.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "062140cc48611355"
+    assert dhash(filename) == "167140cc48611355"
     assert colorhash(filename) == "07000000000"
 
 
@@ -102,7 +102,7 @@ def test_optic_plot_refractor_double(optic_style, dt_dec_16):
     filename = DATA_PATH / "optic-refractor-double-cluster.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "8e172b452b338e4d"
+    assert dhash(filename) == "8e172b032b338e6a"
     assert colorhash(filename) == "33000000000"
 
 
@@ -136,7 +136,7 @@ def test_optic_plot_wrapping(optic_style, dt_dec_16):
     filename = DATA_PATH / "optic-wrapping.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "8e172b452b338e4d"
+    assert dhash(filename) == "8e172b052b238e6a"
     assert colorhash(filename) == "1e000000000"
 
 
@@ -161,8 +161,8 @@ def test_optic_plot_scope_m45(optic_style, dt_dec_16):
     filename = DATA_PATH / "optic-scope-m45.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "8e172b5123238e4d"
-    assert colorhash(filename) == "33e00000000"
+    assert dhash(filename) == "8e172b1333278e6a"
+    assert colorhash(filename) == "1ee00000000"
 
 
 def test_optic_plot_reflector_m45(optic_style, dt_dec_16):
@@ -186,8 +186,8 @@ def test_optic_plot_reflector_m45(optic_style, dt_dec_16):
     filename = DATA_PATH / "optic-reflector-m45.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "8e172b5123338e4d"
-    assert colorhash(filename) == "33000000000"
+    assert dhash(filename) == "8e1f3b3323338e6a"
+    assert colorhash(filename) == "1e000000000"
 
 
 def test_optic_plot_camera_m45(optic_style, dt_dec_16):
@@ -212,7 +212,7 @@ def test_optic_plot_camera_m45(optic_style, dt_dec_16):
     filename = DATA_PATH / "optic-camera-m45.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "4971515171614975"
+    assert dhash(filename) == "0931331333250baa"
     # flaky - seems the colorhash can vary for this plot?
     assert colorhash(filename) == "3a000000000"
 
@@ -240,7 +240,7 @@ def test_optic_plot_camera_rotated(optic_style, dt_dec_16):
     filename = DATA_PATH / "optic-camera-rotated-m45.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "25468b33269d9a65"
+    assert dhash(filename) == "24468313369d9a2a"
     assert colorhash(filename) == "17000000000"
 
 
