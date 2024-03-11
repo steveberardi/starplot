@@ -20,4 +20,4 @@ p = MapPlot(
 p.constellations()
 p.stars(mag=4.6, mag_labels=2.1)
 
-p.export("01_star_chart.png")
+p.export("01_star_chart.png", transparent=True)
