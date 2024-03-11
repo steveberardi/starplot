@@ -5,6 +5,8 @@ bayer_labels:
 border_bg_color: '#2e3440'
 border_font_color: '#a3be8c'
 border_line_color: '#a3be8c'
+title:
+  font_color: '#a3be8c'
 celestial_equator:
   label:
     font_color: '#77A67F'

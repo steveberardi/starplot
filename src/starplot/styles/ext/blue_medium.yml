@@ -3,6 +3,8 @@ figure_background_color: '#fff'
 border_bg_color: '#7997b9'
 border_font_color: '#f1f6ff'
 border_line_color: '#2f4358'
+title:
+  font_color: '#f1f6ff'
 bayer_labels:
   font_alpha: 0.8
   font_color: '#000'

@@ -19,6 +19,7 @@ from starplot.styles import (
     PlotStyle,
     MarkerStyle,
     ObjectStyle,
+    LabelStyle,
     LegendLocationEnum,
     LegendStyle,
     PathStyle,
@@ -147,8 +148,16 @@ class BasePlot(ABC):
 
         self._maybe_remove_label(label)
 
-    def title(self, text: str):
-        self.ax.set_title(text)
+    @use_style(LabelStyle, "title")
+    def title(self, text: str, style: LabelStyle = None):
+        """
+        Plots a title at the top of the plot
+
+        Args:
+            text: Title text to plot
+            style: Styling of the title. If None, then the plot's style (specified when creating the plot) will be used
+        """
+        self.ax.set_title(text, **style.matplot_kwargs(self._size_multiplier))
 
     @use_style(LegendStyle, "legend")
     def legend(self, style: LegendStyle = None):

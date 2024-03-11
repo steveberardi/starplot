@@ -2,6 +2,8 @@ background_color: '#fff'
 border_bg_color: '#fff'
 border_font_color: '#000'
 border_line_color: '#000'
+title:
+  font_color: '#000'
 celestial_equator:
   label:
     font_color: '#999'

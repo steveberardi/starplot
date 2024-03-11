@@ -476,6 +476,14 @@ class PlotStyle(BaseStyle):
     border_line_color: ColorStr = ColorStr("#000")
     border_bg_color: ColorStr = ColorStr("#fff")
 
+    # Title
+    title: LabelStyle = LabelStyle(
+        font_size=24,
+        zorder=1,
+        line_spacing=2,
+    )
+    """Styling for info text (only applies to zenith and optic plots)"""
+
     # Info text
     info_text: LabelStyle = LabelStyle(
         font_size=10,

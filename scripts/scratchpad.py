@@ -91,6 +91,7 @@ def create_map_orion():
     p.constellation_borders()
     p.milky_way()
     p.ecliptic(label=None)
+    p.title("Orion in Meractor")
 
     # p.marker(
     #     ra=4.5,
@@ -294,6 +295,7 @@ def create_optic_plot():
     )
     p1.stars(mag=15, color_fn=callables.color_by_bv)
     p1.dsos(mag=4.1, labels=None)
+    p1.title("Orion Nebula")
 
     p2 = sp.OpticPlot(
         # M45

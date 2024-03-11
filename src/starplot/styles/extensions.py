@@ -26,4 +26,3 @@ BLUE_DARK = load("blue_dark.yml")
 BROWN = load("brown.yml")
 ANTIQUE = load("antique.yml")
 NORD = load("nord.yml")
-
