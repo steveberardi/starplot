@@ -1,7 +1,7 @@
 <div class="grid cards" markdown>
 
-- ![starchart-blue](images/gallery/001.png)
-- ![orion](images/gallery/002.png)
+- ![starchart-blue](images/gallery/zenith.png)
+- ![orion](images/gallery/orion.png)
 
 - ![Optic - 1](images/gallery/optic_01.png)
 - ![Optic - 2](images/gallery/optic_02.png)

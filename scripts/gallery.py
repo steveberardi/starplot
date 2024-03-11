@@ -40,7 +40,7 @@ def zenith():
     p.ecliptic()
     p.celestial_equator()
     p.milky_way()
-    p.export(IMAGE_PATH + "zenith.png")
+    p.export(IMAGE_PATH + "zenith.png", transparent=True)
 
 
 def orion():
