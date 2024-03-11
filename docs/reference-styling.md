@@ -165,7 +165,6 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
 
 ## Code Reference
 
-
 ::: starplot.PlotStyle
     options:
         show_root_heading: true
@@ -187,7 +186,6 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
         show_root_heading: true
         show_docstring_attributes: true
 
-
 ::: starplot.styles.PolygonStyle
     options:
         show_root_heading: true
@@ -200,7 +198,6 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
         show_docstring_attributes: true
 
 ---
-
 
 ::: starplot.styles.ObjectStyle
     options:
@@ -216,7 +213,6 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     options:
         show_root_heading: true
         show_docstring_attributes: true
-
 
 ---
 ::: starplot.styles.FillStyleEnum
@@ -271,7 +267,6 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
     - `ZENITH` - Basic styling tailored for zenith plots ([details](#extensions-zenith))
-
 
 <!-- GRAYSCALE -->
 <h2 class="doc doc-heading" id="extensions-grayscale"><code>GRAYSCALE</code></h2>
@@ -364,7 +359,6 @@ Nord inspired colors
     ```
 </div>
 
-
 <!-- OPTIC -->
 <h2 class="doc doc-heading" id="extensions-optic"><code>OPTIC</code></h2>
 
@@ -402,6 +396,4 @@ Basic styling tailored for zenith plots
     ```yaml 
     --8<-- "src/starplot/styles/ext/zenith.yml"
     ```
-</div>
-
 </div>
