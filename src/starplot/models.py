@@ -10,10 +10,10 @@ class Star(BaseModel):
     """
 
     ra: float
-    """Right Ascension"""
+    """Right Ascension, in hours (0...24)"""
 
     dec: float
-    """Declination"""
+    """Declination, in degrees (-90...90)"""
 
     magnitude: float
     """Magnitude"""

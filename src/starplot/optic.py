@@ -27,8 +27,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
     Args:
         optic: Optic instance that defines optical parameters
-        ra: Right ascension of target center
-        dec: Declination of target center
+        ra: Right ascension of target center, in hours (0...24)
+        dec: Declination of target center, in degrees (-90...90)
         lat: Latitude of observer's location
         lon: Longitude of observer's location
         dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
@@ -39,7 +39,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
 
     Returns:
-        OpticPlot: A new instance of a OpticPlot
+        OpticPlot: A new instance of an OpticPlot
 
     """
 
