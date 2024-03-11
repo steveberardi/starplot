@@ -119,17 +119,17 @@ def create_map_orion():
     # )
 
     points = [
-        (5 * 15, 10),
-        (6 * 15, 10),
-        (6 * 15, 0),
-        (5 * 15, 0),
-        (5 * 15, 10),
+        (5, 10),
+        (6, 10),
+        (6, 0),
+        (5, 0),
+        (5, 10),
     ]
 
-    # p.polygon(
-    #     points,
-    #     pstyle,
-    # )
+    p.polygon(
+        points,
+        pstyle,
+    )
     # p.rectangle(
     #     # (6, 20),
     #     # 5,
@@ -412,15 +412,15 @@ def create_map_scratch():
 
 # ------------------------------------------
 
-create_optic_plot()
+# create_optic_plot()
 
-create_zenith()
+# create_zenith()
 
-create_map_miller()
+# create_map_miller()
 
 create_map_orion()
 
-create_map_scratch()
+# create_map_scratch()
 
 #  2 ** math.log(20-mag) / math.log(20)
 

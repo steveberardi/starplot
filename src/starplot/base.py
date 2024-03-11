@@ -422,7 +422,8 @@ class BasePlot(ABC):
             points: List of polygon points `[(ra, dec), ...]`
             style: Style of polygon
         """
-        self._polygon(points, style)
+        _points = [(ra * 15, dec) for ra, dec in points]
+        self._polygon(_points, style)
 
     @use_style(PolygonStyle)
     def rectangle(
