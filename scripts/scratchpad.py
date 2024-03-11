@@ -91,7 +91,7 @@ def create_map_orion():
     p.constellation_borders()
     p.milky_way()
     p.ecliptic(label=None)
-    p.title("Orion in Meractor")
+    p.title("Orion in Mercator")
 
     # p.marker(
     #     ra=4.5,
@@ -139,23 +139,6 @@ def create_map_orion():
     #     10,
     #     style=pstyle,
     #     angle=0,
-    # )
-    # p.circle(
-    #     # (7, -5),
-    #     # 5,
-    #     # (0, 80),
-    #     # 10,
-    #     (0, 90),
-    #     5,
-    #     style=pstyle,
-    # )
-
-    # p.ellipse(
-    #     (6, 20),
-    #     5,
-    #     10,
-    #     angle=45,
-    #     style=pstyle,
     # )
     p.gridlines(tick_marks=True)
     # p.bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
@@ -234,15 +217,12 @@ def create_map_miller():
 
 def create_optic_plot():
     style = PlotStyle().extend(
-        # extensions.MINIMAL,
         # extensions.GRAYSCALE_DARK,
         # extensions.GRAYSCALE,
         # extensions.BLUE_LIGHT,
         extensions.BLUE_DARK,
         extensions.OPTIC,
     )
-    # style.star.marker.size = 20
-    # style.dso_nebula.marker.color = None
 
     p1 = sp.OpticPlot(
         # ra=2.3774370927640605,
@@ -265,27 +245,27 @@ def create_optic_plot():
         # ra=4.501,
         # dec=15.96,
         # Orion's belt
-        # ra=5.6,
-        # dec=-1.2,
+        ra=5.6,
+        dec=-1.2,
         # Orion Nebula
-        ra=5.583,
-        dec=-5.383,
+        # ra=5.583,
+        # dec=-5.383,
         lat=32.97,
         lon=-117.038611,
         # Falkland Islands
         # lat=-51.524793,
         # lon=-60.118504,
         # 10x binoculars
-        # optic=sp.optics.Binoculars(
-        #     magnification=10,
-        #     fov=65,
-        # ),
-        # TV-85
-        optic=sp.optics.Scope(
-            focal_length=600,
-            eyepiece_focal_length=11,
-            eyepiece_fov=100,
+        optic=sp.optics.Binoculars(
+            magnification=10,
+            fov=65,
         ),
+        # TV-85
+        # optic=sp.optics.Scope(
+        #     focal_length=600,
+        #     eyepiece_focal_length=11,
+        #     eyepiece_fov=100,
+        # ),
         dt=datetime.now(timezone("America/Los_Angeles")).replace(
             hour=20, minute=30, second=0
         ),
@@ -293,6 +273,8 @@ def create_optic_plot():
         resolution=1800,
         debug=True,
     )
+    p1.celestial_equator()
+    p1.ecliptic()
     p1.stars(mag=15, color_fn=callables.color_by_bv)
     p1.dsos(mag=4.1, labels=None)
     p1.title("Orion Nebula")
@@ -302,8 +284,10 @@ def create_optic_plot():
         # ra=3.7836111111,
         # dec=24.1166666667,
         # double cluster
-        ra=2.33,
-        dec=57.14,
+        # ra=2.33,
+        # dec=57.14,
+        ra=6.1,
+        dec=22,
         # M44
         # ra=8.667,
         # dec=19.67,
@@ -313,16 +297,16 @@ def create_optic_plot():
         lat=32.97,
         lon=-117.038611,
         # 10x binoculars
-        # optic=sp.optics.Binoculars(
-        #     magnification=10,
-        #     fov=65,
-        # ),
-        # AT72EDII
-        optic=sp.optics.Refractor(
-            focal_length=430,
-            eyepiece_focal_length=11,
-            eyepiece_fov=82,
+        optic=sp.optics.Binoculars(
+            magnification=10,
+            fov=65,
         ),
+        # AT72EDII
+        # optic=sp.optics.Refractor(
+        #     focal_length=430,
+        #     eyepiece_focal_length=11,
+        #     eyepiece_fov=82,
+        # ),
         # TV-85
         # optic=sp.optics.Refractor(
         #     focal_length=600,
@@ -347,7 +331,8 @@ def create_optic_plot():
         resolution=1600,
         debug=True,
     )
-    # p2.plot_stars(limiting_magnitude=12)
+    p2.ecliptic()
+    p2.stars(mag=10, bayer_labels=True)
     p2.info()
 
     # p1.export("temp/optic-p1.svg", format="svg", padding=0.3)
@@ -412,7 +397,7 @@ def create_map_scratch():
 
 # ------------------------------------------
 
-# create_optic_plot()
+create_optic_plot()
 
 # create_zenith()
 
@@ -421,7 +406,5 @@ def create_map_scratch():
 create_map_orion()
 
 # create_map_scratch()
-
-#  2 ** math.log(20-mag) / math.log(20)
 
 print(f"Total run time: {time.time() - start_time}")
