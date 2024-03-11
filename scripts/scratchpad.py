@@ -126,23 +126,14 @@ def create_map_orion():
         (5, 10),
     ]
 
-    p.polygon(
-        points,
-        pstyle,
-    )
-    # p.rectangle(
-    #     # (6, 20),
-    #     # 5,
-    #     # 10,
-    #     (0, 70),
-    #     10,
-    #     10,
-    #     style=pstyle,
-    #     angle=0,
+    # p.polygon(
+    #     points,
+    #     pstyle,
     # )
-    p.gridlines(tick_marks=True)
+
     # p.bino_fov(ra=5.6, dec=-1.2, fov=65, magnification=10)
 
+    p.gridlines(tick_marks=True)
     p.legend()
 
     # p.export("temp/map-orion.svg", format="svg", padding=1)
