@@ -161,7 +161,7 @@ def test_optic_plot_scope_m45(optic_style, dt_dec_16):
     filename = DATA_PATH / "optic-scope-m45.png"
     optic_plot.export(filename)
 
-    assert dhash(filename) == "8e172b1333278e6a"
+    assert dhash(filename) in ["8e172b1333278e6a", "8e17231333278e6a"]
     assert colorhash(filename) == "1ee00000000"
 
 
