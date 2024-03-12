@@ -33,18 +33,6 @@ constellation_borders:
   width: 2
   color: hsl(209, 50%, 74%)
 
-dso:
-  label:
-    font_alpha: 0.6
-    font_color: hsl(209, 23%, 66%)
-    font_size: 7
-    font_weight: light
-  marker:
-    alpha: 0.46
-    color: rgb(230, 204, 147)
-    edge_color: '#d2a441'
-    fill: full
-    size: 4
 dso_double_star:
   label:
     font_color: hsl(209, 23%, 66%)
@@ -56,14 +44,15 @@ dso_galaxy:
   label:
     font_color: hsl(209, 23%, 66%)
   marker:
-    alpha: 0.27
-    color: hsl(209, 20%, 76%)
-    edge_color: hsl(209, 20%, 78%)
+    alpha: 0.16
+    color: hsl(209, 20%, 75%)
+    edge_color: hsl(209, 20%, 90%)
+    zorder: -600
 dso_nebula:
   label:
     font_color: hsl(209, 23%, 66%)
   marker:
-    alpha: 0.36
+    alpha: 0.46
     color: hsl(209, 50%, 78%)
     edge_color: hsl(209, 50%, 20%)
     zorder: -500
@@ -71,27 +60,31 @@ dso_open_cluster:
   label:
     font_color: hsl(209, 23%, 66%)
   marker:
-    alpha: 0.26
+    size: 10
+    alpha: 0.52
     fill: none
     # color: hsl(209, 50%, 68%)
-    edge_color: hsl(209, 50%, 80%)
+    edge_color: hsl(209, 50%, 92%)
     zorder: -500
 dso_association_stars:
   label:
     font_color: hsl(209, 23%, 66%)
   marker:
-    alpha: 0.26
+    alpha: 0.52
     fill: none
     # color: hsl(209, 50%, 68%)
-    edge_color: hsl(209, 50%, 80%)
+    edge_color: hsl(209, 50%, 92%)
     zorder: -500
 dso_globular_cluster:
   label:
-    font_color: hsl(209, 23%, 66%)
+    font_color: hsl(209, 23%, 76%)
   marker:
-    alpha: 0.5
-    color: '#c7c7c7'
-    edge_color: '#444'
+    alpha: 0.68
+    size: 10
+    symbol: circle_plus
+    color: hsl(209, 50%, 92%)
+    edge_color: null
+    zorder: 100
 
 info_text:
   font_color: hsl(209, 53%, 90%)

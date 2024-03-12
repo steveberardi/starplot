@@ -1,12 +1,12 @@
-background_color: 'hsl(136, 0%, 10%)'
-figure_background_color: hsl(136, 0%, 30%)
-border_bg_color: 'hsl(136, 0%, 20%)'
-border_font_color: 'hsl(136, 0%, 97%)'
-border_line_color: 'hsl(136, 0%, 97%)'
+background_color: hsl(136, 0%, 10%)
+figure_background_color: hsl(136, 0%, 100%)
+border_bg_color: hsl(136, 0%, 20%)
+border_font_color: hsl(136, 0%, 0%)
+border_line_color: hsl(136, 0%, 97%)
 title:
-  font_color: hsl(136, 0%, 97%)
+  font_color: hsl(136, 0%, 0%)
 info_text:
-  font_color: hsl(136, 0%, 98%)
+  font_color: hsl(136, 0%, 0%)
 star:
   label:
     font_color: hsl(136, 0%, 97%)
@@ -71,8 +71,8 @@ moon:
     font_color: hsl(136, 0%, 97%)
 gridlines:
   label:
-    font_color: hsl(136, 0%, 97%)
+    font_color: hsl(136, 0%, 0%)
 tick_marks:
-  font_color: hsl(136, 0%, 97%)
+  font_color: hsl(136, 0%, 0%)
 legend:
   background_color: hsl(136, 0%, 64%)

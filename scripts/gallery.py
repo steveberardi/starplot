@@ -85,7 +85,7 @@ def orion():
     p.milky_way()
     p.gridlines()
     p.legend()
-    p.export(IMAGE_PATH + "orion.png")
+    p.export(IMAGE_PATH + "orion.png", padding=0.2)
 
 
 def lmc():
@@ -94,8 +94,8 @@ def lmc():
         # extensions.GRAYSCALE,
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
-        extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
+        # extensions.BLUE_MEDIUM,
+        extensions.BLUE_DARK,
         extensions.MAP,
         {
             "star": {
@@ -111,21 +111,21 @@ def lmc():
                 "num_columns": 1,
                 "background_alpha": 1,
             },
-            "dso_galaxy": {
-                "marker": {
-                    "color": "#fa87c0",
-                    "alpha": 0.2,
-                    "zorder": -200,
-                }
-            },
+            # "dso_galaxy": {
+            #     "marker": {
+            #         "color": "#fa87c0",
+            #         "alpha": 0.2,
+            #         "zorder": -200,
+            #     }
+            # },
         },
     )
     p = MapPlot(
         projection=Projection.STEREO_SOUTH,
         ra_min=4,
         ra_max=6.5,
-        dec_min=-75,
-        dec_max=-64,
+        dec_min=-76,
+        dec_max=-63,
         style=style,
         resolution=RESOLUTION,
     )
@@ -141,7 +141,7 @@ def lmc():
     p.milky_way()
     p.gridlines()
     p.legend()
-    p.export(IMAGE_PATH + "magellanic_cloud.png")
+    p.export(IMAGE_PATH + "magellanic_cloud.png", padding=0.2)
 
 
 def sgr():
@@ -156,8 +156,8 @@ def sgr():
         projection=Projection.STEREO_SOUTH,
         ra_min=17,
         ra_max=19.5,
-        dec_min=-45,
-        dec_max=-15,
+        dec_min=-46,
+        dec_max=-14,
         style=style,
         resolution=RESOLUTION,
     )
@@ -169,7 +169,7 @@ def sgr():
     p.celestial_equator()
     p.milky_way()
     p.gridlines()
-    p.export(IMAGE_PATH + "sagittarius.png")
+    p.export(IMAGE_PATH + "sagittarius.png", padding=0.2)
 
 
 def optics():
@@ -243,9 +243,9 @@ def optics():
     p3.stars(mag=11, color_fn=callables.color_by_bv, bayer_labels=True)
     p3.info()
 
-    p1.export(IMAGE_PATH + "optic_01.png")
-    p2.export(IMAGE_PATH + "optic_02.png")
-    p3.export(IMAGE_PATH + "optic_03.png")
+    p1.export(IMAGE_PATH + "optic_01.png", padding=0.3)
+    p2.export(IMAGE_PATH + "optic_02.png", padding=0.3)
+    p3.export(IMAGE_PATH + "optic_03.png", padding=0.3)
 
 
 def orthographic():
@@ -291,7 +291,7 @@ def orthographic():
         p.planets()
         p.adjust_text()
 
-        p.export(IMAGE_PATH + f"orthographic_0{i+1}.png")
+        p.export(IMAGE_PATH + f"orthographic_0{i+1}.png", padding=0.3)
 
 
 def miller_big():
