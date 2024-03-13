@@ -28,7 +28,5 @@ p.scope_fov(
     eyepiece_focal_length=14,
     eyepiece_fov=82,
 )
-
-p.ax.set_title("M45 :: TV-85 / 14mm @ 82deg")
-
+p.title("M45 :: TV-85 / 14mm @ 82deg")
 p.export("04_map_m45_scope.png", padding=0.3)

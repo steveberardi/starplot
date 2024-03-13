@@ -36,11 +36,21 @@ for day in range(0, 30, 7):
 
 # Now let's plot the data on a map!
 style = PlotStyle().extend(
-    extensions.BLUE_LIGHT,
+    extensions.BLUE_DARK,
     extensions.MAP,
+    {
+        "star": {
+            "label": {
+                "font_size": 9,
+                "font_weight": "normal",
+            }
+        },
+        "legend": {
+            "location": "lower center",
+        }
+    }
 )
-style.legend.location = "lower right"
-style.legend.num_columns = 1
+style.legend.location = "lower center"
 
 p = MapPlot(
     projection=Projection.STEREO_NORTH,
@@ -50,16 +60,18 @@ p = MapPlot(
     # the max RA to 28, so this plot will have an RA extent from 23h to 4h
     ra_min=23,
     ra_max=28,
-    dec_min=20,
-    dec_max=56,
+    dec_min=14,
+    dec_max=60,
     style=style,
-    resolution=2600,
+    resolution=2800,
 )
-p.gridlines()
+p.gridlines(labels=False)
 p.stars(mag=8)
 p.constellations()
 p.constellation_borders()
-p.dsos(mag=8, labels=None)
+p.nebula(mag=8, labels=None)
+p.open_clusters(mag=8, labels=None)
+p.galaxies(mag=8, labels=None)
 p.milky_way()
 
 for t, ra, dec in radecs:
@@ -74,15 +86,15 @@ for t, ra, dec in radecs:
                 "size": 16,
                 "symbol": "circle",
                 "fill": "full",
-                "color": "#b51f1f",
-                "edge_color": "#b51f1f",
-                "alpha": 0.5,
+                "color": "hsl(358, 78%, 58%)",
+                "edge_color": "hsl(358, 78%, 42%)",
+                "alpha": 0.64,
                 "zorder": 4096,
             },
             "label": {
                 "font_size": 17,
                 "font_weight": "bold",
-                "font_color": "#3c6daa",
+                "font_color": "hsl(60, 70%, 72%)",
                 "zorder": 4096,
             },
         },

@@ -20,27 +20,36 @@ bayer_labels = {
 
 def zenith():
     print("Creating Zenith...")
-    tz = timezone("America/Los_Angeles")
-    dt = datetime(2023, 7, 13, 22, 0, tzinfo=tz)  # July 13, 2023 at 10pm PT
-    p = MapPlot(
-        projection=Projection.ZENITH,
-        lat=33.363484,
-        lon=-116.836394,
-        dt=dt,
-        style=PlotStyle().extend(
-            extensions.BLUE_MEDIUM,
-            extensions.ZENITH,
-        ),
-        resolution=RESOLUTION,
-    )
-    p.constellations(labels=constellations.CONSTELLATIONS_FULL_NAMES)
-    p.stars(mag=5.6, mag_labels=2.1)
-    p.dsos(mag=9, null=True, true_size=True, labels=None)
-    p.constellation_borders()
-    p.ecliptic()
-    p.celestial_equator()
-    p.milky_way()
-    p.export(IMAGE_PATH + "zenith.png", transparent=True)
+    ext = [
+        extensions.BLUE_MEDIUM,
+        extensions.NORD,
+    ]
+    for i, e in enumerate(ext):
+        tz = timezone("America/Los_Angeles")
+        dt = datetime(2023, 7, 13, 22, 0, tzinfo=tz)  # July 13, 2023 at 10pm PT
+        p = MapPlot(
+            projection=Projection.ZENITH,
+            lat=33.363484,
+            lon=-116.836394,
+            dt=dt,
+            style=PlotStyle().extend(
+                e,
+                extensions.ZENITH,
+            ),
+            resolution=RESOLUTION,
+        )
+        p.constellations(labels=constellations.CONSTELLATIONS_FULL_NAMES)
+        p.stars(mag=5.6, mag_labels=2.1)
+        p.dsos(mag=9, null=True, true_size=True, labels=None)
+
+        # p.constellation_borders()
+        if i in [0]:
+            p.gridlines(labels=False)
+            p.ecliptic()
+            p.celestial_equator()
+            p.milky_way()
+
+        p.export(IMAGE_PATH + f"zenith_{i}.png", transparent=True)
 
 
 def orion():
@@ -327,7 +336,44 @@ def miller_big():
 
     p.export(IMAGE_PATH + "miller_big.png", padding=0.5)
 
+def antique():
+    print("Creating Antique...")
+    style = PlotStyle().extend(
+        extensions.ANTIQUE,
+        extensions.MAP,
+        bayer_labels,
+    )
+    p = MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=1,
+        ra_max=6,
+        dec_min=20,
+        dec_max=70,
+        style=style,
+        resolution=RESOLUTION,
+    )
+    p.gridlines(labels=False)
+    p.stars(mag=9.4, style={"marker": {"size": 20}})
+    p.stars(mag=8, bayer_labels=True, style={"marker": {"alpha": 0}})
+    p.stars(
+        mag=2.3,
+        style={
+            "marker": {
+                "size": 54,
+                "symbol": "star_8",
+                "zorder": 50,
+            }
+        },
+        legend_label=None,
+        labels=None,
+    )
+    p.constellations()
+    p.constellation_borders()
+    p.dsos(mag=12, labels=None)
+    p.milky_way()
+    p.export(IMAGE_PATH + "antique.png", padding=0.5)
 
+antique()
 zenith()
 orion()
 sgr()
