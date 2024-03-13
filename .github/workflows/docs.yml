@@ -12,10 +12,19 @@ jobs:
       id-token: 'write'
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Build Docker image
       run: make build
+
+    - name: Build Examples
+      run: make examples
+    
+    - name: Build Gallery
+      run: make gallery
+    
+    - name: Build OpenNGC Data Reference
+      run: make scripts SCRIPT=ongc_docdata
 
     - name: Build Docs
       run: make docs-build
@@ -25,12 +34,12 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
       
-    - name: 'Set up Cloud SDK'
+    - name: 'Set up Google Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
       with:
         version: '>= 363.0.0'
 
-    - name: 'Use gcloud CLI'
+    - name: 'Sync docs to Cloud Storage Bucket'
       run: 'gsutil -m rsync -R -d site gs://starplot.dev'
 
     

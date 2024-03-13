@@ -9,12 +9,13 @@ nav:
     - Installation: installation.md
     - Examples: examples.md
     - Reference:
-        - starplot.OpticPlot: reference-opticplot.md
-        - starplot.MapPlot: reference-mapplot.md
-        - starplot.ZenithPlot: reference-zenithplot.md
-        - starplot.SkyObject: reference-skyobject.md
+        - MapPlot: reference-mapplot.md
+        - OpticPlot: reference-opticplot.md
+        - Models: reference-models.md
         - Styling: reference-styling.md
+        - Callables: reference-callables.md
         - Data: reference-data.md
+        - OpenNGC: reference-ongc.md
     - Data Sources: data-sources.md
     - License: license.md
     - Coming Soon: roadmap.md
@@ -42,6 +43,7 @@ theme:
   features:
     - content.code.copy
     - toc.integrate
+    - navigation.footer
   
 extra_css:
   - css/extra.css
@@ -58,6 +60,10 @@ plugins:
             show_source: false
             show_bases: false
             docstring_section_style: list
+            annotations_path: brief
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
   - macros:
       include_dir: .
       # include_dir: examples/ src/starplot/styles/ext/
@@ -68,6 +74,7 @@ markdown_extensions:
   - admonition
   - md_in_html
   - attr_list
+  - tables
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span

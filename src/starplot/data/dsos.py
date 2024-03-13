@@ -180,7 +180,7 @@ ONGC_TYPE = {
     DsoType.STAR: "*",
     DsoType.DOUBLE_STAR: "**",
     DsoType.ASSOCIATION_OF_STARS: "*Ass",
-    # Others - not supported yet (no styles defined)
+    # Others
     DsoType.HII_IONIZED_REGION: "HII",
     DsoType.DARK_NEBULA: "DrkN",
     DsoType.SUPERNOVA_REMNANT: "SNR",
@@ -211,9 +211,9 @@ DEFAULT_DSO_TYPES = [
     # DsoType.DOUBLE_STAR,
     DsoType.ASSOCIATION_OF_STARS,
 ]
-"""Default types of Deep Sky Objects (DSOs) that are plotted on maps"""
+"""Default types of Deep Sky Objects (DSOs) that are plotted when you call `dsos()` on a plot"""
 
-LEGEND_LABELS = {
+DSO_LEGEND_LABELS = {
     # Galaxies ----------
     DsoType.GALAXY: "Galaxy",
     DsoType.GALAXY_PAIR: "Galaxy",
@@ -225,4 +225,36 @@ LEGEND_LABELS = {
     DsoType.EMISSION_NEBULA: "Nebula",
     DsoType.STAR_CLUSTER_NEBULA: "Nebula",
     DsoType.REFLECTION_NEBULA: "Nebula",
+    # Star Clusters ----------
+    DsoType.OPEN_CLUSTER: "Open Cluster",
+    DsoType.GLOBULAR_CLUSTER: "Globular Cluster",
+    # Stars ----------
+    DsoType.DOUBLE_STAR: "Double Star",
+    DsoType.ASSOCIATION_OF_STARS: "Association of stars",
+    DsoType.NOVA_STAR: "Nova Star",
+    # Others
+    DsoType.HII_IONIZED_REGION: "HII Ionized Region",
+    DsoType.DARK_NEBULA: "Dark Nebula",
+    DsoType.SUPERNOVA_REMNANT: "Supernova Remnant",
 }
+
+
+class DsoLabelMaker(dict):
+    """
+    This is pretty hacky, but it helps keep a consistent interface for plotting labels and any overrides.
+
+    Basically this is just a dictionary that returns the key itself for any get() call, unless
+    the key is present in the 'overrides' dict that's passed on init
+    """
+
+    def __init__(self, *args, **kwargs):
+        self._overrides = kwargs.get("overrides") or {}
+
+    def __getitem__(self, key):
+        return self.get(key)
+
+    def get(self, key):
+        return self._overrides.get(key) or key
+
+
+DSO_LABELS_DEFAULT = DsoLabelMaker()

@@ -1,0 +1,110 @@
+
+# Yellow Sat - hsl(49, 92%, 77%)
+# Yellow unsat - hsl(48, 80%, 92%)
+# blue - hsl(188, 35%, 76%)
+# blue gray - hsl(225, 25%, 88%)
+# green - hsl(71, 58%, 76%)
+# red - hsl(26, 93%, 82%)
+
+background_color: hsl(48, 80%, 96%)
+figure_background_color: hsl(60, 9%, 29%)
+border_bg_color: hsl(60, 3%, 32%)
+border_font_color: hsl(60, 20%, 93%)
+border_line_color: hsl(60, 20%, 53%)
+title:
+  font_color: hsl(60, 20%, 93%)
+bayer_labels:
+  font_alpha: 0.74
+  font_color: '#000'
+celestial_equator:
+  label:
+    font_color: hsl(188, 35%, 56%)
+  line:
+    color: hsl(188, 35%, 76%)
+    alpha: 0.62
+constellation:
+  label:
+    font_size: 10
+    font_weight: light
+    font_color: hsl(60, 3%, 52%)
+    font_alpha: 0.36
+    font_name: "serif"
+  line:
+    alpha: 0.2
+    color: hsl(48, 80%, 14%)
+    width: 1.46
+constellation_borders:
+  color: hsl(37, 33%, 40%)
+  alpha: 0.44
+  width: 1.2
+  zorder: -500
+ecliptic:
+  label:
+    font_color: hsl(26, 63%, 52%)
+  line:
+    color: hsl(26, 93%, 82%)
+    alpha: 0.6
+milky_way:
+  alpha: 0.14
+  color: hsl(48, 40%, 70%)
+  edge_width: 0
+gridlines:
+  label:
+    font_alpha: 0.8
+    font_color: hsl(60, 3%, 92%)
+    font_size: 8
+    font_weight: light
+  line:
+    alpha: 0.6
+    color: hsl(68, 11%, 71%)
+    style: solid
+    width: 1
+star:
+  marker:
+    color: hsl(60, 12%, 32%)
+  label:
+    font_color: hsl(60, 3%, 42%)
+planets:
+  marker:
+    size: 8
+    symbol: circle
+    alpha: 0.68
+    fill: full
+    color: hsl(26, 93%, 82%)
+    edge_color: hsl(26, 93%, 52%)
+  label:
+    font_size: 7
+    font_color: hsl(60, 3%, 42%)
+
+# DSOs
+dso_double_star:
+  marker:
+    alpha: 0.6
+dso_galaxy:
+  marker:
+    alpha: 0.42
+    color: hsl(26, 93%, 82%)
+    edge_color:  hsl(26, 93%, 32%)
+dso_nebula:
+  marker:
+    alpha: 0.52
+    color: hsl(71, 58%, 76%)
+    edge_color: hsl(71, 58%, 36%)
+dso_open_cluster:
+  marker:
+    alpha: 0.52
+    color: hsl(49, 92%, 77%)
+    edge_color: hsl(49, 92%, 27%)
+dso_association_stars:
+  marker:
+    alpha: 0.52
+    color: hsl(49, 92%, 77%)
+    edge_color: hsl(49, 92%, 27%)
+dso_globular_cluster:
+  marker:
+    alpha: 0.5
+    color: hsl(60, 53%, 76%)
+    edge_color: hsl(60, 3%, 32%)
+
+legend:
+  background_color: hsl(48, 50%, 98%)

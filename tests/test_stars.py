@@ -4,10 +4,10 @@ from starplot.data import stars
 
 
 def test_star_hip_names():
-    assert stars.hip_names[95947] == "Albireo"
-    assert stars.hip_names[11767] == "Polaris"
-    assert stars.hip_names[32349] == "Sirius"
-    assert stars.hip_names[91262] == "Vega"
+    assert stars.STAR_NAMES[95947] == "Albireo"
+    assert stars.STAR_NAMES[11767] == "Polaris"
+    assert stars.STAR_NAMES[32349] == "Sirius"
+    assert stars.STAR_NAMES[91262] == "Vega"
 
 
 def test_stars_load_default():

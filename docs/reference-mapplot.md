@@ -1,11 +1,4 @@
-**Map plots are general purpose maps of the sky.** They're not dependent on an observer's location, but they are dependent on time if you want to include the planets and/or the moon in the plot.
-
-There are four supported projections for map plots: 
-
-- Mercator (the default)
-- Stereographic North
-- Stereographic South
-- Mollweide
+**Map plots are general-purpose maps of the sky.** They support a variety of [projections](#map-projections) (including a few perspective based projections that help show what the sky looks like at a particular time and place).
 
 ::: starplot.MapPlot
     options:
@@ -15,12 +8,14 @@ There are four supported projections for map plots:
         docstring_section_style: list
         <!-- separate_signature: true -->
 
-::: starplot.Projection
+## Map Projections
+
+### ::: starplot.Projection
     options:
         show_root_heading: true
         show_docstring_attributes: true
 
-::: starplot.map.DEFAULT_FOV_STYLE
+::: starplot.base.DEFAULT_FOV_STYLE
     options:
         show_root_heading: true
         show_docstring_attributes: true

@@ -1,5 +1,5 @@
-from starplot import MapPlot, Projection, SkyObject
-from starplot.styles import PlotStyle, extensions
+from starplot import MapPlot, Projection
+from starplot.styles import PlotStyle, PolygonStyle, extensions
 
 style = PlotStyle().extend(
     extensions.BLUE_LIGHT,
@@ -17,7 +17,6 @@ style = PlotStyle().extend(
         },
     },
 )
-style.star.label.font_size = 11
 
 p = MapPlot(
     projection=Projection.MERCATOR,
@@ -25,31 +24,29 @@ p = MapPlot(
     ra_max=7.8,
     dec_min=-16,
     dec_max=23.6,
-    limiting_magnitude=7.2,
     style=style,
     resolution=3600,
 )
-p.plot_object(
-    SkyObject(
-        name="M42",
-        ra=5.58333,
-        dec=-4.61,
-        style={
-            "marker": {
-                "size": 10,
-                "symbol": "s",
-                "fill": "full",
-                "color": "#ff6868",
-                "alpha": 1,
-                "zorder": 4096,
-            },
-            "label": {
-                "font_size": 10,
-                "font_weight": "bold",
-                "font_color": "darkred",
-                "zorder": 4096,
-            },
-        },
-    )
+p.gridlines()
+p.stars(mag=9, bayer_labels=True)
+p.dsos(mag=9, null=True, labels=None)
+p.constellations()
+p.constellation_borders()
+p.milky_way()
+p.ecliptic()
+
+p.ellipse(
+    (5.6, -1.2),
+    height_degrees=3,
+    width_degrees=5,
+    style=PolygonStyle(
+        fill_color="#ed7eed",
+        edge_color="#000",
+        alpha=0.2,
+    ),
+    angle=-22,
 )
+
+p.legend()
+
 p.export("03_map_orion.png", padding=0.5)

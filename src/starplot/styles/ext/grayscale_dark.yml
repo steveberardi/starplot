@@ -1,7 +1,12 @@
-background_color: 'hsl(136, 0%, 10%)'
-border_bg_color: 'hsl(136, 0%, 20%)'
-border_font_color: 'hsl(136, 0%, 97%)'
-border_line_color: 'hsl(136, 0%, 97%)'
+background_color: hsl(136, 0%, 10%)
+figure_background_color: hsl(136, 0%, 100%)
+border_bg_color: hsl(136, 0%, 20%)
+border_font_color: hsl(136, 0%, 0%)
+border_line_color: hsl(136, 0%, 97%)
+title:
+  font_color: hsl(136, 0%, 0%)
+info_text:
+  font_color: hsl(136, 0%, 0%)
 star:
   label:
     font_color: hsl(136, 0%, 97%)
@@ -29,22 +34,22 @@ dso_galaxy:
   marker:
     color: 'hsl(136, 0%, 97%)'
     alpha: 0.8
-    symbol: D
+    symbol: diamond
     fill: top
 dso_nebula:
   marker:
     color: 'hsl(136, 0%, 97%)'
-    alpha: 0.34
+    alpha: 0.28
 dso_open_cluster:
   marker:
     edge_color: 'hsl(136, 0%, 97%)'
     fill: none
-    alpha: 0.86
+    alpha: 0.8
 dso_association_stars:
   marker:
     edge_color: 'hsl(136, 0%, 97%)'
     fill: none
-    alpha: 0.86
+    alpha: 0.8
 ecliptic:
   label:
     font_color: '#777'
@@ -66,8 +71,8 @@ moon:
     font_color: hsl(136, 0%, 97%)
 gridlines:
   label:
-    font_color: hsl(136, 0%, 97%)
+    font_color: hsl(136, 0%, 0%)
 tick_marks:
-  font_color: hsl(136, 0%, 97%)
+  font_color: hsl(136, 0%, 0%)
 legend:
   background_color: hsl(136, 0%, 64%)

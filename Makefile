@@ -32,7 +32,7 @@ docker-multi-arch:
 	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag sberardi/starplot-base:latest --target base .
 
 lint:
-	$(DOCKER_RUN) "ruff check src/ tests/"
+	$(DOCKER_RUN) "ruff check src/ tests/ $(ARGS)"
 
 format:
 	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ $(ARGS)"
@@ -44,13 +44,16 @@ bash:
 	$(DOCKER_RUN) bash
 
 shell:
-	$(DOCKER_RUN) python
+	$(DOCKER_RUN) ipython
 
 scratchpad:
 	$(DOCKER_RUN) "python $(SCRATCH_ARGS) scripts/scratchpad.py"
 
 examples:
 	$(DOCKER_RUN) "cd examples && python examples.py"
+
+gallery:
+	$(DOCKER_RUN) "python scripts/gallery.py"
 
 # ------------------------------------------------------------------
 # Python version testing
@@ -79,7 +82,7 @@ test-3.12:
 # Docs
 docs-serve: DR_ARGS=-it -p 8000:8000
 docs-serve:
-	$(DOCKER_RUN) "mkdocs serve -a 0.0.0.0:8000 --watch src/"
+	$(DOCKER_RUN) "mkdocs serve -a 0.0.0.0:8000 -q --watch src/"
 
 docs-build:
 	$(DOCKER_RUN) "mkdocs build"
@@ -113,5 +116,6 @@ clean:
 	rm -rf dist
 	rm -rf site
 	rm -rf htmlcov
+	rm -f tests/data/*.png
 
-.PHONY: install test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts
+.PHONY: build test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts

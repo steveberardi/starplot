@@ -1,13 +1,14 @@
 from enum import Enum
+from typing import Dict
 
 import numpy as np
 
 from skyfield.api import Angle
 
-from starplot.data import load
 
+class Planet(str, Enum):
+    """Planets ... Coming Soon: Pluto :)"""
 
-class Planets(str, Enum):
     MERCURY = "mercury"
     VENUS = "venus"
     MARS = "mars"
@@ -17,14 +18,16 @@ class Planets(str, Enum):
     NEPTUNE = "neptune"
 
 
+PLANET_LABELS_DEFAULT = {p: p.value.upper() for p in Planet}
+
 PLANET_SIZE_KM = {
-    Planets.MERCURY: 2_440,
-    Planets.VENUS: 6_052,
-    Planets.MARS: 3_390,
-    Planets.JUPITER: 69_911,
-    Planets.SATURN: 58_232,
-    Planets.URANUS: 25_362,
-    Planets.NEPTUNE: 24_622,
+    Planet.MERCURY: 2_440,
+    Planet.VENUS: 6_052,
+    Planet.MARS: 3_390,
+    Planet.JUPITER: 69_911,
+    Planet.SATURN: 58_232,
+    Planet.URANUS: 25_362,
+    Planet.NEPTUNE: 24_622,
 }
 """
 Planet sizes from NASA:
@@ -35,14 +38,12 @@ Retrieved on 28-Jan-2024
 """
 
 
-def get_planet_positions(timescale, ephemeris: str = "de421_2001.bsp") -> dict:
+def get_planet_positions(timescale, ephemeris) -> Dict[Planet, tuple]:
     result = {}
+    earth = ephemeris["earth"]
 
-    eph = load(ephemeris)
-    earth = eph["earth"]
-
-    for p in Planets:
-        planet = eph[f"{p.value} barycenter"]
+    for p in Planet:
+        planet = ephemeris[f"{p.value} barycenter"]
         astrometric = earth.at(timescale).observe(planet)
         ra, dec, distance = astrometric.radec()
 
@@ -53,6 +54,6 @@ def get_planet_positions(timescale, ephemeris: str = "de421_2001.bsp") -> dict:
             radians=np.arcsin(radius_km / distance.km) * 2.0
         ).degrees
 
-        result[p.value] = (ra.hours, dec.degrees, apparent_diameter_degrees)
+        result[p] = (ra.hours, dec.degrees, apparent_diameter_degrees)
 
     return result

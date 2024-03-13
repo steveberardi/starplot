@@ -1,21 +1,21 @@
 from datetime import datetime
 from pytz import timezone
 from starplot import OpticPlot
+from starplot.callables import color_by_bv
 from starplot.optics import Refractor
 from starplot.styles import PlotStyle, extensions
 
 dt = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 
 style = PlotStyle().extend(
-    extensions.MINIMAL,
     extensions.GRAYSCALE_DARK,
     extensions.OPTIC,
 )
 
 p = OpticPlot(
     # M45
-    ra=3.7912777778,
-    dec=24.1052777778,
+    ra=3.7912778,
+    dec=24.1052778,
     lat=33.363484,
     lon=-116.836394,
     # Refractor Telescope
@@ -25,11 +25,12 @@ p = OpticPlot(
         eyepiece_fov=82,
     ),
     dt=dt,
-    limiting_magnitude=12,
     style=style,
     resolution=1600,
-    include_info_text=True,
-    colorize_stars=True,
 )
-
+p.stars(
+    mag=12,
+    color_fn=color_by_bv,
+)
+p.info()
 p.export("05_optic_m45.png", padding=0.3)

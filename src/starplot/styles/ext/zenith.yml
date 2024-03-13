@@ -1,19 +1,19 @@
+constellation:
+  label:
+    font_size: 7
+    font_weight: light
+  line:
+    width: 3
 ecliptic:
-  label:
-    visible: false
   line:
-    visible: false
-celestial_equator:
-  label:
-    visible: false
+    alpha: 0.8
+    width: 2
+gridlines:
   line:
-    visible: false
-milky_way:
-  visible: false
-legend:
-  visible: false
-moon:
+    alpha: 0.8
+    width: 1
+star:
+  label:
+    font_size: 9
   marker:
-    visible: true
-  label:
-    visible: true
+    size: 16

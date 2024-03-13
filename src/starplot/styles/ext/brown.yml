@@ -1,0 +1,103 @@
+background_color: hsl(60, 20%, 93%)
+figure_background_color: '#fff'
+border_bg_color: hsl(60, 3%, 32%)
+border_font_color: hsl(60, 20%, 93%)
+border_line_color: hsl(60, 20%, 53%)
+title:
+  font_color: hsl(60, 20%, 93%)
+bayer_labels:
+  font_alpha: 0.8
+  font_color: '#000'
+celestial_equator:
+  label:
+    font_color: hsl(162, 24%, 46%)
+  line:
+    color: hsl(162, 24%, 56%)
+    alpha: 0.5
+constellation:
+  label:
+    font_size: 10
+    font_weight: light
+    font_color: hsl(60, 3%, 52%)
+    font_alpha: 0.4
+    font_name: "serif"
+  line:
+    alpha: 0.23
+    # color: '#6785b3'
+    color: hsl(162, 24%, 56%)
+    width: 3
+constellation_borders:
+  color: hsl(37, 33%, 40%)
+  alpha: 0.34
+  width: 1.35
+  zorder: -500
+ecliptic:
+  label:
+    font_color: hsl(339, 20%, 50%)
+  line:
+    color: hsl(339, 20%, 70%)
+    alpha: 0.6
+milky_way:
+  alpha: 0.14
+  color: hsl(37, 33%, 75%)
+  edge_width: 0
+gridlines:
+  label:
+    font_alpha: 0.8
+    font_color: '#2f4358'
+    font_size: 8
+    font_weight: light
+  line:
+    alpha: 0.6
+    color: hsl(68, 11%, 71%)
+    style: solid
+    width: 1
+star:
+  marker:
+    color: hsl(60, 3%, 32%)
+  label:
+    font_color: hsl(60, 3%, 42%)
+planets:
+  marker:
+    size: 8
+    symbol: circle
+    alpha: 0.68
+    fill: full
+    color: hsl(339, 33%, 74%)
+    edge_color: hsl(339, 33%, 50%)
+  label:
+    font_size: 7
+    font_color: hsl(60, 3%, 42%)
+
+# DSOs
+dso_double_star:
+  marker:
+    alpha: 0.6
+dso_galaxy:
+  marker:
+    alpha: 0.42
+    color: hsl(339, 23%, 76%)
+    edge_color: hsl(339, 10%, 34%)
+dso_nebula:
+  marker:
+    alpha: 0.52
+    color: hsl(162, 22%, 76%)
+    edge_color: hsl(162, 12%, 36%)
+dso_open_cluster:
+  marker:
+    alpha: 0.52
+    color: hsl(37, 65%, 81%)
+    edge_color: hsl(37, 65%, 31%)
+dso_association_stars:
+  marker:
+    alpha: 0.52
+    color: hsl(37, 65%, 81%)
+    edge_color: hsl(37, 65%, 31%)
+dso_globular_cluster:
+  marker:
+    alpha: 0.5
+    color: hsl(60, 3%, 76%)
+    edge_color: hsl(60, 3%, 32%)
+
+legend:
+  background_color:  hsl(60, 20%, 93%)

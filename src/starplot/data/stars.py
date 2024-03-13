@@ -4,14 +4,7 @@ from pandas import read_parquet
 
 from starplot.data import DataFiles
 
-"""
-    Dictionary of stars that will be labeled on the plot
-
-    Keys: Hipparcos ID
-    Values: Common Name
-"""
-
-hip_names = {
+STAR_NAMES = {
     7588: "Achernar",
     60718: "Acrux",
     33579: "Adhara",
@@ -115,39 +108,7 @@ hip_names = {
     82396: "Wei",
     34444: "Wezen",
 }
-
-ZENITH_BASE = [
-    95947,
-    65477,
-    21421,
-    62956,
-    46390,
-    677,
-    97649,
-    80763,
-    69673,
-    27989,
-    30438,
-    24608,
-    36850,
-    102098,
-    3419,
-    54061,
-    25428,
-    113368,
-    65378,
-    11767,
-    37826,
-    37279,
-    49669,
-    24436,
-    85927,
-    32349,
-    65474,
-    91262,
-]
-
-BASE_LIMITING_MAG = 8
+"""Star names by their HIP id. You can override these values when calling `stars()`"""
 
 
 class StarCatalog(str, Enum):
@@ -165,16 +126,6 @@ def load_hipparcos():
 
 
 def load_tycho1():
-    # columns=[
-    #     "hip",
-    #     "magnitude",
-    #     "ra_hours",
-    #     "dec_degrees",
-    #     "parallax_mas",
-    #     "ra_mas_per_year",
-    #     "dec_mas_per_year",
-    #     "bv",
-    # ]
     df = read_parquet(DataFiles.TYCHO_1)
     df = df.assign(
         ra_degrees=df["ra_hours"] * 15.0,

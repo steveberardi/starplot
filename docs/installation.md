@@ -2,10 +2,7 @@ Starplot is available on [PyPI](https://pypi.org/project/starplot/), but it's ba
 
 Supported Python versions: 3.9+
 
-## Required Dependencies
-
-- GEOS
-- GDAL
+Required Dependencies: [GEOS](https://libgeos.org/), [GDAL](https://gdal.org/)
 
 ## macOS
 
@@ -31,7 +28,7 @@ apt-get install libgeos-dev libgdal-dev
 pip install starplot
 ```
 
-!!! note "What about Windows?"
+!!! star "What about Windows?"
 
     I haven't tried installing Starplot on Windows, but if you have and would like to share instructions, please feel free to [open a pull request on GitHub](https://github.com/steveberardi/starplot) with an update to this file (`docs/installation.md`). Thanks! :)
 

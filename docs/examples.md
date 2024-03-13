@@ -1,7 +1,7 @@
 This page has a few examples to get you familiar with Starplot and how it works.
 
 1. [Star Chart for Time/Location](#star-chart-for-timelocation)
-2. [Star Chart with an Extra Object Plotted](#star-chart-with-an-extra-object-plotted)
+2. [Star Chart with More Detail](#star-chart-with-more-detail)
 3. [Map of Orion](#map-of-orion)
 4. [Map of The Pleiades with a Scope Field of View](#map-of-the-pleiades-with-a-scope-field-of-view)
 5. [Optic plot of The Pleiades with a Refractor Telescope](#optic-plot-of-the-pleiades-with-a-refractor-telescope)
@@ -20,9 +20,9 @@ The created file should look like this:
 ![starchart-blue](images/examples/example_01.png)
 
 
-## Star Chart with an Extra Object Plotted
+## Star Chart with More Detail
 
-Building on the first example, you can also plot additional objects and even customize their style. Here's an example that plots the [Coma Star Cluster](https://en.wikipedia.org/wiki/Coma_Star_Cluster) (Melotte 111) as a red star and also changes the plot style to `GRAYSCALE`:
+Building on the first example, you can also plot additional objects and even customize their style. Here's an example that plots a bunch of extra stuff (including the Milky Way, constellation borders, Deep Sky Objects, and more). It also demonstrates how you can plot your own markers, like the purple circle around the [Coma Star Cluster](https://en.wikipedia.org/wiki/Coma_Star_Cluster) (Melotte 111):
 
 ```python
 --8<-- "examples/example_02.py"
@@ -33,7 +33,7 @@ Building on the first example, you can also plot additional objects and even cus
 
 ## Map of Orion
 
-The following code will create a simple map plot that shows the area around the constellation Orion, including a legend and an extra marker for M42 - [The Great Orion Nebula](https://en.wikipedia.org/wiki/Orion_Nebula):
+The following code will create a simple map plot that shows the area around the constellation Orion, including a legend and an ellipse around [Orion's Belt](https://en.wikipedia.org/wiki/Orion%27s_Belt):
 
 ```python
 --8<-- "examples/example_03.py"
@@ -58,12 +58,12 @@ The result should look like this:
 
 _The solid black circle in this plot is the extent of the Pleiades as defined in [OpenNGC](https://github.com/mattiaverga/OpenNGC)._
 
-!!! tip "Binocular Field of View"
+!!! star "Binocular Field of View"
 
-    You can also plot a circle showing the field of view of binoculars with the `plot_bino_fov` function:
+    You can also plot a circle showing the field of view of binoculars with the `bino_fov` function:
 
     ```python
-    p.plot_bino_fov(ra=3.78361, dec=24.11667, fov=65, magnification=10)
+    p.bino_fov(ra=3.78361, dec=24.11667, fov=65, magnification=10)
     ```
 
 
@@ -98,7 +98,7 @@ The result should look like this:
 
 Here's an example that uses [Skyfield](https://rhodesmill.org/skyfield/) to get some data on the comet [Hale-Bopp](https://en.wikipedia.org/wiki/Comet_Hale%E2%80%93Bopp) ☄️ and then uses that data to plot the comet's location in the sky in March and April of 1997 (when the comet was at its brightest in the sky):
 
-!!! note
+!!! star "Note"
 
     Skyfield is a required dependency of Starplot (and a very important one!), so if you have Starplot installed, then Skyfield should be installed too.
 

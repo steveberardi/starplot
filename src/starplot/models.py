@@ -1,46 +1,25 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
-from starplot.styles import ObjectStyle
 
-
-class SkyObject(BaseModel):
+class Star(BaseModel):
     """
-    Model for plotting additional objects (e.g. DSOs)
-
-    Example Usage:
-        Create a sky object of the Orion Nebula (M42) with custom styling:
-        ```python
-        m42 = SkyObject(
-            name="M42",
-            ra=5.58333,
-            dec=-4.61,
-            style={
-                "marker": {
-                    "size": 10,
-                    "symbol": "s",
-                    "fill": "full",
-                    "color": "#ff6868",
-                },
-                "label": {
-                    "font_size": 10,
-                    "font_weight": "bold",
-                    "font_color": "darkred",
-                },
-            },
-        )
-        ```
-        Plot the object with [`MapPlot.plot_object()`][starplot.map.MapPlot.plot_object] or [`ZenithPlot.plot_object()`][starplot.zenith.ZenithPlot.plot_object]
-
-    Args:
-        name (str): Name of object (used for plotting its label)
-        ra (float): Right ascension (hours) of object
-        dec (float): Declination (degrees) of object
-        style (ObjectStyle): Styling for object
-        legend_label (str): Optional. Label for object in the legend. If `None` (the default), then the object will not be labeled in the legend.
+    Star model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting stars.
+    So, you can use any attributes of this model in your callables. Note that some may be null.
     """
 
-    name: str
     ra: float
+    """Right Ascension, in hours (0...24)"""
+
     dec: float
-    style: ObjectStyle = ObjectStyle()
-    legend_label: str = None
+    """Declination, in degrees (-90...90)"""
+
+    magnitude: float
+    """Magnitude"""
+
+    bv: Optional[float] = None
+    """B-V Color Index, if available"""
+
+    hip: Optional[int] = None
+    """Hipparcos Catalog ID, if available"""

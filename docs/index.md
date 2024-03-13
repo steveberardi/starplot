@@ -26,6 +26,13 @@ Starplot is a Python library for creating star charts and maps.
 
 - 🧭 **Label Collision Avoidance**
 
+!!! warning "Upgrading from `0.8.x` to `0.9.x`"
+
+    The latest version of Starplot (`0.9.x`) has some major changes from the previous version (`0.8.x`). If you've been using Starplot since before `0.9.x`, then please check out the examples/reference to see what's changed. The major change is that everything must be explicitly plotted now.
+
+    <a href="https://archives.starplot.dev/0.8.4/" rel="nofollow">Docs for 0.8.4 available here</a>
+
+
 *Example charts and maps created with Starplot:*
 <figure markdown>
   <img src="images/examples/example_01.png" height="900" width="900">
@@ -34,7 +41,7 @@ Starplot is a Python library for creating star charts and maps.
 
 <figure markdown>
   <img src="images/examples/example_03.png" width="900">
-  <figcaption>Map around the constellation Orion, with M42 marked (<a href="examples/#map-of-orion">source code</a>)</figcaption>
+  <figcaption>Map around the constellation Orion, with an ellipse around Orion's Belt (<a href="examples/#map-of-orion">source code</a>)</figcaption>
 </figure>
 
 

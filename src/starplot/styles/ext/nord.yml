@@ -1,0 +1,115 @@
+background_color: '#4c566a'
+bayer_labels:
+  font_alpha: 0.8
+  font_color: '#85c9de'
+border_bg_color: '#2e3440'
+border_font_color: '#a3be8c'
+border_line_color: '#a3be8c'
+title:
+  font_color: '#a3be8c'
+celestial_equator:
+  label:
+    font_color: '#77A67F'
+  line:
+    color: '#77A67F'
+constellation:
+  label:
+    font_alpha: 0.6
+    font_color: rgb(230, 204, 147)
+    font_size: 7
+    font_weight: light
+  line:
+    alpha: 0.36
+    color: rgb(230, 204, 147)
+    width: 2
+
+dso:
+  label:
+    font_alpha: 0.6
+    font_color: rgb(230, 204, 147)
+    font_size: 7
+    font_weight: light
+  marker:
+    alpha: 0.46
+    color: rgb(230, 204, 147)
+    edge_color: '#d2a441'
+    fill: full
+    size: 4
+dso_double_star:
+  marker:
+    alpha: 0.8
+    color: '#88c0d0'
+    edge_color: '#88c0d0'
+dso_galaxy:
+  marker:
+    alpha: 0.6
+    color: '#D99CBA'
+    edge_color: '#bd5187'
+dso_nebula:
+  marker:
+    alpha: 0.32
+    color: '#9CD9BB'
+    edge_color: '#52896e'
+dso_open_cluster:
+  marker:
+    alpha: 0.32
+    color: '#d8d99c'
+    edge_color: '#9d9f3c'
+dso_association_stars:
+  marker:
+    alpha: 0.32
+    color: '#d8d99c'
+    edge_color: '#9d9f3c'
+dso_globular_cluster:
+  marker:
+    alpha: 0.5
+    color: '#c7c7c7'
+    edge_color: '#444'
+
+ecliptic:
+  label:
+    font_color: '#D99CBA'
+  line:
+    color: '#D99CBA'
+gridlines:
+  label:
+    font_alpha: 0.8
+    font_color: '#c2d2f3'
+    font_size: 8
+    font_weight: light
+  line:
+    alpha: 0.8
+    color: '#888'
+    style: solid
+    width: 1
+tick_marks:
+  font_color: '#888'
+milky_way:
+  alpha: 0.14
+  color: '#95a3bf'
+  edge_width: 0
+planets:
+  label:
+    font_color: '#D99CCF'
+  marker:
+    alpha: 0.8
+    color: '#D99CCF'
+    fill: full
+moon:
+  label:
+    font_color: '#f2f2f2'
+    font_alpha: 0.8
+  marker:
+    color: '#e9e9e9'
+star:
+  label:
+    font_color: '#88c0d0'
+    font_size: 9
+    font_weight: bold
+  marker:
+    color: '#88c0d0'
+
+legend:
+  background_color: '#515e76'
+  background_alpha: 1.0
+  font_color: '#d5e0f5'

@@ -1,44 +1,45 @@
 from datetime import datetime
-
-from cartopy import crs as ccrs
-from matplotlib import pyplot as plt
-from skyfield.api import Star, wgs84
-
-from starplot.base import StarPlot
-from starplot.data import load, stars, bayer
-from starplot.optics import Optic
-from starplot.styles import PlotStyle, OPTIC_BASE
-from starplot.utils import bv_to_hex_color, azimuth_to_string
+from typing import Callable
 
 import pandas as pd
 
+from cartopy import crs as ccrs
+from matplotlib import pyplot as plt, patches, path
+from skyfield.api import wgs84, Star as SkyfieldStar
+
+from starplot import callables
+from starplot.base import BasePlot
+from starplot.data.stars import StarCatalog
+from starplot.mixins import ExtentMaskMixin
+from starplot.models import Star
+from starplot.optics import Optic
+from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
+from starplot.styles import PlotStyle, MarkerStyle, LabelStyle, extensions, use_style
+from starplot.utils import azimuth_to_string
+
 pd.options.mode.chained_assignment = None  # default='warn'
 
+DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
 
-class OpticPlot(StarPlot):
+
+class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new optic plot.
 
     Args:
         optic: Optic instance that defines optical parameters
-        ra: Right ascension of target center
-        dec: Declination of target center
+        ra: Right ascension of target center, in hours (0...24)
+        dec: Declination of target center, in degrees (-90...90)
         lat: Latitude of observer's location
         lon: Longitude of observer's location
         dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
-        limiting_magnitude: Limiting magnitude of stars to plot
-        limiting_magnitude_labels: Limiting magnitude of stars to label on the plot
-        include_info_text: If True, then the plot will include a table with details of the target/observer/optic
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
-        adjust_text: If True, then the labels will be adjusted to avoid overlapping
-        rasterize_stars: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
-        colorize_stars: If True, then stars will be filled with their BV color index
         raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
 
     Returns:
-        OpticPlot: A new instance of a OpticPlot
+        OpticPlot: A new instance of an OpticPlot
 
     """
 
@@ -52,39 +53,28 @@ class OpticPlot(StarPlot):
         lat: float,
         lon: float,
         dt: datetime = None,
-        limiting_magnitude: float = 6.0,
-        limiting_magnitude_labels: float = 2.1,
-        include_info_text: bool = False,
         ephemeris: str = "de421_2001.bsp",
-        style: PlotStyle = OPTIC_BASE,
+        style: PlotStyle = DEFAULT_OPTIC_STYLE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
-        adjust_text: bool = False,
-        rasterize_stars: bool = False,
-        colorize_stars: bool = False,
         raise_on_below_horizon: bool = True,
         *args,
         **kwargs,
     ) -> "OpticPlot":
         super().__init__(
             dt,
-            limiting_magnitude,
-            limiting_magnitude_labels,
             ephemeris,
             style,
             resolution,
             hide_colliding_labels,
-            adjust_text,
-            rasterize_stars,
             *args,
             **kwargs,
         )
+        self.logger.debug("Creating OpticPlot...")
         self.ra = ra
         self.dec = dec
         self.lat = lat
         self.lon = lon
-        self.include_info_text = include_info_text
-        self.colorize_stars = colorize_stars
         self.raise_on_below_horizon = raise_on_below_horizon
 
         self.optic = optic
@@ -99,18 +89,13 @@ class OpticPlot(StarPlot):
             raise ValueError(
                 f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX})"
             )
-
-        self._star_size_multiplier = (
-            self._star_size_multiplier
-            * 0.4
-            * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
-        )
         self._calc_position()
+        self._adjust_radec_minmax()
         self._init_plot()
 
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
-        point = Star(ra_hours=ra, dec_degrees=dec)
+        point = SkyfieldStar(ra_hours=ra, dec_degrees=dec)
         position = self.observe(point)
         pos_apparent = position.apparent()
         pos_alt, pos_az, _ = pos_apparent.altaz()
@@ -120,22 +105,39 @@ class OpticPlot(StarPlot):
         return dict(transform=self._crs)
 
     def in_bounds(self, ra, dec) -> bool:
+        """Determine if a coordinate is within the bounds of the plot.
+
+        Args:
+            ra: Right ascension, in hours (0...24)
+            dec: Declination, in degrees (-90...90)
+
+        Returns:
+            True if the coordinate is in bounds, otherwise False
+        """
         az, alt = self._prepare_coords(ra, dec)
         return self.in_bounds_altaz(alt, az)
 
     def in_bounds_altaz(self, alt, az, scale: float = 1) -> bool:
+        """Determine if a coordinate is within the bounds of the plot.
+
+        Args:
+            alt: Altitude angle in degrees (0...90)
+            az: Azimuth angle in degrees (0...360)
+
+        Returns:
+            True if the coordinate is in bounds, otherwise False
+        """
         x, y = self._proj.transform_point(az, alt, self._crs)
         return self.optic.in_bounds(x, y, scale)
 
-    def _plot_polygon(self, points, style, **kwargs):
-        super()._plot_polygon(points, style, transform=self._crs)
+    def _polygon(self, points, style, **kwargs):
+        super()._polygon(points, style, transform=self._crs, **kwargs)
 
     def _calc_position(self):
-        eph = load(self.ephemeris)
-        earth = eph["earth"]
+        earth = self.ephemeris["earth"]
 
         self.location = earth + wgs84.latlon(self.lat, self.lon)
-        self.star = Star(ra_hours=self.ra, dec_degrees=self.dec)
+        self.star = SkyfieldStar(ra_hours=self.ra, dec_degrees=self.dec)
         self.observe = self.location.at(self.timescale).observe
         self.position = self.observe(self.star)
 
@@ -145,136 +147,129 @@ class OpticPlot(StarPlot):
         if self.pos_alt.degrees < 0 and self.raise_on_below_horizon:
             raise ValueError("Target is below horizon at specified time/location.")
 
-    def _plot_stars(self):
-        stardata = stars.load(stars.StarCatalog.TYCHO_1)
-        self._stardata = stardata
-
-        ra_min = self.ra - self.optic.true_fov / 15 * 1.08
-        ra_max = self.ra + self.optic.true_fov / 15 * 1.08
+    def _adjust_radec_minmax(self):
+        self.ra_min = self.ra - self.optic.true_fov / 15 * 1.08
+        self.ra_max = self.ra + self.optic.true_fov / 15 * 1.08
+        self.dec_max = self.dec + self.optic.true_fov / 2 * 1.03
+        self.dec_min = self.dec - self.optic.true_fov / 2 * 1.03
 
         if self.dec > 70 or self.dec < -70:
             # naive method of getting all the stars near the poles
-            ra_min = 0
-            ra_max = 24
+            self.ra_min = 0
+            self.ra_max = 24
 
-        nearby_stars_df = stardata[
-            (stardata["magnitude"] <= self.limiting_magnitude)
-            & (stardata["dec_degrees"] < self.dec + self.optic.true_fov / 2 * 1.03)
-            & (stardata["dec_degrees"] > self.dec - self.optic.true_fov / 2 * 1.03)
-        ]
+        self.logger.debug(
+            f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
+        )
 
-        if ra_max < 24:
-            nearby_stars_df = nearby_stars_df[
-                (nearby_stars_df["ra_hours"] < ra_max)
-                & (nearby_stars_df["ra_hours"] > ra_min)
-            ]
-        else:
-            # handle wrapping
-            nearby_stars_df = nearby_stars_df[
-                (nearby_stars_df["ra_hours"] > ra_min)
-                | (nearby_stars_df["ra_hours"] < ra_max - 24)
-            ]
+    def _scatter_stars(
+        self, ras, decs, sizes, alphas, colors, style=None, epoch_year=None, **kwargs
+    ):
+        """Override StarPlotterMixin _scatter_stars so we can convert to alt/az coords"""
+        ra_hours = [ra / 15 for ra in ras]
 
-        x = []
-        y = []
-        sizes = []
-        alphas = []
-        colors = []
+        df = pd.DataFrame({"ra_hours": ra_hours, "dec_degrees": decs})
+        df["epoch_year"] = epoch_year
 
-        # calculate apparent position (alt/az) of stars
-        stars_apparent = self.observe(Star.from_dataframe(nearby_stars_df)).apparent()
+        stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
-        nearby_stars_df["alt"], nearby_stars_df["az"] = (
+
+        df["alt"], df["az"] = (
             nearby_stars_alt.degrees,
             nearby_stars_az.degrees,
         )
 
-        for _, star in nearby_stars_df.iterrows():
-            m = star["magnitude"]
-            alt, az = star["alt"], star["az"]
+        plotted = super()._scatter_stars(
+            df["az"],
+            df["alt"],
+            sizes,
+            alphas,
+            colors,
+            style,
+            **kwargs,
+        )
+        plotted.set_clip_on(True)
 
-            if not self.in_bounds_altaz(alt, az):
-                continue
+        if type(self._background_clip_path) == patches.Rectangle:
+            # convert to generic path to handle possible rotation angle:
+            clip_path = path.Path(self._background_clip_path.get_corners())
+            plotted.set_clip_path(clip_path, transform=self.ax.transData)
+        else:
+            plotted.set_clip_path(self._background_clip_path)
 
-            if m < 4.6:
-                sizes.append((9 - m) ** 3.76 * self._star_size_multiplier)
-                alphas.append(1)
-            # elif m < 4.6:
-            #     sizes.append((9 - m) ** 3.68 * self._size_multiplier)
-            #     alphas.append(1)
-            elif m < 5.85:
-                sizes.append((9 - m) ** 3.72 * self._star_size_multiplier)
-                alphas.append(0.94)
-            elif m < 9:
-                sizes.append((13 - m) ** 1.91 * self._star_size_multiplier)
-                alphas.append(0.88)
-            else:
-                sizes.append(4.93 * self._star_size_multiplier)
-                alphas.append((16 - m) * 0.09)
+    @use_style(MarkerStyle, "star")
+    def stars(
+        self,
+        mag: float = 8.0,
+        mag_labels: float = 6.0,
+        catalog: StarCatalog = StarCatalog.TYCHO_1,
+        style: MarkerStyle = None,
+        rasterize: bool = False,
+        size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
+        alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
+        color_fn: Callable[[Star], str] = None,
+        legend_label: str = "Star",
+        *args,
+        **kwargs,
+    ):
+        """
+        Plots stars
 
-            if self.colorize_stars:
-                c = bv_to_hex_color(star["bv"]) or self.style.star.marker.color.as_hex()
-            else:
-                c = self.style.star.marker.color.as_hex()
+        Args:
+            mag: Limiting magnitude of stars to plot
+            mag_labels: Limiting magnitude of stars to label on the plot
+            catalog: The catalog of stars to use: "hipparcos" or "tycho-1"
+            style: If `None`, then the plot's style for stars will be used
+            rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
+            size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
+            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
+            color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
+            legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
+        """
+        optic_star_multiplier = 0.4 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
 
-            colors.append(c)
-            x.append(az)
-            y.append(alt)
+        def size_fn_mx(st: Star) -> float:
+            return size_fn(st) * optic_star_multiplier
 
-        # Draw stars
-        if self.style.star.marker.visible:
-            self._plotted_stars = self.ax.scatter(
-                x,
-                y,
-                sizes,
-                colors,
-                alpha=alphas,
-                marker=self.style.star.marker.symbol,
-                edgecolors=self.style.star.marker.edge_color.as_hex()
-                if self.style.star.marker.edge_color
-                else "none",
-                zorder=self.style.star.marker.zorder,
-                rasterized=self.rasterize_stars,
-                clip_path=self.background_patch,
-                **self._plot_kwargs(),
-            )
-            self._plotted_stars.set_clip_on(True)
-            self._plotted_stars.set_clip_path(self.background_patch)
-            self._add_legend_handle_marker("Star", self.style.star.marker)
+        super().stars(
+            mag=mag,
+            mag_labels=mag_labels,
+            catalog=catalog,
+            style=style,
+            rasterize=rasterize,
+            size_fn=size_fn_mx,
+            alpha_fn=alpha_fn,
+            color_fn=color_fn,
+            legend_label=legend_label,
+            *args,
+            **kwargs,
+        )
 
-        # Plot star labels (names and bayer designations)
-        stars_labeled = nearby_stars_df[
-            (nearby_stars_df["magnitude"] <= self.limiting_magnitude_labels)
-        ]
+    def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
+        super()._plot_text(
+            ra, dec, text, clip_path=self._background_clip_path, *args, **kwargs
+        )
 
-        stars_labeled.sort_values("magnitude")
+    @use_style(LabelStyle, "info_text")
+    def info(self, style: LabelStyle = None):
+        """
+        Plots a table with info about the plot, including:
 
-        for hip_id, s in stars_labeled.iterrows():
-            name = stars.hip_names.get(hip_id)
-            bayer_desig = bayer.hip.get(hip_id)
-            ra, dec = s["ra_hours"], s["dec_degrees"]
-            alt, az = s["alt"], s["az"]
+        - Target's position (alt/az and ra/dec)
+        - Observer's position (lat/lon and date/time)
+        - Optic details (type, magnification, FOV)
 
-            if not self.in_bounds_altaz(alt, az, scale=0.9):
-                continue
-
-            if name and self.style.star.label.visible:
-                style = self.style.star.label.matplot_kwargs(self._size_multiplier)
-                self._plot_text(ra, dec, name, ha="left", va="top", **style)
-
-            if bayer_desig and self.style.bayer_labels.visible:
-                style = self.style.bayer_labels.matplot_kwargs(self._size_multiplier)
-                self._plot_text(ra, dec, bayer_desig, ha="right", va="bottom", **style)
-
-    def _plot_info(self):
-        if not self.include_info_text:
-            return
-
+        Args:
+            style: If `None`, then the plot's style for info text will be used
+        """
         self.ax.set_xlim(-1.22 * self.optic.xlim, 1.22 * self.optic.xlim)
         self.ax.set_ylim(-1.12 * self.optic.ylim, 1.12 * self.optic.ylim)
+        self.optic.transform(
+            self.ax
+        )  # apply transform again because new xy limits will undo the transform
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        font_size = self.style.info_text.font_size * self._size_multiplier * 2
+        font_size = style.font_size * self._size_multiplier * 2
 
         column_labels = [
             "Target (Alt/Az)",
@@ -309,7 +304,7 @@ class OpticPlot(StarPlot):
         for row in [0, 1]:
             for col in range(len(values)):
                 table[row, col].set_text_props(
-                    **self.style.info_text.matplot_kwargs(self._size_multiplier)
+                    **style.matplot_kwargs(self._size_multiplier)
                 )
 
         # Apply some styles only to the header row
@@ -322,15 +317,15 @@ class OpticPlot(StarPlot):
         y = 0
 
         # Background of Viewable Area
-        self.background_patch = self.optic.patch(
+        self._background_clip_path = self.optic.patch(
             x,
             y,
             facecolor=self.style.background_color.as_hex(),
             linewidth=0,
             fill=True,
-            zorder=-100,
+            zorder=-1000,
         )
-        self.ax.add_patch(self.background_patch)
+        self.ax.add_patch(self._background_clip_path)
 
         # Inner Border
         inner_border = self.optic.patch(
@@ -367,34 +362,20 @@ class OpticPlot(StarPlot):
             central_longitude=self.pos_az.degrees,
             central_latitude=self.pos_alt.degrees,
         )
-        self._proj.threshold = 100
-
+        self._proj.threshold = 1000
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
-            # facecolor=self.style.background_color.as_hex(),
-            layout="tight",
+            facecolor=self.style.figure_background_color.as_hex(),
+            layout="constrained",
         )
         self.ax = plt.axes(projection=self._proj)
-
         self.ax.xaxis.set_visible(False)
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")
 
         self._plot_border()
-        self._plot_stars()
-        self._plot_planets()
-        self._plot_moon()
-
         self._fit_to_ax()
 
-        self.ax.set_xlim(-1.03 * self.optic.xlim, 1.03 * self.optic.xlim)
-        self.ax.set_ylim(-1.03 * self.optic.ylim, 1.03 * self.optic.ylim)
-
-        self._plot_info()
-
+        self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
+        self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
         self.optic.transform(self.ax)
-
-        self.refresh_legend()
-
-        if self.adjust_text:
-            self.adjust_labels()

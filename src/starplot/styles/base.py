@@ -10,6 +10,8 @@ from pydantic.color import Color
 from pydantic.functional_serializers import PlainSerializer
 from typing_extensions import Annotated
 
+from starplot.data.dsos import DsoType
+from starplot.styles.helpers import merge_dict
 
 ColorStr = Annotated[
     Color,
@@ -22,23 +24,6 @@ ColorStr = Annotated[
 FONT_SCALE = 2
 
 HERE = Path(__file__).resolve().parent
-
-
-def merge_dict(dict_1: dict, dict_2: dict) -> None:
-    """
-
-    Args:
-        dict_1: Base dictionary to merge into
-        dict_2: Dictionary to merge into the base (dict_1)
-
-    Returns:
-        None (dict_1 is modified directly)
-    """
-    for k in dict_2.keys():
-        if k in dict_1 and isinstance(dict_1[k], dict) and isinstance(dict_2[k], dict):
-            merge_dict(dict_1[k], dict_2[k])
-        else:
-            dict_1[k] = dict_2[k]
 
 
 class BaseStyle(BaseModel):
@@ -88,13 +73,61 @@ class FontStyleEnum(str, Enum):
 class MarkerSymbolEnum(str, Enum):
     """Options for marker symbols"""
 
-    POINT = "."
-    CIRCLE = "o"
-    SQUARE = "s"
-    STAR = "*"
-    DIAMOND = "D"
-    TRIANGLE = "^"
-    CIRCLE_CROSS = r"$\bigoplus$"
+    POINT = "point"
+    """\u00B7"""
+
+    CIRCLE = "circle"
+    """\u25CF"""
+
+    SQUARE = "square"
+    """\u25A0"""
+
+    SQUARE_STRIPES_DIAGONAL = "square_stripes_diagonal"
+    """\u25A8"""
+
+    # SQUARE_CROSSHAIR = "square_crosshair"
+    # """\u2BD0"""
+
+    STAR = "star"
+    """\u2605"""
+
+    DIAMOND = "diamond"
+    """\u25C6"""
+
+    TRIANGLE = "triangle"
+    """\u23F6"""
+
+    CIRCLE_PLUS = "circle_plus"
+    """\u2295"""
+
+    CIRCLE_CROSS = "circle_cross"
+    """\u1AA0"""
+
+    CIRCLE_DOTTED_EDGE = "circle_dotted_edge"
+    """\u25CC"""
+
+    COMET = "comet"
+    """\u2604"""
+
+    STAR_8 = "star_8"
+    """\u2734"""
+
+    def as_matplot(self) -> str:
+        """Returns the matplotlib value of this marker"""
+        return {
+            MarkerSymbolEnum.POINT: ".",
+            MarkerSymbolEnum.CIRCLE: "o",
+            MarkerSymbolEnum.SQUARE: "s",
+            MarkerSymbolEnum.SQUARE_STRIPES_DIAGONAL: "$\u25A8$",
+            MarkerSymbolEnum.STAR: "*",
+            MarkerSymbolEnum.DIAMOND: "D",
+            MarkerSymbolEnum.TRIANGLE: "^",
+            MarkerSymbolEnum.CIRCLE_PLUS: "$\u2295$",
+            MarkerSymbolEnum.CIRCLE_CROSS: "$\u1AA0$",
+            MarkerSymbolEnum.CIRCLE_DOTTED_EDGE: "$\u25CC$",
+            MarkerSymbolEnum.COMET: "$\u2604$",
+            MarkerSymbolEnum.STAR_8: "$\u2734$",
+        }.get(self.value)
 
 
 class LineStyleEnum(str, Enum):
@@ -127,16 +160,15 @@ class MarkerStyle(BaseStyle):
     """
     Styling properties for markers.
 
-    Example Usage:
+    ???- tip "Example Usage"
         Creates a style for a red triangle marker:
         ```python
         m = MarkerStyle(
             color="#b13737",
-            symbol=MarkerStyleSymbolEnum.TRIANGLE,
+            symbol="triangle",
             size=8,
-            fill=FillStyleEnum.FULL,
+            fill="full",
             alpha=1.0,
-            visible=True,
             zorder=100,
         )
         ```
@@ -163,16 +195,25 @@ class MarkerStyle(BaseStyle):
     zorder: int = -1
     """Zorder of marker"""
 
-    visible: bool = True
-    """If true, the marker will be plotted"""
+    @property
+    def symbol_matplot(self) -> str:
+        return MarkerSymbolEnum(self.symbol).as_matplot()
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex() if self.color else "none",
             markeredgecolor=self.edge_color.as_hex() if self.edge_color else "none",
-            marker=self.symbol,
+            marker=MarkerSymbolEnum(self.symbol).as_matplot(),
             markersize=self.size * size_multiplier * FONT_SCALE,
             fillstyle=self.fill,
+            alpha=self.alpha,
+            zorder=self.zorder,
+        )
+
+    def to_polygon_style(self):
+        return PolygonStyle(
+            fill_color=self.color.as_hex() if self.color else None,
+            edge_color=self.edge_color.as_hex() if self.edge_color else None,
             alpha=self.alpha,
             zorder=self.zorder,
         )
@@ -182,20 +223,20 @@ class LineStyle(BaseStyle):
     """
     Styling properties for lines.
 
-    Example Usage:
+    ???- tip "Example Usage"
         Creates a style for a dashed green line:
         ```python
         ls = LineStyle(
             width=2,
             color="#6ba832",
-            style=LineStyleEnum.DASHED,
+            style="dashed",
             alpha=0.2,
             zorder=-10,
         )
         ```
     """
 
-    width: int = 2
+    width: float = 2
     """Width of line"""
 
     color: ColorStr = ColorStr("#000")
@@ -213,9 +254,6 @@ class LineStyle(BaseStyle):
     zorder: int = -1
     """Zorder of the line"""
 
-    visible: bool = True
-    """If True, the line will be plotted"""
-
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         result = dict(
             color=self.color.as_hex(),
@@ -232,7 +270,7 @@ class PolygonStyle(BaseStyle):
     """
     Styling properties for polygons.
 
-    Example Usage:
+    ???- tip "Example Usage"
         Creates a style for a partially transparent blue polygon:
         ```python
         ps = PolygonStyle(
@@ -265,9 +303,6 @@ class PolygonStyle(BaseStyle):
     zorder: int = -1
     """Zorder of the polygon"""
 
-    visible: bool = True
-    """If True, the polygon will be plotted"""
-
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         styles = dict(
             edgecolor=self.edge_color.as_hex() if self.edge_color else "none",
@@ -288,12 +323,12 @@ class LabelStyle(BaseStyle):
     """
     Styling properties for a label.
 
-    Example Usage:
+    ???- tip "Example Usage"
         Creates a style for a bold blue label:
         ```python
         ls = LabelStyle(
                 font_color="blue",
-                font_weight=FontWeightEnum.BOLD,
+                font_weight="bold",
                 zorder=1,
         )
         ```
@@ -326,9 +361,6 @@ class LabelStyle(BaseStyle):
     zorder: int = 1
     """Zorder of the label"""
 
-    visible: bool = True
-    """If True, the label will be plotted"""
-
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         style = dict(
             color=self.font_color.as_hex(),
@@ -349,7 +381,7 @@ class LabelStyle(BaseStyle):
 
 
 class ObjectStyle(BaseStyle):
-    """Defines the style for a SkyObject"""
+    """Defines the style for a sky object (e.g. star, DSO)"""
 
     marker: MarkerStyle = MarkerStyle()
     """Style for the object's marker (see [MarkerStyle][starplot.styles.MarkerStyle])"""
@@ -389,6 +421,9 @@ class LegendStyle(BaseStyle):
     label_padding: float = 1.6
     """Padding between legend labels"""
 
+    symbol_size: int = 16
+    """Relative size of symbols in the legend"""
+
     symbol_padding: float = 0.2
     """Padding between each symbol and its label"""
 
@@ -401,8 +436,8 @@ class LegendStyle(BaseStyle):
     font_color: ColorStr = ColorStr("#000")
     """Font color for legend labels"""
 
-    visible: bool = True
-    """If True, the legend will be plotted"""
+    zorder: int = 2_000
+    """Zorder of the legend"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
@@ -426,6 +461,10 @@ class PlotStyle(BaseStyle):
 
     # Base
     background_color: ColorStr = ColorStr("#fff")
+    """Background color of the map region"""
+
+    figure_background_color: ColorStr = ColorStr("#fff")
+
     text_border_width: int = 2
     text_offset_x: float = 0.005
     text_offset_y: float = 0.005
@@ -436,6 +475,14 @@ class PlotStyle(BaseStyle):
     border_font_color: ColorStr = ColorStr("#000")
     border_line_color: ColorStr = ColorStr("#000")
     border_bg_color: ColorStr = ColorStr("#fff")
+
+    # Title
+    title: LabelStyle = LabelStyle(
+        font_size=23,
+        zorder=1,
+        line_spacing=32,
+    )
+    """Styling for info text (only applies to zenith and optic plots)"""
 
     # Info text
     info_text: LabelStyle = LabelStyle(
@@ -449,14 +496,14 @@ class PlotStyle(BaseStyle):
     # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=20, edge_color=None),
-        label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=1),
+        label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=400),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
         font_size=8, font_weight=FontWeightEnum.LIGHT, zorder=1
     )
-    """Styling for Bayer labels of stars *(see [`LabelStyle`][starplot.styles.LabelStyle])* - *only applies to map plots*"""
+    """Styling for Bayer labels of stars"""
 
     planets: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -478,28 +525,15 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
             color="#c8c8c8",
             alpha=0.5,
-            visible=False,
         ),
         label=LabelStyle(
             font_size=8,
             font_weight=FontWeightEnum.BOLD,
-            visible=False,
         ),
     )
     """Styling for the moon"""
 
     # Deep Sky Objects (DSOs)
-    dso: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.TRIANGLE, size=4, fill=FillStyleEnum.FULL
-        ),
-        label=LabelStyle(
-            font_size=8,
-            font_weight=FontWeightEnum.LIGHT,
-        ),
-    )
-    """Styling for deep sky objects (DSOs) on zenith plots"""
-
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
@@ -509,7 +543,6 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=8,
             font_weight=FontWeightEnum.LIGHT,
-            visible=False,
         ),
     )
     """Styling for open star clusters"""
@@ -523,7 +556,6 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=8,
             font_weight=FontWeightEnum.LIGHT,
-            visible=False,
         ),
     )
     """Styling for associations of stars"""
@@ -536,7 +568,7 @@ class PlotStyle(BaseStyle):
             color="#555",
             alpha=0.8,
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for globular star clusters"""
 
@@ -544,7 +576,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for galaxies"""
 
@@ -552,7 +584,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for nebulas"""
 
@@ -560,7 +592,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.TOP
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
     """Styling for double stars"""
 
@@ -569,91 +601,84 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
-    """Styling for dark nebulas (hidden by default)"""
+    """Styling for dark nebulas"""
 
     dso_hii_ionized_region: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
-    """Styling for HII Ionized regions (hidden by default)"""
+    """Styling for HII Ionized regions"""
 
     dso_supernova_remnant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
-    """Styling for supernova remnants (hidden by default)"""
+    """Styling for supernova remnants"""
 
     dso_nova_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
-    """Styling for nova stars (hidden by default)"""
+    """Styling for nova stars"""
 
     dso_nonexistant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
-    """Styling for 'nonexistent' (as designated by OpenNGC) deep sky objects (hidden by default)"""
+    """Styling for 'nonexistent' (as designated by OpenNGC) deep sky objects"""
 
     dso_unknown: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
-    """Styling for 'unknown' (as designated by OpenNGC) types of deep sky objects (hidden by default)"""
+    """Styling for 'unknown' (as designated by OpenNGC) types of deep sky objects"""
 
     dso_duplicate: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             size=6,
             fill=FillStyleEnum.TOP,
-            visible=False,
             color="#000",
         ),
-        label=LabelStyle(font_size=8, visible=False),
+        label=LabelStyle(font_size=8),
     )
-    """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects (hidden by default)"""
+    """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
     # Constellations
     constellation: PathStyle = PathStyle(
         line=LineStyle(color="#c8c8c8"),
-        label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT),
+        label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT, zorder=400),
     )
-    """Styling for constellations"""
+    """Styling for constellation lines and labels (only applies to map plots)"""
 
     constellation_borders: LineStyle = LineStyle(
         color="#000", width=2, style=LineStyleEnum.DASHED, alpha=0.2, zorder=-100
@@ -665,13 +690,13 @@ class PlotStyle(BaseStyle):
         color="#d9d9d9",
         alpha=0.36,
         edge_width=0,
-        zorder=-10000,
+        zorder=-1_000,
     )
     """Styling for the Milky Way (only applies to map plots)"""
 
     # Legend
     legend: LegendStyle = LegendStyle()
-    """Styling for legend - *(see [`LegendStyle`][starplot.styles.LegendStyle])* """
+    """Styling for legend"""
 
     # Gridlines
     gridlines: PathStyle = PathStyle(
@@ -680,7 +705,7 @@ class PlotStyle(BaseStyle):
             width=1,
             style=LineStyleEnum.SOLID,
             alpha=0.8,
-            zorder=-10_000,
+            zorder=-1_000,
         ),
         label=LabelStyle(
             font_size=11,
@@ -711,10 +736,11 @@ class PlotStyle(BaseStyle):
             zorder=-20,
         ),
         label=LabelStyle(
-            font_size=4,
+            font_size=6,
             font_color="#777",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
+            zorder=-20,
         ),
     )
     """Styling for the Ecliptic"""
@@ -726,16 +752,49 @@ class PlotStyle(BaseStyle):
             width=2,
             style=LineStyleEnum.DASHED_DOTS,
             alpha=0.65,
-            zorder=-1024,
+            zorder=-20,
         ),
         label=LabelStyle(
             font_size=6,
             font_color="#999",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=0.65,
+            zorder=-20,
         ),
     )
     """Styling for the Celestial Equator"""
+
+    def get_dso_style(self, dso_type: DsoType):
+        """Returns the style for a DSO type"""
+        styles_by_type = {
+            # Star Clusters ----------
+            DsoType.OPEN_CLUSTER: self.dso_open_cluster,
+            DsoType.GLOBULAR_CLUSTER: self.dso_globular_cluster,
+            # Galaxies ----------
+            DsoType.GALAXY: self.dso_galaxy,
+            DsoType.GALAXY_PAIR: self.dso_galaxy,
+            DsoType.GALAXY_TRIPLET: self.dso_galaxy,
+            DsoType.GROUP_OF_GALAXIES: self.dso_galaxy,
+            # Nebulas ----------
+            DsoType.NEBULA: self.dso_nebula,
+            DsoType.PLANETARY_NEBULA: self.dso_nebula,
+            DsoType.EMISSION_NEBULA: self.dso_nebula,
+            DsoType.STAR_CLUSTER_NEBULA: self.dso_nebula,
+            DsoType.REFLECTION_NEBULA: self.dso_nebula,
+            # Stars ----------
+            DsoType.STAR: None,
+            DsoType.DOUBLE_STAR: self.dso_double_star,
+            DsoType.ASSOCIATION_OF_STARS: self.dso_association_stars,
+            # Others (hidden by default style)
+            DsoType.DARK_NEBULA: self.dso_dark_nebula,
+            DsoType.HII_IONIZED_REGION: self.dso_hii_ionized_region,
+            DsoType.SUPERNOVA_REMNANT: self.dso_supernova_remnant,
+            DsoType.NOVA_STAR: self.dso_nova_star,
+            DsoType.NONEXISTENT: self.dso_nonexistant,
+            DsoType.UNKNOWN: self.dso_unknown,
+            DsoType.DUPLICATE_RECORD: self.dso_duplicate,
+        }
+        return styles_by_type.get(dso_type)
 
     @staticmethod
     def load_from_file(filename: str) -> "PlotStyle":
@@ -775,18 +834,17 @@ class PlotStyle(BaseStyle):
         that is also in the last style arg, then the resulting style will have the value
         from the last style (similar to how CSS works).
 
-        Example Usage:
-            Create an extension of the default style with map optimizations, light blue color scheme,
-            and hide the constellation borders and Milky Way:
+        ???- tip "Example Usage"
+            Create an extension of the default style with the light blue color scheme, map optimizations,
+            and change the constellation line color to red:
 
             ```python
 
             new_style = PlotStyle().extend(
-                styles.extensions.MAP,
                 styles.extensions.BLUE_LIGHT,
+                styles.extensions.MAP,
                 {
-                    "constellation_borders": {"visible": False},
-                    "milky_way": {"visible": False},
+                    "constellation": {"line": {"color": "#e12d2d"}},
                 },
             )
             ```

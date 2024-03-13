@@ -1,26 +1,49 @@
-from starplot.styles import PlotStyle, extensions
+import json
 
-BASE = PlotStyle()
-
-# Optic Plots
-OPTIC_BASE = BASE.extend(extensions.OPTIC)
-
-# Map Plots
-MAP_BASE = BASE.extend(extensions.MAP)
-MAP_BLUE_LIGHT = MAP_BASE.extend(extensions.BLUE_LIGHT)
-MAP_BLUE_MEDIUM = MAP_BASE.extend(extensions.BLUE_MEDIUM)
-MAP_BLUE_DARK = MAP_BASE.extend(extensions.BLUE_DARK)
-MAP_GRAYSCALE = MAP_BASE.extend(extensions.GRAYSCALE)
-
-# Zenith Plots
-ZENITH_BASE = BASE.extend(extensions.ZENITH)
-ZENITH_BLUE_LIGHT = ZENITH_BASE.extend(extensions.BLUE_LIGHT)
-ZENITH_BLUE_MEDIUM = ZENITH_BASE.extend(extensions.BLUE_MEDIUM)
-ZENITH_BLUE_DARK = ZENITH_BASE.extend(extensions.BLUE_DARK)
-ZENITH_GRAYSCALE = ZENITH_BASE.extend(extensions.GRAYSCALE)
+from functools import wraps
 
 
-BLUE_LIGHT = BASE.extend(extensions.BLUE_LIGHT)
-BLUE_MEDIUM = BASE.extend(extensions.BLUE_MEDIUM)
-BLUE_DARK = BASE.extend(extensions.BLUE_DARK)
-GRAYSCALE = BASE.extend(extensions.GRAYSCALE)
+def merge_dict(dict_1: dict, dict_2: dict) -> None:
+    """
+
+    Args:
+        dict_1: Base dictionary to merge into
+        dict_2: Dictionary to merge into the base (dict_1)
+
+    Returns:
+        None (dict_1 is modified directly)
+    """
+    for k in dict_2.keys():
+        if k in dict_1 and isinstance(dict_1[k], dict) and isinstance(dict_2[k], dict):
+            merge_dict(dict_1[k], dict_2[k])
+        else:
+            dict_1[k] = dict_2[k]
+
+
+def use_style(style_class, style_attr: str = None):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            style = kwargs.get("style")
+
+            if style and isinstance(style, dict):
+                if style_attr is not None:
+                    # if style is a dict and there's a base style, then we just want to merge the changes
+                    base_style = getattr(args[0].style, style_attr).model_dump_json()
+                    base_style = json.loads(base_style)
+
+                    merge_dict(base_style, style)
+
+                    kwargs["style"] = style_class(**base_style)
+                else:
+                    kwargs["style"] = style_class(**style)
+
+            elif style is None and style_attr is not None:
+                # if no style overrides and there's a base style, then just pass the base style
+                kwargs["style"] = getattr(args[0].style, style_attr, None)
+
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
