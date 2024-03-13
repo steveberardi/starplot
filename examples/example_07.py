@@ -47,8 +47,8 @@ style = PlotStyle().extend(
         },
         "legend": {
             "location": "lower center",
-        }
-    }
+        },
+    },
 )
 style.legend.location = "lower center"
 

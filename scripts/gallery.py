@@ -336,6 +336,7 @@ def miller_big():
 
     p.export(IMAGE_PATH + "miller_big.png", padding=0.5)
 
+
 def antique():
     print("Creating Antique...")
     style = PlotStyle().extend(
@@ -372,6 +373,7 @@ def antique():
     p.dsos(mag=12, labels=None)
     p.milky_way()
     p.export(IMAGE_PATH + "antique.png", padding=0.5)
+
 
 antique()
 zenith()
