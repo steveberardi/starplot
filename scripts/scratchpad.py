@@ -31,7 +31,7 @@ def create_map_orion():
         # extensions.BLUE_MEDIUM,
         # extensions.BLUE_DARK,
         extensions.MAP,
-        extensions.ANTIQUE,
+        extensions.CB_WONG,
         {
             "star": {
                 "label": {"font_size": 8},
@@ -82,8 +82,8 @@ def create_map_orion():
         mag=12,
         null=True,
         # labels={"NGC2260": "2260www"},
-        labels=None,
-        legend_labels={sp.data.dsos.DsoType.OPEN_CLUSTER: None}
+        # labels=None,
+        # legend_labels={sp.data.dsos.DsoType.OPEN_CLUSTER: None}
         # names=["NGC1976", "Mel022", "C041"],
     )
 
@@ -177,8 +177,9 @@ def create_map_miller():
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        extensions.BLUE_DARK,
+        # extensions.BLUE_DARK,
         # extensions.ANTIQUE,
+        extensions.CB_WONG,
         extensions.MAP,
     )
 
