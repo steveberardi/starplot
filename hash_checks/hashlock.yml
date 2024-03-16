@@ -30,6 +30,38 @@ map_wrapping:
   colorhash: '07000000000'
   dhash: 17574e6d4643251117574e6d4643251117574e6d46432511
   filename: /starplot/hash_checks/data/map-wrapping.png
+optic_binoculars_m45:
+  colorhash: '33000000000'
+  dhash: 8e172b5133338e4d8e172b5133338e4d8e172b5133338e4d
+  filename: /starplot/hash_checks/data/optic-binoculars-m45.png
+optic_camera_m45:
+  colorhash: 3a000000000
+  dhash: 4d71715171654d754d71715171654d754d71715171654d75
+  filename: /starplot/hash_checks/data/optic-camera-m45.png
+optic_camera_rotated:
+  colorhash: '17000000000'
+  dhash: 25468b33269d9a6525468b33269d9a6525468b33269d9a65
+  filename: /starplot/hash_checks/data/optic-camera-rotated-m45.png
+optic_polaris_binoculars:
+  colorhash: '33000000000'
+  dhash: 8e172b512b338e4d8e172b512b338e4d8e172b512b338e4d
+  filename: /starplot/hash_checks/data/optic-binoculars-polaris.png
+optic_reflector_m45:
+  colorhash: '33000000000'
+  dhash: 8e173b512b338e4d8e173b512b338e4d8e173b512b338e4d
+  filename: /starplot/hash_checks/data/optic-reflector-m45.png
+optic_refractor_double_cluster:
+  colorhash: '33000000000'
+  dhash: 8e172b552b338e4d8e172b552b338e4d8e172b552b338e4d
+  filename: /starplot/hash_checks/data/optic-refractor-double-cluster.png
+optic_scope_m45:
+  colorhash: 33e00000000
+  dhash: 8e172b5133338e4d8e172b5133338e4d8e172b5133238e4d
+  filename: /starplot/hash_checks/data/optic-scope-m45.png
+optic_wrapping:
+  colorhash: 1e000000000
+  dhash: 8e172b452b338e4d8e172b452b338e4d8e172b452b338e4d
+  filename: /starplot/hash_checks/data/optic-wrapping.png
 zenith_base:
   colorhash: '06007000000'
   dhash: 1379cca69ad469271359aca68a9469271359ac868a946927
