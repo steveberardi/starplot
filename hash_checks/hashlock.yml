@@ -27,9 +27,9 @@ map_with_planets:
   filename: /starplot/hash_checks/data/map-mercator-planets.png
   phash: e9c6b7b962641c0b
 map_wrapping:
-  dhash: 17574e6d4643251117574e6d4643251117574e6d46432511
+  dhash: 175dce6d46432511175dce6d46432511175dce6d46432511
   filename: /starplot/hash_checks/data/map-wrapping.png
-  phash: ee31b0c9ac72e165
+  phash: e635b0e9ac62e165
 optic_binoculars_m45:
   dhash: 8e172b5133338e4d8e172b5133338e4d8e172b5133338e4d
   filename: /starplot/hash_checks/data/optic-binoculars-m45.png

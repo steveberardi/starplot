@@ -541,7 +541,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
         ),
         label=LabelStyle(
-            font_size=8,
+            font_size=6,
             font_weight=FontWeightEnum.LIGHT,
         ),
     )
@@ -554,7 +554,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
         ),
         label=LabelStyle(
-            font_size=8,
+            font_size=6,
             font_weight=FontWeightEnum.LIGHT,
         ),
     )
@@ -568,7 +568,7 @@ class PlotStyle(BaseStyle):
             color="#555",
             alpha=0.8,
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for globular star clusters"""
 
@@ -576,7 +576,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for galaxies"""
 
@@ -584,7 +584,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for nebulas"""
 
@@ -592,7 +592,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.TOP
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for double stars"""
 
@@ -603,7 +603,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for dark nebulas"""
 
@@ -614,7 +614,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for HII Ionized regions"""
 
@@ -625,7 +625,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for supernova remnants"""
 
@@ -636,7 +636,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for nova stars"""
 
@@ -647,7 +647,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for 'nonexistent' (as designated by OpenNGC) deep sky objects"""
 
@@ -658,7 +658,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for 'unknown' (as designated by OpenNGC) types of deep sky objects"""
 
@@ -669,7 +669,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
