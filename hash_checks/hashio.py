@@ -1,5 +1,6 @@
 import sys
 import inspect
+import time
 
 from pathlib import Path
 
@@ -69,6 +70,9 @@ class Hashio:
         hash_blue = imagehash.dhash(b)
         return str(hash_red) + str(hash_green) + str(hash_blue)
 
+    def _phash(self, img) -> str:
+        return str(imagehash.phash(img))
+
     def _get_hashes(self) -> dict:
         """Gets hashes for all callables"""
         hashes = {}
@@ -81,7 +85,7 @@ class Hashio:
                 hashes[func_name] = {
                     "filename": str(filename),
                     "dhash": self._dhash(img),
-                    "colorhash": self._colorhash(img),
+                    "phash": self._phash(img),
                 }
 
         return hashes
@@ -105,11 +109,11 @@ class Hashio:
             if not all(
                 [
                     values["dhash"] == hashlock[func_name]["dhash"],
-                    values["colorhash"] == hashlock[func_name]["colorhash"],
+                    values["phash"] == hashlock[func_name]["phash"],
                 ]
             ):
                 values["dhash_expected"] = hashlock[func_name]["dhash"]
-                values["colorhash_expected"] = hashlock[func_name]["colorhash"]
+                values["phash_expected"] = hashlock[func_name]["phash"]
                 failed[func_name] = values
                 console.print(f"{func_name}...FAIL", style="red")
 
@@ -139,6 +143,7 @@ class Hashio:
 
 
 if __name__ == "__main__":
+    start = time.time()
     command = sys.argv[1]
 
     callables = Hashio.find_functions(map_checks)
@@ -150,8 +155,10 @@ if __name__ == "__main__":
     if command.lower() == "lock":
         h.lock()
         console.print(":lock: Hashes locked!", style="bold green")
+        console.print(f"Time: {round(time.time() - start)}s")
     elif command.lower() == "check":
         passed, failed, new = h.check()
+        console.print(f"Time: {round(time.time() - start)}s")
 
         console.print(f"\nPASSED: {passed}\n", style="green")
 
