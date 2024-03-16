@@ -24,6 +24,8 @@ dso_double_star:
   marker:
     alpha: 0.6
 dso_galaxy:
+  label:
+    font_color: hsl(26, 100%, 32%)
   marker:
     alpha: 0.7
     color: hsl(26, 100%, 42%)
@@ -31,18 +33,20 @@ dso_galaxy:
 dso_nebula:
   label:
     font_color: hsl(163, 99%, 31%)
-    font_weight: light
-    font_size: 6
   marker:
     alpha: 0.7
     color: hsl(163, 99%, 31%)
     edge_color: hsl(163, 99%, 21%)
 dso_open_cluster:
+  label:
+    font_color: hsl(56, 85%, 30%)
   marker:
     alpha: 0.8
     color: hsl(56, 85%, 60%)
     edge_color: hsl(56, 85%, 30%)
 dso_association_stars:
+  label:
+    font_color: hsl(56, 85%, 30%)
   marker:
     alpha: 0.8
     color: hsl(56, 85%, 60%)
