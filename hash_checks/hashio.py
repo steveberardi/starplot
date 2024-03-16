@@ -154,7 +154,7 @@ if __name__ == "__main__":
         passed, failed, new = h.check()
 
         console.print(f"\nPASSED: {passed}\n", style="green")
-        
+
         if failed or new:
             console.print(f"FAILED: {failed}\n", style="bold red")
             console.print(f"NEW   : {new}\n", style="blue")
