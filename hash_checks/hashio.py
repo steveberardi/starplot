@@ -71,11 +71,7 @@ class Hashio:
         return str(hash_red) + str(hash_green) + str(hash_blue)
 
     def _phash(self, img) -> str:
-        r, g, b, a = img.split()
-        hash_red = imagehash.phash(r)
-        hash_green = imagehash.phash(g)
-        hash_blue = imagehash.phash(b)
-        return str(hash_red) + str(hash_green) + str(hash_blue)
+        return str(imagehash.phash(img))
 
     def _get_hashes(self) -> dict:
         """Gets hashes for all callables"""
@@ -159,10 +155,10 @@ if __name__ == "__main__":
     if command.lower() == "lock":
         h.lock()
         console.print(":lock: Hashes locked!", style="bold green")
-        console.print(f"Time: {round(time.time() - start)}s")
+        console.print(f":stopwatch: Time: {round(time.time() - start)}s")
     elif command.lower() == "check":
         passed, failed, new = h.check()
-        console.print(f"Time: {round(time.time() - start)}s")
+        console.print(f":stopwatch: {round(time.time() - start)}s")
 
         console.print(f"\nPASSED: {passed}\n", style="green")
 

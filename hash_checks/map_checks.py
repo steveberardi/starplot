@@ -36,7 +36,9 @@ def _mercator():
     p.constellation_borders()
     return p
 
+
 mercator_base = _mercator()
+
 
 def _stereo_north():
     p = MapPlot(
