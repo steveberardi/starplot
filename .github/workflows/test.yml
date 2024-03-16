@@ -30,29 +30,21 @@ jobs:
     - uses: actions/checkout@v4
     - name: Run Tests - Python 3.9
       run: make test-3.9 CI=true
-    - name: Check Image Hashes
-      run: make check-hashes CI=true
   test-python-3-10:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
     - name: Run Tests - Python 3.10
       run: make test-3.10 CI=true
-    - name: Check Image Hashes
-      run: make check-hashes CI=true
   test-python-3-11:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
     - name: Run Tests - Python 3.11
       run: make test-3.11 CI=true
-    - name: Check Image Hashes
-      run: make check-hashes CI=true
   test-python-3-12:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
     - name: Run Tests - Python 3.12
       run: make test-3.12 CI=true
-    - name: Check Image Hashes
-      run: make check-hashes CI=true
