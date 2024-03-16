@@ -71,7 +71,11 @@ class Hashio:
         return str(hash_red) + str(hash_green) + str(hash_blue)
 
     def _phash(self, img) -> str:
-        return str(imagehash.phash(img))
+        r, g, b, a = img.split()
+        hash_red = imagehash.phash(r)
+        hash_green = imagehash.phash(g)
+        hash_blue = imagehash.phash(b)
+        return str(hash_red) + str(hash_green) + str(hash_blue)
 
     def _get_hashes(self) -> dict:
         """Gets hashes for all callables"""

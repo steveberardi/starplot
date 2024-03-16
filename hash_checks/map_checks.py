@@ -36,6 +36,7 @@ def _mercator():
     p.constellation_borders()
     return p
 
+mercator_base = _mercator()
 
 def _stereo_north():
     p = MapPlot(
@@ -58,15 +59,13 @@ def _stereo_north():
 
 def check_map_mercator_base():
     filename = DATA_PATH / "map-mercator-base.png"
-    map_plot_mercator = _mercator()
-    map_plot_mercator.export(filename)
+    mercator_base.export(filename)
     return filename
 
 
 def check_map_mercator_extra():
     filename = DATA_PATH / "map-mercator-extra.png"
-    map_plot_mercator = _mercator()
-    map_plot_mercator.marker(
+    mercator_base.marker(
         ra=4.5,
         dec=5,
         label="hello worldzz",
@@ -80,7 +79,7 @@ def check_map_mercator_extra():
         },
         legend_label="hello legend",
     )
-    map_plot_mercator.circle(
+    mercator_base.circle(
         (7, -10),
         5,
         style=styles.PolygonStyle(
@@ -88,8 +87,8 @@ def check_map_mercator_extra():
             alpha=0.14,
         ),
     )
-    map_plot_mercator.legend()
-    map_plot_mercator.export(filename, padding=0.5)
+    mercator_base.legend()
+    mercator_base.export(filename, padding=0.5)
     return filename
 
 

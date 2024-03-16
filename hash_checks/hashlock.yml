@@ -1,68 +1,68 @@
 map_custom_stars:
   dhash: 5cb129ceae0e84085cb129ceae0e84085cb129ceae0e8408
   filename: /starplot/hash_checks/data/map-custom-stars.png
-  phash: e619d966032576dc
+  phash: e619d966032576dce619d966032576dce619d966032576dc
 map_mercator_base:
   dhash: 183b3a3e2e2e6c6c1c1b3a4e2e2e6c6c1c1b3b8e2e0e6c6c
   filename: /starplot/hash_checks/data/map-mercator-base.png
-  phash: be79d8260706799c
+  phash: be79d0064686d99dbe79d82607267998b279592614a4f59e
 map_mercator_extra:
   dhash: 1c1b3a6f3e6c6c171d1b1a6b2e6c6c171c1b1b6b2e2c6c17
   filename: /starplot/hash_checks/data/map-mercator-extra.png
-  phash: bf71d01ee10fe490
+  phash: bef1e00ee10ee0d9bff1d01ee10fe090ab59d896a706b49c
 map_mollweide:
   dhash: 0b2b1b632b3317070b2b1b632b3317070b2b1b632b331707
   filename: /starplot/hash_checks/data/map-mollweide.png
-  phash: eb9ba498c6319173
+  phash: eb9ba498c6319173eb9ba498c6319173eb9ba498c6319173
 map_scope_bino_fov:
   dhash: 0b80808c8c8080800b8eb2ac4daa928c0b8eb2ac4daa928c
   filename: /starplot/hash_checks/data/map-scope-bino-fov.png
-  phash: e46b696a6e691b60
+  phash: c46b6b6a6e2929e2e46b296a66691b65e46b296a66691b65
 map_stereo_base:
   dhash: 627666f03c383436627676f0ac383416627676f2a8889456
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
-  phash: 9dce7972429062fa
+  phash: 9dc67172c29162fa9dce6972429073da85cc7d73029073de
 map_with_planets:
   dhash: 4c681185cbb28a0c4c681185cbb28a0c4c681185cbb28a0c
   filename: /starplot/hash_checks/data/map-mercator-planets.png
-  phash: e9c6b7b962641c0b
+  phash: e9c6b7a962641c8be9c6b6b962641c8be9c6b7b922641c8b
 map_wrapping:
   dhash: 17574e6d4643251117574e6d4643251117574e6d46432511
   filename: /starplot/hash_checks/data/map-wrapping.png
-  phash: ee31b0c9ac72e165
+  phash: ee31b0c9ac72e165ee31b0c9ac72e165ee31b0c9ac72e165
 optic_binoculars_m45:
   dhash: 8e172b5133338e4d8e172b5133338e4d8e172b5133338e4d
   filename: /starplot/hash_checks/data/optic-binoculars-m45.png
-  phash: aa7b84f182d38e96
+  phash: aa7b84f182d38e96aa7b84f182d38e96aa7b84f182d38e96
 optic_camera_m45:
   dhash: 4d71715171654d754d71715171654d754d71715171654d75
   filename: /starplot/hash_checks/data/optic-camera-m45.png
-  phash: fe7b847b803bc490
+  phash: fe7b847b803bc490fe7b847b803bc490fe7b847b803bc490
 optic_camera_rotated:
   dhash: 25468b33269d9a6525468b33269d9a6525468b33269d9a65
   filename: /starplot/hash_checks/data/optic-camera-rotated-m45.png
-  phash: ac6cc6941edb7285
+  phash: ac6cc6941edb7285ac6cc6941edb7285ac6cc6941edb7285
 optic_polaris_binoculars:
   dhash: 8e172b512b338e4d8e172b512b338e4d8e172b512b338e4d
   filename: /starplot/hash_checks/data/optic-binoculars-polaris.png
-  phash: aa7b84f186d38e92
+  phash: aa7b84f186d38e92aa7b84f186d38e92aa7b84f186d38e92
 optic_reflector_m45:
   dhash: 8e173b512b338e4d8e173b512b338e4d8e173b512b338e4d
   filename: /starplot/hash_checks/data/optic-reflector-m45.png
-  phash: bb7b84e48693ca92
+  phash: bb7b84e48693ca92bb7b84e48693ca92bb7b84e48693ca92
 optic_refractor_double_cluster:
-  dhash: 8e172b552b338e4d8e172b552b338e4d8e172b552b338e4d
+  dhash: 8e172b452b338e4d8e172b452b338e4d8e172b452b338e4d
   filename: /starplot/hash_checks/data/optic-refractor-double-cluster.png
-  phash: ea7b84f18693ca92
+  phash: ea7b84f18693ca92ea7b84f18693ca92ea7b84f18693ca92
 optic_scope_m45:
   dhash: 8e172b5133338e4d8e172b5133338e4d8e172b5133238e4d
   filename: /starplot/hash_checks/data/optic-scope-m45.png
-  phash: ae7b84e48393ce86
+  phash: ae7b84e48293ce96ae7b84e48393ce86ae7b84e48393ce86
 optic_wrapping:
   dhash: 8e172b452b338e4d8e172b452b338e4d8e172b452b338e4d
   filename: /starplot/hash_checks/data/optic-wrapping.png
-  phash: ba7b84a186d3cad2
+  phash: ba7b84a186d3cad2ba7b84a186d3cad2ba7b84a186d3cad2
 zenith_base:
   dhash: 1379cca69ad469271359aca68a9469271359ac868a946927
   filename: /starplot/hash_checks/data/zenith-base.png
-  phash: 90db3b9965366472
+  phash: 90db3bd96526647290db3b996536647290cb3bd965366472
