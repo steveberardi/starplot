@@ -478,9 +478,10 @@ class PlotStyle(BaseStyle):
 
     # Title
     title: LabelStyle = LabelStyle(
-        font_size=23,
+        font_size=20,
+        font_weight=FontWeightEnum.BOLD,
         zorder=1,
-        line_spacing=32,
+        line_spacing=48,
     )
     """Styling for info text (only applies to zenith and optic plots)"""
 
