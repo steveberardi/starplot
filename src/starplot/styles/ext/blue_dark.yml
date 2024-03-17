@@ -23,7 +23,6 @@ constellation:
   label:
     font_alpha: 0.37
     font_color: hsl(209, 23%, 76%)
-    font_size: 7
     font_weight: light
   line:
     alpha: 0.36
@@ -121,7 +120,6 @@ moon:
 star:
   label:
     font_color: hsl(209, 23%, 80%)
-    font_size: 9
     font_weight: bold
   marker:
     color: hsl(209, 50%, 94%)
