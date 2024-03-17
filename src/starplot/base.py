@@ -158,7 +158,7 @@ class BasePlot(ABC):
             style: Styling of the title. If None, then the plot's style (specified when creating the plot) will be used
         """
         style_kwargs = style.matplot_kwargs(self._size_multiplier)
-        style_kwargs.pop("line_spacing", None)
+        style_kwargs.pop("linespacing", None)
         style_kwargs["pad"] = style.line_spacing
         self.ax.set_title(text, **style_kwargs)
 
