@@ -21,8 +21,9 @@ The table below shows all the deep sky objects (DSOs) available through OpenNGC.
             'Type', 
             'RA',
             'DEC',
-            'Magnitude', 
-            'Geometry'
+            'Magnitude',
+            // 'Size (deg2)',
+            'Geometry',
         ],
         server: {
             url: '../data/ongc.json',
@@ -32,7 +33,8 @@ The table below shows all the deep sky objects (DSOs) available through OpenNGC.
                 dso.RA,
                 dso.DEC,
                 dso.Magnitude,
-                dso.Geometry
+                // dso.Size,
+                dso.Geometry,
             ])
         } ,
         language: {

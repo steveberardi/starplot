@@ -3,6 +3,7 @@ from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
+import numpy as np
 
 from shapely.geometry import Polygon, MultiPolygon
 
@@ -15,6 +16,29 @@ IGNORE_OUTLINES = [
     "IC0424",  # seems too big?
 ]
 MIN_SIZE = 0.1
+
+
+def _size(d):
+    """Returns size (in sq degrees) of minimum bounding rectangle of a DSO"""
+    size = None
+    geometry_types = d["geometry"].geom_type
+
+    if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
+        size = d.geometry.envelope.area
+
+    elif "MultiPolygon" in geometry_types:
+        size = sum([p.envelope.area for p in d.geometry.geoms])
+
+    elif d.MajAx and not np.isnan(d.MinAx):
+        size = (d.MajAx / 60) * (d.MinAx / 60)
+
+    elif d.MajAx:
+        size = (d.MajAx / 60) ** 2
+
+    if size:
+        size = round(size, 8)
+
+    return size
 
 
 def read_csv():
@@ -146,12 +170,15 @@ for f in walk_files():
             gdf.loc[name, "geometry"] = dso_geom
 
 
+# add size column
+gdf["size_deg2"] = gdf.apply(_size, axis=1)
+
 gdf_outlines = gpd.GeoDataFrame(
     {"designation": outlines.keys(), "geometry": outlines.values()}
 )
 
 print(gdf.loc["Orion"])
-gdf.to_file(HERE.parent / "build" / "ngc.gpkg", driver="GPKG", crs=CRS, index=True)
+gdf.to_file(HERE.parent / "build" / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
 gdf_outlines.to_file(
     HERE.parent / "build" / "nebulae.gpkg", driver="GPKG", crs=CRS, index=True
 )

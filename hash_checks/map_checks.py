@@ -27,7 +27,7 @@ def _mercator():
         resolution=RESOLUTION,
     )
     p.stars(mag=7.6, bayer_labels=True)
-    p.dsos(mag=8, null=True, labels=None)
+    p.dsos(mag=8, labels=None, visible_fn=lambda d: d.size and d.size > 0.1)
     p.milky_way()
     p.gridlines()
     p.ecliptic()
@@ -50,8 +50,8 @@ def _stereo_north():
         style=STYLE,
         resolution=RESOLUTION,
     )
-    p.stars(mag=7.6, bayer_labels=True)
-    p.dsos(mag=8, null=True, labels=None)
+    p.stars(mag=9, bayer_labels=True)
+    p.dsos(mag=8, labels=None)
     p.milky_way()
     p.gridlines()
     p.constellations()
@@ -59,14 +59,14 @@ def _stereo_north():
     return p
 
 
-def check_map_mercator_base():
-    filename = DATA_PATH / "map-mercator-base.png"
+def check_map_orion_base():
+    filename = DATA_PATH / "map-orion-base.png"
     mercator_base.export(filename)
     return filename
 
 
-def check_map_mercator_extra():
-    filename = DATA_PATH / "map-mercator-extra.png"
+def check_map_orion_extra():
+    filename = DATA_PATH / "map-orion-extra.png"
     mercator_base.marker(
         ra=4.5,
         dec=5,
@@ -94,6 +94,32 @@ def check_map_mercator_extra():
     return filename
 
 
+def check_map_coma_berenices_dso_size():
+    filename = DATA_PATH / "map-coma-berenices-dso-size.png"
+    p = MapPlot(
+        projection=Projection.MILLER,
+        ra_min=12,
+        ra_max=13.5,
+        dec_min=15,
+        dec_max=32,
+        style=styles.PlotStyle().extend(
+            styles.extensions.BLUE_DARK,
+            styles.extensions.MAP,
+        ),
+        resolution=RESOLUTION,
+    )
+    p.stars(mag=8, bayer_labels=True)
+    p.galaxies(mag=11, true_size=False)
+    p.open_clusters(mag=11, true_size=True)
+    p.gridlines()
+    p.ecliptic()
+    p.celestial_equator()
+    p.constellations()
+    p.constellation_borders()
+    p.export(filename, padding=0.5)
+    return filename
+
+
 def check_map_stereo_base():
     filename = DATA_PATH / "map-stereo-north-base.png"
     map_stereo_north = _stereo_north()
@@ -109,8 +135,8 @@ def check_map_with_planets():
         projection=Projection.MILLER,
         ra_min=0,
         ra_max=24,
-        dec_min=-70,
-        dec_max=70,
+        dec_min=-40,
+        dec_max=40,
         dt=dt,
         hide_colliding_labels=False,
         style=STYLE,
@@ -119,7 +145,6 @@ def check_map_with_planets():
     p.stars(mag=3, labels=None)
     p.planets()
     p.ecliptic()
-    p.gridlines()
     p.export(filename)
 
     return filename
@@ -196,12 +221,12 @@ def check_map_wrapping():
         ra_min=18,
         ra_max=26,
         dec_min=30,
-        dec_max=50,
+        dec_max=64,
         style=style,
         resolution=RESOLUTION,
     )
     p.stars(mag=9)
-    p.dsos(mag=9, null=True)
+    p.dsos(mag=9, visible_fn=lambda d: d.size and d.size > 0.1)
     p.gridlines()
     p.constellations()
     p.title("Andromeda + nebula + Vega")
@@ -224,7 +249,7 @@ def check_map_mollweide():
     )
     p.stars(mag=4.2, mag_labels=1.8)
     p.constellations()
-    p.dsos(mag=4, null=True, labels=None)
+    p.dsos(mag=4, labels=None)
     p.milky_way()
     p.gridlines(labels=False)
     p.export(filename, padding=0.1)

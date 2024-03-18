@@ -29,7 +29,7 @@ p = MapPlot(
 )
 p.gridlines()
 p.stars(mag=9, bayer_labels=True)
-p.dsos(mag=9, null=True, labels=None)
+p.dsos(mag=9, labels=None)
 p.constellations()
 p.constellation_borders()
 p.milky_way()

@@ -59,7 +59,7 @@ p.stars(
     mag=12,
     color_fn=sp.callables.color_by_bv, # <-- here's where we specify the callable
 )
-p.dsos(mag=12, null=True)
+p.dsos(mag=12, mag_null=True)
 p.constellations()
 
 p.export("orion_colored_stars.png", padding=0.25)

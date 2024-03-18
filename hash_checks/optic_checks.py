@@ -16,29 +16,6 @@ optic_style = styles.PlotStyle().extend(
 )
 
 
-def check_optic_binoculars_m45():
-    optic_plot = OpticPlot(
-        # M45
-        ra=3.7836111111,
-        dec=24.1166666667,
-        lat=32.97,
-        lon=-117.038611,
-        # 10x binoculars
-        optic=optics.Binoculars(
-            magnification=10,
-            fov=65,
-        ),
-        dt=dt_dec_16,
-        style=optic_style,
-        resolution=1600,
-    )
-    optic_plot.stars(mag=12)
-    optic_plot.info()
-    filename = DATA_PATH / "optic-binoculars-m45.png"
-    optic_plot.export(filename)
-    return filename
-
-
 def check_optic_polaris_binoculars():
     optic_plot = OpticPlot(
         # Polaris
@@ -62,7 +39,7 @@ def check_optic_polaris_binoculars():
     return filename
 
 
-def check_optic_refractor_double_cluster():
+def check_optic_double_cluster_refractor():
     optic_plot = OpticPlot(
         # double cluster
         ra=2.33,
@@ -81,7 +58,7 @@ def check_optic_refractor_double_cluster():
     )
     optic_plot.stars(mag=12)
     optic_plot.info()
-    filename = DATA_PATH / "optic-refractor-double-cluster.png"
+    filename = DATA_PATH / "optic-double-cluster-refractor.png"
     optic_plot.export(filename)
     return filename
 
@@ -118,7 +95,30 @@ def check_optic_wrapping():
     return filename
 
 
-def check_optic_scope_m45():
+def check_optic_m45_binoculars():
+    optic_plot = OpticPlot(
+        # M45
+        ra=3.7836111111,
+        dec=24.1166666667,
+        lat=32.97,
+        lon=-117.038611,
+        # 10x binoculars
+        optic=optics.Binoculars(
+            magnification=10,
+            fov=65,
+        ),
+        dt=dt_dec_16,
+        style=optic_style,
+        resolution=1600,
+    )
+    optic_plot.stars(mag=12)
+    optic_plot.info()
+    filename = DATA_PATH / "optic-m45-binoculars.png"
+    optic_plot.export(filename)
+    return filename
+
+
+def check_optic_m45_scope():
     optic_plot = OpticPlot(
         # M45
         ra=3.7836111111,
@@ -136,12 +136,12 @@ def check_optic_scope_m45():
     )
     optic_plot.stars(mag=12, color_fn=callables.color_by_bv)
     optic_plot.info()
-    filename = DATA_PATH / "optic-scope-m45.png"
+    filename = DATA_PATH / "optic-m45-scope.png"
     optic_plot.export(filename)
     return filename
 
 
-def check_optic_reflector_m45():
+def check_optic_m45_reflector():
     optic_plot = OpticPlot(
         # M45
         ra=3.7836111111,
@@ -159,12 +159,12 @@ def check_optic_reflector_m45():
     )
     optic_plot.stars(mag=12)
     optic_plot.info()
-    filename = DATA_PATH / "optic-reflector-m45.png"
+    filename = DATA_PATH / "optic-m45-reflector.png"
     optic_plot.export(filename)
     return filename
 
 
-def check_optic_camera_m45():
+def check_optic_m45_camera():
     optic_plot = OpticPlot(
         # M45
         ra=3.7836111111,
@@ -183,7 +183,7 @@ def check_optic_camera_m45():
     )
     optic_plot.stars(mag=12)
     optic_plot.info()
-    filename = DATA_PATH / "optic-camera-m45.png"
+    filename = DATA_PATH / "optic-m45-camera.png"
     optic_plot.export(filename)
     return filename
 

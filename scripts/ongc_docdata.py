@@ -2,7 +2,6 @@ import json
 
 import numpy as np
 import geopandas as gpd
-import pandas as pd
 
 from starplot.data import DataFiles
 from starplot.data.dsos import ONGC_TYPE_MAP
@@ -28,7 +27,7 @@ for _, dso in ongc.iterrows():
         "Magnitude": dso["V-Mag"] or dso["B-Mag"] or "None",
         "Major Axis": dso.MajAx,
         "Minor Axis": dso.MinAx,
-        "Angle": dso.PosAng,
+        "Size": dso.size_deg2,
         "Geometry": dso["geometry"].geom_type,
     }
 

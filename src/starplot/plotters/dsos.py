@@ -1,4 +1,4 @@
-from typing import Mapping
+from typing import Callable, Mapping
 
 import geopandas as gpd
 import numpy as np
@@ -13,6 +13,7 @@ from starplot.data.dsos import (
     DSO_LABELS_DEFAULT,
     DsoLabelMaker,
 )
+from starplot.models import DSO
 from starplot.styles import MarkerSymbolEnum
 
 
@@ -66,23 +67,25 @@ class DsoPlotterMixin:
         mag: float = 8.0,
         types: list[DsoType] = DEFAULT_DSO_TYPES,
         names: list[str] = None,
-        null: bool = False,
         true_size: bool = True,
         labels: Mapping[str, str] = DSO_LABELS_DEFAULT,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
+        visible_fn: Callable[[DSO], bool] = None,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
 
         Args:
             mag: Limiting magnitude of DSOs to plot
+            mag_null: If True, then DSOs without a defined magnitude will be plotted
             types: List of DSO types to plot
             names: List of DSO names (as specified in OpenNGC) to filter by (case sensitive!). If `None`, then the DSOs will not be filtered by name.
-            null: If True, then DSOs without a defined magnitude will be plotted
             true_size: If True, then each DSO will be plotted as its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used. Also, keep in mind not all DSOs have a defined size (according to OpenNGC) -- so these will use the style's marker size.
+            size_min: Minimum size (in square degrees) of DSOs to plot. The size of each DSO is calculated as the area of the minimum bounding rectangle of the DSO.
+            size_null: If True, then DSOs without a defined size will be plotted and their size will be based on the style's marker size
             labels: A dictionary that maps DSO names (as specified in OpenNGC) to the label that'll be plotted for that object. By default, the DSO's name in OpenNGC will be used as the label. If you want to hide all labels, then set this arg to `None`.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
-
+            visible_fn: A callable that determines if a DSO should be plotted. Receives an instance of the DSO and should return True to plot the DSO, return False to hide it. Note: this callable is called *after* filtering DSOs by magnitude, types, etc. If None (the default), then the DSOs will not be filtered by this callable.
         """
 
         # TODO: add args mag_labels, styles
@@ -90,12 +93,14 @@ class DsoPlotterMixin:
         # TODO: sort by type, and plot markers together (for better performance)
 
         self.logger.debug("Plotting DSOs...")
-        ongc = gpd.read_file(
+        nearby_dsos = gpd.read_file(
             DataFiles.ONGC.value,
             engine="pyogrio",
             use_arrow=True,
             bbox=self._extent_mask(),
         )
+
+        visible_fn = visible_fn or (lambda d: True)
 
         if labels is None:
             labels = {}
@@ -107,20 +112,20 @@ class DsoPlotterMixin:
         else:
             legend_labels = {**DSO_LEGEND_LABELS, **legend_labels}
 
-        dso_types = [ONGC_TYPE[dtype] for dtype in types]
-        nearby_dsos = ongc[ongc["Type"].isin(dso_types)]
         nearby_dsos = nearby_dsos.replace({np.nan: None})
+        dso_types = [ONGC_TYPE[dtype] for dtype in types]
+        nearby_dsos = nearby_dsos[
+            nearby_dsos["Type"].isin(dso_types)
+            & nearby_dsos["ra_degrees"].notnull()
+            & nearby_dsos["dec_degrees"].notnull()
+        ]
 
         if names:
             nearby_dsos = nearby_dsos[nearby_dsos["Name"].isin(names)]
 
-        for n, d in nearby_dsos.iterrows():
-            if d.ra_degrees is None or d.dec_degrees is None:
-                continue
-
+        for _, d in nearby_dsos.iterrows():
             ra = d.ra_degrees
             dec = d.dec_degrees
-
             name = d.Name
             label = labels.get(name)
             dso_type = ONGC_TYPE_MAP[d.Type]
@@ -129,26 +134,36 @@ class DsoPlotterMixin:
             legend_label = legend_labels.get(dso_type)
             magnitude = d["V-Mag"] or d["B-Mag"] or None
             magnitude = float(magnitude) if magnitude else None
+            _dso = DSO(
+                name=name,
+                ra=ra / 15,
+                dec=dec,
+                type=dso_type,
+                maj_ax=maj_ax,
+                min_ax=min_ax,
+                angle=angle,
+                magnitude=magnitude,
+                size=d.size_deg2,
+            )
 
-            if (
-                not style
-                or (magnitude is not None and magnitude > mag)
-                or (magnitude is None and not null)
+            if any(
+                [
+                    style is None,
+                    not visible_fn(_dso),
+                    magnitude is not None and magnitude > mag,
+                ]
             ):
                 continue
 
-            geometry_types = d["geometry"].geom_type
-
-            if true_size:
-                if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
+            if true_size and d.size_deg2 is not None:
+                if "Polygon" == str(d.geometry.geom_type):
                     self._plot_dso_polygon(d.geometry, style)
 
-                elif "MultiPolygon" in geometry_types:
+                elif "MultiPolygon" == str(d.geometry.geom_type):
                     for polygon in d.geometry.geoms:
                         self._plot_dso_polygon(polygon, style)
                 elif maj_ax:
                     # if object has a major axis then plot its actual extent
-
                     maj_ax_degrees = (maj_ax / 60) / 2
 
                     if min_ax:

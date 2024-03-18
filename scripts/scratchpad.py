@@ -29,9 +29,9 @@ def create_map_orion():
         # extensions.GRAYSCALE_DARK,
         # extensions.BLUE_LIGHT,
         # extensions.BLUE_MEDIUM,
-        # extensions.BLUE_DARK,
+        extensions.BLUE_DARK,
+        # extensions.CB_WONG,
         extensions.MAP,
-        extensions.CB_WONG,
         {
             "star": {
                 "label": {"font_size": 8},
@@ -80,7 +80,7 @@ def create_map_orion():
     )
     p.dsos(
         mag=12,
-        null=True,
+        visible_fn=lambda d: d.size and d.size > 0.08,
         # labels={"NGC2260": "2260www"},
         # labels=None,
         # legend_labels={sp.data.dsos.DsoType.OPEN_CLUSTER: None}
@@ -91,7 +91,7 @@ def create_map_orion():
     p.constellation_borders()
     p.milky_way()
     p.ecliptic(label=None)
-    p.title("Orion in Mercator")
+    p.title("Orion")
 
     # p.marker(
     #     ra=4.5,
@@ -198,7 +198,7 @@ def create_map_miller():
         debug=True,
     )
     p.stars(mag=8, labels=None)
-    p.dsos(mag=8, null=True, labels=None)
+    p.dsos(mag=8, labels=None)
     p.gridlines()
     p.milky_way()
     p.planets()
