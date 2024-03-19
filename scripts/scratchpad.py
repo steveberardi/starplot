@@ -31,6 +31,7 @@ def create_map_orion():
         # extensions.BLUE_MEDIUM,
         extensions.BLUE_DARK,
         # extensions.CB_WONG,
+        # extensions.ANTIQUE,
         extensions.MAP,
         {
             "star": {
@@ -43,7 +44,6 @@ def create_map_orion():
             "legend": {
                 "location": "lower right",
                 "num_columns": 8,
-                "background_alpha": 1,
             },
         },
     )
@@ -59,25 +59,25 @@ def create_map_orion():
         resolution=3200,
         debug=True,
     )
-
+    p.stars(
+        # catalog="tycho-1",
+        mag=9,
+        bayer_labels=True,
+        labels=None,
+        visible_fn=lambda s: s.magnitude > 2.3,
+    )
     p.stars(
         mag=2.3,
         style={
             "marker": {
                 "size": 46,
                 "symbol": "star_8",
-                "zorder": 50,
             }
         },
         legend_label=None,
         labels=None,
     )
-    p.stars(
-        # catalog="tycho-1",
-        mag=10,
-        bayer_labels=True,
-        labels=None,
-    )
+
     p.dsos(
         mag=12,
         visible_fn=lambda d: d.size and d.size > 0.08,
@@ -138,6 +138,21 @@ def create_map_orion():
 
     # p.export("temp/map-orion.svg", format="svg", padding=1)
     p.export("temp/map-orion.png", padding=0.5)
+
+    
+
+
+    # convert to map/data coordinates
+    x, y = p._proj.transform_point(5.8*15, 5, p._crs)
+
+    data_to_axes = p.ax.transData + p.ax.transAxes.inverted()
+
+    # convert data to axes coordinates
+    x_axes, y_axes = data_to_axes.transform((x, y))
+
+    # with axes coordinates: plotted if between 0...1
+
+    print(f"{x_axes}, {y_axes}")
 
 
 def create_zenith():

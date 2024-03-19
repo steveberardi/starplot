@@ -113,6 +113,7 @@ class StarPlotterMixin:
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
+        visible_fn: Callable[[Star], bool] = None,
         labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
         bayer_labels: bool = False,
@@ -131,6 +132,7 @@ class StarPlotterMixin:
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
+            visible_fn: A callable that determines if a star should be plotted. Receives an instance of the star and should return True to plot the star, return False to hide it. Note: this callable is called *after* filtering stars by magnitude. If None (the default), then the stars will not be filtered by this callable.
             labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
@@ -141,6 +143,8 @@ class StarPlotterMixin:
         size_fn = size_fn or (lambda d: style.marker.size)
         alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
         color_fn = color_fn or (lambda d: style.marker.color.as_hex())
+
+        visible_fn = visible_fn or (lambda d: True)
 
         layers = kwargs.get("layers") or 1
 
@@ -172,6 +176,19 @@ class StarPlotterMixin:
             ra, dec = star.ra, star.dec
 
             obj = Star(ra=ra, dec=dec, magnitude=m, bv=star.get("bv"))
+
+            # TODO : fix this for optic plots
+            # x, y = self._proj.transform_point(ra*15, dec, self._crs)
+            # data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
+            # x_axes, y_axes = data_to_axes.transform((x, y))
+
+            if any([
+                not visible_fn(obj),
+                # x_axes < 0 or x_axes > 1,
+                # y_axes < 0 or y_axes > 1,
+            ]):
+                continue
+
             size = size_fn(obj) * star_size_multiplier
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()
