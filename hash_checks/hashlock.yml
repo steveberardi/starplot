@@ -39,7 +39,7 @@ optic_camera_rotated:
   filename: /starplot/hash_checks/data/optic-camera-rotated-m45.png
   phash: ac6cc6941edb7285
 optic_double_cluster_refractor:
-  dhash: 8e172b452b338e4d8e172b452b338e4d8e172b452b338e4d
+  dhash: 8e172b552b338e4d8e172b552b338e4d8e172b552b338e4d
   filename: /starplot/hash_checks/data/optic-double-cluster-refractor.png
   phash: ea7b84f18693ca92
 optic_m45_binoculars:

@@ -139,8 +139,6 @@ def create_map_orion():
     # p.export("temp/map-orion.svg", format="svg", padding=1)
     p.export("temp/map-orion.png", padding=0.5)
 
-    
-
 
     # convert to map/data coordinates
     x, y = p._proj.transform_point(5.8*15, 5, p._crs)
@@ -153,6 +151,7 @@ def create_map_orion():
     # with axes coordinates: plotted if between 0...1
 
     print(f"{x_axes}, {y_axes}")
+    # print(p.objects.stars)
 
 
 def create_zenith():

@@ -9,10 +9,11 @@ from adjustText import adjust_text as _adjust_text
 from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects, transforms
 from matplotlib.lines import Line2D
+from pydantic import BaseModel
 from pytz import timezone
 from skyfield.api import Angle
 
-from starplot import geod
+from starplot import geod, models
 from starplot.data import load, ecliptic
 from starplot.data.planets import Planet, get_planet_positions, PLANET_LABELS_DEFAULT
 from starplot.styles import (
@@ -42,6 +43,10 @@ DEFAULT_FOV_STYLE = PolygonStyle(
 """Default style for plotting scope and bino field of view circles"""
 
 DEFAULT_STYLE = PlotStyle()
+
+class ObjectList(BaseModel):
+    stars: list[models.Star] = [] # mutable defaults handled correctly in Pydantic
+    dsos: list[models.DSO] = []
 
 
 class BasePlot(ABC):
@@ -85,6 +90,8 @@ class BasePlot(ABC):
         )
         self._size_multiplier = self.resolution / 3000
         self.timescale = load.timescale().from_datetime(self.dt)
+
+        self.objects = ObjectList()
 
     def _plot_kwargs(self) -> dict:
         return {}

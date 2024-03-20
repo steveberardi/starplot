@@ -146,8 +146,6 @@ class StarPlotterMixin:
 
         visible_fn = visible_fn or (lambda d: True)
 
-        layers = kwargs.get("layers") or 1
-
         if labels is None:
             labels = {}
         else:
@@ -155,11 +153,9 @@ class StarPlotterMixin:
 
         star_size_multiplier = self._size_multiplier * style.marker.size / 5
 
-        earth = self.ephemeris["earth"]
-
         nearby_stars_df = self._load_stars(catalog, mag)
         nearby_stars = SkyfieldStar.from_dataframe(nearby_stars_df)
-        astrometric = earth.at(self.timescale).observe(nearby_stars)
+        astrometric = self.ephemeris["earth"].at(self.timescale).observe(nearby_stars)
         stars_ra, stars_dec, _ = astrometric.radec()
         nearby_stars_df["ra"], nearby_stars_df["dec"] = (
             stars_ra.hours * 15,
@@ -168,72 +164,54 @@ class StarPlotterMixin:
         epoch_year = nearby_stars_df.iloc[0]["epoch_year"]
 
         starz = []
-        max_size = 0
-        min_size = 0
+
+        # TODO : transform points first, find in-axis stars, 
+        # then iterate again and calc size/alpha/color etc
 
         for _, star in nearby_stars_df.iterrows():
             m = star.magnitude
             ra, dec = star.ra, star.dec
 
-            obj = Star(ra=ra, dec=dec, magnitude=m, bv=star.get("bv"))
+            obj = Star(ra=ra/15, dec=dec, magnitude=m, bv=star.get("bv"))
 
-            # TODO : fix this for optic plots
-            # x, y = self._proj.transform_point(ra*15, dec, self._crs)
-            # data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-            # x_axes, y_axes = data_to_axes.transform((x, y))
-
-            if any([
-                not visible_fn(obj),
-                # x_axes < 0 or x_axes > 1,
-                # y_axes < 0 or y_axes > 1,
-            ]):
+            if not visible_fn(obj):
                 continue
 
             size = size_fn(obj) * star_size_multiplier
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()
 
-            max_size = max(max_size, size)
-            min_size = min(min_size, size)
-            starz.append((ra, dec, size, alpha, color))
+            starz.append((ra, dec, size, alpha, color, obj))
 
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 
-        ra, dec, sizes, alphas, colors = zip(*starz)
-        step_size = (max_size - min_size) / layers
+        ras, decs, sizes, alphas, colors, star_objects = zip(*starz)
 
-        current_min = max_size - step_size
-        current_layer = []
-        zorder = style.marker.zorder
-        edgecolors = self.style.background_color.as_hex()
+        # much more efficient!
+        # TODO : move to function
+        import numpy as np
+        radec_projected = self._proj.transform_points(self._crs, np.array(ras), np.array(decs))
+        data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
+        x, y, _ = zip(*radec_projected)
+        ax_coords = data_to_axes.transform((x,y))
 
-        self.logger.debug(f"Layers: {layers}")
-        self.logger.debug(f"Step: {step_size}")
-        self.logger.debug(f"Max size: {max_size}")
+        for i, (ax, ay) in enumerate(ax_coords):
+            if 0 < ax < 1 and 0 < ay < 1:
+                self.objects.stars.append(star_objects[i])
 
         # Plot Stars
-        for i, s in enumerate(starz):
-            ra, dec, size, alpha, color = s
-            if size > current_min and i != len(starz) - 1:
-                current_layer.append(s)
-            else:
-                self.logger.debug(f"Plotting layer: {current_min}")
-                ras, decs, sizes, alphas, colors = zip(*starz)
-                self._scatter_stars(
-                    ras,
-                    decs,
-                    sizes,
-                    alphas,
-                    colors,
-                    style=style,
-                    zorder=zorder,
-                    edgecolors=edgecolors,
-                    rasterized=rasterize,
-                    epoch_year=epoch_year,
-                )
-                current_layer = []
-                current_min = current_min - step_size
-                zorder += 5
+        self._scatter_stars(
+            ras,
+            decs,
+            sizes,
+            alphas,
+            colors,
+            style=style,
+            zorder=style.marker.zorder,
+            edgecolors=self.style.background_color.as_hex(),
+            rasterized=rasterize,
+            epoch_year=epoch_year,
+        )
 
         self._add_legend_handle_marker(legend_label, style.marker)
 
