@@ -148,12 +148,12 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             True if the coordinate is in bounds, otherwise False
         """
         # TODO : this is slow for point by point calc, try other methods
-        x, y = self._proj.transform_point(ra*15, dec, self._crs)
+        x, y = self._proj.transform_point(ra * 15, dec, self._crs)
         data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
         x_axes, y_axes = data_to_axes.transform((x, y))
 
         return 0 <= x_axes <= 1 and 0 <= y_axes <= 1
-        
+
         # if self.ra_max < 24:
         #     return self.ra_min < ra < self.ra_max and self.dec_min < dec < self.dec_max
         # else:

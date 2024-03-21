@@ -139,9 +139,11 @@ def create_map_orion():
     # p.export("temp/map-orion.svg", format="svg", padding=1)
     p.export("temp/map-orion.png", padding=0.5)
 
-
     # convert to map/data coordinates
-    x, y = p._proj.transform_point(5.8*15, 5, p._crs)
+    x, y = p._proj.transform_point(5.5 * 15, 15, p._crs)
+
+    # (0.45364372930200453, 1.1154537139286997) -> (97.13793583239013, -4.579175259666723)
+    x, y = p._proj.transform_point(97.13793583239013, -4.579175259666723, p._crs)
 
     data_to_axes = p.ax.transData + p.ax.transAxes.inverted()
 
@@ -403,13 +405,13 @@ def create_map_scratch():
 
 # ------------------------------------------
 
-# create_optic_plot()
+create_optic_plot()
 
 # create_zenith()
 
-create_map_miller()
+# create_map_miller()
 
-create_map_orion()
+# create_map_orion()
 
 # create_map_scratch()
 

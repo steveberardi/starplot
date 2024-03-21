@@ -29,11 +29,11 @@ map_stereo_base:
 map_with_planets:
   dhash: 629115eb899b3232629115ebc99b3232629115ebc99b3232
   filename: /starplot/hash_checks/data/map-mercator-planets.png
-  phash: e9469d8986ad5f12
+  phash: e9469d89863d5f12
 map_wrapping:
-  dhash: 16295d256542211516295d256542211516295d2565422115
+  dhash: 16295da56542211516295da56542211516295da565422115
   filename: /starplot/hash_checks/data/map-wrapping.png
-  phash: e631f16d34743139
+  phash: e631f1ed34643139
 optic_camera_rotated:
   dhash: 25468b33269d9a6525468b33269d9a6525468b33269d9a65
   filename: /starplot/hash_checks/data/optic-camera-rotated-m45.png

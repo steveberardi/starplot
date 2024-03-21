@@ -165,16 +165,14 @@ class StarPlotterMixin:
 
         starz = []
 
-        # TODO : transform points first, find in-axis stars, 
-        # then iterate again and calc size/alpha/color etc
-
         for _, star in nearby_stars_df.iterrows():
             m = star.magnitude
             ra, dec = star.ra, star.dec
 
-            obj = Star(ra=ra/15, dec=dec, magnitude=m, bv=star.get("bv"))
+            obj = Star(ra=ra / 15, dec=dec, magnitude=m, bv=star.get("bv"))
 
-            if not visible_fn(obj):
+            # in_bounds creates bottleneck for optic plots
+            if not visible_fn(obj) or not self.in_bounds(ra / 15, dec):
                 continue
 
             size = size_fn(obj) * star_size_multiplier
@@ -186,18 +184,6 @@ class StarPlotterMixin:
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 
         ras, decs, sizes, alphas, colors, star_objects = zip(*starz)
-
-        # much more efficient!
-        # TODO : move to function
-        import numpy as np
-        radec_projected = self._proj.transform_points(self._crs, np.array(ras), np.array(decs))
-        data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-        x, y, _ = zip(*radec_projected)
-        ax_coords = data_to_axes.transform((x,y))
-
-        for i, (ax, ay) in enumerate(ax_coords):
-            if 0 < ax < 1 and 0 < ay < 1:
-                self.objects.stars.append(star_objects[i])
 
         # Plot Stars
         self._scatter_stars(

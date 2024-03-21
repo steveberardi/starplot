@@ -44,8 +44,9 @@ DEFAULT_FOV_STYLE = PolygonStyle(
 
 DEFAULT_STYLE = PlotStyle()
 
+
 class ObjectList(BaseModel):
-    stars: list[models.Star] = [] # mutable defaults handled correctly in Pydantic
+    stars: list[models.Star] = []  # mutable defaults handled correctly in Pydantic
     dsos: list[models.DSO] = []
 
 
