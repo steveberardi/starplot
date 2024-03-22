@@ -140,7 +140,6 @@ def create_map_orion():
     p.export("temp/map-orion.png", padding=0.5)
 
 
-
 def create_zenith():
     """Create zenith plot for tonight's sky in Poway"""
     style = PlotStyle().extend(
