@@ -162,32 +162,21 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
 
-    def _scatter_stars(
-        self, ras, decs, sizes, alphas, colors, style=None, epoch_year=None, **kwargs
-    ):
-        """Override StarPlotterMixin _scatter_stars so we can convert to alt/az coords"""
-        ra_hours = [ra / 15 for ra in ras]
+    def _in_bounds_xy(self, x: float, y: float) -> bool:
+        return self.in_bounds_altaz(y, x)  # alt = y, az = x
 
-        df = pd.DataFrame({"ra_hours": ra_hours, "dec_degrees": decs})
-        df["epoch_year"] = epoch_year
-
+    def _prepare_star_coords(self, df):
         stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
-
-        df["alt"], df["az"] = (
-            nearby_stars_alt.degrees,
+        df["x"], df["y"] = (
             nearby_stars_az.degrees,
+            nearby_stars_alt.degrees,
         )
+        return df
 
-        plotted = super()._scatter_stars(
-            df["az"],
-            df["alt"],
-            sizes,
-            alphas,
-            colors,
-            style,
-            **kwargs,
-        )
+    def _scatter_stars(self, *args, **kwargs):
+        """Override StarPlotterMixin _scatter_stars so we can convert to alt/az coords"""
+        plotted = super()._scatter_stars(*args, **kwargs)
         plotted.set_clip_on(True)
 
         if type(self._background_clip_path) == patches.Rectangle:

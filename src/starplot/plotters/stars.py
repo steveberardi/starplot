@@ -1,5 +1,6 @@
 from typing import Callable, Mapping
 
+import numpy as np
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
@@ -41,9 +42,7 @@ class StarPlotterMixin:
 
         return stardata
 
-    def _scatter_stars(
-        self, ras, decs, sizes, alphas, colors, style=None, epoch_year=None, **kwargs
-    ):
+    def _scatter_stars(self, ras, decs, sizes, alphas, colors, style=None, **kwargs):
         style = style or self.style.star
         edge_colors = kwargs.pop("edgecolors", None)
 
@@ -101,6 +100,13 @@ class StarPlotterMixin:
                     va="bottom",
                     **self.style.bayer_labels.matplot_kwargs(self._size_multiplier),
                 )
+
+    def _prepare_star_coords(self, df):
+        df["x"], df["y"] = (
+            df["ra"],
+            df["dec"],
+        )
+        return df
 
     @use_style(ObjectStyle, "star")
     def stars(
@@ -161,34 +167,41 @@ class StarPlotterMixin:
             stars_ra.hours * 15,
             stars_dec.degrees,
         )
-        epoch_year = nearby_stars_df.iloc[0]["epoch_year"]
+        self._prepare_star_coords(nearby_stars_df)
 
         starz = []
 
-        for _, star in nearby_stars_df.iterrows():
+        for hip_id, star in nearby_stars_df.iterrows():
             m = star.magnitude
             ra, dec = star.ra, star.dec
 
             obj = Star(ra=ra / 15, dec=dec, magnitude=m, bv=star.get("bv"))
 
-            # in_bounds creates bottleneck for optic plots
-            if not visible_fn(obj) or not self.in_bounds(ra / 15, dec):
+            if np.isfinite(hip_id):
+                obj.hip = hip_id
+                obj.name = STAR_NAMES.get(hip_id)
+
+            if not visible_fn(obj) or not self._in_bounds_xy(star.x, star.y):
                 continue
 
             size = size_fn(obj) * star_size_multiplier
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()
 
-            starz.append((ra, dec, size, alpha, color, obj))
+            starz.append((star.x, star.y, size, alpha, color, obj))
 
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 
-        ras, decs, sizes, alphas, colors, star_objects = zip(*starz)
+        x, y, sizes, alphas, colors, star_objects = zip(*starz)
+
+        self.objects.stars.extend(star_objects)
+
+        self.logger.debug(f"Star count = {len(star_objects)}")
 
         # Plot Stars
         self._scatter_stars(
-            ras,
-            decs,
+            x,
+            y,
             sizes,
             alphas,
             colors,
@@ -196,7 +209,6 @@ class StarPlotterMixin:
             zorder=style.marker.zorder,
             edgecolors=self.style.background_color.as_hex(),
             rasterized=rasterize,
-            epoch_year=epoch_year,
         )
 
         self._add_legend_handle_marker(legend_label, style.marker)

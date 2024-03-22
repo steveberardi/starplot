@@ -139,21 +139,6 @@ def create_map_orion():
     # p.export("temp/map-orion.svg", format="svg", padding=1)
     p.export("temp/map-orion.png", padding=0.5)
 
-    # convert to map/data coordinates
-    x, y = p._proj.transform_point(5.5 * 15, 15, p._crs)
-
-    # (0.45364372930200453, 1.1154537139286997) -> (97.13793583239013, -4.579175259666723)
-    x, y = p._proj.transform_point(97.13793583239013, -4.579175259666723, p._crs)
-
-    data_to_axes = p.ax.transData + p.ax.transAxes.inverted()
-
-    # convert data to axes coordinates
-    x_axes, y_axes = data_to_axes.transform((x, y))
-
-    # with axes coordinates: plotted if between 0...1
-
-    print(f"{x_axes}, {y_axes}")
-    # print(p.objects.stars)
 
 
 def create_zenith():
@@ -283,7 +268,7 @@ def create_optic_plot():
     )
     p1.celestial_equator()
     p1.ecliptic()
-    p1.stars(mag=15, color_fn=callables.color_by_bv)
+    p1.stars(mag=12, color_fn=callables.color_by_bv, catalog="tycho-1")
     p1.dsos(mag=4.1, labels=None)
     p1.title("Orion Nebula")
 
@@ -411,7 +396,7 @@ create_optic_plot()
 
 # create_map_miller()
 
-# create_map_orion()
+create_map_orion()
 
 # create_map_scratch()
 

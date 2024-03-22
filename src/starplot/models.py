@@ -26,6 +26,9 @@ class Star(BaseModel):
     hip: Optional[int] = None
     """Hipparcos Catalog ID, if available"""
 
+    name: Optional[str] = None
+    """Name, if available"""
+
 
 class DSO(BaseModel):
     """

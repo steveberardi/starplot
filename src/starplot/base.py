@@ -414,6 +414,22 @@ class BasePlot(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def _in_bounds_xy(self, x: float, y: float) -> bool:
+        """
+        Determine if a data / projected coordinate is within the non-clipped bounds of the plot.
+
+        This should be extremely precise.
+
+        Args:
+            x: X coordinate
+            y: Y coordinate
+
+        Returns:
+            bool: True if the coordinate is in bounds, otherwise False
+        """
+        raise NotImplementedError
+
     def _polygon(self, points: list, style: PolygonStyle, **kwargs):
         points = [geod.to_radec(p) for p in points]
         points = [self._prepare_coords(*p) for p in points]

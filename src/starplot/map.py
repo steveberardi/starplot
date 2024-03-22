@@ -147,7 +147,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        # TODO : this is slow for point by point calc, try other methods
+        # TODO : try using pyproj transformer directly
         x, y = self._proj.transform_point(ra * 15, dec, self._crs)
         data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
         x_axes, y_axes = data_to_axes.transform((x, y))
@@ -160,6 +160,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         #     return (
         #         ra > self.ra_min or ra < self.ra_max - 24
         #     ) and self.dec_min < dec < self.dec_max
+
+    def _in_bounds_xy(self, x: float, y: float) -> bool:
+        return self.in_bounds(x / 15, y)
 
     def _polygon(self, points, style, **kwargs):
         super()._polygon(points, style, transform=self._crs, **kwargs)
