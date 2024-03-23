@@ -36,7 +36,7 @@ import starplot as sp
 tz = timezone("America/Los_Angeles")
 
 p = sp.MapPlot(
-    projection=Projection.ZENITH,
+    projection=sp.Projection.ZENITH,
     lat=33.363484,
     lon=-116.836394,
     dt=datetime.now(tz).replace(hour=22),
@@ -60,6 +60,12 @@ p.export("starchart.png")
 For a demo of Starplot's zenith plots, check out: 
 
 [Sky Atlas - Star Chart Creator](https://skyatlas.app/star-charts/)
+
+## Discord
+
+Chat with other starplotters on our Discord server:
+
+https://discord.gg/bwazdyD7
 
 ## Core Dependencies
 

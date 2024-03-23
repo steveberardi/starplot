@@ -26,6 +26,10 @@
     font-weight: 600;
 }
 
+.fg-primary {
+    color: var(--md-primary-fg-color);
+}
+
 /* Object Class Headings */
 .doc-object.doc-class {
     border-top: 2px solid rgba(200, 200, 200, 0.6);
