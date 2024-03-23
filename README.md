@@ -61,6 +61,12 @@ For a demo of Starplot's zenith plots, check out:
 
 [Sky Atlas - Star Chart Creator](https://skyatlas.app/star-charts/)
 
+## Discord
+
+Chat with other starplotters on our Discord server:
+
+https://discord.gg/bwazdyD7
+
 ## Core Dependencies
 
 - matplotlib
