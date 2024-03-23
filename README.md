@@ -36,7 +36,7 @@ import starplot as sp
 tz = timezone("America/Los_Angeles")
 
 p = sp.MapPlot(
-    projection=Projection.ZENITH,
+    projection=sp.Projection.ZENITH,
     lat=33.363484,
     lon=-116.836394,
     dt=datetime.now(tz).replace(hour=22),
