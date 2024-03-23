@@ -31,12 +31,13 @@ To create a star chart for tonight's sky as seen from [Palomar Mountain](https:/
 ```python
 from datetime import datetime
 from pytz import timezone
+from starplot.map import Projection
 import starplot as sp
 
 tz = timezone("America/Los_Angeles")
 
 p = sp.MapPlot(
-    projection=sp.Projection.ZENITH,
+    projection=Projection.ZENITH,
     lat=33.363484,
     lon=-116.836394,
     dt=datetime.now(tz).replace(hour=22),
