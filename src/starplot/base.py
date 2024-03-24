@@ -392,7 +392,7 @@ class BasePlot(ABC):
                 legend_label=legend_label,
             )
             
-    @use_style(ObjectStyle, "moon")
+    @use_style(ObjectStyle, "sun")
     def sun(
         self,
         style: ObjectStyle = None,
