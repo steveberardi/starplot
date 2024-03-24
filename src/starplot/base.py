@@ -391,6 +391,63 @@ class BasePlot(ABC):
                 style=style,
                 legend_label=legend_label,
             )
+            
+    @use_style(ObjectStyle, "moon")
+    def sun(
+        self,
+        style: ObjectStyle = None,
+        true_size: bool = False,
+        label: str = "Sun",
+        legend_label: str = "Sun",
+    ) -> None:
+        """Plots the Sun
+
+        Args:
+            style: Styling of the Sun. If None, then the plot's style (specified when creating the plot) will be used
+            true_size: If True, then the Sun's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
+            label: How the Sun will be labeled on the plot and legend
+        """
+        earth, sun = self.ephemeris["earth"], self.ephemeris["sun"]
+        astrometric = earth.at(self.timescale).observe(sun)
+        ra, dec, distance = astrometric.radec()
+
+        ra = ra.hours
+        dec = dec.degrees
+
+        if not self.in_bounds(ra, dec):
+            return
+
+        # ToDo update data, but plot_circle() in undefined
+        if true_size:
+            radius_km = 1_740
+            apparent_diameter_degrees = Angle(
+                radians=np.arcsin(radius_km / distance.km) * 2.0
+            ).degrees
+
+            self.plot_circle(
+                (ra, dec),
+                apparent_diameter_degrees,
+                style.marker.to_polygon_style(),
+            )
+
+            self._add_legend_handle_marker(legend_label, style.marker)
+
+            if label:
+                self._plot_text(
+                    ra,
+                    dec,
+                    label,
+                    **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
+                )
+
+        else:
+            self.marker(
+                ra=ra,
+                dec=dec,
+                label=label,
+                style=style,
+                legend_label=legend_label,
+            )
 
     @abstractmethod
     def in_bounds(self, ra: float, dec: float) -> bool:
