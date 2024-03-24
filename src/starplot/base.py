@@ -311,7 +311,7 @@ class BasePlot(ABC):
             label = labels.get(p)
 
             if true_size:
-                self.plot_circle(
+                self.circle(
                     (ra, dec),
                     apparent_size_degrees,
                     style.marker.to_polygon_style(),
@@ -367,7 +367,7 @@ class BasePlot(ABC):
                 radians=np.arcsin(radius_km / distance.km) * 2.0
             ).degrees
 
-            self.plot_circle(
+            self.circle(
                 (ra, dec),
                 apparent_diameter_degrees,
                 style.marker.to_polygon_style(),
