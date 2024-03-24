@@ -12,6 +12,8 @@ __pycache__/
 # macOS
 .DS_Store
 
+scripts/scratchpad.py
+
 # astronomy data
 constellationship.fab
 de421.bsp
