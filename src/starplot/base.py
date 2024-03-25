@@ -411,20 +411,22 @@ class BasePlot(ABC):
         astrometric = earth.at(self.timescale).observe(sun)
         ra, dec, distance = astrometric.radec()
 
+        #testing
+        print(distance.km)
+
         ra = ra.hours
         dec = dec.degrees
 
         if not self.in_bounds(ra, dec):
             return
 
-        # ToDo update data, but plot_circle() in undefined
         if true_size:
-            radius_km = 1_740
+            radius_km = 695_700
             apparent_diameter_degrees = Angle(
                 radians=np.arcsin(radius_km / distance.km) * 2.0
             ).degrees
 
-            self.plot_circle(
+            self.circle(
                 (ra, dec),
                 apparent_diameter_degrees,
                 style.marker.to_polygon_style(),

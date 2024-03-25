@@ -533,6 +533,21 @@ class PlotStyle(BaseStyle):
     )
     """Styling for the moon"""
 
+    sun: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.CIRCLE,
+            size=14,
+            fill=FillStyleEnum.FULL,
+            color="#faad5a",
+            alpha=0.5,
+        ),
+        label=LabelStyle(
+            font_size=8,
+            font_weight=FontWeightEnum.BOLD,
+        ),
+    )
+    """Styling for the sun"""
+
     # Deep Sky Objects (DSOs)
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
