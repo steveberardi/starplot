@@ -151,6 +151,7 @@ class DsoPlotterMixin:
                     style is None,
                     not visible_fn(_dso),
                     magnitude is not None and magnitude > mag,
+                    not self.in_bounds(ra / 15, dec),
                 ]
             ):
                 continue
@@ -206,5 +207,7 @@ class DsoPlotterMixin:
                     label=label,
                     style=style,
                 )
+
+            self.objects.dsos.append(_dso)
 
             self._add_legend_handle_marker(legend_label, style.marker)
