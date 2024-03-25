@@ -48,6 +48,7 @@ DEFAULT_STYLE = PlotStyle()
 class ObjectList(BaseModel):
     stars: list[models.Star] = []  # mutable defaults handled correctly in Pydantic
     dsos: list[models.DSO] = []
+    planets: list[models.Planet] = []
 
 
 class BasePlot(ABC):
@@ -269,31 +270,34 @@ class BasePlot(ABC):
         """
         x, y = self._prepare_coords(ra, dec)
 
-        if self.in_bounds(ra, dec):
-            self.ax.plot(
+        # TODO : optimize this (optic plots will end up calling prepare_coords twice here!)
+        if not self.in_bounds(ra, dec):
+            return
+
+        self.ax.plot(
+            x,
+            y,
+            **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
+            **self._plot_kwargs(),
+            linestyle="None",
+        )
+
+        if legend_label is not None:
+            self._add_legend_handle_marker(legend_label, style.marker)
+
+        if label:
+            plotted_label = self.ax.text(
                 x,
                 y,
-                **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
+                label,
+                **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
                 **self._plot_kwargs(),
-                linestyle="None",
+                path_effects=[self.text_border],
+                va="bottom",
+                ha="left",
             )
-
-            if legend_label is not None:
-                self._add_legend_handle_marker(legend_label, style.marker)
-
-            if label:
-                plotted_label = self.ax.text(
-                    x,
-                    y,
-                    label,
-                    **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
-                    **self._plot_kwargs(),
-                    path_effects=[self.text_border],
-                    va="bottom",
-                    ha="left",
-                )
-                plotted_label.set_clip_on(True)
-                self._maybe_remove_label(plotted_label)
+            plotted_label.set_clip_on(True)
+            self._maybe_remove_label(plotted_label)
 
     @use_style(ObjectStyle, "planets")
     def planets(
@@ -317,6 +321,11 @@ class BasePlot(ABC):
         for p, planet_data in planets.items():
             ra, dec, apparent_size_degrees = planet_data
             label = labels.get(p)
+
+            if self.in_bounds(ra, dec):
+                self.objects.planets.append(
+                    models.Planet(name=label, ra=ra, dec=dec)
+                )
 
             if true_size:
                 self.circle(

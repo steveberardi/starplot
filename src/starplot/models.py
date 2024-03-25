@@ -61,3 +61,18 @@ class DSO(BaseModel):
 
     size: Optional[float] = None
     """Size of the DSO in degrees squared (if available)"""
+
+
+class Planet(BaseModel):
+    """
+    Planet model.
+    """
+
+    name: str
+    """Name of the planet"""
+
+    ra: float
+    """Right Ascension, in hours (0...24)"""
+
+    dec: float
+    """Declination, in degrees (-90...90)"""
