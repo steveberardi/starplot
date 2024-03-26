@@ -63,16 +63,20 @@ class DSO(BaseModel):
     """Size of the DSO in degrees squared (if available)"""
 
 
-class Planet(BaseModel):
+class SkyObject(BaseModel):
     """
-    Planet model.
+    Basic sky object model.
     """
 
     name: str
-    """Name of the planet"""
+    """Name of the object"""
 
     ra: float
     """Right Ascension, in hours (0...24)"""
 
     dec: float
     """Declination, in degrees (-90...90)"""
+
+
+class Planet(SkyObject):
+    pass

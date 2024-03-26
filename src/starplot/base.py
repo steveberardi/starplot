@@ -49,6 +49,7 @@ class ObjectList(BaseModel):
     stars: list[models.Star] = []  # mutable defaults handled correctly in Pydantic
     dsos: list[models.DSO] = []
     planets: list[models.Planet] = []
+    moon: models.SkyObject = None
 
 
 class BasePlot(ABC):
@@ -323,9 +324,7 @@ class BasePlot(ABC):
             label = labels.get(p)
 
             if self.in_bounds(ra, dec):
-                self.objects.planets.append(
-                    models.Planet(name=label, ra=ra, dec=dec)
-                )
+                self.objects.planets.append(models.Planet(name=label, ra=ra, dec=dec))
 
             if true_size:
                 self.circle(
@@ -377,6 +376,8 @@ class BasePlot(ABC):
 
         if not self.in_bounds(ra, dec):
             return
+
+        self.objects.moon = models.SkyObject(name=label, ra=ra, dec=dec)
 
         if true_size:
             radius_km = 1_740
