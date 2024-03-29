@@ -91,6 +91,9 @@ class MarkerSymbolEnum(str, Enum):
     STAR = "star"
     """\u2605"""
 
+    SUN = "sun"
+    """\u263C"""
+
     DIAMOND = "diamond"
     """\u25C6"""
 
@@ -120,6 +123,7 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.SQUARE: "s",
             MarkerSymbolEnum.SQUARE_STRIPES_DIAGONAL: "$\u25A8$",
             MarkerSymbolEnum.STAR: "*",
+            MarkerSymbolEnum.SUN: "$\u263C$",
             MarkerSymbolEnum.DIAMOND: "D",
             MarkerSymbolEnum.TRIANGLE: "^",
             MarkerSymbolEnum.CIRCLE_PLUS: "$\u2295$",
@@ -358,7 +362,7 @@ class LabelStyle(BaseStyle):
     line_spacing: Optional[int] = None
     """Spacing between lines of text"""
 
-    zorder: int = 1
+    zorder: int = 101
     """Zorder of the label"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
@@ -526,6 +530,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
             color="#c8c8c8",
             alpha=0.5,
+            zorder=100,
         ),
         label=LabelStyle(
             font_size=8,
@@ -533,6 +538,21 @@ class PlotStyle(BaseStyle):
         ),
     )
     """Styling for the moon"""
+
+    sun: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.SUN,
+            size=14,
+            fill=FillStyleEnum.FULL,
+            color="#000",
+            zorder=90,
+        ),
+        label=LabelStyle(
+            font_size=8,
+            font_weight=FontWeightEnum.BOLD,
+        ),
+    )
+    """Styling for the Sun"""
 
     # Deep Sky Objects (DSOs)
     dso_open_cluster: ObjectStyle = ObjectStyle(

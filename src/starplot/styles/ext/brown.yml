@@ -57,6 +57,12 @@ star:
     color: hsl(60, 3%, 32%)
   label:
     font_color: hsl(60, 3%, 42%)
+sun:
+  marker:
+    color: hsl(60, 3%, 32%)
+    edge_color: hsl(60, 3%, 32%)
+  label:
+    font_color: hsl(60, 3%, 42%)
 planets:
   marker:
     size: 8

@@ -144,6 +144,7 @@ def check_map_with_planets():
     )
     p.stars(mag=3, labels=None)
     p.planets()
+    p.sun()
     p.ecliptic()
     p.export(filename)
 
