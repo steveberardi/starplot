@@ -11,15 +11,17 @@ from starplot.styles import ObjectStyle, LabelStyle, use_style
 
 
 class StarPlotterMixin:
-    def _load_stars(self, catalog, limiting_magnitude):
+    def _load_stars(self, catalog, limiting_magnitude=None):
         stardata = stars.load(catalog)
 
         ra_buffer = (self.ra_max - self.ra_min) / 4
         dec_buffer = (self.dec_max - self.dec_min) / 4
 
+        if limiting_magnitude is not None:
+            stardata = stardata[(stardata["magnitude"] <= limiting_magnitude)]
+
         stardata = stardata[
-            (stardata["magnitude"] <= limiting_magnitude)
-            & (stardata["dec_degrees"] < self.dec_max + dec_buffer)
+            (stardata["dec_degrees"] < self.dec_max + dec_buffer)
             & (stardata["dec_degrees"] > self.dec_min - dec_buffer)
         ]
 
@@ -151,6 +153,9 @@ class StarPlotterMixin:
         color_fn = color_fn or (lambda d: style.marker.color.as_hex())
 
         filters = filters or []
+
+        if filters:
+            mag = None
 
         if labels is None:
             labels = {}

@@ -2,32 +2,33 @@ import pytest
 
 from pydantic import ValidationError
 
-from starplot.models import Star
+from starplot.models import Star, DSO
 
 
-@pytest.mark.parametrize(
-    "kwargs",
-    [
-        dict(ra=1, dec=2, magnitude=-1.2),
-        dict(ra=1.6, dec=2.6, magnitude=10, bv=2.3, hip=1201),
-    ],
-)
-def test_star_valid(kwargs):
-    try:
-        s = Star(**kwargs)
-        for k, v in kwargs.items():
-            assert getattr(s, k) == v
-    except ValidationError:
-        pytest.fail("Unexpected ValidationError")
+def test_star_true_expressions():
+    star = Star(ra=2, dec=20, magnitude=4, bv=2.12, name="fakestar")
+
+    expressions = [
+        Star.ra < 24,
+        Star.dec > 5,
+        Star.ra <= 2,
+        Star.hip.is_null(),
+        Star.name.is_in(["stuff", "sirius", "fakestar"]),
+        (Star.name == "wrong") | (Star.name == "fakestar"),
+        Star.name != "noname",
+        (Star.name == "bellatrix") | ((Star.name == "fakestar") & (Star.magnitude < 5)),
+    ]
+    assert all([e.evaluate(star) for e in expressions])
 
 
-@pytest.mark.parametrize(
-    "kwargs",
-    [
-        dict(ra="r", dec=2, magnitude=3),
-        dict(ra=1, dec=2, magnitude=4, hip=1.234),
-    ],
-)
-def test_star_invalid(kwargs):
-    with pytest.raises(ValidationError):
-        Star(**kwargs)
+def test_star_false_expressions():
+    star = Star(ra=2, dec=20, magnitude=4, bv=2.12, name="fakestar")
+
+    expressions = [
+        Star.ra > 4,
+        Star.dec < 5,
+        Star.hip.is_not_null(),
+        Star.name.is_not_in(["stuff", "sirius", "fakestar"]),
+        (Star.name == "wrong") | (Star.name != "fakestar"),
+    ]
+    assert not any([e.evaluate(star) for e in expressions])

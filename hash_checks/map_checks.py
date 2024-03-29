@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles
+from starplot import styles, DSO, Star
 from starplot.map import MapPlot, Projection
 
 HERE = Path(__file__).resolve().parent
@@ -27,7 +27,15 @@ def _mercator():
         resolution=RESOLUTION,
     )
     p.stars(mag=7.6, bayer_labels=True)
-    p.dsos(mag=8, labels=None, visible_fn=lambda d: d.size and d.size > 0.1)
+    p.dsos(
+        # mag=8,
+        labels=None,
+        filters=[
+            DSO.magnitude.is_null() | (DSO.magnitude <= 8),
+            DSO.size.is_not_null(),
+            DSO.size > 0.1,
+        ],
+    )
     p.milky_way()
     p.gridlines()
     p.ecliptic()
@@ -227,7 +235,13 @@ def check_map_wrapping():
         resolution=RESOLUTION,
     )
     p.stars(mag=9)
-    p.dsos(mag=9, visible_fn=lambda d: d.size and d.size > 0.1)
+    p.dsos(
+        filters=[
+            DSO.magnitude.is_null() | (DSO.magnitude < 9),
+            DSO.size.is_not_null(),
+            DSO.size > 0.1,
+        ],
+    )
     p.gridlines()
     p.constellations()
     p.title("Andromeda + nebula + Vega")

@@ -101,6 +101,9 @@ class DsoPlotterMixin:
 
         filters = filters or []
 
+        if not filters:
+            filters = [DSO.magnitude.is_null() | (DSO.magnitude < mag)]
+
         if labels is None:
             labels = {}
         elif type(labels) != DsoLabelMaker:
@@ -149,7 +152,6 @@ class DsoPlotterMixin:
                 [
                     style is None,
                     not all([e.evaluate(_dso) for e in filters]),
-                    magnitude is not None and magnitude > mag,
                     not self.in_bounds(ra / 15, dec),
                 ]
             ):

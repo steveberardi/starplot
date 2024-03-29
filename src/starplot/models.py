@@ -41,7 +41,7 @@ class Term:
 
     def __ne__(self, other):
         return Expression(
-            func=lambda c: getattr(c, self.attr) == other
+            func=lambda c: getattr(c, self.attr) != other
             if other is not None
             else getattr(c, self.attr) is not None
         )
