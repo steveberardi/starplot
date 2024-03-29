@@ -12,6 +12,12 @@ star:
     font_color: hsl(136, 0%, 97%)
   marker:
     color: hsl(136, 0%, 97%)
+sun:
+  label:
+    font_color: hsl(136, 0%, 97%)
+  marker:
+    color: hsl(136, 0%, 97%)
+    edge_color: hsl(136, 0%, 97%)
 bayer_labels:
   font_color: hsl(136, 0%, 77%)
 celestial_equator:

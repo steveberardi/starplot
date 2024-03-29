@@ -27,9 +27,9 @@ map_stereo_base:
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
   phash: 9dce7972429062fa
 map_with_planets:
-  dhash: 629115eb899b323b629115ebc99b323b629115ebc99b323b
+  dhash: 629115e7899b323b629115e7c99b323b629115e7c99b323b
   filename: /starplot/hash_checks/data/map-mercator-planets.png
-  phash: e9469d8986ad5f12
+  phash: e9469d89862c7f92
 map_wrapping:
   dhash: 16295da56542211516295da56542211516295da565422115
   filename: /starplot/hash_checks/data/map-wrapping.png
@@ -62,6 +62,10 @@ optic_polaris_binoculars:
   dhash: 8e172b512b338e4d8e172b512b338e4d8e172b512b338e4d
   filename: /starplot/hash_checks/data/optic-binoculars-polaris.png
   phash: aa7b84f186d38e92
+optic_solar_eclipse_binoculars:
+  dhash: 0769f4cecef469071769f4cecef469170369c08c8cc06903
+  filename: /starplot/hash_checks/data/optic-binoculars-eclipse.png
+  phash: b38ccc3333cccc33
 optic_wrapping:
   dhash: 8e172b452b338e4d8e172b452b338e4d8e172b452b338e4d
   filename: /starplot/hash_checks/data/optic-wrapping.png

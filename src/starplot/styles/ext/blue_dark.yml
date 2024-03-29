@@ -122,6 +122,15 @@ star:
   marker:
     color: hsl(209, 50%, 94%)
     size: 25
+sun:
+  label:
+    font_color: hsl(209, 23%, 80%)
+    font_size: 9
+    font_weight: bold
+  marker:
+    color: hsl(209, 50%, 94%)
+    edge_color: hsl(209, 50%, 94%)
+    size: 25
 
 legend:
   background_color: hsl(209, 50%, 26%)

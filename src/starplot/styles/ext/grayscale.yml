@@ -44,6 +44,10 @@ planets:
   marker:
     color: '#000'
     fill: left
+sun:
+  marker:
+    color: '#000'
+    edge_color: '#000'
 
 legend:
   background_color: '#fff'

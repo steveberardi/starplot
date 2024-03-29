@@ -48,6 +48,10 @@ gridlines:
     color: '#888'
     style: solid
     width: 1
+sun:
+  marker:
+    color: '#000'
+    edge_color: '#000'
 
 # DSOs
 dso_double_star:
