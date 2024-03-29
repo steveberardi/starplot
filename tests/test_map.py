@@ -1,4 +1,8 @@
+from datetime import datetime
+
 import pytest
+
+from pytz import timezone
 
 from starplot.map import MapPlot, Projection
 
@@ -21,3 +25,41 @@ def test_map_radec_invalid():
             dec_min=50,
             dec_max=24,
         )
+
+
+def test_map_objects_list():
+    p = MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=8.3,
+        ra_max=8.8,
+        dec_min=19.4,
+        dec_max=19.8,
+    )
+    p.open_clusters()
+    assert "NGC2632" in [d.name for d in p.objects.dsos]
+
+    p.stars(mag=8)
+    assert 42578 in [s.hip for s in p.objects.stars]
+
+    assert p.objects.moon is None
+    assert len(p.objects.planets) == 0
+
+
+def test_map_objects_list_planets():
+    dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+
+    p = MapPlot(
+        projection=Projection.MILLER,
+        ra_min=0,
+        ra_max=24,
+        dec_min=-40,
+        dec_max=40,
+        dt=dt,
+    )
+    p.planets()
+    p.sun()
+    p.moon()
+
+    assert p.objects.moon.ra == 19.502411822774185
+    assert p.objects.sun.ra == 10.398849150787433
+    assert len(p.objects.planets) == 7

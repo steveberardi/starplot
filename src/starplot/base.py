@@ -44,13 +44,6 @@ DEFAULT_FOV_STYLE = PolygonStyle(
 DEFAULT_STYLE = PlotStyle()
 
 
-class ObjectList(object):
-    stars: list[models.Star] = []  # mutable defaults handled correctly in Pydantic
-    dsos: list[models.DSO] = []
-    planets: list[models.Planet] = []
-    moon: models.Moon = None
-
-
 class BasePlot(ABC):
     _background_clip_path = None
 
@@ -93,7 +86,7 @@ class BasePlot(ABC):
         self._size_multiplier = self.resolution / 3000
         self.timescale = load.timescale().from_datetime(self.dt)
 
-        self.objects = ObjectList()
+        self._objects = models.ObjectList()
 
     def _plot_kwargs(self) -> dict:
         return {}
@@ -156,6 +149,13 @@ class BasePlot(ABC):
             label.set_clip_path(kwargs.get("clip_path"))
 
         self._maybe_remove_label(label)
+
+    @property
+    def objects(self) -> models.ObjectList:
+        """
+        Returns an [`ObjectList`][starplot.models.ObjectList] that contains various lists of sky objects that have been plotted.
+        """
+        return self._objects
 
     @use_style(LabelStyle, "title")
     def title(self, text: str, style: LabelStyle = None):
@@ -323,7 +323,7 @@ class BasePlot(ABC):
             label = labels.get(p)
 
             if self.in_bounds(ra, dec):
-                self.objects.planets.append(models.Planet(name=label, ra=ra, dec=dec))
+                self._objects.planets.append(models.Planet(name=label, ra=ra, dec=dec))
 
             if true_size:
                 self.circle(
@@ -376,7 +376,7 @@ class BasePlot(ABC):
         if not self.in_bounds(ra, dec):
             return
 
-        self.objects.moon = models.Moon(ra=ra, dec=dec, name=label)
+        self._objects.moon = models.Moon(ra=ra, dec=dec, name=label)
 
         if true_size:
             radius_km = 1_740
@@ -433,6 +433,8 @@ class BasePlot(ABC):
 
         if not self.in_bounds(ra, dec):
             return
+
+        self._objects.sun = models.Sun(ra=ra, dec=dec, name=label)
 
         if true_size:
             radius_km = 695_700

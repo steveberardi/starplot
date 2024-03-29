@@ -28,9 +28,8 @@ def _mercator():
     )
     p.stars(mag=7.6, bayer_labels=True)
     p.dsos(
-        # mag=8,
         labels=None,
-        filters=[
+        where=[
             DSO.magnitude.is_null() | (DSO.magnitude <= 8),
             DSO.size.is_not_null(),
             DSO.size > 0.1,
@@ -236,7 +235,7 @@ def check_map_wrapping():
     )
     p.stars(mag=9)
     p.dsos(
-        filters=[
+        where=[
             DSO.magnitude.is_null() | (DSO.magnitude < 9),
             DSO.size.is_not_null(),
             DSO.size > 0.1,

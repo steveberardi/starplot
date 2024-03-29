@@ -130,12 +130,12 @@
     padding-left: 1rem;
     border-left: 1px solid rgb(201, 201, 201);
 }
-
+/* 
 .doc-object .doc-attribute {
     margin-left: 1rem;
     padding-left: 1rem;
     border-left: 1px solid rgb(201, 201, 201);
-}
+} */
 .doc-object .doc-attribute .doc-label {
     display: none;
 }

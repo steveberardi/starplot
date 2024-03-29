@@ -201,7 +201,7 @@ class StarPlotterMixin:
 
         x, y, sizes, alphas, colors, star_objects = zip(*starz)
 
-        self.objects.stars.extend(star_objects)
+        self._objects.stars.extend(star_objects)
 
         self.logger.debug(f"Star count = {len(star_objects)}")
 
