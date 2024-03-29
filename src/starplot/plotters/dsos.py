@@ -13,7 +13,7 @@ from starplot.data.dsos import (
     DSO_LABELS_DEFAULT,
     DsoLabelMaker,
 )
-from starplot.models import DSO
+from starplot.models import DSO, Expression
 from starplot.styles import MarkerSymbolEnum
 
 
@@ -70,14 +70,13 @@ class DsoPlotterMixin:
         true_size: bool = True,
         labels: Mapping[str, str] = DSO_LABELS_DEFAULT,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
-        visible_fn: Callable[[DSO], bool] = None,
+        filters: list = None,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
 
         Args:
             mag: Limiting magnitude of DSOs to plot
-            mag_null: If True, then DSOs without a defined magnitude will be plotted
             types: List of DSO types to plot
             names: List of DSO names (as specified in OpenNGC) to filter by (case sensitive!). If `None`, then the DSOs will not be filtered by name.
             true_size: If True, then each DSO will be plotted as its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used. Also, keep in mind not all DSOs have a defined size (according to OpenNGC) -- so these will use the style's marker size.
@@ -85,7 +84,7 @@ class DsoPlotterMixin:
             size_null: If True, then DSOs without a defined size will be plotted and their size will be based on the style's marker size
             labels: A dictionary that maps DSO names (as specified in OpenNGC) to the label that'll be plotted for that object. By default, the DSO's name in OpenNGC will be used as the label. If you want to hide all labels, then set this arg to `None`.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
-            visible_fn: A callable that determines if a DSO should be plotted. Receives an instance of the DSO and should return True to plot the DSO, return False to hide it. Note: this callable is called *after* filtering DSOs by magnitude, types, etc. If None (the default), then the DSOs will not be filtered by this callable.
+            filters: A callable that determines if a DSO should be plotted. Receives an instance of the DSO and should return True to plot the DSO, return False to hide it. Note: this callable is called *after* filtering DSOs by magnitude, types, etc. If None (the default), then the DSOs will not be filtered by this callable.
         """
 
         # TODO: add args mag_labels, styles
@@ -100,7 +99,7 @@ class DsoPlotterMixin:
             bbox=self._extent_mask(),
         )
 
-        visible_fn = visible_fn or (lambda d: True)
+        filters = filters or []
 
         if labels is None:
             labels = {}
@@ -149,7 +148,7 @@ class DsoPlotterMixin:
             if any(
                 [
                     style is None,
-                    not visible_fn(_dso),
+                    not all([e.evaluate(_dso) for e in filters]),
                     magnitude is not None and magnitude > mag,
                     not self.in_bounds(ra / 15, dec),
                 ]

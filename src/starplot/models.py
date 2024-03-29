@@ -1,14 +1,84 @@
 from typing import Optional
 
-from pydantic import BaseModel
-
 from starplot.data.dsos import DsoType
 
 
-class Star(BaseModel):
+class Expression:
+    def __init__(self, func=None) -> None:
+        self.func = func
+
+    def evaluate(self, obj):
+        return self.func(obj)
+
+    def __or__(self, other):
+        return Expression(func=lambda d: self.evaluate(d) or other.evaluate(d))
+
+    def __and__(self, other):
+        return Expression(func=lambda d: self.evaluate(d) and other.evaluate(d))
+
+
+class Term:
+    def _factory(self, func):
+        def exp(c):
+            value = getattr(c, self.attr)
+
+            if value is None:
+                return False
+
+            return func(value)
+
+        return Expression(func=exp)
+
+    def __init__(self, attr):
+        self.attr = attr
+
+    def __eq__(self, other):
+        return Expression(
+            func=lambda c: getattr(c, self.attr) == other
+            if other is not None
+            else getattr(c, self.attr) is None
+        )
+
+    def __ne__(self, other):
+        return Expression(
+            func=lambda c: getattr(c, self.attr) == other
+            if other is not None
+            else getattr(c, self.attr) is not None
+        )
+
+    def __lt__(self, other):
+        return self._factory(lambda value: value < other)
+
+    def __le__(self, other):
+        return self._factory(lambda value: value <= other)
+
+    def __gt__(self, other):
+        return self._factory(lambda value: value > other)
+
+    def __ge__(self, other):
+        return self._factory(lambda value: value >= other)
+
+    def is_in(self, other):
+        return Expression(func=lambda c: getattr(c, self.attr) in other)
+
+    def is_not_in(self, other):
+        return Expression(func=lambda c: getattr(c, self.attr) not in other)
+
+    def is_null(self):
+        return Expression(func=lambda c: getattr(c, self.attr) is None)
+
+    def is_not_null(self):
+        return Expression(func=lambda c: getattr(c, self.attr) is not None)
+
+
+class Meta(type):
+    def __getattribute__(cls, attr):
+        return Term(attr)
+
+
+class SkyObject(metaclass=Meta):
     """
-    Star model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting stars.
-    So, you can use any attributes of this model in your callables. Note that some may be null.
+    Basic sky object model.
     """
 
     ra: float
@@ -16,6 +86,17 @@ class Star(BaseModel):
 
     dec: float
     """Declination, in degrees (-90...90)"""
+
+    def __init__(self, ra: float, dec: float) -> None:
+        self.ra = ra
+        self.dec = dec
+
+
+class Star(SkyObject):
+    """
+    Star model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting stars.
+    So, you can use any attributes of this model in your callables. Note that some may be null.
+    """
 
     magnitude: float
     """Magnitude"""
@@ -29,8 +110,23 @@ class Star(BaseModel):
     name: Optional[str] = None
     """Name, if available"""
 
+    def __init__(
+        self,
+        ra: float,
+        dec: float,
+        magnitude: float,
+        bv: float = None,
+        hip: int = None,
+        name: str = None,
+    ) -> None:
+        super().__init__(ra, dec)
+        self.magnitude = magnitude
+        self.bv = bv
+        self.hip = hip
+        self.name = name
 
-class DSO(BaseModel):
+
+class DSO(SkyObject):
     """
     Deep Sky Object (DSO) model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting DSOs.
     So, you can use any attributes of this model in your callables. Note that some may be null.
@@ -39,16 +135,10 @@ class DSO(BaseModel):
     name: str
     """Name of the DSO (as specified in OpenNGC)"""
 
-    ra: float
-    """Right Ascension, in hours (0...24)"""
-
-    dec: float
-    """Declination, in degrees (-90...90)"""
+    type: DsoType
 
     magnitude: Optional[float] = None
     """Magnitude (if available)"""
-
-    type: DsoType
 
     maj_ax: Optional[float] = None
     """Major axis of the DSO, in arcmin (if available)"""
@@ -62,21 +152,45 @@ class DSO(BaseModel):
     size: Optional[float] = None
     """Size of the DSO in degrees squared (if available)"""
 
-
-class SkyObject(BaseModel):
-    """
-    Basic sky object model.
-    """
-
-    name: str
-    """Name of the object"""
-
-    ra: float
-    """Right Ascension, in hours (0...24)"""
-
-    dec: float
-    """Declination, in degrees (-90...90)"""
+    def __init__(
+        self,
+        ra: float,
+        dec: float,
+        name: str,
+        type: DsoType,
+        magnitude: float = None,
+        maj_ax: float = None,
+        min_ax: float = None,
+        angle: float = None,
+        size: float = None,
+    ) -> None:
+        super().__init__(ra, dec)
+        self.name = name
+        self.type = type
+        self.magnitude = magnitude
+        self.maj_ax = maj_ax
+        self.min_ax = min_ax
+        self.angle = angle
+        self.size = size
 
 
 class Planet(SkyObject):
-    pass
+    """Planet model."""
+
+    name: str
+    """Name of the planet"""
+
+    def __init__(self, ra: float, dec: float, name: str) -> None:
+        super().__init__(ra, dec)
+        self.name = name
+
+
+class Moon(SkyObject):
+    """Moon model. Only used for Earth's moon right now, but will potentially represent other planets' moons in future versions."""
+
+    name: str
+    """Name of the moon"""
+
+    def __init__(self, ra: float, dec: float, name: str) -> None:
+        super().__init__(ra, dec)
+        self.name = name

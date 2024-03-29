@@ -1,4 +1,4 @@
-from typing import Callable, Mapping
+from typing import Callable, Mapping, Union
 
 import numpy as np
 from skyfield.api import Star as SkyfieldStar
@@ -6,7 +6,7 @@ from skyfield.api import Star as SkyfieldStar
 from starplot import callables
 from starplot.data import bayer, stars
 from starplot.data.stars import StarCatalog, STAR_NAMES
-from starplot.models import Star
+from starplot.models import Star, Expression
 from starplot.styles import ObjectStyle, LabelStyle, use_style
 
 
@@ -119,7 +119,7 @@ class StarPlotterMixin:
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
-        visible_fn: Callable[[Star], bool] = None,
+        filters: list = None,
         labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
         bayer_labels: bool = False,
@@ -138,7 +138,7 @@ class StarPlotterMixin:
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
-            visible_fn: A callable that determines if a star should be plotted. Receives an instance of the star and should return True to plot the star, return False to hide it. Note: this callable is called *after* filtering stars by magnitude. If None (the default), then the stars will not be filtered by this callable.
+            filters: A callable that determines if a star should be plotted. Receives an instance of the star and should return True to plot the star, return False to hide it. Note: this callable is called *after* filtering stars by magnitude. If None (the default), then the stars will not be filtered by this callable.
             labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
@@ -150,7 +150,7 @@ class StarPlotterMixin:
         alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
         color_fn = color_fn or (lambda d: style.marker.color.as_hex())
 
-        visible_fn = visible_fn or (lambda d: True)
+        filters = filters or []
 
         if labels is None:
             labels = {}
@@ -181,7 +181,9 @@ class StarPlotterMixin:
                 obj.hip = hip_id
                 obj.name = STAR_NAMES.get(hip_id)
 
-            if not visible_fn(obj) or not self._in_bounds_xy(star.x, star.y):
+            if not all([e.evaluate(obj) for e in filters]) or not self._in_bounds_xy(
+                star.x, star.y
+            ):
                 continue
 
             size = size_fn(obj) * star_size_multiplier
