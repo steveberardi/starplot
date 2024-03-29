@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <title>Hashio Results</title>
+        <style>
+            body {
+                font-family: 'Courier New', Courier, monospace;
+                margin: 0;
+            }
+
+            h3 {
+                font-weight: normal;
+                font-size: 1.6rem;
+            }
+
+            th {
+                text-align: start;
+                font-weight: normal;
+            }
+
+            td {
+                padding-right: 2rem;
+            }
+
+            .img-result {
+                max-width: 1024px;
+            }
+
+            .section {
+                padding: 2rem;
+                border-bottom: 3px solid black;
+            }
+
+            .result {
+                padding-bottom: 2.1rem;
+            }
+            
+            .new {
+                background-color: rgba(0, 117, 185, 0.3);
+            }
+            
+            .failed {
+                background-color: rgba(128, 0, 0, 0.3);
+            }
+
+            .passed {
+                background-color: rgba(108, 198, 108, 0.3);
+            }
+
+        </style>
+    </head>
+
+    <!-- FAILED -->
+    <div class="section failed">
+
+        <h2>FAILED ({{failed|count}})</h2>
+        {% for func_name, values in failed.items() %}
+
+        <div class="result">
+            <h3>{{ func_name }}</h3>
+            <table>
+                <tr>
+                    <th></th>
+                    <th>dhash</th>
+                    <th>phash</th>
+                </tr>
+                <tr>
+                    <td>expected</td>
+                    <td>{{ values['dhash_expected'] }}</td>
+                    <td>{{ values['phash_expected'] }}</td>
+                </tr>
+                <tr>
+                    <td>actual</td>
+                    <td>{{ values['dhash'] }}</td>
+                    <td>{{ values['phash'] }}</td>
+                </tr>
+                
+            </table>
+
+            <img src="{{ values['filename'] }}" class="img-result ">
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- NEW -->
+    <div class="section new">
+
+        <h2>NEW ({{new|count}})</h2>
+        {% for func_name, values in new.items() %}
+        <div class="result">
+            <h3>{{ func_name }}</h3>
+            <img src="{{ values['filename'] }}" class="img-result ">
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- PASSED -->
+    <div class="section passed">
+
+        <h2>PASSED ({{passed|count}})</h2>
+        {% for func_name, values in passed.items() %}
+        <div class="result">
+            <h3>{{ func_name }}</h3>
+            <img src="{{ values['filename'] }}" class="img-result ">
+        </div>
+        {% endfor %}
+    </div>
+
+</html>

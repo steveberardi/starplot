@@ -32,13 +32,19 @@ docker-multi-arch:
 	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag sberardi/starplot-base:latest --target base .
 
 lint:
-	$(DOCKER_RUN) "ruff check src/ tests/ $(ARGS)"
+	$(DOCKER_RUN) "ruff check src/ tests/ hash_checks/ $(ARGS)"
 
 format:
-	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ $(ARGS)"
+	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ $(ARGS)"
 
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
+
+check-hashes:
+	$(DOCKER_RUN) "python hash_checks/hashio.py check"
+
+lock-hashes:
+	$(DOCKER_RUN) "python hash_checks/hashio.py lock"
 
 bash:
 	$(DOCKER_RUN) bash

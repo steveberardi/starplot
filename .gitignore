@@ -21,7 +21,11 @@ hip_main.dat
 hip8.dat
 CometEls.txt
 
-temp*
+hash_checks/data/*.png
+hash_checks/results.html
+
+temp.py
+temp/
 raw/
 examples/*.png
 docs/images/examples/*.png

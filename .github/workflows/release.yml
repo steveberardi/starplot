@@ -18,6 +18,8 @@ jobs:
       run: make format CI=true ARGS=--check
     - name: Run Tests
       run: make test CI=true
+    - name: Check Image Hashes
+      run: make check-hashes CI=true
     - name: Build
       run: make flit-build
     - name: Publish

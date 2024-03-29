@@ -9,10 +9,11 @@ from adjustText import adjust_text as _adjust_text
 from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects, transforms
 from matplotlib.lines import Line2D
+from pydantic import BaseModel
 from pytz import timezone
 from skyfield.api import Angle
 
-from starplot import geod
+from starplot import geod, models
 from starplot.data import load, ecliptic
 from starplot.data.planets import Planet, get_planet_positions, PLANET_LABELS_DEFAULT
 from starplot.styles import (
@@ -42,6 +43,12 @@ DEFAULT_FOV_STYLE = PolygonStyle(
 """Default style for plotting scope and bino field of view circles"""
 
 DEFAULT_STYLE = PlotStyle()
+
+
+class ObjectList(BaseModel):
+    stars: list[models.Star] = []  # mutable defaults handled correctly in Pydantic
+    dsos: list[models.DSO] = []
+    planets: list[models.Planet] = []
 
 
 class BasePlot(ABC):
@@ -85,6 +92,8 @@ class BasePlot(ABC):
         )
         self._size_multiplier = self.resolution / 3000
         self.timescale = load.timescale().from_datetime(self.dt)
+
+        self.objects = ObjectList()
 
     def _plot_kwargs(self) -> dict:
         return {}
@@ -158,7 +167,7 @@ class BasePlot(ABC):
             style: Styling of the title. If None, then the plot's style (specified when creating the plot) will be used
         """
         style_kwargs = style.matplot_kwargs(self._size_multiplier)
-        style_kwargs.pop("line_spacing", None)
+        style_kwargs.pop("linespacing", None)
         style_kwargs["pad"] = style.line_spacing
         self.ax.set_title(text, **style_kwargs)
 
@@ -261,31 +270,34 @@ class BasePlot(ABC):
         """
         x, y = self._prepare_coords(ra, dec)
 
-        if self.in_bounds(ra, dec):
-            self.ax.plot(
+        # TODO : optimize this (optic plots will end up calling prepare_coords twice here!)
+        if not self.in_bounds(ra, dec):
+            return
+
+        self.ax.plot(
+            x,
+            y,
+            **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
+            **self._plot_kwargs(),
+            linestyle="None",
+        )
+
+        if legend_label is not None:
+            self._add_legend_handle_marker(legend_label, style.marker)
+
+        if label:
+            plotted_label = self.ax.text(
                 x,
                 y,
-                **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
+                label,
+                **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
                 **self._plot_kwargs(),
-                linestyle="None",
+                path_effects=[self.text_border],
+                va="bottom",
+                ha="left",
             )
-
-            if legend_label is not None:
-                self._add_legend_handle_marker(legend_label, style.marker)
-
-            if label:
-                plotted_label = self.ax.text(
-                    x,
-                    y,
-                    label,
-                    **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
-                    **self._plot_kwargs(),
-                    path_effects=[self.text_border],
-                    va="bottom",
-                    ha="left",
-                )
-                plotted_label.set_clip_on(True)
-                self._maybe_remove_label(plotted_label)
+            plotted_label.set_clip_on(True)
+            self._maybe_remove_label(plotted_label)
 
     @use_style(ObjectStyle, "planets")
     def planets(
@@ -309,6 +321,11 @@ class BasePlot(ABC):
         for p, planet_data in planets.items():
             ra, dec, apparent_size_degrees = planet_data
             label = labels.get(p)
+
+            if self.in_bounds(ra, dec):
+                self.objects.planets.append(
+                    models.Planet(name=label, ra=ra, dec=dec)
+                )
 
             if true_size:
                 self.circle(
@@ -459,6 +476,22 @@ class BasePlot(ABC):
         Returns:
             bool: True if the coordinate is in bounds, otherwise False
 
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def _in_bounds_xy(self, x: float, y: float) -> bool:
+        """
+        Determine if a data / projected coordinate is within the non-clipped bounds of the plot.
+
+        This should be extremely precise.
+
+        Args:
+            x: X coordinate
+            y: Y coordinate
+
+        Returns:
+            bool: True if the coordinate is in bounds, otherwise False
         """
         raise NotImplementedError
 

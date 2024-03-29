@@ -20,6 +20,8 @@ jobs:
       run: make format CI=true ARGS=--check
     - name: Run Tests
       run: make test CI=true
+    - name: Check Image Hashes
+      run: make check-hashes CI=true
     - name: Build PIP Package
       run: make flit-build
   test-python-3-9:

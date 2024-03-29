@@ -20,7 +20,7 @@ p = MapPlot(
 p.constellations()
 p.stars(mag=5.6, mag_labels=2.1)
 
-p.dsos(mag=9, null=True, true_size=True, labels=None)
+p.dsos(mag=9, true_size=True, labels=None)
 p.constellation_borders()
 p.ecliptic()
 p.celestial_equator()

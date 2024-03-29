@@ -69,7 +69,7 @@ for cid, props in constellations.properties.items():
         "center_ra": props[1] * 15,
         "center_dec": props[2],
         "lines_hip_ids": ",".join(
-            "-".join([str(h) for h in hips]) for hips in con_lines[cid]
+            "-".join([str(h) for h in hips]) for hips in con_lines[cid.lower()]
         ),
     }
     print(cid)
