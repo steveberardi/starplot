@@ -9,7 +9,7 @@ HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
 
 dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
-dt_april_8 =datetime.now(timezone("US/Pacific")).replace(hour=11, minute=7, month=4, day=8)
+dt_april_8 =datetime.now(timezone("US/Pacific")).replace(2024, 4, 8, 11, 7, 0)
 
 optic_style = styles.PlotStyle().extend(
     styles.extensions.GRAYSCALE_DARK,
