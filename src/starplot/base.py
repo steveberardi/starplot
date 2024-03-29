@@ -89,7 +89,7 @@ class BasePlot(ABC):
     def _plot_kwargs(self) -> dict:
         return {}
 
-    def _prepare_coords(self, ra, dec) -> (float, float):
+    def _prepare_coords(self, ra, dec) -> tuple[float, float]:
         return ra, dec
 
     def _is_label_collision(self, extent) -> bool:
@@ -410,9 +410,6 @@ class BasePlot(ABC):
         earth, sun = self.ephemeris["earth"], self.ephemeris["sun"]
         astrometric = earth.at(self.timescale).observe(sun)
         ra, dec, distance = astrometric.radec()
-
-        #testing
-        print(distance.km)
 
         ra = ra.hours
         dec = dec.degrees

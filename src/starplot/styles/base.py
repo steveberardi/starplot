@@ -91,6 +91,9 @@ class MarkerSymbolEnum(str, Enum):
     STAR = "star"
     """\u2605"""
 
+    SUN = "sun"
+    """\u263C"""
+
     DIAMOND = "diamond"
     """\u25C6"""
 
@@ -120,6 +123,7 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.SQUARE: "s",
             MarkerSymbolEnum.SQUARE_STRIPES_DIAGONAL: "$\u25A8$",
             MarkerSymbolEnum.STAR: "*",
+            MarkerSymbolEnum.SUN: "$\u263C$",
             MarkerSymbolEnum.DIAMOND: "D",
             MarkerSymbolEnum.TRIANGLE: "^",
             MarkerSymbolEnum.CIRCLE_PLUS: "$\u2295$",
@@ -525,6 +529,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
             color="#c8c8c8",
             alpha=0.5,
+            zorder=100,
         ),
         label=LabelStyle(
             font_size=8,
@@ -535,11 +540,11 @@ class PlotStyle(BaseStyle):
 
     sun: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE,
+            symbol=MarkerSymbolEnum.SUN,
             size=14,
             fill=FillStyleEnum.FULL,
-            color="#faad5a",
-            alpha=0.5,
+            color="#000",
+            zorder=-10,
         ),
         label=LabelStyle(
             font_size=8,
