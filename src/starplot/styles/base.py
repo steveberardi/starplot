@@ -362,7 +362,7 @@ class LabelStyle(BaseStyle):
     line_spacing: Optional[int] = None
     """Spacing between lines of text"""
 
-    zorder: int = 1
+    zorder: int = 101
     """Zorder of the label"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
@@ -545,14 +545,14 @@ class PlotStyle(BaseStyle):
             size=14,
             fill=FillStyleEnum.FULL,
             color="#000",
-            zorder=-10,
+            zorder=90,
         ),
         label=LabelStyle(
             font_size=8,
             font_weight=FontWeightEnum.BOLD,
         ),
     )
-    """Styling for the sun"""
+    """Styling for the Sun"""
 
     # Deep Sky Objects (DSOs)
     dso_open_cluster: ObjectStyle = ObjectStyle(

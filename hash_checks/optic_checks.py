@@ -9,6 +9,7 @@ HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
 
 dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
+dt_april_8 =datetime.now(timezone("US/Pacific")).replace(hour=11, minute=7, month=4, day=8)
 
 optic_style = styles.PlotStyle().extend(
     styles.extensions.GRAYSCALE_DARK,
@@ -35,6 +36,27 @@ def check_optic_polaris_binoculars():
     optic_plot.stars(mag=14)
     optic_plot.info()
     filename = DATA_PATH / "optic-binoculars-polaris.png"
+    optic_plot.export(filename)
+    return filename
+
+def check_optic_solar_eclipse_binoculars():
+    optic_plot = OpticPlot(
+        lat=33.363484,
+        lon=-116.836394,
+        ra=1.16667,
+        dec=7.45,
+        optic=optics.Binoculars(magnification=8, fov=65),
+        dt=dt_april_8,
+        style=styles.PlotStyle().extend(
+            styles.extensions.BLUE_MEDIUM,
+            styles.extensions.ZENITH,
+        ),
+        resolution=2000,
+    )
+    optic_plot.stars(mag=14)
+    optic_plot.moon(true_size=True)
+    optic_plot.sun(true_size=True)
+    filename = DATA_PATH / "optic-binoculars-eclipse.png"
     optic_plot.export(filename)
     return filename
 
@@ -211,3 +233,4 @@ def check_optic_camera_rotated():
     filename = DATA_PATH / "optic-camera-rotated-m45.png"
     optic_plot.export(filename)
     return filename
+
