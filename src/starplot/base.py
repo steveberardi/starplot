@@ -9,7 +9,6 @@ from adjustText import adjust_text as _adjust_text
 from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects, transforms
 from matplotlib.lines import Line2D
-from pydantic import BaseModel
 from pytz import timezone
 from skyfield.api import Angle
 

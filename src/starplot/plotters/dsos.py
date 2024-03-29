@@ -13,7 +13,7 @@ from starplot.data.dsos import (
     DSO_LABELS_DEFAULT,
     DsoLabelMaker,
 )
-from starplot.models import DSO, Expression
+from starplot.models import DSO
 from starplot.styles import MarkerSymbolEnum
 
 
@@ -70,6 +70,7 @@ class DsoPlotterMixin:
         true_size: bool = True,
         labels: Mapping[str, str] = DSO_LABELS_DEFAULT,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
+        alpha_fn: Callable[[DSO], float] = None,
         filters: list = None,
     ):
         """

@@ -1,8 +1,4 @@
-import pytest
-
-from pydantic import ValidationError
-
-from starplot.models import Star, DSO
+from starplot.models import Star
 
 
 def test_star_true_expressions():
