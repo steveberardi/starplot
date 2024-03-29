@@ -85,7 +85,7 @@ class DsoPlotterMixin:
             size_null: If True, then DSOs without a defined size will be plotted and their size will be based on the style's marker size
             labels: A dictionary that maps DSO names (as specified in OpenNGC) to the label that'll be plotted for that object. By default, the DSO's name in OpenNGC will be used as the label. If you want to hide all labels, then set this arg to `None`.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
-            where: A callable that determines if a DSO should be plotted. Receives an instance of the DSO and should return True to plot the DSO, return False to hide it. Note: this callable is called *after* filtering DSOs by magnitude, types, etc. If None (the default), then the DSOs will not be filtered by this callable.
+            where: A list of expressions that determine which DSOs to plot.
         """
 
         # TODO: add args mag_labels, styles

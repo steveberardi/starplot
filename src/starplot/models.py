@@ -59,15 +59,19 @@ class Term:
         return self._factory(lambda value: value >= other)
 
     def is_in(self, other):
+        """Returns `True` if `other` is in the field value"""
         return Expression(func=lambda c: getattr(c, self.attr) in other)
 
     def is_not_in(self, other):
+        """Returns `True` if `other` is NOT in the field value"""
         return Expression(func=lambda c: getattr(c, self.attr) not in other)
 
     def is_null(self):
+        """Returns `True` if the field value is `None`"""
         return Expression(func=lambda c: getattr(c, self.attr) is None)
 
     def is_not_null(self):
+        """Returns `True` if the field value is NOT `None`"""
         return Expression(func=lambda c: getattr(c, self.attr) is not None)
 
 

@@ -12,6 +12,7 @@ nav:
         - MapPlot: reference-mapplot.md
         - OpticPlot: reference-opticplot.md
         - Models: reference-models.md
+        - Selecting Objects: reference-selecting-objects.md
         - Styling: reference-styling.md
         - Callables: reference-callables.md
         - Data: reference-data.md

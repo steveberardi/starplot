@@ -121,7 +121,7 @@ class StarPlotterMixin:
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
-        filters: list = None,
+        where: list = None,
         labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
         bayer_labels: bool = False,
@@ -152,7 +152,7 @@ class StarPlotterMixin:
         alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
         color_fn = color_fn or (lambda d: style.marker.color.as_hex())
 
-        filters = filters or []
+        filters = where or []
 
         if filters:
             mag = None
