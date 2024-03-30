@@ -1,4 +1,4 @@
-from starplot import MapPlot, Projection
+from starplot import MapPlot, Projection, DSO
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -20,7 +20,13 @@ p.stars(
     mag=14,
     catalog="tycho-1",
 )
-p.dsos(mag=8, labels=None, visible_fn=lambda d: d.magnitude is not None)
+p.dsos(
+    where=[
+        DSO.magnitude.is_not_null(),
+        DSO.magnitude <= 8,
+    ],
+    labels=None,
+)
 p.scope_fov(
     ra=3.7912778,
     dec=24.1052778,

@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from starplot import MapPlot, Projection, callables
+from starplot import MapPlot, Projection, callables, DSO
 from starplot.data import constellations
 from starplot.styles import PlotStyle, extensions
 
@@ -328,7 +328,13 @@ def miller_big():
         resolution=6000,
     )
     p.stars(mag=8)
-    p.dsos(mag=8, labels=None)
+    p.dsos(
+        labels=None,
+        where=[
+            DSO.magnitude <= 8,
+            DSO.size > 0.05,
+        ],
+    )
     p.gridlines()
     p.milky_way()
     p.ecliptic(style={"line": {"style": "dashed"}})
