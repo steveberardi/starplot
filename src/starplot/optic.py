@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Callable
+from typing import Callable, Mapping
 
 import pandas as pd
 
@@ -9,12 +9,12 @@ from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot import callables
 from starplot.base import BasePlot
-from starplot.data.stars import StarCatalog
+from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
 from starplot.optics import Optic
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
-from starplot.styles import PlotStyle, MarkerStyle, LabelStyle, extensions, use_style
+from starplot.styles import PlotStyle, ObjectStyle, LabelStyle, extensions, use_style
 from starplot.utils import azimuth_to_string
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -186,18 +186,21 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         else:
             plotted.set_clip_path(self._background_clip_path)
 
-    @use_style(MarkerStyle, "star")
+    @use_style(ObjectStyle, "star")
     def stars(
         self,
-        mag: float = 8.0,
+        mag: float = 6.0,
         mag_labels: float = 6.0,
         catalog: StarCatalog = StarCatalog.TYCHO_1,
-        style: MarkerStyle = None,
+        style: ObjectStyle = None,
         rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
+        where: list = None,
+        labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
+        bayer_labels: bool = False,
         *args,
         **kwargs,
     ):
@@ -213,7 +216,10 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
+            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
+            bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
         """
         optic_star_multiplier = 0.4 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
 
@@ -229,7 +235,10 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             size_fn=size_fn_mx,
             alpha_fn=alpha_fn,
             color_fn=color_fn,
+            where=where,
+            labels=labels,
             legend_label=legend_label,
+            bayer_labels=bayer_labels,
             *args,
             **kwargs,
         )
