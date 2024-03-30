@@ -66,7 +66,6 @@ class DsoPlotterMixin:
         self,
         mag: float = 8.0,
         types: list[DsoType] = DEFAULT_DSO_TYPES,
-        names: list[str] = None,
         true_size: bool = True,
         labels: Mapping[str, str] = DSO_LABELS_DEFAULT,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
@@ -79,10 +78,7 @@ class DsoPlotterMixin:
         Args:
             mag: Limiting magnitude of DSOs to plot
             types: List of DSO types to plot
-            names: List of DSO names (as specified in OpenNGC) to filter by (case sensitive!). If `None`, then the DSOs will not be filtered by name.
             true_size: If True, then each DSO will be plotted as its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used. Also, keep in mind not all DSOs have a defined size (according to OpenNGC) -- so these will use the style's marker size.
-            size_min: Minimum size (in square degrees) of DSOs to plot. The size of each DSO is calculated as the area of the minimum bounding rectangle of the DSO.
-            size_null: If True, then DSOs without a defined size will be plotted and their size will be based on the style's marker size
             labels: A dictionary that maps DSO names (as specified in OpenNGC) to the label that'll be plotted for that object. By default, the DSO's name in OpenNGC will be used as the label. If you want to hide all labels, then set this arg to `None`.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
@@ -123,9 +119,6 @@ class DsoPlotterMixin:
             & nearby_dsos["ra_degrees"].notnull()
             & nearby_dsos["dec_degrees"].notnull()
         ]
-
-        if names:
-            nearby_dsos = nearby_dsos[nearby_dsos["Name"].isin(names)]
 
         for _, d in nearby_dsos.iterrows():
             ra = d.ra_degrees

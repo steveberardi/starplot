@@ -154,7 +154,7 @@ class DSO(SkyObject):
     """Angle of the DSO, in degrees (if available)"""
 
     size: Optional[float] = None
-    """Size of the DSO in degrees squared (if available)"""
+    """Size of the DSO calculated as the area of the minimum bounding rectangle of the DSO, in degrees squared (if available)"""
 
     def __init__(
         self,
