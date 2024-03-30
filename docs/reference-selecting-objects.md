@@ -2,7 +2,7 @@ When plotting [stars][starplot.MapPlot.stars] or [deep sky objects (DSOs)][starp
 
 The basic idea is that when you call `stars()` or `dsos()` you can pass a list of expressions that are used to determine which stars/DSOs are plotted. Only the stars/DSOs that satisfy ALL the conditions will be plotted.
 
-Let's see a simple example:
+Let's check out a simple example:
 
 ## Example
 
@@ -29,7 +29,7 @@ p.dsos(
     ]
 )
 ```
-On line 16, we plot only the DSOs we want by passing the `where` keyword argument that contains a list of expressions that determine which DSOs to plot. Only the DSOs that satisfy ALL of these conditions will be plotted.
+On line 16, we plot only the DSOs we want by passing the `where` keyword argument containing a list of expressions that determine which DSOs to plot. Only the DSOs that satisfy ALL of these conditions will be plotted.
 
 ### More Examples
 
@@ -39,6 +39,13 @@ On line 16, we plot only the DSOs we want by passing the `where` keyword argumen
 | `(Star.hip.is_not_null()) | (Star.bv < 0)`       | Select stars that have a HIP id **OR** have a bluish color (bv < 0)       |
 | `Star.name.is_in(["Sirius", "Rigel", "Vega"])`   | Select stars with the names Sirius, Rigel, or Vega                        |
 | `(DSO.size.is_null()) | (DSO.size > 0.01)`       | Select DSOs that have no defined size **OR** are larger than 0.01 square degrees      |
+
+## Details
+
+- When writing expressions, you can reference any field on the [model](/reference-models) you're filtering
+- See table below for a list of [operators](#operators) you can use in your expressions
+- Each field also has [functions](#functions) available to check for null, etc
+- You can combine expressions with the bitwise OR (`|`) / AND (`&`) operators, but you **must** put parenthesis around each expression when doing this (e.g. `(Star.magnitude > 8) | (Star.name == "Vega")`)
 
 ## Operators
 
