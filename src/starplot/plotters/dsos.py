@@ -26,14 +26,28 @@ class DsoPlotterMixin:
         self._polygon(coords, style.marker.to_polygon_style(), closed=False)
 
     def open_clusters(self, *args, **kwargs):
+        """
+        Plots open clusters
+        
+        This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
+        """
         self.dsos(types=[DsoType.OPEN_CLUSTER], **kwargs)
 
     def globular_clusters(self, *args, **kwargs):
+        """
+        Plots globular clusters
+        
+        This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
+        """
         self.dsos(types=[DsoType.GLOBULAR_CLUSTER], **kwargs)
 
     def galaxies(self, *args, **kwargs):
         """
-        Plots galaxy DSO types
+        Plots galaxy DSO types:
+
+        - Galaxy
+        - Galaxy Pair
+        - Galaxy Triplet
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
@@ -47,7 +61,14 @@ class DsoPlotterMixin:
         )
 
     def nebula(self, *args, **kwargs):
-        """Plots nebula DSO types
+        """
+        Plots nebula DSO types:
+
+        - Nebula
+        - Planetary Nebula
+        - Emission Nebula
+        - Star Cluster Nebula
+        - Reflection Nebula
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
@@ -87,7 +108,7 @@ class DsoPlotterMixin:
             where_labels: A list of expressions that determine which DSOs are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
         """
 
-        # TODO: add args mag_labels, styles
+        # TODO: add kwarg styles
 
         # TODO: sort by type, and plot markers together (for better performance)
 
