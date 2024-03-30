@@ -71,6 +71,7 @@ class DsoPlotterMixin:
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
         alpha_fn: Callable[[DSO], float] = None,
         where: list = None,
+        where_labels: list = None,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
@@ -83,6 +84,7 @@ class DsoPlotterMixin:
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
             where: A list of expressions that determine which DSOs to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which DSOs are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
         """
 
         # TODO: add args mag_labels, styles
@@ -97,10 +99,11 @@ class DsoPlotterMixin:
             bbox=self._extent_mask(),
         )
 
-        filters = where or []
+        where = where or []
+        where_labels = where_labels or []
 
-        if not filters:
-            filters = [DSO.magnitude.is_null() | (DSO.magnitude < mag)]
+        if not where:
+            where = [DSO.magnitude.is_null() | (DSO.magnitude < mag)]
 
         if labels is None:
             labels = {}
@@ -146,7 +149,7 @@ class DsoPlotterMixin:
             if any(
                 [
                     style is None,
-                    not all([e.evaluate(_dso) for e in filters]),
+                    not all([e.evaluate(_dso) for e in where]),
                     not self.in_bounds(ra / 15, dec),
                 ]
             ):
@@ -154,6 +157,9 @@ class DsoPlotterMixin:
 
             _alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
             style.marker.alpha = _alpha_fn(_dso)
+
+            if where_labels and not all([e.evaluate(_dso) for e in where_labels]):
+                label = None
 
             if true_size and d.size_deg2 is not None:
                 if "Polygon" == str(d.geometry.geom_type):
