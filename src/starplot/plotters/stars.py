@@ -69,24 +69,23 @@ class StarPlotterMixin:
 
     def _star_labels(
         self,
-        stars_df,
-        mag: float,
+        star_objects: list[Star],
+        where_labels: list,
         style: LabelStyle,
         labels: Mapping[str, str],
         bayer_labels: bool,
     ):
-        stars_df = stars_df[(stars_df["magnitude"] <= mag)]
-        stars_df.sort_values("magnitude")
+        for s in star_objects:
+            if where_labels and not all([e.evaluate(s) for e in where_labels]):
+                continue
 
-        for hip_id, s in stars_df.iterrows():
-            name = labels.get(hip_id)
-            bayer_desig = bayer.hip.get(hip_id)
-            ra, dec = s["ra_hours"], s["dec_degrees"]
+            name = labels.get(s.hip)
+            bayer_desig = bayer.hip.get(s.hip)
 
             if name:
                 self._plot_text(
-                    ra,
-                    dec,
+                    s.ra,
+                    s.dec,
                     name,
                     ha="left",
                     va="top",
@@ -95,8 +94,8 @@ class StarPlotterMixin:
 
             if bayer_labels and bayer_desig:
                 self._plot_text(
-                    ra,
-                    dec,
+                    s.ra,
+                    s.dec,
                     bayer_desig,
                     ha="right",
                     va="bottom",
@@ -114,7 +113,6 @@ class StarPlotterMixin:
     def stars(
         self,
         mag: float = 6.0,
-        mag_labels: float = 6.0,
         catalog: StarCatalog = StarCatalog.HIPPARCOS,
         style: ObjectStyle = None,
         rasterize: bool = False,
@@ -122,6 +120,7 @@ class StarPlotterMixin:
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
         where: list = None,
+        where_labels: list = None,
         labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
         bayer_labels: bool = False,
@@ -132,8 +131,7 @@ class StarPlotterMixin:
         Plots stars
 
         Args:
-            mag: Limiting magnitude of stars to plot
-            mag_labels: Limiting magnitude of stars to label on the plot
+            mag: Limiting magnitude of stars to plot. For more control of what stars to plot, use the `where` kwarg. **Note:** if you pass `mag` and `where` then `mag` will be ignored
             catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
             style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
@@ -141,6 +139,7 @@ class StarPlotterMixin:
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
@@ -152,9 +151,9 @@ class StarPlotterMixin:
         alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
         color_fn = color_fn or (lambda d: style.marker.color.as_hex())
 
-        filters = where or []
+        where = where or []
 
-        if filters:
+        if where:
             mag = None
 
         if labels is None:
@@ -186,7 +185,7 @@ class StarPlotterMixin:
                 obj.hip = hip_id
                 obj.name = STAR_NAMES.get(hip_id)
 
-            if not all([e.evaluate(obj) for e in filters]) or not self._in_bounds_xy(
+            if not all([e.evaluate(obj) for e in where]) or not self._in_bounds_xy(
                 star.x, star.y
             ):
                 continue
@@ -220,6 +219,4 @@ class StarPlotterMixin:
 
         self._add_legend_handle_marker(legend_label, style.marker)
 
-        self._star_labels(
-            nearby_stars_df, mag_labels, style.label, labels, bayer_labels
-        )
+        self._star_labels(star_objects, where_labels, style.label, labels, bayer_labels)

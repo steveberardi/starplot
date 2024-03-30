@@ -9,21 +9,21 @@ map_custom_stars:
 map_mollweide:
   dhash: 0b2b7b632b3317070b2b7b632b3317070b2b7b632b331707
   filename: /starplot/hash_checks/data/map-mollweide.png
-  phash: eb9ba498e3319163
+  phash: eb9ba498e1319563
 map_orion_base:
-  dhash: 1c3b3a7e6e2e6c6c1c3b3a4e2e2e6c6c1c3b3bce6e0e6c6c
+  dhash: 1c3b3a7e6e2e646c1c393b4e2e2e646c1c3b3bce6e2e646c
   filename: /starplot/hash_checks/data/map-orion-base.png
-  phash: be79d8260706799c
+  phash: be79d9260785748c
 map_orion_extra:
-  dhash: 181b3a7f3e6c6c071d1b1a6b2e6c6c071c1b3b6b6e6c6c17
+  dhash: 1c1b3b7f2e646c071c1b1a6b2e646c071c1b3b6b2e646c07
   filename: /starplot/hash_checks/data/map-orion-extra.png
-  phash: bf71d01ee10fe490
+  phash: be71d016e11fe494
 map_scope_bino_fov:
-  dhash: 0bc080848c8080802bc4b2ac4daa928c2bc4b2ac4daa928c
+  dhash: 0bc080848c8080802bc4b2ac4da8928c2bc4b2ac4da8928c
   filename: /starplot/hash_checks/data/map-scope-bino-fov.png
   phash: e46b696a6e293964
 map_stereo_base:
-  dhash: 626666f03c383436626666f0ac383416727666f0e8c89456
+  dhash: 626666f03c383436626666f0ac383436727666f0e8c89456
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
   phash: 9dce7972429062fa
 map_with_planets:
@@ -71,6 +71,6 @@ optic_wrapping:
   filename: /starplot/hash_checks/data/optic-wrapping.png
   phash: ba7b84a186d3cad2
 zenith_base:
-  dhash: 1379cca69ad469271359aca68a9469271359ac868a946927
+  dhash: 1379cca69ad469271359aca69a9469271359ac869a946927
   filename: /starplot/hash_checks/data/zenith-base.png
-  phash: 90db3b9965366472
+  phash: 90db3bd961366472

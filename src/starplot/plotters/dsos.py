@@ -28,7 +28,7 @@ class DsoPlotterMixin:
     def open_clusters(self, *args, **kwargs):
         """
         Plots open clusters
-        
+
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         self.dsos(types=[DsoType.OPEN_CLUSTER], **kwargs)
@@ -36,7 +36,7 @@ class DsoPlotterMixin:
     def globular_clusters(self, *args, **kwargs):
         """
         Plots globular clusters
-        
+
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         self.dsos(types=[DsoType.GLOBULAR_CLUSTER], **kwargs)
@@ -98,7 +98,7 @@ class DsoPlotterMixin:
         Plots Deep Sky Objects (DSOs), from OpenNGC
 
         Args:
-            mag: Limiting magnitude of DSOs to plot
+            mag: Limiting magnitude of DSOs to plot. For more control of what DSOs to plot, use the `where` kwarg. **Note:** if you pass `mag` and `where` then `mag` will be ignored
             types: List of DSO types to plot
             true_size: If True, then each DSO will be plotted as its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used. Also, keep in mind not all DSOs have a defined size (according to OpenNGC) -- so these will use the style's marker size.
             labels: A dictionary that maps DSO names (as specified in OpenNGC) to the label that'll be plotted for that object. By default, the DSO's name in OpenNGC will be used as the label. If you want to hide all labels, then set this arg to `None`.
@@ -124,7 +124,7 @@ class DsoPlotterMixin:
         where_labels = where_labels or []
 
         if not where:
-            where = [DSO.magnitude.is_null() | (DSO.magnitude < mag)]
+            where = [DSO.magnitude.is_null() | (DSO.magnitude <= mag)]
 
         if labels is None:
             labels = {}

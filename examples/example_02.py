@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from starplot import MapPlot, Projection
+from starplot import MapPlot, Projection, Star
 from starplot.styles import PlotStyle, extensions
 
 tz = timezone("America/Los_Angeles")
@@ -18,7 +18,7 @@ p = MapPlot(
     resolution=2600,
 )
 p.constellations()
-p.stars(mag=5.6, mag_labels=2.1)
+p.stars(mag=5.6, where_labels=[Star.magnitude < 2.1])
 
 p.dsos(mag=9, true_size=True, labels=None)
 p.constellation_borders()

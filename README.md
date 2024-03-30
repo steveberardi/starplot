@@ -47,7 +47,7 @@ p = sp.MapPlot(
     resolution=2000,
 )
 p.constellations()
-p.stars(mag=4.6, mag_labels=2.1)
+p.stars(mag=4.6)
 p.export("starchart.png")
 ```
 
