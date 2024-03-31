@@ -199,7 +199,9 @@ class DSO(SkyObject, CreateMapMixin):
         self.min_ax = min_ax
         self.angle = angle
         self.size = size
-        self.m = m
+
+        if m is not None:
+            self.m = int(m)
 
     def __repr__(self) -> str:
         return f"DSO(name={self.name}, magnitude={self.magnitude})"

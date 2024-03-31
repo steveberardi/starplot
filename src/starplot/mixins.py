@@ -63,31 +63,27 @@ class CreateMapMixin:
         Returns:
             MapPlot: new instance of a [`MapPlot`][starplot.MapPlot]
         """
-        from starplot import MapPlot, Projection, geod
+        from starplot import MapPlot, geod
 
         ex = geod.rectangle(
             center=(self.ra, self.dec),
             height_degrees=extent,
             width_degrees=extent,
         )
+        ra_min = ex[0][0] / 15
+        ra_max = ex[2][0] / 15
+        dec_min = ex[0][1]
+        dec_max = ex[2][1]
 
-        ra_min = min(c[0] for c in ex) / 15
-        ra_max = max(c[0] for c in ex) / 15
-
-        if ra_min < 0 and ra_max > 0:
-            oldmin = ra_min
-            ra_min = ra_max
-            ra_max = oldmin + 24
-
-        dec_min = min(c[1] for c in ex)
-        dec_max = max(c[1] for c in ex)
+        # handle wrapping
+        if ra_max < ra_min:
+            ra_max += 24
 
         p = MapPlot(
             ra_min=ra_min,
             ra_max=ra_max,
             dec_min=dec_min,
             dec_max=dec_max,
-            projection=Projection.MILLER,
             *args,
             **kwargs,
         )
