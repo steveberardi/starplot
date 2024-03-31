@@ -175,11 +175,12 @@ class StarPlotterMixin:
 
         starz = []
 
-        for hip_id, star in nearby_stars_df.iterrows():
+        for star in nearby_stars_df.itertuples():
             m = star.magnitude
             ra, dec = star.ra, star.dec
+            hip_id = star.Index
 
-            obj = Star(ra=ra / 15, dec=dec, magnitude=m, bv=star.get("bv"))
+            obj = Star(ra=ra / 15, dec=dec, magnitude=m, bv=star.bv)
 
             if np.isfinite(hip_id):
                 obj.hip = hip_id
