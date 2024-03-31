@@ -212,6 +212,7 @@ def check_map_custom_stars():
         resolution=RESOLUTION,
     )
     p.stars(mag=6)
+    p.text("CUSTOM STARZZZ", 7, -5, style={"font_size": 20})
     p.export(filename, padding=0.3)
     return filename
 

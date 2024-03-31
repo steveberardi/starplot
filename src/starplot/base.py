@@ -132,7 +132,7 @@ class BasePlot(ABC):
                 label=label,
             )
 
-    def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
+    def _text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
         x, y = self._prepare_coords(ra, dec)
         kwargs["path_effects"] = kwargs.get("path_effects") or [self.text_border]
         label = self.ax.text(
@@ -149,6 +149,20 @@ class BasePlot(ABC):
             label.set_clip_path(kwargs.get("clip_path"))
 
         self._maybe_remove_label(label)
+
+    @use_style(LabelStyle)
+    def text(self, text: str, ra: float, dec: float, style: LabelStyle = None):
+        """
+        Plots text
+
+        Args:
+            text: Text to plot
+            ra: Right ascension of text (0...24)
+            dec: Declination of text (-90...90)
+            style: Styling of the text
+        """
+        style = style or LabelStyle()
+        self._text(ra, dec, text, **style.matplot_kwargs(self._size_multiplier))
 
     @property
     def objects(self) -> models.ObjectList:
@@ -334,7 +348,7 @@ class BasePlot(ABC):
                 self._add_legend_handle_marker(legend_label, style.marker)
 
                 if label:
-                    self._plot_text(
+                    self._text(
                         ra,
                         dec,
                         label.upper(),
@@ -393,7 +407,7 @@ class BasePlot(ABC):
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
-                self._plot_text(
+                self._text(
                     ra,
                     dec,
                     label,
@@ -451,7 +465,7 @@ class BasePlot(ABC):
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
-                self._plot_text(
+                self._text(
                     ra,
                     dec,
                     label,
@@ -692,7 +706,7 @@ class BasePlot(ABC):
 
                 for i in range(0, len(inbounds), label_spacing):
                     ra, dec = inbounds[i]
-                    self._plot_text(
+                    self._text(
                         ra,
                         dec - 0.4,
                         label,
@@ -737,4 +751,4 @@ class BasePlot(ABC):
             label_style_kwargs = style.label.matplot_kwargs(self._size_multiplier)
             label_spacing = (self.ra_max - self.ra_min) / 3
             for ra in np.arange(self.ra_min, self.ra_max, label_spacing):
-                self._plot_text(ra, 0.25, label, **label_style_kwargs)
+                self._text(ra, 0.25, label, **label_style_kwargs)

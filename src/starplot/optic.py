@@ -243,8 +243,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             **kwargs,
         )
 
-    def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
-        super()._plot_text(
+    def _text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
+        super()._text(
             ra, dec, text, clip_path=self._background_clip_path, *args, **kwargs
         )
 

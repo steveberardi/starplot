@@ -3,9 +3,9 @@ map_coma_berenices_dso_size:
   filename: /starplot/hash_checks/data/map-coma-berenices-dso-size.png
   phash: c56d16963b696992
 map_custom_stars:
-  dhash: 5cb129ceae0e84085cb129ceae0e84085cb129ceae0e8408
+  dhash: 5cb129ce8e2e84485cb129ce8e2e84485cb129ce8e2e8448
   filename: /starplot/hash_checks/data/map-custom-stars.png
-  phash: e619d9660125f6dc
+  phash: a6c9d93487253ec6
 map_mollweide:
   dhash: 0b2b7b632b3317070b2b7b632b3317070b2b7b632b331707
   filename: /starplot/hash_checks/data/map-mollweide.png

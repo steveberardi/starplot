@@ -218,7 +218,7 @@ class DsoPlotterMixin:
                         )
 
                 if label:
-                    self._plot_text(
+                    self._text(
                         ra / 15,
                         dec,
                         label,

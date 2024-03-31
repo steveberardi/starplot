@@ -83,7 +83,7 @@ class StarPlotterMixin:
             bayer_desig = bayer.hip.get(s.hip)
 
             if name:
-                self._plot_text(
+                self._text(
                     s.ra,
                     s.dec,
                     name,
@@ -93,7 +93,7 @@ class StarPlotterMixin:
                 )
 
             if bayer_labels and bayer_desig:
-                self._plot_text(
+                self._text(
                     s.ra,
                     s.dec,
                     bayer_desig,
