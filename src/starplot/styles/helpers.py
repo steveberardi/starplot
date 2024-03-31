@@ -25,10 +25,10 @@ def use_style(style_class, style_attr: str = None):
         @wraps(func)
         def wrapper(*args, **kwargs):
             style = kwargs.get("style")
-            style_kwargs = {x:kwargs[x] for x in kwargs if x[:7] == "style__"}
+            style_kwargs = {kw: value for kw, value in kwargs.items() if kw.startswith("style__")}
 
             if style and style_kwargs:
-                    raise ValueError("oo many style arguments types. Specify only style or style kwargs")
+                    raise ValueError("Too many style arguments types. Specify only style or style kwargs")
             if style and isinstance(style, dict):
                 if style_attr is not None:
                     # if style is a dict and there's a base style, then we just want to merge the changes
