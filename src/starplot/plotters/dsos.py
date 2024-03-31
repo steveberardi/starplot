@@ -1,9 +1,5 @@
 from typing import Callable, Mapping
 
-import geopandas as gpd
-import numpy as np
-
-from starplot.data import DataFiles
 from starplot.data.dsos import (
     DsoType,
     DEFAULT_DSO_TYPES,
@@ -12,6 +8,7 @@ from starplot.data.dsos import (
     DSO_LEGEND_LABELS,
     DSO_LABELS_DEFAULT,
     DsoLabelMaker,
+    load_ongc,
 )
 from starplot.models import DSO
 from starplot.styles import MarkerSymbolEnum
@@ -24,6 +21,22 @@ class DsoPlotterMixin:
         coords.append(coords[0])
         coords.append(coords[0])
         self._polygon(coords, style.marker.to_polygon_style(), closed=False)
+
+    def _dso_from_df_tuple(self, d):
+        magnitude = d.mag_v or d.mag_b or None
+        magnitude = float(magnitude) if magnitude else None
+        return DSO(
+            name=d.name,
+            ra=d.ra_degrees / 15,
+            dec=d.dec_degrees,
+            type=ONGC_TYPE_MAP[d.type],
+            maj_ax=d.maj_ax,
+            min_ax=d.min_ax,
+            angle=d.angle,
+            magnitude=magnitude,
+            size=d.size_deg2,
+            m=d.m,
+        )
 
     def open_clusters(self, *args, **kwargs):
         """
@@ -113,12 +126,6 @@ class DsoPlotterMixin:
         # TODO: sort by type, and plot markers together (for better performance)
 
         self.logger.debug("Plotting DSOs...")
-        nearby_dsos = gpd.read_file(
-            DataFiles.ONGC.value,
-            engine="pyogrio",
-            use_arrow=True,
-            bbox=self._extent_mask(),
-        )
 
         where = where or []
         where_labels = where_labels or []
@@ -136,36 +143,21 @@ class DsoPlotterMixin:
         else:
             legend_labels = {**DSO_LEGEND_LABELS, **legend_labels}
 
-        nearby_dsos = nearby_dsos.replace({np.nan: None})
+        nearby_dsos = load_ongc(bbox=self._extent_mask())
         dso_types = [ONGC_TYPE[dtype] for dtype in types]
-        nearby_dsos = nearby_dsos[
-            nearby_dsos["Type"].isin(dso_types)
-            & nearby_dsos["ra_degrees"].notnull()
-            & nearby_dsos["dec_degrees"].notnull()
-        ]
+        nearby_dsos = nearby_dsos[nearby_dsos["type"].isin(dso_types)]
 
-        for _, d in nearby_dsos.iterrows():
+        for d in nearby_dsos.itertuples():
             ra = d.ra_degrees
             dec = d.dec_degrees
-            name = d.Name
-            label = labels.get(name)
-            dso_type = ONGC_TYPE_MAP[d.Type]
+            label = labels.get(d.name)
+            dso_type = ONGC_TYPE_MAP[d.type]
             style = self.style.get_dso_style(dso_type)
-            maj_ax, min_ax, angle = d.MajAx, d.MinAx, d.PosAng
+            maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
             legend_label = legend_labels.get(dso_type)
-            magnitude = d["V-Mag"] or d["B-Mag"] or None
+            magnitude = d.mag_v or d.mag_b or None
             magnitude = float(magnitude) if magnitude else None
-            _dso = DSO(
-                name=name,
-                ra=ra / 15,
-                dec=dec,
-                type=dso_type,
-                maj_ax=maj_ax,
-                min_ax=min_ax,
-                angle=angle,
-                magnitude=magnitude,
-                size=d.size_deg2,
-            )
+            _dso = self._dso_from_df_tuple(d)
 
             if any(
                 [
@@ -205,16 +197,16 @@ class DsoPlotterMixin:
                             (ra / 15, dec),
                             min_ax_degrees * 2,
                             maj_ax_degrees * 2,
-                            poly_style,
-                            angle or 0,
+                            style=poly_style,
+                            angle=angle or 0,
                         )
                     else:
                         self.ellipse(
                             (ra / 15, dec),
                             min_ax_degrees * 2,
                             maj_ax_degrees * 2,
-                            poly_style,
-                            angle or 0,
+                            style=poly_style,
+                            angle=angle or 0,
                         )
 
                 if label:

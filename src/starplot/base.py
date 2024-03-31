@@ -401,7 +401,7 @@ class BasePlot(ABC):
             self.circle(
                 (ra, dec),
                 apparent_diameter_degrees,
-                style.marker.to_polygon_style(),
+                style=style.marker.to_polygon_style(),
             )
 
             self._add_legend_handle_marker(legend_label, style.marker)
@@ -459,7 +459,7 @@ class BasePlot(ABC):
             self.circle(
                 (ra, dec),
                 apparent_diameter_degrees,
-                style.marker.to_polygon_style(),
+                style=style.marker.to_polygon_style(),
             )
 
             self._add_legend_handle_marker(legend_label, style.marker)
@@ -611,7 +611,7 @@ class BasePlot(ABC):
             center,
             radius_degrees * 2,
             radius_degrees * 2,
-            style,
+            style=style,
             angle=0,
             num_pts=num_pts,
         )
@@ -625,7 +625,7 @@ class BasePlot(ABC):
         self.circle(
             (ra, dec),
             fov_radius,
-            style,
+            style=style,
         )
 
     @use_style(PolygonStyle)
