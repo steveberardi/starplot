@@ -25,11 +25,11 @@ def use_style(style_class, style_attr: str = None):
         @wraps(func)
         def wrapper(*args, **kwargs):
             style = kwargs.get("style")
-            style_args = {x:kwargs[x] for x in kwargs if x[:7] == "style__"}
+            style_kwargs = {x:kwargs[x] for x in kwargs if x[:7] == "style__"}
 
+            if style and style_kwargs:
+                    raise ValueError("oo many style arguments types. Specify only style or style kwargs")
             if style and isinstance(style, dict):
-                if style_args:
-                    raise Exception("Both versions of style override used. Use either kwargs OR dictionary") # not sure exactly what to say here
                 if style_attr is not None:
                     # if style is a dict and there's a base style, then we just want to merge the changes
                     base_style = getattr(args[0].style, style_attr).model_dump_json()
@@ -42,11 +42,11 @@ def use_style(style_class, style_attr: str = None):
                     kwargs["style"] = style_class(**style)
 
             elif style is None:
-                if style_args:
+                if style_kwargs:
                     if style_attr is not None:
                         # if style kwargs are used - build style dict and pass as "style" variable
                         styling_overrides = {}
-                        for key, value in style_args.items():
+                        for key, value in style_kwargs.items():
                             parts = key.split("__")[1:]
                             temp = styling_overrides
                             for part in parts[:-1]:
