@@ -157,7 +157,11 @@ def check_optic_m45_scope():
         style=optic_style,
         resolution=1600,
     )
-    optic_plot.stars(mag=12, color_fn=callables.color_by_bv, style={"label": {"font_color": "#7df597"}})
+    optic_plot.stars(
+        mag=12,
+        color_fn=callables.color_by_bv,
+        style={"label": {"font_color": "#7df597"}},
+    )
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-scope.png"
     optic_plot.export(filename)
