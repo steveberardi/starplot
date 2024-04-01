@@ -255,6 +255,19 @@ class DsoManager:
             dso for dso in DsoManager.all() if all([e.evaluate(dso) for e in where])
         ]
 
+    @staticmethod
+    def get(**kwargs):
+        matches = [
+            dso for dso in DsoManager.all() if all([getattr(dso, kw) == value for kw, value in kwargs.items()])
+        ]
+
+        if len(matches) == 1:
+            return matches[0]
+        elif len(matches) > 1:
+            raise ValueError("More than one match")
+        else:
+            return None
+
 
 class Planet(SkyObject):
     """Planet model."""
