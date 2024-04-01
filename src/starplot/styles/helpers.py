@@ -41,31 +41,31 @@ def use_style(style_class, style_attr: str = None):
                 else:
                     kwargs["style"] = style_class(**style)
 
-            elif style is None:
-                if style_kwargs:
-                    if style_attr is not None:
-                        # if style kwargs are used - build style dict and pass as "style" variable
-                        styling_overrides = {}
-                        for key, value in style_kwargs.items():
-                            parts = key.split("__")[1:]
-                            temp = styling_overrides
-                            for part in parts[:-1]:
-                                temp.setdefault(part, {})
-                                temp = temp[part]
-                            temp[parts[-1]] = value
-                            
-                        base_style = getattr(args[0].style, style_attr).model_dump_json()
-                        base_style = json.loads(base_style)
-
-                        merge_dict(base_style, styling_overrides)
+            elif style_kwargs:
+                if style_attr is not None:
+                    # if style kwargs are used - build style dict and pass as "style" variable
+                    styling_overrides = {}
+                    for key, val in style_kwargs.items():
+                        t = styling_overrides
+                        prev = None
+                        for part in key.split("__")[1:]:
+                            if prev is not None:
+                                t = t.setdefault(prev, {})
+                            prev = part
+                        t.setdefault(prev, val)
                         
-                        kwargs["style"] = style_class(**base_style)
-                    else:
-                        kwargs["style"] = style_class(**styling_overrides)
+                    base_style = getattr(args[0].style, style_attr).model_dump_json()
+                    base_style = json.loads(base_style)
 
-                elif style_attr is not None:
-                    # if no style overrides and there's a base style, then just pass the base style
-                    kwargs["style"] = getattr(args[0].style, style_attr, None)
+                    merge_dict(base_style, styling_overrides)
+                    
+                    kwargs["style"] = style_class(**base_style)
+                else:
+                    kwargs["style"] = style_class(**styling_overrides)
+
+            elif style is None and style_attr is not None:
+                # if no style overrides and there's a base style, then just pass the base style
+                kwargs["style"] = getattr(args[0].style, style_attr, None)
 
             return func(*args, **kwargs)
 
