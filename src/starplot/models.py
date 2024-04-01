@@ -1,7 +1,11 @@
 from typing import Optional
+from abc import ABC, abstractmethod
+
+import numpy as np
 
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.data.dsos import DsoType
+from starplot.data.stars import StarCatalog, STAR_NAMES, load as _load_stars
 
 
 class Expression:
@@ -90,11 +94,17 @@ class Meta(type):
         if cls == DSO:
             return DsoManager.get
 
+        if cls == Star:
+            return StarManager.get
+
         raise NotImplementedError
 
     def find(cls):
         if cls == DSO:
             return DsoManager.find
+
+        if cls == Star:
+            return StarManager.find
 
         raise NotImplementedError
 
@@ -113,6 +123,31 @@ class SkyObject(metaclass=Meta):
     def __init__(self, ra: float, dec: float) -> None:
         self.ra = ra
         self.dec = dec
+
+
+class SkyObjectManager(ABC):
+    @abstractmethod
+    def all(cls, *args, **kwargs):
+        raise NotImplementedError
+
+    @classmethod
+    def find(cls, where):
+        return [s for s in cls.all() if all([e.evaluate(s) for e in where])]
+
+    @classmethod
+    def get(cls, **kwargs):
+        matches = [
+            s
+            for s in cls.all()
+            if all([getattr(s, kw) == value for kw, value in kwargs.items()])
+        ]
+
+        if len(matches) == 1:
+            return matches[0]
+        elif len(matches) > 1:
+            raise ValueError("More than one match")
+        else:
+            return None
 
 
 class Star(SkyObject, CreateMapMixin):
@@ -147,6 +182,24 @@ class Star(SkyObject, CreateMapMixin):
         self.bv = bv
         self.hip = hip
         self.name = name
+
+
+class StarManager(SkyObjectManager):
+    @classmethod
+    def all(cls, catalog: StarCatalog = StarCatalog.HIPPARCOS):
+        all_stars = _load_stars(catalog)
+
+        # TODO : add datetime kwarg
+
+        for s in all_stars.itertuples():
+            hip_id = s.Index
+            obj = Star(ra=s.ra_hours, dec=s.dec_degrees, magnitude=s.magnitude, bv=s.bv)
+
+            if np.isfinite(hip_id):
+                obj.hip = hip_id
+                obj.name = STAR_NAMES.get(hip_id)
+
+            yield obj
 
 
 class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
@@ -226,9 +279,9 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         pass
 
 
-class DsoManager:
-    @staticmethod
-    def all():
+class DsoManager(SkyObjectManager):
+    @classmethod
+    def all(cls):
         from starplot.data.dsos import load_ongc, ONGC_TYPE_MAP
 
         all_dsos = load_ongc()
@@ -248,25 +301,6 @@ class DsoManager:
                 size=d.size_deg2,
                 m=d.m,
             )
-
-    @staticmethod
-    def find(where):
-        return [
-            dso for dso in DsoManager.all() if all([e.evaluate(dso) for e in where])
-        ]
-
-    @staticmethod
-    def get(**kwargs):
-        matches = [
-            dso for dso in DsoManager.all() if all([getattr(dso, kw) == value for kw, value in kwargs.items()])
-        ]
-
-        if len(matches) == 1:
-            return matches[0]
-        elif len(matches) > 1:
-            raise ValueError("More than one match")
-        else:
-            return None
 
 
 class Planet(SkyObject):
