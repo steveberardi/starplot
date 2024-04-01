@@ -29,6 +29,7 @@ def use_style(style_class, style_attr: str = None):
 
             if style and style_kwargs:
                     raise ValueError("Too many style arguments types. Specify only style or style kwargs")
+            
             if style and isinstance(style, dict):
                 if style_attr is not None:
                     # if style is a dict and there's a base style, then we just want to merge the changes
@@ -42,23 +43,22 @@ def use_style(style_class, style_attr: str = None):
                     kwargs["style"] = style_class(**style)
 
             elif style_kwargs:
+                # if style kwargs are used - build style dict and pass as "style" variable
+                styling_overrides = {}
+                for key, val in style_kwargs.items():
+                    t = styling_overrides
+                    prev = None
+                    for part in key.split("__")[1:]:
+                        if prev is not None:
+                            t = t.setdefault(prev, {})
+                        prev = part
+                    t.setdefault(prev, val)
                 if style_attr is not None:
-                    # if style kwargs are used - build style dict and pass as "style" variable
-                    styling_overrides = {}
-                    for key, val in style_kwargs.items():
-                        t = styling_overrides
-                        prev = None
-                        for part in key.split("__")[1:]:
-                            if prev is not None:
-                                t = t.setdefault(prev, {})
-                            prev = part
-                        t.setdefault(prev, val)
-                        
                     base_style = getattr(args[0].style, style_attr).model_dump_json()
                     base_style = json.loads(base_style)
 
                     merge_dict(base_style, styling_overrides)
-                    
+                
                     kwargs["style"] = style_class(**base_style)
                 else:
                     kwargs["style"] = style_class(**styling_overrides)
