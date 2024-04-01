@@ -228,16 +228,15 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
 
 class DsoManager:
     @staticmethod
-    def find(where):
+    def all():
         from starplot.data.dsos import load_ongc, ONGC_TYPE_MAP
 
         all_dsos = load_ongc()
-        matches = []
 
         for d in all_dsos.itertuples():
             magnitude = d.mag_v or d.mag_b or None
             magnitude = float(magnitude) if magnitude else None
-            dso = DSO(
+            yield DSO(
                 name=d.name,
                 ra=d.ra_degrees / 15,
                 dec=d.dec_degrees,
@@ -250,10 +249,24 @@ class DsoManager:
                 m=d.m,
             )
 
-            if all([e.evaluate(dso) for e in where]):
-                matches.append(dso)
+    @staticmethod
+    def find(where):
+        return [
+            dso for dso in DsoManager.all() if all([e.evaluate(dso) for e in where])
+        ]
 
-        return matches
+    @staticmethod
+    def get(**kwargs):
+        matches = [
+            dso for dso in DsoManager.all() if all([getattr(dso, kw) == value for kw, value in kwargs.items()])
+        ]
+
+        if len(matches) == 1:
+            return matches[0]
+        elif len(matches) > 1:
+            raise ValueError("More than one match")
+        else:
+            return None
 
 
 class Planet(SkyObject):
