@@ -190,7 +190,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def stars(
         self,
         mag: float = 6.0,
-        mag_labels: float = 6.0,
         catalog: StarCatalog = StarCatalog.TYCHO_1,
         style: ObjectStyle = None,
         rasterize: bool = False,
@@ -198,6 +197,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
         where: list = None,
+        where_labels: list = None,
         labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
         bayer_labels: bool = False,
@@ -209,7 +209,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         Args:
             mag: Limiting magnitude of stars to plot
-            mag_labels: Limiting magnitude of stars to label on the plot
             catalog: The catalog of stars to use: "hipparcos" or "tycho-1"
             style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
@@ -217,6 +216,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
@@ -228,7 +228,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         super().stars(
             mag=mag,
-            mag_labels=mag_labels,
             catalog=catalog,
             style=style,
             rasterize=rasterize,
@@ -236,6 +235,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             alpha_fn=alpha_fn,
             color_fn=color_fn,
             where=where,
+            where_labels=where_labels,
             labels=labels,
             legend_label=legend_label,
             bayer_labels=bayer_labels,
@@ -243,8 +243,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             **kwargs,
         )
 
-    def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
-        super()._plot_text(
+    def _text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
+        super()._text(
             ra, dec, text, clip_path=self._background_clip_path, *args, **kwargs
         )
 

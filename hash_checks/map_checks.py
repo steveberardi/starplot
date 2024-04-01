@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, DSO
+from starplot import styles, DSO, Star
 from starplot.map import MapPlot, Projection
 
 HERE = Path(__file__).resolve().parent
@@ -212,6 +212,7 @@ def check_map_custom_stars():
         resolution=RESOLUTION,
     )
     p.stars(mag=6)
+    p.text("CUSTOM STARZZZ", 7, -5, style={"font_size": 20})
     p.export(filename, padding=0.3)
     return filename
 

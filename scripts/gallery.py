@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from starplot import MapPlot, Projection, callables, DSO
+from starplot import MapPlot, Projection, callables, DSO, Star
 from starplot.data import constellations
 from starplot.styles import PlotStyle, extensions
 
@@ -39,7 +39,7 @@ def zenith():
             resolution=RESOLUTION,
         )
         p.constellations(labels=constellations.CONSTELLATIONS_FULL_NAMES)
-        p.stars(mag=5.6, mag_labels=2.1)
+        p.stars(mag=5.6, where_labels=[Star.magnitude < 2.1])
         p.dsos(mag=9, true_size=True, labels=None)
 
         # p.constellation_borders()
@@ -285,7 +285,7 @@ def orthographic():
             resolution=RESOLUTION,
         )
         p.gridlines(labels=False)
-        p.stars(mag=7.86, mag_labels=6)
+        p.stars(mag=7.86, where_labels=[Star.magnitude < 6])
         p.open_clusters(mag=8, true_size=False, labels=None)
         p.galaxies(mag=8, true_size=False, labels=None)
         p.nebula(mag=8, true_size=True, labels=None)

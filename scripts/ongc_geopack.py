@@ -29,11 +29,11 @@ def _size(d):
     elif "MultiPolygon" in geometry_types:
         size = sum([p.envelope.area for p in d.geometry.geoms])
 
-    elif d.MajAx and not np.isnan(d.MinAx):
-        size = (d.MajAx / 60) * (d.MinAx / 60)
+    elif d.maj_ax and not np.isnan(d.min_ax):
+        size = (d.maj_ax / 60) * (d.min_ax / 60)
 
-    elif d.MajAx:
-        size = (d.MajAx / 60) ** 2
+    elif d.maj_ax:
+        size = (d.maj_ax / 60) ** 2
 
     if size:
         size = round(size, 8)
@@ -53,6 +53,24 @@ def read_csv():
     df = pd.concat([df, df_addendum])
     df["ra_degrees"] = df.apply(parse_ra, axis=1)
     df["dec_degrees"] = df.apply(parse_dec, axis=1)
+
+    df = df.rename(
+        columns={
+            "Name": "name",
+            "Type": "type",
+            "M": "m",
+            "NGC": "ngc",
+            "IC": "ic",
+            "MajAx": "maj_ax",
+            "MinAx": "min_ax",
+            "PosAng": "angle",
+            "B-Mag": "mag_b",
+            "V-Mag": "mag_v",
+            "NED notes": "ned_notes",
+            "Common names": "common_names",
+            "Const": "constellation",
+        }
+    )
 
     gdf = gpd.GeoDataFrame(
         df,
@@ -120,7 +138,7 @@ def walk_files(path=DATA_PATH):
 
 
 gdf = read_csv()
-gdf = gdf.set_index("Name")
+gdf = gdf.set_index("name")
 
 outlines = {}
 
@@ -162,7 +180,7 @@ for f in walk_files():
         gdf.loc[name, "geometry"] = dso_geom
         gdf.loc[name, "ra_degrees"] = centroid.x
         gdf.loc[name, "dec_degrees"] = centroid.y
-        gdf.loc[name, "Type"] = "Neb"
+        gdf.loc[name, "type"] = "Neb"
     else:
         if gdf.loc[name].empty:
             print(f"NGC/IC object not found: {name}")

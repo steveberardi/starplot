@@ -18,6 +18,6 @@ p = MapPlot(
     resolution=2600,
 )
 p.constellations()
-p.stars(mag=4.6, mag_labels=2.1)
+p.stars(mag=4.6)
 
 p.export("01_star_chart.png", transparent=True)

@@ -1,5 +1,6 @@
 from typing import Optional
 
+from starplot.mixins import CreateMapMixin
 from starplot.data.dsos import DsoType
 
 
@@ -77,7 +78,25 @@ class Term:
 
 class Meta(type):
     def __getattribute__(cls, attr):
+        if attr == "get":
+            return Meta.get(cls)
+
+        if attr == "find":
+            return Meta.find(cls)
+
         return Term(attr)
+
+    def get(cls):
+        if cls == DSO:
+            return DsoManager.get
+
+        raise NotImplementedError
+
+    def find(cls):
+        if cls == DSO:
+            return DsoManager.find
+
+        raise NotImplementedError
 
 
 class SkyObject(metaclass=Meta):
@@ -96,7 +115,7 @@ class SkyObject(metaclass=Meta):
         self.dec = dec
 
 
-class Star(SkyObject):
+class Star(SkyObject, CreateMapMixin):
     """
     Star model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting stars.
     So, you can use any attributes of this model in your callables. Note that some may be null.
@@ -130,7 +149,7 @@ class Star(SkyObject):
         self.name = name
 
 
-class DSO(SkyObject):
+class DSO(SkyObject, CreateMapMixin):
     """
     Deep Sky Object (DSO) model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting DSOs.
     So, you can use any attributes of this model in your callables. Note that some may be null.
@@ -156,6 +175,9 @@ class DSO(SkyObject):
     size: Optional[float] = None
     """Size of the DSO calculated as the area of the minimum bounding rectangle of the DSO, in degrees squared (if available)"""
 
+    m: Optional[int] = None
+    """Messier number, (if available)"""
+
     def __init__(
         self,
         ra: float,
@@ -167,6 +189,7 @@ class DSO(SkyObject):
         min_ax: float = None,
         angle: float = None,
         size: float = None,
+        m: int = None,
     ) -> None:
         super().__init__(ra, dec)
         self.name = name
@@ -176,6 +199,61 @@ class DSO(SkyObject):
         self.min_ax = min_ax
         self.angle = angle
         self.size = size
+
+        if m is not None:
+            self.m = int(m)
+
+    def __repr__(self) -> str:
+        return f"DSO(name={self.name}, magnitude={self.magnitude})"
+
+    @classmethod
+    def get(where: list):
+        """Get a DSO"""
+        pass
+
+    @classmethod
+    def find(where: list) -> list["DSO"]:
+        """
+        Find DSOs
+
+        Args:
+            where: A list of expressions that determine which DSOs to find. See [Selecting Objects](/reference-selecting-objects/) for details.
+
+        Returns:
+            List of DSOs that match all `where` expressions
+
+        """
+        pass
+
+
+class DsoManager:
+    @staticmethod
+    def find(where):
+        from starplot.data.dsos import load_ongc, ONGC_TYPE_MAP
+
+        all_dsos = load_ongc()
+        matches = []
+
+        for d in all_dsos.itertuples():
+            magnitude = d.mag_v or d.mag_b or None
+            magnitude = float(magnitude) if magnitude else None
+            dso = DSO(
+                name=d.name,
+                ra=d.ra_degrees / 15,
+                dec=d.dec_degrees,
+                type=ONGC_TYPE_MAP[d.type],
+                maj_ax=d.maj_ax,
+                min_ax=d.min_ax,
+                angle=d.angle,
+                magnitude=magnitude,
+                size=d.size_deg2,
+                m=d.m,
+            )
+
+            if all([e.evaluate(dso) for e in where]):
+                matches.append(dso)
+
+        return matches
 
 
 class Planet(SkyObject):

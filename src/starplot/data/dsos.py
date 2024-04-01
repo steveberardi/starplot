@@ -258,3 +258,21 @@ class DsoLabelMaker(dict):
 
 
 DSO_LABELS_DEFAULT = DsoLabelMaker()
+
+
+def load_ongc(**kwargs):
+    import geopandas as gpd
+    import numpy as np
+    from starplot.data import DataFiles
+
+    all_dsos = gpd.read_file(
+        DataFiles.ONGC.value,
+        engine="pyogrio",
+        use_arrow=True,
+        **kwargs,
+    )
+    all_dsos = all_dsos.replace({np.nan: None})
+    all_dsos = all_dsos[
+        all_dsos["ra_degrees"].notnull() & all_dsos["dec_degrees"].notnull()
+    ]
+    return all_dsos

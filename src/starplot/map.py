@@ -421,7 +421,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             _, ra, dec = condata.get(con)
             text = labels.get(con.lower())
             if text and self.in_bounds(ra, dec):
-                self._plot_text(ra, dec, text, **style_kwargs)
+                self._text(ra, dec, text, **style_kwargs)
 
     @use_style(PolygonStyle, "milky_way")
     def milky_way(self, style: PolygonStyle = None):
