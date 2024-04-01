@@ -91,5 +91,22 @@ class CreateMapMixin:
 
 
 class CreateOpticMixin:
-    def create_optic(self, extent, *args, **kwargs):
-        pass
+    def create_optic(self, *args, **kwargs):
+        """
+        Creates an optic plot with this object at the center
+
+        Args:
+            *args: args passed through to [`OpticPlot()`][starplot.OpticPlot]
+            **kwargs: kwargs passed through to [`OpticPlot()`][starplot.OpticPlot]
+
+        Returns:
+            OpticPlot: new instance of a [`OpticPlot`][starplot.OpticPlot]
+        """
+        from starplot import OpticPlot
+
+        return OpticPlot(
+            ra=self.ra,
+            dec=self.dec,
+            *args,
+            **kwargs,
+        )
