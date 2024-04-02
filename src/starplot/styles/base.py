@@ -29,6 +29,8 @@ HERE = Path(__file__).resolve().parent
 class BaseStyle(BaseModel):
     class Config:
         use_enum_values = True
+        # placeholder for now, will require some code updates to enable
+        # extra='forbid'
 
 
 class FillStyleEnum(str, Enum):
