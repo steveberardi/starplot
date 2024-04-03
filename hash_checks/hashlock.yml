@@ -7,9 +7,9 @@ map_custom_stars:
   filename: /starplot/hash_checks/data/map-custom-stars.png
   phash: a6c9d93487253ec6
 map_mollweide:
-  dhash: 0b2b7b632b3317070b2b7b632b3317070b2b7b732b331707
+  dhash: 0b297b63233307070b297b63233307072b297b6323330707
   filename: /starplot/hash_checks/data/map-mollweide.png
-  phash: ef9ba498e1619163
+  phash: fa9ae498c4259567
 map_orion_base:
   dhash: 1c3b3a7e6e2e646c1c393b4e2e2e646c1c3b3bce6e2e646c
   filename: /starplot/hash_checks/data/map-orion-base.png
@@ -31,9 +31,9 @@ map_with_planets:
   filename: /starplot/hash_checks/data/map-mercator-planets.png
   phash: e9469d89862c7f92
 map_wrapping:
-  dhash: 16295da464c2211416295da465c2211416295da565c22115
+  dhash: 16295d256546211516295d256546211516295d2565462115
   filename: /starplot/hash_checks/data/map-wrapping.png
-  phash: e631796d3464313d
+  phash: ee30f1ed34643139
 optic_camera_rotated:
   dhash: 25468b33269d9a6525468b33269d9a6525468b33269d9a65
   filename: /starplot/hash_checks/data/optic-camera-rotated-m45.png

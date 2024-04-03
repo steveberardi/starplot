@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, DSO, Star
+from starplot import styles, DSO
 from starplot.map import MapPlot, Projection
 
 HERE = Path(__file__).resolve().parent
@@ -234,7 +234,7 @@ def check_map_wrapping():
         style=style,
         resolution=RESOLUTION,
     )
-    p.stars(mag=9, style={"marker": {"color": "#f5d57d"}})
+    p.stars(mag=9, style={"marker": {"size": 40}})
     p.dsos(
         where=[
             DSO.magnitude.is_null() | (DSO.magnitude < 9),
@@ -262,7 +262,7 @@ def check_map_mollweide():
         style=style,
         resolution=RESOLUTION,
     )
-    p.stars(mag=4.2, mag_labels=1.8, style__marker__color="#676fdb")
+    p.stars(mag=4.2, mag_labels=1.8, style__marker__color="blue")
     p.constellations()
     p.dsos(mag=4, labels=None)
     p.milky_way()

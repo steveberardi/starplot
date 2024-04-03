@@ -186,7 +186,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         else:
             plotted.set_clip_path(self._background_clip_path)
 
-    @use_style(ObjectStyle, "star")
     def stars(
         self,
         mag: float = 6.0,
