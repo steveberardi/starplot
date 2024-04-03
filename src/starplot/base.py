@@ -37,7 +37,7 @@ LOGGER.addHandler(LOG_HANDLER)
 
 
 DEFAULT_FOV_STYLE = PolygonStyle(
-    fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
+    fill_color=None, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
 )
 """Default style for plotting scope and bino field of view circles"""
 

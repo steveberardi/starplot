@@ -450,7 +450,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def horizon(
         self,
         style: PolygonStyle = PolygonStyle(
-            fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
+            fill_color=None,
+            edge_color="red",
+            line_style="dashed",
+            edge_width=4,
+            zorder=1000,
         ),
     ):
         """

@@ -29,8 +29,7 @@ HERE = Path(__file__).resolve().parent
 class BaseStyle(BaseModel):
     class Config:
         use_enum_values = True
-        # placeholder for now, will require some code updates to enable
-        # extra='forbid'
+        extra = "forbid"
 
 
 class FillStyleEnum(str, Enum):
@@ -495,7 +494,7 @@ class PlotStyle(BaseStyle):
     info_text: LabelStyle = LabelStyle(
         font_size=10,
         zorder=1,
-        family="monospace",
+        font_family="monospace",
         line_spacing=2,
     )
     """Styling for info text (only applies to zenith and optic plots)"""
