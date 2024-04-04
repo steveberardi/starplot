@@ -66,10 +66,10 @@ class Star(SkyObject, CreateMapMixin, CreateOpticMixin):
         Get a Star, by matching its attributes.
 
         Example: `sirius = Star.get(name="Sirius")`
-        
+
         Args:
             **kwargs: Attributes on the star you want to match
-        
+
         Raises: `ValueError` if more than one star is matched
         """
         pass

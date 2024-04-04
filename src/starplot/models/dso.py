@@ -94,10 +94,10 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         Get a DSO, by matching its attributes.
 
         Example: `d = DSO.get(m=13)`
-        
+
         Args:
             **kwargs: Attributes on the DSO you want to match
-        
+
         Raises: `ValueError` if more than one DSO is matched
         """
         pass
