@@ -71,7 +71,7 @@ There are also a few operators you can use to combine expressions:
 
 ## Functions
 
-### ::: starplot.models.Term
+### ::: starplot.models.base.Term
     options:
         inherited_members: true
         docstring_section_style: list

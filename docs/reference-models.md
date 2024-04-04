@@ -23,7 +23,7 @@
         show_docstring_attributes: true
         members_order: source
 
-::: starplot.models.Moon
+::: starplot.Moon
     options:
         inherited_members: true
         docstring_section_style: list
@@ -31,7 +31,7 @@
         show_docstring_attributes: true
         members_order: source
 
-::: starplot.models.ObjectList
+::: starplot.ObjectList
     options:
         inherited_members: true
         docstring_section_style: list

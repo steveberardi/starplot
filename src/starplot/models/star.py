@@ -59,3 +59,31 @@ class Star(SkyObject, CreateMapMixin, CreateOpticMixin):
         self.bv = bv
         self.hip = hip
         self.name = name
+
+    @classmethod
+    def get(**kwargs):
+        """
+        Get a Star, by matching its attributes.
+
+        Example: `sirius = Star.get(name="Sirius")`
+        
+        Args:
+            **kwargs: Attributes on the star you want to match
+        
+        Raises: `ValueError` if more than one star is matched
+        """
+        pass
+
+    @classmethod
+    def find(where: list) -> list["Star"]:
+        """
+        Find Stars
+
+        Args:
+            where: A list of expressions that determine which stars to find. See [Selecting Objects](/reference-selecting-objects/) for details.
+
+        Returns:
+            List of Stars that match all `where` expressions
+
+        """
+        pass
