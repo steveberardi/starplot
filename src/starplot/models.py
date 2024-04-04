@@ -81,32 +81,27 @@ class Term:
 
 
 class Meta(type):
+    managers = {}
+
+    def __new__(cls, name, bases, attrs):
+        new_cls = super().__new__(cls, name, bases, attrs)
+
+        if "_manager" in attrs:
+            Meta.managers[new_cls] = attrs["_manager"]
+        
+        return new_cls
+        
     def __getattribute__(cls, attr):
         if attr == "get":
-            return Meta.get(cls)
+            return Meta.managers[cls].get
 
         if attr == "find":
-            return Meta.find(cls)
+            return Meta.managers[cls].find
+    
+        if attr == "all":
+            return Meta.managers[cls].all
 
         return Term(attr)
-
-    def get(cls):
-        if cls == DSO:
-            return DsoManager.get
-
-        if cls == Star:
-            return StarManager.get
-
-        raise NotImplementedError
-
-    def find(cls):
-        if cls == DSO:
-            return DsoManager.find
-
-        if cls == Star:
-            return StarManager.find
-
-        raise NotImplementedError
 
 
 class SkyObject(metaclass=Meta):
@@ -149,12 +144,30 @@ class SkyObjectManager(ABC):
         else:
             return None
 
+class StarManager(SkyObjectManager):
+    @classmethod
+    def all(cls, catalog: StarCatalog = StarCatalog.HIPPARCOS):
+        all_stars = _load_stars(catalog)
+
+        # TODO : add datetime kwarg
+
+        for s in all_stars.itertuples():
+            hip_id = s.Index
+            obj = Star(ra=s.ra_hours, dec=s.dec_degrees, magnitude=s.magnitude, bv=s.bv)
+
+            if np.isfinite(hip_id):
+                obj.hip = hip_id
+                obj.name = STAR_NAMES.get(hip_id)
+
+            yield obj
 
 class Star(SkyObject, CreateMapMixin, CreateOpticMixin):
     """
     Star model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting stars.
     So, you can use any attributes of this model in your callables. Note that some may be null.
     """
+
+    _manager = StarManager
 
     magnitude: float
     """Magnitude"""
@@ -184,29 +197,36 @@ class Star(SkyObject, CreateMapMixin, CreateOpticMixin):
         self.name = name
 
 
-class StarManager(SkyObjectManager):
+class DsoManager(SkyObjectManager):
     @classmethod
-    def all(cls, catalog: StarCatalog = StarCatalog.HIPPARCOS):
-        all_stars = _load_stars(catalog)
+    def all(cls):
+        from starplot.data.dsos import load_ongc, ONGC_TYPE_MAP
 
-        # TODO : add datetime kwarg
+        all_dsos = load_ongc()
 
-        for s in all_stars.itertuples():
-            hip_id = s.Index
-            obj = Star(ra=s.ra_hours, dec=s.dec_degrees, magnitude=s.magnitude, bv=s.bv)
-
-            if np.isfinite(hip_id):
-                obj.hip = hip_id
-                obj.name = STAR_NAMES.get(hip_id)
-
-            yield obj
-
+        for d in all_dsos.itertuples():
+            magnitude = d.mag_v or d.mag_b or None
+            magnitude = float(magnitude) if magnitude else None
+            yield DSO(
+                name=d.name,
+                ra=d.ra_degrees / 15,
+                dec=d.dec_degrees,
+                type=ONGC_TYPE_MAP[d.type],
+                maj_ax=d.maj_ax,
+                min_ax=d.min_ax,
+                angle=d.angle,
+                magnitude=magnitude,
+                size=d.size_deg2,
+                m=d.m,
+            )
 
 class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     """
     Deep Sky Object (DSO) model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting DSOs.
     So, you can use any attributes of this model in your callables. Note that some may be null.
     """
+
+    _manager = DsoManager
 
     name: str
     """Name of the DSO (as specified in OpenNGC)"""
@@ -279,28 +299,6 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         pass
 
 
-class DsoManager(SkyObjectManager):
-    @classmethod
-    def all(cls):
-        from starplot.data.dsos import load_ongc, ONGC_TYPE_MAP
-
-        all_dsos = load_ongc()
-
-        for d in all_dsos.itertuples():
-            magnitude = d.mag_v or d.mag_b or None
-            magnitude = float(magnitude) if magnitude else None
-            yield DSO(
-                name=d.name,
-                ra=d.ra_degrees / 15,
-                dec=d.dec_degrees,
-                type=ONGC_TYPE_MAP[d.type],
-                maj_ax=d.maj_ax,
-                min_ax=d.min_ax,
-                angle=d.angle,
-                magnitude=magnitude,
-                size=d.size_deg2,
-                m=d.m,
-            )
 
 
 class Planet(SkyObject):
