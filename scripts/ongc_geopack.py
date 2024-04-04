@@ -54,6 +54,11 @@ def read_csv():
     df["ra_degrees"] = df.apply(parse_ra, axis=1)
     df["dec_degrees"] = df.apply(parse_dec, axis=1)
 
+    # df.drop("Identifiers", axis="columns")
+    # df.drop("Sources", axis="columns")
+    # df["IC"] = df.apply(parse_ic, axis=1)
+    # df["NGC"] = df.apply(parse_ngc, axis=1)
+
     df = df.rename(
         columns={
             "Name": "name",
@@ -82,6 +87,20 @@ def read_csv():
 
     return gdf
 
+def parse_ic(row):
+    """Parses IC number if name starts with IC"""
+    if row.Name.startswith("IC"):
+
+        return int(row.Name[2:])
+    
+    return None
+
+def parse_ngc(row):
+    """Parses NGC number if name starts with NGC"""
+    if row.Name.startswith("NGC"):
+        return int(row.Name[3:])
+    
+    return None
 
 def parse_ra(row):
     """Parses RA from ONGC CSV from HH:MM:SS to 0...360 degree float"""

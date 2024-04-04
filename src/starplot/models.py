@@ -145,7 +145,7 @@ class SkyObjectManager(ABC):
         if len(matches) == 1:
             return matches[0]
         elif len(matches) > 1:
-            raise ValueError("More than one match")
+            raise ValueError("More than one match. Use find() instead or narrow your search.")
         else:
             return None
 
