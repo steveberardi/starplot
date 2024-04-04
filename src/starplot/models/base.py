@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 # from starplot.models.meta import Meta
 
+
 class Expression:
     def __init__(self, func=None) -> None:
         self.func = func
