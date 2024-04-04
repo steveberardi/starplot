@@ -87,20 +87,22 @@ def read_csv():
 
     return gdf
 
+
 def parse_ic(row):
     """Parses IC number if name starts with IC"""
     if row.Name.startswith("IC"):
-
         return int(row.Name[2:])
-    
+
     return None
+
 
 def parse_ngc(row):
     """Parses NGC number if name starts with NGC"""
     if row.Name.startswith("NGC"):
         return int(row.Name[3:])
-    
+
     return None
+
 
 def parse_ra(row):
     """Parses RA from ONGC CSV from HH:MM:SS to 0...360 degree float"""
