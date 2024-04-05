@@ -61,6 +61,11 @@ examples:
 gallery:
 	$(DOCKER_RUN) "python scripts/gallery.py"
 
+profile: DR_ARGS=-it -p 8080:8080
+profile:
+	$(DOCKER_RUN) "python -m cProfile -o temp/results.prof scripts/scratchpad.py && \
+	snakeviz -s -p 8080 -H 0.0.0.0 temp/results.prof"
+
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------

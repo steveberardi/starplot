@@ -103,27 +103,31 @@ class BasePlot(ABC):
         )
         return len(ix) > 0
 
+    def _is_clipped(self, extent) -> bool:
+        return self._background_clip_path is not None and not all(
+            self._background_clip_path.contains_points(extent.get_points())
+        )
+
     def _maybe_remove_label(self, label) -> None:
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-        ax_extent = self.ax.get_window_extent()
-        intersection = transforms.Bbox.intersection(ax_extent, extent)
 
-        if self._background_clip_path is not None:
-            if not all(self._background_clip_path.contains_points(extent.get_points())):
-                label.remove()
-                return
-
-        if (
-            intersection is not None
-            and (
-                intersection.height * intersection.width == extent.height * extent.width
-            )
-            and not (self.hide_colliding_labels and self._is_label_collision(extent))
-        ):
-            self.labels.append(label)
-            self._labels_rtree.insert(0, (extent.x0, extent.y0, extent.x1, extent.y1))
-        else:
+        if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]):
             label.remove()
+            return
+
+        if any(
+            [
+                self._is_clipped(extent),
+                self.hide_colliding_labels and self._is_label_collision(extent),
+            ]
+        ):
+            label.remove()
+            return
+
+        self.labels.append(label)
+        self._labels_rtree.insert(
+            0, np.array((extent.x0, extent.y0, extent.x1, extent.y1))
+        )
 
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
         if label is not None and label not in self._legend_handles:

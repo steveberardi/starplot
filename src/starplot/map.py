@@ -590,6 +590,20 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         if self.projection == Projection.ZENITH:
             self._plot_border()
+        else:
+            # draw patch in axes coords, which are easier to work with
+            # in cases like this cause they go from 0...1 in all plots
+            self._background_clip_path = patches.Rectangle(
+                (0, 0),
+                width=1,
+                height=1,
+                facecolor=self.style.background_color.as_hex(),
+                linewidth=0,
+                fill=True,
+                zorder=-2_000,
+                transform=self.ax.transAxes,
+            )
+            self.ax.add_patch(self._background_clip_path)
 
         self._fit_to_ax()
 

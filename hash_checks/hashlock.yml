@@ -3,7 +3,7 @@ map_coma_berenices_dso_size:
   filename: /starplot/hash_checks/data/map-coma-berenices-dso-size.png
   phash: c56d16963b696992
 map_custom_stars:
-  dhash: 5cb129ce8e2e84485cb129ce8e2e84485cb129ce8e2e8448
+  dhash: 5cb129cece2e84485cb129cece2e84485cb129cece2e8448
   filename: /starplot/hash_checks/data/map-custom-stars.png
   phash: a6c9d93487253ec6
 map_mollweide:
@@ -27,7 +27,7 @@ map_stereo_base:
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
   phash: 9dce7972429062fa
 map_with_planets:
-  dhash: 629115e7899b323b629115e7c99b323b629115e7c99b323b
+  dhash: 629115e7899b323b629115e7c99b323b629115efc99b323b
   filename: /starplot/hash_checks/data/map-mercator-planets.png
   phash: e9469d89862c7f92
 map_wrapping:

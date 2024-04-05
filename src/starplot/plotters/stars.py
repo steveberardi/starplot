@@ -68,15 +68,10 @@ class StarPlotterMixin:
             **self._plot_kwargs(),
             **kwargs,
         )
-        if getattr(self, "_background_clip_path", None) is not None:
-            plotted.set_clip_on(True)
 
-            if type(self._background_clip_path) == patches.Rectangle:
-                # convert to generic path to handle possible rotation angle:
-                clip_path = path.Path(self._background_clip_path.get_corners())
-                plotted.set_clip_path(clip_path, transform=self.ax.transData)
-            else:
-                plotted.set_clip_path(self._background_clip_path)
+        if self._background_clip_path is not None:
+            plotted.set_clip_on(True)
+            plotted.set_clip_path(self._background_clip_path)
 
         return plotted
 
