@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, optics, OpticPlot, callables
+from starplot import styles, optics, OpticPlot, callables, Star
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -88,19 +88,9 @@ def check_optic_orion_nebula_refractor():
 
 
 def check_optic_wrapping():
-    style = optic_style.extend(
-        {
-            "star": {
-                "marker": {
-                    "symbol": "star",
-                    "size": 90,
-                }
-            }
-        }
-    )
     optic_plot = OpticPlot(
         ra=23.99,
-        dec=17.2738888889,
+        dec=17.573889,
         lat=32.97,
         lon=-117.038611,
         # use binoculars for a wide TFOV
@@ -109,10 +99,20 @@ def check_optic_wrapping():
             fov=65,
         ),
         dt=dt_dec_16,
-        style=style,
-        resolution=1600,
+        style=optic_style,
+        resolution=2000,
     )
-    optic_plot.stars(mag=12)
+    optic_plot.stars(
+        where=[Star.magnitude <= 12],
+        style__marker__symbol="star",
+        style__marker__size=500,
+    )
+    optic_plot.rectangle(
+        center=(23.9, 17.5),
+        height_degrees=1,
+        width_degrees=2,
+        style__fill_color="red",
+    )
     optic_plot.info()
     filename = DATA_PATH / "optic-wrapping.png"
     optic_plot.export(filename)

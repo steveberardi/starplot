@@ -67,9 +67,9 @@ optic_solar_eclipse_binoculars:
   filename: /starplot/hash_checks/data/optic-binoculars-eclipse.png
   phash: b38ccc3333cccc33
 optic_wrapping:
-  dhash: 8e172b452b338e4d8e172b452b338e4d8e172b452b338e4d
+  dhash: 8e172b511b2b8e4d8e172b6d2d238e4d8e172b6d2d238e4d
   filename: /starplot/hash_checks/data/optic-wrapping.png
-  phash: fa7a80a187d3cad2
+  phash: ba6ec4b193e48a93
 zenith_base:
   dhash: 1379cca69ad469271379eca69ad469271359ac869a947927
   filename: /starplot/hash_checks/data/zenith-base.png
