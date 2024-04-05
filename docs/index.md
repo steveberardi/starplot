@@ -28,12 +28,6 @@ Starplot is a Python library for creating star charts and maps.
 
 Join other starplotters on [Discord :fontawesome-brands-discord:{ .fg-primary }](https://discord.gg/bwazdyD7)
 
-!!! warning "Upgrading from `0.8.x` to `0.9.x`"
-
-    The latest version of Starplot (`0.9.x`) has some major changes from the previous version (`0.8.x`). If you've been using Starplot since before `0.9.x`, then please check out the examples/reference to see what's changed. The major change is that everything must be explicitly plotted now.
-
-    <a href="https://archives.starplot.dev/0.8.4/" rel="nofollow">Docs for 0.8.4 available here</a>
-
 
 *Example charts and maps created with Starplot:*
 <figure markdown>

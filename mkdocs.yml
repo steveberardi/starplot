@@ -19,6 +19,7 @@ nav:
         - OpenNGC: reference-ongc.md
     - Data Sources: data-sources.md
     - License: license.md
+    - Changelog: changelog.md
     - Coming Soon: roadmap.md
     - About: about.md
 
