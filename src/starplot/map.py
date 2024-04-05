@@ -636,7 +636,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             facecolor=self.style.background_color.as_hex(),
             edgecolor=self.style.border_line_color.as_hex(),
             linewidth=8 * self._size_multiplier,
-            zorder=-10_00,
+            zorder=-1_000,
             transform=self.ax.transAxes,
         )
         self.ax.add_patch(background_circle)
@@ -647,7 +647,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             fill=False,
             edgecolor=self.style.border_bg_color.as_hex(),
             linewidth=90 * self._size_multiplier,
-            zorder=5000,
+            zorder=1_000,
             transform=self.ax.transAxes,
         )
         self.ax.add_patch(border_circle)
@@ -658,7 +658,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             fill=False,
             edgecolor=self.style.border_line_color.as_hex(),
             linewidth=8 * self._size_multiplier,
-            zorder=5200,
+            zorder=1_000,
             transform=self.ax.transAxes,
         )
         self.ax.add_patch(border_line_circle)
