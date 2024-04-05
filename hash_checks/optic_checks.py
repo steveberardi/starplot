@@ -103,9 +103,9 @@ def check_optic_wrapping():
         resolution=2000,
     )
     optic_plot.stars(
-        where=[Star.magnitude <= 12],
+        where=[Star.magnitude < 8],
         style__marker__symbol="star",
-        style__marker__size=500,
+        style__marker__size=600,
     )
     optic_plot.rectangle(
         center=(23.9, 17.5),
