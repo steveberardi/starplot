@@ -1,6 +1,8 @@
 from typing import Callable, Mapping
 
 import numpy as np
+
+from matplotlib import patches, path
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
@@ -54,7 +56,7 @@ class StarPlotterMixin:
             else:
                 edge_colors = "none"
 
-        return self.ax.scatter(
+        plotted = self.ax.scatter(
             ras,
             decs,
             sizes,
@@ -66,6 +68,17 @@ class StarPlotterMixin:
             **self._plot_kwargs(),
             **kwargs,
         )
+        if getattr(self, "_background_clip_path", None) is not None:
+            plotted.set_clip_on(True)
+
+            if type(self._background_clip_path) == patches.Rectangle:
+                # convert to generic path to handle possible rotation angle:
+                clip_path = path.Path(self._background_clip_path.get_corners())
+                plotted.set_clip_path(clip_path, transform=self.ax.transData)
+            else:
+                plotted.set_clip_path(self._background_clip_path)
+
+        return plotted
 
     def _star_labels(
         self,

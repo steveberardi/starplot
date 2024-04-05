@@ -625,13 +625,13 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             zorder=5200,
         )
         self.ax.text(0.5, 0.98, "N", **border_font_kwargs)
-        self.ax.text(0.975, 0.5, "W", **border_font_kwargs)
-        self.ax.text(0.0046, 0.5, "E", **border_font_kwargs)
-        self.ax.text(0.5, 0.0046, "S", **border_font_kwargs)
+        self.ax.text(0.9752, 0.5, "W", **border_font_kwargs)
+        self.ax.text(0.00455, 0.5, "E", **border_font_kwargs)
+        self.ax.text(0.5, 0.00456, "S", **border_font_kwargs)
 
         background_circle = patches.Circle(
             (0.5, 0.5),
-            radius=0.474,
+            radius=0.48,
             fill=True,
             facecolor=self.style.background_color.as_hex(),
             edgecolor=self.style.border_line_color.as_hex(),
@@ -640,6 +640,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             transform=self.ax.transAxes,
         )
         self.ax.add_patch(background_circle)
+
+        self._background_clip_path = background_circle
 
         border_circle = patches.Circle(
             (0.5, 0.5),
@@ -658,7 +660,18 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             fill=False,
             edgecolor=self.style.border_line_color.as_hex(),
             linewidth=8 * self._size_multiplier,
-            zorder=1_000,
+            zorder=1_200,
             transform=self.ax.transAxes,
         )
         self.ax.add_patch(border_line_circle)
+
+        inner_border_line_circle = patches.Circle(
+            (0.5, 0.5),
+            radius=0.472,
+            fill=False,
+            edgecolor=self.style.border_line_color.as_hex(),
+            linewidth=4 * self._size_multiplier,
+            zorder=2_000,
+            transform=self.ax.transAxes,
+        )
+        self.ax.add_patch(inner_border_line_circle)

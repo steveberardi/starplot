@@ -174,18 +174,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         )
         return df
 
-    def _scatter_stars(self, *args, **kwargs):
-        """Override StarPlotterMixin _scatter_stars so we can convert to alt/az coords"""
-        plotted = super()._scatter_stars(*args, **kwargs)
-        plotted.set_clip_on(True)
-
-        if type(self._background_clip_path) == patches.Rectangle:
-            # convert to generic path to handle possible rotation angle:
-            clip_path = path.Path(self._background_clip_path.get_corners())
-            plotted.set_clip_path(clip_path, transform=self.ax.transData)
-        else:
-            plotted.set_clip_path(self._background_clip_path)
-
     def stars(
         self,
         mag: float = 6.0,
