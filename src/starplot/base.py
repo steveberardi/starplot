@@ -71,6 +71,7 @@ class BasePlot(ABC):
 
         self.labels = []
         self._labels_rtree = rtree.index.Index()
+        self._background_clip_path = None
 
         self._legend = None
         self._legend_handles = {}
@@ -106,6 +107,11 @@ class BasePlot(ABC):
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
         ax_extent = self.ax.get_window_extent()
         intersection = transforms.Bbox.intersection(ax_extent, extent)
+
+        if self._background_clip_path is not None:
+            if not all(self._background_clip_path.contains_points(extent.get_points())):
+                label.remove()
+                return
 
         if (
             intersection is not None
