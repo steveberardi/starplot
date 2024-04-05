@@ -645,7 +645,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         background_circle = patches.Circle(
             (0.5, 0.5),
-            radius=0.48,
+            radius=0.475,
             fill=True,
             facecolor=self.style.background_color.as_hex(),
             edgecolor=self.style.border_line_color.as_hex(),

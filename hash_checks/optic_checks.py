@@ -62,11 +62,11 @@ def check_optic_solar_eclipse_binoculars():
     return filename
 
 
-def check_optic_double_cluster_refractor():
+def check_optic_orion_nebula_refractor():
     optic_plot = OpticPlot(
-        # double cluster
-        ra=2.33,
-        dec=57.14,
+        # Orion Nebula
+        ra=5.583,
+        dec=-5.383,
         lat=32.97,
         lon=-117.038611,
         # TV-85 with ES 14mm 82deg
@@ -80,8 +80,9 @@ def check_optic_double_cluster_refractor():
         resolution=1600,
     )
     optic_plot.stars(mag=12)
+    optic_plot.nebula()
     optic_plot.info()
-    filename = DATA_PATH / "optic-double-cluster-refractor.png"
+    filename = DATA_PATH / "optic-orion-nebula-refractor.png"
     optic_plot.export(filename)
     return filename
 

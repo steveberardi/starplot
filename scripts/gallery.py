@@ -38,7 +38,7 @@ def zenith():
             ),
             resolution=RESOLUTION,
         )
-        p.constellations(labels=constellations.CONSTELLATIONS_FULL_NAMES)
+        p.constellations()
         p.stars(mag=5.6, where_labels=[Star.magnitude < 2.1])
         p.dsos(mag=9, true_size=True, labels=None)
 

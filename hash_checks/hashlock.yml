@@ -38,10 +38,6 @@ optic_camera_rotated:
   dhash: 25468b33269d9a6525468b33269d9a6525468b33269d9a65
   filename: /starplot/hash_checks/data/optic-camera-rotated-m45.png
   phash: ac6cc6941edb7285
-optic_double_cluster_refractor:
-  dhash: 8e172b552b338e4d8e172b552b338e4d8e172b552b338e4d
-  filename: /starplot/hash_checks/data/optic-double-cluster-refractor.png
-  phash: ea7b84f18693ca92
 optic_m45_binoculars:
   dhash: 8e172b5133338e4d8e172b5133338e4d8e172b5133338e4d
   filename: /starplot/hash_checks/data/optic-m45-binoculars.png
@@ -58,6 +54,10 @@ optic_m45_scope:
   dhash: 8e172b5133338e4d8e172b5133338e4d8e172b5133338e4d
   filename: /starplot/hash_checks/data/optic-m45-scope.png
   phash: ae7b84e48393ce92
+optic_orion_nebula_refractor:
+  dhash: 8e17257163238e4d8e17257163238e4d8e17257163238e4d
+  filename: /starplot/hash_checks/data/optic-orion-nebula-refractor.png
+  phash: ae3a9161c7929e96
 optic_polaris_binoculars:
   dhash: 8e172b512b338e4d8e172b512b338e4d8e172b512b338e4d
   filename: /starplot/hash_checks/data/optic-binoculars-polaris.png
