@@ -7,7 +7,7 @@ import numpy as np
 import rtree
 from adjustText import adjust_text as _adjust_text
 from matplotlib import patches
-from matplotlib import pyplot as plt, patheffects, transforms
+from matplotlib import pyplot as plt, patheffects
 from matplotlib.lines import Line2D
 from pytz import timezone
 from skyfield.api import Angle

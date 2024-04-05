@@ -2,7 +2,6 @@ from typing import Callable, Mapping
 
 import numpy as np
 
-from matplotlib import patches, path
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables

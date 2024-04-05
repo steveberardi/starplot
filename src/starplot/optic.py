@@ -4,7 +4,7 @@ from typing import Callable, Mapping
 import pandas as pd
 
 from cartopy import crs as ccrs
-from matplotlib import pyplot as plt, patches, path
+from matplotlib import pyplot as plt
 from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot import callables
