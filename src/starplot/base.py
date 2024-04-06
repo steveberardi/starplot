@@ -465,27 +465,18 @@ class BasePlot(ABC):
             true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             label: How the Moon will be labeled on the plot and legend
         """
-        earth, moon = self.ephemeris["earth"], self.ephemeris["moon"]
-        astrometric = earth.at(self.timescale).observe(moon)
-        ra, dec, distance = astrometric.radec()
+        m = models.Moon.get(dt=self.dt)
+        m.name = label or m.name
 
-        ra = ra.hours
-        dec = dec.degrees
-
-        if not self.in_bounds(ra, dec):
+        if not self.in_bounds(m.ra, m.dec):
             return
 
-        self._objects.moon = models.Moon(ra=ra, dec=dec, name=label)
+        self._objects.moon = m
 
         if true_size:
-            radius_km = 1_740
-            apparent_diameter_degrees = Angle(
-                radians=np.arcsin(radius_km / distance.km) * 2.0
-            ).degrees
-
             self.circle(
-                (ra, dec),
-                apparent_diameter_degrees,
+                (m.ra, m.dec),
+                m.apparent_size,
                 style=style.marker.to_polygon_style(),
             )
 
@@ -493,16 +484,16 @@ class BasePlot(ABC):
 
             if label:
                 self._text(
-                    ra,
-                    dec,
+                    m.ra,
+                    m.dec,
                     label,
                     **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
                 )
 
         else:
             self.marker(
-                ra=ra,
-                dec=dec,
+                ra=m.ra,
+                dec=m.dec,
                 label=label,
                 style=style,
                 legend_label=legend_label,

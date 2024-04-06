@@ -1,4 +1,4 @@
-from starplot.models import Star, DSO
+from starplot.models import Star, DSO, Moon
 from starplot.models.base import SkyObject
 
 
@@ -7,17 +7,6 @@ class Planet(SkyObject):
 
     name: str
     """Name of the planet"""
-
-    def __init__(self, ra: float, dec: float, name: str) -> None:
-        super().__init__(ra, dec)
-        self.name = name
-
-
-class Moon(SkyObject):
-    """Moon model. Only used for Earth's moon right now, but will potentially represent other planets' moons in future versions."""
-
-    name: str = "Moon"
-    """Name of the moon"""
 
     def __init__(self, ra: float, dec: float, name: str) -> None:
         super().__init__(ra, dec)

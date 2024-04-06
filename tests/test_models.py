@@ -1,6 +1,10 @@
+from datetime import datetime
+
 import pytest
 
-from starplot.models import Star
+from pytz import timezone
+
+from starplot import Star, Moon
 
 
 def test_star_true_expressions():
@@ -52,3 +56,11 @@ def test_model_manager_find():
     bright = Star.find(where=[Star.name.is_in(names)])
     assert len(bright) == 4
     assert set([s.name for s in bright]) == names
+
+
+def test_model_moon_get():
+    dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+    m = Moon.get(dt)
+    assert m.ra == 19.502411822774185
+    assert m.dec == -26.96492167310071
+    assert m.apparent_size == 0.5480758923848209
