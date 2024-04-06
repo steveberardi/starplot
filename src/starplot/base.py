@@ -10,7 +10,6 @@ from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.lines import Line2D
 from pytz import timezone
-from skyfield.api import Angle
 
 from starplot import geod, models
 from starplot.data import load, ecliptic
@@ -514,27 +513,18 @@ class BasePlot(ABC):
             true_size: If True, then the Sun's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             label: How the Sun will be labeled on the plot and legend
         """
-        earth, sun = self.ephemeris["earth"], self.ephemeris["sun"]
-        astrometric = earth.at(self.timescale).observe(sun)
-        ra, dec, distance = astrometric.radec()
+        s = models.Sun.get(dt=self.dt)
+        s.name = label or s.name
 
-        ra = ra.hours
-        dec = dec.degrees
-
-        if not self.in_bounds(ra, dec):
+        if not self.in_bounds(s.ra, s.dec):
             return
 
-        self._objects.sun = models.Sun(ra=ra, dec=dec, name=label)
+        self._objects.sun = s
 
         if true_size:
-            radius_km = 695_700
-            apparent_diameter_degrees = Angle(
-                radians=np.arcsin(radius_km / distance.km) * 2.0
-            ).degrees
-
             self.circle(
-                (ra, dec),
-                apparent_diameter_degrees,
+                (s.ra, s.dec),
+                s.apparent_size,
                 style=style.marker.to_polygon_style(),
             )
 
@@ -542,16 +532,16 @@ class BasePlot(ABC):
 
             if label:
                 self._text(
-                    ra,
-                    dec,
+                    s.ra,
+                    s.dec,
                     label,
                     **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
                 )
 
         else:
             self.marker(
-                ra=ra,
-                dec=dec,
+                ra=s.ra,
+                dec=s.dec,
                 label=label,
                 style=style,
                 legend_label=legend_label,
