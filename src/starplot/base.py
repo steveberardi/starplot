@@ -323,6 +323,81 @@ class BasePlot(ABC):
             plotted_label.set_clip_on(True)
             self._maybe_remove_label(plotted_label)
 
+    @use_style(ObjectStyle)
+    def markers(
+        self,
+        ra: list[float],
+        dec: list[float],
+        style: Union[dict, ObjectStyle],
+        labels: list[str] = None,
+        sizes: list[float] = None,
+        alphas: list[float] = None,
+        colors: list[str] = None,
+        legend_label: str = None,
+    ) -> None:
+        """
+        Plots many markers at once. This can be **much** faster than plotting a lot of markers one by one.
+
+        This function accepts a bunch of list args for specifying the coordinates, labels, sizes,
+        alpha values, and colors of each marker. **Each marker should have the same index across all the lists.**
+        For example, if you wanted to plot three markers with labels and each with a different size:
+
+        ```python
+        p.markers(
+            ra=[1, 2, 3],
+            dec=[0, 5, 10],
+            style=ObjectStyle(),
+            labels=[
+                "Marker 1",
+                "Marker 2",
+                None,  # this marker won't be labeled
+            ],
+            sizes=[10, 20, 4],
+        )
+        ```
+
+        Args:
+            ra: List of right ascensions of the markers
+            dec: List of declinations of the markers
+            style: Styling for the markers
+            labels: List of optional labels for each marker
+            sizes: List of sizes for each marker. If `None`, then each marker will be sized according to the style.
+            alphas: List of alpha values for each marker. If `None`, then each marker's alpha will be what's in the style.
+            colors: List of color values for each marker. If `None`, then each marker's color will be what's in the style.
+            legend_label: How to label the markers in the legend. If `None`, then the marker will not be added to the legend
+
+        """
+        labels = labels or []
+
+        # TODO : create function that translates MANY coords
+        x, y = self._prepare_coords(ra, dec)
+
+        # TODO : optimize this (optic plots will end up calling prepare_coords twice here!)
+        if not self.in_bounds(ra, dec):
+            return
+
+        # Plot markers
+        self.ax.scatter(
+            x,
+            y,
+            **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
+            **self._plot_kwargs(),
+        )
+
+        # Plot labels
+        for i, label in enumerate(labels):
+            plotted_label = self._text(
+                x[i],  # TODO : use transformed coords
+                y[i],
+                label,
+                **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
+            )
+            plotted_label.set_clip_on(True)
+            self._maybe_remove_label(plotted_label)
+
+        if legend_label is not None:
+            self._add_legend_handle_marker(legend_label, style.marker)
+
     @use_style(ObjectStyle, "planets")
     def planets(
         self,
