@@ -58,8 +58,8 @@ class StarPlotterMixin:
         plotted = self.ax.scatter(
             ras,
             decs,
-            sizes,
-            colors,
+            s=sizes,
+            c=colors,
             marker=kwargs.pop("symbol", None) or style.marker.symbol_matplot,
             zorder=kwargs.pop("zorder", None) or style.marker.zorder,
             edgecolors=edge_colors,

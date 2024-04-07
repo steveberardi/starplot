@@ -67,6 +67,13 @@ def use_style(style_class, style_attr: str = None):
                 else:
                     kwargs["style"] = style_class(**styling_overrides)
 
+                # remove 'style__' kwargs so they're not passed to wrapped function
+                kwargs = {
+                    kw: value
+                    for kw, value in kwargs.items()
+                    if not kw.startswith("style__")
+                }
+
             elif style is None and style_attr is not None:
                 # if no style overrides and there's a base style, then just pass the base style
                 kwargs["style"] = getattr(args[0].style, style_attr, None)

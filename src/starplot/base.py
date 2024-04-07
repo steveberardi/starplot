@@ -324,10 +324,9 @@ class BasePlot(ABC):
             self._maybe_remove_label(plotted_label)
 
     @use_style(ObjectStyle)
-    def markers(
+    def _markers(
         self,
-        ra: list[float],
-        dec: list[float],
+        coords: list[tuple[float, float]],
         style: Union[dict, ObjectStyle],
         labels: list[str] = None,
         sizes: list[float] = None,
@@ -344,8 +343,11 @@ class BasePlot(ABC):
 
         ```python
         p.markers(
-            ra=[1, 2, 3],
-            dec=[0, 5, 10],
+            coords=[
+                (1, 0),
+                (2, 5),
+                (3, 10),
+            ],
             style=ObjectStyle(),
             labels=[
                 "Marker 1",
@@ -369,26 +371,40 @@ class BasePlot(ABC):
         """
         labels = labels or []
 
-        # TODO : create function that translates MANY coords
-        x, y = self._prepare_coords(ra, dec)
+        x, y = zip(*[self._prepare_coords(r, d) for r, d in coords])
 
-        # TODO : optimize this (optic plots will end up calling prepare_coords twice here!)
-        if not self.in_bounds(ra, dec):
-            return
+        if sizes:
+            sizes = [s * self._size_multiplier for s in sizes]
+        else:
+            sizes = style.marker.size * self._size_multiplier**2
 
+        if style.marker.edge_color:
+            edge_colors = style.marker.edge_color.as_hex()
+        else:
+            edge_colors = "none"
+
+        print(sizes)
         # Plot markers
-        # TODO : clip path
-        self.ax.scatter(
+        plotted = self.ax.scatter(
             x,
             y,
-            **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
+            sizes,
+            c=colors or style.marker.color.as_hex(),
+            alpha=alphas or style.marker.alpha,
+            marker=style.marker.symbol_matplot,
+            zorder=style.marker.zorder,
+            edgecolors=edge_colors,
             **self._plot_kwargs(),
         )
+
+        if self._background_clip_path is not None:
+            plotted.set_clip_on(True)
+            plotted.set_clip_path(self._background_clip_path)
 
         # Plot labels
         for i, label in enumerate(labels):
             plotted_label = self._text(
-                x[i],  # TODO : use transformed coords
+                x[i],
                 y[i],
                 label,
                 **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
