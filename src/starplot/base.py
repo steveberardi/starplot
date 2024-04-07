@@ -23,6 +23,7 @@ from starplot.styles import (
     LegendStyle,
     PathStyle,
     PolygonStyle,
+    FONT_SCALE,
 )
 from starplot.styles.helpers import use_style
 
@@ -376,15 +377,13 @@ class BasePlot(ABC):
         if sizes:
             sizes = [s * self._size_multiplier for s in sizes]
         else:
-            sizes = style.marker.size * self._size_multiplier**2
+            sizes = (style.marker.size * self._size_multiplier * FONT_SCALE) ** 2
 
         if style.marker.edge_color:
             edge_colors = style.marker.edge_color.as_hex()
         else:
             edge_colors = "none"
 
-        print(sizes)
-        # Plot markers
         plotted = self.ax.scatter(
             x,
             y,
