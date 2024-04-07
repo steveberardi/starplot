@@ -69,6 +69,9 @@ profile:
 	$(DOCKER_RUN) "python -m cProfile -o temp/results.prof scripts/scratchpad.py && \
 	snakeviz -s -p 8080 -H 0.0.0.0 temp/results.prof"
 
+version:
+	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"
+
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------
