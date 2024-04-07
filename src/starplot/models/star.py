@@ -2,7 +2,6 @@ from typing import Optional
 
 import numpy as np
 
-from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject, SkyObjectManager
 from starplot.data.stars import StarCatalog, STAR_NAMES, load as _load_stars
 
@@ -25,7 +24,7 @@ class StarManager(SkyObjectManager):
             yield obj
 
 
-class Star(SkyObject, CreateMapMixin, CreateOpticMixin):
+class Star(SkyObject):
     """
     Star model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting stars.
     So, you can use any attributes of this model in your callables. Note that some may be null.
@@ -61,7 +60,7 @@ class Star(SkyObject, CreateMapMixin, CreateOpticMixin):
         self.name = name
 
     @classmethod
-    def get(**kwargs):
+    def get(**kwargs) -> "Star":
         """
         Get a Star, by matching its attributes.
 

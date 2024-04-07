@@ -10,11 +10,10 @@ from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.lines import Line2D
 from pytz import timezone
-from skyfield.api import Angle
 
 from starplot import geod, models
 from starplot.data import load, ecliptic
-from starplot.data.planets import Planet, get_planet_positions, PLANET_LABELS_DEFAULT
+from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.styles import (
     PlotStyle,
     MarkerStyle,
@@ -67,6 +66,7 @@ class BasePlot(ABC):
         self.hide_colliding_labels = hide_colliding_labels
 
         self.dt = dt or timezone("UTC").localize(datetime.now())
+        self._ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
 
         self.labels = []
@@ -323,12 +323,88 @@ class BasePlot(ABC):
             plotted_label.set_clip_on(True)
             self._maybe_remove_label(plotted_label)
 
+    @use_style(ObjectStyle)
+    def markers(
+        self,
+        ra: list[float],
+        dec: list[float],
+        style: Union[dict, ObjectStyle],
+        labels: list[str] = None,
+        sizes: list[float] = None,
+        alphas: list[float] = None,
+        colors: list[str] = None,
+        legend_label: str = None,
+    ) -> None:
+        """
+        Plots many markers at once. This can be **much** faster than plotting a lot of markers one by one.
+
+        This function accepts a bunch of list args for specifying the coordinates, labels, sizes,
+        alpha values, and colors of each marker. **Each marker should have the same index across all the lists.**
+        For example, if you wanted to plot three markers with labels and each with a different size:
+
+        ```python
+        p.markers(
+            ra=[1, 2, 3],
+            dec=[0, 5, 10],
+            style=ObjectStyle(),
+            labels=[
+                "Marker 1",
+                "Marker 2",
+                None,  # this marker won't be labeled
+            ],
+            sizes=[10, 20, 4],
+        )
+        ```
+
+        Args:
+            ra: List of right ascensions of the markers
+            dec: List of declinations of the markers
+            style: Styling for the markers
+            labels: List of optional labels for each marker
+            sizes: List of sizes for each marker. If `None`, then each marker will be sized according to the style.
+            alphas: List of alpha values for each marker. If `None`, then each marker's alpha will be what's in the style.
+            colors: List of color values for each marker. If `None`, then each marker's color will be what's in the style.
+            legend_label: How to label the markers in the legend. If `None`, then the marker will not be added to the legend
+
+        """
+        labels = labels or []
+
+        # TODO : create function that translates MANY coords
+        x, y = self._prepare_coords(ra, dec)
+
+        # TODO : optimize this (optic plots will end up calling prepare_coords twice here!)
+        if not self.in_bounds(ra, dec):
+            return
+
+        # Plot markers
+        # TODO : clip path
+        self.ax.scatter(
+            x,
+            y,
+            **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
+            **self._plot_kwargs(),
+        )
+
+        # Plot labels
+        for i, label in enumerate(labels):
+            plotted_label = self._text(
+                x[i],  # TODO : use transformed coords
+                y[i],
+                label,
+                **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
+            )
+            plotted_label.set_clip_on(True)
+            self._maybe_remove_label(plotted_label)
+
+        if legend_label is not None:
+            self._add_legend_handle_marker(legend_label, style.marker)
+
     @use_style(ObjectStyle, "planets")
     def planets(
         self,
         style: ObjectStyle = None,
         true_size: bool = False,
-        labels: Dict[Planet, str] = PLANET_LABELS_DEFAULT,
+        labels: Dict[PlanetName, str] = PLANET_LABELS_DEFAULT,
         legend_label: str = "Planet",
     ) -> None:
         """Plots the planets
@@ -336,31 +412,30 @@ class BasePlot(ABC):
         Args:
             style: Styling of the planets. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then each planet's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
-            labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.data.planets.Planet])
+            labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.models.planet.PlanetName])
             legend_label: How to label the planets in the legend. If `None`, then the planets will not be added to the legend
         """
         labels = labels or {}
-        planets = get_planet_positions(self.timescale, ephemeris=self.ephemeris)
+        planets = models.Planet.all(self.dt, self._ephemeris_name)
 
-        for p, planet_data in planets.items():
-            ra, dec, apparent_size_degrees = planet_data
-            label = labels.get(p)
+        for p in planets:
+            label = labels.get(p.name)
 
-            if self.in_bounds(ra, dec):
-                self._objects.planets.append(models.Planet(name=label, ra=ra, dec=dec))
+            if self.in_bounds(p.ra, p.dec):
+                self._objects.planets.append(p)
 
             if true_size:
                 self.circle(
-                    (ra, dec),
-                    apparent_size_degrees,
+                    (p.ra, p.dec),
+                    p.apparent_size,
                     style.marker.to_polygon_style(),
                 )
                 self._add_legend_handle_marker(legend_label, style.marker)
 
                 if label:
                     self._text(
-                        ra,
-                        dec,
+                        p.ra,
+                        p.dec,
                         label.upper(),
                         **style.label.matplot_kwargs(
                             size_multiplier=self._size_multiplier
@@ -368,8 +443,8 @@ class BasePlot(ABC):
                     )
             else:
                 self.marker(
-                    ra=ra,
-                    dec=dec,
+                    ra=p.ra,
+                    dec=p.dec,
                     label=label.upper() if label else None,
                     style=style,
                     legend_label=legend_label,
@@ -390,27 +465,18 @@ class BasePlot(ABC):
             true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             label: How the Moon will be labeled on the plot and legend
         """
-        earth, moon = self.ephemeris["earth"], self.ephemeris["moon"]
-        astrometric = earth.at(self.timescale).observe(moon)
-        ra, dec, distance = astrometric.radec()
+        m = models.Moon.get(dt=self.dt, ephemeris=self._ephemeris_name)
+        m.name = label or m.name
 
-        ra = ra.hours
-        dec = dec.degrees
-
-        if not self.in_bounds(ra, dec):
+        if not self.in_bounds(m.ra, m.dec):
             return
 
-        self._objects.moon = models.Moon(ra=ra, dec=dec, name=label)
+        self._objects.moon = m
 
         if true_size:
-            radius_km = 1_740
-            apparent_diameter_degrees = Angle(
-                radians=np.arcsin(radius_km / distance.km) * 2.0
-            ).degrees
-
             self.circle(
-                (ra, dec),
-                apparent_diameter_degrees,
+                (m.ra, m.dec),
+                m.apparent_size,
                 style=style.marker.to_polygon_style(),
             )
 
@@ -418,16 +484,16 @@ class BasePlot(ABC):
 
             if label:
                 self._text(
-                    ra,
-                    dec,
+                    m.ra,
+                    m.dec,
                     label,
                     **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
                 )
 
         else:
             self.marker(
-                ra=ra,
-                dec=dec,
+                ra=m.ra,
+                dec=m.dec,
                 label=label,
                 style=style,
                 legend_label=legend_label,
@@ -448,27 +514,18 @@ class BasePlot(ABC):
             true_size: If True, then the Sun's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             label: How the Sun will be labeled on the plot and legend
         """
-        earth, sun = self.ephemeris["earth"], self.ephemeris["sun"]
-        astrometric = earth.at(self.timescale).observe(sun)
-        ra, dec, distance = astrometric.radec()
+        s = models.Sun.get(dt=self.dt)
+        s.name = label or s.name
 
-        ra = ra.hours
-        dec = dec.degrees
-
-        if not self.in_bounds(ra, dec):
+        if not self.in_bounds(s.ra, s.dec):
             return
 
-        self._objects.sun = models.Sun(ra=ra, dec=dec, name=label)
+        self._objects.sun = s
 
         if true_size:
-            radius_km = 695_700
-            apparent_diameter_degrees = Angle(
-                radians=np.arcsin(radius_km / distance.km) * 2.0
-            ).degrees
-
             self.circle(
-                (ra, dec),
-                apparent_diameter_degrees,
+                (s.ra, s.dec),
+                s.apparent_size,
                 style=style.marker.to_polygon_style(),
             )
 
@@ -476,16 +533,16 @@ class BasePlot(ABC):
 
             if label:
                 self._text(
-                    ra,
-                    dec,
+                    s.ra,
+                    s.dec,
                     label,
                     **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
                 )
 
         else:
             self.marker(
-                ra=ra,
-                dec=dec,
+                ra=s.ra,
+                dec=s.dec,
                 label=label,
                 style=style,
                 legend_label=legend_label,

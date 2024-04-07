@@ -89,7 +89,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
 
     @classmethod
-    def get(**kwargs):
+    def get(**kwargs) -> "DSO":
         """
         Get a DSO, by matching its attributes.
 

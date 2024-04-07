@@ -46,6 +46,9 @@ check-hashes:
 lock-hashes:
 	$(DOCKER_RUN) "python hash_checks/hashio.py lock"
 
+mypy:
+	$(DOCKER_RUN) "mypy --ignore-missing-imports src/starplot/"
+
 bash:
 	$(DOCKER_RUN) bash
 
