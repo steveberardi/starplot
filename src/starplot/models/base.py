@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-# from starplot.models.meta import Meta
+from starplot.mixins import CreateMapMixin, CreateOpticMixin
 
 
 class Expression:
@@ -93,7 +93,7 @@ class Meta(type):
         return Term(attr)
 
 
-class SkyObject(metaclass=Meta):
+class SkyObject(CreateMapMixin, CreateOpticMixin, metaclass=Meta):
     """
     Basic sky object model.
     """

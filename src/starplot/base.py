@@ -435,7 +435,7 @@ class BasePlot(ABC):
                     self._text(
                         p.ra,
                         p.dec,
-                        p.label.upper(),
+                        label.upper(),
                         **style.label.matplot_kwargs(
                             size_multiplier=self._size_multiplier
                         ),
