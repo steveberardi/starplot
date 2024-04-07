@@ -15,7 +15,7 @@ class SunManager(SkyObjectManager):
         raise NotImplementedError
 
     @classmethod
-    def get(cls, dt, ephemeris: str = "de421_2001.bsp"):
+    def get(cls, dt, ephemeris: str = "de421_2001.bsp") -> "Sun":
         RADIUS_KM = 695_700
 
         ephemeris = load(ephemeris)
@@ -53,7 +53,7 @@ class Sun(SkyObject):
         self.apparent_size = apparent_size
 
     @classmethod
-    def get(dt, ephemeris: str = "de421_2001.bsp"):
+    def get(dt, ephemeris: str = "de421_2001.bsp") -> "Sun":
         """
         Get the Sun for a specific date/time.
 

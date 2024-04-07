@@ -13,7 +13,7 @@ from pytz import timezone
 
 from starplot import geod, models
 from starplot.data import load, ecliptic
-from starplot.data.planets import Planet, get_planet_positions, PLANET_LABELS_DEFAULT
+from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.styles import (
     PlotStyle,
     MarkerStyle,
@@ -66,6 +66,7 @@ class BasePlot(ABC):
         self.hide_colliding_labels = hide_colliding_labels
 
         self.dt = dt or timezone("UTC").localize(datetime.now())
+        self._ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
 
         self.labels = []
@@ -402,7 +403,7 @@ class BasePlot(ABC):
         self,
         style: ObjectStyle = None,
         true_size: bool = False,
-        labels: Dict[Planet, str] = PLANET_LABELS_DEFAULT,
+        labels: Dict[PlanetName, str] = PLANET_LABELS_DEFAULT,
         legend_label: str = "Planet",
     ) -> None:
         """Plots the planets
@@ -410,40 +411,39 @@ class BasePlot(ABC):
         Args:
             style: Styling of the planets. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then each planet's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
-            labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.data.planets.Planet])
+            labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.models.planet.PlanetName])
             legend_label: How to label the planets in the legend. If `None`, then the planets will not be added to the legend
         """
         labels = labels or {}
-        planets = get_planet_positions(self.timescale, ephemeris=self.ephemeris)
+        planets = models.Planet.all(self.dt, self._ephemeris_name)
 
-        for p, planet_data in planets.items():
-            ra, dec, apparent_size_degrees = planet_data
-            label = labels.get(p)
+        for p in planets:
+            label = labels.get(p.name)
 
-            if self.in_bounds(ra, dec):
-                self._objects.planets.append(models.Planet(name=label, ra=ra, dec=dec))
+            if self.in_bounds(p.ra, p.dec):
+                self._objects.planets.append(p)
 
             if true_size:
                 self.circle(
-                    (ra, dec),
-                    apparent_size_degrees,
+                    (p.ra, p.dec),
+                    p.apparent_size,
                     style.marker.to_polygon_style(),
                 )
                 self._add_legend_handle_marker(legend_label, style.marker)
 
                 if label:
                     self._text(
-                        ra,
-                        dec,
-                        label.upper(),
+                        p.ra,
+                        p.dec,
+                        p.label.upper(),
                         **style.label.matplot_kwargs(
                             size_multiplier=self._size_multiplier
                         ),
                     )
             else:
                 self.marker(
-                    ra=ra,
-                    dec=dec,
+                    ra=p.ra,
+                    dec=p.dec,
                     label=label.upper() if label else None,
                     style=style,
                     legend_label=legend_label,
@@ -464,7 +464,7 @@ class BasePlot(ABC):
             true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             label: How the Moon will be labeled on the plot and legend
         """
-        m = models.Moon.get(dt=self.dt)
+        m = models.Moon.get(dt=self.dt, ephemeris=self._ephemeris_name)
         m.name = label or m.name
 
         if not self.in_bounds(m.ra, m.dec):

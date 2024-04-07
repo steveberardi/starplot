@@ -61,7 +61,7 @@ class Star(SkyObject, CreateMapMixin, CreateOpticMixin):
         self.name = name
 
     @classmethod
-    def get(**kwargs):
+    def get(**kwargs) -> "Star":
         """
         Get a Star, by matching its attributes.
 

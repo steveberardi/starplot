@@ -53,7 +53,7 @@ class Moon(SkyObject):
         self.apparent_size = apparent_size
 
     @classmethod
-    def get(dt, ephemeris: str = "de421_2001.bsp"):
+    def get(dt, ephemeris: str = "de421_2001.bsp") -> "Moon":
         """
         Get the Moon for a specific date/time.
 
