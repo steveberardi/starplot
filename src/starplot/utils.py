@@ -130,5 +130,7 @@ def bv_to_hex_color(bv_index):
 
 
 def azimuth_to_string(azimuth_degrees: int):
+    if azimuth_degrees >= 360:
+        azimuth_degrees -= 360
     direction_strings = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"]
     return direction_strings[int(azimuth_degrees / 40)]

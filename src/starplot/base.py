@@ -377,6 +377,7 @@ class BasePlot(ABC):
             return
 
         # Plot markers
+        # TODO : clip path
         self.ax.scatter(
             x,
             y,
