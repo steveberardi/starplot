@@ -1,4 +1,7 @@
 import math
+from datetime import datetime
+
+from pytz import timezone
 
 
 def in_circle(x, y, center_x=0, center_y=0, radius=0.9) -> bool:
@@ -126,3 +129,7 @@ def azimuth_to_string(azimuth_degrees: int):
         azimuth_degrees -= 360
     direction_strings = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"]
     return direction_strings[int(azimuth_degrees / 40)]
+
+
+def dt_or_now(dt):
+    return dt or timezone("UTC").localize(datetime.now())

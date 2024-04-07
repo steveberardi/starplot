@@ -1,8 +1,11 @@
+from datetime import datetime
+
 import numpy as np
 from skyfield.api import Angle
 
 from starplot.data import load
 from starplot.models.base import SkyObject, SkyObjectManager
+from starplot.utils import dt_or_now
 
 
 class MoonManager(SkyObjectManager):
@@ -15,9 +18,10 @@ class MoonManager(SkyObjectManager):
         raise NotImplementedError
 
     @classmethod
-    def get(cls, dt, ephemeris: str = "de421_2001.bsp"):
+    def get(cls, dt: datetime = None, ephemeris: str = "de421_2001.bsp"):
         RADIUS_KM = 1_740
 
+        dt = dt_or_now(dt)
         ephemeris = load(ephemeris)
         timescale = load.timescale().from_datetime(dt)
         earth, moon = ephemeris["earth"], ephemeris["moon"]
@@ -53,12 +57,12 @@ class Moon(SkyObject):
         self.apparent_size = apparent_size
 
     @classmethod
-    def get(dt, ephemeris: str = "de421_2001.bsp") -> "Moon":
+    def get(dt: datetime = None, ephemeris: str = "de421_2001.bsp") -> "Moon":
         """
         Get the Moon for a specific date/time.
 
         Args:
-            dt: Datetime you want the moon for (must be timezone aware!)
+            dt: Datetime you want the moon for (must be timezone aware!). _Defaults to current UTC time_.
             ephemeris: Ephemeris to use for calculating moon positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
         pass

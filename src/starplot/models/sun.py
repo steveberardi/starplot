@@ -1,8 +1,11 @@
+from datetime import datetime
+
 import numpy as np
 from skyfield.api import Angle
 
 from starplot.data import load
 from starplot.models.base import SkyObject, SkyObjectManager
+from starplot.utils import dt_or_now
 
 
 class SunManager(SkyObjectManager):
@@ -15,9 +18,10 @@ class SunManager(SkyObjectManager):
         raise NotImplementedError
 
     @classmethod
-    def get(cls, dt, ephemeris: str = "de421_2001.bsp") -> "Sun":
+    def get(cls, dt: datetime = None, ephemeris: str = "de421_2001.bsp") -> "Sun":
         RADIUS_KM = 695_700
 
+        dt = dt_or_now(dt)
         ephemeris = load(ephemeris)
         timescale = load.timescale().from_datetime(dt)
         earth, moon = ephemeris["earth"], ephemeris["sun"]
@@ -53,12 +57,12 @@ class Sun(SkyObject):
         self.apparent_size = apparent_size
 
     @classmethod
-    def get(dt, ephemeris: str = "de421_2001.bsp") -> "Sun":
+    def get(dt: datetime = None, ephemeris: str = "de421_2001.bsp") -> "Sun":
         """
         Get the Sun for a specific date/time.
 
         Args:
-            dt: Datetime you want the Sun for (must be timezone aware!)
+            dt: Datetime you want the Sun for (must be timezone aware!). _Defaults to current UTC time_.
             ephemeris: Ephemeris to use for calculating Sun/moon/planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
         pass

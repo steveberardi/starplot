@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import Iterator
 
@@ -7,6 +8,7 @@ from skyfield.api import Angle
 
 from starplot.data import load
 from starplot.models.base import SkyObject, SkyObjectManager
+from starplot.utils import dt_or_now
 
 
 class PlanetName(str, Enum):
@@ -43,7 +45,8 @@ Retrieved on 28-Jan-2024
 
 class PlanetManager(SkyObjectManager):
     @classmethod
-    def all(cls, dt, ephemeris: str = "de421_2001.bsp"):
+    def all(cls, dt: datetime = None, ephemeris: str = "de421_2001.bsp"):
+        dt = dt_or_now(dt)
         ephemeris = load(ephemeris)
         timescale = load.timescale().from_datetime(dt)
         earth = ephemeris["earth"]
@@ -72,7 +75,8 @@ class PlanetManager(SkyObjectManager):
         raise NotImplementedError
 
     @classmethod
-    def get(cls, name: str, dt, ephemeris: str = "de421_2001.bsp"):
+    def get(cls, name: str, dt: datetime = None, ephemeris: str = "de421_2001.bsp"):
+        dt = dt_or_now(dt)
         for p in cls.all(dt, ephemeris):
             if p.name == name:
                 return p
@@ -97,23 +101,25 @@ class Planet(SkyObject):
         self.apparent_size = apparent_size
 
     @classmethod
-    def all(dt, ephemeris: str = "de421_2001.bsp") -> Iterator["Planet"]:
+    def all(
+        dt: datetime = None, ephemeris: str = "de421_2001.bsp"
+    ) -> Iterator["Planet"]:
         """
         Iterator for getting all planets at a specific date/time.
 
         Args:
-            dt: Datetime you want the planets for (must be timezone aware!)
+            dt: Datetime you want the planets for (must be timezone aware!). _Defaults to current UTC time_.
             ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
         pass
 
     @classmethod
-    def get(dt, ephemeris: str = "de421_2001.bsp") -> "Planet":
+    def get(dt: datetime = None, ephemeris: str = "de421_2001.bsp") -> "Planet":
         """
         Get a planet for a specific date/time.
 
         Args:
-            dt: Datetime you want the planet for (must be timezone aware!)
+            dt: Datetime you want the planet for (must be timezone aware!). _Defaults to current UTC time_.
             ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
         pass
