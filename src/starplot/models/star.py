@@ -2,7 +2,6 @@ from typing import Optional
 
 import numpy as np
 
-from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject, SkyObjectManager
 from starplot.data.stars import StarCatalog, STAR_NAMES, load as _load_stars
 
