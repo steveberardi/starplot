@@ -52,10 +52,14 @@ def test_lon_to_ra(lon, ra):
         (0.74, "#ffeddb"),
         (1.21, "#ffdfb8"),
         (1.85, "#ffa94b"),
+        (5, None),
     ],
 )
 def test_bv_to_hex_color(bv, hexcolor):
-    assert utils.bv_to_hex_color(bv) == hexcolor
+    if hexcolor is None:
+        assert utils.bv_to_hex_color(bv) is None
+    else:
+        assert utils.bv_to_hex_color(bv) == hexcolor
 
 
 @pytest.mark.parametrize(
