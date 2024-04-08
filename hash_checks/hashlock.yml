@@ -6,6 +6,10 @@ map_custom_stars:
   dhash: 5cb129cece2e84485cb129cece2e84485cb129cece2e8448
   filename: /starplot/hash_checks/data/map-custom-stars.png
   phash: a6c9d93487253ec6
+map_many_markers:
+  dhash: 0000e0380e8380068000c4300e4380068000c0700c838104
+  filename: /starplot/hash_checks/data/map-many-markers.png
+  phash: 8095ce6a371f0ff0
 map_mollweide:
   dhash: 0b297b63233307070b297b63233307072b297b6323330707
   filename: /starplot/hash_checks/data/map-mollweide.png

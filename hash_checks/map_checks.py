@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import datetime
 
+import numpy as np
 from pytz import timezone
 
 from starplot import styles, DSO
@@ -268,4 +269,42 @@ def check_map_mollweide():
     p.milky_way()
     p.gridlines(labels=False)
     p.export(filename, padding=0.1)
+    return filename
+
+
+def check_map_many_markers():
+    filename = DATA_PATH / "map-many-markers.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.GRAYSCALE,
+        styles.extensions.MAP,
+    )
+    style.star.marker.symbol = "circle_plus"
+    style.star.marker.size = 20
+
+    p = MapPlot(
+        projection=Projection.MERCATOR,
+        ra_min=4,
+        ra_max=8,
+        dec_min=6,
+        dec_max=20,
+        style=style,
+        resolution=RESOLUTION,
+    )
+    coords = [(r, r * 2) for r in np.linspace(4, 8, num=10)]
+    labels = [f"C{i}" for i, _ in enumerate(coords)]
+
+    p.markers(
+        coords=coords,
+        labels=labels,
+        style__marker__symbol="circle_plus",
+        style__marker__size=20,
+        style__marker__fill="full",
+        style__marker__color="blue",
+        style__label__font_color="red",
+        style__label__font_weight="bold",
+        style__label__font_size=18,
+    )
+
+    p.export(filename, padding=0.3)
     return filename

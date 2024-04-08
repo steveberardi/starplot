@@ -325,8 +325,8 @@ class BasePlot(ABC):
     def markers(
         self,
         coords: list[tuple[float, float]],
+        labels: list[str],
         style: Union[dict, ObjectStyle],
-        labels: list[str] = None,
         legend_label: str = None,
     ) -> None:
         """
@@ -334,8 +334,8 @@ class BasePlot(ABC):
 
         Args:
             coords: List of coordinates for markers (RA, DEC)
+            labels: List of labels for each marker
             style: Styling for the markers
-            labels: List of optional labels for each marker
             legend_label: How to label the markers in the legend. If `None`, then the marker will not be added to the legend
 
         """
