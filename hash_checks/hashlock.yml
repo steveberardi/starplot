@@ -1,7 +1,7 @@
 map_coma_berenices_dso_size:
-  dhash: c4a4a292c8a084a084a69292caa29494828eb292aaa28c82
+  dhash: c4a4a292c4a084a084a69292cca2948482aeb292aaa28c82
   filename: /starplot/hash_checks/data/map-coma-berenices-dso-size.png
-  phash: c56d16963b696992
+  phash: c56916963b696996
 map_custom_stars:
   dhash: 5cb129cece2e84485cb129cece2e84485cb129cece2e8448
   filename: /starplot/hash_checks/data/map-custom-stars.png
@@ -15,9 +15,9 @@ map_orion_base:
   filename: /starplot/hash_checks/data/map-orion-base.png
   phash: be79d9260785748c
 map_orion_extra:
-  dhash: 1c1b3b7f2e646c071c1b1a6b2e646c071c1b3b6b2e646c07
+  dhash: 1c1b3b7f2e646c071c1b1a6b2f646c071c1b3b6b2e646c07
   filename: /starplot/hash_checks/data/map-orion-extra.png
-  phash: be71d016e11fe494
+  phash: be71d01ee11fe490
 map_scope_bino_fov:
   dhash: 0bc080848c8080802bc4b2ac4da8928c2bc4b2ac4da8928c
   filename: /starplot/hash_checks/data/map-scope-bino-fov.png
@@ -27,9 +27,9 @@ map_stereo_base:
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
   phash: 9dce7972429062fa
 map_with_planets:
-  dhash: 629115e7899b323b629115e7c99b323b629115efc99b323b
+  dhash: 62930567899b323b62930566899b323b62930566899b323b
   filename: /starplot/hash_checks/data/map-mercator-planets.png
-  phash: e9469d89862c7f92
+  phash: e8469d89a67c5f12
 map_wrapping:
   dhash: 16295d256546211516295d256546211516295d2565462115
   filename: /starplot/hash_checks/data/map-wrapping.png

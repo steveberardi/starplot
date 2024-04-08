@@ -23,7 +23,6 @@ from starplot.styles import (
     LegendStyle,
     PathStyle,
     PolygonStyle,
-    FONT_SCALE,
 )
 from starplot.styles.helpers import use_style
 
@@ -305,68 +304,38 @@ class BasePlot(ABC):
             **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
             **self._plot_kwargs(),
             linestyle="None",
+            clip_on=True,
+            clip_path=self._background_clip_path,
         )
+
+        if label:
+            self._text(
+                ra,
+                dec,
+                label,
+                **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
+                ha="left",
+                va="top",
+            )
 
         if legend_label is not None:
             self._add_legend_handle_marker(legend_label, style.marker)
 
-        if label:
-            plotted_label = self.ax.text(
-                x,
-                y,
-                label,
-                **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
-                **self._plot_kwargs(),
-                path_effects=[self.text_border],
-                va="bottom",
-                ha="left",
-            )
-            plotted_label.set_clip_on(True)
-            self._maybe_remove_label(plotted_label)
-
     @use_style(ObjectStyle)
-    def _markers(
+    def markers(
         self,
         coords: list[tuple[float, float]],
         style: Union[dict, ObjectStyle],
         labels: list[str] = None,
-        sizes: list[float] = None,
-        alphas: list[float] = None,
-        colors: list[str] = None,
         legend_label: str = None,
     ) -> None:
         """
         Plots many markers at once. This can be **much** faster than plotting a lot of markers one by one.
 
-        This function accepts a bunch of list args for specifying the coordinates, labels, sizes,
-        alpha values, and colors of each marker. **Each marker should have the same index across all the lists.**
-        For example, if you wanted to plot three markers with labels and each with a different size:
-
-        ```python
-        p.markers(
-            coords=[
-                (1, 0),
-                (2, 5),
-                (3, 10),
-            ],
-            style=ObjectStyle(),
-            labels=[
-                "Marker 1",
-                "Marker 2",
-                None,  # this marker won't be labeled
-            ],
-            sizes=[10, 20, 4],
-        )
-        ```
-
         Args:
-            ra: List of right ascensions of the markers
-            dec: List of declinations of the markers
+            coords: List of coordinates for markers (RA, DEC)
             style: Styling for the markers
             labels: List of optional labels for each marker
-            sizes: List of sizes for each marker. If `None`, then each marker will be sized according to the style.
-            alphas: List of alpha values for each marker. If `None`, then each marker's alpha will be what's in the style.
-            colors: List of color values for each marker. If `None`, then each marker's color will be what's in the style.
             legend_label: How to label the markers in the legend. If `None`, then the marker will not be added to the legend
 
         """
@@ -374,42 +343,27 @@ class BasePlot(ABC):
 
         x, y = zip(*[self._prepare_coords(r, d) for r, d in coords])
 
-        if sizes:
-            sizes = [s * self._size_multiplier for s in sizes]
-        else:
-            sizes = (style.marker.size * self._size_multiplier * FONT_SCALE) ** 2
-
-        if style.marker.edge_color:
-            edge_colors = style.marker.edge_color.as_hex()
-        else:
-            edge_colors = "none"
-
-        plotted = self.ax.scatter(
+        self.ax.plot(
             x,
             y,
-            sizes,
-            c=colors or style.marker.color.as_hex(),
-            alpha=alphas or style.marker.alpha,
-            marker=style.marker.symbol_matplot,
-            zorder=style.marker.zorder,
-            edgecolors=edge_colors,
+            **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
             **self._plot_kwargs(),
+            linestyle="None",
+            clip_on=True,
+            clip_path=self._background_clip_path,
         )
-
-        if self._background_clip_path is not None:
-            plotted.set_clip_on(True)
-            plotted.set_clip_path(self._background_clip_path)
 
         # Plot labels
         for i, label in enumerate(labels):
-            plotted_label = self._text(
-                x[i],
-                y[i],
+            ra, dec = coords[i]
+            self._text(
+                ra,
+                dec,
                 label,
                 **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
+                ha="left",
+                va="top",
             )
-            plotted_label.set_clip_on(True)
-            self._maybe_remove_label(plotted_label)
 
         if legend_label is not None:
             self._add_legend_handle_marker(legend_label, style.marker)
