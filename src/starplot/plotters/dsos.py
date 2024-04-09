@@ -123,8 +123,6 @@ class DsoPlotterMixin:
 
         # TODO: add kwarg styles
 
-        # TODO: sort by type, and plot markers together (for better performance)
-
         self.logger.debug("Plotting DSOs...")
 
         where = where or []
@@ -163,7 +161,7 @@ class DsoPlotterMixin:
                 [
                     style is None,
                     not all([e.evaluate(_dso) for e in where]),
-                    not self.in_bounds(ra / 15, dec),
+                    # not self.in_bounds(ra / 15, dec),
                 ]
             ):
                 continue
@@ -224,6 +222,7 @@ class DsoPlotterMixin:
                     dec=dec,
                     label=label,
                     style=style,
+                    skip_bounds_check=True,
                 )
 
             self._objects.dsos.append(_dso)

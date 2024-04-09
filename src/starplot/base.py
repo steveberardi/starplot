@@ -143,6 +143,9 @@ class BasePlot(ABC):
             )
 
     def _text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
+        if not text:
+            return
+
         x, y = self._prepare_coords(ra, dec)
         kwargs["path_effects"] = kwargs.get("path_effects") or [self.text_border]
         label = self.ax.text(
@@ -281,6 +284,7 @@ class BasePlot(ABC):
         label: str,
         style: Union[dict, ObjectStyle],
         legend_label: str = None,
+        skip_bounds_check: bool = False,
     ) -> None:
         """Plots a marker
 
@@ -290,13 +294,14 @@ class BasePlot(ABC):
             label: Label for the marker
             style: Styling for the marker
             legend_label: How to label the marker in the legend. If `None`, then the marker will not be added to the legend
+            skip_bounds_check: If True, then don't check the marker coordinates to ensure they're within the bounds of the plot. If you're plotting many markers, setting this to True can speed up plotting time.
 
         """
-        x, y = self._prepare_coords(ra, dec)
 
-        # TODO : optimize this (optic plots will end up calling prepare_coords twice here!)
-        if not self.in_bounds(ra, dec):
+        if not skip_bounds_check and not self.in_bounds(ra, dec):
             return
+
+        x, y = self._prepare_coords(ra, dec)
 
         self.ax.plot(
             x,
@@ -309,53 +314,6 @@ class BasePlot(ABC):
         )
 
         if label:
-            self._text(
-                ra,
-                dec,
-                label,
-                **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
-                ha="left",
-                va="top",
-            )
-
-        if legend_label is not None:
-            self._add_legend_handle_marker(legend_label, style.marker)
-
-    @use_style(ObjectStyle)
-    def markers(
-        self,
-        coords: list[tuple[float, float]],
-        labels: list[str],
-        style: Union[dict, ObjectStyle],
-        legend_label: str = None,
-    ) -> None:
-        """
-        Plots many markers at once. This can be **much** faster than plotting a lot of markers one by one.
-
-        Args:
-            coords: List of coordinates for markers (RA, DEC)
-            labels: List of labels for each marker
-            style: Styling for the markers
-            legend_label: How to label the markers in the legend. If `None`, then the marker will not be added to the legend
-
-        """
-        labels = labels or []
-
-        x, y = zip(*[self._prepare_coords(r, d) for r, d in coords])
-
-        self.ax.plot(
-            x,
-            y,
-            **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
-            **self._plot_kwargs(),
-            linestyle="None",
-            clip_on=True,
-            clip_path=self._background_clip_path,
-        )
-
-        # Plot labels
-        for i, label in enumerate(labels):
-            ra, dec = coords[i]
             self._text(
                 ra,
                 dec,
