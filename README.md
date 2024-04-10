@@ -79,11 +79,10 @@ https://discord.gg/bwazdyD7
 - adjustText
 
 ## Coming Soon
+- 🌑 Planet moons
 - ✴️ Custom markers
-- 📋 List of objects plotted
 - 📐 More Nebula outline levels
 - ⚖️ Better auto font-size adjustment
-- ☄️ Better label collision detection and handling
 
 See more details on the [Public Roadmap](https://starplot.notion.site/aaa0dd71c17943f89850c9a8c43ade50)
 
