@@ -193,9 +193,7 @@ class StarPlotterMixin:
                 obj.hip = hip_id
                 obj.name = STAR_NAMES.get(hip_id)
 
-            if not all([e.evaluate(obj) for e in where]) or not self._in_bounds_xy(
-                star.x, star.y
-            ):
+            if not all([e.evaluate(obj) for e in where]):
                 continue
 
             size = size_fn(obj) * star_size_multiplier

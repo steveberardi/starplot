@@ -11,8 +11,12 @@ DATA_PATH = HERE / "data"
 dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 dt_april_8 = datetime.now(timezone("US/Pacific")).replace(2024, 4, 8, 11, 7, 0)
 
-optic_style = styles.PlotStyle().extend(
+style_dark = styles.PlotStyle().extend(
     styles.extensions.GRAYSCALE_DARK,
+    styles.extensions.OPTIC,
+)
+style_blue = styles.PlotStyle().extend(
+    styles.extensions.BLUE_DARK,
     styles.extensions.OPTIC,
 )
 
@@ -30,7 +34,7 @@ def check_optic_polaris_binoculars():
             fov=65,
         ),
         dt=dt_dec_16,
-        style=optic_style,
+        style=style_dark,
         resolution=1600,
     )
     optic_plot.stars(mag=14)
@@ -76,7 +80,7 @@ def check_optic_orion_nebula_refractor():
             eyepiece_fov=82,
         ),
         dt=dt_dec_16,
-        style=optic_style,
+        style=style_dark,
         resolution=1600,
     )
     optic_plot.stars(mag=12)
@@ -99,7 +103,7 @@ def check_optic_wrapping():
             fov=65,
         ),
         dt=dt_dec_16,
-        style=optic_style,
+        style=style_blue,
         resolution=2000,
     )
     optic_plot.stars(
@@ -119,6 +123,32 @@ def check_optic_wrapping():
     return filename
 
 
+def check_optic_clipping():
+    optic_plot = OpticPlot(
+        # Orion Nebula
+        ra=5.583,
+        dec=-5.383,
+        lat=32.97,
+        lon=-117.038611,
+        # TV-85
+        optic=optics.Scope(
+            focal_length=600,
+            eyepiece_focal_length=8,
+            eyepiece_fov=82,
+        ),
+        dt=dt_dec_16,
+        style=style_blue,
+        resolution=1800,
+    )
+    optic_plot.stars(mag=12)
+    optic_plot.dsos(mag=8.1, labels=None)
+    optic_plot.nebula()
+    optic_plot.title("Orion Nebula")
+    filename = DATA_PATH / "optic-clipping.png"
+    optic_plot.export(filename, padding=0.4)
+    return filename
+
+
 def check_optic_m45_binoculars():
     optic_plot = OpticPlot(
         # M45
@@ -132,7 +162,7 @@ def check_optic_m45_binoculars():
             fov=65,
         ),
         dt=dt_dec_16,
-        style=optic_style,
+        style=style_dark,
         resolution=1600,
     )
     optic_plot.stars(mag=12)
@@ -155,7 +185,7 @@ def check_optic_m45_scope():
             eyepiece_fov=82,
         ),
         dt=dt_dec_16,
-        style=optic_style,
+        style=style_dark,
         resolution=1600,
     )
     optic_plot.stars(
@@ -182,7 +212,7 @@ def check_optic_m45_reflector():
             eyepiece_fov=82,
         ),
         dt=dt_dec_16,
-        style=optic_style,
+        style=style_dark,
         resolution=1600,
     )
     optic_plot.stars(mag=12)
@@ -206,7 +236,7 @@ def check_optic_m45_camera():
             lens_focal_length=430,
         ),
         dt=dt_dec_16,
-        style=optic_style,
+        style=style_dark,
         resolution=1600,
     )
     optic_plot.stars(mag=12, style__marker__symbol=styles.MarkerSymbolEnum.STAR)
@@ -231,7 +261,7 @@ def check_optic_camera_rotated():
             rotation=40,
         ),
         dt=dt_dec_16,
-        style=optic_style,
+        style=style_dark,
         resolution=1600,
     )
     optic_plot.stars(mag=12)

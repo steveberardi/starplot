@@ -513,6 +513,8 @@ class BasePlot(ABC):
             # closed=False, # needs to be false for circles at poles?
             **style.matplot_kwargs(size_multiplier=self._size_multiplier),
             **kwargs,
+            clip_on=True,
+            clip_path=self._background_clip_path,
         )
         self.ax.add_patch(patch)
 
