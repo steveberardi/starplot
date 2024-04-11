@@ -1,7 +1,8 @@
 from datetime import datetime
 
 import numpy as np
-from skyfield.api import Angle
+from skyfield.api import Angle, load
+from skyfield import almanac
 
 from starplot.data import load
 from starplot.models.base import SkyObject, SkyObjectManager
@@ -32,11 +33,18 @@ class MoonManager(SkyObjectManager):
             radians=np.arcsin(RADIUS_KM / distance.km) * 2.0
         ).degrees
 
+        ts = load.timescale()
+        t = ts.utc(dt.year, dt.month, dt.day)
+        phase = almanac.moon_phase(ephemeris, t).degrees
+
+        # TODO phase_descpription
+
         return Moon(
             ra=ra.hours,
             dec=dec.degrees,
             name="Moon",
             apparent_size=apparent_diameter_degrees,
+            phase=phase,
         )
 
 
@@ -51,7 +59,7 @@ class Moon(SkyObject):
     apparent_size: float
     """Apparent size (degrees)"""
 
-    phase: int
+    phase: float
     """Degrees of illumination"""
 
     phase_descriptions: str
@@ -67,10 +75,11 @@ class Moon(SkyObject):
     * 271-259 degrees -- Waning Crescent
     """
 
-    def __init__(self, ra: float, dec: float, name: str, apparent_size: float) -> None:
+    def __init__(self, ra: float, dec: float, name: str, apparent_size: float, phase: float) -> None:
         super().__init__(ra, dec)
         self.name = name
         self.apparent_size = apparent_size
+        self.phase = phase
 
     @classmethod
     def get(dt: datetime = None, ephemeris: str = "de421_2001.bsp") -> "Moon":

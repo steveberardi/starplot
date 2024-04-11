@@ -394,6 +394,7 @@ class BasePlot(ABC):
         """
         m = models.Moon.get(dt=self.dt, ephemeris=self._ephemeris_name)
         m.name = label or m.name
+        print(m.phase)
 
         if not self.in_bounds(m.ra, m.dec):
             return
