@@ -1,3 +1,50 @@
+
+<div class="grid cards examples" markdown>
+
+-   ![Zenith Star Chart - blue medium](images/examples/example_01.png)
+
+    Basic Star Chart
+    [:octicons-arrow-right-24: View Source](#)
+
+-   ![zenith-coma](images/examples/example_02.png)
+
+    Star Chart with more details
+    [:octicons-arrow-right-24: View Source](#)
+
+-   ![zenith-coma](images/examples/example_03.png)
+
+    Map of Orion
+    [:octicons-arrow-right-24: View Source](#)
+
+-   ![zenith-coma](images/examples/example_03.png)
+
+    Map of Orion
+    [:octicons-arrow-right-24: View Source](#)
+
+-   ![zenith-coma](images/examples/example_05.png)
+
+    Optic plot of The Pleiades with a Refractor Telescope
+    [:octicons-arrow-right-24: View Source](#)
+
+-   ![zenith-coma](images/examples/example_05.png)
+
+    Optic plot of The Pleiades with a Refractor Telescope
+    [:octicons-arrow-right-24: View Source](#)
+
+-   ![zenith-coma](images/examples/example_06.png)
+
+    Map of The Big Dipper with Custom Markers
+
+    [:octicons-arrow-right-24: View Source](#)
+
+-   ![zenith-coma](images/examples/example_07.png)
+
+    Map of Hale-Bopp in 1997
+    [:octicons-arrow-right-24: View Source](#)
+</div>
+
+
+
 This page has a few examples to get you familiar with Starplot and how it works.
 
 1. [Star Chart for Time/Location](#star-chart-for-timelocation)

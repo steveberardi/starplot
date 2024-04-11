@@ -7,6 +7,7 @@ nav:
     - Demo: demo.md
     - Gallery: gallery.md
     - Installation: installation.md
+    - Tutorial: tutorial.md
     - Examples: examples.md
     - Reference:
         - MapPlot: reference-mapplot.md
