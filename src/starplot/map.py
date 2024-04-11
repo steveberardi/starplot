@@ -407,21 +407,19 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                     **style_kwargs,
                 )
 
-        self._plot_constellation_labels(style, labels)
+        self._plot_constellation_labels(style.label, labels)
 
     def _plot_constellation_labels(
         self,
         style: PathStyle = None,
         labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
     ):
-        style = style or self.style.constellation
-        style_kwargs = style.label.matplot_kwargs(size_multiplier=self._size_multiplier)
+        style = style or self.style.constellation.label
 
         for con in condata.iterator():
             _, ra, dec = condata.get(con)
             text = labels.get(con.lower())
-            if text and self.in_bounds(ra, dec):
-                self._text(ra, dec, text, **style_kwargs)
+            self.text(text, ra, dec, style)
 
     @use_style(PolygonStyle, "milky_way")
     def milky_way(self, style: PolygonStyle = None):

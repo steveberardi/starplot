@@ -77,13 +77,17 @@ def check_map_orion_extra():
     mercator_base.marker(
         ra=4.5,
         dec=5,
-        label="hello worldzz",
+        label="hello worldzz label offset",
         style={
             "marker": {
                 "size": 30,
                 "symbol": "square",
                 "fill": "full",
                 "color": "#ff6868",
+            },
+            "label": {
+                "offset_x": 50,
+                "offset_y": -100,
             },
         },
         legend_label="hello legend",
@@ -212,7 +216,12 @@ def check_map_custom_stars():
         resolution=RESOLUTION,
     )
     p.stars(mag=6)
-    p.text("CUSTOM STARZZZ", 7, -5, style={"font_size": 20})
+    p.text(
+        "CUSTOM STARZZZ",
+        7,
+        -5,
+        style={"font_size": 20, "offset_x": 40, "offset_y": 100},
+    )
     p.export(filename, padding=0.3)
     return filename
 

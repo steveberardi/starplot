@@ -363,6 +363,12 @@ class LabelStyle(BaseStyle):
     line_spacing: Optional[int] = None
     """Spacing between lines of text"""
 
+    offset_x: int = 0
+    """Horizontal offset of the label, in pixels. Negative values supported."""
+
+    offset_y: int = 0
+    """Vertical offset of the label, in pixels. Negative values supported."""
+
     zorder: int = 101
     """Zorder of the label"""
 

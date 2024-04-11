@@ -242,11 +242,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             **kwargs,
         )
 
-    def _text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
-        super()._text(
-            ra, dec, text, clip_path=self._background_clip_path, *args, **kwargs
-        )
-
     @use_style(LabelStyle, "info_text")
     def info(self, style: LabelStyle = None):
         """
