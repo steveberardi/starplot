@@ -24,8 +24,8 @@ class SunManager(SkyObjectManager):
         dt = dt_or_now(dt)
         ephemeris = load(ephemeris)
         timescale = load.timescale().from_datetime(dt)
-        earth, moon = ephemeris["earth"], ephemeris["sun"]
-        astrometric = earth.at(timescale).observe(moon)
+        earth, sun = ephemeris["earth"], ephemeris["sun"]
+        astrometric = earth.at(timescale).observe(sun)
         ra, dec, distance = astrometric.radec()
 
         apparent_diameter_degrees = Angle(
