@@ -208,12 +208,7 @@ class DsoPlotterMixin:
                         )
 
                 if label:
-                    self._text(
-                        ra / 15,
-                        dec,
-                        label,
-                        **style.label.matplot_kwargs(self._size_multiplier),
-                    )
+                    self.text(label, ra / 15, dec, style.label)
 
             else:
                 # if no major axis, then just plot as a marker

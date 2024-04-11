@@ -161,6 +161,41 @@ class LegendLocationEnum(str, Enum):
     OUTSIDE_BOTTOM = "outside lower center"
 
 
+class AnchorPointEnum(str, Enum):
+    """Options for the anchor point of labels"""
+
+    TOP_LEFT = "top left"
+    TOP_RIGHT = "top right"
+    TOP_CENTER = "top center"
+    BOTTOM_LEFT = "bottom left"
+    BOTTOM_RIGHT = "bottom right"
+    BOTTOM_CENTER = "bottom center"
+
+    def as_matplot(self) -> dict:
+        style = {}
+        # the values below look wrong, but they're inverted because the map coords are inverted
+        if self.value == AnchorPointEnum.BOTTOM_LEFT:
+            style["va"] = "top"
+            style["ha"] = "right"
+        elif self.value == AnchorPointEnum.BOTTOM_RIGHT:
+            style["va"] = "top"
+            style["ha"] = "left"
+        elif self.value == AnchorPointEnum.BOTTOM_CENTER:
+            style["va"] = "top"
+            style["ha"] = "center"
+        elif self.value == AnchorPointEnum.TOP_LEFT:
+            style["va"] = "bottom"
+            style["ha"] = "right"
+        elif self.value == AnchorPointEnum.TOP_RIGHT:
+            style["va"] = "bottom"
+            style["ha"] = "left"
+        elif self.value == AnchorPointEnum.TOP_CENTER:
+            style["va"] = "bottom"
+            style["ha"] = "center"
+
+        return style
+
+
 class MarkerStyle(BaseStyle):
     """
     Styling properties for markers.
@@ -339,6 +374,9 @@ class LabelStyle(BaseStyle):
         ```
     """
 
+    anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
+    """Anchor point of label"""
+
     font_size: int = 8
     """Relative font size of the label"""
 
@@ -387,6 +425,8 @@ class LabelStyle(BaseStyle):
             style["family"] = self.font_family
         if self.line_spacing:
             style["linespacing"] = self.line_spacing
+
+        style.update(AnchorPointEnum(self.anchor_point).as_matplot())
 
         return style
 
@@ -493,6 +533,7 @@ class PlotStyle(BaseStyle):
         font_weight=FontWeightEnum.BOLD,
         zorder=1,
         line_spacing=48,
+        anchor_point=AnchorPointEnum.BOTTOM_CENTER,
     )
     """Styling for info text (only applies to zenith and optic plots)"""
 
@@ -502,6 +543,7 @@ class PlotStyle(BaseStyle):
         zorder=1,
         font_family="monospace",
         line_spacing=2,
+        anchor_point=AnchorPointEnum.BOTTOM_CENTER,
     )
     """Styling for info text (only applies to zenith and optic plots)"""
 
@@ -513,7 +555,10 @@ class PlotStyle(BaseStyle):
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
-        font_size=8, font_weight=FontWeightEnum.LIGHT, zorder=1
+        font_size=8,
+        font_weight=FontWeightEnum.LIGHT,
+        zorder=1,
+        anchor_point=AnchorPointEnum.TOP_LEFT,
     )
     """Styling for Bayer labels of stars"""
 
