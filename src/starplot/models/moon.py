@@ -51,6 +51,22 @@ class Moon(SkyObject):
     apparent_size: float
     """Apparent size (degrees)"""
 
+    phase: int
+    """Degrees of illumination"""
+
+    phase_descriptions: str
+    """
+    Description of moon phase
+    * 0 degrees -- New Moon
+    * 1-89 degrees -- Waxing Crescent
+    * 90 degrees -- First Quarter
+    * 91-179 degrees -- Waxing Gibbous
+    * 180 degrees -- Full Moon
+    * 181-269 degrees -- Waning Gibbous
+    * 270 degrees -- Last Quarter
+    * 271-259 degrees -- Waning Crescent
+    """
+
     def __init__(self, ra: float, dec: float, name: str, apparent_size: float) -> None:
         super().__init__(ra, dec)
         self.name = name
