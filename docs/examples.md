@@ -1,10 +1,10 @@
 
 <div class="grid cards examples" markdown>
 
--   ![Zenith Star Chart - blue medium](images/examples/example_01.png)
-
+-  [![Zenith Star Chart - blue medium](images/examples/example_01.png){ .off-glb }](examples/star-chart-basic.md)
+    
     Basic Star Chart
-    [:octicons-arrow-right-24: View Source](#)
+    [:octicons-arrow-right-24: View Source](examples/star-chart-basic.md)
 
 -   ![zenith-coma](images/examples/example_02.png)
 

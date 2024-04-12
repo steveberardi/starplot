@@ -285,3 +285,14 @@ code.raw {
     -webkit-mask-image: var(--md-admonition-icon--star);
     mask-image: var(--md-admonition-icon--star);
 }
+
+.example-header {
+    padding-top: 0.5em !important;
+    margin-bottom: 0.25em !important;
+    border-top: 1px solid #c6c6c6;
+    text-align: center;
+}
+
+.text-center {
+    text-align: center;
+}

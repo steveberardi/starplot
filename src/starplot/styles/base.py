@@ -749,7 +749,12 @@ class PlotStyle(BaseStyle):
     # Constellations
     constellation: PathStyle = PathStyle(
         line=LineStyle(color="#c8c8c8"),
-        label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT, zorder=400),
+        label=LabelStyle(
+            font_size=7,
+            font_weight=FontWeightEnum.LIGHT,
+            zorder=400,
+            anchor_point=AnchorPointEnum.TOP_RIGHT,
+        ),
     )
     """Styling for constellation lines and labels (only applies to map plots)"""
 
@@ -785,6 +790,7 @@ class PlotStyle(BaseStyle):
             font_color="#000",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
+            anchor_point=AnchorPointEnum.BOTTOM_CENTER,
         ),
     )
     """Styling for gridlines (including Right Ascension / Declination labels). *Only applies to map plots*."""

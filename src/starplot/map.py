@@ -499,14 +499,18 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             **style.line.matplot_kwargs(),
         )
 
+        style_kwargs = style.label.matplot_kwargs()
+        style_kwargs.pop("va")
+        style_kwargs.pop("ha")
+
         # use a fixed locator for right ascension so gridlines are only drawn at whole numbers
         hour_locations = [x for x in range(-180, 180, 15)]
         gridlines.xlocator = FixedLocator(hour_locations)
         gridlines.xformatter = FuncFormatter(ra_formatter)
-        gridlines.xlabel_style = style.label.matplot_kwargs()
+        gridlines.xlabel_style = style_kwargs
 
         gridlines.yformatter = FuncFormatter(dec_formatter)
-        gridlines.ylabel_style = style.label.matplot_kwargs()
+        gridlines.ylabel_style = style_kwargs
 
         if tick_marks:
             self._plot_tick_marks()
