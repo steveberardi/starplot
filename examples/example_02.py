@@ -12,7 +12,7 @@ p = MapPlot(
     lon=-116.836394,
     dt=dt,
     style=PlotStyle().extend(
-        extensions.BLUE_MEDIUM,
+        extensions.NORD,
         extensions.ZENITH,
     ),
     resolution=2600,
@@ -44,6 +44,8 @@ p.marker(
             "zorder": 200,
             "font_size": 12,
             "font_weight": "bold",
+            "font_color": "ed7eed",
+            "font_alpha": 0.8,
         },
     },
 )

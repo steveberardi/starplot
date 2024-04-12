@@ -22,8 +22,8 @@ p = MapPlot(
     projection=Projection.MERCATOR,
     ra_min=3.6,
     ra_max=7.8,
-    dec_min=-16,
-    dec_max=23.6,
+    dec_min=-15,
+    dec_max=25,
     style=style,
     resolution=3600,
 )

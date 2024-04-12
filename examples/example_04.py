@@ -1,38 +1,31 @@
-from starplot import MapPlot, Projection, DSO
+from starplot import MapPlot, Projection
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.GRAYSCALE,
+    extensions.GRAYSCALE_DARK,
     extensions.MAP,
+    {
+        "bayer_labels": {
+            "font_name": "GFS Didot",
+            "font_size": 7,
+        }
+    },
 )
-style.star.marker.size = 60
-
 p = MapPlot(
-    projection=Projection.STEREO_NORTH,
-    ra_min=54.5 / 15,
-    ra_max=58.5 / 15,
-    dec_min=22.5,
-    dec_max=25.5,
+    projection=Projection.STEREO_SOUTH,
+    ra_min=17,
+    ra_max=19.5,
+    dec_min=-46,
+    dec_max=-14,
     style=style,
-    resolution=1400,
+    resolution=3200,
 )
-p.stars(
-    mag=14,
-    catalog="tycho-1",
-)
-p.dsos(
-    where=[
-        DSO.magnitude.is_not_null(),
-        DSO.magnitude <= 8,
-    ],
-    labels=None,
-)
-p.scope_fov(
-    ra=3.7912778,
-    dec=24.1052778,
-    scope_focal_length=600,
-    eyepiece_focal_length=14,
-    eyepiece_fov=82,
-)
-p.title("M45 :: TV-85 / 14mm @ 82deg")
-p.export("04_map_m45_scope.png", padding=0.3)
+p.constellations()
+p.stars(mag=13, bayer_labels=True)
+p.dsos(mag=13, true_size=True, labels=None)
+p.constellation_borders()
+p.ecliptic()
+p.celestial_equator()
+p.milky_way()
+p.gridlines()
+p.export("04_map_sagittarius.png", padding=0.2)

@@ -5,7 +5,7 @@ title: Star Chart for Time/Location
 
 # Star Chart for Time/Location {.example-header}
 
-<center>_Source code is below image_</center>
+<!-- <center>_Source code is below image_</center> -->
 
 
 ![starchart-blue](/images/examples/example_01.png)

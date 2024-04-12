@@ -4,11 +4,9 @@ repo_url: https://github.com/steveberardi/starplot
 
 nav:
     - Overview: index.md
-    - Demo: demo.md
-    - Gallery: gallery.md
     - Installation: installation.md
-    - Tutorial: tutorial.md
     - Examples: examples.md
+    - Tutorial: tutorial.md
     - Reference:
         - MapPlot: reference-mapplot.md
         - OpticPlot: reference-opticplot.md

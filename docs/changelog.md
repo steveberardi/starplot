@@ -6,6 +6,7 @@
 - Adds function to plot the Sun - thanks to Graham Schmidt
 - Adds `objects` property to plots that stores lists of objects that have been plotted
 - Adds object finder helpers
+- Adds customizable anchor points for text labels
 - Fixes clipping issues with polygons
 
 ## v0.9.x
