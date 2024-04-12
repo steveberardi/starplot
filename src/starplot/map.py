@@ -513,31 +513,30 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         gridlines.ylabel_style = style_kwargs
 
         if tick_marks:
-            self._plot_tick_marks()
+            self._tick_marks()
 
-    def _plot_tick_marks(self):
-        xticks = [x for x in np.arange(-180, 180, 3.75)]
+    def _tick_marks(self):
+        import matplotlib.ticker as ticker
+
+        xticks = [x for x in np.arange(0, 360, 3.75)]
         yticks = [x for x in np.arange(-90, 90, 1)]
-        tick_style = self.style.tick_marks.matplot_kwargs()
-        tick_style["family"] = "monospace"
-        xtick_style = tick_style.copy()
-        xtick_style["fontsize"] -= 4
-        xtick_style["weight"] = "heavy"
 
-        self.ax.gridlines(
-            draw_labels=True,
-            xlocs=xticks,
-            ylocs=yticks,
-            x_inline=False,
-            y_inline=False,
-            rotate_labels=False,
-            xpadding=0.34,
-            ypadding=0.34,
-            yformatter=FuncFormatter(lambda x, pos: "—"),
-            xformatter=FuncFormatter(lambda x, pos: "|"),
-            xlabel_style=xtick_style,
-            ylabel_style=tick_style,
-            alpha=0,  # hide the actual gridlines
+        inbound_xticks = [
+            -1 * x for x in xticks if x < self.ra_max * 15 and x > self.ra_min * 15
+        ]
+        self.ax.set_xticks(inbound_xticks, crs=ccrs.PlateCarree())
+        self.ax.xaxis.set_major_formatter(ticker.NullFormatter())
+
+        inbound_yticks = [y for y in yticks if y < self.dec_max and y > self.dec_min]
+        self.ax.set_yticks(inbound_yticks, crs=ccrs.PlateCarree())
+        self.ax.yaxis.set_major_formatter(ticker.NullFormatter())
+
+        self.ax.tick_params(
+            which="major",
+            width=1,
+            length=8,
+            top=True,
+            right=True,
         )
 
     def _fit_to_ax(self) -> None:
