@@ -1,27 +1,36 @@
-from starplot import MapPlot, Projection
-from starplot.styles import PlotStyle, extensions, MarkerSymbolEnum
+from starplot import MapPlot, Projection, Star
+from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.GRAYSCALE,
+    extensions.BLUE_DARK,
     extensions.MAP,
 )
 
-style.star.marker.symbol = MarkerSymbolEnum.STAR
-
-# By default, star sizes are calculated based on their magnitude first,
-# but then that result will be multiplied by the star's marker size in the PlotStyle
-# so, adjusting the star marker size is a way to make all stars bigger or smaller
-style.star.marker.size = 80
-
 p = MapPlot(
     projection=Projection.STEREO_NORTH,
-    ra_min=10.8,
-    ra_max=14,
-    dec_min=48,
-    dec_max=64,
+    ra_min=10.75,
+    ra_max=14.2,
+    dec_min=47,
+    dec_max=65,
     style=style,
-    resolution=1400,
+    resolution=1800,
 )
-p.stars(mag=3.6)
-p.adjust_text()
-p.export("map_big_dipper.png", padding=0.2)
+p.stars(
+    where=[
+        Star.magnitude < 3.6,
+        Star.dec > 45,
+        Star.dec < 64,
+    ],
+    # By default, star sizes are calculated based on their magnitude first,
+    # but then that result will be multiplied by the star's marker size in the PlotStyle
+    # so, adjusting the star marker size is a way to make all stars bigger or smaller
+    style__marker__size=88,
+    style__marker__symbol="star",
+    style__marker__color="hsl(60, 94%, 78%)",
+    style__label__font_size=13,
+    style__label__font_alpha=0.8,
+    style__label__anchor_point="bottom right",
+    style__label__offset_x=16,
+    style__label__offset_y=-52,
+)
+p.export("map_big_dipper.png", transparent=True)
