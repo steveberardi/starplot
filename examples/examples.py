@@ -2,9 +2,11 @@
 
 import subprocess
 import glob
+import time
 
+start = time.time()
 
-for filename in glob.iglob('*.py'):
+for filename in glob.iglob("*.py"):
     if filename.endswith("examples.py"):
         continue
 
@@ -13,7 +15,6 @@ for filename in glob.iglob('*.py'):
 
 
 print("Copying images to examples directory...")
-subprocess.call(
-    f"cp *.png ../docs/images/examples/", shell=True
-)
-    
+subprocess.call(f"cp *.png ../docs/images/examples/", shell=True)
+
+print(f"{time.time() - start}")

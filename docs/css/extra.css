@@ -297,6 +297,12 @@ code.raw {
     text-align: center;
 }
 
+.text-subtitle {
+    font-size: 1.2em;
+    font-style: italic;
+    color: #3f3f3f;
+}
+
 .example-card-title {
     font-size: 1.4em;
     font-weight: 600;
