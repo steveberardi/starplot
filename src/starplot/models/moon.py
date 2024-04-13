@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 
 import numpy as np
 from skyfield.api import Angle, load
@@ -8,6 +9,21 @@ from starplot.data import load
 from starplot.models.base import SkyObject, SkyObjectManager
 from starplot.utils import dt_or_now
 
+class MoonPhase(str, Enum):
+    """Phases of Earth's moon"""
+
+    NEW_MOON = "New Moon"
+    WAXING_CRESCENT = "Waxing Crescent"
+    FIRST_QUARTER = "First Quarter"
+    WAXING_GIBBOUS = "Waxing Gibbous"
+    FULL_MOON = "Full Moon"
+    WANING_GIBBOUS = "Waning Gibbous"
+    LAST_QUARTER = "Last Quarter"
+    WANING_CRESCENT = "Waning Crescent"
+    
+MOON_ILLUMINATION_PHASE_MAP = {
+
+}
 
 class MoonManager(SkyObjectManager):
     @classmethod
@@ -35,9 +51,27 @@ class MoonManager(SkyObjectManager):
 
         ts = load.timescale()
         t = ts.utc(dt.year, dt.month, dt.day)
-        phase = almanac.moon_phase(ephemeris, t).degrees
+        phase = almanac.moon_phase(ephemeris, t).degrees/360
 
-        # TODO phase_descpription
+        # please tell me if there's a cleaner way to implement this, it killed me to write
+        if phase >= 0.99 or phase <= 0.01:
+            phase_description = MoonPhase.NEW_MOON
+        elif 0.01 < phase < 0.24:
+            phase_description = MoonPhase.WANING_CRESCENT
+        elif 0.24 <= phase <= 0.26:
+            phase_description = MoonPhase.FIRST_QUARTER
+        elif 0.26 < phase < 0.49:
+            phase_description = MoonPhase.WAXING_GIBBOUS
+        elif 0.49 <= phase <= 0.51:
+            phase_description = MoonPhase.FULL_MOON
+        elif 0.51 < phase < 0.74:
+            phase_description = MoonPhase.WANING_GIBBOUS
+        elif 0.74 <= phase <= 0.76:
+            phase_description = MoonPhase.LAST_QUARTER
+        elif 0.76 < phase < 0.99:
+            phase_description = MoonPhase.WANING_CRESCENT
+
+        
 
         return Moon(
             ra=ra.hours,
@@ -45,6 +79,7 @@ class MoonManager(SkyObjectManager):
             name="Moon",
             apparent_size=apparent_diameter_degrees,
             phase=phase,
+            phase_description = phase_description
         )
 
 
@@ -62,7 +97,7 @@ class Moon(SkyObject):
     phase: float
     """Degrees of illumination"""
 
-    phase_descriptions: str
+    phase_description: str
     """
     Description of moon phase
     * 0 degrees -- New Moon
@@ -75,11 +110,12 @@ class Moon(SkyObject):
     * 271-259 degrees -- Waning Crescent
     """
 
-    def __init__(self, ra: float, dec: float, name: str, apparent_size: float, phase: float) -> None:
+    def __init__(self, ra: float, dec: float, name: str, apparent_size: float, phase: float, phase_description: str) -> None:
         super().__init__(ra, dec)
         self.name = name
         self.apparent_size = apparent_size
         self.phase = phase
+        self.phase_description = phase_description
 
     @classmethod
     def get(dt: datetime = None, ephemeris: str = "de421_2001.bsp") -> "Moon":
