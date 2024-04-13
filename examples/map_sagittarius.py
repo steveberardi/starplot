@@ -23,9 +23,7 @@ p = MapPlot(
 p.constellations()
 
 p.stars(
-    where=[
-        Star.magnitude <= 3
-    ],
+    where=[Star.magnitude <= 3],
     style__marker__size=72,
     style__marker__symbol="star_8",
 )
@@ -35,16 +33,11 @@ p.stars(
         Star.magnitude < 12,
     ],
     style__marker__size=12,
-    bayer_labels=True, 
+    bayer_labels=True,
     catalog="tycho-1",
 )
 
-p.dsos(
-    where=[
-        DSO.magnitude.is_null() | (DSO.magnitude < 12)
-    ],
-    true_size=True
-)
+p.dsos(where=[DSO.magnitude.is_null() | (DSO.magnitude < 12)], true_size=True)
 
 p.constellation_borders()
 p.ecliptic()

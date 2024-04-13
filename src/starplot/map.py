@@ -1,5 +1,6 @@
 import datetime
 import warnings
+from typing import Callable
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
@@ -472,15 +473,28 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
     @use_style(PathStyle, "gridlines")
     def gridlines(
-        self, style: PathStyle = None, labels: bool = True, tick_marks: bool = False
+        self,
+        style: PathStyle = None,
+        labels: bool = True,
+        tick_marks: bool = False,
+        ra_locations: list[float] = None,
+        dec_locations: list[float] = None,
+        ra_formatter_fn: Callable[[float], str] = None,
+        dec_formatter_fn: Callable[[float], str] = None,
     ):
         """Plots gridlines
 
         Args:
             style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
-            labels: If True, then labels for each gridline will be plotted.
+            labels: If True, then labels for each gridline will be plotted on the outside of the axes.
             tick_marks: If True, then tick marks will be plotted outside the axis. **Only supported for rectangular projections (e.g. Mercator, Miller)**
+            ra_locations: List of Right Ascension locations for the gridlines (in hours, 0...24)
+            dec_locations: List of Declination locations for the gridlines (in degrees, -90...90)
+            ra_formatter_fn: Callable for creating labels of right ascension gridlines
+            dec_formatter_fn: Callable for creating labels of declination gridlines
         """
+
+        # TODO : implement kwargs
 
         def ra_formatter(x, pos) -> str:
             hour, minutes, seconds = lon_to_ra(x)
