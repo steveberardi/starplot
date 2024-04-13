@@ -5,7 +5,7 @@ title: Map of Hale-Bopp in 1997
 
 # Map of Hale-Bopp in 1997 {.example-header}
 
-![map-hale-bopp](/images/examples/example_07.png)
+![map-hale-bopp](/images/examples/map_hale_bopp.png)
 
 Here's an example that uses [Skyfield](https://rhodesmill.org/skyfield/) to get some data on the comet [Hale-Bopp](https://en.wikipedia.org/wiki/Comet_Hale%E2%80%93Bopp) ☄️ and then uses that data to plot the comet's location in the sky in March and April of 1997 (when the comet was at its brightest in the sky):
 
@@ -15,6 +15,6 @@ Here's an example that uses [Skyfield](https://rhodesmill.org/skyfield/) to get 
 
 
 ```python
---8<-- "examples/example_07.py"
+--8<-- "examples/map_hale_bopp.py"
 ```
 

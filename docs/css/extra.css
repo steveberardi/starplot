@@ -296,3 +296,13 @@ code.raw {
 .text-center {
     text-align: center;
 }
+
+.example-card-title {
+    font-size: 1.4em;
+    font-weight: 600;
+}
+
+.grid.cards>ul>li {
+    border: 2px solid #c6c6c6 !important;
+    margin: 8px !important;
+}

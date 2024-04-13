@@ -5,13 +5,11 @@ title: Map of Sagittarius
 
 # Map of Sagittarius {.example-header}
 
-<!-- <center>_Source code is below image_</center> -->
-
-![map-sagittarius](/images/examples/example_04.png)
+![map-sagittarius](/images/examples/map_sagittarius.png)
 
 
 ```python
---8<-- "examples/example_04.py"
+--8<-- "examples/map_sagittarius.py"
 ```
 
 

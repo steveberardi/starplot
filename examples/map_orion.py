@@ -49,4 +49,4 @@ p.ellipse(
 
 p.legend()
 
-p.export("03_map_orion.png", padding=0.5)
+p.export("map_orion.png", padding=0.5)

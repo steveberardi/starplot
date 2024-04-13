@@ -479,7 +479,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Args:
             style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
             labels: If True, then labels for each gridline will be plotted.
-            tick_marks: If True, then minor tick marks will be plotted outside the axis between the major gridlines.
+            tick_marks: If True, then tick marks will be plotted outside the axis. **Only supported for rectangular projections (e.g. Mercator, Miller)**
         """
 
         def ra_formatter(x, pos) -> str:
@@ -524,11 +524,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         inbound_xticks = [
             -1 * x for x in xticks if x < self.ra_max * 15 and x > self.ra_min * 15
         ]
-        self.ax.set_xticks(inbound_xticks, crs=ccrs.PlateCarree())
+        self.ax.set_xticks(inbound_xticks, crs=self._plate_carree)
         self.ax.xaxis.set_major_formatter(ticker.NullFormatter())
 
         inbound_yticks = [y for y in yticks if y < self.dec_max and y > self.dec_min]
-        self.ax.set_yticks(inbound_yticks, crs=ccrs.PlateCarree())
+        self.ax.set_yticks(inbound_yticks, crs=self._plate_carree)
         self.ax.yaxis.set_major_formatter(ticker.NullFormatter())
 
         self.ax.tick_params(

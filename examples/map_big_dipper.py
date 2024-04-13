@@ -24,4 +24,4 @@ p = MapPlot(
 )
 p.stars(mag=3.6)
 p.adjust_text()
-p.export("06_big_dipper_stars.png", padding=0.2)
+p.export("map_big_dipper.png", padding=0.2)

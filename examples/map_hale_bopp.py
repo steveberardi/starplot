@@ -102,4 +102,4 @@ for t, ra, dec in radecs:
 
 p.legend()
 
-p.export("07_map_hale_bopp.png", padding=0.2)
+p.export("map_hale_bopp.png", padding=0.2)

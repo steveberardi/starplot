@@ -50,4 +50,4 @@ p.marker(
     },
 )
 
-p.export("02_star_chart_extra.png", transparent=True)
+p.export("star_chart_detail.png", transparent=True)
