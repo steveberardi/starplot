@@ -89,7 +89,7 @@
 
 <br/>
 
-Check out the [tutorial](tutorial.md) and code reference to learn more about using starplot!
+Check out the [tutorial](tutorial.md) and code reference to learn more about using Starplot!
 {.text-subtitle .text-center}
 
 <br/>
