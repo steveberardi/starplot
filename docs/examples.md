@@ -26,13 +26,15 @@
 
     [:octicons-arrow-right-24: View Source](examples/map-orion.md)
 
-<!----- [ Map Sagittarius ] ----------->
--   [![map-sagittarius](images/examples/map_sagittarius.png)](examples/map-sagittarius.md)
 
-    Map of Sagittarius
+<!----- [ Big Map ] ----------->
+-   [![Map - Big](images/examples/map_big.png)](examples/map-big.md)
+
+    Big Map
     {.example-card-title}
 
-    [:octicons-arrow-right-24: View Source](examples/map-sagittarius.md)
+    [:octicons-arrow-right-24: View Source](examples/map-big.md)
+
 
 <!----- [ Optic M45 ] ----------->
 -   [![Optic - Pleiades M45](images/examples/optic_m45.png)](examples/optic-m45.md)
@@ -68,14 +70,14 @@
 
     [:octicons-arrow-right-24: View Source](examples/map-hale-bopp-comet.md)
 
+<!----- [ Map Sagittarius ] ----------->
+-   [![map-sagittarius](images/examples/map_sagittarius.png)](examples/map-sagittarius.md)
 
-<!----- [ Big Map ] ----------->
--   [![Map - Big](images/examples/map_big.png)](examples/map-big.md)
-
-    Big Map
+    Map of Sagittarius
     {.example-card-title}
 
-    [:octicons-arrow-right-24: View Source](examples/map-big.md)
+    [:octicons-arrow-right-24: View Source](examples/map-sagittarius.md)
+
 
 <!----- [ Map Orthographic ] ----------->
 -   [![Map - Orthographic](images/examples/map_orthographic.png)](examples/map-orthographic.md)
