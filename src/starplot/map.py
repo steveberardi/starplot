@@ -1,10 +1,11 @@
 import datetime
+import math
 import warnings
 from typing import Callable
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
-from matplotlib import path, patches
+from matplotlib import path, patches, ticker
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import LineString, MultiLineString
 from shapely.ops import unary_union
@@ -27,7 +28,7 @@ from starplot.styles import (
     extensions,
 )
 from starplot.styles.helpers import use_style
-from starplot.utils import lon_to_ra
+from starplot.utils import lon_to_ra, ra_to_lon
 
 # Silence noisy cartopy warnings
 warnings.filterwarnings("ignore", module="cartopy")
@@ -476,32 +477,43 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self,
         style: PathStyle = None,
         labels: bool = True,
-        tick_marks: bool = False,
         ra_locations: list[float] = None,
         dec_locations: list[float] = None,
         ra_formatter_fn: Callable[[float], str] = None,
         dec_formatter_fn: Callable[[float], str] = None,
+        tick_marks: bool = False,
+        ra_tick_locations: list[float] = None,
+        dec_tick_locations: list[float] = None,
     ):
         """Plots gridlines
 
         Args:
             style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
             labels: If True, then labels for each gridline will be plotted on the outside of the axes.
-            tick_marks: If True, then tick marks will be plotted outside the axis. **Only supported for rectangular projections (e.g. Mercator, Miller)**
-            ra_locations: List of Right Ascension locations for the gridlines (in hours, 0...24)
-            dec_locations: List of Declination locations for the gridlines (in degrees, -90...90)
+            ra_locations: List of Right Ascension locations for the gridlines (in hours, 0...24). Defaults to every 1 hour.
+            dec_locations: List of Declination locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
             ra_formatter_fn: Callable for creating labels of right ascension gridlines
             dec_formatter_fn: Callable for creating labels of declination gridlines
+            tick_marks: If True, then tick marks will be plotted outside the axis. **Only supported for rectangular projections (e.g. Mercator, Miller)**
+            ra_tick_locations: List of Right Ascension locations for the tick marks (in hours, 0...24)
+            dec_tick_locations: List of Declination locations for the tick marks (in degrees, -90...90)
         """
 
-        # TODO : implement kwargs
+        ra_formatter_fn_default = lambda r: f"{math.floor(r)}h"  # noqa: E731
+        dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0"  # noqa: E731
+
+        ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
+        dec_formatter_fn = dec_formatter_fn or dec_formatter_fn_default
 
         def ra_formatter(x, pos) -> str:
-            hour, minutes, seconds = lon_to_ra(x)
-            return f"{hour}h"
+            ra = lon_to_ra(x)
+            return ra_formatter_fn(ra)
 
         def dec_formatter(x, pos) -> str:
-            return f"{round(x)}\u00b0"
+            return dec_formatter_fn(x)
+
+        ra_locations = ra_locations or [x for x in range(24)]
+        dec_locations = dec_locations or [d for d in range(-90, 90, 10)]
 
         gridlines = self.ax.gridlines(
             draw_labels=labels,
@@ -517,27 +529,25 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         style_kwargs.pop("va")
         style_kwargs.pop("ha")
 
-        # use a fixed locator for right ascension so gridlines are only drawn at whole numbers
-        hour_locations = [x for x in range(-180, 180, 15)]
-        gridlines.xlocator = FixedLocator(hour_locations)
+        gridlines.xlocator = FixedLocator([ra_to_lon(r) for r in ra_locations])
         gridlines.xformatter = FuncFormatter(ra_formatter)
         gridlines.xlabel_style = style_kwargs
 
+        gridlines.ylocator = FixedLocator(dec_locations)
         gridlines.yformatter = FuncFormatter(dec_formatter)
         gridlines.ylabel_style = style_kwargs
 
         if tick_marks:
-            self._tick_marks()
+            self._tick_marks(style, ra_tick_locations, dec_tick_locations)
 
-    def _tick_marks(self):
-        import matplotlib.ticker as ticker
+    def _tick_marks(self, style, ra_tick_locations=None, dec_tick_locations=None):
+        def in_axes(ra):
+            return self.in_bounds(ra, (self.dec_max + self.dec_min) / 2)
 
-        xticks = [x for x in np.arange(0, 360, 3.75)]
-        yticks = [x for x in np.arange(-90, 90, 1)]
+        xticks = ra_tick_locations or [x for x in np.arange(0, 24, 0.125)]
+        yticks = dec_tick_locations or [x for x in np.arange(-90, 90, 1)]
 
-        inbound_xticks = [
-            -1 * x for x in xticks if x < self.ra_max * 15 and x > self.ra_min * 15
-        ]
+        inbound_xticks = [ra_to_lon(ra) for ra in xticks if in_axes(ra)]
         self.ax.set_xticks(inbound_xticks, crs=self._plate_carree)
         self.ax.xaxis.set_major_formatter(ticker.NullFormatter())
 
@@ -549,6 +559,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             which="major",
             width=1,
             length=8,
+            color=style.label.font_color.as_hex(),
             top=True,
             right=True,
         )

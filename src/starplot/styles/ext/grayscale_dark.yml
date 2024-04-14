@@ -88,7 +88,5 @@ moon:
 gridlines:
   label:
     font_color: hsl(136, 0%, 0%)
-tick_marks:
-  font_color: hsl(136, 0%, 0%)
 legend:
   background_color: hsl(136, 0%, 64%)

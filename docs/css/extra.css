@@ -311,4 +311,5 @@ code.raw {
 .grid.cards>ul>li {
     border: 2px solid #c6c6c6 !important;
     margin: 8px !important;
+    justify-content: center;
 }

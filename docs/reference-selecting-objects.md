@@ -63,11 +63,15 @@ There are also a few operators you can use to combine expressions:
 | `|`       | Logical OR                                | `(Star.magnitude > 8) | (Star.name == "Vega")`     |
 | `&`       | Logical AND                               | `(DSO.magnitude < 8) & (DSO.size.is_not_null())`   |
 
-**Important**:When using operators to combine expressions, you must put each expression in parenthesis:
+**Important**: When using operators to combine expressions, you must put each expression in parenthesis:
 
-- :white_check_mark: `(Star.magnitude > 8) | (Star.name == "Vega")`
+```python
+# Good ✅ 
+(Star.magnitude > 8) | (Star.name == "Vega")
 
-- :x: `Star.magnitude > 8 | Star.name == "Vega"`
+# Bad ❌ 
+Star.magnitude > 8 | Star.name == "Vega"
+```
 
 ## Functions
 

@@ -70,8 +70,6 @@ gridlines:
     color: '#888'
     style: solid
     width: 1
-tick_marks:
-  font_color: '#888'
 milky_way:
   alpha: 0.14
   color: '#95a3bf'
