@@ -51,24 +51,25 @@ class MoonManager(SkyObjectManager):
 
         ts = load.timescale()
         t = ts.utc(dt.year, dt.month, dt.day)
-        phase = almanac.moon_phase(ephemeris, t).degrees/360
+        phase = almanac.moon_phase(ephemeris, t).degrees
+        illumination = phase/360
 
         # please tell me if there's a cleaner way to implement this, it killed me to write
-        if phase >= 0.99 or phase <= 0.01:
+        if phase >= 359 or phase <= 1:
             phase_description = MoonPhase.NEW_MOON
-        elif 0.01 < phase < 0.24:
+        elif 1 < phase < 89:
             phase_description = MoonPhase.WANING_CRESCENT
-        elif 0.24 <= phase <= 0.26:
+        elif 89 <= phase <= 91:
             phase_description = MoonPhase.FIRST_QUARTER
-        elif 0.26 < phase < 0.49:
+        elif 91 < phase < 179:
             phase_description = MoonPhase.WAXING_GIBBOUS
-        elif 0.49 <= phase <= 0.51:
+        elif 179 <= phase <= 181:
             phase_description = MoonPhase.FULL_MOON
-        elif 0.51 < phase < 0.74:
+        elif 181 < phase < 269:
             phase_description = MoonPhase.WANING_GIBBOUS
-        elif 0.74 <= phase <= 0.76:
+        elif 269 <= phase <= 271:
             phase_description = MoonPhase.LAST_QUARTER
-        elif 0.76 < phase < 0.99:
+        elif 271 < phase < 359:
             phase_description = MoonPhase.WANING_CRESCENT
 
         
@@ -79,7 +80,8 @@ class MoonManager(SkyObjectManager):
             name="Moon",
             apparent_size=apparent_diameter_degrees,
             phase=phase,
-            phase_description = phase_description
+            phase_description = phase_description,
+            illumination = illumination,
         )
 
 
@@ -97,10 +99,13 @@ class Moon(SkyObject):
     phase: float
     """Degrees of illumination"""
 
+    illumination: float
+    """Percentage of illumination"""
+
     phase_description: str
     """
     Description of moon phase
-    * 0 degrees -- New Moon
+    *  degrees -- New Moon
     * 1-89 degrees -- Waxing Crescent
     * 90 degrees -- First Quarter
     * 91-179 degrees -- Waxing Gibbous
@@ -110,12 +115,13 @@ class Moon(SkyObject):
     * 271-259 degrees -- Waning Crescent
     """
 
-    def __init__(self, ra: float, dec: float, name: str, apparent_size: float, phase: float, phase_description: str) -> None:
+    def __init__(self, ra: float, dec: float, name: str, apparent_size: float, phase: float, phase_description: str, illumination: str) -> None:
         super().__init__(ra, dec)
         self.name = name
         self.apparent_size = apparent_size
         self.phase = phase
         self.phase_description = phase_description
+        self.illumination = illumination
 
     @classmethod
     def get(dt: datetime = None, ephemeris: str = "de421_2001.bsp") -> "Moon":
