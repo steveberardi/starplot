@@ -1,9 +1,9 @@
 ---
-title: Optic Plot of The Pleiades With a Refractor Telescope
+title: Optic Plot of the Pleiades with a Refractor Telescope
 ---
 [:octicons-arrow-left-24: Back to Examples](/examples)
 
-# Optic Plot of The Pleiades With a Refractor Telescope {.example-header}
+# Optic Plot of the Pleiades with a Refractor Telescope {.example-header}
 
 ![optic-m45](/images/examples/optic_m45.png)
 

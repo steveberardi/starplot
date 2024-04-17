@@ -2,7 +2,7 @@ from starplot.models import Star, DSO, Moon, Sun, Planet
 
 
 class ObjectList(object):
-    """Lists of objects that have been plotted"""
+    """Lists of objects that have been plotted. An instance of this model is returned by a plot's `objects` property."""
 
     stars: list[Star] = None
     """Stars"""

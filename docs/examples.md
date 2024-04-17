@@ -12,7 +12,7 @@
 <!----- [ Star Chart Detail ] ----------->
 -   [![zenith-detail](images/examples/star_chart_detail.png)](examples/star-chart-detail.md)
 
-    Star Chart with more details
+    Detailed Star Chart
     {.example-card-title}
 
     [:octicons-arrow-right-24: View Source](examples/star-chart-detail.md)
@@ -39,7 +39,7 @@
 <!----- [ Optic M45 ] ----------->
 -   [![Optic - Pleiades M45](images/examples/optic_m45.png)](examples/optic-m45.md)
 
-    Optic Plot of The Pleiades
+    Optic Plot of the Pleiades
     {.example-card-title}
 
     [:octicons-arrow-right-24: View Source](examples/optic-m45.md)
@@ -48,7 +48,7 @@
 <!----- [ Optic Orion Nebula ] ----------->
 -   [![Optic - Orion Nebula](images/examples/optic_orion_nebula.png)](examples/optic-orion.md)
 
-    Optic Plot of The Orion Nebula
+    Optic Plot of the Orion Nebula
     {.example-card-title}
 
     [:octicons-arrow-right-24: View Source](examples/optic-orion.md)
@@ -57,7 +57,7 @@
 <!----- [ Big Dipper ] ----------->
 -   [![Map - Big Dipper](images/examples/map_big_dipper.png)](examples/map-big-dipper.md)
 
-    Map of The Big Dipper
+    Map of the Big Dipper
     {.example-card-title}
 
     [:octicons-arrow-right-24: View Source](examples/map-big-dipper.md)

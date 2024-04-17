@@ -1,6 +1,6 @@
 
+*Work In Progress*{.text-subtitle}
 
-WIP
 
 
 1. Concepts
