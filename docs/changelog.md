@@ -7,6 +7,7 @@
 - Adds `objects` property to plots that stores lists of objects that have been plotted
 - Adds object finder helpers
 - Adds customizable anchor points for text labels
+- Adds Pluto as a planet :)
 - Fixes clipping issues with polygons
 
 ## v0.9.x

@@ -81,6 +81,7 @@ https://discord.gg/bwazdyD7
 ## Coming Soon
 - 🌑 Planet moons
 - ✴️ Custom markers
+- 🚀 Plotting Optimizations
 - 📐 More Nebula outline levels
 - ⚖️ Better auto font-size adjustment
 

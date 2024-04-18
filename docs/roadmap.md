@@ -1,5 +1,4 @@
 
-- 🟣 Pluto
 - 🌑 Planet moons
 - ✴️ Custom markers
 - 🚀 Plotting Optimizations

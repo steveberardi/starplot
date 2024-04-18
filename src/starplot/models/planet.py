@@ -12,7 +12,7 @@ from starplot.utils import dt_or_now
 
 
 class PlanetName(str, Enum):
-    """Planets ... Coming Soon: Pluto :)"""
+    """Planet names"""
 
     MERCURY = "mercury"
     VENUS = "venus"
@@ -21,11 +21,12 @@ class PlanetName(str, Enum):
     SATURN = "saturn"
     URANUS = "uranus"
     NEPTUNE = "neptune"
+    PLUTO = "pluto"
 
 
 PLANET_LABELS_DEFAULT = {p: p.value.upper() for p in PlanetName}
 
-PLANET_SIZE_KM = {
+PLANET_RADIUS_KM = {
     PlanetName.MERCURY: 2_440,
     PlanetName.VENUS: 6_052,
     PlanetName.MARS: 3_390,
@@ -33,13 +34,15 @@ PLANET_SIZE_KM = {
     PlanetName.SATURN: 58_232,
     PlanetName.URANUS: 25_362,
     PlanetName.NEPTUNE: 24_622,
+    PlanetName.PLUTO: 1_151,
 }
 """
-Planet sizes from NASA:
+Planet radii in kilometers, via NASA:
 
-https://science.nasa.gov/resource/solar-system-sizes/
+- https://science.nasa.gov/resource/solar-system-sizes/
+- https://science.nasa.gov/dwarf-planets/pluto/facts/
 
-Retrieved on 28-Jan-2024
+Retrieved on 18-APR-2024
 """
 
 
@@ -58,9 +61,8 @@ class PlanetManager(SkyObjectManager):
 
             # angular diameter:
             # https://rhodesmill.org/skyfield/examples.html#what-is-the-angular-diameter-of-a-planet-given-its-radius
-            radius_km = PLANET_SIZE_KM[p]
             apparent_diameter_degrees = Angle(
-                radians=np.arcsin(radius_km / distance.km) * 2.0
+                radians=np.arcsin(PLANET_RADIUS_KM[p] / distance.km) * 2.0
             ).degrees
 
             yield Planet(
