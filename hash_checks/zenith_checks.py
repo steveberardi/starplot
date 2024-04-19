@@ -14,7 +14,7 @@ STYLE = styles.PlotStyle().extend(
     styles.extensions.ZENITH,
 )
 
-JUNE_2023 = datetime.now(timezone("US/Pacific")).replace(2023, 6, 20, 21, 0, 0)
+JUNE_2023 = datetime.now(timezone("US/Pacific")).replace(2023, 6, 20, 21, 0, 0, 0)
 
 RESOLUTION = 2400
 
@@ -28,10 +28,10 @@ def _zenith():
         style=STYLE,
         resolution=RESOLUTION,
     )
-    p.stars(mag=4.6)
+    p.stars(mag=4.6, style__marker__size=25)
     p.constellations()
-    p.ecliptic()
-    p.celestial_equator()
+    p.ecliptic(style__line__width=8)
+    p.celestial_equator(style__line__width=8)
     return p
 
 
