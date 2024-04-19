@@ -36,6 +36,7 @@ class SunManager(SkyObjectManager):
             ra=ra.hours,
             dec=dec.degrees,
             name="Sun",
+            dt=dt,
             apparent_size=apparent_diameter_degrees,
         )
 
@@ -48,12 +49,18 @@ class Sun(SkyObject):
     name: str = "Sun"
     """Name of the Sun"""
 
+    dt: datetime
+    """Date/time of Sun's position"""
+
     apparent_size: float
     """Apparent size (degrees)"""
 
-    def __init__(self, ra: float, dec: float, name: str, apparent_size: float) -> None:
+    def __init__(
+        self, ra: float, dec: float, name: str, dt: datetime, apparent_size: float
+    ) -> None:
         super().__init__(ra, dec)
         self.name = name
+        self.dt = dt
         self.apparent_size = apparent_size
 
     @classmethod

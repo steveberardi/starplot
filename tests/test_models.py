@@ -62,6 +62,7 @@ class TestMoon:
         m = Moon.get(dt)
         assert m.ra == 19.502411822774185
         assert m.dec == -26.96492167310071
+        assert m.dt == dt
         assert m.apparent_size == 0.5480758923848209
 
 
@@ -71,9 +72,10 @@ class TestPlanet:
         jupiter = Planet.get("jupiter", dt)
         assert jupiter.ra == 3.086003716668181
         assert jupiter.dec == 16.56207889273591
+        assert jupiter.dt == dt
         assert jupiter.apparent_size == 0.009162890626143375
 
     def test_planet_all(self):
         dt = timezone("UTC").localize(datetime(2024, 4, 7, 21, 0, 0, 0))
         planets = [p for p in Planet.all(dt)]
-        assert len(planets) == 7
+        assert len(planets) == 8

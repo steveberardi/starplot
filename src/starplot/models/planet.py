@@ -69,6 +69,7 @@ class PlanetManager(SkyObjectManager):
                 ra=ra.hours,
                 dec=dec.degrees,
                 name=p,
+                dt=dt,
                 apparent_size=apparent_diameter_degrees,
             )
 
@@ -94,12 +95,18 @@ class Planet(SkyObject):
     name: str
     """Name of the planet"""
 
+    dt: datetime
+    """Date/time of planet's position"""
+
     apparent_size: float
     """Apparent size (degrees)"""
 
-    def __init__(self, ra: float, dec: float, name: str, apparent_size: float) -> None:
+    def __init__(
+        self, ra: float, dec: float, name: str, dt: datetime, apparent_size: float
+    ) -> None:
         super().__init__(ra, dec)
         self.name = name
+        self.dt = dt
         self.apparent_size = apparent_size
 
     @classmethod
