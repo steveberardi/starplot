@@ -4,7 +4,7 @@ import pytest
 
 from pytz import timezone
 
-from starplot import Star, Moon, Planet
+from starplot import DSO, Star, Moon, Planet
 
 
 class TestStar:
@@ -54,6 +54,29 @@ class TestStar:
         bright = Star.find(where=[Star.name.is_in(names)])
         assert len(bright) == 4
         assert set([s.name for s in bright]) == names
+
+
+class TestDSO:
+    def test_dso_get(self):
+        m13 = DSO.get(m="13")
+        assert m13.ra == 16.694897222222224
+        assert m13.dec == 36.46130555555556
+        assert m13.m == "13"
+        assert m13.ngc == "6205"
+        assert m13.ic is None
+
+    def test_dso_find_messier(self):
+        results = DSO.find(where=[DSO.m.is_not_null()])
+        assert len(results) == 110
+
+    def test_dso_find_duplicate(self):
+        results = DSO.find(where=[DSO.ngc == "5273"])
+        assert len(results) == 2
+
+        for r in results:
+            assert r.m is None
+            assert r.ngc == "5273"
+            assert r.ic == "895"
 
 
 class TestMoon:
