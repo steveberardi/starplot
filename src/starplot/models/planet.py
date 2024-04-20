@@ -81,7 +81,7 @@ class PlanetManager(SkyObjectManager):
     def get(cls, name: str, dt: datetime = None, ephemeris: str = "de421_2001.bsp"):
         dt = dt_or_now(dt)
         for p in cls.all(dt, ephemeris):
-            if p.name == name:
+            if p.name.lower() == name.lower():
                 return p
 
         return None
@@ -93,7 +93,19 @@ class Planet(SkyObject):
     _manager = PlanetManager
 
     name: str
-    """Name of the planet"""
+    """
+    Name of the planet:
+
+    - Mercury
+    - Venus
+    - Mars
+    - Jupiter
+    - Saturn
+    - Uranus
+    - Neptune
+    - Pluto
+    
+    """
 
     dt: datetime
     """Date/time of planet's position"""
@@ -123,11 +135,14 @@ class Planet(SkyObject):
         pass
 
     @classmethod
-    def get(dt: datetime = None, ephemeris: str = "de421_2001.bsp") -> "Planet":
+    def get(
+        name: str, dt: datetime = None, ephemeris: str = "de421_2001.bsp"
+    ) -> "Planet":
         """
         Get a planet for a specific date/time.
 
         Args:
+            name: Name of the planet you want to get (see [starplot.Planet.name][] for options). Case insensitive.
             dt: Datetime you want the planet for (must be timezone aware!). _Defaults to current UTC time_.
             ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """

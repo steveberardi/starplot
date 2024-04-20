@@ -29,9 +29,9 @@ p.dsos(
     ]
 )
 ```
-On line 16, we plot only the DSOs we want by passing the `where` keyword argument containing a list of expressions that determine which DSOs to plot. Only the DSOs that satisfy ALL of these conditions will be plotted.
+On line 16, we plot only the DSOs we want by passing the `where` keyword argument. This argument contains a list of expressions that describe which objects you want to plot. Only the DSOs that satisfy ALL of these conditions will be plotted.
 
-### More Examples
+### Expression Examples
 
 | Expression                                       | Description                           |
 | ------------------------------------------------ | ------------------------------------- |
