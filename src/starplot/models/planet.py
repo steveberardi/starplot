@@ -142,7 +142,7 @@ class Planet(SkyObject):
         Get a planet for a specific date/time.
 
         Args:
-            name: Name of the planet you want to get (see [starplot.Planet.name][] for options). Case insensitive.
+            name: Name of the planet you want to get (see [`Planet.name`][starplot.Planet.name] for options). Case insensitive.
             dt: Datetime you want the planet for (must be timezone aware!). _Defaults to current UTC time_.
             ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
