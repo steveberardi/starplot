@@ -143,8 +143,7 @@ p = MapPlot(
 
 ```
 
----
-## Built-in Style Extensions
+### Built-in Style Extensions
 
 Starplot has a bunch of built-in style extensions (all imported from `starplot.styles.extensions`):
 
@@ -161,6 +160,42 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
     - `ZENITH` - Basic styling tailored for zenith plots ([details](#extensions-zenith))
 
+---
+
+## Overriding Styles When Plotting
+
+After you create a plot instance and start plotting stuff (e.g. stars, DSOs, etc), then you may want to override the plot's style sometimes. For example, you may want to plot the brightest stars with one style and the dimmer stars with a different style (see the example [map of Sagittarius](/examples/map-sagittarius/) which uses different markers for brighter stars). Luckily, Starplot provides two easy ways to do this:
+
+1. ####  Via `style` kwarg {.mt-none}
+All plotting calls have an optional `style` kwarg that lets you pass in a dictionary of any styles you want to override for that plotting call. For example, here's how you can plot bright stars with a different marker and color than the plot's style:
+
+    ```python
+    p.stars(
+        mag=3,
+        style={
+            "marker": {
+                "symbol": "star",
+                "color": "red",
+            }
+        }
+    )
+    ```
+
+
+2. #### Via `style__*` kwargs
+When you only want to override one or two style properties, it can be tedious to create a dictionary, so Starplot also lets you specify overrides through keyword arguments that start with `style__` and separate each level by `__`. For example, we could re-write the previous example like this:
+
+    ```python
+    p.stars(
+        mag=3,
+        style__marker__symbol="star",
+        style__marker__color="red",
+    )
+    ```
+
+**When overriding styles like this, you only have to define style properties you want to override.**
+    
+    
 ---
 
 ## Code Reference

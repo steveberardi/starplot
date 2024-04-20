@@ -30,6 +30,10 @@
     color: var(--md-primary-fg-color);
 }
 
+.mt-none {
+    margin-top: 0 !important;
+}
+
 /* Object Class Headings */
 .doc-object.doc-class {
     border-top: 2px solid rgba(200, 200, 200, 0.6);
@@ -261,7 +265,7 @@ code.raw {
 .md-typeset .starplot > .admonition-title,
 .md-typeset .starplot > summary {
     color: var(--md-primary-fg-color);
-    background-color: hsl(209, 58%, 87%);
+    background-color: hsl(209, 58%, 90%);
 }
 .md-typeset .starplot > .admonition-title::before,
 .md-typeset .starplot > summary::before {
