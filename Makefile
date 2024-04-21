@@ -35,7 +35,7 @@ lint:
 	$(DOCKER_RUN) "ruff check src/ tests/ hash_checks/ $(ARGS)"
 
 format:
-	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ $(ARGS)"
+	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ $(ARGS)"
 
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
