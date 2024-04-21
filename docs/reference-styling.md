@@ -158,7 +158,6 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
 - **Plot types**
     - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
-    - `ZENITH` - Basic styling tailored for zenith plots ([details](#extensions-zenith))
 
 ---
 
@@ -307,7 +306,6 @@ When you only want to override one or two style properties, it can be tedious to
 - **Plot types**
     - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
-    - `ZENITH` - Basic styling tailored for zenith plots ([details](#extensions-zenith))
 
 <!-- GRAYSCALE -->
 <h2 class="doc doc-heading" id="extensions-grayscale"><code>GRAYSCALE</code></h2>
@@ -423,18 +421,5 @@ Basic styling tailored for map plots
 
     ```yaml 
     --8<-- "src/starplot/styles/ext/map.yml"
-    ```
-</div>
-
-<!-- ZENITH -->
-<h2 class="doc doc-heading" id="extensions-zenith"><code>ZENITH</code></h2>
-
-<div class="indent" markdown>
-Basic styling tailored for zenith plots
-
-???- star "Source"
-
-    ```yaml 
-    --8<-- "src/starplot/styles/ext/zenith.yml"
     ```
 </div>

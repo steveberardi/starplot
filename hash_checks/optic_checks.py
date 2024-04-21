@@ -54,7 +54,6 @@ def check_optic_solar_eclipse_binoculars():
         dt=dt_april_8,
         style=styles.PlotStyle().extend(
             styles.extensions.BLUE_MEDIUM,
-            styles.extensions.ZENITH,
         ),
         resolution=2000,
     )

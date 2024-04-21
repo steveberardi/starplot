@@ -3,6 +3,8 @@
     --md-primary-fg-color--light: hsl(209, 53%, 70%);
     --md-primary-bg-color--light: hsl(209, 78%, 90%);
     --md-primary-fg-color--dark:  hsl(209, 53%, 27%);
+
+    /* --md-accent-fg-color: hsl(209, 73%, 47%); */
 }
 
 .md-typeset h1,
@@ -226,6 +228,10 @@ code.raw {
     }
 }
 
+.md-nav__icon {
+    display: none;
+}
+
 /* hide inactive nav items */
 .md-nav--secondary li:not(:has( a.md-nav__link--active)) {
     nav {
@@ -301,6 +307,10 @@ code.raw {
     text-align: center;
 }
 
+.text-right {
+    text-align: end;
+}
+
 .text-subtitle {
     font-size: 1.25em;
     font-style: italic;
@@ -328,4 +338,22 @@ code.raw {
 .grid.cards.examples>ul>li:hover {
     background-color: var(--doc-symbol-class-bg-color);
     border: 1px solid var(--doc-symbol-class-bg-color) !important;
+}
+
+.flex-space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tutorial-top-nav {
+    border-top: 1px solid #c6c6c6;
+    border-bottom: 1px solid #c6c6c6;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+
+    background-color: var(--doc-symbol-class-bg-color);
+    p {
+        margin: 0;
+    }
 }

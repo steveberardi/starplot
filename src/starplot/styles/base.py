@@ -555,7 +555,7 @@ class PlotStyle(BaseStyle):
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
-        font_size=8,
+        font_size=7,
         font_weight=FontWeightEnum.LIGHT,
         zorder=1,
         anchor_point=AnchorPointEnum.TOP_LEFT,
@@ -786,7 +786,7 @@ class PlotStyle(BaseStyle):
             zorder=-1_000,
         ),
         label=LabelStyle(
-            font_size=11,
+            font_size=9,
             font_color="#000",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
@@ -799,10 +799,10 @@ class PlotStyle(BaseStyle):
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(
             color="#777",
-            width=1,
+            width=2,
             style=LineStyleEnum.DOTTED,
             dash_capstyle=DashCapStyleEnum.ROUND,
-            alpha=0.75,
+            alpha=0.8,
             zorder=-20,
         ),
         label=LabelStyle(

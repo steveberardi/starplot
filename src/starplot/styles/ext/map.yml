@@ -1,23 +1,9 @@
-bayer_labels:
-  font_size: 7
 constellation:
   label:
     font_alpha: 0.82
     font_size: 10
-    font_weight: light
   line:
     width: 2.36
-ecliptic:
-  line:
-    alpha: 0.8
-    width: 2
-gridlines:
-  label:
-    font_size: 9
-    font_weight: light
-  line:
-    alpha: 0.8
-    width: 1
 star:
   label:
     font_size: 11

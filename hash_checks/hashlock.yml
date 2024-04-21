@@ -71,7 +71,7 @@ optic_polaris_binoculars:
   filename: /starplot/hash_checks/data/optic-binoculars-polaris.png
   phash: aa7b84f186d38e92
 optic_solar_eclipse_binoculars:
-  dhash: 0769f4cecef469071769f4cecef469170369c08c8cc06903
+  dhash: 0769f4cecef469071769f4cecef469170369c48c8cc06903
   filename: /starplot/hash_checks/data/optic-binoculars-eclipse.png
   phash: b38ccc3333cccc33
 optic_wrapping:

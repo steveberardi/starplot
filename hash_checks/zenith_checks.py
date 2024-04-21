@@ -11,7 +11,6 @@ DATA_PATH = HERE / "data"
 
 STYLE = styles.PlotStyle().extend(
     styles.extensions.BLUE_MEDIUM,
-    styles.extensions.ZENITH,
 )
 
 JUNE_2023 = datetime.now(timezone("US/Pacific")).replace(2023, 6, 20, 21, 0, 0, 0)
