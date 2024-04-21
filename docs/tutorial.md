@@ -8,11 +8,14 @@ Here's an overview of what the tutorial covers:
 1. [Concepts of mapping the sky](tutorial/01.md)
 2. [Creating a basic star chart](tutorial/02.md)
 3. [Adding more details to the star chart](tutorial/03.md)
-4. Creating a basic map chart
-5. Creating a basic optic plot
+4. [Creating a basic map](tutorial/04.md)
+5. [Creating a basic optic plot](tutorial/05.md)
 6. Selecting objects to plot
 7. Object lookup
 8. Creating callables
+9. Where to go from here
+
+Estimated time to complete: 1 hour
 
 <br/>
 
