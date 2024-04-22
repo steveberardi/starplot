@@ -357,3 +357,18 @@ code.raw {
         margin: 0;
     }
 }
+
+/* Code Styling for Tutorial */
+.tutorial {
+    --md-code-hl-comment-color: hsl(209, 78%, 35%);
+
+    pre {
+        line-height: 1.8;
+    }
+    .c1 {
+        background-color: rgb(236, 240, 202);
+        padding: 2px 4px;
+        border: 1px solid gray;
+        border-radius: 8px;
+    }
+}
