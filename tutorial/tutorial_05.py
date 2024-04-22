@@ -9,7 +9,7 @@ dt = datetime.now(timezone("US/Pacific")).replace(2024, 4, 8, 21, 0, 0)
 style = PlotStyle().extend(
     extensions.GRAYSCALE_DARK,
     extensions.OPTIC,
-    {"star": {"marker": {"size": 58}}}, # make the stars bigger
+    {"star": {"marker": {"size": 58}}},  # make the stars bigger
 )
 
 p = OpticPlot(
