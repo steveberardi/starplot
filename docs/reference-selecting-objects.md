@@ -6,7 +6,7 @@ Let's check out a simple example:
 
 ## Example
 
-```python linenums="1"
+```python linenums="1" hl_lines="16-21"
 from starplot import MapPlot, Projection
 from starplot.models import DSO
 
@@ -31,7 +31,7 @@ p.dsos(
 ```
 On line 16, we plot only the DSOs we want by passing the `where` keyword argument. This argument contains a list of expressions that describe which objects you want to plot. Only the DSOs that satisfy ALL of these conditions will be plotted.
 
-### Expression Examples
+### More Expression Examples
 
 | Expression                                       | Description                           |
 | ------------------------------------------------ | ------------------------------------- |
@@ -40,7 +40,7 @@ On line 16, we plot only the DSOs we want by passing the `where` keyword argumen
 | `Star.name.is_in(["Sirius", "Rigel", "Vega"])`   | Select stars with the names Sirius, Rigel, or Vega                        |
 | `(DSO.size.is_null()) | (DSO.size > 0.01)`       | Select DSOs that have no defined size **OR** are larger than 0.01 square degrees      |
 
-## Details
+## Important Details
 
 - When writing expressions, you can reference any field on the [model](/reference-models) you're filtering
 - See table below for a list of [operators](#operators) you can use in your expressions

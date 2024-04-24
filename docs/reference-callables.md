@@ -36,7 +36,7 @@ Callables allow you to define your own functions for calculating a few of the st
 
 Here's a basic example of using one of the built-in callables to colorize the stars based on their BV index:
 
-```python
+```python hl_lines="21"
 from starplot.styles import PlotStyle, extensions
 from starplot.map import Projection
 

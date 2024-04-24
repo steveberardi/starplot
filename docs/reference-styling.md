@@ -192,7 +192,7 @@ When you only want to override one or two style properties, it can be tedious to
     )
     ```
 
-**When overriding styles like this, you only have to define style properties you want to override.**
+**When overriding styles like this, you only have to define style properties you want to override.** Other properties will be inherited from the plot's style.
     
     
 ---

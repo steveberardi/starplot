@@ -366,9 +366,19 @@ code.raw {
         line-height: 1.8;
     }
     .c1 {
-        background-color: rgb(236, 240, 202);
+        background-color: hsl(197, 56%, 94%);
         padding: 2px 4px;
-        border: 1px solid gray;
-        border-radius: 8px;
+        border: 1px solid hsl(207, 46%, 86%);
+        /* border-radius: 8px; */
+    }   
+}
+
+[data-md-color-scheme=slate] {
+    .tutorial .c1 {
+        color: hsl(207, 46%, 86%);
+        background-color: hsl(197, 36%, 30%);
+        padding: 2px 4px;
+        border: 1px solid hsl(207, 46%, 56%);
+        /* border-radius: 8px; */
     }
 }
