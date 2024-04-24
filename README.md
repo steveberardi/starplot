@@ -16,13 +16,13 @@
 
 ## Examples
 *Zenith plot of the stars from a specific time/location:*
-![starchart-blue](https://starplot.dev/images/examples/example_01.png)
+![starchart-blue](https://starplot.dev/images/examples/star_chart_basic.png)
 
 *Map around the constellation Orion:*
-![map-orion](https://starplot.dev/images/gallery/orion.png)
+![map-orion](https://starplot.dev/images/examples/map_orion.png)
 
 *Optic plot of The Pleiades through a refractor as seen from a specific time/location:*
-![optic-pleiades](https://starplot.dev/images/gallery/optic_02.png)
+![optic-pleiades](https://starplot.dev/images/examples/optic_m45.png)
 
 ## Basic Usage
 

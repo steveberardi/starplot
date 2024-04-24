@@ -19,10 +19,8 @@ style = PlotStyle().extend(
 )
 
 p = MapPlot(
-    # specify a non-perspective projection
-    projection=Projection.MERCATOR,
-    # limit the map to a specific area
-    ra_min=3.6,
+    projection=Projection.MERCATOR,  # specify a non-perspective projection
+    ra_min=3.6,  # limit the map to a specific area
     ra_max=7.8,
     dec_min=-15,
     dec_max=27,
@@ -30,11 +28,9 @@ p = MapPlot(
     resolution=3600,
 )
 
-# add gridlines
-p.gridlines()
+p.gridlines()  # add gridlines
 
-# include bayer labels with the stars
-p.stars(mag=9, bayer_labels=True)
+p.stars(mag=9, bayer_labels=True)  # include bayer labels with the stars
 
 p.dsos(mag=9, labels=None)
 p.constellations()
@@ -42,7 +38,6 @@ p.constellation_borders()
 p.milky_way()
 p.ecliptic()
 
-# add a legend
-p.legend()
+p.legend()  # add a legend
 
 p.export("tutorial_04.png", padding=0.2, transparent=True)

@@ -19,7 +19,7 @@ nav:
     - Data Sources: data-sources.md
     - License: license.md
     - Changelog: changelog.md
-    - Coming Soon: roadmap.md
+    - Coming Soon: coming-soon.md
     - About: about.md
 
 theme:

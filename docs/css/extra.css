@@ -367,8 +367,8 @@ code.raw {
     }
     .c1 {
         background-color: hsl(197, 56%, 94%);
-        padding: 2px 4px;
-        border: 1px solid hsl(207, 46%, 86%);
+        padding: 2px 5px;
+        /* border: 1px solid hsl(207, 46%, 86%); */
         /* border-radius: 8px; */
     }   
 }
@@ -377,8 +377,6 @@ code.raw {
     .tutorial .c1 {
         color: hsl(207, 46%, 86%);
         background-color: hsl(197, 36%, 30%);
-        padding: 2px 4px;
-        border: 1px solid hsl(207, 46%, 56%);
-        /* border-radius: 8px; */
+        /* border: 1px solid hsl(207, 46%, 56%); */
     }
 }
