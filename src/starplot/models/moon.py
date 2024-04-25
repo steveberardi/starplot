@@ -1,8 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 
 import numpy as np
-from skyfield.api import Angle, load
+from skyfield.api import Angle
+from skyfield.api import load as skyload
+from starplot.data import load
 from skyfield import almanac
 
 from starplot.data import load
@@ -33,6 +35,42 @@ class MoonManager(SkyObjectManager):
     @classmethod
     def find(cls):
         raise NotImplementedError
+    
+
+    @classmethod
+    def _calc_moon_phase_day_range(cls, year: int, month: int, day: int, ephemeris: str = "de421_2001.bsp"):
+        ts = skyload.timescale()
+        
+        # establish monthlong range to search for nearst Full Moon
+        date = ts.utc(year, month, day)
+        t0 = date - 15 # 15 days earlier
+        t1 = date + 15 # 15 days later
+        ephemeris = load(ephemeris)
+
+        t, y = almanac.find_discrete(t0, t1, almanac.moon_phases(ephemeris))
+
+        closestPhase = []
+        for i in range(len(y)):
+            if y[i] == 1:
+                closestPhase.append(t[i])
+        
+        while len(closestPhase) > 1:
+            if abs(date-closestPhase[0]) < abs(date-closestPhase[1]):
+                del closestPhase[1]
+            else:
+                del closestPhase[0]
+
+        nearphase = closestPhase[0].utc
+        curr_date = ts.utc(nearphase.year, nearphase.month, nearphase.day, nearphase.hour, nearphase.minute)
+        comp_date = curr_date + timedelta(hours=12)
+
+        phase_mid = almanac.moon_phase(ephemeris, curr_date).degrees
+        phase_pre = almanac.moon_phase(ephemeris, comp_date).degrees
+
+
+        phase_range = abs(phase_mid-phase_pre)
+
+        return phase_range
 
     @classmethod
     def get(cls, dt: datetime = None, ephemeris: str = "de421_2001.bsp"):
@@ -49,30 +87,37 @@ class MoonManager(SkyObjectManager):
             radians=np.arcsin(RADIUS_KM / distance.km) * 2.0
         ).degrees
 
-        ts = load.timescale()
-        t = ts.utc(dt.year, dt.month, dt.day)
-        phase = almanac.moon_phase(ephemeris, t).degrees
-        illumination = phase/360
-
-        # please tell me if there's a cleaner way to implement this, it killed me to write
-        if phase >= 359 or phase <= 1:
-            phase_description = MoonPhase.NEW_MOON
-        elif 1 < phase < 89:
-            phase_description = MoonPhase.WANING_CRESCENT
-        elif 89 <= phase <= 91:
-            phase_description = MoonPhase.FIRST_QUARTER
-        elif 91 < phase < 179:
-            phase_description = MoonPhase.WAXING_GIBBOUS
-        elif 179 <= phase <= 181:
-            phase_description = MoonPhase.FULL_MOON
-        elif 181 < phase < 269:
-            phase_description = MoonPhase.WANING_GIBBOUS
-        elif 269 <= phase <= 271:
-            phase_description = MoonPhase.LAST_QUARTER
-        elif 271 < phase < 359:
-            phase_description = MoonPhase.WANING_CRESCENT
-
         
+        ts = load.timescale()
+        t = ts.utc(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
+        phase = almanac.moon_phase(ephemeris, t).degrees
+        if phase <= 180:
+            illumination = phase / 180
+        else:
+            illumination = 2 - (phase / 180)
+
+        day_range = cls._calc_moon_phase_day_range(dt.year, dt.month, dt.day)
+
+        phaseMap = {
+            MoonPhase.NEW_MOON: 0,
+            MoonPhase.FIRST_QUARTER: 90,
+            MoonPhase.FULL_MOON: 180,
+            MoonPhase.LAST_QUARTER: 270,
+        }
+        phase_description = None
+        for desc, angle in phaseMap.items():
+            if abs(phase-angle) < day_range:
+                phase_description = desc
+        if phase_description is None:
+            if 0 < phase < 90:
+                phase_description = MoonPhase.WANING_CRESCENT
+            elif 90 < phase < 180:
+                phase_description = MoonPhase.WAXING_GIBBOUS
+            elif 180 < phase < 270:
+                phase_description = MoonPhase.WANING_GIBBOUS
+            elif 270 < phase < 360:
+                phase_description = MoonPhase.WANING_CRESCENT
+
 
         return Moon(
             ra=ra.hours,

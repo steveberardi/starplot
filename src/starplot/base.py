@@ -23,6 +23,7 @@ from starplot.styles import (
     LegendStyle,
     PathStyle,
     PolygonStyle,
+    FillStyleEnum
 )
 from starplot.styles.helpers import use_style
 
@@ -382,6 +383,7 @@ class BasePlot(ABC):
         self,
         style: ObjectStyle = None,
         true_size: bool = False,
+        show_phase: bool = False,
         label: str = "Moon",
         legend_label: str = "Moon",
     ) -> None:
@@ -392,21 +394,38 @@ class BasePlot(ABC):
             true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             label: How the Moon will be labeled on the plot and legend
         """
+        print(f"dt:{self.dt}")
         m = models.Moon.get(dt=self.dt, ephemeris=self._ephemeris_name)
         m.name = label or m.name
-        print(m.phase)
 
+        print(f"phase: {m.phase}")
+        print(f"Illumination: {m.illumination}")
+        print(f"Phase desc: {m.phase_description}")
+        
         if not self.in_bounds(m.ra, m.dec):
             return
 
         self._objects.moon = m
 
         if true_size:
-            self.circle(
-                (m.ra, m.dec),
-                m.apparent_size,
-                style=style.marker.to_polygon_style(),
-            )
+            if show_phase == False:
+                self.circle(
+                    (m.ra, m.dec),
+                    m.apparent_size,
+                    style=style.marker.to_polygon_style(),
+                )
+            else:
+               self.circle(
+                    (m.ra, m.dec),
+                    m.apparent_size,
+                    style=style.marker.to_polygon_style(),
+                ) 
+               self.ellipse(
+                   (m.ra, m.dec),
+                   m.apparent_size *2,
+                   m.apparent_size,
+                   style=PolygonStyle(edge_color="Blue", edge_width=0, fill_color="Red")
+               )
 
             self._add_legend_handle_marker(legend_label, style.marker)
 
@@ -579,7 +598,7 @@ class BasePlot(ABC):
             num_pts: Number of points to calculate for the ellipse polygon
         """
 
-        points = geod.ellipse(
+        points = geod.ellipse( 
             center,
             height_degrees,
             width_degrees,
