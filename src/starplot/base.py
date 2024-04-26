@@ -14,6 +14,7 @@ from pytz import timezone
 from starplot import geod, models
 from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
+from starplot.models.moon import MoonPhaseEnum
 from starplot.styles import (
     PlotStyle,
     MarkerStyle,
@@ -23,7 +24,7 @@ from starplot.styles import (
     LegendStyle,
     PathStyle,
     PolygonStyle,
-    FillStyleEnum
+    ColorStr
 )
 from starplot.styles.helpers import use_style
 
@@ -394,14 +395,9 @@ class BasePlot(ABC):
             true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             label: How the Moon will be labeled on the plot and legend
         """
-        print(f"dt:{self.dt}")
         m = models.Moon.get(dt=self.dt, ephemeris=self._ephemeris_name)
         m.name = label or m.name
 
-        print(f"phase: {m.phase}")
-        print(f"Illumination: {m.illumination}")
-        print(f"Phase desc: {m.phase_description}")
-        
         if not self.in_bounds(m.ra, m.dec):
             return
 
@@ -414,18 +410,13 @@ class BasePlot(ABC):
                     m.apparent_size,
                     style=style.marker.to_polygon_style(),
                 )
-            else:
-               self.circle(
+            elif show_phase == True:
+                self.moon_with_phases(
+                    m.phase_description,
                     (m.ra, m.dec),
                     m.apparent_size,
-                    style=style.marker.to_polygon_style(),
-                ) 
-               self.ellipse(
-                   (m.ra, m.dec),
-                   m.apparent_size *2,
-                   m.apparent_size,
-                   style=PolygonStyle(edge_color="Blue", edge_width=0, fill_color="Red")
-               )
+                    style=style.marker.to_polygon_style()
+                )
 
             self._add_legend_handle_marker(legend_label, style.marker)
 
@@ -438,6 +429,9 @@ class BasePlot(ABC):
                 )
 
         else:
+            if show_phase == True:
+                print(m.phase_marker)
+                style.marker.symbol = m.phase_marker
             self.marker(
                 ra=m.ra,
                 dec=m.dec,
@@ -632,6 +626,103 @@ class BasePlot(ABC):
             num_pts=num_pts,
         )
 
+    @use_style(PolygonStyle)
+    def _semicircle(
+        self,
+        center: tuple,
+        radius_degrees: float,
+        style: PolygonStyle,
+        angle: int = 0,
+        num_pts: int = 100,
+    ):
+        points = geod.semicircle(
+            center,
+            radius_degrees * 2,
+            radius_degrees * 2,
+            angle=angle,
+            num_pts=num_pts
+        )
+
+        self._polygon(points, style)
+
+    @use_style(PolygonStyle)
+    def moon_with_phases(
+        self,
+        moon_phase: MoonPhaseEnum,
+        center: tuple,
+        radius_degrees: float,
+        style: PolygonStyle,
+        num_pts: int = 100,
+    ):
+        print(moon_phase)
+        black = ColorStr("Black")
+        white = ColorStr("White")
+        semi1_style = style.copy()
+        semi2_style = style.copy()
+        ellipse_style = style.copy()
+        ellipse_style.edge_width=0 
+        semi1_style.alpha = semi2_style.alpha = ellipse_style.alpha = 1
+        if moon_phase == MoonPhaseEnum.WAXING_CRESCENT:
+            print("chose waxing crescent")
+            semi1_style.fill_color=white
+            semi2_style.fill_color=black
+            ellipse_style.fill_color=black
+        elif moon_phase == MoonPhaseEnum.FIRST_QUARTER:
+            print("chose first quarter")
+            semi1_style.fill_color=white
+            semi2_style.fill_color=black
+            ellipse_style.alpha=0
+        elif moon_phase == MoonPhaseEnum.WAXING_GIBBOUS:
+            print("chose waxing gibbous")
+            semi1_style.fill_color=white
+            semi2_style.fill_color=black
+            ellipse_style.fill_color=white
+        elif moon_phase == MoonPhaseEnum.FULL_MOON:
+            semi1_style.fill_color = semi2_style.fill_color = ellipse_style.fill_color = white
+            print("Full Moon")
+        elif moon_phase == MoonPhaseEnum.WANING_GIBBOUS:
+            print("chose waning gibbous")
+            semi1_style.fill_color=black
+            semi2_style.fill_color=white
+            ellipse_style.fill_color=white
+        elif moon_phase == MoonPhaseEnum.LAST_QUARTER:
+            semi1_style.fill_color=black
+            semi2_style.fill_color=white
+            ellipse_style.alpha=0
+            print("last quarter")
+        elif moon_phase == MoonPhaseEnum.WANING_CRESCENT:
+            print("chose waning crescent")
+            semi2_style.fill_color=white
+            ellipse_style.fill_color=black
+            semi1_style.fill_color=black
+
+        else:
+            semi1_style.fill_color = semi2_style.fill_color = ellipse_style.fill_color = black
+            # full black circle
+            print("New Moon")
+
+        self._semicircle(
+            center,
+            radius_degrees,
+            style=semi1_style,
+            num_pts=num_pts,
+            angle=0
+        )
+        self._semicircle(
+            center,
+            radius_degrees,
+            style=semi2_style,
+            num_pts=num_pts,
+            angle=180,
+        )
+        self.ellipse(
+            center,
+            radius_degrees * 2,
+            radius_degrees,
+            style=ellipse_style,
+        )
+        
+        
     def _fov_circle(
         self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
     ):

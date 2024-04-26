@@ -115,7 +115,7 @@ def semicircle(
     width = distance_m(width_degrees / 2)  # a
 
     points = []
-    for angle_pt in range(0, 180, int(360 / num_pts)):
+    for angle_pt in range(0, 181, int(360 / num_pts)):
         radians = math.radians(angle_pt)
         radius_a = (height * width) / math.sqrt(
             height**2 * (math.sin(radians)) ** 2
