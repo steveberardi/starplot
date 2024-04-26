@@ -25,19 +25,19 @@ class Projection(str, Enum):
     """
     Shows the celestial sphere as a 3D-looking globe. Objects near the edges will be distorted.
 
-    **This is a _perspective_ projection, so it requires the following `kwargs` when creating the plot: `lat`, `lon`, and `dt`**. _The persepctive of the globe will be based on these values._
+    **This is a _perspective_ projection, so it requires the following `kwargs` when creating the plot: `lat`, `lon`, and `dt`**. _The perspective of the globe will be based on these values._
     """
 
     STEREOGRAPHIC = "stereographic"
     """
     Similar to the North/South Stereographic projection, but this version is location-dependent.
 
-    **This is a _perspective_ projection, so it requires the following `kwargs` when creating the plot: `lat`, `lon`, and `dt`**. _The persepctive of the map will be based on these values._
+    **This is a _perspective_ projection, so it requires the following `kwargs` when creating the plot: `lat`, `lon`, and `dt`**. _The perspective of the map will be based on these values._
     """
 
     ZENITH = "zenith"
     """
-    **This is a _perspective_ projection, so it requires the following `kwargs` when creating the plot: `lat`, `lon`, and `dt`**. _The persepctive of the map will be based on these values._
+    **This is a _perspective_ projection, so it requires the following `kwargs` when creating the plot: `lat`, `lon`, and `dt`**. _The perspective of the map will be based on these values._
 
     The Zenith projection shows the whole sky as seen from a specific time and place. They're also sometimes called "star charts" but that name is used for many different types of star maps, so Starplot uses the more specific name "Zenith plot" (which reflects the fact that the [zenith](https://en.wikipedia.org/wiki/Zenith) is in the center of the chart).
     """
