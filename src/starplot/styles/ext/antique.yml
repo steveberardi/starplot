@@ -81,6 +81,12 @@ sun:
   marker:
     color: hsl(60, 12%, 32%)
     edge_color: hsl(60, 12%, 32%)
+moon:
+  label:
+    font_color: hsl(60, 3%, 42%)
+  marker:
+    color: hsl(60, 12%, 32%)
+    edge_color: hsl(60, 12%, 32%)
 
 # DSOs
 dso_double_star:

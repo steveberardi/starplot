@@ -51,6 +51,8 @@ class MoonManager(SkyObjectManager):
         t, y = almanac.find_discrete(t0, t1, almanac.moon_phases(ephemeris))
 
         closestPhase = []
+        
+        # only include Full Moon dates (1)
         for i in range(len(y)):
             if y[i] == 1:
                 closestPhase.append(t[i])
@@ -100,30 +102,25 @@ class MoonManager(SkyObjectManager):
         day_range = cls._calc_moon_phase_day_range(dt.year, dt.month, dt.day)
 
         phaseMap = {
-            MoonPhaseEnum.NEW_MOON: (0, MarkerSymbolEnum.NEW_MOON),
-            MoonPhaseEnum.FIRST_QUARTER: (90, MarkerSymbolEnum.FIRST_QUARTER),
-            MoonPhaseEnum.FULL_MOON: (180, MarkerSymbolEnum.FULL_MOON),
-            MoonPhaseEnum.LAST_QUARTER: (270, MarkerSymbolEnum.LAST_QUARTER),
+            MoonPhaseEnum.NEW_MOON: 0,
+            MoonPhaseEnum.FIRST_QUARTER: 90,
+            MoonPhaseEnum.FULL_MOON: 180, 
+            MoonPhaseEnum.LAST_QUARTER: 270,
         }
         phase_description = None
         for desc, att in phaseMap.items():
-            if abs(phase-att[0]) < day_range:
+            if abs(phase-att) < day_range:
                 phase_description = desc
-                phase_marker = att[1]
 
         if phase_description is None:
             if 0 < phase < 90:
                 phase_description = MoonPhaseEnum.WANING_CRESCENT
-                phase_marker = MarkerSymbolEnum.WANING_CRESCENT
             elif 90 < phase < 180:
                 phase_description = MoonPhaseEnum.WAXING_GIBBOUS
-                phase_marker = MarkerSymbolEnum.WAXING_GIBBOUS
             elif 180 < phase < 270:
                 phase_description = MoonPhaseEnum.WANING_GIBBOUS
-                phase_marker = MarkerSymbolEnum.WANING_GIBBOUS
             elif 270 < phase < 360:
                 phase_description = MoonPhaseEnum.WANING_CRESCENT
-                phase_marker = MarkerSymbolEnum.WANING_CRESCENT
 
 
         return Moon(
@@ -134,7 +131,6 @@ class MoonManager(SkyObjectManager):
             phase=phase,
             phase_description = phase_description,
             illumination = illumination,
-            phase_marker = phase_marker
         )
 
 
@@ -158,17 +154,13 @@ class Moon(SkyObject):
     phase_description: str
     """Description of moon phase"""
 
-    phase_marker: MarkerSymbolEnum
-    """Phase symbol when plotting marker"""
-
-    def __init__(self, ra: float, dec: float, name: str, apparent_size: float, phase: float, phase_description: str, illumination: str, phase_marker: MarkerSymbolEnum) -> None:
+    def __init__(self, ra: float, dec: float, name: str, apparent_size: float, phase: float, phase_description: str, illumination: str) -> None:
         super().__init__(ra, dec)
         self.name = name
         self.apparent_size = apparent_size
         self.phase = phase
         self.phase_description = phase_description
         self.illumination = illumination
-        self.phase_marker = phase_marker
 
     @classmethod
     def get(dt: datetime = None, ephemeris: str = "de421_2001.bsp") -> "Moon":

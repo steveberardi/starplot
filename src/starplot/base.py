@@ -393,6 +393,7 @@ class BasePlot(ABC):
         Args:
             style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
+            show_phase: If True, and if true_size = True, the phase of the moon will be illustrated.
             label: How the Moon will be labeled on the plot and legend
         """
         m = models.Moon.get(dt=self.dt, ephemeris=self._ephemeris_name)
@@ -429,9 +430,6 @@ class BasePlot(ABC):
                 )
 
         else:
-            if show_phase == True:
-                print(m.phase_marker)
-                style.marker.symbol = m.phase_marker
             self.marker(
                 ra=m.ra,
                 dec=m.dec,
@@ -472,6 +470,7 @@ class BasePlot(ABC):
 
             self._add_legend_handle_marker(legend_label, style.marker)
 
+            
             if label:
                 self._text(
                     s.ra,
@@ -654,7 +653,6 @@ class BasePlot(ABC):
         style: PolygonStyle,
         num_pts: int = 100,
     ):
-        print(moon_phase)
         black = ColorStr("Black")
         white = ColorStr("White")
         semi1_style = style.copy()
@@ -663,25 +661,20 @@ class BasePlot(ABC):
         ellipse_style.edge_width=0 
         semi1_style.alpha = semi2_style.alpha = ellipse_style.alpha = 1
         if moon_phase == MoonPhaseEnum.WAXING_CRESCENT:
-            print("chose waxing crescent")
             semi1_style.fill_color=white
             semi2_style.fill_color=black
             ellipse_style.fill_color=black
         elif moon_phase == MoonPhaseEnum.FIRST_QUARTER:
-            print("chose first quarter")
             semi1_style.fill_color=white
             semi2_style.fill_color=black
             ellipse_style.alpha=0
         elif moon_phase == MoonPhaseEnum.WAXING_GIBBOUS:
-            print("chose waxing gibbous")
             semi1_style.fill_color=white
             semi2_style.fill_color=black
             ellipse_style.fill_color=white
         elif moon_phase == MoonPhaseEnum.FULL_MOON:
             semi1_style.fill_color = semi2_style.fill_color = ellipse_style.fill_color = white
-            print("Full Moon")
         elif moon_phase == MoonPhaseEnum.WANING_GIBBOUS:
-            print("chose waning gibbous")
             semi1_style.fill_color=black
             semi2_style.fill_color=white
             ellipse_style.fill_color=white
@@ -689,17 +682,13 @@ class BasePlot(ABC):
             semi1_style.fill_color=black
             semi2_style.fill_color=white
             ellipse_style.alpha=0
-            print("last quarter")
         elif moon_phase == MoonPhaseEnum.WANING_CRESCENT:
-            print("chose waning crescent")
             semi2_style.fill_color=white
             ellipse_style.fill_color=black
             semi1_style.fill_color=black
 
         else:
             semi1_style.fill_color = semi2_style.fill_color = ellipse_style.fill_color = black
-            # full black circle
-            print("New Moon")
 
         self._semicircle(
             center,

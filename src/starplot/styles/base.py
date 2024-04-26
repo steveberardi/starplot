@@ -116,30 +116,6 @@ class MarkerSymbolEnum(str, Enum):
     STAR_8 = "star_8"
     """\u2734"""
 
-    NEW_MOON = "new_moon"
-    """\u1F311"""
-
-    WAXING_CRESCENT = "waxing_crescent"
-    """\u1F312"""
-
-    FIRST_QUARTER = "first_quarter"
-    """\u1F313"""
-
-    WAXING_GIBBOUS = "waxing_gibbous"
-    """\u1F314"""
-
-    FULL_MOON = "full_moon"
-    """\u1F315"""
-
-    WANING_GIBBOUS = "waning_gibbous"
-    """\u1F316"""
-    
-    LAST_QUARTER = "last_quarter"
-    """\u1F317"""
-
-    WANING_CRESCENT = "waning_crescent"
-    """\u1F318"""
-    
     def as_matplot(self) -> str:
         """Returns the matplotlib value of this marker"""
         return {
@@ -156,14 +132,6 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.CIRCLE_DOTTED_EDGE: "$\u25CC$",
             MarkerSymbolEnum.COMET: "$\u2604$",
             MarkerSymbolEnum.STAR_8: "$\u2734$",
-            MarkerSymbolEnum.NEW_MOON: "$\u1F311$",
-            MarkerSymbolEnum.WAXING_CRESCENT: "$\u1F312$",
-            MarkerSymbolEnum.FIRST_QUARTER: "$\u1F313$",
-            MarkerSymbolEnum.WAXING_GIBBOUS: "$\u1F314$",
-            MarkerSymbolEnum.FULL_MOON: "$\u1F315$",
-            MarkerSymbolEnum.WANING_GIBBOUS: "$\u1F316$",
-            MarkerSymbolEnum.LAST_QUARTER: "$\u1F317$",
-            MarkerSymbolEnum.WANING_CRESCENT: "$\u1F318$",
         }.get(self.value)
 
 
