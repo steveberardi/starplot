@@ -470,7 +470,6 @@ class BasePlot(ABC):
 
             self._add_legend_handle_marker(legend_label, style.marker)
 
-            
             if label:
                 self._text(
                     s.ra,
