@@ -126,10 +126,3 @@ def semicircle(
         points.append((lon[0], lat[0]))
 
     return points
-
-def crescent():
-    pass
-    # generate "left" half of points 0-180
-
-def gibbous():
-    pass
