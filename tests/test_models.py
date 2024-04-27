@@ -87,6 +87,23 @@ class TestMoon:
         assert m.dec == -26.96492167310071
         assert m.dt == dt
         assert m.apparent_size == 0.5480758923848209
+        assert m.phase_description == "Waxing Gibbous"
+        assert m.phase_angle == 135.9701133085137
+        assert m.illumination == 0.7553895183806317
+    
+    def test_moon_get_new_moon(self):
+        dt = timezone("UTC").localize(datetime(2024, 4, 8, 12, 0, 0, 0))
+        m = Moon.get(dt)
+        assert m.phase_description == "New Moon"
+        assert m.phase_angle == 356.2894192723546
+        assert m.illumination == 0.020614337375807645
+    
+    def test_moon_get_full_moon(self):
+        dt = timezone("UTC").localize(datetime(2024, 4, 23, 14, 0, 0, 0))
+        m = Moon.get(dt)
+        assert m.phase_description == "Full Moon"
+        assert m.phase_angle == 175.42641200608864
+        assert m.illumination == 0.9745911778116035
 
 
 class TestPlanet:

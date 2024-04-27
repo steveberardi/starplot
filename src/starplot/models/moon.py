@@ -22,6 +22,41 @@ class MoonPhaseEnum(str, Enum):
     LAST_QUARTER = "Last Quarter"
     WANING_CRESCENT = "Waning Crescent"
 
+def _calc_moon_phase_day_range(year: int, month: int, day: int, ephemeris):
+    ts = load.timescale()
+
+    # establish monthlong range to search for nearst Full Moon
+    date = ts.utc(year, month, day)
+    t0 = date - 15  # 15 days earlier
+    t1 = date + 15  # 15 days later
+
+    times_of_phases, phase_types = almanac.find_discrete(
+        t0, t1, almanac.moon_phases(ephemeris)
+    )
+
+    closest_phase = []
+
+    # only include Full Moon dates (1)
+    for i in range(len(phase_types)):
+        if phase_types[i] == 1:
+            closest_phase.append(times_of_phases[i])
+
+    nearphase = closest_phase[0].utc
+    curr_date = ts.utc(
+        nearphase.year,
+        nearphase.month,
+        nearphase.day,
+        nearphase.hour,
+        nearphase.minute,
+    )
+    comp_date = curr_date + timedelta(hours=12)
+
+    phase_mid = almanac.moon_phase(ephemeris, curr_date).degrees
+    phase_pre = almanac.moon_phase(ephemeris, comp_date).degrees
+
+    phase_range = abs(phase_mid - phase_pre)
+
+    return phase_range
 
 class MoonManager(SkyObjectManager):
     @classmethod
@@ -31,46 +66,6 @@ class MoonManager(SkyObjectManager):
     @classmethod
     def find(cls):
         raise NotImplementedError
-
-    @classmethod
-    def _calc_moon_phase_day_range(
-        cls, year: int, month: int, day: int, ephemeris: str = "de421_2001.bsp"
-    ):
-        ts = load.timescale()
-
-        # establish monthlong range to search for nearst Full Moon
-        date = ts.utc(year, month, day)
-        t0 = date - 15  # 15 days earlier
-        t1 = date + 15  # 15 days later
-        ephemeris = load(ephemeris)
-
-        times_of_phases, phase_types = almanac.find_discrete(
-            t0, t1, almanac.moon_phases(ephemeris)
-        )
-
-        closest_phase = []
-
-        # only include Full Moon dates (1)
-        for i in range(len(phase_types)):
-            if phase_types[i] == 1:
-                closest_phase.append(times_of_phases[i])
-
-        nearphase = closest_phase[0].utc
-        curr_date = ts.utc(
-            nearphase.year,
-            nearphase.month,
-            nearphase.day,
-            nearphase.hour,
-            nearphase.minute,
-        )
-        comp_date = curr_date + timedelta(hours=12)
-
-        phase_mid = almanac.moon_phase(ephemeris, curr_date).degrees
-        phase_pre = almanac.moon_phase(ephemeris, comp_date).degrees
-
-        phase_range = abs(phase_mid - phase_pre)
-
-        return phase_range
 
     @classmethod
     def get(cls, dt: datetime = None, ephemeris: str = "de421_2001.bsp"):
@@ -87,15 +82,14 @@ class MoonManager(SkyObjectManager):
             radians=np.arcsin(RADIUS_KM / distance.km) * 2.0
         ).degrees
 
-        ts = load.timescale()
-        t = ts.utc(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
-        phase_angle = almanac.moon_phase(ephemeris, t).degrees
+        phase_angle = almanac.moon_phase(ephemeris, timescale).degrees
+
         if phase_angle <= 180:
             illumination = phase_angle / 180
         else:
             illumination = 2 - (phase_angle / 180)
 
-        day_range = cls._calc_moon_phase_day_range(dt.year, dt.month, dt.day)
+        day_range = _calc_moon_phase_day_range(dt.year, dt.month, dt.day, ephemeris)
 
         phase_map = {
             MoonPhaseEnum.NEW_MOON: 0,
@@ -128,7 +122,7 @@ class MoonManager(SkyObjectManager):
             dt=dt,
             apparent_size=apparent_diameter_degrees,
             phase_angle=phase_angle,
-            phase_description=phase_description,
+            phase_description=phase_description.value,
             illumination=illumination,
         )
 
