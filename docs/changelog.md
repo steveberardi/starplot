@@ -4,6 +4,7 @@
 - Adds `where` kwarg to star/DSO plotting functions to selectively plot stars
 - Adds easier way to override style properties on plotting functions - thanks to Graham Schmidt
 - Adds function to plot the Sun - thanks to Graham Schmidt
+- Adds option to illustrate the Moon's phase - thanks to Graham Schmidt
 - Adds `objects` property to plots that stores lists of objects that have been plotted
 - Adds object finder helpers
 - Adds customizable anchor points for text labels
