@@ -382,7 +382,7 @@ class BasePlot(ABC):
         Args:
             style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
-            show_phase: If True, and if true_size = True, the phase of the moon will be illustrated.
+            show_phase: If True, and if `true_size = True`, then the phase of the moon will be illustrated.
             label: How the Moon will be labeled on the plot and legend
         """
         m = models.Moon.get(dt=self.dt, ephemeris=self._ephemeris_name)
