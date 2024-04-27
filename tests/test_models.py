@@ -4,7 +4,7 @@ import pytest
 
 from pytz import timezone
 
-from starplot import Star, Moon, Planet
+from starplot import DSO, Star, Moon, Planet
 
 
 class TestStar:
@@ -56,12 +56,36 @@ class TestStar:
         assert set([s.name for s in bright]) == names
 
 
+class TestDSO:
+    def test_dso_get(self):
+        m13 = DSO.get(m="13")
+        assert m13.ra == 16.694897222222224
+        assert m13.dec == 36.46130555555556
+        assert m13.m == "13"
+        assert m13.ngc == "6205"
+        assert m13.ic is None
+
+    def test_dso_find_messier(self):
+        results = DSO.find(where=[DSO.m.is_not_null()])
+        assert len(results) == 110
+
+    def test_dso_find_duplicate(self):
+        results = DSO.find(where=[DSO.ngc == "5273"])
+        assert len(results) == 2
+
+        for r in results:
+            assert r.m is None
+            assert r.ngc == "5273"
+            assert r.ic == "895"
+
+
 class TestMoon:
     def test_moon_get(self):
         dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
         m = Moon.get(dt)
         assert m.ra == 19.502411822774185
         assert m.dec == -26.96492167310071
+        assert m.dt == dt
         assert m.apparent_size == 0.5480758923848209
 
 
@@ -71,9 +95,10 @@ class TestPlanet:
         jupiter = Planet.get("jupiter", dt)
         assert jupiter.ra == 3.086003716668181
         assert jupiter.dec == 16.56207889273591
+        assert jupiter.dt == dt
         assert jupiter.apparent_size == 0.009162890626143375
 
     def test_planet_all(self):
         dt = timezone("UTC").localize(datetime(2024, 4, 7, 21, 0, 0, 0))
         planets = [p for p in Planet.all(dt)]
-        assert len(planets) == 7
+        assert len(planets) == 8

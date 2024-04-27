@@ -27,9 +27,9 @@ eph = load("de421.bsp")
 sun, earth = eph["sun"], eph["earth"]
 comet = sun + mpc.comet_orbit(row, ts, GM_SUN)
 
-# Find the RA/DEC of comet for every 7 days starting on March 18, 1997
+# Find the RA/DEC of comet for every 8 days starting on March 18, 1997
 radecs = []
-for day in range(0, 30, 7):
+for day in range(0, 32, 8):
     t = ts.utc(1997, 3, 18 + day)
     ra, dec, distance = earth.at(t).observe(comet).radec()
     radecs.append((t, ra.hours, dec.degrees))
@@ -65,15 +65,8 @@ p = MapPlot(
     style=style,
     resolution=2800,
 )
-p.gridlines(labels=False)
-p.stars(mag=8)
-p.constellations()
-p.constellation_borders()
-p.nebula(mag=8, labels=None)
-p.open_clusters(mag=8, labels=None)
-p.galaxies(mag=8, labels=None)
-p.milky_way()
 
+# Plot the comet markers first, to ensure their labels are plotted
 for t, ra, dec in radecs:
     label = f"{t.utc.month}/{t.utc.day}/{t.utc.year % 100}"
     p.marker(
@@ -100,6 +93,14 @@ for t, ra, dec in radecs:
         },
     )
 
+p.gridlines(labels=False)
+p.stars(mag=8)
+p.constellations()
+p.constellation_borders()
+p.nebula(mag=8, labels=None)
+p.open_clusters(mag=8, labels=None)
+p.galaxies(mag=8, labels=None)
+p.milky_way()
 p.legend()
 
-p.export("07_map_hale_bopp.png", padding=0.2)
+p.export("map_hale_bopp.png", padding=0.2)

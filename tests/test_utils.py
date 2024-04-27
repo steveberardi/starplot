@@ -40,7 +40,7 @@ def test_dec_str_to_float(dms, expected):
     ],
 )
 def test_lon_to_ra(lon, ra):
-    assert utils.lon_to_ra(lon) == ra
+    assert utils.lon_to_ra_hms(lon) == ra
 
 
 @pytest.mark.parametrize(

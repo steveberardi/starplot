@@ -1,17 +1,4 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# ruff
-.ruff_cache
-
-# C extensions
-*.so
-
-# macOS
-.DS_Store
-
+# scratchpad for local development
 scripts/scratchpad.py
 
 # astronomy data
@@ -27,15 +14,33 @@ hash_checks/results.html
 temp.py
 temp/
 raw/
+
+# Documentation Generated Files
 examples/*.png
 docs/images/examples/*.png
-docs/images/gallery/*.png
+tutorial/*.png
+docs/images/tutorial/*.png
 docs/data/*.json
 
+# Profiling files
 *.prof
 
 # test-generated data
 tests/data/*.png
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ruff
+.ruff_cache
+
+# C extensions
+*.so
+
+# macOS
+.DS_Store
 
 # Distribution / packaging
 .Python

@@ -150,18 +150,15 @@ class BasePlot(ABC):
 
         x, y = self._prepare_coords(ra, dec)
         kwargs["path_effects"] = kwargs.get("path_effects") or [self.text_border]
-        label = self.ax.text(
-            x,
-            y,
+        label = self.ax.annotate(
             text,
+            (x, y),
             *args,
             **kwargs,
             **self._plot_kwargs(),
         )
         label.set_clip_on(True)
-
-        if kwargs.get("clip_path"):
-            label.set_clip_path(kwargs.get("clip_path"))
+        label.set_clip_path(self._background_clip_path)
 
         self._maybe_remove_label(label)
 
@@ -177,7 +174,14 @@ class BasePlot(ABC):
             style: Styling of the text
         """
         style = style or LabelStyle()
-        self._text(ra, dec, text, **style.matplot_kwargs(self._size_multiplier))
+        self._text(
+            ra,
+            dec,
+            text,
+            **style.matplot_kwargs(self._size_multiplier),
+            xytext=(style.offset_x, style.offset_y),
+            textcoords="offset pixels",
+        )
 
     @property
     def objects(self) -> models.ObjectList:
@@ -316,14 +320,7 @@ class BasePlot(ABC):
         )
 
         if label:
-            self._text(
-                ra,
-                dec,
-                label,
-                **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
-                ha="left",
-                va="top",
-            )
+            self.text(label, ra, dec, style.label)
 
         if legend_label is not None:
             self._add_legend_handle_marker(legend_label, style.marker)
@@ -362,14 +359,7 @@ class BasePlot(ABC):
                 self._add_legend_handle_marker(legend_label, style.marker)
 
                 if label:
-                    self._text(
-                        p.ra,
-                        p.dec,
-                        label.upper(),
-                        **style.label.matplot_kwargs(
-                            size_multiplier=self._size_multiplier
-                        ),
-                    )
+                    self.text(label.upper(), p.ra, p.dec, style.label)
             else:
                 self.marker(
                     ra=p.ra,
@@ -422,12 +412,7 @@ class BasePlot(ABC):
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
-                self._text(
-                    m.ra,
-                    m.dec,
-                    label,
-                    **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
-                )
+                self.text(label, m.ra, m.dec, style.label)
 
         else:
             self.marker(
@@ -471,12 +456,7 @@ class BasePlot(ABC):
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
-                self._text(
-                    s.ra,
-                    s.dec,
-                    label,
-                    **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
-                )
+                self.text(label, s.ra, s.dec, style.label)
 
         else:
             self.marker(
@@ -806,14 +786,7 @@ class BasePlot(ABC):
 
                 for i in range(0, len(inbounds), label_spacing):
                     ra, dec = inbounds[i]
-                    self._text(
-                        ra,
-                        dec - 0.4,
-                        label,
-                        **self.style.ecliptic.label.matplot_kwargs(
-                            self._size_multiplier
-                        ),
-                    )
+                    self.text(label, ra, dec, style.label)
 
     @use_style(PathStyle, "celestial_equator")
     def celestial_equator(
@@ -848,7 +821,6 @@ class BasePlot(ABC):
         )
 
         if label:
-            label_style_kwargs = style.label.matplot_kwargs(self._size_multiplier)
             label_spacing = (self.ra_max - self.ra_min) / 3
             for ra in np.arange(self.ra_min, self.ra_max, label_spacing):
-                self._text(ra, 0.25, label, **label_style_kwargs)
+                self.text(label, ra, 0.25, style.label)

@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import datetime
 
+import numpy as np
 from pytz import timezone
 
 from starplot import styles, DSO
@@ -77,13 +78,17 @@ def check_map_orion_extra():
     mercator_base.marker(
         ra=4.5,
         dec=5,
-        label="hello worldzz",
+        label="hello worldzz label offset",
         style={
             "marker": {
                 "size": 30,
                 "symbol": "square",
                 "fill": "full",
                 "color": "#ff6868",
+            },
+            "label": {
+                "offset_x": 50,
+                "offset_y": -100,
             },
         },
         legend_label="hello legend",
@@ -212,7 +217,12 @@ def check_map_custom_stars():
         resolution=RESOLUTION,
     )
     p.stars(mag=6)
-    p.text("CUSTOM STARZZZ", 7, -5, style={"font_size": 20})
+    p.text(
+        "CUSTOM STARZZZ",
+        7,
+        -5,
+        style={"font_size": 20, "offset_x": 40, "offset_y": 100},
+    )
     p.export(filename, padding=0.3)
     return filename
 
@@ -268,4 +278,39 @@ def check_map_mollweide():
     p.milky_way()
     p.gridlines(labels=False)
     p.export(filename, padding=0.1)
+    return filename
+
+
+def check_map_gridlines():
+    filename = DATA_PATH / "map-gridlines.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.GRAYSCALE,
+        styles.extensions.MAP,
+    )
+
+    p = MapPlot(
+        projection=Projection.MILLER,
+        ra_min=10,
+        ra_max=15,
+        dec_min=31,
+        dec_max=67,
+        style=style,
+        resolution=RESOLUTION,
+    )
+
+    p.stars(mag=6, style__marker__size=45)
+
+    p.gridlines(tick_marks=True)
+
+    p.gridlines(
+        ra_locations=list(np.arange(0, 24, 0.25)),
+        ra_formatter_fn=lambda d: None,
+        dec_formatter_fn=lambda d: None,
+        dec_locations=list(np.arange(-90, 90, 1)),
+        style__line__alpha=0.2,
+    )
+
+    p.export(filename, padding=0.3)
+
     return filename

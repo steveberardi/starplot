@@ -1,5 +1,5 @@
 from starplot import MapPlot, Projection
-from starplot.styles import PlotStyle, PolygonStyle, extensions
+from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
     extensions.BLUE_LIGHT,
@@ -19,34 +19,25 @@ style = PlotStyle().extend(
 )
 
 p = MapPlot(
-    projection=Projection.MERCATOR,
-    ra_min=3.6,
+    projection=Projection.MERCATOR,  # specify a non-perspective projection
+    ra_min=3.6,  # limit the map to a specific area
     ra_max=7.8,
-    dec_min=-16,
-    dec_max=23.6,
+    dec_min=-15,
+    dec_max=27,
     style=style,
     resolution=3600,
 )
-p.gridlines()
-p.stars(mag=9, bayer_labels=True)
+
+p.gridlines()  # add gridlines
+
+p.stars(mag=9, bayer_labels=True)  # include bayer labels with the stars
+
 p.dsos(mag=9, labels=None)
 p.constellations()
 p.constellation_borders()
 p.milky_way()
 p.ecliptic()
 
-p.ellipse(
-    (5.6, -1.2),
-    height_degrees=3,
-    width_degrees=5,
-    style=PolygonStyle(
-        fill_color="#ed7eed",
-        edge_color="#000",
-        alpha=0.2,
-    ),
-    angle=-22,
-)
+p.legend()  # add a legend
 
-p.legend()
-
-p.export("03_map_orion.png", padding=0.5)
+p.export("tutorial_04.png", padding=0.2, transparent=True)

@@ -15,7 +15,6 @@ def load(filename: str) -> dict:
 # Plot Types
 OPTIC = load("optic.yml")
 MAP = load("map.yml")
-ZENITH = load("zenith.yml")
 
 # Color Schemes
 GRAYSCALE = load("grayscale.yml")

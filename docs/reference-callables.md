@@ -1,4 +1,4 @@
-Callables allow you to define your own functions for calculating a few of the style properties for stars: size, alpha (opacity), and color. Starplot has a few basic callables built-in, but you can also create your own.
+Callables allow you to define your own functions for calculating a few of the style properties for stars: size, alpha (opacity), and color. DSOs support callables for alpha only. Starplot has a few basic callables built-in, but you can also create your own.
 
 ???- tip "What's a Callable?"
 
@@ -36,7 +36,7 @@ Callables allow you to define your own functions for calculating a few of the st
 
 Here's a basic example of using one of the built-in callables to colorize the stars based on their BV index:
 
-```python
+```python hl_lines="21"
 from starplot.styles import PlotStyle, extensions
 from starplot.map import Projection
 
@@ -83,7 +83,7 @@ p.stars(
     color_fn=color_by_mag,
 )
 ```
-Every callable for stars is passed an instance of [`Star`][starplot.Star], so you can reference various properties of stars in your callables.
+Every callable for stars is passed an instance of [`Star`][starplot.Star], so you can reference various properties of stars in your callables. Similarly, every callable for a DSO is passed an instance of [`DSO`][starplot.DSO].
 
 ## Built-In Callables
 

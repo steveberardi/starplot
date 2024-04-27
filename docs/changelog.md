@@ -6,7 +6,9 @@
 - Adds function to plot the Sun - thanks to Graham Schmidt
 - Adds `objects` property to plots that stores lists of objects that have been plotted
 - Adds object finder helpers
-- Adds function for plotting many markers at once
+- Adds customizable anchor points for text labels
+- Adds Pluto as a planet :)
+- Fixes clipping issues with polygons
 
 ## v0.9.x
 [Documentation](https://archives.starplot.dev/0.9.1/)

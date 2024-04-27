@@ -35,7 +35,7 @@ lint:
 	$(DOCKER_RUN) "ruff check src/ tests/ hash_checks/ $(ARGS)"
 
 format:
-	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ $(ARGS)"
+	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ $(ARGS)"
 
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
@@ -61,8 +61,8 @@ scratchpad:
 examples:
 	$(DOCKER_RUN) "cd examples && python examples.py"
 
-gallery:
-	$(DOCKER_RUN) "python scripts/gallery.py"
+tutorial:
+	$(DOCKER_RUN) "cd tutorial && python build.py"
 
 profile: DR_ARGS=-it -p 8080:8080
 profile:
@@ -135,4 +135,4 @@ clean:
 	rm -rf htmlcov
 	rm -f tests/data/*.png
 
-.PHONY: build test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts
+.PHONY: build test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts tutorial

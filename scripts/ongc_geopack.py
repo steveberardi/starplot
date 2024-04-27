@@ -1,4 +1,5 @@
 import os
+import zipfile
 from pathlib import Path
 
 import geopandas as gpd
@@ -10,6 +11,7 @@ from shapely.geometry import Polygon, MultiPolygon
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE.parent / "raw" / "ongc" / "outlines"
+BUILD_PATH = HERE.parent / "build"
 
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 IGNORE_OUTLINES = [
@@ -54,10 +56,11 @@ def read_csv():
     df["ra_degrees"] = df.apply(parse_ra, axis=1)
     df["dec_degrees"] = df.apply(parse_dec, axis=1)
 
-    # df.drop("Identifiers", axis="columns")
-    # df.drop("Sources", axis="columns")
-    # df["IC"] = df.apply(parse_ic, axis=1)
-    # df["NGC"] = df.apply(parse_ngc, axis=1)
+    df.drop("Identifiers", axis="columns")
+    df.drop("Sources", axis="columns")
+    df["M"] = df.apply(parse_m, axis=1)
+    df["IC"] = df.apply(parse_ic, axis=1)
+    df["NGC"] = df.apply(parse_ngc, axis=1)
 
     df = df.rename(
         columns={
@@ -88,10 +91,21 @@ def read_csv():
     return gdf
 
 
+def parse_m(row):
+    """Parses messier number"""
+    if not np.isnan(row.M):
+        return str(int(row.M)).lstrip("0")
+
+    return None
+
+
 def parse_ic(row):
     """Parses IC number if name starts with IC"""
     if row.Name.startswith("IC"):
-        return int(row.Name[2:])
+        return row.Name[2:].lstrip("0")
+
+    if str(row.IC) != "nan":
+        return str(row.IC).lstrip("0")
 
     return None
 
@@ -99,7 +113,10 @@ def parse_ic(row):
 def parse_ngc(row):
     """Parses NGC number if name starts with NGC"""
     if row.Name.startswith("NGC"):
-        return int(row.Name[3:])
+        return row.Name[3:].lstrip("0")
+
+    if str(row.NGC) != "nan":
+        return str(row.NGC).lstrip("0")
 
     return None
 
@@ -216,12 +233,18 @@ gdf_outlines = gpd.GeoDataFrame(
     {"designation": outlines.keys(), "geometry": outlines.values()}
 )
 
-print(gdf.loc["Orion"])
-gdf.to_file(HERE.parent / "build" / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
-gdf_outlines.to_file(
-    HERE.parent / "build" / "nebulae.gpkg", driver="GPKG", crs=CRS, index=True
-)
+print(gdf.loc["NGC6405"])
 
-print("Total: " + str(len(outlines)))
+gdf.to_file(BUILD_PATH / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
+
+# Create nebulae-only file
+# gdf_outlines.to_file(BUILD_PATH / "nebulae.gpkg", driver="GPKG", crs=CRS, index=True)
+
+print("Total nebula outlines: " + str(len(outlines)))
 # result = gpd.read_file(HERE.parent / "build" / "ngc.gpkg")
 # print(result)
+
+# Zip it up!
+zipped = zipfile.ZipFile(BUILD_PATH / "ongc.gpkg.zip", "w", zipfile.ZIP_DEFLATED)
+zipped.write(BUILD_PATH / "ongc.gpkg")
+zipped.close()

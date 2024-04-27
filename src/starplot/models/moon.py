@@ -122,6 +122,7 @@ class MoonManager(SkyObjectManager):
             ra=ra.hours,
             dec=dec.degrees,
             name="Moon",
+            dt=dt,
             apparent_size=apparent_diameter_degrees,
             phase_angle=phase_angle,
             phase_description = phase_description,
@@ -136,6 +137,9 @@ class Moon(SkyObject):
 
     name: str = "Moon"
     """Name of the moon"""
+
+    dt: datetime
+    """Date/time of moon's position"""
 
     apparent_size: float
     """Apparent size (degrees)"""
@@ -152,6 +156,7 @@ class Moon(SkyObject):
     def __init__(self, ra: float, dec: float, name: str, apparent_size: float, phase_angle: float, phase_description: str, illumination: str) -> None:
         super().__init__(ra, dec)
         self.name = name
+        self.dt = dt
         self.apparent_size = apparent_size
         self.phase_angle = phase_angle
         self.phase_description = phase_description

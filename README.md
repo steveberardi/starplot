@@ -16,13 +16,13 @@
 
 ## Examples
 *Zenith plot of the stars from a specific time/location:*
-![starchart-blue](https://starplot.dev/images/examples/example_01.png)
+![starchart-blue](https://starplot.dev/images/examples/star_chart_basic.png)
 
 *Map around the constellation Orion:*
-![map-orion](https://starplot.dev/images/gallery/orion.png)
+![map-orion](https://starplot.dev/images/examples/map_orion.png)
 
 *Optic plot of The Pleiades through a refractor as seen from a specific time/location:*
-![optic-pleiades](https://starplot.dev/images/gallery/optic_02.png)
+![optic-pleiades](https://starplot.dev/images/examples/optic_m45.png)
 
 ## Basic Usage
 
@@ -79,11 +79,11 @@ https://discord.gg/bwazdyD7
 - adjustText
 
 ## Coming Soon
+- 🌑 Planet moons
 - ✴️ Custom markers
-- 📋 List of objects plotted
+- 🚀 Plotting Optimizations
 - 📐 More Nebula outline levels
 - ⚖️ Better auto font-size adjustment
-- ☄️ Better label collision detection and handling
 
 See more details on the [Public Roadmap](https://starplot.notion.site/aaa0dd71c17943f89850c9a8c43ade50)
 

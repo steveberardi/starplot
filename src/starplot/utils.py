@@ -10,6 +10,22 @@ def in_circle(x, y, center_x=0, center_y=0, radius=0.9) -> bool:
 
 
 def lon_to_ra(lon: float) -> (int, int, int):
+    pos_lon = lon + 180
+    ra = 12 - (24 * pos_lon / 360)
+    if ra < 0:
+        ra += 24
+    return ra
+
+
+def ra_to_lon(ra):
+    lon = ra * -15
+    if lon < -180:
+        lon += 360
+
+    return lon
+
+
+def lon_to_ra_hms(lon: float) -> (int, int, int):
     """Converts longitude back to right ascension
 
     Args:

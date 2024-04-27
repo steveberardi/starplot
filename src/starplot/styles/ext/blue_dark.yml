@@ -96,8 +96,6 @@ gridlines:
     color: hsl(209, 53%, 37%)
     style: solid
     width: 1
-tick_marks:
-  font_color: hsl(209, 23%, 66%)
 milky_way:
   alpha: 0.26
   color: hsl(209, 50%, 54%)

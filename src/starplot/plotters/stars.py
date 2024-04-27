@@ -90,24 +90,10 @@ class StarPlotterMixin:
             bayer_desig = bayer.hip.get(s.hip)
 
             if name:
-                self._text(
-                    s.ra,
-                    s.dec,
-                    name,
-                    ha="left",
-                    va="top",
-                    **style.matplot_kwargs(self._size_multiplier),
-                )
+                self.text(name, s.ra, s.dec, style)
 
             if bayer_labels and bayer_desig:
-                self._text(
-                    s.ra,
-                    s.dec,
-                    bayer_desig,
-                    ha="right",
-                    va="bottom",
-                    **self.style.bayer_labels.matplot_kwargs(self._size_multiplier),
-                )
+                self.text(bayer_desig, s.ra, s.dec, self.style.bayer_labels)
 
     def _prepare_star_coords(self, df):
         df["x"], df["y"] = (

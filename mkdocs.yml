@@ -4,10 +4,9 @@ repo_url: https://github.com/steveberardi/starplot
 
 nav:
     - Overview: index.md
-    - Demo: demo.md
-    - Gallery: gallery.md
     - Installation: installation.md
     - Examples: examples.md
+    - Tutorial: tutorial.md
     - Reference:
         - MapPlot: reference-mapplot.md
         - OpticPlot: reference-opticplot.md
@@ -20,7 +19,7 @@ nav:
     - Data Sources: data-sources.md
     - License: license.md
     - Changelog: changelog.md
-    - Coming Soon: roadmap.md
+    - Coming Soon: coming-soon.md
     - About: about.md
 
 theme:
@@ -30,6 +29,7 @@ theme:
     # toggle for light mode
     - scheme: default
       primary: custom
+      accent: blue
       toggle:
         icon: material/brightness-7 
         name: Switch to dark mode
@@ -37,6 +37,7 @@ theme:
     # toggle for dark mode
     - scheme: slate
       primary: custom
+      accent: indigo
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -66,9 +67,9 @@ plugins:
             separate_signature: true
             show_signature_annotations: true
             signature_crossrefs: true
+            line_length: 80
   - macros:
       include_dir: .
-      # include_dir: examples/ src/starplot/styles/ext/
   - glightbox:
       zoomable: false
 

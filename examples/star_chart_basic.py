@@ -13,11 +13,10 @@ p = MapPlot(
     dt=dt,
     style=PlotStyle().extend(
         extensions.BLUE_MEDIUM,
-        extensions.ZENITH,
     ),
     resolution=2600,
 )
 p.constellations()
 p.stars(mag=4.6)
 
-p.export("01_star_chart.png", transparent=True)
+p.export("star_chart_basic.png", transparent=True)

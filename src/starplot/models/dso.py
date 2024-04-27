@@ -26,6 +26,8 @@ class DsoManager(SkyObjectManager):
                 magnitude=magnitude,
                 size=d.size_deg2,
                 m=d.m,
+                ngc=d.ngc,
+                ic=d.ic,
             )
 
 
@@ -57,8 +59,20 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     size: Optional[float] = None
     """Size of the DSO calculated as the area of the minimum bounding rectangle of the DSO, in degrees squared (if available)"""
 
-    m: Optional[int] = None
-    """Messier number, (if available)"""
+    m: Optional[str] = None
+    """
+    Messier number. *Note that this field is a string, to be consistent with the other identifier fields (`ngc` and `ic`).*
+    """
+
+    ngc: Optional[str] = None
+    """
+    New General Catalogue (NGC) identifier. *Note that this field is a string, to support objects like '3537 NED01'.*
+    """
+
+    ic: Optional[str] = None
+    """
+    Index Catalogue (IC) identifier. *Note that this field is a string, to support objects like '4974 NED01'.*
+    """
 
     def __init__(
         self,
@@ -71,7 +85,9 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         min_ax: float = None,
         angle: float = None,
         size: float = None,
-        m: int = None,
+        m: str = None,
+        ngc: str = None,
+        ic: str = None,
     ) -> None:
         super().__init__(ra, dec)
         self.name = name
@@ -81,9 +97,9 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         self.min_ax = min_ax
         self.angle = angle
         self.size = size
-
-        if m is not None:
-            self.m = int(m)
+        self.m = m
+        self.ngc = ngc
+        self.ic = ic
 
     def __repr__(self) -> str:
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
