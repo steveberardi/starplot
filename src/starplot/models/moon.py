@@ -10,7 +10,7 @@ from starplot.models.base import SkyObject, SkyObjectManager
 from starplot.utils import dt_or_now
 
 
-class MoonPhaseEnum(str, Enum):
+class MoonPhase(str, Enum):
     """Phases of Earth's moon"""
 
     NEW_MOON = "New Moon"
@@ -21,42 +21,6 @@ class MoonPhaseEnum(str, Enum):
     WANING_GIBBOUS = "Waning Gibbous"
     LAST_QUARTER = "Last Quarter"
     WANING_CRESCENT = "Waning Crescent"
-
-def _calc_moon_phase_day_range(year: int, month: int, day: int, ephemeris):
-    ts = load.timescale()
-
-    # establish monthlong range to search for nearst Full Moon
-    date = ts.utc(year, month, day)
-    t0 = date - 15  # 15 days earlier
-    t1 = date + 15  # 15 days later
-
-    times_of_phases, phase_types = almanac.find_discrete(
-        t0, t1, almanac.moon_phases(ephemeris)
-    )
-
-    closest_phase = []
-
-    # only include Full Moon dates (1)
-    for i in range(len(phase_types)):
-        if phase_types[i] == 1:
-            closest_phase.append(times_of_phases[i])
-
-    nearphase = closest_phase[0].utc
-    curr_date = ts.utc(
-        nearphase.year,
-        nearphase.month,
-        nearphase.day,
-        nearphase.hour,
-        nearphase.minute,
-    )
-    comp_date = curr_date + timedelta(hours=12)
-
-    phase_mid = almanac.moon_phase(ephemeris, curr_date).degrees
-    phase_pre = almanac.moon_phase(ephemeris, comp_date).degrees
-
-    phase_range = abs(phase_mid - phase_pre)
-
-    return phase_range
 
 class MoonManager(SkyObjectManager):
     @classmethod
@@ -89,31 +53,37 @@ class MoonManager(SkyObjectManager):
         else:
             illumination = 2 - (phase_angle / 180)
 
-        day_range = _calc_moon_phase_day_range(dt.year, dt.month, dt.day, ephemeris)
+        # phase angle 12 hours BEFORE dt
+        phase_angle_0 = almanac.moon_phase(ephemeris, timescale - timedelta(hours=12)).degrees
 
-        phase_map = {
-            MoonPhaseEnum.NEW_MOON: 0,
-            MoonPhaseEnum.FIRST_QUARTER: 90,
-            MoonPhaseEnum.FULL_MOON: 180,
-            MoonPhaseEnum.LAST_QUARTER: 270,
-        }
-        phase_description = None
-        for desc, att in phase_map.items():
-            if abs(phase_angle - att) < day_range:
-                phase_description = desc
+        # phase angle 12 hours AFTER dt
+        phase_angle_1 = almanac.moon_phase(ephemeris, timescale + timedelta(hours=12)).degrees
 
-        if phase_angle > (360 - day_range):
-            phase_description = MoonPhaseEnum.NEW_MOON
+        phase = None
 
-        if phase_description is None:
-            if 0 < phase_angle < 90:
-                phase_description = MoonPhaseEnum.WAXING_CRESCENT
-            elif 90 < phase_angle < 180:
-                phase_description = MoonPhaseEnum.WAXING_GIBBOUS
-            elif 180 < phase_angle < 270:
-                phase_description = MoonPhaseEnum.WANING_GIBBOUS
-            elif 270 < phase_angle < 360:
-                phase_description = MoonPhaseEnum.WANING_CRESCENT
+        if phase_angle_1 < phase_angle_0:
+            phase = MoonPhase.NEW_MOON
+
+        elif phase_angle_0 < 90 < phase_angle_1:
+            phase = MoonPhase.FIRST_QUARTER
+
+        elif phase_angle_0 < 180 < phase_angle_1:
+            phase = MoonPhase.FULL_MOON
+
+        elif phase_angle_0 < 270 < phase_angle_1:
+            phase = MoonPhase.LAST_QUARTER
+
+        elif 0 < phase_angle < 90:
+            phase = MoonPhase.WAXING_CRESCENT
+
+        elif 90 < phase_angle < 180:
+            phase = MoonPhase.WAXING_GIBBOUS
+
+        elif 180 < phase_angle < 270:
+            phase = MoonPhase.WANING_GIBBOUS
+            
+        elif 270 < phase_angle < 360:
+            phase = MoonPhase.WANING_CRESCENT
 
         return Moon(
             ra=ra.hours,
@@ -122,7 +92,7 @@ class MoonManager(SkyObjectManager):
             dt=dt,
             apparent_size=apparent_diameter_degrees,
             phase_angle=phase_angle,
-            phase_description=phase_description.value,
+            phase_description=phase.value,
             illumination=illumination,
         )
 
@@ -145,7 +115,7 @@ class Moon(SkyObject):
     """Angle of the moon from the Sun (degrees)"""
 
     phase_description: str
-    """Description of moon phase"""
+    """Description of the moon's phase. The Moon will be considered New/Full/Quarter if it's within 12 hours of that precise phase."""
 
     illumination: float
     """Percent of illumination (0...1)"""
