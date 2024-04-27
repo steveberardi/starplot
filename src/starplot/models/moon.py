@@ -148,10 +148,10 @@ class Moon(SkyObject):
     """Apparent size (degrees)"""
 
     phase_angle: float
-    """Degrees of illumination"""
+    """Angle of the moon from the Sun (degrees)"""
 
     illumination: float
-    """Percentage of illumination"""
+    """Percent of illumination (0...1)"""
 
     phase_description: str
     """Description of moon phase"""
