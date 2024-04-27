@@ -22,6 +22,7 @@ class MoonPhase(str, Enum):
     LAST_QUARTER = "Last Quarter"
     WANING_CRESCENT = "Waning Crescent"
 
+
 class MoonManager(SkyObjectManager):
     @classmethod
     def all(cls):
@@ -54,10 +55,14 @@ class MoonManager(SkyObjectManager):
             illumination = 2 - (phase_angle / 180)
 
         # phase angle 12 hours BEFORE dt
-        phase_angle_0 = almanac.moon_phase(ephemeris, timescale - timedelta(hours=12)).degrees
+        phase_angle_0 = almanac.moon_phase(
+            ephemeris, timescale - timedelta(hours=12)
+        ).degrees
 
         # phase angle 12 hours AFTER dt
-        phase_angle_1 = almanac.moon_phase(ephemeris, timescale + timedelta(hours=12)).degrees
+        phase_angle_1 = almanac.moon_phase(
+            ephemeris, timescale + timedelta(hours=12)
+        ).degrees
 
         phase = None
 
@@ -81,7 +86,7 @@ class MoonManager(SkyObjectManager):
 
         elif 180 < phase_angle < 270:
             phase = MoonPhase.WANING_GIBBOUS
-            
+
         elif 270 < phase_angle < 360:
             phase = MoonPhase.WANING_CRESCENT
 
