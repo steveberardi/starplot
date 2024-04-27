@@ -392,10 +392,15 @@ class BasePlot(ABC):
         self._objects.sun = s
 
         if true_size:
+            polygon_style = style.marker.to_polygon_style()
+
+            # hide the edge because it can interfere with the true size
+            polygon_style.edge_color = None
+
             self.circle(
                 (s.ra, s.dec),
                 s.apparent_size,
-                style=style.marker.to_polygon_style(),
+                style=polygon_style,
             )
 
             self._add_legend_handle_marker(legend_label, style.marker)
@@ -579,18 +584,25 @@ class BasePlot(ABC):
         self._objects.moon = m
 
         if true_size:
+            # convert to PolygonStyle because we'll plot the true size as a polygon
+            polygon_style = style.marker.to_polygon_style()
+
+            # hide the edge because it can interfere with the true size
+            polygon_style.edge_color = None
+
             if show_phase:
                 self._moon_with_phase(
                     m.phase_description,
                     (m.ra, m.dec),
                     m.apparent_size,
-                    style=style.marker.to_polygon_style(),
+                    style=polygon_style,
+                    dark_side_color=style.marker.edge_color,
                 )
             else:
                 self.circle(
                     (m.ra, m.dec),
                     m.apparent_size,
-                    style=style.marker.to_polygon_style(),
+                    style=polygon_style,
                 )
 
             self._add_legend_handle_marker(legend_label, style.marker)
@@ -613,6 +625,7 @@ class BasePlot(ABC):
         center: tuple,
         radius_degrees: float,
         style: PolygonStyle,
+        dark_side_color: str,
         num_pts: int = 100,
     ):
         """
@@ -620,12 +633,10 @@ class BasePlot(ABC):
         and then determining the color of each of the three shapes by the moon phase.
         """
         illuminated_color = style.fill_color
-        dark_side_color = style.edge_color
 
         left = style.copy()
         right = style.copy()
         middle = style.copy()
-        middle.edge_width = 0
 
         if moon_phase == MoonPhase.WAXING_CRESCENT:
             left.fill_color = illuminated_color
@@ -669,10 +680,9 @@ class BasePlot(ABC):
             radius_degrees * 2,
             radius_degrees * 2,
             style=left,
-            num_pts=num_pts / 2,  # divide by 2 because we're plotting half-circle
+            num_pts=num_pts,
             angle=0,
-            start_angle=0,  # plot as a semicircle
-            end_angle=180,
+            end_angle=180,  # plot as a semicircle
         )
         # Plot right side
         self.ellipse(
@@ -680,10 +690,9 @@ class BasePlot(ABC):
             radius_degrees * 2,
             radius_degrees * 2,
             style=right,
-            num_pts=num_pts / 2,  # divide by 2 because we're plotting half-circle
+            num_pts=num_pts,
             angle=180,
-            start_angle=0,  # plot as a semicircle
-            end_angle=180,
+            end_angle=180,  # plot as a semicircle
         )
         # Plot middle
         self.ellipse(

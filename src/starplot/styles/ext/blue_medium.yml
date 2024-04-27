@@ -50,8 +50,8 @@ gridlines:
     width: 1
 sun:
   marker:
-    color: '#000'
-    edge_color: '#000'
+    color: '#ffd22e'
+    edge_color: 'hsl(47, 100%, 29%)'
 
 # DSOs
 dso_double_star:

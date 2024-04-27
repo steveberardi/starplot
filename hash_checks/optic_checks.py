@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, optics, OpticPlot, callables, Star
+from starplot import styles, optics, OpticPlot, callables, Star, Moon
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -40,27 +40,6 @@ def check_optic_polaris_binoculars():
     optic_plot.stars(mag=14)
     optic_plot.info()
     filename = DATA_PATH / "optic-binoculars-polaris.png"
-    optic_plot.export(filename)
-    return filename
-
-
-def check_optic_solar_eclipse_binoculars():
-    optic_plot = OpticPlot(
-        lat=33.363484,
-        lon=-116.836394,
-        ra=1.16667,
-        dec=7.45,
-        optic=optics.Binoculars(magnification=8, fov=65),
-        dt=dt_april_8,
-        style=styles.PlotStyle().extend(
-            styles.extensions.BLUE_MEDIUM,
-        ),
-        resolution=2000,
-    )
-    optic_plot.stars(mag=14)
-    optic_plot.moon(true_size=True)
-    optic_plot.sun(true_size=True)
-    filename = DATA_PATH / "optic-binoculars-eclipse.png"
     optic_plot.export(filename)
     return filename
 
@@ -242,6 +221,7 @@ def check_optic_m45_camera():
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-camera.png"
     optic_plot.export(filename)
+    optic_plot.close_fig()
     return filename
 
 
@@ -267,4 +247,100 @@ def check_optic_camera_rotated():
     optic_plot.info()
     filename = DATA_PATH / "optic-camera-rotated-m45.png"
     optic_plot.export(filename)
+    optic_plot.close_fig()
+    return filename
+
+
+def check_optic_solar_eclipse_binoculars():
+    optic_plot = OpticPlot(
+        lat=33.363484,
+        lon=-116.836394,
+        ra=1.16667,
+        dec=7.45,
+        optic=optics.Binoculars(magnification=8, fov=65),
+        dt=dt_april_8,
+        style=styles.PlotStyle().extend(
+            styles.extensions.BLUE_MEDIUM,
+        ),
+        resolution=2000,
+    )
+    optic_plot.stars(mag=14)
+    optic_plot.moon(true_size=True, show_phase=True)
+    optic_plot.sun(true_size=True)
+    filename = DATA_PATH / "optic-binoculars-eclipse.png"
+    optic_plot.export(filename)
+    optic_plot.close_fig()
+    return filename
+
+
+def check_optic_moon_phase_waxing_crescent():
+    m = Moon.get(dt=dt_dec_16)
+    optic_plot = m.create_optic(
+        lat=32.97,
+        lon=-117.038611,
+        # 10x binoculars
+        optic=optics.Binoculars(
+            magnification=15,
+            fov=65,
+        ),
+        dt=dt_dec_16,
+        style=style_dark,
+        raise_on_below_horizon=False,
+    )
+    optic_plot.moon(
+        true_size=True,
+        show_phase=True,
+    )
+    filename = DATA_PATH / "optic-moon-phase-waxing-crescent.png"
+    optic_plot.export(filename)
+    optic_plot.close_fig()
+    return filename
+
+
+def check_optic_moon_phase_new():
+    m = Moon.get(dt=dt_april_8)
+    optic_plot = m.create_optic(
+        lat=32.97,
+        lon=-117.038611,
+        # 10x binoculars
+        optic=optics.Binoculars(
+            magnification=15,
+            fov=65,
+        ),
+        dt=dt_april_8,
+        style=style_blue,
+        raise_on_below_horizon=False,
+    )
+    optic_plot.moon(
+        true_size=True,
+        show_phase=True,
+    )
+    filename = DATA_PATH / "optic-moon-phase-new.png"
+    optic_plot.export(filename)
+    optic_plot.close_fig()
+    return filename
+
+
+def check_optic_moon_phase_full():
+    dt_full_moon = datetime.now(timezone("US/Pacific")).replace(2024, 4, 23, 11, 7, 0)
+    m = Moon.get(dt=dt_full_moon)
+    optic_plot = m.create_optic(
+        lat=32.97,
+        lon=-117.038611,
+        # 10x binoculars
+        optic=optics.Binoculars(
+            magnification=15,
+            fov=65,
+        ),
+        dt=dt_full_moon,
+        style=style_blue,
+        raise_on_below_horizon=False,
+    )
+    optic_plot.moon(
+        true_size=True,
+        show_phase=True,
+    )
+    filename = DATA_PATH / "optic-moon-phase-full.png"
+    optic_plot.export(filename)
+    optic_plot.close_fig()
     return filename
