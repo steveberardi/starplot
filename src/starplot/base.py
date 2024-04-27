@@ -382,7 +382,7 @@ class BasePlot(ABC):
         Args:
             style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
-            show_phase: If True, and if `true_size = True`, then the phase of the moon will be illustrated.
+            show_phase: If True, and if `true_size = True`, then the phase of the moon will be illustrated. The dark side of the moon will be colored with the marker's `edge_color`
             label: How the Moon will be labeled on the plot and legend
         """
         m = models.Moon.get(dt=self.dt, ephemeris=self._ephemeris_name)
@@ -608,27 +608,6 @@ class BasePlot(ABC):
         )
 
     @use_style(PolygonStyle)
-    def _semicircle(
-        self,
-        center: tuple,
-        radius_degrees: float,
-        style: PolygonStyle,
-        angle: int = 0,
-        num_pts: int = 100,
-    ):
-        points = geod.ellipse(
-            center,
-            radius_degrees * 2,
-            radius_degrees * 2,
-            angle=angle,
-            num_pts=num_pts,
-            start_angle=0,
-            end_angle=180,
-        )
-
-        self._polygon(points, style)
-
-    @use_style(PolygonStyle)
     def _moon_with_phases(
         self,
         moon_phase: MoonPhaseEnum,
@@ -637,50 +616,73 @@ class BasePlot(ABC):
         style: PolygonStyle,
         num_pts: int = 100,
     ):
-        illum = style.fill_color
-        dark = style.edge_color
+        illuminated_color = style.fill_color
+        dark_side_color = style.edge_color
+
         left = style.copy()
         right = style.copy()
         middle = style.copy()
         middle.edge_width = 0
+
         if moon_phase == MoonPhaseEnum.WAXING_CRESCENT:
-            left.fill_color = illum
-            right.fill_color = dark
-            middle.fill_color = dark
+            left.fill_color = illuminated_color
+            middle.fill_color = dark_side_color
+            right.fill_color = dark_side_color
+
         elif moon_phase == MoonPhaseEnum.FIRST_QUARTER:
-            left.fill_color = illum
-            right.fill_color = dark
+            left.fill_color = illuminated_color
             middle.alpha = 0
+            right.fill_color = dark_side_color
+
         elif moon_phase == MoonPhaseEnum.WAXING_GIBBOUS:
-            left.fill_color = illum
-            right.fill_color = dark
-            middle.fill_color = illum
+            left.fill_color = illuminated_color
+            middle.fill_color = illuminated_color
+            right.fill_color = dark_side_color
+
         elif moon_phase == MoonPhaseEnum.FULL_MOON:
-            left.fill_color = right.fill_color = middle.fill_color = illum
+            left.fill_color = middle.fill_color = right.fill_color = illuminated_color
+
         elif moon_phase == MoonPhaseEnum.WANING_GIBBOUS:
-            left.fill_color = dark
-            right.fill_color = illum
-            middle.fill_color = illum
+            left.fill_color = dark_side_color
+            middle.fill_color = illuminated_color
+            right.fill_color = illuminated_color
+
         elif moon_phase == MoonPhaseEnum.LAST_QUARTER:
-            left.fill_color = dark
-            right.fill_color = illum
+            left.fill_color = dark_side_color
             middle.alpha = 0
+            right.fill_color = illuminated_color
+
         elif moon_phase == MoonPhaseEnum.WANING_CRESCENT:
-            right.fill_color = illum
-            middle.fill_color = dark
-            left.fill_color = dark
+            left.fill_color = dark_side_color
+            middle.fill_color = dark_side_color
+            right.fill_color = illuminated_color
 
         else:
-            left.fill_color = right.fill_color = middle.fill_color = dark
+            left.fill_color = middle.fill_color = right.fill_color = dark_side_color
 
-        self._semicircle(center, radius_degrees, style=left, num_pts=num_pts, angle=0)
-        self._semicircle(
+        # Plot left side
+        self.ellipse(
             center,
-            radius_degrees,
-            style=right,
-            num_pts=num_pts,
-            angle=180,
+            radius_degrees * 2,
+            radius_degrees * 2,
+            style=left,
+            num_pts=num_pts / 2,  # divide by 2 because we're plotting half-circle
+            angle=0,
+            start_angle=0,  # plot as a semicircle
+            end_angle=180,
         )
+        # Plot right side
+        self.ellipse(
+            center,
+            radius_degrees * 2,
+            radius_degrees * 2,
+            style=right,
+            num_pts=num_pts / 2,  # divide by 2 because we're plotting half-circle
+            angle=180,
+            start_angle=0,  # plot as a semicircle
+            end_angle=180,
+        )
+        # Plot middle
         self.ellipse(
             center,
             radius_degrees * 2,
