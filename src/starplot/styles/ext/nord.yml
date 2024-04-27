@@ -102,7 +102,14 @@ sun:
   marker:
     color: '#88c0d0'
     edge_color: '#88c0d0'
-
+moon:
+  label:
+    font_color: '#88c0d0'
+    font_size: 9
+    font_weight: bold
+  marker:
+    color: '#88c0d0'
+    
 legend:
   background_color: '#515e76'
   background_alpha: 1.0

@@ -581,7 +581,7 @@ class PlotStyle(BaseStyle):
             size=14,
             fill=FillStyleEnum.FULL,
             color="#c8c8c8",
-            alpha=0.5,
+            alpha=1,
             zorder=100,
         ),
         label=LabelStyle(
