@@ -75,7 +75,7 @@ planets:
     font_size: 7
 moon:
   marker:
-    color: hsl(60, 3%, 32%)
+    color: hsl(60, 20%, 93%)
     edge_color: hsl(60, 3%, 32%)
   label:
     font_color: hsl(60, 3%, 42%)

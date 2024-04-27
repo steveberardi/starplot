@@ -58,6 +58,8 @@ def ellipse(
     width_degrees: float,
     angle: float = 0,
     num_pts: int = 100,
+    start_angle: int = 0,
+    end_angle: int = 360,
 ) -> list:
     ra, dec = center
     ra = ra * 15
@@ -72,7 +74,7 @@ def ellipse(
     width = distance_m(width_degrees / 2)  # a
 
     points = []
-    for angle_pt in range(0, 360, int(360 / num_pts)):
+    for angle_pt in range(start_angle, end_angle, int((end_angle-start_angle) / num_pts)):
         radians = math.radians(angle_pt)
         radius_a = (height * width) / math.sqrt(
             height**2 * (math.sin(radians)) ** 2
@@ -93,36 +95,3 @@ def circle(center: tuple, radius_degrees: float, num_pts: int = 100) -> list:
         angle=0,
         num_pts=num_pts,
     )
-
-# return the points required for _polygon to draw one of the 8 phase of the moon
-def semicircle(
-    center: tuple,
-    height_degrees: float,
-    width_degrees: float,
-    angle: float = 0,
-    num_pts: int = 100,
-) -> list:
-    ra, dec = center
-    ra = ra * 15
-    angle = 180 - angle
-
-    if dec == 90:
-        dec -= 0.00000001
-    if dec == -90:
-        dec += 0.00000001
-
-    height = distance_m(height_degrees / 2)  # b
-    width = distance_m(width_degrees / 2)  # a
-
-    points = []
-    for angle_pt in range(0, 181, int(360 / num_pts)):
-        radians = math.radians(angle_pt)
-        radius_a = (height * width) / math.sqrt(
-            height**2 * (math.sin(radians)) ** 2
-            + width**2 * (math.cos(radians)) ** 2
-        )
-        lon, lat, _ = GEOD.fwd([ra], [dec], angle + angle_pt, radius_a)
-
-        points.append((lon[0], lat[0]))
-
-    return points

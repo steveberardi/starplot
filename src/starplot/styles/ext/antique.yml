@@ -85,7 +85,7 @@ moon:
   label:
     font_color: hsl(60, 3%, 42%)
   marker:
-    color: hsl(60, 12%, 32%)
+    color: hsl(48, 80%, 96%)
     edge_color: hsl(60, 12%, 32%)
 
 # DSOs

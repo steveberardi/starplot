@@ -405,18 +405,18 @@ class BasePlot(ABC):
         self._objects.moon = m
 
         if true_size:
-            if show_phase == False:
-                self.circle(
-                    (m.ra, m.dec),
-                    m.apparent_size,
-                    style=style.marker.to_polygon_style(),
-                )
-            elif show_phase == True:
-                self.moon_with_phases(
+            if show_phase: 
+                self._moon_with_phases(
                     m.phase_description,
                     (m.ra, m.dec),
                     m.apparent_size,
                     style=style.marker.to_polygon_style()
+                )
+            else:
+                self.circle(
+                    (m.ra, m.dec),
+                    m.apparent_size,
+                    style=style.marker.to_polygon_style(),
                 )
 
             self._add_legend_handle_marker(legend_label, style.marker)
@@ -578,6 +578,8 @@ class BasePlot(ABC):
         style: PolygonStyle,
         angle: float = 0,
         num_pts: int = 100,
+        start_angle: int = 0,
+        end_angle: int = 360,
     ):
         """Plots an ellipse
 
@@ -596,6 +598,8 @@ class BasePlot(ABC):
             width_degrees,
             angle,
             num_pts,
+            start_angle,
+            end_angle
         )
         self._polygon(points, style)
 
@@ -633,18 +637,20 @@ class BasePlot(ABC):
         angle: int = 0,
         num_pts: int = 100,
     ):
-        points = geod.semicircle(
+        points = geod.ellipse(
             center,
             radius_degrees * 2,
             radius_degrees * 2,
             angle=angle,
-            num_pts=num_pts
+            num_pts=num_pts,
+            start_angle=0,
+            end_angle=180,
         )
 
         self._polygon(points, style)
 
     @use_style(PolygonStyle)
-    def moon_with_phases(
+    def _moon_with_phases(
         self,
         moon_phase: MoonPhaseEnum,
         center: tuple,
@@ -652,54 +658,53 @@ class BasePlot(ABC):
         style: PolygonStyle,
         num_pts: int = 100,
     ):
-        black = ColorStr("Black")
-        white = ColorStr("White")
-        semi1_style = style.copy()
-        semi2_style = style.copy()
-        ellipse_style = style.copy()
-        ellipse_style.edge_width=0 
-        semi1_style.alpha = semi2_style.alpha = ellipse_style.alpha = 1
+        illum = style.fill_color
+        dark = style.edge_color
+        left = style.copy()
+        right = style.copy()
+        middle = style.copy()
+        middle.edge_width=0 
         if moon_phase == MoonPhaseEnum.WAXING_CRESCENT:
-            semi1_style.fill_color=white
-            semi2_style.fill_color=black
-            ellipse_style.fill_color=black
+            left.fill_color=illum
+            right.fill_color=dark
+            middle.fill_color=dark
         elif moon_phase == MoonPhaseEnum.FIRST_QUARTER:
-            semi1_style.fill_color=white
-            semi2_style.fill_color=black
-            ellipse_style.alpha=0
+            left.fill_color=illum
+            right.fill_color=dark
+            middle.alpha=0
         elif moon_phase == MoonPhaseEnum.WAXING_GIBBOUS:
-            semi1_style.fill_color=white
-            semi2_style.fill_color=black
-            ellipse_style.fill_color=white
+            left.fill_color=illum
+            right.fill_color=dark
+            middle.fill_color=illum
         elif moon_phase == MoonPhaseEnum.FULL_MOON:
-            semi1_style.fill_color = semi2_style.fill_color = ellipse_style.fill_color = white
+            left.fill_color = right.fill_color = middle.fill_color = illum
         elif moon_phase == MoonPhaseEnum.WANING_GIBBOUS:
-            semi1_style.fill_color=black
-            semi2_style.fill_color=white
-            ellipse_style.fill_color=white
+            left.fill_color=dark
+            right.fill_color=illum
+            middle.fill_color=illum
         elif moon_phase == MoonPhaseEnum.LAST_QUARTER:
-            semi1_style.fill_color=black
-            semi2_style.fill_color=white
-            ellipse_style.alpha=0
+            left.fill_color=dark
+            right.fill_color=illum
+            middle.alpha=0
         elif moon_phase == MoonPhaseEnum.WANING_CRESCENT:
-            semi2_style.fill_color=white
-            ellipse_style.fill_color=black
-            semi1_style.fill_color=black
+            right.fill_color=illum
+            middle.fill_color=dark
+            left.fill_color=dark
 
         else:
-            semi1_style.fill_color = semi2_style.fill_color = ellipse_style.fill_color = black
+            left.fill_color = right.fill_color = middle.fill_color = dark
 
         self._semicircle(
             center,
             radius_degrees,
-            style=semi1_style,
+            style=left,
             num_pts=num_pts,
             angle=0
         )
         self._semicircle(
             center,
             radius_degrees,
-            style=semi2_style,
+            style=right,
             num_pts=num_pts,
             angle=180,
         )
@@ -707,7 +712,7 @@ class BasePlot(ABC):
             center,
             radius_degrees * 2,
             radius_degrees,
-            style=ellipse_style,
+            style=middle,
         )
         
         
