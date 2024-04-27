@@ -30,7 +30,7 @@ p.stars(
     where_labels=[Star.magnitude < 8],
     bayer_labels=True,
     catalog="tycho-1",
-    color_fn=callables.color_by_bv, # <-- here's where we specify the callable
+    color_fn=callables.color_by_bv,  # <-- here's where we specify the callable
 )
 
 p.export("tutorial_08.png", padding=0)

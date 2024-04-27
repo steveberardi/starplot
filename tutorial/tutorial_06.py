@@ -29,8 +29,8 @@ p.constellations()
 
 p.stars(
     where=[Star.magnitude <= 3],  # select the brightest stars
-    style__marker__size=76, # make them bigger
-    style__marker__symbol="star_8", # use an 8-pointed star for bright star markers
+    style__marker__size=76,  # make them bigger
+    style__marker__symbol="star_8",  # use an 8-pointed star for bright star markers
     style__marker__zorder=200,
 )
 p.stars(
@@ -46,9 +46,10 @@ p.stars(
 p.nebula(
     where=[
         # select DSOs which have no defined magnitude or less than 12
-        DSO.magnitude.is_null() | (DSO.magnitude < 12), 
+        DSO.magnitude.is_null()
+        | (DSO.magnitude < 12),
     ],
-    true_size=True, # plot nebula as their true size
+    true_size=True,  # plot nebula as their true size
 )
 p.open_clusters(
     where=[

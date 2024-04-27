@@ -17,7 +17,7 @@ p = jupiter.create_optic(
     dt=tonight,
     optic=optics.Refractor(
         focal_length=600,
-        eyepiece_focal_length=4, 
+        eyepiece_focal_length=4,
         eyepiece_fov=52,
     ),
     style=PlotStyle().extend(extensions.GRAYSCALE_DARK),

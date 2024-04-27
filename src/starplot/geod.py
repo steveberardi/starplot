@@ -74,7 +74,9 @@ def ellipse(
     width = distance_m(width_degrees / 2)  # a
 
     points = []
-    for angle_pt in range(start_angle, end_angle, int((end_angle-start_angle) / num_pts)):
+    for angle_pt in range(
+        start_angle, end_angle, int((end_angle - start_angle) / num_pts)
+    ):
         radians = math.radians(angle_pt)
         radius_a = (height * width) / math.sqrt(
             height**2 * (math.sin(radians)) ** 2

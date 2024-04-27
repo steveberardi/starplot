@@ -24,7 +24,6 @@ from starplot.styles import (
     LegendStyle,
     PathStyle,
     PolygonStyle,
-    ColorStr
 )
 from starplot.styles.helpers import use_style
 
@@ -395,12 +394,12 @@ class BasePlot(ABC):
         self._objects.moon = m
 
         if true_size:
-            if show_phase: 
+            if show_phase:
                 self._moon_with_phases(
                     m.phase_description,
                     (m.ra, m.dec),
                     m.apparent_size,
-                    style=style.marker.to_polygon_style()
+                    style=style.marker.to_polygon_style(),
                 )
             else:
                 self.circle(
@@ -572,14 +571,14 @@ class BasePlot(ABC):
             num_pts: Number of points to calculate for the ellipse polygon
         """
 
-        points = geod.ellipse( 
+        points = geod.ellipse(
             center,
             height_degrees,
             width_degrees,
             angle,
             num_pts,
             start_angle,
-            end_angle
+            end_angle,
         )
         self._polygon(points, style)
 
@@ -643,44 +642,38 @@ class BasePlot(ABC):
         left = style.copy()
         right = style.copy()
         middle = style.copy()
-        middle.edge_width=0 
+        middle.edge_width = 0
         if moon_phase == MoonPhaseEnum.WAXING_CRESCENT:
-            left.fill_color=illum
-            right.fill_color=dark
-            middle.fill_color=dark
+            left.fill_color = illum
+            right.fill_color = dark
+            middle.fill_color = dark
         elif moon_phase == MoonPhaseEnum.FIRST_QUARTER:
-            left.fill_color=illum
-            right.fill_color=dark
-            middle.alpha=0
+            left.fill_color = illum
+            right.fill_color = dark
+            middle.alpha = 0
         elif moon_phase == MoonPhaseEnum.WAXING_GIBBOUS:
-            left.fill_color=illum
-            right.fill_color=dark
-            middle.fill_color=illum
+            left.fill_color = illum
+            right.fill_color = dark
+            middle.fill_color = illum
         elif moon_phase == MoonPhaseEnum.FULL_MOON:
             left.fill_color = right.fill_color = middle.fill_color = illum
         elif moon_phase == MoonPhaseEnum.WANING_GIBBOUS:
-            left.fill_color=dark
-            right.fill_color=illum
-            middle.fill_color=illum
+            left.fill_color = dark
+            right.fill_color = illum
+            middle.fill_color = illum
         elif moon_phase == MoonPhaseEnum.LAST_QUARTER:
-            left.fill_color=dark
-            right.fill_color=illum
-            middle.alpha=0
+            left.fill_color = dark
+            right.fill_color = illum
+            middle.alpha = 0
         elif moon_phase == MoonPhaseEnum.WANING_CRESCENT:
-            right.fill_color=illum
-            middle.fill_color=dark
-            left.fill_color=dark
+            right.fill_color = illum
+            middle.fill_color = dark
+            left.fill_color = dark
 
         else:
             left.fill_color = right.fill_color = middle.fill_color = dark
 
-        self._semicircle(
-            center,
-            radius_degrees,
-            style=left,
-            num_pts=num_pts,
-            angle=0
-        )
+        self._semicircle(center, radius_degrees, style=left, num_pts=num_pts, angle=0)
         self._semicircle(
             center,
             radius_degrees,
@@ -694,8 +687,7 @@ class BasePlot(ABC):
             radius_degrees,
             style=middle,
         )
-        
-        
+
     def _fov_circle(
         self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
     ):
