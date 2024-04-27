@@ -63,9 +63,9 @@ optic_m45_scope:
   filename: /starplot/hash_checks/data/optic-m45-scope.png
   phash: ae7b84e48393ce92
 optic_moon_phase_full:
-  dhash: 70ccb2b2b2b2cc7071ccb2b2b2b2cc7171ccb2b2b2b2cc71
+  dhash: 0e2b513333512b0e0e2b513333512b0e0e2b513333512b0e
   filename: /starplot/hash_checks/data/optic-moon-phase-full.png
-  phash: 999c663398ce6179
+  phash: fb3ea02295f09734
 optic_moon_phase_new:
   dhash: 0f61cc8e8ecc610f0f61cc8e8ecc610f0f61cc8e8ecc610f
   filename: /starplot/hash_checks/data/optic-moon-phase-new.png

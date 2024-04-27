@@ -339,7 +339,7 @@ def check_optic_moon_phase_full():
             fov=65,
         ),
         dt=dt_full_moon,
-        style=style_blue,
+        style=style_dark,
         raise_on_below_horizon=False,
     )
     optic_plot.moon(
