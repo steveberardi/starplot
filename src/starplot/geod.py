@@ -15,6 +15,18 @@ def to_radec(p) -> tuple:
     return (p[0] / 15, p[1])
 
 
+def away_from_poles(dec):
+    # for some reason cartopy does not like plotting things EXACTLY at the poles
+    # so, this is a little hack to avoid the bug (or maybe a misconception?) by
+    # plotting a tiny bit away from the pole
+    if dec == 90:
+        dec -= 0.00000001
+    if dec == -90:
+        dec += 0.00000001
+
+    return dec
+
+
 def rectangle(
     center: tuple,
     height_degrees: float,
@@ -23,12 +35,8 @@ def rectangle(
 ) -> list:
     ra, dec = center
     ra = ra * 15
+    dec = away_from_poles(dec)
     angle = 180 - angle
-
-    if dec == 90:
-        dec -= 0.00000001
-    if dec == -90:
-        dec += 0.00000001
 
     height_m = distance_m(height_degrees)
     width_m = distance_m(width_degrees)
@@ -63,12 +71,8 @@ def ellipse(
 ) -> list:
     ra, dec = center
     ra = ra * 15
+    dec = away_from_poles(dec)
     angle = 180 - angle
-
-    if dec == 90:
-        dec -= 0.00000001
-    if dec == -90:
-        dec += 0.00000001
 
     height = distance_m(height_degrees / 2)  # b
     width = distance_m(width_degrees / 2)  # a

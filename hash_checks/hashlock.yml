@@ -63,15 +63,15 @@ optic_m45_scope:
   filename: /starplot/hash_checks/data/optic-m45-scope.png
   phash: ae7b84e48393ce92
 optic_moon_phase_full:
-  dhash: 70c0ccb2b2ccc07071c88eb2b28ec87171c48eb2b28ec471
+  dhash: 70ccb2b2b2b2cc7071ccb2b2b2b2cc7171ccb2b2b2b2cc71
   filename: /starplot/hash_checks/data/optic-moon-phase-full.png
-  phash: 9999663299d96666
+  phash: 999c663398ce6179
 optic_moon_phase_new:
-  dhash: 70c4a8cccca8c47071c4aaccccaac47171d4aaccccaad471
+  dhash: 0f61cc8e8ecc610f0f61cc8e8ecc610f0f61cc8e8ecc610f
   filename: /starplot/hash_checks/data/optic-moon-phase-new.png
-  phash: 83915cda3353ccd9
+  phash: e661998966339e36
 optic_moon_phase_waxing_crescent:
-  dhash: 0e3365495b752b0e0e3365495b752b0e0e3365495b752b0e
+  dhash: 0e33454959712b0e0e33454959712b0e0e33454959712b0e
   filename: /starplot/hash_checks/data/optic-moon-phase-waxing-crescent.png
   phash: bb26e4999166c699
 optic_orion_nebula_refractor:
@@ -83,7 +83,7 @@ optic_polaris_binoculars:
   filename: /starplot/hash_checks/data/optic-binoculars-polaris.png
   phash: aa7b84f186d38e92
 optic_solar_eclipse_binoculars:
-  dhash: 0769d4cc8ed469071769f4cccef469170369c08c8cc06903
+  dhash: 0f71ccccccf069170f71ccccccf069172b61ccccccc06903
   filename: /starplot/hash_checks/data/optic-binoculars-eclipse.png
   phash: b323cccc3333cccc
 optic_wrapping:

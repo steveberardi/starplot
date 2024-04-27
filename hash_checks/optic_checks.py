@@ -11,6 +11,10 @@ DATA_PATH = HERE / "data"
 dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 dt_april_8 = datetime.now(timezone("US/Pacific")).replace(2024, 4, 8, 11, 7, 0)
 
+style_light = styles.PlotStyle().extend(
+    styles.extensions.GRAYSCALE,
+    styles.extensions.OPTIC,
+)
 style_dark = styles.PlotStyle().extend(
     styles.extensions.GRAYSCALE_DARK,
     styles.extensions.OPTIC,
@@ -257,7 +261,7 @@ def check_optic_solar_eclipse_binoculars():
         lon=-116.836394,
         ra=1.16667,
         dec=7.45,
-        optic=optics.Binoculars(magnification=8, fov=65),
+        optic=optics.Binoculars(magnification=12, fov=65),
         dt=dt_april_8,
         style=styles.PlotStyle().extend(
             styles.extensions.BLUE_MEDIUM,
@@ -280,7 +284,7 @@ def check_optic_moon_phase_waxing_crescent():
         lon=-117.038611,
         # 10x binoculars
         optic=optics.Binoculars(
-            magnification=15,
+            magnification=20,
             fov=65,
         ),
         dt=dt_dec_16,
@@ -290,6 +294,7 @@ def check_optic_moon_phase_waxing_crescent():
     optic_plot.moon(
         true_size=True,
         show_phase=True,
+        label=None,
     )
     filename = DATA_PATH / "optic-moon-phase-waxing-crescent.png"
     optic_plot.export(filename)
@@ -304,16 +309,17 @@ def check_optic_moon_phase_new():
         lon=-117.038611,
         # 10x binoculars
         optic=optics.Binoculars(
-            magnification=15,
+            magnification=20,
             fov=65,
         ),
         dt=dt_april_8,
-        style=style_blue,
+        style=style_light,
         raise_on_below_horizon=False,
     )
     optic_plot.moon(
         true_size=True,
         show_phase=True,
+        label=None,
     )
     filename = DATA_PATH / "optic-moon-phase-new.png"
     optic_plot.export(filename)
@@ -329,7 +335,7 @@ def check_optic_moon_phase_full():
         lon=-117.038611,
         # 10x binoculars
         optic=optics.Binoculars(
-            magnification=15,
+            magnification=20,
             fov=65,
         ),
         dt=dt_full_moon,
@@ -339,6 +345,7 @@ def check_optic_moon_phase_full():
     optic_plot.moon(
         true_size=True,
         show_phase=True,
+        label=None,
     )
     filename = DATA_PATH / "optic-moon-phase-full.png"
     optic_plot.export(filename)
