@@ -150,11 +150,11 @@ class Moon(SkyObject):
     phase_angle: float
     """Angle of the moon from the Sun (degrees)"""
 
-    illumination: float
-    """Percent of illumination (0...1)"""
-
     phase_description: str
     """Description of moon phase"""
+
+    illumination: float
+    """Percent of illumination (0...1)"""
 
     def __init__(
         self,
