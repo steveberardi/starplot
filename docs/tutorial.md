@@ -10,10 +10,10 @@ Here's an overview of what the tutorial covers:
 3. [Adding more details to the star chart](tutorial/03.md)
 4. [Creating a basic map](tutorial/04.md)
 5. [Creating a basic optic plot](tutorial/05.md)
-6. Selecting objects to plot
-7. Object lookup
-8. Creating callables
-9. Where to go from here
+6. [Selecting objects to plot](tutorial/06.md)
+7. [Object lookup](tutorial/07.md)
+8. [Using callables](tutorial/08.md)
+9. [Where to go from here](tutorial/09.md)
 
 Estimated time to complete: 1 hour
 

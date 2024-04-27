@@ -22,7 +22,8 @@ Using styles is usually a 3-step process:
 3. Apply the style to the plot
 
 Example:
-```python
+<div class="tutorial" markdown>
+```python linenums="1"
 from starplot import MapPlot
 from starplot.styles import PlotStyle, extensions
 
@@ -43,8 +44,8 @@ mp = MapPlot(
     dec_max=20,
     style=style,
 )
-
 ```
+</div>
 
 The sections below go into more detail around these steps.
 

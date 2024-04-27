@@ -20,6 +20,9 @@ jobs:
     - name: Build Examples
       run: make examples
     
+    - name: Build Tutorial
+      run: make tutorial
+    
     - name: Build OpenNGC Data Reference
       run: make scripts SCRIPT=ongc_docdata
 
