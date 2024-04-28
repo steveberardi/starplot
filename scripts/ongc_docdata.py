@@ -15,20 +15,20 @@ ongc = gpd.read_file(DataFiles.ONGC.value)
 ongc = ongc.replace({np.nan: None})
 dsos = []
 
-for _, dso in ongc.iterrows():
-    if not dso["geometry"]:
+for dso in ongc.itertuples():
+    if not dso.geometry:
         continue
 
     d = {
-        "Name": dso.Name,
-        "Type": ONGC_TYPE_MAP.get(dso.Type),
+        "Name": dso.name,
+        "Type": ONGC_TYPE_MAP.get(dso.type),
         "RA": round(dso.ra_degrees / 15, 2),
         "DEC": round(dso.dec_degrees, 2),
-        "Magnitude": dso["V-Mag"] or dso["B-Mag"] or "None",
-        "Major Axis": dso.MajAx,
-        "Minor Axis": dso.MinAx,
+        "Magnitude": dso.mag_v or dso.mag_b or "None",
+        "Major Axis": dso.maj_ax,
+        "Minor Axis": dso.min_ax,
         "Size": dso.size_deg2,
-        "Geometry": dso["geometry"].geom_type,
+        "Geometry": dso.geometry.geom_type,
     }
 
     dsos.append(d)
