@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Callable
+from typing import Callable, Mapping
 
 import pandas as pd
 
@@ -9,12 +9,12 @@ from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot import callables
 from starplot.base import BasePlot
-from starplot.data.stars import StarCatalog
+from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
 from starplot.optics import Optic
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
-from starplot.styles import PlotStyle, MarkerStyle, LabelStyle, extensions, use_style
+from starplot.styles import PlotStyle, ObjectStyle, LabelStyle, extensions, use_style
 from starplot.utils import azimuth_to_string
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -162,33 +162,22 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
 
-    def _scatter_stars(
-        self, ras, decs, sizes, alphas, colors, style=None, epoch_year=None, **kwargs
-    ):
-        """Override StarPlotterMixin _scatter_stars so we can convert to alt/az coords"""
-        ra_hours = [ra / 15 for ra in ras]
+    def _in_bounds_xy(self, x: float, y: float) -> bool:
+        return self.in_bounds_altaz(y, x)  # alt = y, az = x
 
-        df = pd.DataFrame({"ra_hours": ra_hours, "dec_degrees": decs})
-        df["epoch_year"] = epoch_year
-
+    def _prepare_star_coords(self, df):
         stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
-
-        df["alt"], df["az"] = (
-            nearby_stars_alt.degrees,
+        df["x"], df["y"] = (
             nearby_stars_az.degrees,
+            nearby_stars_alt.degrees,
         )
+        return df
 
+    def _scatter_stars(self, ras, decs, sizes, alphas, colors, style=None, **kwargs):
         plotted = super()._scatter_stars(
-            df["az"],
-            df["alt"],
-            sizes,
-            alphas,
-            colors,
-            style,
-            **kwargs,
+            ras, decs, sizes, alphas, colors, style, **kwargs
         )
-        plotted.set_clip_on(True)
 
         if type(self._background_clip_path) == patches.Rectangle:
             # convert to generic path to handle possible rotation angle:
@@ -197,18 +186,20 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         else:
             plotted.set_clip_path(self._background_clip_path)
 
-    @use_style(MarkerStyle, "star")
     def stars(
         self,
-        mag: float = 8.0,
-        mag_labels: float = 6.0,
+        mag: float = 6.0,
         catalog: StarCatalog = StarCatalog.TYCHO_1,
-        style: MarkerStyle = None,
+        style: ObjectStyle = None,
         rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
+        where: list = None,
+        where_labels: list = None,
+        labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
+        bayer_labels: bool = False,
         *args,
         **kwargs,
     ):
@@ -217,14 +208,17 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         Args:
             mag: Limiting magnitude of stars to plot
-            mag_labels: Limiting magnitude of stars to label on the plot
             catalog: The catalog of stars to use: "hipparcos" or "tycho-1"
             style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
+            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
+            bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
         """
         optic_star_multiplier = 0.4 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
 
@@ -233,21 +227,19 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         super().stars(
             mag=mag,
-            mag_labels=mag_labels,
             catalog=catalog,
             style=style,
             rasterize=rasterize,
             size_fn=size_fn_mx,
             alpha_fn=alpha_fn,
             color_fn=color_fn,
+            where=where,
+            where_labels=where_labels,
+            labels=labels,
             legend_label=legend_label,
+            bayer_labels=bayer_labels,
             *args,
             **kwargs,
-        )
-
-    def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
-        super()._plot_text(
-            ra, dec, text, clip_path=self._background_clip_path, *args, **kwargs
         )
 
     @use_style(LabelStyle, "info_text")

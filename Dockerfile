@@ -26,4 +26,4 @@ ENV PYTHONPATH=/starplot/src/
 
 RUN git config --global --add safe.directory /starplot
 
-CMD ["bash", "-c", "python -m pytest ."]
+CMD ["bash", "-c", "python -m pytest . && python hash_checks/hashio.py check"]

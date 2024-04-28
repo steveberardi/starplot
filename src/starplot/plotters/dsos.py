@@ -1,9 +1,5 @@
-from typing import Mapping
+from typing import Callable, Mapping
 
-import geopandas as gpd
-import numpy as np
-
-from starplot.data import DataFiles
 from starplot.data.dsos import (
     DsoType,
     DEFAULT_DSO_TYPES,
@@ -12,7 +8,9 @@ from starplot.data.dsos import (
     DSO_LEGEND_LABELS,
     DSO_LABELS_DEFAULT,
     DsoLabelMaker,
+    load_ongc,
 )
+from starplot.models import DSO
 from starplot.styles import MarkerSymbolEnum
 
 
@@ -24,15 +22,45 @@ class DsoPlotterMixin:
         coords.append(coords[0])
         self._polygon(coords, style.marker.to_polygon_style(), closed=False)
 
+    def _dso_from_df_tuple(self, d):
+        magnitude = d.mag_v or d.mag_b or None
+        magnitude = float(magnitude) if magnitude else None
+        return DSO(
+            name=d.name,
+            ra=d.ra_degrees / 15,
+            dec=d.dec_degrees,
+            type=ONGC_TYPE_MAP[d.type],
+            maj_ax=d.maj_ax,
+            min_ax=d.min_ax,
+            angle=d.angle,
+            magnitude=magnitude,
+            size=d.size_deg2,
+            m=d.m,
+        )
+
     def open_clusters(self, *args, **kwargs):
+        """
+        Plots open clusters
+
+        This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
+        """
         self.dsos(types=[DsoType.OPEN_CLUSTER], **kwargs)
 
     def globular_clusters(self, *args, **kwargs):
+        """
+        Plots globular clusters
+
+        This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
+        """
         self.dsos(types=[DsoType.GLOBULAR_CLUSTER], **kwargs)
 
     def galaxies(self, *args, **kwargs):
         """
-        Plots galaxy DSO types
+        Plots galaxy DSO types:
+
+        - Galaxy
+        - Galaxy Pair
+        - Galaxy Triplet
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
@@ -46,7 +74,14 @@ class DsoPlotterMixin:
         )
 
     def nebula(self, *args, **kwargs):
-        """Plots nebula DSO types
+        """
+        Plots nebula DSO types:
+
+        - Nebula
+        - Planetary Nebula
+        - Emission Nebula
+        - Star Cluster Nebula
+        - Reflection Nebula
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
@@ -65,37 +100,36 @@ class DsoPlotterMixin:
         self,
         mag: float = 8.0,
         types: list[DsoType] = DEFAULT_DSO_TYPES,
-        names: list[str] = None,
-        null: bool = False,
         true_size: bool = True,
         labels: Mapping[str, str] = DSO_LABELS_DEFAULT,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
+        alpha_fn: Callable[[DSO], float] = None,
+        where: list = None,
+        where_labels: list = None,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
 
         Args:
-            mag: Limiting magnitude of DSOs to plot
+            mag: Limiting magnitude of DSOs to plot. For more control of what DSOs to plot, use the `where` kwarg. **Note:** if you pass `mag` and `where` then `mag` will be ignored
             types: List of DSO types to plot
-            names: List of DSO names (as specified in OpenNGC) to filter by (case sensitive!). If `None`, then the DSOs will not be filtered by name.
-            null: If True, then DSOs without a defined magnitude will be plotted
             true_size: If True, then each DSO will be plotted as its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used. Also, keep in mind not all DSOs have a defined size (according to OpenNGC) -- so these will use the style's marker size.
             labels: A dictionary that maps DSO names (as specified in OpenNGC) to the label that'll be plotted for that object. By default, the DSO's name in OpenNGC will be used as the label. If you want to hide all labels, then set this arg to `None`.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
-
+            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
+            where: A list of expressions that determine which DSOs to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which DSOs are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
         """
 
-        # TODO: add args mag_labels, styles
-
-        # TODO: sort by type, and plot markers together (for better performance)
+        # TODO: add kwarg styles
 
         self.logger.debug("Plotting DSOs...")
-        ongc = gpd.read_file(
-            DataFiles.ONGC.value,
-            engine="pyogrio",
-            use_arrow=True,
-            bbox=self._extent_mask(),
-        )
+
+        where = where or []
+        where_labels = where_labels or []
+
+        if not where:
+            where = [DSO.magnitude.is_null() | (DSO.magnitude <= mag)]
 
         if labels is None:
             labels = {}
@@ -107,48 +141,46 @@ class DsoPlotterMixin:
         else:
             legend_labels = {**DSO_LEGEND_LABELS, **legend_labels}
 
+        nearby_dsos = load_ongc(bbox=self._extent_mask())
         dso_types = [ONGC_TYPE[dtype] for dtype in types]
-        nearby_dsos = ongc[ongc["Type"].isin(dso_types)]
-        nearby_dsos = nearby_dsos.replace({np.nan: None})
+        nearby_dsos = nearby_dsos[nearby_dsos["type"].isin(dso_types)]
 
-        if names:
-            nearby_dsos = nearby_dsos[nearby_dsos["Name"].isin(names)]
-
-        for n, d in nearby_dsos.iterrows():
-            if d.ra_degrees is None or d.dec_degrees is None:
-                continue
-
+        for d in nearby_dsos.itertuples():
             ra = d.ra_degrees
             dec = d.dec_degrees
-
-            name = d.Name
-            label = labels.get(name)
-            dso_type = ONGC_TYPE_MAP[d.Type]
+            label = labels.get(d.name)
+            dso_type = ONGC_TYPE_MAP[d.type]
             style = self.style.get_dso_style(dso_type)
-            maj_ax, min_ax, angle = d.MajAx, d.MinAx, d.PosAng
+            maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
             legend_label = legend_labels.get(dso_type)
-            magnitude = d["V-Mag"] or d["B-Mag"] or None
+            magnitude = d.mag_v or d.mag_b or None
             magnitude = float(magnitude) if magnitude else None
+            _dso = self._dso_from_df_tuple(d)
 
-            if (
-                not style
-                or (magnitude is not None and magnitude > mag)
-                or (magnitude is None and not null)
+            if any(
+                [
+                    style is None,
+                    not all([e.evaluate(_dso) for e in where]),
+                    # not self.in_bounds(ra / 15, dec),
+                ]
             ):
                 continue
 
-            geometry_types = d["geometry"].geom_type
+            _alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
+            style.marker.alpha = _alpha_fn(_dso)
 
-            if true_size:
-                if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
+            if where_labels and not all([e.evaluate(_dso) for e in where_labels]):
+                label = None
+
+            if true_size and d.size_deg2 is not None:
+                if "Polygon" == str(d.geometry.geom_type):
                     self._plot_dso_polygon(d.geometry, style)
 
-                elif "MultiPolygon" in geometry_types:
+                elif "MultiPolygon" == str(d.geometry.geom_type):
                     for polygon in d.geometry.geoms:
                         self._plot_dso_polygon(polygon, style)
                 elif maj_ax:
                     # if object has a major axis then plot its actual extent
-
                     maj_ax_degrees = (maj_ax / 60) / 2
 
                     if min_ax:
@@ -163,25 +195,20 @@ class DsoPlotterMixin:
                             (ra / 15, dec),
                             min_ax_degrees * 2,
                             maj_ax_degrees * 2,
-                            poly_style,
-                            angle or 0,
+                            style=poly_style,
+                            angle=angle or 0,
                         )
                     else:
                         self.ellipse(
                             (ra / 15, dec),
                             min_ax_degrees * 2,
                             maj_ax_degrees * 2,
-                            poly_style,
-                            angle or 0,
+                            style=poly_style,
+                            angle=angle or 0,
                         )
 
                 if label:
-                    self._plot_text(
-                        ra / 15,
-                        dec,
-                        label,
-                        **style.label.matplot_kwargs(self._size_multiplier),
-                    )
+                    self.text(label, ra / 15, dec, style.label)
 
             else:
                 # if no major axis, then just plot as a marker
@@ -190,6 +217,9 @@ class DsoPlotterMixin:
                     dec=dec,
                     label=label,
                     style=style,
+                    skip_bounds_check=True,
                 )
+
+            self._objects.dsos.append(_dso)
 
             self._add_legend_handle_marker(legend_label, style.marker)

@@ -1,12 +1,20 @@
 """Runs examples from documentation and copies the image to the docs directory"""
 
 import subprocess
+import glob
+import time
 
-NUM_EXAMPLES = 7
+start = time.time()
 
-for n in range(1, NUM_EXAMPLES + 1):
-    print(f"Running example {n}")
-    subprocess.call(f"python example_{n:02}.py", shell=True)
-    subprocess.call(
-        f"cp {n:02}*.png ../docs/images/examples/example_{n:02}.png", shell=True
-    )
+for filename in glob.iglob("*.py"):
+    if filename.endswith("examples.py"):
+        continue
+
+    print(f"Running {filename}")
+    subprocess.call(f"python {filename}", shell=True)
+
+
+print("Copying images to examples directory...")
+subprocess.call(f"cp *.png ../docs/images/examples/", shell=True)
+
+print(f"{time.time() - start}")

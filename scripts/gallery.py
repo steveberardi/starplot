@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from starplot import MapPlot, Projection, callables
+from starplot import MapPlot, Projection, callables, DSO, Star
 from starplot.data import constellations
 from starplot.styles import PlotStyle, extensions
 
@@ -38,9 +38,9 @@ def zenith():
             ),
             resolution=RESOLUTION,
         )
-        p.constellations(labels=constellations.CONSTELLATIONS_FULL_NAMES)
-        p.stars(mag=5.6, mag_labels=2.1)
-        p.dsos(mag=9, null=True, true_size=True, labels=None)
+        p.constellations()
+        p.stars(mag=5.6, where_labels=[Star.magnitude < 2.1])
+        p.dsos(mag=9, true_size=True, labels=None)
 
         # p.constellation_borders()
         if i in [0]:
@@ -87,7 +87,7 @@ def orion():
     )
     p.constellations()
     p.stars(mag=10, bayer_labels=True)
-    p.dsos(mag=10, null=True, true_size=True, labels=None)
+    p.dsos(mag=10, true_size=True, labels=None)
     p.constellation_borders()
     p.ecliptic()
     p.celestial_equator()
@@ -140,10 +140,10 @@ def lmc():
     )
     p.constellations()
     p.stars(mag=13)
-    p.galaxies(mag=12, null=True, labels=None)
-    p.nebula(mag=12, null=True, labels=None)
-    p.open_clusters(mag=12, null=True, true_size=False, labels=None)
-    p.globular_clusters(mag=12, null=True, true_size=False, labels=None)
+    p.galaxies(mag=12, labels=None)
+    p.nebula(mag=12, labels=None)
+    p.open_clusters(mag=12, true_size=False, labels=None)
+    p.globular_clusters(mag=12, true_size=False, labels=None)
     p.constellation_borders()
     p.ecliptic()
     p.celestial_equator()
@@ -172,7 +172,7 @@ def sgr():
     )
     p.constellations()
     p.stars(mag=13, bayer_labels=True)
-    p.dsos(mag=13, null=True, true_size=True, labels=None)
+    p.dsos(mag=13, true_size=True, labels=None)
     p.constellation_borders()
     p.ecliptic()
     p.celestial_equator()
@@ -285,10 +285,10 @@ def orthographic():
             resolution=RESOLUTION,
         )
         p.gridlines(labels=False)
-        p.stars(mag=7.86, mag_labels=6)
-        p.open_clusters(mag=8, null=True, true_size=False, labels=None)
-        p.galaxies(mag=8, null=True, true_size=False, labels=None)
-        p.nebula(mag=8, null=True, true_size=True, labels=None)
+        p.stars(mag=7.86, where_labels=[Star.magnitude < 6])
+        p.open_clusters(mag=8, true_size=False, labels=None)
+        p.galaxies(mag=8, true_size=False, labels=None)
+        p.nebula(mag=8, true_size=True, labels=None)
         p.constellations(
             labels=constellations.CONSTELLATIONS_FULL_NAMES,
             style={"label": {"font_size": 9, "font_alpha": 0.8}},
@@ -328,7 +328,13 @@ def miller_big():
         resolution=6000,
     )
     p.stars(mag=8)
-    p.dsos(mag=8, null=True, labels=None)
+    p.dsos(
+        labels=None,
+        where=[
+            DSO.magnitude <= 8,
+            DSO.size > 0.05,
+        ],
+    )
     p.gridlines()
     p.milky_way()
     p.ecliptic(style={"line": {"style": "dashed"}})

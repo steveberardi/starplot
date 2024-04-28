@@ -29,6 +29,7 @@ HERE = Path(__file__).resolve().parent
 class BaseStyle(BaseModel):
     class Config:
         use_enum_values = True
+        extra = "forbid"
 
 
 class FillStyleEnum(str, Enum):
@@ -91,6 +92,9 @@ class MarkerSymbolEnum(str, Enum):
     STAR = "star"
     """\u2605"""
 
+    SUN = "sun"
+    """\u263C"""
+
     DIAMOND = "diamond"
     """\u25C6"""
 
@@ -120,6 +124,7 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.SQUARE: "s",
             MarkerSymbolEnum.SQUARE_STRIPES_DIAGONAL: "$\u25A8$",
             MarkerSymbolEnum.STAR: "*",
+            MarkerSymbolEnum.SUN: "$\u263C$",
             MarkerSymbolEnum.DIAMOND: "D",
             MarkerSymbolEnum.TRIANGLE: "^",
             MarkerSymbolEnum.CIRCLE_PLUS: "$\u2295$",
@@ -154,6 +159,41 @@ class LegendLocationEnum(str, Enum):
     INSIDE_BOTTOM_LEFT = "lower left"
     OUTSIDE_TOP = "outside upper center"
     OUTSIDE_BOTTOM = "outside lower center"
+
+
+class AnchorPointEnum(str, Enum):
+    """Options for the anchor point of labels"""
+
+    TOP_LEFT = "top left"
+    TOP_RIGHT = "top right"
+    TOP_CENTER = "top center"
+    BOTTOM_LEFT = "bottom left"
+    BOTTOM_RIGHT = "bottom right"
+    BOTTOM_CENTER = "bottom center"
+
+    def as_matplot(self) -> dict:
+        style = {}
+        # the values below look wrong, but they're inverted because the map coords are inverted
+        if self.value == AnchorPointEnum.BOTTOM_LEFT:
+            style["va"] = "top"
+            style["ha"] = "right"
+        elif self.value == AnchorPointEnum.BOTTOM_RIGHT:
+            style["va"] = "top"
+            style["ha"] = "left"
+        elif self.value == AnchorPointEnum.BOTTOM_CENTER:
+            style["va"] = "top"
+            style["ha"] = "center"
+        elif self.value == AnchorPointEnum.TOP_LEFT:
+            style["va"] = "bottom"
+            style["ha"] = "right"
+        elif self.value == AnchorPointEnum.TOP_RIGHT:
+            style["va"] = "bottom"
+            style["ha"] = "left"
+        elif self.value == AnchorPointEnum.TOP_CENTER:
+            style["va"] = "bottom"
+            style["ha"] = "center"
+
+        return style
 
 
 class MarkerStyle(BaseStyle):
@@ -334,6 +374,9 @@ class LabelStyle(BaseStyle):
         ```
     """
 
+    anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
+    """Anchor point of label"""
+
     font_size: int = 8
     """Relative font size of the label"""
 
@@ -358,7 +401,13 @@ class LabelStyle(BaseStyle):
     line_spacing: Optional[int] = None
     """Spacing between lines of text"""
 
-    zorder: int = 1
+    offset_x: int = 0
+    """Horizontal offset of the label, in pixels. Negative values supported."""
+
+    offset_y: int = 0
+    """Vertical offset of the label, in pixels. Negative values supported."""
+
+    zorder: int = 101
     """Zorder of the label"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
@@ -376,6 +425,8 @@ class LabelStyle(BaseStyle):
             style["family"] = self.font_family
         if self.line_spacing:
             style["linespacing"] = self.line_spacing
+
+        style.update(AnchorPointEnum(self.anchor_point).as_matplot())
 
         return style
 
@@ -478,9 +529,11 @@ class PlotStyle(BaseStyle):
 
     # Title
     title: LabelStyle = LabelStyle(
-        font_size=23,
+        font_size=20,
+        font_weight=FontWeightEnum.BOLD,
         zorder=1,
-        line_spacing=32,
+        line_spacing=48,
+        anchor_point=AnchorPointEnum.BOTTOM_CENTER,
     )
     """Styling for info text (only applies to zenith and optic plots)"""
 
@@ -488,8 +541,9 @@ class PlotStyle(BaseStyle):
     info_text: LabelStyle = LabelStyle(
         font_size=10,
         zorder=1,
-        family="monospace",
+        font_family="monospace",
         line_spacing=2,
+        anchor_point=AnchorPointEnum.BOTTOM_CENTER,
     )
     """Styling for info text (only applies to zenith and optic plots)"""
 
@@ -501,7 +555,10 @@ class PlotStyle(BaseStyle):
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
-        font_size=8, font_weight=FontWeightEnum.LIGHT, zorder=1
+        font_size=7,
+        font_weight=FontWeightEnum.LIGHT,
+        zorder=1,
+        anchor_point=AnchorPointEnum.TOP_LEFT,
     )
     """Styling for Bayer labels of stars"""
 
@@ -524,7 +581,8 @@ class PlotStyle(BaseStyle):
             size=14,
             fill=FillStyleEnum.FULL,
             color="#c8c8c8",
-            alpha=0.5,
+            alpha=1,
+            zorder=100,
         ),
         label=LabelStyle(
             font_size=8,
@@ -532,6 +590,21 @@ class PlotStyle(BaseStyle):
         ),
     )
     """Styling for the moon"""
+
+    sun: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.SUN,
+            size=14,
+            fill=FillStyleEnum.FULL,
+            color="#000",
+            zorder=90,
+        ),
+        label=LabelStyle(
+            font_size=8,
+            font_weight=FontWeightEnum.BOLD,
+        ),
+    )
+    """Styling for the Sun"""
 
     # Deep Sky Objects (DSOs)
     dso_open_cluster: ObjectStyle = ObjectStyle(
@@ -541,7 +614,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
         ),
         label=LabelStyle(
-            font_size=8,
+            font_size=6,
             font_weight=FontWeightEnum.LIGHT,
         ),
     )
@@ -554,7 +627,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
         ),
         label=LabelStyle(
-            font_size=8,
+            font_size=6,
             font_weight=FontWeightEnum.LIGHT,
         ),
     )
@@ -568,7 +641,7 @@ class PlotStyle(BaseStyle):
             color="#555",
             alpha=0.8,
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for globular star clusters"""
 
@@ -576,7 +649,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for galaxies"""
 
@@ -584,7 +657,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for nebulas"""
 
@@ -592,7 +665,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.TOP
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for double stars"""
 
@@ -603,7 +676,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for dark nebulas"""
 
@@ -614,7 +687,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for HII Ionized regions"""
 
@@ -625,7 +698,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for supernova remnants"""
 
@@ -636,7 +709,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for nova stars"""
 
@@ -647,7 +720,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for 'nonexistent' (as designated by OpenNGC) deep sky objects"""
 
@@ -658,7 +731,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for 'unknown' (as designated by OpenNGC) types of deep sky objects"""
 
@@ -669,14 +742,19 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
-        label=LabelStyle(font_size=8),
+        label=LabelStyle(font_size=6),
     )
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
     # Constellations
     constellation: PathStyle = PathStyle(
         line=LineStyle(color="#c8c8c8"),
-        label=LabelStyle(font_size=7, font_weight=FontWeightEnum.LIGHT, zorder=400),
+        label=LabelStyle(
+            font_size=7,
+            font_weight=FontWeightEnum.LIGHT,
+            zorder=400,
+            anchor_point=AnchorPointEnum.TOP_RIGHT,
+        ),
     )
     """Styling for constellation lines and labels (only applies to map plots)"""
 
@@ -708,31 +786,23 @@ class PlotStyle(BaseStyle):
             zorder=-1_000,
         ),
         label=LabelStyle(
-            font_size=11,
+            font_size=9,
             font_color="#000",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
+            anchor_point=AnchorPointEnum.BOTTOM_CENTER,
         ),
     )
     """Styling for gridlines (including Right Ascension / Declination labels). *Only applies to map plots*."""
-
-    # Tick marks
-    tick_marks: LabelStyle = LabelStyle(
-        font_size=5,
-        font_color="#000",
-        font_alpha=1,
-        zorder=-100,
-    )
-    """Styling for tick marks on map plots."""
 
     # Ecliptic
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(
             color="#777",
-            width=1,
+            width=2,
             style=LineStyleEnum.DOTTED,
             dash_capstyle=DashCapStyleEnum.ROUND,
-            alpha=0.75,
+            alpha=0.8,
             zorder=-20,
         ),
         label=LabelStyle(

@@ -75,6 +75,18 @@ planets:
   label:
     font_size: 7
     font_color: hsl(60, 3%, 42%)
+sun:
+  label:
+    font_color: hsl(60, 3%, 42%)
+  marker:
+    color: hsl(60, 12%, 32%)
+    edge_color: hsl(60, 12%, 32%)
+moon:
+  label:
+    font_color: hsl(60, 3%, 42%)
+  marker:
+    color: hsl(48, 80%, 96%)
+    edge_color: hsl(60, 12%, 32%)
 
 # DSOs
 dso_double_star:

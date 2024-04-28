@@ -14,8 +14,8 @@ from starplot.styles import PlotStyle, FontWeightEnum, LineStyle, LineStyleEnum
         ),
         dict(background_color=Color("#ff8e8e")),
         dict(background_color="rgb(12,12,12)"),
-        dict(star_font_weight=FontWeightEnum.BOLD),
-        dict(background_color="#fff", constellation_line_width=2),
+        dict(star={"label": {"font_weight": FontWeightEnum.BOLD}}),
+        dict(background_color="#fff", constellation={"line": {"width": 2}}),
     ],
 )
 def test_plot_style_valid(kwargs):
@@ -33,6 +33,7 @@ def test_plot_style_valid(kwargs):
         dict(background_color="rgb(12,12,12,12,12)"),
         dict(background_color="#fff", constellation="hello"),
         dict(star={"label": {"font_weight": "invalid"}}),
+        dict(background_color="#fff", extra_stuff="hello"),
     ],
 )
 def test_plot_style_invalid(kwargs):

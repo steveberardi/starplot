@@ -7,14 +7,14 @@ import numpy as np
 import rtree
 from adjustText import adjust_text as _adjust_text
 from matplotlib import patches
-from matplotlib import pyplot as plt, patheffects, transforms
+from matplotlib import pyplot as plt, patheffects
 from matplotlib.lines import Line2D
 from pytz import timezone
-from skyfield.api import Angle
 
-from starplot import geod
+from starplot import geod, models
 from starplot.data import load, ecliptic
-from starplot.data.planets import Planet, get_planet_positions, PLANET_LABELS_DEFAULT
+from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
+from starplot.models.moon import MoonPhase
 from starplot.styles import (
     PlotStyle,
     MarkerStyle,
@@ -37,7 +37,7 @@ LOGGER.addHandler(LOG_HANDLER)
 
 
 DEFAULT_FOV_STYLE = PolygonStyle(
-    fill=False, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
+    fill_color=None, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
 )
 """Default style for plotting scope and bino field of view circles"""
 
@@ -67,10 +67,12 @@ class BasePlot(ABC):
         self.hide_colliding_labels = hide_colliding_labels
 
         self.dt = dt or timezone("UTC").localize(datetime.now())
+        self._ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
 
         self.labels = []
         self._labels_rtree = rtree.index.Index()
+        self._background_clip_path = None
 
         self._legend = None
         self._legend_handles = {}
@@ -86,10 +88,12 @@ class BasePlot(ABC):
         self._size_multiplier = self.resolution / 3000
         self.timescale = load.timescale().from_datetime(self.dt)
 
+        self._objects = models.ObjectList()
+
     def _plot_kwargs(self) -> dict:
         return {}
 
-    def _prepare_coords(self, ra, dec) -> (float, float):
+    def _prepare_coords(self, ra, dec) -> tuple[float, float]:
         return ra, dec
 
     def _is_label_collision(self, extent) -> bool:
@@ -100,22 +104,31 @@ class BasePlot(ABC):
         )
         return len(ix) > 0
 
+    def _is_clipped(self, extent) -> bool:
+        return self._background_clip_path is not None and not all(
+            self._background_clip_path.contains_points(extent.get_points())
+        )
+
     def _maybe_remove_label(self, label) -> None:
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-        ax_extent = self.ax.get_window_extent()
-        intersection = transforms.Bbox.intersection(ax_extent, extent)
 
-        if (
-            intersection is not None
-            and (
-                intersection.height * intersection.width == extent.height * extent.width
-            )
-            and not (self.hide_colliding_labels and self._is_label_collision(extent))
-        ):
-            self.labels.append(label)
-            self._labels_rtree.insert(0, (extent.x0, extent.y0, extent.x1, extent.y1))
-        else:
+        if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]):
             label.remove()
+            return
+
+        if any(
+            [
+                self._is_clipped(extent),
+                self.hide_colliding_labels and self._is_label_collision(extent),
+            ]
+        ):
+            label.remove()
+            return
+
+        self.labels.append(label)
+        self._labels_rtree.insert(
+            0, np.array((extent.x0, extent.y0, extent.x1, extent.y1))
+        )
 
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
         if label is not None and label not in self._legend_handles:
@@ -130,23 +143,51 @@ class BasePlot(ABC):
                 label=label,
             )
 
-    def _plot_text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
+    def _text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
+        if not text:
+            return
+
         x, y = self._prepare_coords(ra, dec)
         kwargs["path_effects"] = kwargs.get("path_effects") or [self.text_border]
-        label = self.ax.text(
-            x,
-            y,
+        label = self.ax.annotate(
             text,
+            (x, y),
             *args,
             **kwargs,
             **self._plot_kwargs(),
         )
         label.set_clip_on(True)
-
-        if kwargs.get("clip_path"):
-            label.set_clip_path(kwargs.get("clip_path"))
+        label.set_clip_path(self._background_clip_path)
 
         self._maybe_remove_label(label)
+
+    @use_style(LabelStyle)
+    def text(self, text: str, ra: float, dec: float, style: LabelStyle = None):
+        """
+        Plots text
+
+        Args:
+            text: Text to plot
+            ra: Right ascension of text (0...24)
+            dec: Declination of text (-90...90)
+            style: Styling of the text
+        """
+        style = style or LabelStyle()
+        self._text(
+            ra,
+            dec,
+            text,
+            **style.matplot_kwargs(self._size_multiplier),
+            xytext=(style.offset_x, style.offset_y),
+            textcoords="offset pixels",
+        )
+
+    @property
+    def objects(self) -> models.ObjectList:
+        """
+        Returns an [`ObjectList`][starplot.models.ObjectList] that contains various lists of sky objects that have been plotted.
+        """
+        return self._objects
 
     @use_style(LabelStyle, "title")
     def title(self, text: str, style: LabelStyle = None):
@@ -158,7 +199,7 @@ class BasePlot(ABC):
             style: Styling of the title. If None, then the plot's style (specified when creating the plot) will be used
         """
         style_kwargs = style.matplot_kwargs(self._size_multiplier)
-        style_kwargs.pop("line_spacing", None)
+        style_kwargs.pop("linespacing", None)
         style_kwargs["pad"] = style.line_spacing
         self.ax.set_title(text, **style_kwargs)
 
@@ -248,6 +289,7 @@ class BasePlot(ABC):
         label: str,
         style: Union[dict, ObjectStyle],
         legend_label: str = None,
+        skip_bounds_check: bool = False,
     ) -> None:
         """Plots a marker
 
@@ -257,42 +299,37 @@ class BasePlot(ABC):
             label: Label for the marker
             style: Styling for the marker
             legend_label: How to label the marker in the legend. If `None`, then the marker will not be added to the legend
+            skip_bounds_check: If True, then don't check the marker coordinates to ensure they're within the bounds of the plot. If you're plotting many markers, setting this to True can speed up plotting time.
 
         """
+
+        if not skip_bounds_check and not self.in_bounds(ra, dec):
+            return
+
         x, y = self._prepare_coords(ra, dec)
 
-        if self.in_bounds(ra, dec):
-            self.ax.plot(
-                x,
-                y,
-                **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
-                **self._plot_kwargs(),
-                linestyle="None",
-            )
+        self.ax.plot(
+            x,
+            y,
+            **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
+            **self._plot_kwargs(),
+            linestyle="None",
+            clip_on=True,
+            clip_path=self._background_clip_path,
+        )
 
-            if legend_label is not None:
-                self._add_legend_handle_marker(legend_label, style.marker)
+        if label:
+            self.text(label, ra, dec, style.label)
 
-            if label:
-                plotted_label = self.ax.text(
-                    x,
-                    y,
-                    label,
-                    **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
-                    **self._plot_kwargs(),
-                    path_effects=[self.text_border],
-                    va="bottom",
-                    ha="left",
-                )
-                plotted_label.set_clip_on(True)
-                self._maybe_remove_label(plotted_label)
+        if legend_label is not None:
+            self._add_legend_handle_marker(legend_label, style.marker)
 
     @use_style(ObjectStyle, "planets")
     def planets(
         self,
         style: ObjectStyle = None,
         true_size: bool = False,
-        labels: Dict[Planet, str] = PLANET_LABELS_DEFAULT,
+        labels: Dict[PlanetName, str] = PLANET_LABELS_DEFAULT,
         legend_label: str = "Planet",
     ) -> None:
         """Plots the planets
@@ -300,93 +337,81 @@ class BasePlot(ABC):
         Args:
             style: Styling of the planets. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then each planet's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
-            labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.data.planets.Planet])
+            labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.models.planet.PlanetName])
             legend_label: How to label the planets in the legend. If `None`, then the planets will not be added to the legend
         """
         labels = labels or {}
-        planets = get_planet_positions(self.timescale, ephemeris=self.ephemeris)
+        planets = models.Planet.all(self.dt, self._ephemeris_name)
 
-        for p, planet_data in planets.items():
-            ra, dec, apparent_size_degrees = planet_data
-            label = labels.get(p)
+        for p in planets:
+            label = labels.get(p.name)
+
+            if self.in_bounds(p.ra, p.dec):
+                self._objects.planets.append(p)
 
             if true_size:
                 self.circle(
-                    (ra, dec),
-                    apparent_size_degrees,
+                    (p.ra, p.dec),
+                    p.apparent_size,
                     style.marker.to_polygon_style(),
                 )
                 self._add_legend_handle_marker(legend_label, style.marker)
 
                 if label:
-                    self._plot_text(
-                        ra,
-                        dec,
-                        label.upper(),
-                        **style.label.matplot_kwargs(
-                            size_multiplier=self._size_multiplier
-                        ),
-                    )
+                    self.text(label.upper(), p.ra, p.dec, style.label)
             else:
                 self.marker(
-                    ra=ra,
-                    dec=dec,
+                    ra=p.ra,
+                    dec=p.dec,
                     label=label.upper() if label else None,
                     style=style,
                     legend_label=legend_label,
                 )
 
-    @use_style(ObjectStyle, "moon")
-    def moon(
+    @use_style(ObjectStyle, "sun")
+    def sun(
         self,
         style: ObjectStyle = None,
         true_size: bool = False,
-        label: str = "Moon",
-        legend_label: str = "Moon",
+        label: str = "Sun",
+        legend_label: str = "Sun",
     ) -> None:
-        """Plots the Moon
+        """Plots the Sun
 
         Args:
-            style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
-            true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
-            label: How the Moon will be labeled on the plot and legend
+            style: Styling of the Sun. If None, then the plot's style (specified when creating the plot) will be used
+            true_size: If True, then the Sun's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
+            label: How the Sun will be labeled on the plot and legend
         """
-        earth, moon = self.ephemeris["earth"], self.ephemeris["moon"]
-        astrometric = earth.at(self.timescale).observe(moon)
-        ra, dec, distance = astrometric.radec()
+        s = models.Sun.get(dt=self.dt)
+        s.name = label or s.name
 
-        ra = ra.hours
-        dec = dec.degrees
-
-        if not self.in_bounds(ra, dec):
+        if not self.in_bounds(s.ra, s.dec):
             return
 
+        self._objects.sun = s
+
         if true_size:
-            radius_km = 1_740
-            apparent_diameter_degrees = Angle(
-                radians=np.arcsin(radius_km / distance.km) * 2.0
-            ).degrees
+            polygon_style = style.marker.to_polygon_style()
+
+            # hide the edge because it can interfere with the true size
+            polygon_style.edge_color = None
 
             self.circle(
-                (ra, dec),
-                apparent_diameter_degrees,
-                style.marker.to_polygon_style(),
+                (s.ra, s.dec),
+                s.apparent_size,
+                style=polygon_style,
             )
 
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
-                self._plot_text(
-                    ra,
-                    dec,
-                    label,
-                    **style.label.matplot_kwargs(size_multiplier=self._size_multiplier),
-                )
+                self.text(label, s.ra, s.dec, style.label)
 
         else:
             self.marker(
-                ra=ra,
-                dec=dec,
+                ra=s.ra,
+                dec=s.dec,
                 label=label,
                 style=style,
                 legend_label=legend_label,
@@ -406,6 +431,22 @@ class BasePlot(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def _in_bounds_xy(self, x: float, y: float) -> bool:
+        """
+        Determine if a data / projected coordinate is within the non-clipped bounds of the plot.
+
+        This should be extremely precise.
+
+        Args:
+            x: X coordinate
+            y: Y coordinate
+
+        Returns:
+            bool: True if the coordinate is in bounds, otherwise False
+        """
+        raise NotImplementedError
+
     def _polygon(self, points: list, style: PolygonStyle, **kwargs):
         points = [geod.to_radec(p) for p in points]
         points = [self._prepare_coords(*p) for p in points]
@@ -414,6 +455,8 @@ class BasePlot(ABC):
             # closed=False, # needs to be false for circles at poles?
             **style.matplot_kwargs(size_multiplier=self._size_multiplier),
             **kwargs,
+            clip_on=True,
+            clip_path=self._background_clip_path,
         )
         self.ax.add_patch(patch)
 
@@ -465,6 +508,8 @@ class BasePlot(ABC):
         style: PolygonStyle,
         angle: float = 0,
         num_pts: int = 100,
+        start_angle: int = 0,
+        end_angle: int = 360,
     ):
         """Plots an ellipse
 
@@ -483,6 +528,8 @@ class BasePlot(ABC):
             width_degrees,
             angle,
             num_pts,
+            start_angle,
+            end_angle,
         )
         self._polygon(points, style)
 
@@ -506,9 +553,153 @@ class BasePlot(ABC):
             center,
             radius_degrees * 2,
             radius_degrees * 2,
-            style,
+            style=style,
             angle=0,
             num_pts=num_pts,
+        )
+
+    @use_style(ObjectStyle, "moon")
+    def moon(
+        self,
+        style: ObjectStyle = None,
+        true_size: bool = False,
+        show_phase: bool = False,
+        label: str = "Moon",
+        legend_label: str = "Moon",
+    ) -> None:
+        """Plots the Moon
+
+        Args:
+            style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
+            true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
+            show_phase: If True, and if `true_size = True`, then the approximate phase of the moon will be illustrated. The dark side of the moon will be colored with the marker's `edge_color`.
+            label: How the Moon will be labeled on the plot and legend
+        """
+        m = models.Moon.get(dt=self.dt, ephemeris=self._ephemeris_name)
+        m.name = label or m.name
+
+        if not self.in_bounds(m.ra, m.dec):
+            return
+
+        self._objects.moon = m
+
+        if true_size:
+            # convert to PolygonStyle because we'll plot the true size as a polygon
+            polygon_style = style.marker.to_polygon_style()
+
+            # hide the edge because it can interfere with the true size
+            polygon_style.edge_color = None
+
+            if show_phase:
+                self._moon_with_phase(
+                    m.phase_description,
+                    (m.ra, m.dec),
+                    m.apparent_size,
+                    style=polygon_style,
+                    dark_side_color=style.marker.edge_color,
+                )
+            else:
+                self.circle(
+                    (m.ra, m.dec),
+                    m.apparent_size,
+                    style=polygon_style,
+                )
+
+            self._add_legend_handle_marker(legend_label, style.marker)
+
+            if label:
+                self.text(label, m.ra, m.dec, style.label)
+
+        else:
+            self.marker(
+                ra=m.ra,
+                dec=m.dec,
+                label=label,
+                style=style,
+                legend_label=legend_label,
+            )
+
+    def _moon_with_phase(
+        self,
+        moon_phase: MoonPhase,
+        center: tuple,
+        radius_degrees: float,
+        style: PolygonStyle,
+        dark_side_color: str,
+        num_pts: int = 100,
+    ):
+        """
+        Plots the (approximate) moon phase by drawing two half circles and one ellipse in the center,
+        and then determining the color of each of the three shapes by the moon phase.
+        """
+        illuminated_color = style.fill_color
+
+        left = style.copy()
+        right = style.copy()
+        middle = style.copy()
+
+        if moon_phase == MoonPhase.WAXING_CRESCENT:
+            left.fill_color = illuminated_color
+            middle.fill_color = dark_side_color
+            right.fill_color = dark_side_color
+
+        elif moon_phase == MoonPhase.FIRST_QUARTER:
+            left.fill_color = illuminated_color
+            middle.alpha = 0
+            right.fill_color = dark_side_color
+
+        elif moon_phase == MoonPhase.WAXING_GIBBOUS:
+            left.fill_color = illuminated_color
+            middle.fill_color = illuminated_color
+            right.fill_color = dark_side_color
+
+        elif moon_phase == MoonPhase.FULL_MOON:
+            left.fill_color = middle.fill_color = right.fill_color = illuminated_color
+
+        elif moon_phase == MoonPhase.WANING_GIBBOUS:
+            left.fill_color = dark_side_color
+            middle.fill_color = illuminated_color
+            right.fill_color = illuminated_color
+
+        elif moon_phase == MoonPhase.LAST_QUARTER:
+            left.fill_color = dark_side_color
+            middle.alpha = 0
+            right.fill_color = illuminated_color
+
+        elif moon_phase == MoonPhase.WANING_CRESCENT:
+            left.fill_color = dark_side_color
+            middle.fill_color = dark_side_color
+            right.fill_color = illuminated_color
+
+        else:
+            left.fill_color = middle.fill_color = right.fill_color = dark_side_color
+
+        # Plot left side
+        self.ellipse(
+            center,
+            radius_degrees * 2,
+            radius_degrees * 2,
+            style=left,
+            num_pts=num_pts,
+            angle=0,
+            end_angle=180,  # plot as a semicircle
+        )
+        # Plot right side
+        self.ellipse(
+            center,
+            radius_degrees * 2,
+            radius_degrees * 2,
+            style=right,
+            num_pts=num_pts,
+            angle=180,
+            end_angle=180,  # plot as a semicircle
+        )
+        # Plot middle
+        self.ellipse(
+            center,
+            radius_degrees * 2,
+            radius_degrees,
+            style=middle,
         )
 
     def _fov_circle(
@@ -520,7 +711,7 @@ class BasePlot(ABC):
         self.circle(
             (ra, dec),
             fov_radius,
-            style,
+            style=style,
         )
 
     @use_style(PolygonStyle)
@@ -601,14 +792,7 @@ class BasePlot(ABC):
 
                 for i in range(0, len(inbounds), label_spacing):
                     ra, dec = inbounds[i]
-                    self._plot_text(
-                        ra,
-                        dec - 0.4,
-                        label,
-                        **self.style.ecliptic.label.matplot_kwargs(
-                            self._size_multiplier
-                        ),
-                    )
+                    self.text(label, ra, dec, style.label)
 
     @use_style(PathStyle, "celestial_equator")
     def celestial_equator(
@@ -643,7 +827,6 @@ class BasePlot(ABC):
         )
 
         if label:
-            label_style_kwargs = style.label.matplot_kwargs(self._size_multiplier)
             label_spacing = (self.ra_max - self.ra_min) / 3
             for ra in np.arange(self.ra_min, self.ra_max, label_spacing):
-                self._plot_text(ra, 0.25, label, **label_style_kwargs)
+                self.text(label, ra, 0.25, style.label)

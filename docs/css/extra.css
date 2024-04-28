@@ -3,6 +3,8 @@
     --md-primary-fg-color--light: hsl(209, 53%, 70%);
     --md-primary-bg-color--light: hsl(209, 78%, 90%);
     --md-primary-fg-color--dark:  hsl(209, 53%, 27%);
+
+    /* --md-accent-fg-color: hsl(209, 73%, 47%); */
 }
 
 .md-typeset h1,
@@ -28,6 +30,10 @@
 
 .fg-primary {
     color: var(--md-primary-fg-color);
+}
+
+.mt-none {
+    margin-top: 0 !important;
 }
 
 /* Object Class Headings */
@@ -130,12 +136,12 @@
     padding-left: 1rem;
     border-left: 1px solid rgb(201, 201, 201);
 }
-
+/* 
 .doc-object .doc-attribute {
     margin-left: 1rem;
     padding-left: 1rem;
     border-left: 1px solid rgb(201, 201, 201);
-}
+} */
 .doc-object .doc-attribute .doc-label {
     display: none;
 }
@@ -162,6 +168,7 @@ code.raw {
 .cards ul li {
     display: flex !important;
     align-items: center;
+    flex-direction: column;
 }
 .cards ul li img {
     align-self: center;
@@ -175,7 +182,7 @@ code.raw {
     display: flex !important;
     justify-content:space-between;
     flex-grow: 1;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     border: 1px solid #c6c6c6;
     margin-right: 1em;
@@ -221,6 +228,10 @@ code.raw {
     }
 }
 
+.md-nav__icon {
+    display: none;
+}
+
 /* hide inactive nav items */
 .md-nav--secondary li:not(:has( a.md-nav__link--active)) {
     nav {
@@ -260,7 +271,7 @@ code.raw {
 .md-typeset .starplot > .admonition-title,
 .md-typeset .starplot > summary {
     color: var(--md-primary-fg-color);
-    background-color: hsl(209, 58%, 87%);
+    background-color: hsl(209, 58%, 90%);
 }
 .md-typeset .starplot > .admonition-title::before,
 .md-typeset .starplot > summary::before {
@@ -283,4 +294,89 @@ code.raw {
     background-color: var(--md-primary-fg-color--dark);
     -webkit-mask-image: var(--md-admonition-icon--star);
     mask-image: var(--md-admonition-icon--star);
+}
+
+.example-header {
+    padding-top: 0.5em !important;
+    margin-bottom: 0.25em !important;
+    border-top: 1px solid #c6c6c6;
+    text-align: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: end;
+}
+
+.text-subtitle {
+    font-size: 1.25em;
+    font-style: italic;
+    color: #3f3f3f;
+}
+
+.example-card-title {
+    font-size: 1.4em;
+    font-weight: 600;
+    text-align: center;
+}
+
+.grid.cards.examples>ul>li {
+    border: 1px solid #c6c6c6 !important;
+    margin: 8px !important;
+    justify-content: center;
+    padding: 0;
+
+    a {
+        color: var(--md-typeset-color);
+        padding: 1em;
+    }
+}
+
+.grid.cards.examples>ul>li:hover {
+    background-color: var(--doc-symbol-class-bg-color);
+    border: 1px solid var(--doc-symbol-class-bg-color) !important;
+}
+
+.flex-space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tutorial-top-nav {
+    border-top: 1px solid #c6c6c6;
+    border-bottom: 1px solid #c6c6c6;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+
+    background-color: var(--doc-symbol-class-bg-color);
+    p {
+        margin: 0;
+    }
+}
+
+/* Code Styling for Tutorial */
+.tutorial {
+    --md-code-hl-comment-color: hsl(209, 78%, 35%);
+
+    pre {
+        line-height: 1.8;
+    }
+    .c1 {
+        background-color: hsl(197, 56%, 94%);
+        padding: 2px 5px;
+        /* border: 1px solid hsl(207, 46%, 86%); */
+        /* border-radius: 8px; */
+    }   
+}
+
+[data-md-color-scheme=slate] {
+    .tutorial .c1 {
+        color: hsl(207, 46%, 86%);
+        background-color: hsl(197, 36%, 30%);
+        /* border: 1px solid hsl(207, 46%, 56%); */
+    }
 }
