@@ -5,11 +5,12 @@
 - Adds easier way to override style properties on plotting functions - thanks to Graham Schmidt
 - Adds function to plot the Sun - thanks to Graham Schmidt
 - Adds option to illustrate the Moon's phase - thanks to Graham Schmidt
-- Adds `objects` property to plots that stores lists of objects that have been plotted
+- Adds `objects` property to plots, which stores lists of objects that have been plotted
 - Adds object finder helpers
 - Adds customizable anchor points for text labels
 - Adds Pluto as a planet :)
 - Fixes clipping issues with polygons
+- Fixes a few issues with gridlines
 
 ## v0.9.x
 [Documentation](https://archives.starplot.dev/0.9.1/)
