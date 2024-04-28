@@ -39,6 +39,5 @@ p.ecliptic()
 p.celestial_equator()
 p.milky_way()
 p.planets()
-p.adjust_text()
 
 p.export("map_orthographic.png", padding=0.3, transparent=True)
