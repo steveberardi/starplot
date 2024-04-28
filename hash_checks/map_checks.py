@@ -17,6 +17,7 @@ RESOLUTION = 3200
 
 dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 
+
 def _mercator():
     # returns a mercator plot of Orion
     p = MapPlot(
@@ -315,6 +316,7 @@ def check_map_gridlines():
     p.export(filename, padding=0.3)
 
     return filename
+
 
 def check_map_moon_phase_waxing_crescent():
     m = Moon.get(dt=dt_dec_16)
