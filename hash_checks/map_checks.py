@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 from pytz import timezone
 
-from starplot import styles, DSO
+from starplot import styles, DSO, Moon
 from starplot.map import MapPlot, Projection
 
 HERE = Path(__file__).resolve().parent
@@ -15,6 +15,7 @@ STYLE = styles.PlotStyle().extend(
 )
 RESOLUTION = 3200
 
+dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 
 def _mercator():
     # returns a mercator plot of Orion
@@ -313,4 +314,25 @@ def check_map_gridlines():
 
     p.export(filename, padding=0.3)
 
+    return filename
+
+def check_map_moon_phase_waxing_crescent():
+    m = Moon.get(dt=dt_dec_16)
+    p = m.create_map(
+        height_degrees=4,
+        width_degrees=4,
+        projection=Projection.MILLER,
+        lat=32.97,
+        lon=-117.038611,
+        dt=dt_dec_16,
+        style=STYLE,
+    )
+    p.moon(
+        true_size=True,
+        show_phase=True,
+        label=None,
+    )
+    filename = DATA_PATH / "map-moon-phase-waxing-crescent.png"
+    p.export(filename)
+    p.close_fig()
     return filename

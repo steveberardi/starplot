@@ -51,12 +51,13 @@ class ExtentMaskMixin:
 
 
 class CreateMapMixin:
-    def create_map(self, extent, *args, **kwargs):
+    def create_map(self, height_degrees: float, width_degrees: float, *args, **kwargs):
         """
         Creates a map plot with this object at the center
 
         Args:
-            extent: Extent of the map (height and width), in degrees
+            height_degrees: Height of the map (degrees)
+            width_degrees: Width of the map (degrees)
             *args: args passed through to [`MapPlot()`][starplot.MapPlot]
             **kwargs: kwargs passed through to [`MapPlot()`][starplot.MapPlot]
 
@@ -67,8 +68,8 @@ class CreateMapMixin:
 
         ex = geod.rectangle(
             center=(self.ra, self.dec),
-            height_degrees=extent,
-            width_degrees=extent,
+            height_degrees=height_degrees,
+            width_degrees=width_degrees,
         )
         ra_min = ex[0][0] / 15
         ra_max = ex[2][0] / 15

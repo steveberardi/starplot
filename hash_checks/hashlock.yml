@@ -14,6 +14,10 @@ map_mollweide:
   dhash: 0f297b632b3307070f297b632b3307070f297b6323330707
   filename: /starplot/hash_checks/data/map-mollweide.png
   phash: fa9ae698c0259567
+map_moon_phase_waxing_crescent:
+  dhash: 8884884d4d88808c8884884d4d88808c8884884d4d88808c
+  filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
+  phash: b3cccc3333cccc31
 map_orion_base:
   dhash: 1c3b3b3e6e2f646c1c3b3b6e2e2e646c1c193b8e2e0e646c
   filename: /starplot/hash_checks/data/map-orion-base.png
