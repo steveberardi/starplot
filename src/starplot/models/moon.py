@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 import numpy as np
-from skyfield.api import Angle
+from skyfield.api import Angle, wgs84
 from skyfield import almanac
 
 from starplot.data import load
@@ -33,15 +33,22 @@ class MoonManager(SkyObjectManager):
         raise NotImplementedError
 
     @classmethod
-    def get(cls, dt: datetime = None, ephemeris: str = "de421_2001.bsp"):
+    def get(cls, dt: datetime = None, lat: float = None, lon: float = None, ephemeris: str = "de421_2001.bsp"):
         RADIUS_KM = 1_740
 
         dt = dt_or_now(dt)
         ephemeris = load(ephemeris)
         timescale = load.timescale().from_datetime(dt)
         earth, moon = ephemeris["earth"], ephemeris["moon"]
-        astrometric = earth.at(timescale).observe(moon)
-        ra, dec, distance = astrometric.radec()
+
+        if lat is not None and lon is not None:
+            position = earth + wgs84.latlon(lat, lon)
+            astrometric = position.at(timescale).observe(moon)
+            apparent = astrometric.apparent()
+            ra, dec, distance = apparent.radec()
+        else:
+            astrometric = earth.at(timescale).observe(moon)
+            ra, dec, distance = astrometric.radec()
 
         apparent_diameter_degrees = Angle(
             radians=np.arcsin(RADIUS_KM / distance.km) * 2.0
@@ -145,12 +152,14 @@ class Moon(SkyObject):
         self.illumination = illumination
 
     @classmethod
-    def get(dt: datetime = None, ephemeris: str = "de421_2001.bsp") -> "Moon":
+    def get(dt: datetime = None, lat: float = None, lon: float = None, ephemeris: str = "de421_2001.bsp") -> "Moon":
         """
-        Get the Moon for a specific date/time.
+        Get the Moon for a specific date/time and observing location.
 
         Args:
             dt: Datetime you want the moon for (must be timezone aware!). _Defaults to current UTC time_.
+            lat: Latitude of observing location. If you set this (and longitude), then the Moon's _apparent_ RA/DEC will be calculated.
+            lon: Longitude of observing location
             ephemeris: Ephemeris to use for calculating moon positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
         pass

@@ -82,6 +82,22 @@
         </a>
     </li>
 
+    <li>
+        <a href="/examples/optic-solar-eclipse">
+            <img src="/images/examples/optic_solar_eclipse.png" alt="Total Solar Eclipse 2024" class="off-glb"/>
+
+            <p class="example-card-title">Total Solar Eclipse 2024</p>
+        </a>
+    </li>
+
+    <li>
+        <a href="/examples/optic-moon-saturn">
+            <img src="/images/examples/optic_moon_saturn.png" alt="Moon and Saturn Conjunction" class="off-glb"/>
+
+            <p class="example-card-title">Moon and Saturn Conjunction</p>
+        </a>
+    </li>
+
 </ul>
 
 

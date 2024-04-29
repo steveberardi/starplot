@@ -4,7 +4,7 @@ import pytest
 
 from pytz import timezone
 
-from starplot import DSO, Star, Moon, Planet
+from starplot import DSO, Star, Sun, Moon, Planet
 
 
 class TestStar:
@@ -104,6 +104,26 @@ class TestMoon:
         assert m.phase_description == "Full Moon"
         assert m.phase_angle == 175.42641200608864
         assert m.illumination == 0.9745911778116035
+
+
+class TestSolarEclipse:
+    def test_total_solar_eclipse(self):
+        # time of total eclipse in Cleveland, Ohio
+        eastern = timezone('US/Eastern')
+        dt = eastern.localize(datetime(2024, 4, 8, 15, 13, 47, 0))
+        lat=41.482222
+        lon=-81.669722
+
+        m = Moon.get(dt=dt, lat=lat, lon=lon)
+        s = Sun.get(dt=dt, lat=lat, lon=lon)
+
+        assert m.ra == 1.1740952571358825
+        assert m.dec == 7.469561912433153
+        assert m.apparent_size == 0.5615855003639567
+
+        assert s.ra == 1.1749494243027
+        assert s.dec == 7.475828971935881
+        assert s.apparent_size == 0.5321154425811137
 
 
 class TestPlanet:

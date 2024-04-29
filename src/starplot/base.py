@@ -332,7 +332,10 @@ class BasePlot(ABC):
         labels: Dict[PlanetName, str] = PLANET_LABELS_DEFAULT,
         legend_label: str = "Planet",
     ) -> None:
-        """Plots the planets
+        """
+        Plots the planets.
+
+        If you specified a lat/lon when creating the plot (e.g. for perspective projections or optic plots), then the planet's _apparent_ RA/DEC will be calculated.
 
         Args:
             style: Styling of the planets. If None, then the plot's style (specified when creating the plot) will be used
@@ -341,7 +344,7 @@ class BasePlot(ABC):
             legend_label: How to label the planets in the legend. If `None`, then the planets will not be added to the legend
         """
         labels = labels or {}
-        planets = models.Planet.all(self.dt, self._ephemeris_name)
+        planets = models.Planet.all(self.dt, self.lat, self.lon, self._ephemeris_name)
 
         for p in planets:
             label = labels.get(p.name)
@@ -350,10 +353,12 @@ class BasePlot(ABC):
                 self._objects.planets.append(p)
 
             if true_size:
+                polygon_style = style.marker.to_polygon_style()
+                polygon_style.edge_color = None
                 self.circle(
                     (p.ra, p.dec),
                     p.apparent_size,
-                    style.marker.to_polygon_style(),
+                    polygon_style,
                 )
                 self._add_legend_handle_marker(legend_label, style.marker)
 
@@ -376,14 +381,17 @@ class BasePlot(ABC):
         label: str = "Sun",
         legend_label: str = "Sun",
     ) -> None:
-        """Plots the Sun
+        """
+        Plots the Sun.
+
+        If you specified a lat/lon when creating the plot (e.g. for perspective projections or optic plots), then the Sun's _apparent_ RA/DEC will be calculated.
 
         Args:
             style: Styling of the Sun. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then the Sun's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             label: How the Sun will be labeled on the plot and legend
         """
-        s = models.Sun.get(dt=self.dt)
+        s = models.Sun.get(dt=self.dt, lat=self.lat, lon=self.lon)
         s.name = label or s.name
 
         if not self.in_bounds(s.ra, s.dec):
@@ -567,7 +575,10 @@ class BasePlot(ABC):
         label: str = "Moon",
         legend_label: str = "Moon",
     ) -> None:
-        """Plots the Moon
+        """
+        Plots the Moon.
+
+        If you specified a lat/lon when creating the plot (e.g. for perspective projections or optic plots), then the Moon's _apparent_ RA/DEC will be calculated.
 
         Args:
             style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
@@ -575,7 +586,7 @@ class BasePlot(ABC):
             show_phase: If True, and if `true_size = True`, then the approximate phase of the moon will be illustrated. The dark side of the moon will be colored with the marker's `edge_color`.
             label: How the Moon will be labeled on the plot and legend
         """
-        m = models.Moon.get(dt=self.dt, ephemeris=self._ephemeris_name)
+        m = models.Moon.get(dt=self.dt, lat=self.lat, lon=self.lon, ephemeris=self._ephemeris_name)
         m.name = label or m.name
 
         if not self.in_bounds(m.ra, m.dec):
