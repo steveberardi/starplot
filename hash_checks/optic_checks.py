@@ -24,7 +24,8 @@ style_blue = styles.PlotStyle().extend(
     styles.extensions.OPTIC,
 )
 
-POWAY = { "lat": 32.97, "lon": -117.038611}
+POWAY = {"lat": 32.97, "lon": -117.038611}
+
 
 def check_optic_polaris_binoculars():
     optic_plot = OpticPlot(

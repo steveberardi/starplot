@@ -15,7 +15,7 @@ STYLE = styles.PlotStyle().extend(
 )
 RESOLUTION = 3200
 
-POWAY = { "lat": 32.97, "lon": -117.038611}
+POWAY = {"lat": 32.97, "lon": -117.038611}
 
 dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 
