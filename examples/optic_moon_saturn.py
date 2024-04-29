@@ -7,8 +7,8 @@ from starplot.styles import PlotStyle, extensions
 dt = datetime.now(timezone("US/Pacific")).replace(2024, 8, 20, 21, 0, 0)
 
 # Julian, CA
-lat=33.070833
-lon=-116.585556
+lat = 33.070833
+lon = -116.585556
 
 m = Moon.get(dt=dt, lat=lat, lon=lon)
 

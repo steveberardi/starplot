@@ -109,10 +109,10 @@ class TestMoon:
 class TestSolarEclipse:
     def test_total_solar_eclipse(self):
         # time of total eclipse in Cleveland, Ohio
-        eastern = timezone('US/Eastern')
+        eastern = timezone("US/Eastern")
         dt = eastern.localize(datetime(2024, 4, 8, 15, 13, 47, 0))
-        lat=41.482222
-        lon=-81.669722
+        lat = 41.482222
+        lon = -81.669722
 
         m = Moon.get(dt=dt, lat=lat, lon=lon)
         s = Sun.get(dt=dt, lat=lat, lon=lon)

@@ -33,7 +33,13 @@ class MoonManager(SkyObjectManager):
         raise NotImplementedError
 
     @classmethod
-    def get(cls, dt: datetime = None, lat: float = None, lon: float = None, ephemeris: str = "de421_2001.bsp"):
+    def get(
+        cls,
+        dt: datetime = None,
+        lat: float = None,
+        lon: float = None,
+        ephemeris: str = "de421_2001.bsp",
+    ):
         RADIUS_KM = 1_740
 
         dt = dt_or_now(dt)
@@ -152,7 +158,12 @@ class Moon(SkyObject):
         self.illumination = illumination
 
     @classmethod
-    def get(dt: datetime = None, lat: float = None, lon: float = None, ephemeris: str = "de421_2001.bsp") -> "Moon":
+    def get(
+        dt: datetime = None,
+        lat: float = None,
+        lon: float = None,
+        ephemeris: str = "de421_2001.bsp",
+    ) -> "Moon":
         """
         Get the Moon for a specific date/time and observing location.
 

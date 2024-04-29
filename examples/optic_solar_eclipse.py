@@ -5,17 +5,17 @@ from starplot import Moon, optics
 from starplot.styles import PlotStyle, extensions
 
 # time of partial eclipse. total eclipse started at 15:13:46
-eastern = timezone('US/Eastern')
+eastern = timezone("US/Eastern")
 dt = eastern.localize(datetime(2024, 4, 8, 14, 40, 47, 0))
 
 # Cleveland, Ohio
-lat=41.482222
-lon=-81.669722
+lat = 41.482222
+lon = -81.669722
 
 m = Moon.get(dt=dt, lat=lat, lon=lon)
 
 op = m.create_optic(
-    lat=lat, 
+    lat=lat,
     lon=lon,
     dt=dt,
     optic=optics.Binoculars(magnification=20, fov=65),
@@ -29,7 +29,7 @@ op.moon(
 )
 op.sun(
     true_size=True,
-    style__marker__color='#ffd22e',
+    style__marker__color="#ffd22e",
     label=None,
 )
 

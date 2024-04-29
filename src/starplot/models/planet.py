@@ -48,7 +48,13 @@ Retrieved on 18-APR-2024
 
 class PlanetManager(SkyObjectManager):
     @classmethod
-    def all(cls, dt: datetime = None, lat: float = None, lon: float = None, ephemeris: str = "de421_2001.bsp"):
+    def all(
+        cls,
+        dt: datetime = None,
+        lat: float = None,
+        lon: float = None,
+        ephemeris: str = "de421_2001.bsp",
+    ):
         dt = dt_or_now(dt)
         ephemeris = load(ephemeris)
         timescale = load.timescale().from_datetime(dt)
@@ -85,7 +91,14 @@ class PlanetManager(SkyObjectManager):
         raise NotImplementedError
 
     @classmethod
-    def get(cls, name: str, dt: datetime = None, lat: float = None, lon: float = None, ephemeris: str = "de421_2001.bsp"):
+    def get(
+        cls,
+        name: str,
+        dt: datetime = None,
+        lat: float = None,
+        lon: float = None,
+        ephemeris: str = "de421_2001.bsp",
+    ):
         dt = dt_or_now(dt)
         for p in cls.all(dt, lat, lon, ephemeris):
             if p.name.lower() == name.lower():
@@ -130,7 +143,10 @@ class Planet(SkyObject):
 
     @classmethod
     def all(
-        dt: datetime = None, lat: float = None, lon: float = None, ephemeris: str = "de421_2001.bsp"
+        dt: datetime = None,
+        lat: float = None,
+        lon: float = None,
+        ephemeris: str = "de421_2001.bsp",
     ) -> Iterator["Planet"]:
         """
         Iterator for getting all planets at a specific date/time and observing location.
@@ -145,7 +161,11 @@ class Planet(SkyObject):
 
     @classmethod
     def get(
-        name: str, dt: datetime = None, lat: float = None, lon: float = None, ephemeris: str = "de421_2001.bsp"
+        name: str,
+        dt: datetime = None,
+        lat: float = None,
+        lon: float = None,
+        ephemeris: str = "de421_2001.bsp",
     ) -> "Planet":
         """
         Get a planet for a specific date/time.

@@ -586,7 +586,9 @@ class BasePlot(ABC):
             show_phase: If True, and if `true_size = True`, then the approximate phase of the moon will be illustrated. The dark side of the moon will be colored with the marker's `edge_color`.
             label: How the Moon will be labeled on the plot and legend
         """
-        m = models.Moon.get(dt=self.dt, lat=self.lat, lon=self.lon, ephemeris=self._ephemeris_name)
+        m = models.Moon.get(
+            dt=self.dt, lat=self.lat, lon=self.lon, ephemeris=self._ephemeris_name
+        )
         m.name = label or m.name
 
         if not self.in_bounds(m.ra, m.dec):
