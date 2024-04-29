@@ -15,6 +15,8 @@ STYLE = styles.PlotStyle().extend(
 )
 RESOLUTION = 3200
 
+POWAY = {"lat": 32.97, "lon": -117.038611}
+
 dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 
 
@@ -319,13 +321,12 @@ def check_map_gridlines():
 
 
 def check_map_moon_phase_waxing_crescent():
-    m = Moon.get(dt=dt_dec_16)
+    m = Moon.get(dt=dt_dec_16, **POWAY)
     p = m.create_map(
         height_degrees=4,
         width_degrees=4,
         projection=Projection.MILLER,
-        lat=32.97,
-        lon=-117.038611,
+        **POWAY,
         dt=dt_dec_16,
         style=STYLE,
     )
@@ -333,6 +334,13 @@ def check_map_moon_phase_waxing_crescent():
         true_size=True,
         show_phase=True,
         label=None,
+    )
+    p.gridlines(
+        ra_locations=list(np.arange(0, 24, 0.05)),
+        ra_formatter_fn=lambda d: None,
+        dec_formatter_fn=lambda d: None,
+        dec_locations=list(np.arange(-90, 90, 0.25)),
+        style__line__alpha=0.2,
     )
     filename = DATA_PATH / "map-moon-phase-waxing-crescent.png"
     p.export(filename)

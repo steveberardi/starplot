@@ -4,7 +4,7 @@ from typing import Iterator
 
 import numpy as np
 
-from skyfield.api import Angle
+from skyfield.api import Angle, wgs84
 
 from starplot.data import load
 from starplot.models.base import SkyObject, SkyObjectManager
@@ -48,7 +48,13 @@ Retrieved on 18-APR-2024
 
 class PlanetManager(SkyObjectManager):
     @classmethod
-    def all(cls, dt: datetime = None, ephemeris: str = "de421_2001.bsp"):
+    def all(
+        cls,
+        dt: datetime = None,
+        lat: float = None,
+        lon: float = None,
+        ephemeris: str = "de421_2001.bsp",
+    ):
         dt = dt_or_now(dt)
         ephemeris = load(ephemeris)
         timescale = load.timescale().from_datetime(dt)
@@ -56,8 +62,15 @@ class PlanetManager(SkyObjectManager):
 
         for p in PlanetName:
             planet = ephemeris[f"{p.value} barycenter"]
-            astrometric = earth.at(timescale).observe(planet)
-            ra, dec, distance = astrometric.radec()
+
+            if lat is not None and lon is not None:
+                position = earth + wgs84.latlon(lat, lon)
+                astrometric = position.at(timescale).observe(planet)
+                apparent = astrometric.apparent()
+                ra, dec, distance = apparent.radec()
+            else:
+                astrometric = earth.at(timescale).observe(planet)
+                ra, dec, distance = astrometric.radec()
 
             # angular diameter:
             # https://rhodesmill.org/skyfield/examples.html#what-is-the-angular-diameter-of-a-planet-given-its-radius
@@ -78,9 +91,16 @@ class PlanetManager(SkyObjectManager):
         raise NotImplementedError
 
     @classmethod
-    def get(cls, name: str, dt: datetime = None, ephemeris: str = "de421_2001.bsp"):
+    def get(
+        cls,
+        name: str,
+        dt: datetime = None,
+        lat: float = None,
+        lon: float = None,
+        ephemeris: str = "de421_2001.bsp",
+    ):
         dt = dt_or_now(dt)
-        for p in cls.all(dt, ephemeris):
+        for p in cls.all(dt, lat, lon, ephemeris):
             if p.name.lower() == name.lower():
                 return p
 
@@ -123,20 +143,29 @@ class Planet(SkyObject):
 
     @classmethod
     def all(
-        dt: datetime = None, ephemeris: str = "de421_2001.bsp"
+        dt: datetime = None,
+        lat: float = None,
+        lon: float = None,
+        ephemeris: str = "de421_2001.bsp",
     ) -> Iterator["Planet"]:
         """
-        Iterator for getting all planets at a specific date/time.
+        Iterator for getting all planets at a specific date/time and observing location.
 
         Args:
             dt: Datetime you want the planets for (must be timezone aware!). _Defaults to current UTC time_.
+            lat: Latitude of observing location. If you set this (and longitude), then the planet's _apparent_ RA/DEC will be calculated.
+            lon: Longitude of observing location
             ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
         pass
 
     @classmethod
     def get(
-        name: str, dt: datetime = None, ephemeris: str = "de421_2001.bsp"
+        name: str,
+        dt: datetime = None,
+        lat: float = None,
+        lon: float = None,
+        ephemeris: str = "de421_2001.bsp",
     ) -> "Planet":
         """
         Get a planet for a specific date/time.
@@ -144,6 +173,8 @@ class Planet(SkyObject):
         Args:
             name: Name of the planet you want to get (see [`Planet.name`][starplot.Planet.name] for options). Case insensitive.
             dt: Datetime you want the planet for (must be timezone aware!). _Defaults to current UTC time_.
+            lat: Latitude of observing location. If you set this (and longitude), then the planet's _apparent_ RA/DEC will be calculated.
+            lon: Longitude of observing location
             ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
         pass
