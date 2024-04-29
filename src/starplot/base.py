@@ -391,7 +391,7 @@ class BasePlot(ABC):
             true_size: If True, then the Sun's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             label: How the Sun will be labeled on the plot and legend
         """
-        s = models.Sun.get(dt=self.dt, lat=self.lat, lon=self.lon)
+        s = models.Sun.get(dt=self.dt, lat=self.lat, lon=self.lon, ephemeris=self._ephemeris_name)
         s.name = label or s.name
 
         if not self.in_bounds(s.ra, s.dec):
