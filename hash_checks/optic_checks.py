@@ -8,8 +8,8 @@ from starplot import styles, optics, OpticPlot, callables, Star, Moon
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
 
-dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
-dt_april_8 = datetime.now(timezone("US/Pacific")).replace(2024, 4, 8, 11, 7, 0)
+dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0, 0)
+dt_april_8 = datetime.now(timezone("US/Pacific")).replace(2024, 4, 8, 11, 7, 0, 0)
 
 style_light = styles.PlotStyle().extend(
     styles.extensions.GRAYSCALE,
@@ -24,6 +24,7 @@ style_blue = styles.PlotStyle().extend(
     styles.extensions.OPTIC,
 )
 
+POWAY = { "lat": 32.97, "lon": -117.038611}
 
 def check_optic_polaris_binoculars():
     optic_plot = OpticPlot(
@@ -278,11 +279,9 @@ def check_optic_solar_eclipse_binoculars():
 
 
 def check_optic_moon_phase_waxing_crescent():
-    m = Moon.get(dt=dt_dec_16)
+    m = Moon.get(dt=dt_dec_16, **POWAY)
     optic_plot = m.create_optic(
-        lat=32.97,
-        lon=-117.038611,
-        # 10x binoculars
+        **POWAY,
         optic=optics.Binoculars(
             magnification=20,
             fov=65,
@@ -303,13 +302,11 @@ def check_optic_moon_phase_waxing_crescent():
 
 
 def check_optic_moon_phase_new():
-    m = Moon.get(dt=dt_april_8)
+    m = Moon.get(dt=dt_april_8, **POWAY)
     optic_plot = m.create_optic(
-        lat=32.97,
-        lon=-117.038611,
-        # 10x binoculars
+        **POWAY,
         optic=optics.Binoculars(
-            magnification=20,
+            magnification=30,
             fov=65,
         ),
         dt=dt_april_8,
@@ -329,11 +326,9 @@ def check_optic_moon_phase_new():
 
 def check_optic_moon_phase_full():
     dt_full_moon = datetime.now(timezone("US/Pacific")).replace(2024, 4, 23, 11, 7, 0)
-    m = Moon.get(dt=dt_full_moon)
+    m = Moon.get(dt=dt_full_moon, **POWAY)
     optic_plot = m.create_optic(
-        lat=32.97,
-        lon=-117.038611,
-        # 10x binoculars
+        **POWAY,
         optic=optics.Binoculars(
             magnification=20,
             fov=65,
