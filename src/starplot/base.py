@@ -22,6 +22,7 @@ from starplot.styles import (
     LabelStyle,
     LegendLocationEnum,
     LegendStyle,
+    MarkerSymbolEnum,
     PathStyle,
     PolygonStyle,
 )
@@ -388,7 +389,7 @@ class BasePlot(ABC):
 
         Args:
             style: Styling of the Sun. If None, then the plot's style (specified when creating the plot) will be used
-            true_size: If True, then the Sun's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
+            true_size: If True, then the Sun's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
             label: How the Sun will be labeled on the plot and legend
         """
         s = models.Sun.get(
@@ -413,6 +414,7 @@ class BasePlot(ABC):
                 style=polygon_style,
             )
 
+            style.marker.symbol = MarkerSymbolEnum.CIRCLE
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
@@ -584,7 +586,7 @@ class BasePlot(ABC):
 
         Args:
             style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
-            true_size: If True, then the Moon's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
+            true_size: If True, then the Moon's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
             show_phase: If True, and if `true_size = True`, then the approximate phase of the moon will be illustrated. The dark side of the moon will be colored with the marker's `edge_color`.
             label: How the Moon will be labeled on the plot and legend
         """
@@ -620,6 +622,7 @@ class BasePlot(ABC):
                     style=polygon_style,
                 )
 
+            style.marker.symbol = MarkerSymbolEnum.CIRCLE
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
