@@ -214,30 +214,33 @@ class BasePlot(ABC):
         Args:
             style: Styling of the legend. If None, then the plot's style (specified when creating the plot) will be used
         """
-        if not self._legend_handles:
-            return
-
         if self._legend is not None:
             self._legend.remove()
+
+        if not self._legend_handles:
+            return
 
         bbox_kwargs = {}
 
         if style.location == LegendLocationEnum.OUTSIDE_BOTTOM:
-            # to plot legends outside the map area, you have to target the figure
-            target = self.fig
+            style.location = "lower center"
+            offset_y = -0.08
+            if getattr(self, '_axis_labels', False):
+                offset_y -= 0.05
             bbox_kwargs = dict(
-                bbox_to_anchor=(0.5, 0.13), bbox_transform=self.fig.transFigure
+                bbox_to_anchor=(0.5, offset_y),
             )
 
         elif style.location == LegendLocationEnum.OUTSIDE_TOP:
-            target = self.fig
+            style.location = "upper center"
+            offset_y = 1.08
+            if getattr(self, '_axis_labels', False):
+                offset_y += 0.05
             bbox_kwargs = dict(
-                bbox_to_anchor=(0.5, 0.87), bbox_transform=self.fig.transFigure
+                bbox_to_anchor=(0.5, offset_y),
             )
-        else:
-            target = self.ax
 
-        self._legend = target.legend(
+        self._legend = self.ax.legend(
             handles=self._legend_handles.values(),
             **style.matplot_kwargs(size_multiplier=self._size_multiplier),
             **bbox_kwargs,
