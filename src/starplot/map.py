@@ -519,7 +519,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         if labels:
             self._axis_labels = True
-    
+
         style_kwargs = style.label.matplot_kwargs()
         style_kwargs.pop("va")
         style_kwargs.pop("ha")

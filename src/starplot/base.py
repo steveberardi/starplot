@@ -225,7 +225,7 @@ class BasePlot(ABC):
         if style.location == LegendLocationEnum.OUTSIDE_BOTTOM:
             style.location = "lower center"
             offset_y = -0.08
-            if getattr(self, '_axis_labels', False):
+            if getattr(self, "_axis_labels", False):
                 offset_y -= 0.05
             bbox_kwargs = dict(
                 bbox_to_anchor=(0.5, offset_y),
@@ -234,7 +234,7 @@ class BasePlot(ABC):
         elif style.location == LegendLocationEnum.OUTSIDE_TOP:
             style.location = "upper center"
             offset_y = 1.08
-            if getattr(self, '_axis_labels', False):
+            if getattr(self, "_axis_labels", False):
                 offset_y += 0.05
             bbox_kwargs = dict(
                 bbox_to_anchor=(0.5, offset_y),

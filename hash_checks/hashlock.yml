@@ -23,9 +23,9 @@ map_orion_base:
   filename: /starplot/hash_checks/data/map-orion-base.png
   phash: be79d9260785709c
 map_orion_extra:
-  dhash: 1c1b1a7d2d646c061c1b1a6b2d646c061c1b1b6b6f246c06
+  dhash: 1c1b3a7d2d646c171c1b3a6b2d646c871c1b1b6b2f246c07
   filename: /starplot/hash_checks/data/map-orion-extra.png
-  phash: be71d11ee01fe490
+  phash: be71d11ee01fa4d0
 map_scope_bino_fov:
   dhash: 0bc080848c8080802bceb2ac4daa928c2bceb2ac4daa928c
   filename: /starplot/hash_checks/data/map-scope-bino-fov.png
@@ -95,6 +95,6 @@ optic_wrapping:
   filename: /starplot/hash_checks/data/optic-wrapping.png
   phash: d0c46f1b396cf078
 zenith_base:
-  dhash: 1379cca69a9479271359acae9a9479271359ac868a947927
+  dhash: 1359ac8abad4690e1359ac8a82d4690e1359ac8a82dc6906
   filename: /starplot/hash_checks/data/zenith-base.png
-  phash: 90db3bb961366472
+  phash: b051fb3be12cb464
