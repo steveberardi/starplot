@@ -14,7 +14,7 @@
 - [**v0.10.1**]
     - Fixes bug with plotting planets as true apparent size
     - Adds lat/lon kwargs to Sun/Moon/Planet models to allow _apparent_ RA/DEC calculation
-
+- [**v0.10.2**] Fixes a few issues with plotting legends
 
 ## v0.9.x
 [Documentation](https://archives.starplot.dev/0.9.1/)
