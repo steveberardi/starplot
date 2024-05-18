@@ -14,7 +14,7 @@ Starplot is a Python library for creating star charts and maps.
 
 - ⭐ **Zenith Plots** - showing the stars from a specific time/location
 
-- 🗺️ **Map Plots** - including North/South polar and Mercator projections
+- 🗺️ **Map Plots** - including stereographic and perspective projections
 
 - 🔭 **Optic Plots** - simulates what you'll see through an optic (e.g. telescope) from a time/location
 
