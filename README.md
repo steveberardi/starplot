@@ -67,6 +67,10 @@ Chat with other starplotters on our Discord server:
 
 https://discord.gg/bwazdyD7
 
+## Contributing
+
+Contributing to Starplot is welcome and very much appreciated! Please see [here](CONTRIBUTING.md) for details.
+
 ## Core Dependencies
 
 - matplotlib
