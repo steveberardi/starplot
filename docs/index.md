@@ -26,7 +26,7 @@ Starplot is a Python library for creating star charts and maps.
 
 - 🧭 **Label Collision Avoidance**
 
-Join other starplotters on [Discord :fontawesome-brands-discord:{ .fg-primary }](https://discord.gg/bwazdyD7)
+Join other starplotters on [Discord :fontawesome-brands-discord:{ .fg-primary }](https://discord.gg/9rMpJE2E)
 
 *Example charts and maps created with Starplot:*
 <!-- {.text-subtitle} -->
