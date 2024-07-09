@@ -65,7 +65,7 @@ For a demo of Starplot's zenith plots, check out:
 
 Chat with other starplotters on our Discord server:
 
-https://discord.gg/9rMpJE2E
+https://discord.gg/WewJJjshFu
 
 ## Contributing
 
