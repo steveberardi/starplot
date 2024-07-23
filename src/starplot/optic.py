@@ -189,7 +189,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def stars(
         self,
         mag: float = 6.0,
-        catalog: StarCatalog = StarCatalog.TYCHO_1,
+        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
         style: ObjectStyle = None,
         rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
@@ -208,7 +208,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         Args:
             mag: Limiting magnitude of stars to plot
-            catalog: The catalog of stars to use: "hipparcos" or "tycho-1"
+            catalog: The catalog of stars to use
             style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.

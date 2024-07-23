@@ -7,6 +7,7 @@ de421.bsp
 hip_main.dat
 hip8.dat
 CometEls.txt
+stars.bigsky.parquet
 
 hash_checks/data/*.png
 hash_checks/results.html

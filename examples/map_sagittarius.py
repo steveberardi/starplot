@@ -40,7 +40,7 @@ p.stars(
     ],
     style__marker__size=12,
     bayer_labels=True,
-    catalog="tycho-1",
+    catalog="big-sky-mag11",
 )
 
 p.nebula(

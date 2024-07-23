@@ -40,6 +40,9 @@ class Star(SkyObject):
     hip: Optional[int] = None
     """Hipparcos Catalog ID, if available"""
 
+    tyc: Optional[str] = None
+    """Tycho ID, if available"""
+
     name: Optional[str] = None
     """Name, if available"""
 
@@ -51,12 +54,17 @@ class Star(SkyObject):
         bv: float = None,
         hip: int = None,
         name: str = None,
+        tyc: str = None,
     ) -> None:
         super().__init__(ra, dec)
         self.magnitude = magnitude
         self.bv = bv
         self.hip = hip
         self.name = name
+        self.tyc = tyc
+
+    def __repr__(self) -> str:
+        return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
 
     @classmethod
     def get(**kwargs) -> "Star":

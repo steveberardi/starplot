@@ -28,6 +28,9 @@ class Projection(str, Enum):
     **This is a _perspective_ projection, so it requires the following `kwargs` when creating the plot: `lat`, `lon`, and `dt`**. _The perspective of the globe will be based on these values._
     """
 
+    ROBINSON = "robinson"
+    """Good for showing the entire celestial sphere in one plot"""
+
     STEREOGRAPHIC = "stereographic"
     """
     Similar to the North/South Stereographic projection, but this version is location-dependent.
@@ -51,6 +54,7 @@ class Projection(str, Enum):
             Projection.MOLLWEIDE: ccrs.Mollweide,
             Projection.MILLER: ccrs.Miller,
             Projection.ORTHOGRAPHIC: ccrs.Orthographic,
+            Projection.ROBINSON: ccrs.Robinson,
             Projection.STEREOGRAPHIC: ccrs.Stereographic,
             Projection.ZENITH: ccrs.Stereographic,
         }

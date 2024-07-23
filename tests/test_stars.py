@@ -16,9 +16,9 @@ def test_stars_load_default():
     assert len(allstars) == 118_218
 
 
-def test_stars_load_tycho_1():
-    allstars = stars.load(stars.StarCatalog.TYCHO_1)
-    assert len(allstars) == 1_055_115
+def test_stars_load_bigsky_mag11():
+    allstars = stars.load(stars.StarCatalog.BIG_SKY_MAG11)
+    assert len(allstars) == 981_852
 
 
 def test_stars_load_unrecognized_catalog():

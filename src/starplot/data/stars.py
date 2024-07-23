@@ -117,27 +117,35 @@ class StarCatalog(str, Enum):
     HIPPARCOS = "hipparcos"
     """Hipparcos Catalog = 118,218 stars"""
 
-    TYCHO_1 = "tycho-1"
-    """Tycho-1 Catalog = 1,055,115 stars"""
+    BIG_SKY_MAG11 = "big-sky-mag11"
+    """Big Sky Catalog ~ 900k stars"""
+
+    BIG_SKY = "big-sky"
+    """Big Sky Catalog ~ 2.5M stars"""
 
 
 def load_hipparcos():
     return read_parquet(DataFiles.HIPPARCOS)
 
 
-def load_tycho1():
-    df = read_parquet(DataFiles.TYCHO_1)
-    df = df.assign(
-        ra_degrees=df["ra_hours"] * 15.0,
-        epoch_year=1991.25,
-    )
-    return df.set_index("hip")
+def load_bigsky_mag11():
+    df = read_parquet(DataFiles.BIG_SKY_MAG11)
+
+    return df.set_index("tyc_id")
+
+
+def load_bigsky():
+    df = read_parquet(DataFiles.BIG_SKY)
+
+    return df.set_index("tyc_id")
 
 
 def load(catalog: StarCatalog = StarCatalog.HIPPARCOS):
-    if catalog == StarCatalog.TYCHO_1:
-        return load_tycho1()
-    elif catalog == StarCatalog.HIPPARCOS:
+    if catalog == StarCatalog.HIPPARCOS:
         return load_hipparcos()
+    elif catalog == StarCatalog.BIG_SKY_MAG11:
+        return load_bigsky_mag11()
+    elif catalog == StarCatalog.BIG_SKY:
+        return load_bigsky()
     else:
         raise ValueError("Unrecognized star catalog.")

@@ -29,7 +29,7 @@ p.stars(
     where=[Star.magnitude < 12],
     where_labels=[Star.magnitude < 8],
     bayer_labels=True,
-    catalog="tycho-1",
+    catalog="big-sky-mag11",
     color_fn=callables.color_by_bv,  # <-- here's where we specify the callable
 )
 

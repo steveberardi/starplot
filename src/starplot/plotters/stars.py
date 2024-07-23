@@ -125,7 +125,7 @@ class StarPlotterMixin:
 
         Args:
             mag: Limiting magnitude of stars to plot. For more control of what stars to plot, use the `where` kwarg. **Note:** if you pass `mag` and `where` then `mag` will be ignored
-            catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
+            catalog: The catalog of stars to use: "hipparcos" or "big-sky-mag11" -- Hipparcos is the default and has about 10x less stars than Big Sky but will also plot much faster
             style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
@@ -171,9 +171,22 @@ class StarPlotterMixin:
         for star in nearby_stars_df.itertuples():
             m = star.magnitude
             ra, dec = star.ra, star.dec
-            hip_id = star.Index
 
-            obj = Star(ra=ra / 15, dec=dec, magnitude=m, bv=star.bv)
+            if catalog == StarCatalog.HIPPARCOS:
+                hip_id = star.Index
+                tyc_id = None
+            else:
+                hip_id = star.hip
+                tyc_id = star.Index
+
+            obj = Star(
+                ra=ra / 15,
+                dec=dec,
+                magnitude=m,
+                bv=star.bv,
+                hip=hip_id,
+                tyc=tyc_id,
+            )
 
             if np.isfinite(hip_id):
                 obj.hip = hip_id
@@ -205,6 +218,7 @@ class StarPlotterMixin:
             colors,
             style=style,
             zorder=style.marker.zorder,
+            # edgecolors=None,  # self.style.background_color.as_hex(),
             edgecolors=self.style.background_color.as_hex(),
             rasterized=rasterize,
         )
