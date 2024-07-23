@@ -2,7 +2,7 @@ from enum import Enum
 
 from pandas import read_parquet
 
-from starplot.data import DataFiles
+from starplot.data import bigsky, DataFiles
 
 STAR_NAMES = {
     7588: "Achernar",
@@ -135,6 +135,10 @@ def load_bigsky_mag11():
 
 
 def load_bigsky():
+    if not bigsky.exists():
+        bigsky.download()
+        bigsky.to_parquet()
+
     df = read_parquet(DataFiles.BIG_SKY)
 
     return df.set_index("tyc_id")
