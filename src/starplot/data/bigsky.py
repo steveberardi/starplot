@@ -13,6 +13,8 @@ DOWNLOADED_PATH = DATA_PATH / "bigsky.stars.csv.gz"
 
 DIGITS = 4
 
+# TODO : refactor this to make it re-usable for different filenames
+# TODO : delete the SCRIPT for this in scripts/
 
 def download():
     with open(DOWNLOADED_PATH, "wb") as f:
