@@ -124,32 +124,19 @@ class StarCatalog(str, Enum):
     """Big Sky Catalog ~ 2.5M stars"""
 
 
-def load_hipparcos():
-    return read_parquet(DataFiles.HIPPARCOS)
-
-
-def load_bigsky_mag11():
-    df = read_parquet(DataFiles.BIG_SKY_MAG11)
-
-    return df.set_index("tyc_id")
-
-
 def load_bigsky():
     if not bigsky.exists():
         bigsky.download()
-        bigsky.to_parquet()
 
-    df = read_parquet(DataFiles.BIG_SKY)
-
-    return df.set_index("tyc_id")
+    return bigsky.load(DataFiles.BIG_SKY)
 
 
 def load(catalog: StarCatalog = StarCatalog.HIPPARCOS):
     if catalog == StarCatalog.HIPPARCOS:
-        return load_hipparcos()
+        return read_parquet(DataFiles.HIPPARCOS)
     elif catalog == StarCatalog.BIG_SKY_MAG11:
-        return load_bigsky_mag11()
+        return bigsky.load(DataFiles.BIG_SKY_MAG11)
     elif catalog == StarCatalog.BIG_SKY:
-        return load_bigsky()
+        return bigsky.load(DataFiles.BIG_SKY)
     else:
         raise ValueError("Unrecognized star catalog.")
