@@ -12,6 +12,7 @@ star:
     font_color: hsl(136, 0%, 97%)
   marker:
     color: hsl(136, 0%, 97%)
+    edge_color: hsl(136, 0%, 10%)
 sun:
   label:
     font_color: hsl(136, 0%, 97%)

@@ -94,6 +94,7 @@ star:
     font_weight: bold
   marker:
     color: '#88c0d0'
+    edge_color: '#4c566a'
 sun:
   label:
     font_color: '#88c0d0'

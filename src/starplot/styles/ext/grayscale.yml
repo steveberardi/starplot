@@ -12,6 +12,9 @@ celestial_equator:
 constellation:
   line:
     color: '#c8c8c8'
+star:
+  marker:
+    edge_color: '#fff'
 dso_double_star:
   marker:
     color: '#000'

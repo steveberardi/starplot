@@ -10,11 +10,12 @@ for filename in glob.iglob("*.py"):
     if filename.endswith("examples.py"):
         continue
 
+    if filename != "map_milky_way_stars.py": continue
     print(f"Running {filename}")
     subprocess.call(f"python {filename}", shell=True)
 
 
 print("Copying images to examples directory...")
-subprocess.call(f"cp *.png ../docs/images/examples/", shell=True)
+subprocess.call("cp *.png *.jpg ../docs/images/examples/", shell=True)
 
 print(f"{time.time() - start}")

@@ -62,6 +62,7 @@ gridlines:
 star:
   marker:
     color: hsl(60, 12%, 32%)
+    edge_color: hsl(48, 80%, 96%)
   label:
     font_color: hsl(60, 3%, 42%)
 planets:

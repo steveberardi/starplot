@@ -51,6 +51,14 @@
     </li>
 
     <li>
+        <a href="/examples/map-milky-way-stars">
+            <img src="/images/examples/map_milky_way_stars.jpg" alt="Stars of the Milky Way class="off-glb"/>
+
+            <p class="example-card-title">Milky Way Stars</p>
+        </a>
+    </li>
+
+    <li>
         <a href="/examples/map-big-dipper">
             <img src="/images/examples/map_big_dipper.png" alt="Map of the Big Dipper" class="off-glb" loading="lazy"/>
 

@@ -119,7 +119,7 @@ star:
     font_weight: bold
   marker:
     color: hsl(209, 50%, 94%)
-    size: 25
+    edge_color: hsl(209, 50%, 24%)
 sun:
   label:
     font_color: hsl(209, 23%, 80%)

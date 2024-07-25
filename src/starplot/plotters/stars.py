@@ -218,8 +218,7 @@ class StarPlotterMixin:
             colors,
             style=style,
             zorder=style.marker.zorder,
-            # edgecolors=None,  # self.style.background_color.as_hex(),
-            edgecolors=self.style.background_color.as_hex(),
+            edgecolors=style.marker.edge_color.as_hex() if style.marker.edge_color else "none",
             rasterized=rasterize,
         )
 
