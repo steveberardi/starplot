@@ -1,5 +1,3 @@
-from PIL import Image
-
 from starplot import MapPlot, Projection, Star
 from starplot.styles import PlotStyle, extensions
 from starplot.callables import size_by_magnitude_factory, color_by_bv
@@ -11,11 +9,13 @@ style = PlotStyle().extend(
 
 _sizer = size_by_magnitude_factory(6, 0.02, 7)
 
+
 def alpha(s):
     if s.magnitude > 9:
         return 0.5
     else:
         return 0.9
+
 
 p = MapPlot(
     projection=Projection.MOLLWEIDE,
@@ -23,27 +23,25 @@ p = MapPlot(
     resolution=4000,
 )
 
+
 p.stars(
-    where=[
-        Star.magnitude < 6
-    ],
-    size_fn=lambda s: _sizer(s) * 1.2, 
-    alpha_fn=lambda s: 0.4, 
-    color_fn=color_by_bv, 
-    labels=None, 
+    mag=11,
+    size_fn=_sizer,
+    alpha_fn=alpha,
+    color_fn=color_by_bv,
+    labels=None,
+    catalog="big-sky-mag11",
+    style__marker__edge_color="#c5c5c5",
+)
+p.stars(
+    where=[Star.magnitude < 6],
+    size_fn=lambda s: _sizer(s) * 1.5,
+    alpha_fn=lambda s: 0.4,
+    color_fn=color_by_bv,
+    labels=None,
     catalog="big-sky-mag11",
     style__marker__symbol="star_8",
     style__marker__edge_color=None,
-)
-
-p.stars(
-    mag=11, 
-    size_fn=_sizer, 
-    alpha_fn=alpha, 
-    color_fn=color_by_bv, 
-    labels=None, 
-    catalog="big-sky-mag11",
-    style__marker__edge_color="#c5c5c5",
 )
 
 p.export("map_milky_way_stars.jpg", format="jpeg", padding=0.1)
