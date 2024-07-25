@@ -113,6 +113,9 @@ class MarkerSymbolEnum(str, Enum):
     COMET = "comet"
     """\u2604"""
 
+    STAR_4 = "star_4"
+    """\u2726"""
+
     STAR_8 = "star_8"
     """\u2734"""
 
@@ -549,7 +552,7 @@ class PlotStyle(BaseStyle):
 
     # Stars
     star: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=20, edge_color=None),
+        marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=36, edge_color=None),
         label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=400),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""

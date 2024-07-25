@@ -2,7 +2,7 @@ star:
   label:
     font_size: 15
   marker:
-    size: 16
+    size: 30
 bayer_labels:
   font_size: 15
 planets:

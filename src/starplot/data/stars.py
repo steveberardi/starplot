@@ -2,7 +2,7 @@ from enum import Enum
 
 from pandas import read_parquet
 
-from starplot.data import DataFiles
+from starplot.data import bigsky, DataFiles
 
 STAR_NAMES = {
     7588: "Achernar",
@@ -117,27 +117,26 @@ class StarCatalog(str, Enum):
     HIPPARCOS = "hipparcos"
     """Hipparcos Catalog = 118,218 stars"""
 
-    TYCHO_1 = "tycho-1"
-    """Tycho-1 Catalog = 1,055,115 stars"""
+    BIG_SKY_MAG11 = "big-sky-mag11"
+    """Big Sky Catalog ~ 900k stars"""
+
+    BIG_SKY = "big-sky"
+    """Big Sky Catalog ~ 2.5M stars"""
 
 
-def load_hipparcos():
-    return read_parquet(DataFiles.HIPPARCOS)
+def load_bigsky():
+    if not bigsky.exists():
+        bigsky.download()
 
-
-def load_tycho1():
-    df = read_parquet(DataFiles.TYCHO_1)
-    df = df.assign(
-        ra_degrees=df["ra_hours"] * 15.0,
-        epoch_year=1991.25,
-    )
-    return df.set_index("hip")
+    return bigsky.load(DataFiles.BIG_SKY)
 
 
 def load(catalog: StarCatalog = StarCatalog.HIPPARCOS):
-    if catalog == StarCatalog.TYCHO_1:
-        return load_tycho1()
-    elif catalog == StarCatalog.HIPPARCOS:
-        return load_hipparcos()
+    if catalog == StarCatalog.HIPPARCOS:
+        return read_parquet(DataFiles.HIPPARCOS)
+    elif catalog == StarCatalog.BIG_SKY_MAG11:
+        return bigsky.load(DataFiles.BIG_SKY_MAG11)
+    elif catalog == StarCatalog.BIG_SKY:
+        return bigsky.load(DataFiles.BIG_SKY)
     else:
         raise ValueError("Unrecognized star catalog.")

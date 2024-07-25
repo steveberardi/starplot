@@ -185,7 +185,7 @@ def check_map_scope_bino_fov():
         dt=dt,
         style=style,
         resolution=1000,
-        star_catalog="tycho-1",
+        star_catalog="big-sky-mag11",
     )
     p.stars(mag=12)
     p.scope_fov(

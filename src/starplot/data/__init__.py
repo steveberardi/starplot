@@ -15,6 +15,7 @@ class DataFiles(str, Enum):
     CONSTELLATION_BORDERS = DATA_PATH / "constellation_borders_inv.gpkg"
     MILKY_WAY = DATA_PATH / "milkyway.gpkg"
     HIPPARCOS = DATA_PATH / "stars.hipparcos.parquet"
-    TYCHO_1 = DATA_PATH / "stars.tycho-1.gz.parquet"
+    BIG_SKY_MAG11 = DATA_PATH / "stars.bigsky.mag11.parquet"
+    BIG_SKY = DATA_PATH / "stars.bigsky.parquet"
     ONGC = DATA_PATH / "ongc.gpkg.zip"
     CONSTELLATIONS = DATA_PATH / "constellations.gpkg"
