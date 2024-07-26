@@ -271,7 +271,7 @@ class BasePlot(ABC):
 
         Args:
             filename: Filename of exported file
-            format: Format of file: "png" or "svg"
+            format: Format of file (options are "png", "jpeg", or "svg")
             padding: Padding (in inches) around the image
             **kwargs: Any keyword arguments to pass through to matplotlib's `savefig` method
 
