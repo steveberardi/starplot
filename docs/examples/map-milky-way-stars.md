@@ -5,7 +5,7 @@ title: Stars of the Milky Way
 
 # Stars of the Milky Way {.example-header}
 
-![map-milky-way-stars](/images/examples/map_milky_way_stars.png)
+![map-milky-way-stars](/images/examples/map_milky_way_stars.jpg)
 
 
 ```python
