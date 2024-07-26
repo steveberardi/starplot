@@ -5,8 +5,6 @@ from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
 from starplot import MapPlot, Projection
 from starplot.styles import PlotStyle, extensions
 
-exit()
-
 # First, we use Skyfield to get comet data
 # Code adapted from: https://rhodesmill.org/skyfield/kepler-orbits.html#comets
 with load.open(mpc.COMET_URL) as f:
@@ -21,18 +19,18 @@ comets = (
     .set_index("designation", drop=False)
 )
 
-# Find Hale-Bopp
-row = comets.loc["C/1995 O1 (Hale-Bopp)"]
+# Find Comet NEOWISE
+row = comets.loc["C/2020 F3 (NEOWISE)"]
 
 ts = load.timescale()
 eph = load("de421.bsp")
 sun, earth = eph["sun"], eph["earth"]
 comet = sun + mpc.comet_orbit(row, ts, GM_SUN)
 
-# Find the RA/DEC of comet for every 8 days starting on March 18, 1997
+# Find the RA/DEC of comet for every 8 days starting on July 1, 2020
 radecs = []
 for day in range(0, 32, 8):
-    t = ts.utc(1997, 3, 18 + day)
+    t = ts.utc(2020, 7, 1 + day)
     ra, dec, distance = earth.at(t).observe(comet).radec()
     radecs.append((t, ra.hours, dec.degrees))
 
@@ -56,14 +54,10 @@ style.legend.location = "lower center"
 
 p = MapPlot(
     projection=Projection.STEREO_NORTH,
-    # to make plots that are centered around the 0h equinox, you can
-    # set the max RA to a number over 24 which will determine how
-    # far past 0h the plot will extend. For example, here we set
-    # the max RA to 28, so this plot will have an RA extent from 23h to 4h
-    ra_min=23,
-    ra_max=28,
-    dec_min=14,
-    dec_max=60,
+    ra_min=3,
+    ra_max=10,
+    dec_min=5,
+    dec_max=80,
     style=style,
     resolution=2800,
 )
@@ -75,7 +69,7 @@ for t, ra, dec in radecs:
         ra=ra,
         dec=dec,
         label=label,
-        legend_label="Hale-Bopp Comet",
+        legend_label="Comet NEOWISE",
         style={
             "marker": {
                 "size": 16,
@@ -96,13 +90,10 @@ for t, ra, dec in radecs:
     )
 
 p.gridlines(labels=False)
-p.stars(mag=8)
+p.stars(mag=6)
 p.constellations()
 p.constellation_borders()
-p.nebula(mag=8, labels=None)
-p.open_clusters(mag=8, labels=None)
-p.galaxies(mag=8, labels=None)
 p.milky_way()
 p.legend()
 
-p.export("map_hale_bopp.png", padding=0.2)
+p.export("map_comet_neowise.png", padding=0.2)

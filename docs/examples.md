@@ -67,10 +67,10 @@
     </li>
 
     <li>
-        <a href="/examples/map-hale-bopp-comet">
-            <img src="/images/examples/map_hale_bopp.png" alt="Map of Hale-Bopp in 1997" class="off-glb" loading="lazy"/>
+        <a href="/examples/map-comet-neowise">
+            <img src="/images/examples/map_comet_neowise.png" alt="Map of Comet NEOWISE in 2020" class="off-glb" loading="lazy"/>
 
-            <p class="example-card-title">Map of Hale-Bopp in 1997</p>
+            <p class="example-card-title">Comet NEOWISE</p>
         </a>
     </li>
 
