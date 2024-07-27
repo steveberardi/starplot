@@ -31,6 +31,9 @@ class Projection(str, Enum):
     ROBINSON = "robinson"
     """Good for showing the entire celestial sphere in one plot"""
 
+    LAMBERT_AZ_EQ_AREA = "lambert_az_eq_area"
+    """Lambert Azimuthal Equal-Area projection - accurately shows area, but distorts angles."""
+
     STEREOGRAPHIC = "stereographic"
     """
     Similar to the North/South Stereographic projection, but this version is location-dependent.
@@ -50,6 +53,7 @@ class Projection(str, Enum):
         projections = {
             Projection.STEREO_NORTH: ccrs.NorthPolarStereo,
             Projection.STEREO_SOUTH: ccrs.SouthPolarStereo,
+            Projection.LAMBERT_AZ_EQ_AREA: ccrs.LambertAzimuthalEqualArea,
             Projection.MERCATOR: ccrs.Mercator,
             Projection.MOLLWEIDE: ccrs.Mollweide,
             Projection.MILLER: ccrs.Miller,
@@ -68,4 +72,7 @@ class Projection(str, Enum):
                 central_longitude=kwargs["lon"], central_latitude=kwargs["lat"]
             )
         else:
+            if kwargs.get("center_lat") is not None:
+                kwargs["central_latitude"] = kwargs.pop("center_lat")
+
             return proj_class(center_lon, **kwargs)

@@ -573,7 +573,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             layout="constrained",
         )
         bounds = self._latlon_bounds()
+        center_lat = (bounds[2] + bounds[3]) / 2
         center_lon = (bounds[0] + bounds[1]) / 2
+        self._center_lat = center_lat
         self._center_lon = center_lon
 
         if self.projection in [
@@ -584,6 +586,10 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             # Calculate LST to shift RA DEC to be in line with current date and time
             lst = -(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
             self._proj = Projection.crs(self.projection, lon=lst, lat=self.lat)
+        elif self.projection == Projection.LAMBERT_AZ_EQ_AREA:
+            self._proj = Projection.crs(
+                self.projection, center_lat=center_lat, center_lon=center_lon
+            )
         else:
             self._proj = Projection.crs(self.projection, center_lon)
         self._proj.threshold = 1000
