@@ -1,21 +1,21 @@
 background_color: hsl(136, 0%, 10%)
 figure_background_color: hsl(136, 0%, 100%)
 border_bg_color: hsl(136, 0%, 20%)
-border_font_color: hsl(136, 0%, 0%)
-border_line_color: hsl(136, 0%, 97%)
+border_font_color: hsl(136, 0%, 90%)
+border_line_color: hsl(136, 0%, 54%)
 title:
   font_color: hsl(136, 0%, 0%)
 info_text:
   font_color: hsl(136, 0%, 0%)
 star:
   label:
-    font_color: hsl(136, 0%, 97%)
+    font_color: hsl(136, 0%, 90%)
   marker:
     color: hsl(136, 0%, 97%)
     edge_color: hsl(136, 0%, 10%)
 sun:
   label:
-    font_color: hsl(136, 0%, 97%)
+    font_color: hsl(136, 0%, 90%)
   marker:
     color: hsl(136, 0%, 97%)
     edge_color: hsl(136, 0%, 97%)

@@ -598,7 +598,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if self._is_global_extent():
             if self.projection == Projection.ZENITH:
                 theta = np.linspace(0, 2 * np.pi, 100)
-                center, radius = [0.5, 0.5], 0.51
+                center, radius = [0.5, 0.5], 0.472
                 verts = np.vstack([np.sin(theta), np.cos(theta)]).T
                 circle = path.Path(verts * radius + center)
                 extent = self.ax.get_extent(crs=self._proj)
@@ -615,22 +615,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         self.logger.debug(f"Projection = {self.projection.value.upper()}")
 
-        if self.projection == Projection.ZENITH:
-            self._plot_border()
-        else:
-            # draw patch in axes coords, which are easier to work with
-            # in cases like this cause they go from 0...1 in all plots
-            self._background_clip_path = patches.Rectangle(
-                (0, 0),
-                width=1,
-                height=1,
-                facecolor=self.style.background_color.as_hex(),
-                linewidth=0,
-                fill=True,
-                zorder=-2_000,
-                transform=self.ax.transAxes,
-            )
-            self.ax.add_patch(self._background_clip_path)
+        self._plot_background_clip_path()
 
         self._fit_to_ax()
 
@@ -655,56 +640,67 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             transform=self.ax.transAxes,
             **style.matplot_kwargs(self._size_multiplier * 1.36),
         )
+    
+    def _plot_background_clip_path(self):
+        if self.projection == Projection.ZENITH:
+            self._background_clip_path = patches.Circle(
+                (0.5, 0.5),
+                radius=0.472,
+                fill=True,
+                facecolor=self.style.background_color.as_hex(),
+                # edgecolor=self.style.border_line_color.as_hex(),
+                linewidth=0, #4 * self._size_multiplier,
+                zorder=-2_000,
+                transform=self.ax.transAxes,
+            )
+        else:
+            # draw patch in axes coords, which are easier to work with
+            # in cases like this cause they go from 0...1 in all plots
+            self._background_clip_path = patches.Rectangle(
+                (0, 0),
+                width=1,
+                height=1,
+                facecolor=self.style.background_color.as_hex(),
+                linewidth=0,
+                fill=True,
+                zorder=-2_000,
+                transform=self.ax.transAxes,
+            )
+        
+        self.ax.add_patch(self._background_clip_path)
 
-    def _plot_border(self):
+    def border(self, cardinal_direction_labels=("N", "E", "S", "W")):
         """Plots circle border for Zenith projections"""
+        
+        if not self.projection == Projection.ZENITH:
+            raise NotImplementedError("borders only available for zenith projections")
+        
+        n, e, s, w = cardinal_direction_labels
+
+        # Border
         border_font_kwargs = dict(
             fontsize=self.style.border_font_size * self._size_multiplier * 2.26,
             weight=self.style.border_font_weight,
             color=self.style.border_font_color.as_hex(),
             transform=self.ax.transAxes,
-            zorder=5200,
+            zorder=5000,
         )
-        self.ax.text(0.5, 0.98, "N", **border_font_kwargs)
-        self.ax.text(0.9752, 0.5, "W", **border_font_kwargs)
-        self.ax.text(0.00455, 0.5, "E", **border_font_kwargs)
-        self.ax.text(0.5, 0.00456, "S", **border_font_kwargs)
-
-        background_circle = patches.Circle(
-            (0.5, 0.5),
-            radius=0.475,
-            fill=True,
-            facecolor=self.style.background_color.as_hex(),
-            edgecolor=self.style.border_line_color.as_hex(),
-            linewidth=8 * self._size_multiplier,
-            zorder=-1_000,
-            transform=self.ax.transAxes,
-        )
-        self.ax.add_patch(background_circle)
-
-        self._background_clip_path = background_circle
+        self.ax.text(0.5, 0.986, n, **border_font_kwargs)
+        self.ax.text(0.978, 0.5, w, **border_font_kwargs)
+        self.ax.text(-0.002, 0.5, e, **border_font_kwargs)
+        self.ax.text(0.5, -0.002, s, **border_font_kwargs)
 
         border_circle = patches.Circle(
             (0.5, 0.5),
-            radius=0.5,
+            radius=0.495,
             fill=False,
             edgecolor=self.style.border_bg_color.as_hex(),
-            linewidth=90 * self._size_multiplier,
-            zorder=1_000,
+            linewidth=68 * self._size_multiplier,
+            zorder=3_000,
             transform=self.ax.transAxes,
+            clip_on=False,
         )
         self.ax.add_patch(border_circle)
-
-        border_line_circle = patches.Circle(
-            (0.5, 0.5),
-            radius=0.51,
-            fill=False,
-            edgecolor=self.style.border_line_color.as_hex(),
-            linewidth=8 * self._size_multiplier,
-            zorder=1_200,
-            transform=self.ax.transAxes,
-        )
-        self.ax.add_patch(border_line_circle)
 
         inner_border_line_circle = patches.Circle(
             (0.5, 0.5),
@@ -712,7 +708,20 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             fill=False,
             edgecolor=self.style.border_line_color.as_hex(),
             linewidth=4 * self._size_multiplier,
-            zorder=2_000,
+            zorder=3_000,
             transform=self.ax.transAxes,
+            clip_on=False,
         )
         self.ax.add_patch(inner_border_line_circle)
+
+        outer_border_line_circle = patches.Circle(
+            (0.5, 0.5),
+            radius=0.52,
+            fill=False,
+            edgecolor=self.style.border_line_color.as_hex(),
+            linewidth=8 * self._size_multiplier,
+            zorder=8_000,
+            transform=self.ax.transAxes,
+            clip_on=False,
+        )
+        self.ax.add_patch(outer_border_line_circle)
