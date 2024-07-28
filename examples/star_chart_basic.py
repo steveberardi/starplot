@@ -14,9 +14,10 @@ p = MapPlot(
     style=PlotStyle().extend(
         extensions.BLUE_MEDIUM,
     ),
-    resolution=2600,
+    resolution=2400,
 )
 p.constellations()
-p.stars(mag=4.6)
+p.stars(mag=4.4)
+p.border()
 
-p.export("star_chart_basic.png", transparent=True)
+p.export("star_chart_basic.png", transparent=True, padding=0.1)

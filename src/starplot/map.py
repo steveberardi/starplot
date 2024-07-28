@@ -621,7 +621,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
     @use_style(LabelStyle, "info_text")
     def info(self, style: LabelStyle = None):
-        """Plots info text in the lower left corner, including date/time and lat/lon.
+        """
+        Plots info text in the lower left corner, including date/time and lat/lon.
 
         _Only available for ZENITH projections_
 
@@ -640,7 +641,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             transform=self.ax.transAxes,
             **style.matplot_kwargs(self._size_multiplier * 1.36),
         )
-    
+
     def _plot_background_clip_path(self):
         if self.projection == Projection.ZENITH:
             self._background_clip_path = patches.Circle(
@@ -649,7 +650,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 fill=True,
                 facecolor=self.style.background_color.as_hex(),
                 # edgecolor=self.style.border_line_color.as_hex(),
-                linewidth=0, #4 * self._size_multiplier,
+                linewidth=0,  # 4 * self._size_multiplier,
                 zorder=-2_000,
                 transform=self.ax.transAxes,
             )
@@ -666,36 +667,42 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 zorder=-2_000,
                 transform=self.ax.transAxes,
             )
-        
+
         self.ax.add_patch(self._background_clip_path)
 
-    def border(self, cardinal_direction_labels=("N", "E", "S", "W")):
-        """Plots circle border for Zenith projections"""
-        
+    def border(self, cardinal_direction_labels: list = ["N", "E", "S", "W"]):
+        """
+        Plots a border around the map.
+
+        _Only available for ZENITH projections_
+
+        Args:
+            cardinal_direction_labels: List of labels for cardinal directions on zenith plots. Order matters, labels should be in the order: North, East, South, West.
+        """
+
         if not self.projection == Projection.ZENITH:
             raise NotImplementedError("borders only available for zenith projections")
-        
-        n, e, s, w = cardinal_direction_labels
 
-        # Border
-        border_font_kwargs = dict(
-            fontsize=self.style.border_font_size * self._size_multiplier * 2.26,
-            weight=self.style.border_font_weight,
-            color=self.style.border_font_color.as_hex(),
-            transform=self.ax.transAxes,
-            zorder=5000,
-        )
-        self.ax.text(0.5, 0.986, n, **border_font_kwargs)
-        self.ax.text(0.978, 0.5, w, **border_font_kwargs)
-        self.ax.text(-0.002, 0.5, e, **border_font_kwargs)
-        self.ax.text(0.5, -0.002, s, **border_font_kwargs)
+        if cardinal_direction_labels:
+            n, e, s, w = cardinal_direction_labels
+            border_font_kwargs = dict(
+                fontsize=self.style.border_font_size * self._size_multiplier * 2.26,
+                weight=self.style.border_font_weight,
+                color=self.style.border_font_color.as_hex(),
+                transform=self.ax.transAxes,
+                zorder=5000,
+            )
+            self.ax.text(0.5, 0.986, n, **border_font_kwargs)
+            self.ax.text(0.978, 0.5, w, **border_font_kwargs)
+            self.ax.text(-0.002, 0.5, e, **border_font_kwargs)
+            self.ax.text(0.5, -0.002, s, **border_font_kwargs)
 
         border_circle = patches.Circle(
             (0.5, 0.5),
             radius=0.495,
             fill=False,
             edgecolor=self.style.border_bg_color.as_hex(),
-            linewidth=68 * self._size_multiplier,
+            linewidth=72 * self._size_multiplier,
             zorder=3_000,
             transform=self.ax.transAxes,
             clip_on=False,
@@ -704,10 +711,10 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         inner_border_line_circle = patches.Circle(
             (0.5, 0.5),
-            radius=0.472,
+            radius=0.473,
             fill=False,
             edgecolor=self.style.border_line_color.as_hex(),
-            linewidth=4 * self._size_multiplier,
+            linewidth=4.2 * self._size_multiplier,
             zorder=3_000,
             transform=self.ax.transAxes,
             clip_on=False,
@@ -719,7 +726,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             radius=0.52,
             fill=False,
             edgecolor=self.style.border_line_color.as_hex(),
-            linewidth=8 * self._size_multiplier,
+            linewidth=8.2 * self._size_multiplier,
             zorder=8_000,
             transform=self.ax.transAxes,
             clip_on=False,
