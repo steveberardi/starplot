@@ -634,8 +634,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
         info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
         self.ax.text(
-            0.01,
-            0.01,
+            0.05,
+            0.05,
             info,
             transform=self.ax.transAxes,
             **style.matplot_kwargs(self._size_multiplier * 1.36),
