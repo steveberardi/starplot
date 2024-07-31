@@ -167,6 +167,7 @@ class LegendLocationEnum(str, Enum):
 class AnchorPointEnum(str, Enum):
     """Options for the anchor point of labels"""
 
+    CENTER = "center"
     TOP_LEFT = "top left"
     TOP_RIGHT = "top right"
     TOP_CENTER = "top center"
@@ -194,6 +195,9 @@ class AnchorPointEnum(str, Enum):
             style["ha"] = "left"
         elif self.value == AnchorPointEnum.TOP_CENTER:
             style["va"] = "bottom"
+            style["ha"] = "center"
+        elif self.value == AnchorPointEnum.CENTER:
+            style["va"] = "center"
             style["ha"] = "center"
 
         return style
@@ -836,6 +840,25 @@ class PlotStyle(BaseStyle):
         ),
     )
     """Styling for the Celestial Equator"""
+
+    horizon: PathStyle = PathStyle(
+        line=LineStyle(
+            color="#777",
+            width=72,
+            style=LineStyleEnum.SOLID,
+            dash_capstyle=DashCapStyleEnum.PROJECTING,
+            alpha=1,
+            zorder=2000,
+        ),
+        label=LabelStyle(
+            anchor_point=AnchorPointEnum.CENTER,
+            font_color="#fff",
+            font_size=22,
+            font_weight=FontWeightEnum.HEAVY,
+            zorder=2000,
+        )
+    )
+    """Styling for the horizon"""
 
     def get_dso_style(self, dso_type: DsoType):
         """Returns the style for a DSO type"""

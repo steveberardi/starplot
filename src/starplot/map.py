@@ -13,6 +13,7 @@ from skyfield.api import Star as SkyfieldStar, wgs84
 import geopandas as gpd
 import numpy as np
 
+from starplot import geod
 from starplot.base import BasePlot
 from starplot.data import DataFiles, constellations as condata, stars
 from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
@@ -438,31 +439,79 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 **style_kwargs,
             )
 
-    @use_style(PolygonStyle)
+    @use_style(PathStyle, "horizon")
     def horizon(
         self,
-        style: PolygonStyle = PolygonStyle(
-            fill_color=None,
-            edge_color="red",
-            line_style="dashed",
-            edge_width=4,
-            zorder=1000,
-        ),
+        style: PathStyle = None,
+        labels: list = ["N", "E", "S", "W"],
     ):
         """
         Draws a [great circle](https://en.wikipedia.org/wiki/Great_circle) representing the horizon for the given `lat`, `lon` at time `dt` (so you must define these when creating the plot to use this function)
 
         Args:
-            style: Style of the polygon
+            style: Style of the horizon path
         """
         if self.lat is None or self.lon is None or self.dt is None:
             raise ValueError("lat, lon, and dt are required for plotting the horizon")
 
-        self.circle(
-            ((self.timescale.gmst + self.lon / 15.0) % 24, self.lat),
-            90,
-            style,
+        geographic = wgs84.latlon(latitude_degrees=self.lat, longitude_degrees=self.lon)
+        observer = geographic.at(self.timescale)
+        zenith = observer.from_altaz(alt_degrees=90, az_degrees=0)
+        ra, dec, _ = zenith.radec()
+
+        points = geod.ellipse(
+            center=(ra.hours, dec.degrees),
+            height_degrees=180,
+            width_degrees=180,
         )
+        x = []
+        y = []
+        inbounds = []
+
+        for ra, dec in points:
+            ra = ra / 15
+            x0, y0 = self._prepare_coords(ra, dec)
+            x.append(x0)
+            y.append(y0)
+            if self.in_bounds(ra, dec):
+                inbounds.append((ra, dec))
+
+        self.ax.plot(
+            x,
+            y,
+            # dash_capstyle=style.line.dash_capstyle,
+            # clip_path=self._background_clip_path,
+            **style.line.matplot_kwargs(self._size_multiplier),
+            **self._plot_kwargs(),
+        )
+
+        # self.circle(
+        #     (ra.hours, dec.degrees),
+        #     90,
+        #     style,
+        #     num_pts=200,
+        # )
+
+        if not labels:
+            return
+        
+        north = observer.from_altaz(alt_degrees=0, az_degrees=0)
+        east = observer.from_altaz(alt_degrees=0, az_degrees=90)
+        south = observer.from_altaz(alt_degrees=0, az_degrees=180)
+        west = observer.from_altaz(alt_degrees=0, az_degrees=270)
+
+        n, e, s, w = labels
+        ra, dec, _ = north.radec()
+        self.text(n, ra.hours, dec.degrees, style=style.label, hide_on_collision=False)
+
+        ra, dec, _ = east.radec()
+        self.text(e, ra.hours, dec.degrees, style=style.label, hide_on_collision=False)
+
+        ra, dec, _ = south.radec()
+        self.text(s, ra.hours, dec.degrees,style=style.label, hide_on_collision=False)
+
+        ra, dec, _ = west.radec()
+        self.text(w, ra.hours, dec.degrees, style=style.label, hide_on_collision=False)
 
     @use_style(PathStyle, "gridlines")
     def gridlines(
@@ -598,11 +647,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if self._is_global_extent():
             if self.projection == Projection.ZENITH:
                 theta = np.linspace(0, 2 * np.pi, 100)
-                center, radius = [0.5, 0.5], 0.472
+                center, radius = [0.502, 0.503], 0.472
                 verts = np.vstack([np.sin(theta), np.cos(theta)]).T
                 circle = path.Path(verts * radius + center)
                 extent = self.ax.get_extent(crs=self._proj)
-                self.ax.set_extent((p / 3.75 for p in extent), crs=self._proj)
+                self.ax.set_extent((p / 3.548 for p in extent), crs=self._proj)
                 self.ax.set_boundary(circle, transform=self.ax.transAxes)
             else:
                 # this cartopy function works better for setting global extents
