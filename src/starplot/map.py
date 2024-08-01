@@ -21,6 +21,7 @@ from starplot.mixins import ExtentMaskMixin
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.projections import Projection
 from starplot.styles import (
+    ObjectStyle,
     LabelStyle,
     LineStyle,
     PlotStyle,
@@ -439,6 +440,29 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 **style_kwargs,
             )
 
+    @use_style(ObjectStyle, "zenith")
+    def zenith(
+        self,
+        style: ObjectStyle = None,
+        label: str = None,
+        legend_label: str = "Zenith",
+    ):
+        if self.lat is None or self.lon is None or self.dt is None:
+            raise ValueError("lat, lon, and dt are required for plotting the horizon")
+
+        geographic = wgs84.latlon(latitude_degrees=self.lat, longitude_degrees=self.lon)
+        observer = geographic.at(self.timescale)
+        zenith = observer.from_altaz(alt_degrees=90, az_degrees=0)
+        ra, dec, _ = zenith.radec()
+
+        self.marker(
+            ra.hours,
+            dec.degrees,
+            label,
+            style,
+            legend_label,
+        )
+        
     @use_style(PathStyle, "horizon")
     def horizon(
         self,
@@ -479,8 +503,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.ax.plot(
             x,
             y,
-            # dash_capstyle=style.line.dash_capstyle,
-            # clip_path=self._background_clip_path,
+            dash_capstyle=style.line.dash_capstyle,
+            clip_path=self._background_clip_path,
             **style.line.matplot_kwargs(self._size_multiplier),
             **self._plot_kwargs(),
         )
@@ -694,8 +718,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def _plot_background_clip_path(self):
         if self.projection == Projection.ZENITH:
             self._background_clip_path = patches.Circle(
-                (0.5, 0.5),
-                radius=0.472,
+                (0.502, 0.5032),
+                radius=0.4745,
                 fill=True,
                 facecolor=self.style.background_color.as_hex(),
                 # edgecolor=self.style.border_line_color.as_hex(),

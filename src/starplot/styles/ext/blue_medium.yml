@@ -56,6 +56,16 @@ sun:
     color: '#ffd22e'
     edge_color: 'hsl(47, 100%, 29%)'
 
+horizon:
+  line:
+    color: '#7997b9'
+  label:
+    font_color: '#f1f6ff'
+
+zenith:
+  marker:
+    color: 'red'
+
 # DSOs
 dso_double_star:
   marker:

@@ -77,6 +77,9 @@ class MarkerSymbolEnum(str, Enum):
     POINT = "point"
     """\u00B7"""
 
+    PLUS = "plus"
+    """+"""
+
     CIRCLE = "circle"
     """\u25CF"""
 
@@ -125,6 +128,7 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.POINT: ".",
             MarkerSymbolEnum.CIRCLE: "o",
             MarkerSymbolEnum.SQUARE: "s",
+            MarkerSymbolEnum.PLUS: "P",
             MarkerSymbolEnum.SQUARE_STRIPES_DIAGONAL: "$\u25A8$",
             MarkerSymbolEnum.STAR: "*",
             MarkerSymbolEnum.SUN: "$\u263C$",
@@ -135,7 +139,7 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.CIRCLE_DOTTED_EDGE: "$\u25CC$",
             MarkerSymbolEnum.COMET: "$\u2604$",
             MarkerSymbolEnum.STAR_8: "$\u2734$",
-        }.get(self.value)
+        }[self.value]
 
 
 class LineStyleEnum(str, Enum):
@@ -846,7 +850,7 @@ class PlotStyle(BaseStyle):
             color="#777",
             width=72,
             style=LineStyleEnum.SOLID,
-            dash_capstyle=DashCapStyleEnum.PROJECTING,
+            dash_capstyle=DashCapStyleEnum.BUTT,
             alpha=1,
             zorder=2000,
         ),
@@ -859,6 +863,17 @@ class PlotStyle(BaseStyle):
         )
     )
     """Styling for the horizon"""
+
+    zenith: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.PLUS,
+            size=24,
+            fill=FillStyleEnum.FULL,
+            color="#000",
+        ),
+        label=LabelStyle(font_size=14),
+    )
+    """Styling for the zenith marker"""
 
     def get_dso_style(self, dso_type: DsoType):
         """Returns the style for a DSO type"""
