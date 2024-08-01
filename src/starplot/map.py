@@ -448,7 +448,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         legend_label: str = "Zenith",
     ):
         if self.lat is None or self.lon is None or self.dt is None:
-            raise ValueError("lat, lon, and dt are required for plotting the horizon")
+            raise ValueError("lat, lon, and dt are required for plotting the zenith")
 
         geographic = wgs84.latlon(latitude_degrees=self.lat, longitude_degrees=self.lon)
         observer = geographic.at(self.timescale)
