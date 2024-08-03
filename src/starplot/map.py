@@ -5,7 +5,7 @@ from typing import Callable
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
-from matplotlib import path, patches, ticker
+from matplotlib import path, patches, ticker, patheffects
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import LineString, MultiLineString
 from shapely.ops import unary_union
@@ -462,7 +462,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             style,
             legend_label,
         )
-        
+
     @use_style(PathStyle, "horizon")
     def horizon(
         self,
@@ -487,25 +487,48 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             center=(ra.hours, dec.degrees),
             height_degrees=180,
             width_degrees=180,
+            num_pts=180,
         )
         x = []
         y = []
-        inbounds = []
+        verts = []
+
+        # TODO : handle map edges
 
         for ra, dec in points:
             ra = ra / 15
             x0, y0 = self._prepare_coords(ra, dec)
             x.append(x0)
             y.append(y0)
-            if self.in_bounds(ra, dec):
-                inbounds.append((ra, dec))
+            verts.append((x0, y0))
 
+        style_kwargs = style.line.matplot_kwargs(self._size_multiplier)
+        style_kwargs["edgecolor"] = style_kwargs.pop("color")
+
+        style_kwargs ={}
+        if self.projection == Projection.ZENITH:
+            style_kwargs["clip_on"] = False
+        else:
+            style_kwargs["clip_on"] = True
+            style_kwargs["clip_path"] = self._background_clip_path
+
+        patch = patches.Polygon(
+            verts,
+            facecolor=None,
+            fill=False,
+            transform=self._crs,
+            **style_kwargs,
+        )
+        # patch works good for zenith, but not others
+        # self.ax.add_patch(patch)
+        # return
+        
         self.ax.plot(
             x,
             y,
-            dash_capstyle=style.line.dash_capstyle,
-            clip_path=self._background_clip_path,
+            # dash_capstyle=style.line.dash_capstyle,
             **style.line.matplot_kwargs(self._size_multiplier),
+            **style_kwargs,
             **self._plot_kwargs(),
         )
 
@@ -518,24 +541,27 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         if not labels:
             return
-        
+
         north = observer.from_altaz(alt_degrees=0, az_degrees=0)
         east = observer.from_altaz(alt_degrees=0, az_degrees=90)
         south = observer.from_altaz(alt_degrees=0, az_degrees=180)
         west = observer.from_altaz(alt_degrees=0, az_degrees=270)
 
-        n, e, s, w = labels
-        ra, dec, _ = north.radec()
-        self.text(n, ra.hours, dec.degrees, style=style.label, hide_on_collision=False)
+        cardinal_directions = [north, east, south, west]
 
-        ra, dec, _ = east.radec()
-        self.text(e, ra.hours, dec.degrees, style=style.label, hide_on_collision=False)
+        text_kwargs = dict(
+            **style.label.matplot_kwargs(self._size_multiplier),
+            hide_on_collision=False,
+            xytext=(style.label.offset_x, style.label.offset_y),
+            textcoords="offset pixels",
+        )
 
-        ra, dec, _ = south.radec()
-        self.text(s, ra.hours, dec.degrees,style=style.label, hide_on_collision=False)
+        if self.projection == Projection.ZENITH:
+            text_kwargs["clip_on"] = False
 
-        ra, dec, _ = west.radec()
-        self.text(w, ra.hours, dec.degrees, style=style.label, hide_on_collision=False)
+        for i, position in enumerate(cardinal_directions):
+            ra, dec, _ = position.radec()
+            self._text(ra.hours, dec.degrees, labels[i], **text_kwargs)
 
     @use_style(PathStyle, "gridlines")
     def gridlines(
@@ -671,7 +697,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if self._is_global_extent():
             if self.projection == Projection.ZENITH:
                 theta = np.linspace(0, 2 * np.pi, 100)
-                center, radius = [0.502, 0.503], 0.472
+                center, radius = [0.5, 0.5], 0.45
                 verts = np.vstack([np.sin(theta), np.cos(theta)]).T
                 circle = path.Path(verts * radius + center)
                 extent = self.ax.get_extent(crs=self._proj)
@@ -718,8 +744,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def _plot_background_clip_path(self):
         if self.projection == Projection.ZENITH:
             self._background_clip_path = patches.Circle(
-                (0.502, 0.5032),
-                radius=0.4745,
+                (0.50, 0.50),
+                radius=0.45,
                 fill=True,
                 facecolor=self.style.background_color.as_hex(),
                 # edgecolor=self.style.border_line_color.as_hex(),

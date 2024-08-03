@@ -8,6 +8,7 @@ import yaml
 from pydantic import BaseModel
 from pydantic.color import Color
 from pydantic.functional_serializers import PlainSerializer
+from matplotlib import patheffects
 from typing_extensions import Annotated
 
 from starplot.data.dsos import DsoType
@@ -305,15 +306,32 @@ class LineStyle(BaseStyle):
     zorder: int = -1
     """Zorder of the line"""
 
+    edge_width: int = 0
+    """Width of the line's edge. _If the width or color is falsey then the line will NOT be drawn with an edge._"""
+
+    edge_color: Optional[ColorStr] = None
+    """Edge color of the line. _If the width or color is falsey then the line will NOT be drawn with an edge._"""
+
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
+        line_width = self.width * size_multiplier
+
         result = dict(
             color=self.color.as_hex(),
             linestyle=self.style,
-            linewidth=self.width * size_multiplier,
+            linewidth=line_width,
             # dash_capstyle=self.dash_capstyle,
             alpha=self.alpha,
             zorder=self.zorder,
         )
+
+        if self.edge_width and self.edge_color:
+            result["path_effects"] = [
+                patheffects.withStroke(
+                    linewidth=line_width + 2 * self.edge_width * size_multiplier,
+                    foreground=self.edge_color.as_hex(),
+                )
+            ]
+
         return result
 
 
@@ -527,7 +545,7 @@ class PlotStyle(BaseStyle):
 
     figure_background_color: ColorStr = ColorStr("#fff")
 
-    text_border_width: int = 2
+    text_border_width: int = 3
     text_offset_x: float = 0.005
     text_offset_y: float = 0.005
 
@@ -848,7 +866,7 @@ class PlotStyle(BaseStyle):
     horizon: PathStyle = PathStyle(
         line=LineStyle(
             color="#777",
-            width=72,
+            width=64,
             style=LineStyleEnum.SOLID,
             dash_capstyle=DashCapStyleEnum.BUTT,
             alpha=1,
@@ -857,10 +875,10 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             anchor_point=AnchorPointEnum.CENTER,
             font_color="#fff",
-            font_size=22,
-            font_weight=FontWeightEnum.HEAVY,
+            font_size=21,
+            font_weight=FontWeightEnum.NORMAL,
             zorder=2000,
-        )
+        ),
     )
     """Styling for the horizon"""
 

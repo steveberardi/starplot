@@ -144,7 +144,15 @@ class BasePlot(ABC):
                 label=label,
             )
 
-    def _text(self, ra: float, dec: float, text: str, hide_on_collision: bool = True, *args, **kwargs) -> None:
+    def _text(
+        self,
+        ra: float,
+        dec: float,
+        text: str,
+        hide_on_collision: bool = True,
+        *args,
+        **kwargs,
+    ) -> None:
         if not text:
             return
 
@@ -157,6 +165,9 @@ class BasePlot(ABC):
             **kwargs,
             **self._plot_kwargs(),
         )
+        if kwargs.get("clip_on") == False:
+            return
+        
         label.set_clip_on(True)
         label.set_clip_path(self._background_clip_path)
 
@@ -164,7 +175,14 @@ class BasePlot(ABC):
             self._maybe_remove_label(label)
 
     @use_style(LabelStyle)
-    def text(self, text: str, ra: float, dec: float, style: LabelStyle = None, hide_on_collision: bool = True):
+    def text(
+        self,
+        text: str,
+        ra: float,
+        dec: float,
+        style: LabelStyle = None,
+        hide_on_collision: bool = True,
+    ):
         """
         Plots text
 
