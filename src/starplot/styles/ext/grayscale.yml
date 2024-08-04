@@ -1,7 +1,9 @@
 background_color: '#fff'
+
 border_bg_color: '#fff'
 border_font_color: '#000'
 border_line_color: '#000'
+
 title:
   font_color: '#000'
 celestial_equator:
@@ -54,3 +56,10 @@ sun:
 
 legend:
   background_color: '#fff'
+
+horizon:
+  line:
+    color: 'white'
+    edge_color: 'black'
+  label:
+    font_color: 'black'
