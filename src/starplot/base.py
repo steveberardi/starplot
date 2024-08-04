@@ -165,9 +165,9 @@ class BasePlot(ABC):
             **kwargs,
             **self._plot_kwargs(),
         )
-        if kwargs.get("clip_on") == False:
+        if kwargs.get("clip_on") is False:
             return
-        
+
         label.set_clip_on(True)
         label.set_clip_path(self._background_clip_path)
 

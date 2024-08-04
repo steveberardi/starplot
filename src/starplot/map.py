@@ -5,7 +5,7 @@ from typing import Callable
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
-from matplotlib import path, patches, ticker, patheffects
+from matplotlib import path, patches, ticker
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import LineString, MultiLineString
 from shapely.ops import unary_union
@@ -487,13 +487,13 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             center=(ra.hours, dec.degrees),
             height_degrees=180,
             width_degrees=180,
-            num_pts=180,
+            num_pts=100,
         )
         x = []
         y = []
         verts = []
 
-        # TODO : handle map edges
+        # TODO : handle map edges better
 
         for ra, dec in points:
             ra = ra / 15
@@ -502,35 +502,38 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             y.append(y0)
             verts.append((x0, y0))
 
-        style_kwargs = style.line.matplot_kwargs(self._size_multiplier)
-        style_kwargs["edgecolor"] = style_kwargs.pop("color")
-
-        style_kwargs ={}
+        style_kwargs = {}
         if self.projection == Projection.ZENITH:
+            """
+            For zenith projections, we plot the horizon as a patch because
+            plottting as a line results in extra pixels on bottom.
+
+            TODO : investigate why line is extra thick on bottom when plotting line
+            """
+            style_kwargs = style.line.matplot_kwargs(self._size_multiplier)
             style_kwargs["clip_on"] = False
+            style_kwargs["edgecolor"] = style_kwargs.pop("color")
+
+            patch = patches.Polygon(
+                verts,
+                facecolor=None,
+                fill=False,
+                transform=self._crs,
+                **style_kwargs,
+            )
+            self.ax.add_patch(patch)
+
         else:
             style_kwargs["clip_on"] = True
             style_kwargs["clip_path"] = self._background_clip_path
-
-        patch = patches.Polygon(
-            verts,
-            facecolor=None,
-            fill=False,
-            transform=self._crs,
-            **style_kwargs,
-        )
-        # patch works good for zenith, but not others
-        # self.ax.add_patch(patch)
-        # return
-        
-        self.ax.plot(
-            x,
-            y,
-            # dash_capstyle=style.line.dash_capstyle,
-            **style.line.matplot_kwargs(self._size_multiplier),
-            **style_kwargs,
-            **self._plot_kwargs(),
-        )
+            self.ax.plot(
+                x,
+                y,
+                dash_capstyle=style.line.dash_capstyle,
+                **style.line.matplot_kwargs(self._size_multiplier),
+                **style_kwargs,
+                **self._plot_kwargs(),
+            )
 
         # self.circle(
         #     (ra.hours, dec.degrees),

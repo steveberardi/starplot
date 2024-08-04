@@ -867,6 +867,8 @@ class PlotStyle(BaseStyle):
         line=LineStyle(
             color="#777",
             width=64,
+            edge_width=4,
+            edge_color="#000",
             style=LineStyleEnum.SOLID,
             dash_capstyle=DashCapStyleEnum.BUTT,
             alpha=1,
@@ -875,8 +877,8 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             anchor_point=AnchorPointEnum.CENTER,
             font_color="#fff",
-            font_size=21,
-            font_weight=FontWeightEnum.NORMAL,
+            font_size=23,
+            font_weight=FontWeightEnum.BOLD,
             zorder=2000,
         ),
     )

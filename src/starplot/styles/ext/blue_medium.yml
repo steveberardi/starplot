@@ -60,7 +60,6 @@ horizon:
   line:
     color: '#7997b9'
     edge_color: '#2f4358'
-    edge_width: 4
   label:
     font_color: '#f1f6ff'
 

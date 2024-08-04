@@ -3,9 +3,14 @@
 # via https://davidmathlogic.com/colorblind
 
 background_color: '#fff'
-border_bg_color: '#fff'
-border_font_color: hsl(0, 0%, 0%)
-border_line_color: hsl(0, 0%, 0%)
+
+horizon:
+  line:
+    color: '#fff'
+    edge_color: hsl(0, 0%, 0%)
+  label:
+    font_color: hsl(0, 0%, 0%)
+
 title:
   font_color: '#2f4358'
 star:
