@@ -48,6 +48,6 @@ p.marker(
         },
     },
 )
-p.border()
+p.horizon()
 
 p.export("star_chart_detail.png", transparent=True, padding=0.1)

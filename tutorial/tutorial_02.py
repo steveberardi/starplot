@@ -14,5 +14,6 @@ p = MapPlot(
 )
 p.constellations()
 p.stars(mag=4.6)
+p.horizon()
 
 p.export("tutorial_02.png", transparent=True)

@@ -473,7 +473,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Draws a [great circle](https://en.wikipedia.org/wiki/Great_circle) representing the horizon for the given `lat`, `lon` at time `dt` (so you must define these when creating the plot to use this function)
 
         Args:
-            style: Style of the horizon path
+            style: Style of the horizon path. If None, then the plot's style definition will be used.
+            labels: List of labels for cardinal directions. **NOTE: labels should be in the order: North, East, South, West.**
         """
         if self.lat is None or self.lon is None or self.dt is None:
             raise ValueError("lat, lon, and dt are required for plotting the horizon")
