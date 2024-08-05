@@ -20,6 +20,12 @@ horizon:
   label:
     font_color: hsl(60, 20%, 93%)
 
+zenith:
+  marker:
+    color: hsl(26, 93%, 82%)
+  label:
+    font_color: hsl(26, 93%, 82%)
+
 title:
   font_color: hsl(60, 20%, 93%)
 bayer_labels:

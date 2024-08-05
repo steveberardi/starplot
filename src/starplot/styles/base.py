@@ -886,12 +886,13 @@ class PlotStyle(BaseStyle):
 
     zenith: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.PLUS,
+            symbol=MarkerSymbolEnum.TRIANGLE,
             size=24,
             fill=FillStyleEnum.FULL,
             color="#000",
+            alpha=0.8,
         ),
-        label=LabelStyle(font_size=14),
+        label=LabelStyle(font_size=14, font_weight=FontWeightEnum.BOLD),
     )
     """Styling for the zenith marker"""
 

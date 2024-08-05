@@ -63,3 +63,9 @@ horizon:
     edge_color: 'black'
   label:
     font_color: 'black'
+
+zenith:
+  marker:
+    color: black
+  label:
+    font_color: black

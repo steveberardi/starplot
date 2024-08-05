@@ -67,7 +67,9 @@ horizon:
 
 zenith:
   marker:
-    color: 'red'
+    color: '#b979b7'
+  label:
+    font_color: '#b979b7'
 
 # DSOs
 dso_double_star:

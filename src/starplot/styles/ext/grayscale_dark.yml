@@ -12,6 +12,12 @@ horizon:
   label:
     font_color: hsl(136, 0%, 90%)
 
+zenith:
+  marker:
+    color: hsl(136, 0%, 90%)
+  label:
+    font_color: hsl(136, 0%, 90%)
+
 title:
   font_color: hsl(136, 0%, 0%)
 info_text:

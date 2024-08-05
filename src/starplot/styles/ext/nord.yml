@@ -11,6 +11,12 @@ horizon:
   label:
     font_color: '#a3be8c'
 
+zenith:
+  marker:
+    color: '#D99CBA'
+  label:
+    font_color: '#D99CBA'
+
 title:
   font_color: '#a3be8c'
 celestial_equator:
