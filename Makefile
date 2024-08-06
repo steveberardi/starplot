@@ -13,7 +13,7 @@ else
  SCRATCH_ARGS=
 endif
 
-DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
+DOCKER_RUN=docker run --rm --env-file ./.env $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 
 DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" --target dev .

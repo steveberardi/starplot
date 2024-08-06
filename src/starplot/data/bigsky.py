@@ -80,6 +80,8 @@ def to_parquet(source_path: str, destination_path: str, digits: int = DIGITS):
     )
 
     df.to_parquet(destination_path, compression="gzip")
+    
+    print(f"Done! {destination_path.value}")
 
 
 def load(path):
