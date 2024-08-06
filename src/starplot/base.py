@@ -157,7 +157,7 @@ class BasePlot(ABC):
             return
 
         x, y = self._prepare_coords(ra, dec)
-        kwargs["path_effects"] = kwargs.get("path_effects") or [self.text_border]
+        kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
         label = self.ax.annotate(
             text,
             (x, y),

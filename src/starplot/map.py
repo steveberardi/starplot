@@ -558,6 +558,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             hide_on_collision=False,
             xytext=(style.label.offset_x, style.label.offset_y),
             textcoords="offset pixels",
+            path_effects=[],
         )
 
         if self.projection == Projection.ZENITH:
