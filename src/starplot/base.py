@@ -144,12 +144,20 @@ class BasePlot(ABC):
                 label=label,
             )
 
-    def _text(self, ra: float, dec: float, text: str, *args, **kwargs) -> None:
+    def _text(
+        self,
+        ra: float,
+        dec: float,
+        text: str,
+        hide_on_collision: bool = True,
+        *args,
+        **kwargs,
+    ) -> None:
         if not text:
             return
 
         x, y = self._prepare_coords(ra, dec)
-        kwargs["path_effects"] = kwargs.get("path_effects") or [self.text_border]
+        kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
         label = self.ax.annotate(
             text,
             (x, y),
@@ -157,13 +165,24 @@ class BasePlot(ABC):
             **kwargs,
             **self._plot_kwargs(),
         )
+        if kwargs.get("clip_on") is False:
+            return
+
         label.set_clip_on(True)
         label.set_clip_path(self._background_clip_path)
 
-        self._maybe_remove_label(label)
+        if hide_on_collision:
+            self._maybe_remove_label(label)
 
     @use_style(LabelStyle)
-    def text(self, text: str, ra: float, dec: float, style: LabelStyle = None):
+    def text(
+        self,
+        text: str,
+        ra: float,
+        dec: float,
+        style: LabelStyle = None,
+        hide_on_collision: bool = True,
+    ):
         """
         Plots text
 
@@ -172,6 +191,7 @@ class BasePlot(ABC):
             ra: Right ascension of text (0...24)
             dec: Declination of text (-90...90)
             style: Styling of the text
+            hide_on_collision: If True, then the text will not be plotted if it collides with another label
         """
         style = style or LabelStyle()
         self._text(
@@ -179,6 +199,7 @@ class BasePlot(ABC):
             dec,
             text,
             **style.matplot_kwargs(self._size_multiplier),
+            hide_on_collision=hide_on_collision,
             xytext=(style.offset_x, style.offset_y),
             textcoords="offset pixels",
         )

@@ -13,6 +13,7 @@ from skyfield.api import Star as SkyfieldStar, wgs84
 import geopandas as gpd
 import numpy as np
 
+from starplot import geod
 from starplot.base import BasePlot
 from starplot.data import DataFiles, constellations as condata, stars
 from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
@@ -20,6 +21,7 @@ from starplot.mixins import ExtentMaskMixin
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.projections import Projection
 from starplot.styles import (
+    ObjectStyle,
     LabelStyle,
     LineStyle,
     PlotStyle,
@@ -438,31 +440,133 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 **style_kwargs,
             )
 
-    @use_style(PolygonStyle)
+    @use_style(ObjectStyle, "zenith")
+    def zenith(
+        self,
+        style: ObjectStyle = None,
+        label: str = None,
+        legend_label: str = "Zenith",
+    ):
+        if self.lat is None or self.lon is None or self.dt is None:
+            raise ValueError("lat, lon, and dt are required for plotting the zenith")
+
+        geographic = wgs84.latlon(latitude_degrees=self.lat, longitude_degrees=self.lon)
+        observer = geographic.at(self.timescale)
+        zenith = observer.from_altaz(alt_degrees=90, az_degrees=0)
+        ra, dec, _ = zenith.radec()
+
+        self.marker(
+            ra.hours,
+            dec.degrees,
+            label,
+            style,
+            legend_label,
+        )
+
+    @use_style(PathStyle, "horizon")
     def horizon(
         self,
-        style: PolygonStyle = PolygonStyle(
-            fill_color=None,
-            edge_color="red",
-            line_style="dashed",
-            edge_width=4,
-            zorder=1000,
-        ),
+        style: PathStyle = None,
+        labels: list = ["N", "E", "S", "W"],
     ):
         """
         Draws a [great circle](https://en.wikipedia.org/wiki/Great_circle) representing the horizon for the given `lat`, `lon` at time `dt` (so you must define these when creating the plot to use this function)
 
         Args:
-            style: Style of the polygon
+            style: Style of the horizon path. If None, then the plot's style definition will be used.
+            labels: List of labels for cardinal directions. **NOTE: labels should be in the order: North, East, South, West.**
         """
         if self.lat is None or self.lon is None or self.dt is None:
             raise ValueError("lat, lon, and dt are required for plotting the horizon")
 
-        self.circle(
-            ((self.timescale.gmst + self.lon / 15.0) % 24, self.lat),
-            90,
-            style,
+        geographic = wgs84.latlon(latitude_degrees=self.lat, longitude_degrees=self.lon)
+        observer = geographic.at(self.timescale)
+        zenith = observer.from_altaz(alt_degrees=90, az_degrees=0)
+        ra, dec, _ = zenith.radec()
+
+        points = geod.ellipse(
+            center=(ra.hours, dec.degrees),
+            height_degrees=180,
+            width_degrees=180,
+            num_pts=100,
         )
+        x = []
+        y = []
+        verts = []
+
+        # TODO : handle map edges better
+
+        for ra, dec in points:
+            ra = ra / 15
+            x0, y0 = self._prepare_coords(ra, dec)
+            x.append(x0)
+            y.append(y0)
+            verts.append((x0, y0))
+
+        style_kwargs = {}
+        if self.projection == Projection.ZENITH:
+            """
+            For zenith projections, we plot the horizon as a patch because
+            plottting as a line results in extra pixels on bottom.
+
+            TODO : investigate why line is extra thick on bottom when plotting line
+            """
+            style_kwargs = style.line.matplot_kwargs(self._size_multiplier)
+            style_kwargs["clip_on"] = False
+            style_kwargs["edgecolor"] = style_kwargs.pop("color")
+
+            patch = patches.Polygon(
+                verts,
+                facecolor=None,
+                fill=False,
+                transform=self._crs,
+                **style_kwargs,
+            )
+            self.ax.add_patch(patch)
+
+        else:
+            style_kwargs["clip_on"] = True
+            style_kwargs["clip_path"] = self._background_clip_path
+            self.ax.plot(
+                x,
+                y,
+                dash_capstyle=style.line.dash_capstyle,
+                **style.line.matplot_kwargs(self._size_multiplier),
+                **style_kwargs,
+                **self._plot_kwargs(),
+            )
+
+        # self.circle(
+        #     (ra.hours, dec.degrees),
+        #     90,
+        #     style,
+        #     num_pts=200,
+        # )
+
+        if not labels:
+            return
+
+        north = observer.from_altaz(alt_degrees=0, az_degrees=0)
+        east = observer.from_altaz(alt_degrees=0, az_degrees=90)
+        south = observer.from_altaz(alt_degrees=0, az_degrees=180)
+        west = observer.from_altaz(alt_degrees=0, az_degrees=270)
+
+        cardinal_directions = [north, east, south, west]
+
+        text_kwargs = dict(
+            **style.label.matplot_kwargs(self._size_multiplier),
+            hide_on_collision=False,
+            xytext=(style.label.offset_x, style.label.offset_y),
+            textcoords="offset pixels",
+            path_effects=[],
+        )
+
+        if self.projection == Projection.ZENITH:
+            text_kwargs["clip_on"] = False
+
+        for i, position in enumerate(cardinal_directions):
+            ra, dec, _ = position.radec()
+            self._text(ra.hours, dec.degrees, labels[i], **text_kwargs)
 
     @use_style(PathStyle, "gridlines")
     def gridlines(
@@ -598,11 +702,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if self._is_global_extent():
             if self.projection == Projection.ZENITH:
                 theta = np.linspace(0, 2 * np.pi, 100)
-                center, radius = [0.5, 0.5], 0.472
+                center, radius = [0.5, 0.5], 0.45
                 verts = np.vstack([np.sin(theta), np.cos(theta)]).T
                 circle = path.Path(verts * radius + center)
                 extent = self.ax.get_extent(crs=self._proj)
-                self.ax.set_extent((p / 3.75 for p in extent), crs=self._proj)
+                self.ax.set_extent((p / 3.548 for p in extent), crs=self._proj)
                 self.ax.set_boundary(circle, transform=self.ax.transAxes)
             else:
                 # this cartopy function works better for setting global extents
@@ -645,8 +749,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def _plot_background_clip_path(self):
         if self.projection == Projection.ZENITH:
             self._background_clip_path = patches.Circle(
-                (0.5, 0.5),
-                radius=0.472,
+                (0.50, 0.50),
+                radius=0.45,
                 fill=True,
                 facecolor=self.style.background_color.as_hex(),
                 # edgecolor=self.style.border_line_color.as_hex(),

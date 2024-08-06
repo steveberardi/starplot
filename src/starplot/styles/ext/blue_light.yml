@@ -1,7 +1,22 @@
 background_color: '#fff'
+
 border_bg_color: '#b5cbe3'
 border_font_color: '#2f4358'
 border_line_color: '#2f4358'
+
+horizon:
+  line:
+    color: '#b5cbe3'
+    edge_color: '#2f4358'
+  label:
+    font_color: '#2f4358'
+
+zenith:
+  marker:
+    color: hsl(18, 68%, 75%)
+  label:
+    font_color: hsl(18, 68%, 75%)
+
 title:
   font_color: '#2f4358'
 star:

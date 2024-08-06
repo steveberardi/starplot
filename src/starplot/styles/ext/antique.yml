@@ -8,9 +8,24 @@
 
 background_color: hsl(48, 80%, 96%)
 figure_background_color: hsl(60, 9%, 29%)
+
 border_bg_color: hsl(60, 3%, 32%)
 border_font_color: hsl(60, 20%, 93%)
 border_line_color: hsl(60, 20%, 53%)
+
+horizon:
+  line:
+    color: hsl(60, 3%, 32%)
+    edge_color: hsl(60, 20%, 53%)
+  label:
+    font_color: hsl(60, 20%, 93%)
+
+zenith:
+  marker:
+    color: hsl(26, 93%, 82%)
+  label:
+    font_color: hsl(26, 93%, 82%)
+
 title:
   font_color: hsl(60, 20%, 93%)
 bayer_labels:

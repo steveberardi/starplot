@@ -1,8 +1,23 @@
 background_color: hsl(136, 0%, 10%)
 figure_background_color: hsl(136, 0%, 100%)
+
 border_bg_color: hsl(136, 0%, 20%)
 border_font_color: hsl(136, 0%, 90%)
 border_line_color: hsl(136, 0%, 54%)
+
+horizon:
+  line:
+    color: hsl(136, 0%, 20%)
+    edge_color: hsl(136, 0%, 54%)
+  label:
+    font_color: hsl(136, 0%, 90%)
+
+zenith:
+  marker:
+    color: hsl(136, 0%, 90%)
+  label:
+    font_color: hsl(136, 0%, 90%)
+
 title:
   font_color: hsl(136, 0%, 0%)
 info_text:

@@ -47,5 +47,6 @@ p.marker(
         },
     },
 )
+p.horizon()
 
 p.export("tutorial_03.png", transparent=True)

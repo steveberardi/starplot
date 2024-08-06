@@ -18,6 +18,6 @@ p = MapPlot(
 )
 p.constellations()
 p.stars(mag=4.4)
-p.border()
+p.horizon()
 
 p.export("star_chart_basic.png", transparent=True, padding=0.1)

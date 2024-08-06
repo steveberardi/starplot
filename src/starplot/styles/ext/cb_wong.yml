@@ -3,9 +3,25 @@
 # via https://davidmathlogic.com/colorblind
 
 background_color: '#fff'
+
 border_bg_color: '#fff'
 border_font_color: hsl(0, 0%, 0%)
 border_line_color: hsl(0, 0%, 0%)
+
+horizon:
+  line:
+    color: hsl(0, 0%, 96%)
+    edge_color: hsl(0, 0%, 0%)
+  label:
+    font_color: hsl(0, 0%, 0%)
+
+zenith:
+  marker:
+    alpha: 1.0
+    color: hsl(26, 100%, 42%)
+  label:
+    font_color: hsl(26, 100%, 42%)
+
 title:
   font_color: '#2f4358'
 star:

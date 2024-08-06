@@ -1,10 +1,22 @@
 background_color: '#4c566a'
-bayer_labels:
-  font_alpha: 0.8
-  font_color: '#85c9de'
+
 border_bg_color: '#2e3440'
 border_font_color: '#a3be8c'
 border_line_color: '#a3be8c'
+
+horizon:
+  line:
+    color: '#2e3440'
+    edge_color: '#a3be8c'
+  label:
+    font_color: '#a3be8c'
+
+zenith:
+  marker:
+    color: '#D99CBA'
+  label:
+    font_color: '#D99CBA'
+
 title:
   font_color: '#a3be8c'
 celestial_equator:
@@ -110,7 +122,11 @@ moon:
     font_weight: bold
   marker:
     color: '#88c0d0'
-    
+
+bayer_labels:
+  font_alpha: 0.8
+  font_color: '#85c9de'
+
 legend:
   background_color: '#515e76'
   background_alpha: 1.0
