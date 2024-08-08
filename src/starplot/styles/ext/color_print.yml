@@ -1,5 +1,5 @@
 background_color: '#fff'
-figure_background_color: '#fff'
+figure_background_color: hsl(211, 26%, 24%)
 border_bg_color: '#fff'
 border_font_color: '#000'
 border_line_color: '#fff'
@@ -19,12 +19,12 @@ celestial_equator:
     alpha: 0.6
 constellation:
   label:
-    font_size: 7
+    font_size: 4
     font_weight: light
-    font_color: '#2b89ed'
-    font_alpha: 0.2
+    font_color: '#8c8c8c'
+    font_alpha: 0.1
   line:
-    alpha: 0.5
+    alpha: 0.2
     color: '#2b89ed'
     width: 2
 ecliptic:
@@ -39,14 +39,14 @@ planets:
     color: '#f89d00'
     fill: full
 milky_way:
-  alpha: 0.2
+  alpha: 0.1
   color: '#2b89ed'
   edge_width: 0
 gridlines:
   label:
-    font_alpha: 0.8
-    font_color: '#888'
-    font_size: 8
+    font_alpha: 1
+    font_color:  hsl(211, 80%, 97%)
+    font_size: 18
     font_weight: light
   line:
     alpha: 0.4
@@ -77,23 +77,24 @@ dso_double_star:
     
 dso_galaxy:
   marker:
-    alpha: 0.45
+    alpha: 0.3
     color: '#d11925'
     edge_color: '#d11925'
 
 dso_nebula:
   marker:
-    alpha: 0.56
-    color: hsl(91, 62%, 82%)
-    edge_color: hsl(91, 53%, 40%)
+    alpha: 0.5
+    # color: hsl(91, 62%, 82%)
+    color: '#2b89ed'
+    edge_color: hsl(211, 84%, 20%)
 dso_open_cluster:
   marker:
-    alpha: 0.8
+    alpha: 0.6
     color: '#2b89ed'
     symbol: circle_dotted_edge
 dso_association_stars:
   marker:
-    alpha: 0.8
+    alpha: 0.6
     color: '#2b89ed'
     symbol: circle_dotted_edge
 dso_globular_cluster:
