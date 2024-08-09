@@ -2,6 +2,7 @@ import json
 from enum import Enum
 from pathlib import Path
 from typing import Optional
+from functools import cache
 
 import yaml
 
@@ -28,9 +29,13 @@ HERE = Path(__file__).resolve().parent
 
 
 class BaseStyle(BaseModel):
+
+    __hash__ = object.__hash__
+
     class Config:
         use_enum_values = True
         extra = "forbid"
+    
 
 
 class FillStyleEnum(str, Enum):
@@ -251,6 +256,7 @@ class MarkerStyle(BaseStyle):
     def symbol_matplot(self) -> str:
         return MarkerSymbolEnum(self.symbol).as_matplot()
 
+    @cache
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex() if self.color else "none",
@@ -312,6 +318,7 @@ class LineStyle(BaseStyle):
     edge_color: Optional[ColorStr] = None
     """Edge color of the line. _If the width or color is falsey then the line will NOT be drawn with an edge._"""
 
+    @cache
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         line_width = self.width * size_multiplier
 
