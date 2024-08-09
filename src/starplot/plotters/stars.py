@@ -142,7 +142,9 @@ class StarPlotterMixin:
         self.logger.debug("Plotting stars...")
 
         # fallback to style if callables are None
-        color_hex = style.marker.color.as_hex() # calculate color hex once here to avoid repeated calls in color_fn()
+        color_hex = (
+            style.marker.color.as_hex()
+        )  # calculate color hex once here to avoid repeated calls in color_fn()
         size_fn = size_fn or (lambda d: style.marker.size)
         alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
         color_fn = color_fn or (lambda d: color_hex)

@@ -121,8 +121,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 "Zenith projection requires a global extent: ra_min=0, ra_max=24, dec_min=-90, dec_max=90"
             )
 
-        self.stars_df = stars.load("hipparcos")
-
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
         self._crs = ccrs.CRS(
@@ -358,6 +356,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             use_arrow=True,
             bbox=self._extent_mask(),
         )
+        stars_df = stars.load("hipparcos")
 
         if constellations_gdf.empty:
             return
@@ -374,8 +373,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             hiplines = conline_hips[c.id]
 
             for s1_hip, s2_hip in hiplines:
-                s1 = self.stars_df.loc[s1_hip]
-                s2 = self.stars_df.loc[s2_hip]
+                s1 = stars_df.loc[s1_hip]
+                s2 = stars_df.loc[s2_hip]
 
                 s1_ra = s1.ra_hours * 15
                 s2_ra = s2.ra_hours * 15

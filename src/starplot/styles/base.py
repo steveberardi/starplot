@@ -29,13 +29,11 @@ HERE = Path(__file__).resolve().parent
 
 
 class BaseStyle(BaseModel):
-
     __hash__ = object.__hash__
 
     class Config:
         use_enum_values = True
         extra = "forbid"
-    
 
 
 class FillStyleEnum(str, Enum):
