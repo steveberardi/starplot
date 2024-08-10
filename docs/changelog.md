@@ -1,5 +1,19 @@
 
+## v0.11.x
+
+- Replaces Tycho-1 stars with an abridged version of the [Big Sky Catalog](https://github.com/steveberardi/bigsky)
+- Adds style option for a star's edge color (previously this was forced to be the background color)
+- Adds cardinal direction labels to the horizon plotting function
+- Removes behavior that automatically plots the cardinal direction border on zenith plots
+- Adds function for plotting the zenith
+- Adds support for downloading the full [Big Sky Catalog](https://github.com/steveberardi/bigsky) (2.5+ million stars)
+- Various (minor) plotting optimizations
+- Increases star sizes on map plots
+- Adds the following projections: Robinson, Lambert Azimuthal Equal-Area
+
 ## v0.10.x
+[Documentation](https://archives.starplot.dev/0.10.2/)
+
 - Adds function for plotting text
 - Adds `where` kwarg to star/DSO plotting functions to selectively plot stars
 - Adds easier way to override style properties on plotting functions - thanks to Graham Schmidt
@@ -40,3 +54,5 @@
 - [**v0.8.2**] Fixes a small bug in determining if a RA/DEC is in bounds of a plot
 - [**v0.8.3**] More consistent polygon/circle sizing across projections
 - [**v0.8.4**] Fixes a small bug in plotting text labels of DSOs, which prevented some styles from getting applied
+
+<br/><br/>
