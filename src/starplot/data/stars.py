@@ -118,10 +118,25 @@ class StarCatalog(str, Enum):
     """Hipparcos Catalog = 118,218 stars"""
 
     BIG_SKY_MAG11 = "big-sky-mag11"
-    """Big Sky Catalog ~ 900k stars"""
+    """
+    [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 900k stars up to magnitude 11
+    
+    This is an _abridged_ version of the Big Sky Catalog. It includes all stars up to a limiting magnitude of 11, which is 981,852 stars.
+
+    This catalog is included with Starplot, so does not require downloading any files.
+    """
 
     BIG_SKY = "big-sky"
-    """Big Sky Catalog ~ 2.5M stars"""
+    """
+    [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 2.5M stars
+
+    This is the full version of the Big Sky Catalog, which includes 2,557,499 stars from Hipparcos, Tycho-1, and Tycho-2.
+
+    This catalog is very large (50+ MB), so it's not built-in to Starplot. When you plot stars and specify this catalog, the catalog 
+    will be downloaded from the [Big Sky GitHub repository](https://github.com/steveberardi/bigsky) and saved to Starplot's data library 
+    directory. You can override this download path with the environment variable `STARPLOT_DOWNLOAD_PATH`
+    
+    """
 
 
 def load_bigsky():
