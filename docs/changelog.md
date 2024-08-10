@@ -9,6 +9,7 @@
 - Adds support for downloading the full [Big Sky Catalog](https://github.com/steveberardi/bigsky) (2.5+ million stars)
 - Various (minor) plotting optimizations
 - Increases star sizes on map plots
+- Adds TYC id to stars (if available)
 - Adds the following projections: Robinson, Lambert Azimuthal Equal-Area
 
 ## v0.10.x
