@@ -14,7 +14,7 @@ p = MapPlot(
     style=PlotStyle().extend(
         extensions.NORD,
     ),
-    resolution=2600,
+    resolution=3600,
 )
 p.constellations()
 p.stars(mag=4.6, where_labels=[Star.magnitude < 2.1])

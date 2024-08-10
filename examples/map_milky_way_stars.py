@@ -44,4 +44,4 @@ p.stars(
     style__marker__edge_color=None,
 )
 
-p.export("map_milky_way_stars.jpg", format="jpeg", padding=0.1)
+p.export("map_milky_way_stars.png", padding=0.1, transparent=True)

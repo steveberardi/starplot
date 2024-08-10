@@ -14,7 +14,7 @@ p = MapPlot(
     style=PlotStyle().extend(
         extensions.BLUE_MEDIUM,
     ),
-    resolution=2400,
+    resolution=3600,
 )
 p.constellations()
 p.stars(mag=4.4)

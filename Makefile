@@ -59,7 +59,7 @@ scratchpad:
 	$(DOCKER_RUN) "python $(SCRATCH_ARGS) scripts/scratchpad.py"
 
 examples:
-	$(DOCKER_RUN) "cd examples && python examples.py"
+	$(DOCKER_RUN) "cd examples && rm -f *.png && rm -f *.jpg && python examples.py"
 
 tutorial:
 	$(DOCKER_RUN) "cd tutorial && python build.py"

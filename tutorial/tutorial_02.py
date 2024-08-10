@@ -10,7 +10,7 @@ p = MapPlot(
     lat=33.363484,
     lon=-116.836394,
     dt=dt,
-    resolution=2600,
+    resolution=3600,
 )
 p.constellations()
 p.stars(mag=4.6)
