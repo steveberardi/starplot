@@ -25,6 +25,7 @@ export PYTHONPATH=./src/
 build: PYTHON_VERSION=3.11.7
 build: DOCKER_BUILD_ARGS=-t starplot-dev
 build:
+	touch -a .env
 	$(DOCKER_BUILD_PYTHON)
 
 docker-multi-arch:
