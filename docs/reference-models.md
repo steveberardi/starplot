@@ -15,6 +15,15 @@ Starplot has models to represent some of the objects you can plot, including sta
         show_docstring_attributes: true
         members_order: source
 
+
+::: starplot.Constellation
+    options:
+        inherited_members: true
+        docstring_section_style: list
+        show_root_heading: true
+        show_docstring_attributes: true
+        members_order: source
+
 ::: starplot.DSO
     options:
         inherited_members: true

@@ -11,6 +11,7 @@
 - Increases star sizes on map plots
 - Adds TYC id to stars (if available)
 - Adds the following projections: Robinson, Lambert Azimuthal Equal-Area
+- Adds a constellation model, allowing you to selectively plot objects by their constellation
 
 ## v0.10.x
 [Documentation](https://archives.starplot.dev/0.10.2/)
