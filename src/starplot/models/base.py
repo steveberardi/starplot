@@ -110,7 +110,7 @@ class SkyObject(CreateMapMixin, CreateOpticMixin, metaclass=Meta):
     """Declination, in degrees (-90...90)"""
 
     constellation_id: Optional[str] = None
-    """Constellation identifier, as designated by the International Astronomical Union (IAU), three letters and all lowercase"""
+    """Identifier of the constellation that contains this object. The ID is the three-letter (all lowercase) abbreviation from the International Astronomical Union (IAU)."""
 
     def __init__(self, ra: float, dec: float) -> None:
         self.ra = ra
