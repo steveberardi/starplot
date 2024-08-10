@@ -595,7 +595,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         """
 
         ra_formatter_fn_default = lambda r: f"{math.floor(r)}h"  # noqa: E731
-        dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0"  # noqa: E731
+        dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
 
         ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
         dec_formatter_fn = dec_formatter_fn or dec_formatter_fn_default

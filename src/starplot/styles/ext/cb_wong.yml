@@ -36,7 +36,7 @@ constellation:
   label:
     font_color: '#c5c5c5'
   line:
-    alpha: 0.35
+    alpha: 0.346
     color: hsl(202, 100%, 35%)
     width: 2
 dso_double_star:

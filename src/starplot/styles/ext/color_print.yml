@@ -1,5 +1,6 @@
 background_color: '#fff'
-figure_background_color: hsl(211, 26%, 24%)
+# figure_background_color: hsl(211, 26%, 24%)
+figure_background_color: '#fff'
 border_bg_color: '#fff'
 border_font_color: '#000'
 border_line_color: '#fff'
