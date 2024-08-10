@@ -446,6 +446,14 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         label: str = None,
         legend_label: str = "Zenith",
     ):
+        """
+        Plots a marker for the zenith (requires `lat`, `lon`, and `dt` to be defined when creating the plot)
+
+        Args:
+            style: Style of the zenith marker. If None, then the plot's style definition will be used.
+            label: Label for the zenith
+            legend_label: Label in the legend
+        """
         if self.lat is None or self.lon is None or self.dt is None:
             raise ValueError("lat, lon, and dt are required for plotting the zenith")
 
