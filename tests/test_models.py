@@ -4,7 +4,7 @@ import pytest
 
 from pytz import timezone
 
-from starplot import DSO, Star, Sun, Moon, Planet
+from starplot import DSO, Star, Constellation, Sun, Moon, Planet
 
 
 class TestStar:
@@ -41,6 +41,7 @@ class TestStar:
 
         assert sirius.magnitude == -1.44
         assert sirius.hip == 32349
+        assert sirius.constellation_id == "cma"
 
     def test_star_get_raises_exception(self):
         with pytest.raises(ValueError):
@@ -54,6 +55,20 @@ class TestStar:
         bright = Star.find(where=[Star.name.is_in(names)])
         assert len(bright) == 4
         assert set([s.name for s in bright]) == names
+
+
+class TestConstellation:
+    def test_constellation_get(self):
+        hercules = Constellation.get(iau_id="her")
+        assert hercules.name == "Hercules"
+        assert hercules.ra == 16.88
+        assert hercules.dec == 34.86
+
+    def test_constellation_find(self):
+        results = Constellation.find(
+            where=[Constellation.name.is_in(["Canis Major", "Andromeda", "Orion"])]
+        )
+        assert len(results) == 3
 
 
 class TestDSO:

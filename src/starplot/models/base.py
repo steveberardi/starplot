@@ -1,6 +1,11 @@
+from typing import Optional
 from abc import ABC, abstractmethod
 
+from skyfield.api import position_of_radec, load_constellation_map
+
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
+
+constellation_at = load_constellation_map()
 
 
 class Expression:
@@ -104,9 +109,15 @@ class SkyObject(CreateMapMixin, CreateOpticMixin, metaclass=Meta):
     dec: float
     """Declination, in degrees (-90...90)"""
 
+    constellation_id: Optional[str] = None
+    """Constellation identifier, as designated by the International Astronomical Union (IAU), three letters and all lowercase"""
+
     def __init__(self, ra: float, dec: float) -> None:
         self.ra = ra
         self.dec = dec
+
+        pos = position_of_radec(ra, dec)
+        self.constellation_id = constellation_at(pos).lower()
 
 
 class SkyObjectManager(ABC):
