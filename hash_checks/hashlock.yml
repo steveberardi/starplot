@@ -26,6 +26,10 @@ map_orion_extra:
   dhash: 1c1b3a6d2f646c171d1b1b6b2f646c871c1b1b6b2d646c07
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: be71d11ee01fa4d0
+map_plot_limit_constellation:
+  dhash: 228a869606060202028a8686070606462208869647060a06
+  filename: /starplot/hash_checks/data/map-limit-constellation.png
+  phash: e5699392cc6d6592
 map_scope_bino_fov:
   dhash: 0bc0808c8c8080802bceb2ac4daa928c2bceb2ac4daa928c
   filename: /starplot/hash_checks/data/map-scope-bino-fov.png
