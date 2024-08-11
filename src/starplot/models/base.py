@@ -119,6 +119,12 @@ class SkyObject(CreateMapMixin, CreateOpticMixin, metaclass=Meta):
         pos = position_of_radec(ra, dec)
         self.constellation_id = constellation_at(pos).lower()
 
+    def constellation(self):
+        """Returns an instance of the [`Constellation`][starplot.models.Constellation] that contains this object"""
+        from starplot.models import Constellation
+
+        return Constellation.get(iau_id=self.constellation_id)
+
 
 class SkyObjectManager(ABC):
     @abstractmethod

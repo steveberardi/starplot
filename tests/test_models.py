@@ -38,10 +38,14 @@ class TestStar:
 
     def test_star_get(self):
         sirius = Star.get(name="Sirius")
+        constellation = sirius.constellation()
 
         assert sirius.magnitude == -1.44
         assert sirius.hip == 32349
         assert sirius.constellation_id == "cma"
+
+        assert constellation.iau_id == "cma"
+        assert constellation.name == "Canis Major"
 
     def test_star_get_raises_exception(self):
         with pytest.raises(ValueError):
@@ -79,6 +83,7 @@ class TestDSO:
         assert m13.m == "13"
         assert m13.ngc == "6205"
         assert m13.ic is None
+        assert m13.constellation_id == "her"
 
     def test_dso_find_messier(self):
         results = DSO.find(where=[DSO.m.is_not_null()])

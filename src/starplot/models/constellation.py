@@ -66,3 +66,7 @@ class Constellation(SkyObject):
 
         """
         pass
+
+    def constellation(self):
+        """Not applicable to Constellation model, raises `NotImplementedError`"""
+        raise NotImplementedError()
