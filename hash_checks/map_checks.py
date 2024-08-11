@@ -347,6 +347,7 @@ def check_map_moon_phase_waxing_crescent():
     p.close_fig()
     return filename
 
+
 def check_map_plot_limit_constellation():
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
@@ -354,38 +355,24 @@ def check_map_plot_limit_constellation():
         ra_max=20,
         dec_min=23,
         dec_max=50,
-        style=STYLE.extend({
-            "dso_open_cluster": {
-                "marker": {
-                    "size": 20
-                }
-            },
-            "dso_galaxy": {
-                "marker": {
-                    "size": 20
-                }
+        style=STYLE.extend(
+            {
+                "dso_open_cluster": {"marker": {"size": 20}},
+                "dso_galaxy": {"marker": {"size": 20}},
             }
-        }),
+        ),
         resolution=RESOLUTION,
     )
-    p.stars(
-        mag=9, 
-        bayer_labels=True,
-        where=[
-            Star.constellation_id == "lyr"
-        ]
-    )
+    p.stars(mag=9, bayer_labels=True, where=[Star.constellation_id == "lyr"])
     p.dsos(
-        mag=9, 
+        mag=9,
         labels=None,
-        where=[
-            Star.constellation_id == "lyr"
-        ],
+        where=[Star.constellation_id == "lyr"],
         true_size=False,
     )
     p.constellations()
     p.constellation_borders()
-    
+
     filename = DATA_PATH / "map-limit-constellation.png"
     p.export(filename)
     p.close_fig()
