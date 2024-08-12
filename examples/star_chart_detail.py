@@ -14,10 +14,10 @@ p = MapPlot(
     style=PlotStyle().extend(
         extensions.NORD,
     ),
-    resolution=2600,
+    resolution=3600,
 )
 p.constellations()
-p.stars(mag=5.6, where_labels=[Star.magnitude < 2.1])
+p.stars(mag=4.6, where_labels=[Star.magnitude < 2.1])
 
 p.dsos(mag=9, true_size=True, labels=None)
 p.constellation_borders()
@@ -48,5 +48,6 @@ p.marker(
         },
     },
 )
+p.horizon()
 
-p.export("star_chart_detail.png", transparent=True)
+p.export("star_chart_detail.png", transparent=True, padding=0.1)

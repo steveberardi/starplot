@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 from pytz import timezone
 
-from starplot import styles, DSO, Moon
+from starplot import styles, DSO, Moon, Star
 from starplot.map import MapPlot, Projection
 
 HERE = Path(__file__).resolve().parent
@@ -185,7 +185,7 @@ def check_map_scope_bino_fov():
         dt=dt,
         style=style,
         resolution=1000,
-        star_catalog="tycho-1",
+        star_catalog="big-sky-mag11",
     )
     p.stars(mag=12)
     p.scope_fov(
@@ -343,6 +343,37 @@ def check_map_moon_phase_waxing_crescent():
         style__line__alpha=0.2,
     )
     filename = DATA_PATH / "map-moon-phase-waxing-crescent.png"
+    p.export(filename)
+    p.close_fig()
+    return filename
+
+
+def check_map_plot_limit_constellation():
+    p = MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=18,
+        ra_max=20,
+        dec_min=23,
+        dec_max=50,
+        style=STYLE.extend(
+            {
+                "dso_open_cluster": {"marker": {"size": 20}},
+                "dso_galaxy": {"marker": {"size": 20}},
+            }
+        ),
+        resolution=RESOLUTION,
+    )
+    p.stars(mag=9, bayer_labels=True, where=[Star.constellation_id == "lyr"])
+    p.dsos(
+        mag=9,
+        labels=None,
+        where=[Star.constellation_id == "lyr"],
+        true_size=False,
+    )
+    p.constellations()
+    p.constellation_borders()
+
+    filename = DATA_PATH / "map-limit-constellation.png"
     p.export(filename)
     p.close_fig()
     return filename

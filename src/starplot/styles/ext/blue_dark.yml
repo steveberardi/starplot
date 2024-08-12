@@ -1,8 +1,23 @@
 background_color: hsl(209, 50%, 24%)
 figure_background_color: hsl(209, 43%, 15%)
+
 border_bg_color: hsl(209, 50%, 20%)
 border_font_color: hsl(209, 56%, 86%)
 border_line_color: hsl(209, 38%, 50%)
+
+horizon:
+  line:
+    color: hsl(209, 50%, 20%)
+    edge_color: hsl(209, 38%, 50%)
+  label:
+    font_color: hsl(209, 56%, 86%)
+
+zenith:
+  marker:
+    color: hsl(209, 20%, 75%)
+  label:
+    font_color: hsl(209, 20%, 75%)
+
 title:
   font_color: hsl(209, 56%, 86%)
 bayer_labels:
@@ -119,7 +134,7 @@ star:
     font_weight: bold
   marker:
     color: hsl(209, 50%, 94%)
-    size: 25
+    edge_color: hsl(209, 50%, 24%)
 sun:
   label:
     font_color: hsl(209, 23%, 80%)

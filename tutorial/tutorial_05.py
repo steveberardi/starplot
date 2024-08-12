@@ -28,6 +28,6 @@ p = OpticPlot(
     style=style,
     resolution=1600,
 )
-p.stars(mag=12, catalog="tycho-1", bayer_labels=True)
+p.stars(mag=12, catalog="big-sky-mag11", bayer_labels=True)
 
 p.export("tutorial_05.png", padding=0.1, transparent=True)

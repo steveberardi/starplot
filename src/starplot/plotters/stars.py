@@ -1,4 +1,5 @@
 from typing import Callable, Mapping
+from functools import cache
 
 import numpy as np
 
@@ -12,6 +13,7 @@ from starplot.styles import ObjectStyle, LabelStyle, use_style
 
 
 class StarPlotterMixin:
+    @cache
     def _load_stars(self, catalog, limiting_magnitude=None):
         stardata = stars.load(catalog)
 
@@ -125,7 +127,7 @@ class StarPlotterMixin:
 
         Args:
             mag: Limiting magnitude of stars to plot. For more control of what stars to plot, use the `where` kwarg. **Note:** if you pass `mag` and `where` then `mag` will be ignored
-            catalog: The catalog of stars to use: "hipparcos" or "tycho-1" -- Hipparcos is the default and has about 10x less stars than Tycho-1 but will also plot much faster
+            catalog: The catalog of stars to use: "hipparcos", "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
             style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
@@ -140,9 +142,12 @@ class StarPlotterMixin:
         self.logger.debug("Plotting stars...")
 
         # fallback to style if callables are None
+        color_hex = (
+            style.marker.color.as_hex()
+        )  # calculate color hex once here to avoid repeated calls in color_fn()
         size_fn = size_fn or (lambda d: style.marker.size)
         alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
-        color_fn = color_fn or (lambda d: style.marker.color.as_hex())
+        color_fn = color_fn or (lambda d: color_hex)
 
         where = where or []
 
@@ -171,9 +176,22 @@ class StarPlotterMixin:
         for star in nearby_stars_df.itertuples():
             m = star.magnitude
             ra, dec = star.ra, star.dec
-            hip_id = star.Index
 
-            obj = Star(ra=ra / 15, dec=dec, magnitude=m, bv=star.bv)
+            if catalog == StarCatalog.HIPPARCOS:
+                hip_id = star.Index
+                tyc_id = None
+            else:
+                hip_id = star.hip
+                tyc_id = star.Index
+
+            obj = Star(
+                ra=ra / 15,
+                dec=dec,
+                magnitude=m,
+                bv=star.bv,
+                hip=hip_id,
+                tyc=tyc_id,
+            )
 
             if np.isfinite(hip_id):
                 obj.hip = hip_id
@@ -205,7 +223,9 @@ class StarPlotterMixin:
             colors,
             style=style,
             zorder=style.marker.zorder,
-            edgecolors=self.style.background_color.as_hex(),
+            edgecolors=style.marker.edge_color.as_hex()
+            if style.marker.edge_color
+            else "none",
             rasterized=rasterize,
         )
 

@@ -22,7 +22,7 @@ Starplot is a Python library for creating star charts and maps.
 
 - 🎨 **Custom Styles** - for all objects
 
-- 📥 **Export** - png, svg
+- 📥 **Export** - png, svg, jpeg
 
 - 🧭 **Label Collision Avoidance**
 

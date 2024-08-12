@@ -13,6 +13,7 @@ from skyfield.api import Star as SkyfieldStar, wgs84
 import geopandas as gpd
 import numpy as np
 
+from starplot import geod
 from starplot.base import BasePlot
 from starplot.data import DataFiles, constellations as condata, stars
 from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
@@ -20,6 +21,7 @@ from starplot.mixins import ExtentMaskMixin
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.projections import Projection
 from starplot.styles import (
+    ObjectStyle,
     LabelStyle,
     LineStyle,
     PlotStyle,
@@ -118,8 +120,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             raise ValueError(
                 "Zenith projection requires a global extent: ra_min=0, ra_max=24, dec_min=-90, dec_max=90"
             )
-
-        self.stars_df = stars.load("hipparcos")
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -356,6 +356,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             use_arrow=True,
             bbox=self._extent_mask(),
         )
+        stars_df = stars.load("hipparcos")
 
         if constellations_gdf.empty:
             return
@@ -372,8 +373,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             hiplines = conline_hips[c.id]
 
             for s1_hip, s2_hip in hiplines:
-                s1 = self.stars_df.loc[s1_hip]
-                s2 = self.stars_df.loc[s2_hip]
+                s1 = stars_df.loc[s1_hip]
+                s2 = stars_df.loc[s2_hip]
 
                 s1_ra = s1.ra_hours * 15
                 s2_ra = s2.ra_hours * 15
@@ -438,31 +439,141 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 **style_kwargs,
             )
 
-    @use_style(PolygonStyle)
+    @use_style(ObjectStyle, "zenith")
+    def zenith(
+        self,
+        style: ObjectStyle = None,
+        label: str = None,
+        legend_label: str = "Zenith",
+    ):
+        """
+        Plots a marker for the zenith (requires `lat`, `lon`, and `dt` to be defined when creating the plot)
+
+        Args:
+            style: Style of the zenith marker. If None, then the plot's style definition will be used.
+            label: Label for the zenith
+            legend_label: Label in the legend
+        """
+        if self.lat is None or self.lon is None or self.dt is None:
+            raise ValueError("lat, lon, and dt are required for plotting the zenith")
+
+        geographic = wgs84.latlon(latitude_degrees=self.lat, longitude_degrees=self.lon)
+        observer = geographic.at(self.timescale)
+        zenith = observer.from_altaz(alt_degrees=90, az_degrees=0)
+        ra, dec, _ = zenith.radec()
+
+        self.marker(
+            ra.hours,
+            dec.degrees,
+            label,
+            style,
+            legend_label,
+        )
+
+    @use_style(PathStyle, "horizon")
     def horizon(
         self,
-        style: PolygonStyle = PolygonStyle(
-            fill_color=None,
-            edge_color="red",
-            line_style="dashed",
-            edge_width=4,
-            zorder=1000,
-        ),
+        style: PathStyle = None,
+        labels: list = ["N", "E", "S", "W"],
     ):
         """
         Draws a [great circle](https://en.wikipedia.org/wiki/Great_circle) representing the horizon for the given `lat`, `lon` at time `dt` (so you must define these when creating the plot to use this function)
 
         Args:
-            style: Style of the polygon
+            style: Style of the horizon path. If None, then the plot's style definition will be used.
+            labels: List of labels for cardinal directions. **NOTE: labels should be in the order: North, East, South, West.**
         """
         if self.lat is None or self.lon is None or self.dt is None:
             raise ValueError("lat, lon, and dt are required for plotting the horizon")
 
-        self.circle(
-            ((self.timescale.gmst + self.lon / 15.0) % 24, self.lat),
-            90,
-            style,
+        geographic = wgs84.latlon(latitude_degrees=self.lat, longitude_degrees=self.lon)
+        observer = geographic.at(self.timescale)
+        zenith = observer.from_altaz(alt_degrees=90, az_degrees=0)
+        ra, dec, _ = zenith.radec()
+
+        points = geod.ellipse(
+            center=(ra.hours, dec.degrees),
+            height_degrees=180,
+            width_degrees=180,
+            num_pts=100,
         )
+        x = []
+        y = []
+        verts = []
+
+        # TODO : handle map edges better
+
+        for ra, dec in points:
+            ra = ra / 15
+            x0, y0 = self._prepare_coords(ra, dec)
+            x.append(x0)
+            y.append(y0)
+            verts.append((x0, y0))
+
+        style_kwargs = {}
+        if self.projection == Projection.ZENITH:
+            """
+            For zenith projections, we plot the horizon as a patch because
+            plottting as a line results in extra pixels on bottom.
+
+            TODO : investigate why line is extra thick on bottom when plotting line
+            """
+            style_kwargs = style.line.matplot_kwargs(self._size_multiplier)
+            style_kwargs["clip_on"] = False
+            style_kwargs["edgecolor"] = style_kwargs.pop("color")
+
+            patch = patches.Polygon(
+                verts,
+                facecolor=None,
+                fill=False,
+                transform=self._crs,
+                **style_kwargs,
+            )
+            self.ax.add_patch(patch)
+
+        else:
+            style_kwargs["clip_on"] = True
+            style_kwargs["clip_path"] = self._background_clip_path
+            self.ax.plot(
+                x,
+                y,
+                dash_capstyle=style.line.dash_capstyle,
+                **style.line.matplot_kwargs(self._size_multiplier),
+                **style_kwargs,
+                **self._plot_kwargs(),
+            )
+
+        # self.circle(
+        #     (ra.hours, dec.degrees),
+        #     90,
+        #     style,
+        #     num_pts=200,
+        # )
+
+        if not labels:
+            return
+
+        north = observer.from_altaz(alt_degrees=0, az_degrees=0)
+        east = observer.from_altaz(alt_degrees=0, az_degrees=90)
+        south = observer.from_altaz(alt_degrees=0, az_degrees=180)
+        west = observer.from_altaz(alt_degrees=0, az_degrees=270)
+
+        cardinal_directions = [north, east, south, west]
+
+        text_kwargs = dict(
+            **style.label.matplot_kwargs(self._size_multiplier),
+            hide_on_collision=False,
+            xytext=(style.label.offset_x, style.label.offset_y),
+            textcoords="offset pixels",
+            path_effects=[],
+        )
+
+        if self.projection == Projection.ZENITH:
+            text_kwargs["clip_on"] = False
+
+        for i, position in enumerate(cardinal_directions):
+            ra, dec, _ = position.radec()
+            self._text(ra.hours, dec.degrees, labels[i], **text_kwargs)
 
     @use_style(PathStyle, "gridlines")
     def gridlines(
@@ -492,7 +603,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         """
 
         ra_formatter_fn_default = lambda r: f"{math.floor(r)}h"  # noqa: E731
-        dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0"  # noqa: E731
+        dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
 
         ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
         dec_formatter_fn = dec_formatter_fn or dec_formatter_fn_default
@@ -573,7 +684,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             layout="constrained",
         )
         bounds = self._latlon_bounds()
+        center_lat = (bounds[2] + bounds[3]) / 2
         center_lon = (bounds[0] + bounds[1]) / 2
+        self._center_lat = center_lat
         self._center_lon = center_lon
 
         if self.projection in [
@@ -584,6 +697,10 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             # Calculate LST to shift RA DEC to be in line with current date and time
             lst = -(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
             self._proj = Projection.crs(self.projection, lon=lst, lat=self.lat)
+        elif self.projection == Projection.LAMBERT_AZ_EQ_AREA:
+            self._proj = Projection.crs(
+                self.projection, center_lat=center_lat, center_lon=center_lon
+            )
         else:
             self._proj = Projection.crs(self.projection, center_lon)
         self._proj.threshold = 1000
@@ -592,11 +709,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if self._is_global_extent():
             if self.projection == Projection.ZENITH:
                 theta = np.linspace(0, 2 * np.pi, 100)
-                center, radius = [0.5, 0.5], 0.51
+                center, radius = [0.5, 0.5], 0.45
                 verts = np.vstack([np.sin(theta), np.cos(theta)]).T
                 circle = path.Path(verts * radius + center)
                 extent = self.ax.get_extent(crs=self._proj)
-                self.ax.set_extent((p / 3.75 for p in extent), crs=self._proj)
+                self.ax.set_extent((p / 3.548 for p in extent), crs=self._proj)
                 self.ax.set_boundary(circle, transform=self.ax.transAxes)
             else:
                 # this cartopy function works better for setting global extents
@@ -609,8 +726,45 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         self.logger.debug(f"Projection = {self.projection.value.upper()}")
 
+        self._plot_background_clip_path()
+
+        self._fit_to_ax()
+
+    @use_style(LabelStyle, "info_text")
+    def info(self, style: LabelStyle = None):
+        """
+        Plots info text in the lower left corner, including date/time and lat/lon.
+
+        _Only available for ZENITH projections_
+
+        Args:
+            style: Styling of the info text. If None, then the plot's style definition will be used.
+        """
+        if not self.projection == Projection.ZENITH:
+            raise NotImplementedError("info text only available for zenith projections")
+
+        dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
+        info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
+        self.ax.text(
+            0.05,
+            0.05,
+            info,
+            transform=self.ax.transAxes,
+            **style.matplot_kwargs(self._size_multiplier * 1.36),
+        )
+
+    def _plot_background_clip_path(self):
         if self.projection == Projection.ZENITH:
-            self._plot_border()
+            self._background_clip_path = patches.Circle(
+                (0.50, 0.50),
+                radius=0.45,
+                fill=True,
+                facecolor=self.style.background_color.as_hex(),
+                # edgecolor=self.style.border_line_color.as_hex(),
+                linewidth=0,  # 4 * self._size_multiplier,
+                zorder=-2_000,
+                transform=self.ax.transAxes,
+            )
         else:
             # draw patch in axes coords, which are easier to work with
             # in cases like this cause they go from 0...1 in all plots
@@ -624,89 +778,68 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 zorder=-2_000,
                 transform=self.ax.transAxes,
             )
-            self.ax.add_patch(self._background_clip_path)
 
-        self._fit_to_ax()
+        self.ax.add_patch(self._background_clip_path)
 
-    @use_style(LabelStyle, "info_text")
-    def info(self, style: LabelStyle = None):
-        """Plots info text in the lower left corner, including date/time and lat/lon.
+    def border(self, cardinal_direction_labels: list = ["N", "E", "S", "W"]):
+        """
+        Plots a border around the map.
 
         _Only available for ZENITH projections_
 
         Args:
-            style: Styling of the info text. If None, then the plot's style definition will be used.
+            cardinal_direction_labels: List of labels for cardinal directions on zenith plots. Order matters, labels should be in the order: North, East, South, West.
         """
+
         if not self.projection == Projection.ZENITH:
-            raise NotImplementedError("info text only available for zenith projections")
+            raise NotImplementedError("borders only available for zenith projections")
 
-        dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
-        self.ax.text(
-            0.01,
-            0.01,
-            info,
-            transform=self.ax.transAxes,
-            **style.matplot_kwargs(self._size_multiplier * 1.36),
-        )
-
-    def _plot_border(self):
-        """Plots circle border for Zenith projections"""
-        border_font_kwargs = dict(
-            fontsize=self.style.border_font_size * self._size_multiplier * 2.26,
-            weight=self.style.border_font_weight,
-            color=self.style.border_font_color.as_hex(),
-            transform=self.ax.transAxes,
-            zorder=5200,
-        )
-        self.ax.text(0.5, 0.98, "N", **border_font_kwargs)
-        self.ax.text(0.9752, 0.5, "W", **border_font_kwargs)
-        self.ax.text(0.00455, 0.5, "E", **border_font_kwargs)
-        self.ax.text(0.5, 0.00456, "S", **border_font_kwargs)
-
-        background_circle = patches.Circle(
-            (0.5, 0.5),
-            radius=0.475,
-            fill=True,
-            facecolor=self.style.background_color.as_hex(),
-            edgecolor=self.style.border_line_color.as_hex(),
-            linewidth=8 * self._size_multiplier,
-            zorder=-1_000,
-            transform=self.ax.transAxes,
-        )
-        self.ax.add_patch(background_circle)
-
-        self._background_clip_path = background_circle
+        if cardinal_direction_labels:
+            n, e, s, w = cardinal_direction_labels
+            border_font_kwargs = dict(
+                fontsize=self.style.border_font_size * self._size_multiplier * 2.26,
+                weight=self.style.border_font_weight,
+                color=self.style.border_font_color.as_hex(),
+                transform=self.ax.transAxes,
+                zorder=5000,
+            )
+            self.ax.text(0.5, 0.986, n, **border_font_kwargs)
+            self.ax.text(0.978, 0.5, w, **border_font_kwargs)
+            self.ax.text(-0.002, 0.5, e, **border_font_kwargs)
+            self.ax.text(0.5, -0.002, s, **border_font_kwargs)
 
         border_circle = patches.Circle(
             (0.5, 0.5),
-            radius=0.5,
+            radius=0.495,
             fill=False,
             edgecolor=self.style.border_bg_color.as_hex(),
-            linewidth=90 * self._size_multiplier,
-            zorder=1_000,
+            linewidth=72 * self._size_multiplier,
+            zorder=3_000,
             transform=self.ax.transAxes,
+            clip_on=False,
         )
         self.ax.add_patch(border_circle)
 
-        border_line_circle = patches.Circle(
-            (0.5, 0.5),
-            radius=0.51,
-            fill=False,
-            edgecolor=self.style.border_line_color.as_hex(),
-            linewidth=8 * self._size_multiplier,
-            zorder=1_200,
-            transform=self.ax.transAxes,
-        )
-        self.ax.add_patch(border_line_circle)
-
         inner_border_line_circle = patches.Circle(
             (0.5, 0.5),
-            radius=0.472,
+            radius=0.473,
             fill=False,
             edgecolor=self.style.border_line_color.as_hex(),
-            linewidth=4 * self._size_multiplier,
-            zorder=2_000,
+            linewidth=4.2 * self._size_multiplier,
+            zorder=3_000,
             transform=self.ax.transAxes,
+            clip_on=False,
         )
         self.ax.add_patch(inner_border_line_circle)
+
+        outer_border_line_circle = patches.Circle(
+            (0.5, 0.5),
+            radius=0.52,
+            fill=False,
+            edgecolor=self.style.border_line_color.as_hex(),
+            linewidth=8.2 * self._size_multiplier,
+            zorder=8_000,
+            transform=self.ax.transAxes,
+            clip_on=False,
+        )
+        self.ax.add_patch(outer_border_line_circle)

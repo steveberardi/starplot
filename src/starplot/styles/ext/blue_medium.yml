@@ -1,10 +1,15 @@
 background_color: '#f1f6ff'
 figure_background_color: '#fff'
+
 border_bg_color: '#7997b9'
 border_font_color: '#f1f6ff'
 border_line_color: '#2f4358'
+
 title:
   font_color: '#f1f6ff'
+star:
+  marker:
+    edge_color: '#f1f6ff'
 bayer_labels:
   font_alpha: 0.8
   font_color: '#000'
@@ -52,6 +57,19 @@ sun:
   marker:
     color: '#ffd22e'
     edge_color: 'hsl(47, 100%, 29%)'
+
+horizon:
+  line:
+    color: '#7997b9'
+    edge_color: '#2f4358'
+  label:
+    font_color: '#f1f6ff'
+
+zenith:
+  marker:
+    color: '#b979b7'
+  label:
+    font_color: '#b979b7'
 
 # DSOs
 dso_double_star:

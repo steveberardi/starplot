@@ -13,7 +13,7 @@ else
  SCRATCH_ARGS=
 endif
 
-DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
+DOCKER_RUN=docker run --rm --env-file ./.env $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 
 DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" --target dev .
@@ -25,6 +25,7 @@ export PYTHONPATH=./src/
 build: PYTHON_VERSION=3.11.7
 build: DOCKER_BUILD_ARGS=-t starplot-dev
 build:
+	touch -a .env
 	$(DOCKER_BUILD_PYTHON)
 
 docker-multi-arch:
@@ -59,7 +60,7 @@ scratchpad:
 	$(DOCKER_RUN) "python $(SCRATCH_ARGS) scripts/scratchpad.py"
 
 examples:
-	$(DOCKER_RUN) "cd examples && python examples.py"
+	$(DOCKER_RUN) "cd examples && rm -f *.png && rm -f *.jpg && python examples.py"
 
 tutorial:
 	$(DOCKER_RUN) "cd tutorial && python build.py"

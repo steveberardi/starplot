@@ -36,11 +36,10 @@ p.stars(
 p.stars(
     where=[
         Star.magnitude > 3,
-        Star.magnitude < 11,
+        Star.magnitude < 9,
     ],
-    style__marker__size=12,
     bayer_labels=True,
-    catalog="tycho-1",
+    catalog="big-sky-mag11",
 )
 
 p.nebula(

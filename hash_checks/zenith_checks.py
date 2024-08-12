@@ -32,6 +32,7 @@ def _zenith():
     p.ecliptic(style__line__width=8)
     p.celestial_equator(style__line__width=8)
     p.legend(style__location=styles.LegendLocationEnum.OUTSIDE_BOTTOM)
+    p.horizon()
     return p
 
 

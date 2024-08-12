@@ -2,7 +2,7 @@ from enum import Enum
 
 from pandas import read_parquet
 
-from starplot.data import DataFiles
+from starplot.data import bigsky, DataFiles
 
 STAR_NAMES = {
     7588: "Achernar",
@@ -117,27 +117,41 @@ class StarCatalog(str, Enum):
     HIPPARCOS = "hipparcos"
     """Hipparcos Catalog = 118,218 stars"""
 
-    TYCHO_1 = "tycho-1"
-    """Tycho-1 Catalog = 1,055,115 stars"""
+    BIG_SKY_MAG11 = "big-sky-mag11"
+    """
+    [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 900k stars up to magnitude 11
+    
+    This is an _abridged_ version of the Big Sky Catalog, including stars up to a limiting magnitude of 11 (total = 981,852).
+
+    This catalog is included with Starplot, so does not require downloading any files.
+    """
+
+    BIG_SKY = "big-sky"
+    """
+    [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 2.5M stars
+
+    This is the full version of the Big Sky Catalog, which includes 2,557,499 stars from Hipparcos, Tycho-1, and Tycho-2.
+
+    This catalog is very large (50+ MB), so it's not built-in to Starplot. When you plot stars and specify this catalog, the catalog 
+    will be downloaded from the [Big Sky GitHub repository](https://github.com/steveberardi/bigsky) and saved to Starplot's data library 
+    directory. You can override this download path with the environment variable `STARPLOT_DOWNLOAD_PATH`
+    
+    """
 
 
-def load_hipparcos():
-    return read_parquet(DataFiles.HIPPARCOS)
+def load_bigsky():
+    if not bigsky.exists():
+        bigsky.download()
 
-
-def load_tycho1():
-    df = read_parquet(DataFiles.TYCHO_1)
-    df = df.assign(
-        ra_degrees=df["ra_hours"] * 15.0,
-        epoch_year=1991.25,
-    )
-    return df.set_index("hip")
+    return bigsky.load(DataFiles.BIG_SKY)
 
 
 def load(catalog: StarCatalog = StarCatalog.HIPPARCOS):
-    if catalog == StarCatalog.TYCHO_1:
-        return load_tycho1()
-    elif catalog == StarCatalog.HIPPARCOS:
-        return load_hipparcos()
+    if catalog == StarCatalog.HIPPARCOS:
+        return read_parquet(DataFiles.HIPPARCOS)
+    elif catalog == StarCatalog.BIG_SKY_MAG11:
+        return bigsky.load(DataFiles.BIG_SKY_MAG11)
+    elif catalog == StarCatalog.BIG_SKY:
+        return bigsky.load(DataFiles.BIG_SKY)
     else:
         raise ValueError("Unrecognized star catalog.")

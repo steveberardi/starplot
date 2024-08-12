@@ -8,6 +8,11 @@ hip_main.dat
 hip8.dat
 CometEls.txt
 
+# Big Sky - Full Catalog
+# we ignore this because of its size (50+ MB)
+bigsky.stars.csv.gz
+stars.bigsky.parquet
+
 hash_checks/data/*.png
 hash_checks/results.html
 
@@ -17,7 +22,9 @@ raw/
 
 # Documentation Generated Files
 examples/*.png
+examples/*.jpg
 docs/images/examples/*.png
+docs/images/examples/*.jpg
 tutorial/*.png
 docs/images/tutorial/*.png
 docs/data/*.json

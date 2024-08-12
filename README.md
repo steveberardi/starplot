@@ -11,7 +11,7 @@
 - 🔭 **Optic Plots** - simulates what you'll see through an optic (e.g. binoculars, telescope) from a time/location
 - 🪐 **Planets and Deep Sky Objects (DSOs)**
 - 🎨 **Custom Styles** - for all objects
-- 📥 **Export** - png, svg
+- 📥 **Export** - png, svg, jpeg
 - 🧭 **Label Collision Avoidance**
 
 ## Examples
