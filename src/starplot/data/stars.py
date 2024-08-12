@@ -121,7 +121,7 @@ class StarCatalog(str, Enum):
     """
     [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 900k stars up to magnitude 11
     
-    This is an _abridged_ version of the Big Sky Catalog. It includes all stars up to a limiting magnitude of 11, which is 981,852 stars.
+    This is an _abridged_ version of the Big Sky Catalog, including stars up to a limiting magnitude of 11 (total = 981,852).
 
     This catalog is included with Starplot, so does not require downloading any files.
     """
