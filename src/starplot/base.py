@@ -501,7 +501,7 @@ class BasePlot(ABC):
         """Plots a polygon of points
 
         Args:
-            points: List of polygon points `[(ra, dec), ...]`
+            points: List of polygon points `[(ra, dec), ...]` - **must be in counterclockwise order**
             style: Style of polygon
         """
         _points = [(ra * 15, dec) for ra, dec in points]
