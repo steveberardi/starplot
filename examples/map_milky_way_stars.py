@@ -23,7 +23,6 @@ p = MapPlot(
     resolution=4000,
 )
 
-
 p.stars(
     mag=11,
     size_fn=_sizer,
