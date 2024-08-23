@@ -86,10 +86,10 @@ Contributing to Starplot is welcome and very much appreciated! Please see [here]
 - 🌑 Planet moons
 - ✴️ Custom markers
 - 🚀 Plotting Optimizations
-- 📐 More Nebula outline levels
+- 📐 Custom clip paths
 - ⚖️ Better auto font-size adjustment
 
-See more details on the [Public Roadmap](https://starplot.notion.site/aaa0dd71c17943f89850c9a8c43ade50)
+See more details on the [Public Roadmap](https://trello.com/b/sUksygn4/starplot-roadmap)
 
 ## License
 [MIT License](https://github.com/steveberardi/starplot/blob/main/LICENSE)
