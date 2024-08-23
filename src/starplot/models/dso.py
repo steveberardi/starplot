@@ -28,6 +28,7 @@ class DsoManager(SkyObjectManager):
                 m=d.m,
                 ngc=d.ngc,
                 ic=d.ic,
+                geometry=d.geometry,
             )
 
 
@@ -88,6 +89,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         m: str = None,
         ngc: str = None,
         ic: str = None,
+        geometry = None,
     ) -> None:
         super().__init__(ra, dec)
         self.name = name
@@ -100,6 +102,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         self.m = m
         self.ngc = ngc
         self.ic = ic
+        self.geometry = geometry
 
     def __repr__(self) -> str:
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
