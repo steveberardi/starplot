@@ -852,7 +852,7 @@ class BasePlot(ABC):
 
         # TODO : handle wrapping
 
-        for ra in np.arange(0, 24, 0.05):
+        for ra in range(25):
             x0, y0 = self._prepare_coords(ra, 0)
             x.append(x0)
             y.append(y0)
