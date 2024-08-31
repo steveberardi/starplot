@@ -16,6 +16,8 @@
     - Fixes default horizon style to be consistent with grayscale extension
 - [**v0.11.2**]
     - Adds `requests` as a required dependency
+- [**v0.11.3**]
+    - Fixes bug with plotting the celestial equator
 
 ## v0.10.x
 [Documentation](https://archives.starplot.dev/0.10.2/)
