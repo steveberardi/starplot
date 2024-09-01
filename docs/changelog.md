@@ -18,6 +18,8 @@
     - Adds `requests` as a required dependency
 - [**v0.11.3**]
     - Fixes bug with plotting the celestial equator
+- [**v0.11.4**]
+    - Fixes bug with filtering DSOs by NGC/IC identifier
 
 ## v0.10.x
 [Documentation](https://archives.starplot.dev/0.10.2/)

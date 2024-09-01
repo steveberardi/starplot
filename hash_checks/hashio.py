@@ -1,8 +1,8 @@
 import sys
 import inspect
 import time
+import multiprocessing as mp
 
-from multiprocessing import Pool
 from pathlib import Path
 
 import imagehash
@@ -87,9 +87,10 @@ class Hashio:
 
     def _get_hashes(self) -> dict:
         """Gets hashes for all callables"""
+        mp.set_start_method("spawn")  # required for M1 macs? or macOS issue?
 
         console.print("Getting hashes...", style="bold")
-        with Pool(5) as p:
+        with mp.Pool(5) as p:
             results = p.map(self._call_wrapper, self.callables)
 
         return {func_name: hashes for func_name, hashes in results}
