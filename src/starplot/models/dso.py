@@ -73,7 +73,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         m: str = None,
         ngc: str = None,
         ic: str = None,
-        geometry = None,
+        geometry=None,
     ) -> None:
         super().__init__(ra, dec)
         self.name = name
@@ -123,6 +123,9 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
 def from_tuple(d: tuple) -> DSO:
     magnitude = d.mag_v or d.mag_b or None
     magnitude = float(magnitude) if magnitude else None
+
+    # coords = list(zip(*d.geometry.exterior.coords.xy))
+
     return DSO(
         name=d.name,
         ra=d.ra_degrees / 15,

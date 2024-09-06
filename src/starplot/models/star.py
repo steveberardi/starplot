@@ -3,7 +3,6 @@ from typing import Optional
 import numpy as np
 from shapely import Point
 
-from starplot import utils
 from starplot.models.base import SkyObject, SkyObjectManager
 from starplot.data.stars import StarCatalog, STAR_NAMES, load as _load_stars
 
@@ -57,7 +56,7 @@ class Star(SkyObject):
         hip: int = None,
         name: str = None,
         tyc: str = None,
-        geometry = None,
+        geometry=None,
     ) -> None:
         super().__init__(ra, dec)
         self.magnitude = magnitude
@@ -65,7 +64,7 @@ class Star(SkyObject):
         self.hip = hip
         self.name = name
         self.tyc = tyc
-        self.geometry = Point([utils.ra_to_lon(ra), dec])
+        self.geometry = Point([ra * 15, dec])
 
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
