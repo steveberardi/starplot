@@ -1,6 +1,6 @@
 from typing import Optional
 
-from starplot.data.dsos import DsoType
+from starplot.data.dsos import DsoType, load_ongc, ONGC_TYPE_MAP
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject, SkyObjectManager
 
@@ -8,28 +8,12 @@ from starplot.models.base import SkyObject, SkyObjectManager
 class DsoManager(SkyObjectManager):
     @classmethod
     def all(cls):
-        from starplot.data.dsos import load_ongc, ONGC_TYPE_MAP
-
         all_dsos = load_ongc()
 
         for d in all_dsos.itertuples():
             magnitude = d.mag_v or d.mag_b or None
             magnitude = float(magnitude) if magnitude else None
-            yield DSO(
-                name=d.name,
-                ra=d.ra_degrees / 15,
-                dec=d.dec_degrees,
-                type=ONGC_TYPE_MAP[d.type],
-                maj_ax=d.maj_ax,
-                min_ax=d.min_ax,
-                angle=d.angle,
-                magnitude=magnitude,
-                size=d.size_deg2,
-                m=d.m,
-                ngc=d.ngc,
-                ic=d.ic,
-                geometry=d.geometry,
-            )
+            yield from_tuple(d)
 
 
 class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
@@ -134,3 +118,23 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
 
         """
         pass
+
+
+def from_tuple(d: tuple) -> DSO:
+    magnitude = d.mag_v or d.mag_b or None
+    magnitude = float(magnitude) if magnitude else None
+    return DSO(
+        name=d.name,
+        ra=d.ra_degrees / 15,
+        dec=d.dec_degrees,
+        type=ONGC_TYPE_MAP[d.type],
+        maj_ax=d.maj_ax,
+        min_ax=d.min_ax,
+        angle=d.angle,
+        magnitude=magnitude,
+        size=d.size_deg2,
+        m=d.m,
+        ngc=d.ngc,
+        ic=d.ic,
+        geometry=d.geometry,
+    )
