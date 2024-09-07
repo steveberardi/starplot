@@ -73,10 +73,14 @@ class Constellation(SkyObject):
 
 
 def from_tuple(c: tuple) -> Constellation:
+    geometry = c.geometry
+    if len(c.geometry.geoms) == 1:
+        geometry = c.geometry.geoms[0]
+
     return Constellation(
         ra=c.center_ra / 15,
         dec=c.center_dec,
         iau_id=c.iau_id,
         name=c.name,
-        boundary=c.geometry,
+        boundary=geometry,
     )
