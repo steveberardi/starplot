@@ -398,11 +398,10 @@ def check_map_plot_limit_by_geometry():
 
     p.stars(mag=9, bayer_labels=True, where=[Star.geometry.intersects(lyra.boundary)])
     p.dsos(
-
         labels=None,
         where=[
             (DSO.magnitude.is_null()) | (DSO.magnitude < 10),
-            Star.geometry.intersects(lyra.boundary)
+            Star.geometry.intersects(lyra.boundary),
         ],
         true_size=False,
     )
