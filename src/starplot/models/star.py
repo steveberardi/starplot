@@ -67,7 +67,7 @@ class Star(SkyObject):
         self.hip = hip
         self.name = name
         self.tyc = tyc
-        self.geometry = Point([ra * 15, dec])
+        self.geometry = Point([ra, dec])
 
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"

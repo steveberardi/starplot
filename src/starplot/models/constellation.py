@@ -1,6 +1,7 @@
 from shapely import Polygon
 
 from starplot.models.base import SkyObject, SkyObjectManager
+from starplot.models.geometry import to_24h
 from starplot.data import constellations
 
 
@@ -81,6 +82,8 @@ def from_tuple(c: tuple) -> Constellation:
     geometry = c.geometry
     if len(c.geometry.geoms) == 1:
         geometry = c.geometry.geoms[0]
+    
+    geometry = to_24h(geometry)
 
     return Constellation(
         ra=c.center_ra / 15,
