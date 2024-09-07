@@ -112,10 +112,25 @@ CONSTELLATIONS_ABBREVIATIONS = {k.lower(): k.upper() for k in properties.keys()}
 """Constellation 3-letter abbreviations"""
 
 
-def load():
+def _load_deprecated():
     with _load.open("constellations_hip.fab") as f:
         consdata = stellarium.parse_constellations(f)
     return consdata
+
+
+def load(**kwargs):
+    import geopandas as gpd
+    import numpy as np
+    from starplot.data import DataFiles
+
+    cons = gpd.read_file(
+        DataFiles.CONSTELLATIONS.value,
+        engine="pyogrio",
+        use_arrow=True,
+        **kwargs,
+    )
+    cons = cons.replace({np.nan: None})
+    return cons
 
 
 def get(constellation_id: str):

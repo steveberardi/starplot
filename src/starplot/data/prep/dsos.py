@@ -1,5 +1,4 @@
 import os
-import zipfile
 from pathlib import Path
 
 import geopandas as gpd
@@ -9,13 +8,9 @@ import numpy as np
 from shapely.geometry import Polygon, MultiPolygon, Point
 
 from starplot import geod
+from starplot.data.prep.utils import RAW_DATA_PATH, DATA_LIBRARY, zip_file
 
-HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent.parent.parent.parent
-DATA_PATH = ROOT / "raw" / "ongc" / "outlines"
-BUILD_PATH = ROOT / "build"
-DATA_LIBRARY = HERE.parent / "library"
-
+DATA_PATH = RAW_DATA_PATH / "ongc" / "outlines"
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 IGNORE_OUTLINES = [
     "IC0424",  # seems too big?
@@ -295,6 +290,4 @@ print("Total nebula outlines: " + str(len(outlines)))
 # print(result)
 
 # Zip it up!
-zipped = zipfile.ZipFile(DATA_LIBRARY / "ongc.gpkg.zip", "w", zipfile.ZIP_DEFLATED)
-zipped.write(DATA_LIBRARY / "ongc.gpkg")
-# zipped.close()
+zip_file(DATA_LIBRARY / "ongc.gpkg")

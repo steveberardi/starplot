@@ -73,6 +73,9 @@ profile:
 prep-dsos:
 	$(DOCKER_RUN) "python -m starplot.data.prep.dsos"
 
+prep-constellations:
+	$(DOCKER_RUN) "python -m starplot.data.prep.constellations"
+
 version:
 	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"
 

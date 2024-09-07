@@ -18,6 +18,7 @@ from starplot.base import BasePlot
 from starplot.data import DataFiles, constellations as condata, stars
 from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
 from starplot.mixins import ExtentMaskMixin
+from starplot.models.constellation import from_tuple as constellation_from_tuple
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.projections import Projection
 from starplot.styles import (
@@ -342,6 +343,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self,
         style: PathStyle = None,
         labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
+        where: list = None,
     ):
         """Plots the constellation lines and/or labels
 
@@ -349,7 +351,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             style: Styling of the constellations. If None, then the plot's style (specified when creating the plot) will be used
             labels: A dictionary where the keys are each constellation's 3-letter abbreviation, and the values are how the constellation will be labeled on the plot.
         """
+        self.logger.debug("Plotting constellations...")
+
         labels = labels or {}
+        where = where or []
+
         constellations_gdf = gpd.read_file(
             DataFiles.CONSTELLATIONS.value,
             engine="pyogrio",
@@ -369,8 +375,14 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         conline_hips = condata.lines()
         style_kwargs = style.line.matplot_kwargs(size_multiplier=self._size_multiplier)
 
-        for i, c in constellations_gdf.iterrows():
-            hiplines = conline_hips[c.id]
+        for c in constellations_gdf.itertuples():
+            obj = constellation_from_tuple(c)
+
+            if not all([e.evaluate(obj) for e in where]):
+                continue
+
+            hiplines = conline_hips[c.iau_id]
+            inbounds = False
 
             for s1_hip, s2_hip in hiplines:
                 s1 = stars_df.loc[s1_hip]
@@ -388,6 +400,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 elif s2_ra - s1_ra > 60:
                     s1_ra += 360
 
+                if self.in_bounds(s1_ra / 15, s1_dec):
+                    inbounds = True
+
                 s1_ra *= -1
                 s2_ra *= -1
 
@@ -401,6 +416,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                     transform=transform,
                     **style_kwargs,
                 )
+
+            if inbounds:
+                self._objects.constellations.append(obj)
 
         self._plot_constellation_labels(style.label, labels)
 
