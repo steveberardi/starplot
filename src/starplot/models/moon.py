@@ -7,6 +7,7 @@ from skyfield import almanac
 
 from starplot.data import load
 from starplot.models.base import SkyObject, SkyObjectManager
+from starplot.models.geometry import circle
 from starplot.utils import dt_or_now
 
 
@@ -112,6 +113,7 @@ class MoonManager(SkyObjectManager):
             phase_angle=phase_angle,
             phase_description=phase.value,
             illumination=illumination,
+            geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees)
         )
 
 
@@ -148,6 +150,7 @@ class Moon(SkyObject):
         phase_angle: float,
         phase_description: str,
         illumination: str,
+        geometry = None,
     ) -> None:
         super().__init__(ra, dec)
         self.name = name
@@ -156,6 +159,7 @@ class Moon(SkyObject):
         self.phase_angle = phase_angle
         self.phase_description = phase_description
         self.illumination = illumination
+        self.geometry = geometry
 
     @classmethod
     def get(
