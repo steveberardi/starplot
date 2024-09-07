@@ -132,6 +132,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             ],
             globe=ccrs.Globe(ellipse="sphere", flattening=0),
         )
+        self._clip_path = kwargs.pop("clip_path", None)
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
@@ -260,6 +261,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 list(x),
                 list(y),
                 transform=self._plate_carree,
+                clip_on=True,
+                clip_path=self._background_clip_path,
                 **style_kwargs,
             )
 
@@ -415,6 +418,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                     [s1_dec, s2_dec],
                     transform=transform,
                     **style_kwargs,
+                    clip_on=True,
+                    clip_path=self._background_clip_path,
                 )
 
             if inbounds:
@@ -643,6 +648,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             rotate_labels=False,
             xpadding=12,
             ypadding=12,
+            clip_on=True,
+            clip_path=self._background_clip_path,
             **style.line.matplot_kwargs(),
         )
 
@@ -772,7 +779,29 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         )
 
     def _plot_background_clip_path(self):
-        if self.projection == Projection.ZENITH:
+        def to_axes(points):
+            ax_points = []
+
+            for ra, dec in points:
+                x, y = self._proj.transform_point(ra * 15, dec, self._crs)
+                data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
+                x_axes, y_axes = data_to_axes.transform((x, y))
+                ax_points.append([x_axes, y_axes])
+            return ax_points
+
+        if self._clip_path is not None:
+            points = list(zip(*self._clip_path.exterior.coords.xy))
+            print(to_axes(points))
+            self._background_clip_path = patches.Polygon(
+                to_axes(points),
+                facecolor=self.style.background_color.as_hex(),
+                fill=True,
+                zorder=-2_000,
+                transform=self.ax.transAxes,
+            )
+
+
+        elif self.projection == Projection.ZENITH:
             self._background_clip_path = patches.Circle(
                 (0.50, 0.50),
                 radius=0.45,
