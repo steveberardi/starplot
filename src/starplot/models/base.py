@@ -81,7 +81,7 @@ class Term:
 
     def intersects(self, other):
         """Returns `True` if the field's value is NOT in `other`"""
-        return Expression(func=lambda c: c.geometry.intersects(other))
+        return Expression(func=lambda c: getattr(c, self.attr).intersects(other))
 
 
 class Meta(type):
