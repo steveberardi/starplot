@@ -1,8 +1,11 @@
 from typing import Optional
 
+from shapely.geometry import Polygon
+
 from starplot.data.dsos import DsoType, load_ongc, ONGC_TYPE_MAP
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject, SkyObjectManager
+from starplot import geod
 
 
 class DsoManager(SkyObjectManager):
@@ -120,11 +123,42 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         pass
 
 
+def create_ellipse(d):
+    maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
+
+    if maj_ax is None:
+        return d.geometry
+
+    if angle is None:
+        angle = 0
+
+    maj_ax_degrees = (maj_ax / 60) / 2
+
+    if not min_ax:
+        min_ax_degrees = maj_ax_degrees
+    else:
+        min_ax_degrees = (min_ax / 60) / 2
+
+    points = geod.ellipse(
+        (d.ra_degrees / 15, d.dec_degrees),
+        min_ax_degrees * 2,
+        maj_ax_degrees * 2,
+        angle,
+        num_pts=100,
+    )
+
+    # points = [geod.to_radec(p) for p in points]
+    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
+    return Polygon(points)
+
+
 def from_tuple(d: tuple) -> DSO:
     magnitude = d.mag_v or d.mag_b or None
     magnitude = float(magnitude) if magnitude else None
+    geometry = d.geometry
 
-    # coords = list(zip(*d.geometry.exterior.coords.xy))
+    if str(geometry.geom_type) not in ["Polygon", "MultiPolygon"]:
+        geometry = create_ellipse(d)
 
     return DSO(
         name=d.name,
@@ -139,5 +173,5 @@ def from_tuple(d: tuple) -> DSO:
         m=d.m,
         ngc=d.ngc,
         ic=d.ic,
-        geometry=d.geometry,
+        geometry=geometry,
     )

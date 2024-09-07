@@ -6,12 +6,15 @@ import geopandas as gpd
 import pandas as pd
 import numpy as np
 
-from shapely.geometry import Polygon, MultiPolygon
+from shapely.geometry import Polygon, MultiPolygon, Point
 
+from starplot import geod
 
 HERE = Path(__file__).resolve().parent
-DATA_PATH = HERE.parent / "raw" / "ongc" / "outlines"
-BUILD_PATH = HERE.parent / "build"
+ROOT = HERE.parent.parent.parent.parent
+DATA_PATH = ROOT / "raw" / "ongc" / "outlines"
+BUILD_PATH = ROOT / "build"
+DATA_LIBRARY = HERE.parent / "library"
 
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 IGNORE_OUTLINES = [
@@ -53,11 +56,9 @@ def read_csv():
         sep=";",
     )
     df = pd.concat([df, df_addendum])
+
     df["ra_degrees"] = df.apply(parse_ra, axis=1)
     df["dec_degrees"] = df.apply(parse_dec, axis=1)
-
-    df.drop("Identifiers", axis="columns")
-    df.drop("Sources", axis="columns")
     df["M"] = df.apply(parse_m, axis=1)
     df["IC"] = df.apply(parse_ic, axis=1)
     df["NGC"] = df.apply(parse_ngc, axis=1)
@@ -80,15 +81,41 @@ def read_csv():
         }
     )
 
+    df = df.drop(
+        columns=[
+            "Cstar U-Mag",
+            "Cstar B-Mag",
+            "Cstar V-Mag",
+            "Cstar Names",
+            "ned_notes",
+            "constellation",
+            "OpenNGC notes",
+            "Sources",
+            "Hubble",
+            "Identifiers",
+            "J-Mag",
+            "H-Mag",
+            "K-Mag",
+            "RA",
+            "Dec",
+        ],
+        axis=1,
+    )
+
     gdf = gpd.GeoDataFrame(
         df,
         geometry=gpd.points_from_xy(df.ra_degrees, df.dec_degrees),
         crs=CRS,
     )
 
-    gdf.to_file("build/ngc.base.gpkg", driver="GPKG", crs=CRS)
+    gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
+    # gdf["geometry"] = gdf.apply(create_point, axis=1)
 
     return gdf
+
+
+def create_point(d):
+    return Point([d.ra_degrees, d.dec_degrees])
 
 
 def parse_m(row):
@@ -129,7 +156,7 @@ def parse_ra(row):
 
     ra = row.RA
     h, m, s = ra.split(":")
-    return 15 * (float(h) + float(m) / 60 + float(s) / 3600)
+    return round(15 * (float(h) + float(m) / 60 + float(s) / 3600), 4)
 
 
 def parse_dec(row):
@@ -144,7 +171,36 @@ def parse_dec(row):
     else:
         mx = 1
     h, m, s = dec[1:].split(":")
-    return mx * (float(h) + float(m) / 60 + float(s) / 3600)
+    return round(mx * (float(h) + float(m) / 60 + float(s) / 3600), 4)
+
+
+def create_ellipse(d):
+    maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
+
+    if np.isnan(maj_ax):
+        return d.geometry
+
+    if np.isnan(angle):
+        angle = 0
+
+    maj_ax_degrees = (maj_ax / 60) / 2
+
+    if np.isnan(min_ax):
+        min_ax_degrees = maj_ax_degrees
+    else:
+        min_ax_degrees = (min_ax / 60) / 2
+
+    points = geod.ellipse(
+        (d.ra_degrees / 15, d.dec_degrees),
+        min_ax_degrees * 2,
+        maj_ax_degrees * 2,
+        angle,
+        num_pts=100,
+    )
+
+    # points = [geod.to_radec(p) for p in points]
+    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
+    return Polygon(points)
 
 
 def parse_designation_from_filename(filename):
@@ -210,8 +266,8 @@ for f in walk_files():
         print(designation)
         centroid = dso_geom.centroid
         gdf.loc[name, "geometry"] = dso_geom
-        gdf.loc[name, "ra_degrees"] = centroid.x
-        gdf.loc[name, "dec_degrees"] = centroid.y
+        gdf.loc[name, "ra_degrees"] = round(centroid.x, 4)
+        gdf.loc[name, "dec_degrees"] = round(centroid.y, 4)
         gdf.loc[name, "type"] = "Neb"
     else:
         if gdf.loc[name].empty:
@@ -223,20 +279,22 @@ for f in walk_files():
 # add size column
 gdf["size_deg2"] = gdf.apply(_size, axis=1)
 
-gdf_outlines = gpd.GeoDataFrame(
-    {"designation": outlines.keys(), "geometry": outlines.values()}
-)
-
 print(gdf.loc["NGC6405"])
+# print(gdf.loc["Mel022"])
+# print("INDEX")
+# print(gdf.sindex.size)
 
-gdf.to_file(BUILD_PATH / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
+# gdf.to_file(BUILD_PATH / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
 
+
+gdf.to_file(DATA_LIBRARY / "ongc.gpkg", driver="GPKG", engine="pyogrio", index=True)
+# crs=CRS,
 
 print("Total nebula outlines: " + str(len(outlines)))
 # result = gpd.read_file(HERE.parent / "build" / "ngc.gpkg")
 # print(result)
 
 # Zip it up!
-zipped = zipfile.ZipFile(BUILD_PATH / "ongc.gpkg.zip", "w", zipfile.ZIP_DEFLATED)
-zipped.write(BUILD_PATH / "ongc.gpkg")
-zipped.close()
+zipped = zipfile.ZipFile(DATA_LIBRARY / "ongc.gpkg.zip", "w", zipfile.ZIP_DEFLATED)
+zipped.write(DATA_LIBRARY / "ongc.gpkg")
+# zipped.close()
