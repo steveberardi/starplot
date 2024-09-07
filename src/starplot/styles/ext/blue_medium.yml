@@ -1,6 +1,8 @@
 background_color: '#f1f6ff'
 figure_background_color: '#fff'
 
+text_border_color: '#f1f6ff'
+
 border_bg_color: '#7997b9'
 border_font_color: '#f1f6ff'
 border_line_color: '#2f4358'

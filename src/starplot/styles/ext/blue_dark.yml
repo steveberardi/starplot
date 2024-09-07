@@ -1,6 +1,8 @@
 background_color: hsl(209, 50%, 24%)
 figure_background_color: hsl(209, 43%, 15%)
 
+text_border_color: hsl(209, 50%, 24%)
+
 border_bg_color: hsl(209, 50%, 20%)
 border_font_color: hsl(209, 56%, 86%)
 border_line_color: hsl(209, 38%, 50%)

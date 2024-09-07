@@ -551,6 +551,7 @@ class PlotStyle(BaseStyle):
     figure_background_color: ColorStr = ColorStr("#fff")
 
     text_border_width: int = 3
+    text_border_color: ColorStr = ColorStr("#fff")
     text_offset_x: float = 0.005
     text_offset_y: float = 0.005
 
