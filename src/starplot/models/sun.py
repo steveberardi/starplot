@@ -2,6 +2,7 @@ from datetime import datetime
 
 import numpy as np
 from skyfield.api import Angle, wgs84
+from shapely import Polygon
 
 from starplot.data import load
 from starplot.models.base import SkyObject, SkyObjectManager
@@ -53,7 +54,7 @@ class SunManager(SkyObjectManager):
             name="Sun",
             dt=dt,
             apparent_size=apparent_diameter_degrees,
-            geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees)
+            geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees),
         )
 
 
@@ -71,8 +72,17 @@ class Sun(SkyObject):
     apparent_size: float
     """Apparent size (degrees)"""
 
+    geometry: Polygon = None
+    """Shapely Polygon of the Sun's extent. Right ascension coordinates are in 24H format."""
+
     def __init__(
-        self, ra: float, dec: float, name: str, dt: datetime, apparent_size: float, geometry = None
+        self,
+        ra: float,
+        dec: float,
+        name: str,
+        dt: datetime,
+        apparent_size: float,
+        geometry: Polygon = None,
     ) -> None:
         super().__init__(ra, dec)
         self.name = name

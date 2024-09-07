@@ -1,6 +1,6 @@
 from typing import Optional
 
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, MultiPolygon
 
 from starplot.data.dsos import DsoType, load_ongc, ONGC_TYPE_MAP
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
@@ -62,6 +62,9 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     Index Catalogue (IC) identifier. *Note that this field is a string, to support objects like '4974 NED01'.*
     """
 
+    geometry: Polygon | MultiPolygon = None
+    """Shapely Polygon of the DSO's extent. Right ascension coordinates are in 24H format."""
+
     def __init__(
         self,
         ra: float,
@@ -76,7 +79,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         m: str = None,
         ngc: str = None,
         ic: str = None,
-        geometry=None,
+        geometry: Polygon | MultiPolygon = None,
     ) -> None:
         super().__init__(ra, dec)
         self.name = name

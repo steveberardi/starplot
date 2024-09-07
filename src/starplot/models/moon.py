@@ -4,6 +4,7 @@ from enum import Enum
 import numpy as np
 from skyfield.api import Angle, wgs84
 from skyfield import almanac
+from shapely import Polygon
 
 from starplot.data import load
 from starplot.models.base import SkyObject, SkyObjectManager
@@ -113,7 +114,7 @@ class MoonManager(SkyObjectManager):
             phase_angle=phase_angle,
             phase_description=phase.value,
             illumination=illumination,
-            geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees)
+            geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees),
         )
 
 
@@ -140,6 +141,9 @@ class Moon(SkyObject):
     illumination: float
     """Percent of illumination (0...1)"""
 
+    geometry: Polygon = None
+    """Shapely Polygon of the moon's extent. Right ascension coordinates are in 24H format."""
+
     def __init__(
         self,
         ra: float,
@@ -150,7 +154,7 @@ class Moon(SkyObject):
         phase_angle: float,
         phase_description: str,
         illumination: str,
-        geometry = None,
+        geometry: Polygon = None,
     ) -> None:
         super().__init__(ra, dec)
         self.name = name

@@ -47,6 +47,9 @@ class Star(SkyObject):
     name: Optional[str] = None
     """Name, if available"""
 
+    geometry: Point = None
+    """Shapely Point of the star's position. Right ascension coordinates are in 24H format."""
+
     def __init__(
         self,
         ra: float,
@@ -56,7 +59,7 @@ class Star(SkyObject):
         hip: int = None,
         name: str = None,
         tyc: str = None,
-        geometry=None,
+        geometry: Point = None,
     ) -> None:
         super().__init__(ra, dec)
         self.magnitude = magnitude

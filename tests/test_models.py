@@ -60,6 +60,13 @@ class TestStar:
         assert len(bright) == 4
         assert set([s.name for s in bright]) == names
 
+    def test_star_find_intersects(self):
+        m45 = DSO.get(m="45")
+        m45_stars = Star.find(where=[Star.geometry.intersects(m45.geometry)])
+
+        for star in m45_stars:
+            assert star.geometry.intersects(m45.geometry)
+
 
 class TestConstellation:
     def test_constellation_get(self):
@@ -78,8 +85,8 @@ class TestConstellation:
 class TestDSO:
     def test_dso_get(self):
         m13 = DSO.get(m="13")
-        assert m13.ra == 16.694897222222224
-        assert m13.dec == 36.46130555555556
+        assert m13.ra == 16.6949
+        assert m13.dec == 36.4613
         assert m13.m == "13"
         assert m13.ngc == "6205"
         assert m13.ic is None
