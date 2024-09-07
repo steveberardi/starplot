@@ -22,7 +22,7 @@ for filename in glob.iglob("*.py"):
     if filename.endswith("examples.py"):
         continue
 
-    # if filename != "star_chart_basic.py":
+    # if filename != "map_lyra.py":
     #     continue
     print(f"Running {filename}")
     subprocess.call(f"python {filename}", shell=True)
