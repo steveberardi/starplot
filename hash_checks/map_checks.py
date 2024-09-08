@@ -444,12 +444,12 @@ def check_map_plot_custom_clip_path_virgo():
     p.line(
         coordinates=[
             (13, 10),
-            (13.42, -11.1613), # Spica
+            (13.42, -11.1613),  # Spica
         ],
         style={
             "color": "red",
             "width": 9,
-        }
+        },
     )
 
     filename = DATA_PATH / "map-custom-clip-path-virgo.png"

@@ -211,6 +211,25 @@ class AnchorPointEnum(str, Enum):
         return style
 
 
+class ZOrderEnum(int, Enum):
+    """
+    Z Order presets for managing layers
+    """
+
+    LAYER_1 = -2_000
+    """Bottom layer"""
+
+    LAYER_2 = -1_000
+
+    LAYER_3 = 0
+    """Middle layer"""
+
+    LAYER_4 = 1_000
+
+    LAYER_5 = 2_000
+    """Top layer"""
+
+
 class MarkerStyle(BaseStyle):
     """
     Styling properties for markers.
@@ -521,7 +540,7 @@ class LegendStyle(BaseStyle):
     font_color: ColorStr = ColorStr("#000")
     """Font color for legend labels"""
 
-    zorder: int = 2_000
+    zorder: int = ZOrderEnum.LAYER_5
     """Zorder of the legend"""
 
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
@@ -566,7 +585,7 @@ class PlotStyle(BaseStyle):
     title: LabelStyle = LabelStyle(
         font_size=20,
         font_weight=FontWeightEnum.BOLD,
-        zorder=1,
+        zorder=ZOrderEnum.LAYER_5,
         line_spacing=48,
         anchor_point=AnchorPointEnum.BOTTOM_CENTER,
     )
@@ -575,7 +594,7 @@ class PlotStyle(BaseStyle):
     # Info text
     info_text: LabelStyle = LabelStyle(
         font_size=10,
-        zorder=1,
+        zorder=ZOrderEnum.LAYER_5,
         font_family="monospace",
         line_spacing=2,
         anchor_point=AnchorPointEnum.BOTTOM_CENTER,
@@ -584,15 +603,19 @@ class PlotStyle(BaseStyle):
 
     # Stars
     star: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(fill=FillStyleEnum.FULL, zorder=1, size=36, edge_color=None),
-        label=LabelStyle(font_size=9, font_weight=FontWeightEnum.BOLD, zorder=400),
+        marker=MarkerStyle(
+            fill=FillStyleEnum.FULL, zorder=ZOrderEnum.LAYER_4, size=36, edge_color=None
+        ),
+        label=LabelStyle(
+            font_size=9, font_weight=FontWeightEnum.BOLD, zorder=ZOrderEnum.LAYER_4
+        ),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
         font_size=7,
         font_weight=FontWeightEnum.LIGHT,
-        zorder=1,
+        zorder=ZOrderEnum.LAYER_4,
         anchor_point=AnchorPointEnum.TOP_LEFT,
     )
     """Styling for Bayer labels of stars"""
@@ -617,7 +640,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
             color="#c8c8c8",
             alpha=1,
-            zorder=100,
+            zorder=ZOrderEnum.LAYER_4,
         ),
         label=LabelStyle(
             font_size=8,
@@ -632,7 +655,7 @@ class PlotStyle(BaseStyle):
             size=14,
             fill=FillStyleEnum.FULL,
             color="#000",
-            zorder=90,
+            zorder=ZOrderEnum.LAYER_4 - 100,
         ),
         label=LabelStyle(
             font_size=8,
@@ -787,14 +810,18 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=7,
             font_weight=FontWeightEnum.LIGHT,
-            zorder=400,
+            zorder=ZOrderEnum.LAYER_3,
             anchor_point=AnchorPointEnum.TOP_RIGHT,
         ),
     )
     """Styling for constellation lines and labels (only applies to map plots)"""
 
     constellation_borders: LineStyle = LineStyle(
-        color="#000", width=2, style=LineStyleEnum.DASHED, alpha=0.2, zorder=-100
+        color="#000",
+        width=2,
+        style=LineStyleEnum.DASHED,
+        alpha=0.2,
+        zorder=ZOrderEnum.LAYER_3,
     )
     """Styling for constellation borders (only applies to map plots)"""
 
@@ -803,7 +830,7 @@ class PlotStyle(BaseStyle):
         color="#d9d9d9",
         alpha=0.36,
         edge_width=0,
-        zorder=-1_000,
+        zorder=ZOrderEnum.LAYER_2,
     )
     """Styling for the Milky Way (only applies to map plots)"""
 
@@ -818,7 +845,7 @@ class PlotStyle(BaseStyle):
             width=1,
             style=LineStyleEnum.SOLID,
             alpha=0.8,
-            zorder=-1_000,
+            zorder=ZOrderEnum.LAYER_2,
         ),
         label=LabelStyle(
             font_size=9,
@@ -838,14 +865,14 @@ class PlotStyle(BaseStyle):
             style=LineStyleEnum.DOTTED,
             dash_capstyle=DashCapStyleEnum.ROUND,
             alpha=0.8,
-            zorder=-20,
+            zorder=ZOrderEnum.LAYER_3,
         ),
         label=LabelStyle(
             font_size=6,
             font_color="#777",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
-            zorder=-20,
+            zorder=ZOrderEnum.LAYER_3,
         ),
     )
     """Styling for the Ecliptic"""
@@ -857,14 +884,14 @@ class PlotStyle(BaseStyle):
             width=2,
             style=LineStyleEnum.DASHED_DOTS,
             alpha=0.65,
-            zorder=-20,
+            zorder=ZOrderEnum.LAYER_3,
         ),
         label=LabelStyle(
             font_size=6,
             font_color="#999",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=0.65,
-            zorder=-20,
+            zorder=ZOrderEnum.LAYER_3,
         ),
     )
     """Styling for the Celestial Equator"""
@@ -878,14 +905,14 @@ class PlotStyle(BaseStyle):
             style=LineStyleEnum.SOLID,
             dash_capstyle=DashCapStyleEnum.BUTT,
             alpha=1,
-            zorder=2000,
+            zorder=ZOrderEnum.LAYER_5,
         ),
         label=LabelStyle(
             anchor_point=AnchorPointEnum.CENTER,
             font_color="#000",
             font_size=23,
             font_weight=FontWeightEnum.BOLD,
-            zorder=2000,
+            zorder=ZOrderEnum.LAYER_5,
         ),
     )
     """Styling for the horizon"""
