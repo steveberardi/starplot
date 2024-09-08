@@ -22,6 +22,7 @@ from starplot.styles import (
     LabelStyle,
     LegendLocationEnum,
     LegendStyle,
+    LineStyle,
     MarkerSymbolEnum,
     PathStyle,
     PolygonStyle,
@@ -592,6 +593,25 @@ class BasePlot(ABC):
             style=style,
             angle=0,
             num_pts=num_pts,
+        )
+
+    @use_style(LineStyle)
+    def line(self, coordinates: list[tuple[float, float]], style: LineStyle):
+        """Plots a line
+
+        Args:
+            coordinates: List of coordinates, e.g. `[(ra, dec), (ra, dec)]`
+            style: Style of the line
+        """
+        x, y = zip(*[self._prepare_coords(*p) for p in coordinates])
+
+        self.ax.plot(
+            x,
+            y,
+            clip_on=True,
+            clip_path=self._background_clip_path,
+            **style.matplot_kwargs(self._size_multiplier),
+            **self._plot_kwargs(),
         )
 
     @use_style(ObjectStyle, "moon")

@@ -27,9 +27,9 @@ map_orion_extra:
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: be71d11ee01fa4d0
 map_plot_custom_clip_path_virgo:
-  dhash: 062503130d0c0404060501130f0c0404062501170d0c0404
+  dhash: 062503130d0c04040625252d2d0c04040625252f2d0c0404
   filename: /starplot/hash_checks/data/map-custom-clip-path-virgo.png
-  phash: e24ac9a6a5993736
+  phash: e66e9993b3999122
 map_plot_limit_by_geometry:
   dhash: 22a896960c021204028a96960c021244122896964c0a1204
   filename: /starplot/hash_checks/data/map-limit-by-geometry.png
