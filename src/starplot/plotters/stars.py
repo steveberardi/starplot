@@ -234,4 +234,6 @@ class StarPlotterMixin:
 
         self._add_legend_handle_marker(legend_label, style.marker)
 
-        self._star_labels(star_objects, where_labels, style.label, labels, bayer_labels, label_fn)
+        self._star_labels(
+            star_objects, where_labels, style.label, labels, bayer_labels, label_fn
+        )
