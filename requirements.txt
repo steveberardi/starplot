@@ -6,7 +6,7 @@ shapely==2.0.1
 skyfield==1.48
 adjustText==1.0
 cartopy==0.22.0
-geopandas==1.0.1
+geopandas==0.14.4
 pillow==10.0.0
 PyYAML==6.0.1
 pyarrow==17.0.0
