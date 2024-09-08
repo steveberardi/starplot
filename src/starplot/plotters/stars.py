@@ -211,6 +211,10 @@ class StarPlotterMixin:
 
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 
+        if not starz:
+            self.logger.debug(f"Star count = {len(starz)}")
+            return
+
         x, y, sizes, alphas, colors, star_objects = zip(*starz)
 
         self._objects.stars.extend(star_objects)

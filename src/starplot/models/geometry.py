@@ -22,13 +22,11 @@ def circle(center, diameter_degrees):
 def to_24h(geometry: Union[Point, Polygon, MultiPolygon]):
     def _to_poly24(p: Polygon):
         coords = list(zip(*p.exterior.coords.xy))
-        coords = [
-            (round(24 - utils.lon_to_ra(lon), 4), round(dec, 4)) for lon, dec in coords
-        ]
+        coords = [(round(lon / 15, 4), round(dec, 4)) for lon, dec in coords]
         return Polygon(coords)
 
     def _to_point24(p: Point):
-        return Point(round(24 - utils.lon_to_ra(p.x), 4), round(p.y, 4))
+        return Point(round(p.x / 15, 4), round(p.y, 4))
 
     geometry_type = str(geometry.geom_type)
 

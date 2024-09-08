@@ -69,7 +69,7 @@ def _stereo_north():
         labels=None,
         true_size=False,
         where=[
-            DSO.magnitude.is_null() | (DSO.magnitude <= 8),
+            DSO.magnitude.is_null() | (DSO.magnitude <= 9),
             DSO.type.is_in(BASIC_DSO_TYPES),
         ],
     )
@@ -134,8 +134,7 @@ def check_map_coma_berenices_dso_size():
         resolution=RESOLUTION,
     )
     p.stars(mag=8, bayer_labels=True)
-    p.galaxies(mag=11, true_size=False)
-    p.open_clusters(mag=11, true_size=True)
+    p.open_clusters(mag=8, true_size=True)
     p.gridlines()
     p.ecliptic()
     p.celestial_equator()
@@ -377,6 +376,7 @@ def check_map_plot_limit_by_geometry():
             {
                 "dso_open_cluster": {"marker": {"size": 20}},
                 "dso_galaxy": {"marker": {"size": 20}},
+                "dso_nebula": {"marker": {"size": 20}},
             }
         ),
         resolution=RESOLUTION,

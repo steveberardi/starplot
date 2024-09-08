@@ -193,9 +193,13 @@ def create_ellipse(d):
         num_pts=100,
     )
 
-    # points = [geod.to_radec(p) for p in points]
-    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
-    return Polygon(points)
+    points360 = []
+    for lon, dec in points:
+        if lon < 0:
+            lon += 360
+        points360.append([round(lon, 4), round(dec, 4)])
+
+    return Polygon(points360)
 
 
 def parse_designation_from_filename(filename):
@@ -274,16 +278,18 @@ for f in walk_files():
 # add size column
 gdf["size_deg2"] = gdf.apply(_size, axis=1)
 
-print(gdf.loc["NGC6405"])
-# print(gdf.loc["Mel022"])
+# print(gdf.loc["NGC1976"])
+
+print(gdf.loc["NGC6720"])  # ring nebula
+print(gdf.loc["Mel022"])  # M45
 # print("INDEX")
 # print(gdf.sindex.size)
 
 # gdf.to_file(BUILD_PATH / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
 
-
+gdf.set_crs(CRS, inplace=True)
 gdf.to_file(DATA_LIBRARY / "ongc.gpkg", driver="GPKG", engine="pyogrio", index=True)
-# crs=CRS,
+# crs=CRS, engine="pyogrio",
 
 print("Total nebula outlines: " + str(len(outlines)))
 # result = gpd.read_file(HERE.parent / "build" / "ngc.gpkg")
