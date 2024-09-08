@@ -11,13 +11,13 @@ map_gridlines:
   filename: /starplot/hash_checks/data/map-gridlines.png
   phash: f82acf9c3c616392
 map_label_callables:
-  dhash: 8882872f361c90c08886860e361c90c0a88e8e0e0f3c90c0
+  dhash: 80948c8c9c8c88a080988c8c9c8c88a0809c8d0d9d9c98a0
   filename: /starplot/hash_checks/data/map-m45-label-callables.png
-  phash: b466cb9936b236c4
+  phash: b26ccd99316664cd
 map_mollweide:
-  dhash: 0b2973632b33170f0b2973632b33170f0f297b6323330707
+  dhash: 0b2933632b3317070b2933632b3317070f297b6323130707
   filename: /starplot/hash_checks/data/map-mollweide.png
-  phash: fa9ab698c0259567
+  phash: fa9af698c0259566
 map_moon_phase_waxing_crescent:
   dhash: 8884484d4d4884888884484d4d4884888884484d4d488488
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
@@ -37,10 +37,6 @@ map_plot_custom_clip_path_virgo:
 map_plot_limit_by_geometry:
   dhash: 22a896960c021204028a96960c021244122896964c0a1204
   filename: /starplot/hash_checks/data/map-limit-by-geometry.png
-  phash: e56d9b92646d5492
-map_plot_limit_constellation:
-  dhash: 22a896960c021204028a96960c021244122896964c0a1204
-  filename: /starplot/hash_checks/data/map-limit-constellation.png
   phash: e56d9b92646d5492
 map_scope_bino_fov:
   dhash: 0bc0808c8c8080802bceb2ac4daa928c2bceb2ac4daa928c
