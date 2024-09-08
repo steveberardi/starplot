@@ -82,7 +82,7 @@ def from_tuple(c: tuple) -> Constellation:
     geometry = c.geometry
     if len(c.geometry.geoms) == 1:
         geometry = c.geometry.geoms[0]
-    
+
     geometry = to_24h(geometry)
 
     return Constellation(

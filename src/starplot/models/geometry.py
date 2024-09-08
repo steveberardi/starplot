@@ -16,18 +16,18 @@ def circle(center, diameter_degrees):
     ]
     return Polygon(points)
 
-def to_24h(geometry: Point | Polygon | MultiPolygon):
 
+def to_24h(geometry: Point | Polygon | MultiPolygon):
     def _to_poly24(p: Polygon):
         coords = list(zip(*p.exterior.coords.xy))
         coords = [
             (round(24 - utils.lon_to_ra(lon), 4), round(dec, 4)) for lon, dec in coords
         ]
         return Polygon(coords)
-    
+
     def _to_point24(p: Point):
         return Point(round(24 - utils.lon_to_ra(p.x), 4), round(p.y, 4))
-    
+
     geometry_type = str(geometry.geom_type)
 
     if geometry_type == "MultiPolygon":
@@ -42,5 +42,3 @@ def to_24h(geometry: Point | Polygon | MultiPolygon):
         return _to_point24(geometry)
     else:
         raise ValueError(f"Unsupported geometry type: {geometry_type}")
-
-    

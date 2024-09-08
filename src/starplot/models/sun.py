@@ -47,7 +47,6 @@ class SunManager(SkyObjectManager):
             radians=np.arcsin(RADIUS_KM / distance.km) * 2.0
         ).degrees
 
-        print(ra.hours)
         return Sun(
             ra=ra.hours,
             dec=dec.degrees,

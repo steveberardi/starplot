@@ -7,7 +7,7 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
 from matplotlib import path, patches, ticker
 from matplotlib.ticker import FuncFormatter, FixedLocator
-from shapely import LineString, MultiLineString
+from shapely import LineString, MultiLineString, Polygon
 from shapely.ops import unary_union
 from skyfield.api import Star as SkyfieldStar, wgs84
 import geopandas as gpd
@@ -59,6 +59,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
+        clip_path: An optional Shapely Polygon that specifies the clip path of the plot -- only objects inside the polygon will be plotted. If `None` (the default), then the clip path will be the extent of the map you specified with the RA/DEC parameters.
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -79,6 +80,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         style: PlotStyle = DEFAULT_MAP_STYLE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
+        clip_path: Polygon = None,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -107,6 +109,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.dec_max = dec_max
         self.lat = lat
         self.lon = lon
+        self.clip_path = clip_path
 
         if self.projection in [
             Projection.ORTHOGRAPHIC,
@@ -132,7 +135,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             ],
             globe=ccrs.Globe(ellipse="sphere", flattening=0),
         )
-        self._clip_path = kwargs.pop("clip_path", None)
         self._init_plot()
 
     def _plot_kwargs(self) -> dict:
@@ -789,9 +791,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 ax_points.append([x_axes, y_axes])
             return ax_points
 
-        if self._clip_path is not None:
-            points = list(zip(*self._clip_path.exterior.coords.xy))
-            print(to_axes(points))
+        if self.clip_path is not None:
+            points = list(zip(*self.clip_path.exterior.coords.xy))
             self._background_clip_path = patches.Polygon(
                 to_axes(points),
                 facecolor=self.style.background_color.as_hex(),
@@ -799,8 +800,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 zorder=-2_000,
                 transform=self.ax.transAxes,
             )
-
-
         elif self.projection == Projection.ZENITH:
             self._background_clip_path = patches.Circle(
                 (0.50, 0.50),
