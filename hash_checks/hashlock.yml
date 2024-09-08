@@ -11,9 +11,9 @@ map_gridlines:
   filename: /starplot/hash_checks/data/map-gridlines.png
   phash: f82acf9c3c616392
 map_label_callables:
-  dhash: 8882872d361c90c08882860e361c90c0a88e8e0e0f3c90c0
+  dhash: 8882872f361c90c08886860e361c90c0a88e8e0e0f3c90c0
   filename: /starplot/hash_checks/data/map-m45-label-callables.png
-  phash: b467c99832b236cd
+  phash: b466cb9936b236c4
 map_mollweide:
   dhash: 0b2973632b33170f0b2973632b33170f0f297b6323330707
   filename: /starplot/hash_checks/data/map-mollweide.png
