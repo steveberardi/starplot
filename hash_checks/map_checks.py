@@ -39,7 +39,7 @@ def _mercator():
             DSO.magnitude.is_null() | (DSO.magnitude <= 8),
             DSO.size.is_not_null(),
             DSO.size > 0.1,
-            DSO.type.is_in(BASIC_DSO_TYPES)
+            DSO.type.is_in(BASIC_DSO_TYPES),
         ],
     )
     p.milky_way()
@@ -294,7 +294,7 @@ def check_map_mollweide():
             DSO.magnitude.is_null() | (DSO.magnitude <= 4),
             DSO.size.is_not_null(),
             DSO.size > 0.1,
-            DSO.type.is_in(BASIC_DSO_TYPES)
+            DSO.type.is_in(BASIC_DSO_TYPES),
         ],
     )
     p.milky_way()
@@ -364,6 +364,7 @@ def check_map_moon_phase_waxing_crescent():
     p.export(filename)
     p.close_fig()
     return filename
+
 
 def check_map_plot_limit_by_geometry():
     p = MapPlot(
