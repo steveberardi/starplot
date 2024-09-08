@@ -88,6 +88,7 @@ class DsoPlotterMixin:
         labels: Mapping[str, str] = DSO_LABELS_DEFAULT,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
         alpha_fn: Callable[[DSO], float] = None,
+        label_fn: Callable[[DSO], str] = None,
         where: list = None,
         where_labels: list = None,
     ):
@@ -101,6 +102,7 @@ class DsoPlotterMixin:
             labels: A dictionary that maps DSO names (as specified in OpenNGC) to the label that'll be plotted for that object. By default, the DSO's name in OpenNGC will be used as the label. If you want to hide all labels, then set this arg to `None`.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
+            label_fn: Callable for determining the label of each DSO. If `None`, then the names in the `labels` kwarg will be used.
             where: A list of expressions that determine which DSOs to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             where_labels: A list of expressions that determine which DSOs are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
         """
@@ -132,7 +134,6 @@ class DsoPlotterMixin:
         for d in nearby_dsos.itertuples():
             ra = d.ra_degrees
             dec = d.dec_degrees
-            label = labels.get(d.name)
             dso_type = ONGC_TYPE_MAP[d.type]
             style = self.style.get_dso_style(dso_type)
             maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
@@ -140,6 +141,7 @@ class DsoPlotterMixin:
             magnitude = d.mag_v or d.mag_b or None
             magnitude = float(magnitude) if magnitude else None
             _dso = from_tuple(d)
+            label = labels.get(d.name) if label_fn is None else label_fn(_dso)
 
             if any(
                 [

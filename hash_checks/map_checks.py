@@ -456,3 +456,42 @@ def check_map_plot_custom_clip_path_virgo():
     p.export(filename)
     p.close_fig()
     return filename
+
+def check_map_label_callables():
+    p = MapPlot(
+        projection=Projection.MILLER,
+        ra_min=3.5,
+        ra_max=4.1,
+        dec_min=21,
+        dec_max=26,
+        style=STYLE.extend(
+            {
+                "dso_open_cluster": {"label": {"font_size": 28, "font_weight": "bold", "offset_x": 310, "offset_y": 240}},
+            }
+        ),
+        resolution=2000,
+    )
+    m45 = DSO.get(m='45')
+
+    p.dsos(
+        where=[
+            (DSO.magnitude.is_null()) | (DSO.magnitude < 12),
+            DSO.geometry.intersects(m45.geometry),
+            DSO.size > 0.08,
+        ],
+        label_fn=lambda d: f"M{d.m}" if d.m else "",
+    )
+    
+    p.stars(
+        catalog="big-sky-mag11",
+        label_fn=lambda s: s.hip,
+        where=[
+            Star.magnitude < 9.6,
+            Star.geometry.intersects(m45.geometry) 
+        ],
+    )
+
+    filename = DATA_PATH / "map-m45-label-callables.png"
+    p.export(filename)
+    p.close_fig()
+    return filename

@@ -83,16 +83,17 @@ class StarPlotterMixin:
         style: LabelStyle,
         labels: Mapping[str, str],
         bayer_labels: bool,
+        label_fn: Callable[[Star], str],
     ):
         for s in star_objects:
             if where_labels and not all([e.evaluate(s) for e in where_labels]):
                 continue
 
-            name = labels.get(s.hip)
+            label = labels.get(s.hip) if label_fn is None else label_fn(s)
             bayer_desig = bayer.hip.get(s.hip)
 
-            if name:
-                self.text(name, s.ra, s.dec, style)
+            if label:
+                self.text(label, s.ra, s.dec, style)
 
             if bayer_labels and bayer_desig:
                 self.text(bayer_desig, s.ra, s.dec, self.style.bayer_labels)
@@ -114,6 +115,7 @@ class StarPlotterMixin:
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
+        label_fn: Callable[[Star], str] = None,
         where: list = None,
         where_labels: list = None,
         labels: Mapping[int, str] = STAR_NAMES,
@@ -133,6 +135,7 @@ class StarPlotterMixin:
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
+            label_fn: Callable for determining the label of each star. If `None`, then the names in the `labels` kwarg will be used.
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
@@ -231,4 +234,4 @@ class StarPlotterMixin:
 
         self._add_legend_handle_marker(legend_label, style.marker)
 
-        self._star_labels(star_objects, where_labels, style.label, labels, bayer_labels)
+        self._star_labels(star_objects, where_labels, style.label, labels, bayer_labels, label_fn)
