@@ -10,7 +10,7 @@ from starplot.data.dsos import (
     DsoLabelMaker,
     load_ongc,
 )
-from starplot.models import DSO
+from starplot.models.dso import DSO, from_tuple
 from starplot.styles import MarkerSymbolEnum
 
 
@@ -21,22 +21,6 @@ class DsoPlotterMixin:
         coords.append(coords[0])
         coords.append(coords[0])
         self._polygon(coords, style.marker.to_polygon_style(), closed=False)
-
-    def _dso_from_df_tuple(self, d):
-        magnitude = d.mag_v or d.mag_b or None
-        magnitude = float(magnitude) if magnitude else None
-        return DSO(
-            name=d.name,
-            ra=d.ra_degrees / 15,
-            dec=d.dec_degrees,
-            type=ONGC_TYPE_MAP[d.type],
-            maj_ax=d.maj_ax,
-            min_ax=d.min_ax,
-            angle=d.angle,
-            magnitude=magnitude,
-            size=d.size_deg2,
-            m=d.m,
-        )
 
     def open_clusters(self, *args, **kwargs):
         """
@@ -155,7 +139,7 @@ class DsoPlotterMixin:
             legend_label = legend_labels.get(dso_type)
             magnitude = d.mag_v or d.mag_b or None
             magnitude = float(magnitude) if magnitude else None
-            _dso = self._dso_from_df_tuple(d)
+            _dso = from_tuple(d)
 
             if any(
                 [

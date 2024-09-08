@@ -1,6 +1,7 @@
 import sys
 import inspect
 import time
+import multiprocessing as mp
 
 from pathlib import Path
 
@@ -73,22 +74,26 @@ class Hashio:
     def _phash(self, img) -> str:
         return str(imagehash.phash(img))
 
+    def _call_wrapper(self, c):
+        func_name = c.__name__[6:]
+        console.print(f"{func_name}...")
+        filename = c()
+        img = Image.open(filename)
+        return func_name, {
+            "filename": str(filename),
+            "dhash": self._dhash(img),
+            "phash": self._phash(img),
+        }
+
     def _get_hashes(self) -> dict:
         """Gets hashes for all callables"""
-        hashes = {}
-        with console.status("Getting hashes...", spinner="aesthetic"):
-            for c in self.callables:
-                func_name = c.__name__[6:]
-                console.print(f"{func_name}...")
-                filename = c()
-                img = Image.open(filename)
-                hashes[func_name] = {
-                    "filename": str(filename),
-                    "dhash": self._dhash(img),
-                    "phash": self._phash(img),
-                }
+        mp.set_start_method("spawn")  # required for M1 macs? or macOS issue?
 
-        return hashes
+        console.print("Getting hashes...", style="bold")
+        with mp.Pool(5) as p:
+            results = p.map(self._call_wrapper, self.callables)
+
+        return {func_name: hashes for func_name, hashes in results}
 
     def _check(self):
         passed = {}

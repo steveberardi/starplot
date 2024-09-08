@@ -852,11 +852,8 @@ class BasePlot(ABC):
 
         # TODO : handle wrapping
 
-        ra_start = max(0, int(self.ra_min) - 2) * 100
-        ra_end = min(24, int(self.ra_max) + 2) * 100
-
-        for ra in range(ra_start, ra_end, 2):
-            x0, y0 = self._prepare_coords(ra / 100, 0)
+        for ra in range(25):
+            x0, y0 = self._prepare_coords(ra, 0)
             x.append(x0)
             y.append(y0)
 
