@@ -79,6 +79,10 @@ class Term:
         """Returns `True` if the field value is NOT `None`"""
         return Expression(func=lambda c: getattr(c, self.attr) is not None)
 
+    def intersects(self, other):
+        """Returns `True` if the field's value intersects `other`. Only available for geometry-type fields."""
+        return Expression(func=lambda c: getattr(c, self.attr).intersects(other))
+
 
 class Meta(type):
     managers = {}

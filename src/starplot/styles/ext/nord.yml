@@ -1,5 +1,7 @@
 background_color: '#4c566a'
 
+text_border_color: '#4c566a'
+
 border_bg_color: '#2e3440'
 border_font_color: '#a3be8c'
 border_line_color: '#a3be8c'

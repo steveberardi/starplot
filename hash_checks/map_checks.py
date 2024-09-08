@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 from pytz import timezone
 
-from starplot import styles, DSO, Moon, Star
+from starplot import styles, DSO, Moon, Star, Constellation
 from starplot.map import MapPlot, Projection
 
 HERE = Path(__file__).resolve().parent
@@ -374,6 +374,74 @@ def check_map_plot_limit_constellation():
     p.constellation_borders()
 
     filename = DATA_PATH / "map-limit-constellation.png"
+    p.export(filename)
+    p.close_fig()
+    return filename
+
+
+def check_map_plot_limit_by_geometry():
+    p = MapPlot(
+        projection=Projection.STEREO_NORTH,
+        ra_min=18,
+        ra_max=20,
+        dec_min=23,
+        dec_max=50,
+        style=STYLE.extend(
+            {
+                "dso_open_cluster": {"marker": {"size": 20}},
+                "dso_galaxy": {"marker": {"size": 20}},
+            }
+        ),
+        resolution=RESOLUTION,
+    )
+    lyra = Constellation.get(iau_id="lyr")
+
+    p.stars(mag=9, bayer_labels=True, where=[Star.geometry.intersects(lyra.boundary)])
+    p.dsos(
+        labels=None,
+        where=[
+            (DSO.magnitude.is_null()) | (DSO.magnitude < 10),
+            Star.geometry.intersects(lyra.boundary),
+        ],
+        true_size=False,
+    )
+    p.constellations(where=[Constellation.boundary.intersects(lyra.boundary)])
+    p.constellation_borders()
+
+    filename = DATA_PATH / "map-limit-by-geometry.png"
+    p.export(filename)
+    p.close_fig()
+    return filename
+
+
+def check_map_plot_custom_clip_path_virgo():
+    virgo = Constellation.get(iau_id="vir")
+    p = MapPlot(
+        projection=Projection.MILLER,
+        ra_min=11,
+        ra_max=16,
+        dec_min=-29,
+        dec_max=17,
+        style=STYLE.extend(
+            {
+                "dso_open_cluster": {"marker": {"size": 20}},
+                "dso_galaxy": {"marker": {"size": 20}},
+            }
+        ),
+        resolution=RESOLUTION,
+        clip_path=virgo.boundary,
+    )
+
+    p.stars(mag=9, bayer_labels=True)
+    p.dsos(
+        labels=None,
+        where=[(DSO.magnitude.is_null()) | (DSO.magnitude < 9)],
+        true_size=False,
+    )
+    p.constellations()
+    p.constellation_borders()
+
+    filename = DATA_PATH / "map-custom-clip-path-virgo.png"
     p.export(filename)
     p.close_fig()
     return filename

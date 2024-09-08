@@ -7,7 +7,7 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
 from matplotlib import path, patches, ticker
 from matplotlib.ticker import FuncFormatter, FixedLocator
-from shapely import LineString, MultiLineString
+from shapely import LineString, MultiLineString, Polygon
 from shapely.ops import unary_union
 from skyfield.api import Star as SkyfieldStar, wgs84
 import geopandas as gpd
@@ -18,6 +18,7 @@ from starplot.base import BasePlot
 from starplot.data import DataFiles, constellations as condata, stars
 from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
 from starplot.mixins import ExtentMaskMixin
+from starplot.models.constellation import from_tuple as constellation_from_tuple
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.projections import Projection
 from starplot.styles import (
@@ -58,6 +59,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
+        clip_path: An optional Shapely Polygon that specifies the clip path of the plot -- only objects inside the polygon will be plotted. If `None` (the default), then the clip path will be the extent of the map you specified with the RA/DEC parameters.
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -78,6 +80,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         style: PlotStyle = DEFAULT_MAP_STYLE,
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
+        clip_path: Polygon = None,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -106,6 +109,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.dec_max = dec_max
         self.lat = lat
         self.lon = lon
+        self.clip_path = clip_path
 
         if self.projection in [
             Projection.ORTHOGRAPHIC,
@@ -259,6 +263,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 list(x),
                 list(y),
                 transform=self._plate_carree,
+                clip_on=True,
+                clip_path=self._background_clip_path,
                 **style_kwargs,
             )
 
@@ -342,6 +348,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self,
         style: PathStyle = None,
         labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
+        where: list = None,
     ):
         """Plots the constellation lines and/or labels
 
@@ -349,7 +356,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             style: Styling of the constellations. If None, then the plot's style (specified when creating the plot) will be used
             labels: A dictionary where the keys are each constellation's 3-letter abbreviation, and the values are how the constellation will be labeled on the plot.
         """
+        self.logger.debug("Plotting constellations...")
+
         labels = labels or {}
+        where = where or []
+
         constellations_gdf = gpd.read_file(
             DataFiles.CONSTELLATIONS.value,
             engine="pyogrio",
@@ -369,8 +380,14 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         conline_hips = condata.lines()
         style_kwargs = style.line.matplot_kwargs(size_multiplier=self._size_multiplier)
 
-        for i, c in constellations_gdf.iterrows():
-            hiplines = conline_hips[c.id]
+        for c in constellations_gdf.itertuples():
+            obj = constellation_from_tuple(c)
+
+            if not all([e.evaluate(obj) for e in where]):
+                continue
+
+            hiplines = conline_hips[c.iau_id]
+            inbounds = False
 
             for s1_hip, s2_hip in hiplines:
                 s1 = stars_df.loc[s1_hip]
@@ -388,6 +405,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 elif s2_ra - s1_ra > 60:
                     s1_ra += 360
 
+                if self.in_bounds(s1_ra / 15, s1_dec):
+                    inbounds = True
+
                 s1_ra *= -1
                 s2_ra *= -1
 
@@ -400,7 +420,12 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                     [s1_dec, s2_dec],
                     transform=transform,
                     **style_kwargs,
+                    clip_on=True,
+                    clip_path=self._background_clip_path,
                 )
+
+            if inbounds:
+                self._objects.constellations.append(obj)
 
         self._plot_constellation_labels(style.label, labels)
 
@@ -625,6 +650,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             rotate_labels=False,
             xpadding=12,
             ypadding=12,
+            clip_on=True,
+            clip_path=self._background_clip_path,
             **style.line.matplot_kwargs(),
         )
 
@@ -754,7 +781,26 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         )
 
     def _plot_background_clip_path(self):
-        if self.projection == Projection.ZENITH:
+        def to_axes(points):
+            ax_points = []
+
+            for ra, dec in points:
+                x, y = self._proj.transform_point(ra * 15, dec, self._crs)
+                data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
+                x_axes, y_axes = data_to_axes.transform((x, y))
+                ax_points.append([x_axes, y_axes])
+            return ax_points
+
+        if self.clip_path is not None:
+            points = list(zip(*self.clip_path.exterior.coords.xy))
+            self._background_clip_path = patches.Polygon(
+                to_axes(points),
+                facecolor=self.style.background_color.as_hex(),
+                fill=True,
+                zorder=-2_000,
+                transform=self.ax.transAxes,
+            )
+        elif self.projection == Projection.ZENITH:
             self._background_clip_path = patches.Circle(
                 (0.50, 0.50),
                 radius=0.45,

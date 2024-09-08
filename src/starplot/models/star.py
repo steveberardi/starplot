@@ -1,6 +1,7 @@
 from typing import Optional
 
 import numpy as np
+from shapely import Point
 
 from starplot.models.base import SkyObject, SkyObjectManager
 from starplot.data.stars import StarCatalog, STAR_NAMES, load as _load_stars
@@ -46,6 +47,9 @@ class Star(SkyObject):
     name: Optional[str] = None
     """Name, if available"""
 
+    geometry: Point = None
+    """Shapely Point of the star's position. Right ascension coordinates are in 24H format."""
+
     def __init__(
         self,
         ra: float,
@@ -55,6 +59,7 @@ class Star(SkyObject):
         hip: int = None,
         name: str = None,
         tyc: str = None,
+        geometry: Point = None,
     ) -> None:
         super().__init__(ra, dec)
         self.magnitude = magnitude
@@ -62,6 +67,7 @@ class Star(SkyObject):
         self.hip = hip
         self.name = name
         self.tyc = tyc
+        self.geometry = Point([ra, dec])
 
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"

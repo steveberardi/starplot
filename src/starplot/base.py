@@ -84,7 +84,7 @@ class BasePlot(ABC):
 
         self.text_border = patheffects.withStroke(
             linewidth=self.style.text_border_width,
-            foreground=self.style.background_color.as_hex(),
+            foreground=self.style.text_border_color.as_hex(),
         )
         self._size_multiplier = self.resolution / 3000
         self.timescale = load.timescale().from_datetime(self.dt)

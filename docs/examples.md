@@ -106,6 +106,14 @@
         </a>
     </li>
 
+    <li>
+        <a href="/examples/map-lyra">
+            <img src="/images/examples/map_lyra-sm.png" alt="Map of the Constellation Lyra" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Map of Lyra</p>
+        </a>
+    </li>
+
 </ul>
 
 

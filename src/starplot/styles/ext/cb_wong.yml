@@ -4,6 +4,8 @@
 
 background_color: '#fff'
 
+text_border_color: '#fff'
+
 border_bg_color: '#fff'
 border_font_color: hsl(0, 0%, 0%)
 border_line_color: hsl(0, 0%, 0%)
