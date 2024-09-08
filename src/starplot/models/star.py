@@ -64,7 +64,7 @@ class Star(SkyObject):
         super().__init__(ra, dec)
         self.magnitude = magnitude
         self.bv = bv
-        self.hip = hip
+        self.hip = hip if hip is not None and np.isfinite(hip) else None
         self.name = name
         self.tyc = tyc
         self.geometry = Point([ra, dec])
