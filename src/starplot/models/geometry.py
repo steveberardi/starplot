@@ -1,3 +1,5 @@
+from typing import Union
+
 from shapely.geometry import Point, Polygon, MultiPolygon
 
 from starplot import geod, utils
@@ -17,7 +19,7 @@ def circle(center, diameter_degrees):
     return Polygon(points)
 
 
-def to_24h(geometry: Point | Polygon | MultiPolygon):
+def to_24h(geometry: Union[Point, Polygon, MultiPolygon]):
     def _to_poly24(p: Polygon):
         coords = list(zip(*p.exterior.coords.xy))
         coords = [

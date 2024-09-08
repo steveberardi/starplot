@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from shapely.geometry import Polygon, MultiPolygon
 
@@ -63,7 +63,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     Index Catalogue (IC) identifier. *Note that this field is a string, to support objects like '4974 NED01'.*
     """
 
-    geometry: Polygon | MultiPolygon = None
+    geometry: Union[Polygon, MultiPolygon] = None
     """Shapely Polygon of the DSO's extent. Right ascension coordinates are in 24H format."""
 
     def __init__(
@@ -80,7 +80,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         m: str = None,
         ngc: str = None,
         ic: str = None,
-        geometry: Polygon | MultiPolygon = None,
+        geometry: Union[Polygon, MultiPolygon] = None,
     ) -> None:
         super().__init__(ra, dec)
         self.name = name
