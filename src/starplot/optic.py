@@ -14,7 +14,14 @@ from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
 from starplot.optics import Optic
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
-from starplot.styles import PlotStyle, ObjectStyle, LabelStyle, extensions, use_style
+from starplot.styles import (
+    PlotStyle,
+    ObjectStyle,
+    LabelStyle,
+    extensions,
+    use_style,
+    ZOrderEnum,
+)
 from starplot.utils import azimuth_to_string
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -315,7 +322,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             facecolor=self.style.background_color.as_hex(),
             linewidth=0,
             fill=True,
-            zorder=-1000,
+            zorder=ZOrderEnum.LAYER_1,
         )
         self.ax.add_patch(self._background_clip_path)
 
@@ -326,7 +333,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             linewidth=2 * self._size_multiplier,
             edgecolor=self.style.border_line_color.as_hex(),
             fill=False,
-            zorder=128,
+            zorder=ZOrderEnum.LAYER_5 + 100,
         )
         self.ax.add_patch(inner_border)
 
@@ -338,7 +345,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             linewidth=20 * self._size_multiplier,
             edgecolor=self.style.border_bg_color.as_hex(),
             fill=False,
-            zorder=64,
+            zorder=ZOrderEnum.LAYER_5,
         )
         self.ax.add_patch(outer_border)
 

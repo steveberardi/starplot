@@ -19,17 +19,17 @@ map_moon_phase_waxing_crescent:
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b3cccc3333cccc31
 map_orion_base:
-  dhash: 1c3b3b7e6e2f64681c3b3b4e6e2f64681c3b1bce6e2f646c
+  dhash: 1c3b3b6e6e2f64681c3b3b4e6e2f64681c3b1bce6e2f6468
   filename: /starplot/hash_checks/data/map-orion-base.png
   phash: be79d9260785709c
 map_orion_extra:
-  dhash: 1c1b3a6d2f646c171d1b1b6b2f646c871c1b1b6b2d646c07
+  dhash: 1c1b3a6d2f656c171d1b1b6b2f646c871c1b1b6b2d646c07
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: be71d11ee01fa4d0
 map_plot_custom_clip_path_virgo:
-  dhash: 062503130d0c0404060501130f0c0404062501170d0c0404
+  dhash: 062503130d0c04040625252d2d0c04040625252f2d0c0404
   filename: /starplot/hash_checks/data/map-custom-clip-path-virgo.png
-  phash: e24ac9a6a5993736
+  phash: e66e9993b3999122
 map_plot_limit_by_geometry:
   dhash: 22a896960c021204028a96960c021244122896964c0a1204
   filename: /starplot/hash_checks/data/map-limit-by-geometry.png
@@ -49,9 +49,9 @@ map_stereo_base:
 map_with_planets:
   dhash: 62930d63899b32b362930563899b32b362930563899b32b3
   filename: /starplot/hash_checks/data/map-mercator-planets.png
-  phash: e9c69d89861f5b12
+  phash: e9c69d89861f5392
 map_wrapping:
-  dhash: 16391d257743211716391d257743211716391d2577432117
+  dhash: 16391d257743211516391d257743211516391d2577432115
   filename: /starplot/hash_checks/data/map-wrapping.png
   phash: ee30f16d3464253d
 optic_camera_rotated:
@@ -107,6 +107,6 @@ optic_wrapping:
   filename: /starplot/hash_checks/data/optic-wrapping.png
   phash: d0c46f1b396cf078
 zenith_base:
-  dhash: 1779cc8ad45d3b8e1779cc8a965d2b8e1779ec8a965d2b0e
+  dhash: 1779cc8a945d3b8e1779cc8a965d2b8e1779ec8a965d2b0e
   filename: /starplot/hash_checks/data/zenith-base.png
-  phash: b343eb3be1249664
+  phash: ba43eb3be1249664
