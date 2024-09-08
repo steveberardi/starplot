@@ -16,7 +16,7 @@
         show_docstring_attributes: true
         members: true
 
-::: starplot.data.dsos.DEFAULT_DSO_TYPES
+::: starplot.data.dsos.BASIC_DSO_TYPES
     options:
         show_root_heading: true
         show_docstring_attributes: true
