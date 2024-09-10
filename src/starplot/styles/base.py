@@ -258,6 +258,9 @@ class MarkerStyle(BaseStyle):
     edge_color: Optional[ColorStr] = ColorStr("#000")
     """Edge color of marker. Can be a hex, rgb, hsl, or word string."""
 
+    edge_width: int = 1
+    """Edge width of marker. Not available for all marker symbols."""
+
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     """Symbol for marker"""
 
@@ -672,12 +675,14 @@ class PlotStyle(BaseStyle):
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            size=6,
+            size=7,
             fill=FillStyleEnum.FULL,
         ),
         label=LabelStyle(
             font_size=6,
             font_weight=FontWeightEnum.LIGHT,
+            offset_x=10,
+            offset_y=-10,
         ),
     )
     """Styling for open star clusters"""
@@ -685,47 +690,49 @@ class PlotStyle(BaseStyle):
     dso_association_stars: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            size=6,
+            size=7,
             fill=FillStyleEnum.FULL,
         ),
         label=LabelStyle(
             font_size=6,
             font_weight=FontWeightEnum.LIGHT,
+            offset_x=10,
+            offset_y=-10,
         ),
     )
     """Styling for associations of stars"""
 
     dso_globular_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE,
-            size=6,
+            symbol=MarkerSymbolEnum.CIRCLE_CROSS,
+            size=7,
             fill=FillStyleEnum.FULL,
             color="#555",
             alpha=0.8,
         ),
-        label=LabelStyle(font_size=6),
+        label=LabelStyle(font_size=6, offset_x=10, offset_y=-10),
     )
     """Styling for globular star clusters"""
 
     dso_galaxy: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.FULL
+            symbol=MarkerSymbolEnum.ELLIPSE, size=7, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=6),
+        label=LabelStyle(font_size=6, offset_x=10, offset_y=-10),
     )
     """Styling for galaxies"""
 
     dso_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE, size=6, fill=FillStyleEnum.FULL
+            symbol=MarkerSymbolEnum.SQUARE, size=7, fill=FillStyleEnum.FULL
         ),
-        label=LabelStyle(font_size=6),
+        label=LabelStyle(font_size=6, offset_x=10, offset_y=-10),
     )
     """Styling for nebulas"""
 
     dso_double_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE, size=6, fill=FillStyleEnum.TOP
+            symbol=MarkerSymbolEnum.CIRCLE, size=7, fill=FillStyleEnum.TOP
         ),
         label=LabelStyle(font_size=6),
     )
@@ -734,7 +741,7 @@ class PlotStyle(BaseStyle):
     dso_dark_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=6,
+            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
@@ -745,7 +752,7 @@ class PlotStyle(BaseStyle):
     dso_hii_ionized_region: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=6,
+            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
@@ -756,7 +763,7 @@ class PlotStyle(BaseStyle):
     dso_supernova_remnant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=6,
+            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
@@ -767,7 +774,7 @@ class PlotStyle(BaseStyle):
     dso_nova_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=6,
+            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
@@ -778,7 +785,7 @@ class PlotStyle(BaseStyle):
     dso_nonexistant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=6,
+            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
@@ -789,7 +796,7 @@ class PlotStyle(BaseStyle):
     dso_unknown: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=6,
+            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
         ),
@@ -800,7 +807,7 @@ class PlotStyle(BaseStyle):
     dso_duplicate: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=6,
+            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
         ),

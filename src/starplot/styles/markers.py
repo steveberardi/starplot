@@ -1,8 +1,14 @@
+from functools import cache
+
+from matplotlib import transforms
 from matplotlib.path import Path
 
 import numpy as np
 
-def ellipse_points(center_x, center_y, semi_major_axis, semi_minor_axis, num_points=100):
+
+def ellipse_points(
+    center_x, center_y, semi_major_axis, semi_minor_axis, num_points=100
+):
     """Generates points on an ellipse.
 
     Args:
@@ -22,36 +28,45 @@ def ellipse_points(center_x, center_y, semi_major_axis, semi_minor_axis, num_poi
 
     return list(zip(x, y))
 
+@cache
 def ellipse():
     verts = ellipse_points(0, 0, 1, 0.5)
 
-    codes = [Path.MOVETO,]
-    codes.extend([Path.LINETO]*98)
+    codes = [
+        Path.MOVETO,
+    ]
+    codes.extend([Path.LINETO] * 98)
     codes.extend([Path.CLOSEPOLY])
-    
+    p = Path(verts, codes).transformed(transforms.Affine2D().rotate_deg(15))
 
-    return Path(verts, codes)
+    return p
 
+@cache
 def circle_cross():
     verts = ellipse_points(0, 0, 1, 1)
 
-    codes = [Path.MOVETO,]
-    codes.extend([Path.LINETO]*98)
+    codes = [
+        Path.MOVETO,
+    ]
+    codes.extend([Path.LINETO] * 98)
 
     codes.extend([Path.CLOSEPOLY])
-    
-    verts.extend([
-        (-1, 0),
-        (1, 0),
-        (0, 1),
-        (0, -1),
 
-    ])
-    codes.extend([
-        Path.MOVETO,
-        Path.LINETO,
-        Path.MOVETO,
-        Path.LINETO,
-    ])
+    verts.extend(
+        [
+            (-1, 0),
+            (1, 0),
+            (0, 1),
+            (0, -1),
+        ]
+    )
+    codes.extend(
+        [
+            Path.MOVETO,
+            Path.LINETO,
+            Path.MOVETO,
+            Path.LINETO,
+        ]
+    )
 
     return Path(verts, codes)

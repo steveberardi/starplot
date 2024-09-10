@@ -641,7 +641,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             return dec_formatter_fn(x)
 
         ra_locations = ra_locations or [x for x in range(24)]
-        dec_locations = dec_locations or [d for d in range(-90, 90, 10)]
+        dec_locations = dec_locations or [d for d in range(-90, 100, 10)]
 
         gridlines = self.ax.gridlines(
             draw_labels=labels,
