@@ -14,6 +14,7 @@ from typing_extensions import Annotated
 
 from starplot.data.dsos import DsoType
 from starplot.styles.helpers import merge_dict
+from starplot.styles.markers import ellipse, circle_cross
 
 ColorStr = Annotated[
     Color,
@@ -126,6 +127,8 @@ class MarkerSymbolEnum(str, Enum):
     STAR_8 = "star_8"
     """\u2734"""
 
+    ELLIPSE = "ellipse"
+
     def as_matplot(self) -> str:
         """Returns the matplotlib value of this marker"""
         return {
@@ -139,10 +142,11 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.DIAMOND: "D",
             MarkerSymbolEnum.TRIANGLE: "^",
             MarkerSymbolEnum.CIRCLE_PLUS: "$\u2295$",
-            MarkerSymbolEnum.CIRCLE_CROSS: "$\u1AA0$",
+            MarkerSymbolEnum.CIRCLE_CROSS: circle_cross(),
             MarkerSymbolEnum.CIRCLE_DOTTED_EDGE: "$\u25CC$",
             MarkerSymbolEnum.COMET: "$\u2604$",
             MarkerSymbolEnum.STAR_8: "$\u2734$",
+            MarkerSymbolEnum.ELLIPSE: ellipse(),
         }[self.value]
 
 
