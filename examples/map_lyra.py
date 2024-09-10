@@ -2,7 +2,7 @@ from starplot import MapPlot, Projection, Constellation
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.BLUE_LIGHT,
+    extensions.BLUE_MEDIUM,
     extensions.MAP,
     {
         "bayer_labels": {
@@ -16,28 +16,24 @@ style = PlotStyle().extend(
 lyra = Constellation.get(name="Lyra")
 p = MapPlot(
     projection=Projection.STEREO_NORTH,
-    ra_min=17,
-    ra_max=20.6,
-    dec_min=18,
-    dec_max=54,
+    ra_min=17.4,
+    ra_max=20.2,
+    dec_min=19,
+    dec_max=53,
     style=style,
     resolution=3000,
 )
+p.messier(true_size=False, label_fn=lambda d: f"M{d.m}")
 p.stars(mag=9, bayer_labels=True)
-p.dsos(mag=9, labels=None)
 p.constellations()
 p.constellation_borders()
 p.milky_way()
-p.ecliptic()
 
 points = list(zip(*lyra.boundary.exterior.coords.xy))
 p.polygon(
     points,
     style__fill_color="#fff",
     style__zorder=-2000,
-    style__edge_width=1,
-    style__edge_color="#000",
-    style__line_style="dashed",
 )
 
-p.export("map_lyra.png", padding=0.3, transparent=True)
+p.export("map_lyra.png", padding=0.2, transparent=True)

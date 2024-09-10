@@ -604,7 +604,7 @@ class PlotStyle(BaseStyle):
     # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            fill=FillStyleEnum.FULL, zorder=ZOrderEnum.LAYER_4, size=36, edge_color=None
+            fill=FillStyleEnum.FULL, zorder=ZOrderEnum.LAYER_3, size=36, edge_color=None
         ),
         label=LabelStyle(
             font_size=9, font_weight=FontWeightEnum.BOLD, zorder=ZOrderEnum.LAYER_4

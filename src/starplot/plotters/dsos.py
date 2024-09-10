@@ -1,3 +1,4 @@
+from functools import cache
 from typing import Callable, Mapping
 
 from starplot.data.dsos import (
@@ -19,6 +20,15 @@ class DsoPlotterMixin:
         coords.append(coords[0])
         coords.append(coords[0])
         self._polygon(coords, style.marker.to_polygon_style(), closed=False)
+
+    def messier(self, *args, **kwargs):
+        """
+        Plots Messier objects
+
+        This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
+        """
+        where = [DSO.m.is_not_null()] + kwargs.pop("where", [])
+        self.dsos(where=where, **kwargs)
 
     def open_clusters(self, *args, **kwargs):
         """
@@ -78,6 +88,9 @@ class DsoPlotterMixin:
         where = [DSO.type.is_in(nebula_types)] + kwargs.pop("where", [])
         self.dsos(where=where, **kwargs)
 
+    def _load_dsos(self):
+        return load_ongc(bbox=self._extent_mask())
+
     def dsos(
         self,
         mag: float = 8.0,
@@ -123,7 +136,7 @@ class DsoPlotterMixin:
         else:
             legend_labels = {**DSO_LEGEND_LABELS, **legend_labels}
 
-        nearby_dsos = load_ongc(bbox=self._extent_mask())
+        nearby_dsos = self._load_dsos()  # load_ongc(bbox=self._extent_mask())
         # dso_types = [ONGC_TYPE[dtype] for dtype in types]
         # nearby_dsos = nearby_dsos[nearby_dsos["type"].isin(dso_types)]
 

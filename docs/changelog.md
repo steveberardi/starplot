@@ -1,5 +1,14 @@
+## v0.12.x
+
+- Adds Shapely geometry to all sky object models, including support for `intersects` in `where` clauses
+- Adds kwarg to map plots to allow custom clip paths
+- Adds callables for star/dso labels
+- Adds a `line` function for plotting lines
+- Adds colors for some DSO labels that were missing them in some style extensions
+- Removed the kwarg `types` from `dsos`, so ALL DSO types are plotted by default
 
 ## v0.11.x
+[Documentation](https://archives.starplot.dev/0.11.4/)
 
 - Replaces Tycho-1 stars with an abridged version of the [Big Sky Catalog](https://github.com/steveberardi/bigsky)
 - Adds style option for a star's edge color (previously this was forced to be the background color)
@@ -12,14 +21,10 @@
 - Adds TYC id to stars (if available)
 - Adds the following projections: Robinson, Lambert Azimuthal Equal-Area
 - Adds a constellation model, allowing you to selectively plot objects by their constellation
-- [**v0.11.1**]
-    - Fixes default horizon style to be consistent with grayscale extension
-- [**v0.11.2**]
-    - Adds `requests` as a required dependency
-- [**v0.11.3**]
-    - Fixes bug with plotting the celestial equator
-- [**v0.11.4**]
-    - Fixes bug with filtering DSOs by NGC/IC identifier
+- [**v0.11.1**] Fixes default horizon style to be consistent with grayscale extension
+- [**v0.11.2**] Adds `requests` as a required dependency
+- [**v0.11.3**] Fixes bug with plotting the celestial equator
+- [**v0.11.4**] Fixes bug with filtering DSOs by NGC/IC identifier
 
 ## v0.10.x
 [Documentation](https://archives.starplot.dev/0.10.2/)
