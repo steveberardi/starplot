@@ -12,7 +12,13 @@ from starplot.data.dsos import (
 from starplot.models.dso import DSO, from_tuple
 from starplot.styles import MarkerSymbolEnum
 
+def _where(*args, **kwargs):
+    where = kwargs.pop("where", [])
 
+    if mag := kwargs.pop("mag", None):
+        where.append(DSO.magnitude.is_null() | (DSO.magnitude <= mag))
+    return where
+    
 class DsoPlotterMixin:
     def _plot_dso_polygon(self, polygon, style):
         coords = list(zip(*polygon.exterior.coords.xy))
@@ -21,13 +27,16 @@ class DsoPlotterMixin:
         coords.append(coords[0])
         self._polygon(coords, style.marker.to_polygon_style(), closed=False)
 
+    
     def messier(self, *args, **kwargs):
         """
         Plots Messier objects
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
-        where = [DSO.m.is_not_null()] + kwargs.pop("where", [])
+        where = _where(**kwargs)
+        where.append(DSO.m.is_not_null())
+        kwargs.pop("where", None)
         self.dsos(where=where, **kwargs)
 
     def open_clusters(self, *args, **kwargs):
@@ -36,7 +45,9 @@ class DsoPlotterMixin:
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
-        where = [DSO.type == DsoType.OPEN_CLUSTER] + kwargs.pop("where", [])
+        where = _where(**kwargs)
+        where.append(DSO.type == DsoType.OPEN_CLUSTER)
+        kwargs.pop("where", None)
         self.dsos(where=where, **kwargs)
 
     def globular_clusters(self, *args, **kwargs):
@@ -45,7 +56,9 @@ class DsoPlotterMixin:
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
-        where = [DSO.type == DsoType.GLOBULAR_CLUSTER] + kwargs.pop("where", [])
+        where = _where(**kwargs)
+        where.append(DSO.type == DsoType.GLOBULAR_CLUSTER)
+        kwargs.pop("where", None)
         self.dsos(where=where, **kwargs)
 
     def galaxies(self, *args, **kwargs):
@@ -63,7 +76,9 @@ class DsoPlotterMixin:
             DsoType.GALAXY_PAIR,
             DsoType.GALAXY_TRIPLET,
         ]
-        where = [DSO.type.is_in(galaxy_types)] + kwargs.pop("where", [])
+        where = _where(**kwargs)
+        where.append(DSO.type.is_in(galaxy_types))
+        kwargs.pop("where", None)
         self.dsos(where=where, **kwargs)
 
     def nebula(self, *args, **kwargs):
@@ -85,7 +100,9 @@ class DsoPlotterMixin:
             DsoType.STAR_CLUSTER_NEBULA,
             DsoType.REFLECTION_NEBULA,
         ]
-        where = [DSO.type.is_in(nebula_types)] + kwargs.pop("where", [])
+        where = _where(**kwargs)
+        where.append(DSO.type.is_in(nebula_types))
+        kwargs.pop("where", None)
         self.dsos(where=where, **kwargs)
 
     @cache

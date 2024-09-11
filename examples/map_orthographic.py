@@ -34,7 +34,6 @@ p.galaxies(where=[DSO.magnitude < 12], true_size=False, labels=None)
 p.nebula(where=[DSO.magnitude < 12], true_size=False, labels=None)
 
 p.constellations(
-    labels=constellations.CONSTELLATIONS_FULL_NAMES,
     style={"label": {"font_size": 9, "font_alpha": 0.8}},
 )
 p.constellation_borders()

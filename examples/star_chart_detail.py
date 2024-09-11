@@ -18,8 +18,7 @@ p = MapPlot(
 )
 p.constellations()
 p.stars(mag=4.6, where_labels=[Star.magnitude < 2.1])
-
-p.messier(true_size=False, labels=None)
+p.messier(mag=6, true_size=False, labels=None)
 p.constellation_borders()
 p.ecliptic()
 p.celestial_equator()
