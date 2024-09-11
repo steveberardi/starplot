@@ -88,6 +88,7 @@ class DsoPlotterMixin:
         where = [DSO.type.is_in(nebula_types)] + kwargs.pop("where", [])
         self.dsos(where=where, **kwargs)
 
+    @cache
     def _load_dsos(self):
         return load_ongc(bbox=self._extent_mask())
 

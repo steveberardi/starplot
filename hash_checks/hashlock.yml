@@ -15,7 +15,7 @@ map_label_callables:
   filename: /starplot/hash_checks/data/map-m45-label-callables.png
   phash: b26ccd99316664cd
 map_mollweide:
-  dhash: 0b2973632b3317070b2973632b3317070f297b6323130707
+  dhash: 0f2933632b3317070f2933632b3317070f295b6323130707
   filename: /starplot/hash_checks/data/map-mollweide.png
   phash: fa9af698c0259566
 map_moon_phase_waxing_crescent:
@@ -23,27 +23,27 @@ map_moon_phase_waxing_crescent:
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b3cccc3333cccc31
 map_orion_base:
-  dhash: 1c3b3b6e6e2f64681c3b3b4e6e2f64681c3b1bce6e2f6468
+  dhash: 1c3b3b6e6e2f64681c3b3b4e6e2f64681c3b1bce6e2f646c
   filename: /starplot/hash_checks/data/map-orion-base.png
   phash: be79d9260785709c
 map_orion_extra:
-  dhash: 1c1b3a6d2f656c171d1b1b6b2f646c871c1b1b6b2d646c07
+  dhash: 1c1b3a6d2f646c171d1b1b6b2f646c871c1b1b6b2d646c07
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: be71d11ee01fa4d0
 map_plot_custom_clip_path_virgo:
-  dhash: 030313130f0c08040327250d0f0c08040327270d0f0c0802
+  dhash: 020103130d0c04040327252d0d0c08040327250f0d0c0804
   filename: /starplot/hash_checks/data/map-custom-clip-path-virgo.png
   phash: e66cc983b3919336
 map_plot_limit_by_geometry:
-  dhash: 22a886960c0612040a8a8e860c0a12440a288e864c0e0a04
+  dhash: 22a886960c061204028a86960c0a1244122886864c0e0a04
   filename: /starplot/hash_checks/data/map-limit-by-geometry.png
-  phash: e5419b9a6c6d3692
+  phash: e54d9b926c6d1692
 map_scope_bino_fov:
   dhash: 0bc0808c8c8080802bceb2ac4daa928c2bceb2ac4daa928c
   filename: /starplot/hash_checks/data/map-scope-bino-fov.png
   phash: e46b296a6e693964
 map_stereo_base:
-  dhash: 627666f07c3c3436627666f0382c3436727666f2eccd9416
+  dhash: 627666f07c3c3436627666f0382c3436727666f2ecc89416
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
   phash: 9dce7973429062ba
 map_with_planets:
@@ -51,9 +51,9 @@ map_with_planets:
   filename: /starplot/hash_checks/data/map-mercator-planets.png
   phash: e9c69d89861f5392
 map_wrapping:
-  dhash: 16291d2d7743211516291d2d7743211516291d2d77432115
+  dhash: 16391d257743211516391d257743211516391d2577432115
   filename: /starplot/hash_checks/data/map-wrapping.png
-  phash: ee30f16d7464213d
+  phash: ee30f1ed3464213d
 optic_camera_rotated:
   dhash: 25468b33269d9a6525468b33269d9a6525468b33269d9a65
   filename: /starplot/hash_checks/data/optic-camera-rotated-m45.png

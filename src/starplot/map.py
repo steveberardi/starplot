@@ -641,8 +641,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             return dec_formatter_fn(x)
 
         ra_locations = ra_locations or [x for x in range(24)]
-        dec_locations = dec_locations or [d for d in range(-90, 100, 10)]
+        dec_locations = dec_locations or [d for d in range(-80, 90, 10)]
 
+        line_style_kwargs = style.line.matplot_kwargs()
         gridlines = self.ax.gridlines(
             draw_labels=labels,
             x_inline=False,
@@ -652,23 +653,34 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             ypadding=12,
             clip_on=True,
             clip_path=self._background_clip_path,
-            **style.line.matplot_kwargs(),
+            **line_style_kwargs,
         )
 
         if labels:
             self._axis_labels = True
 
-        style_kwargs = style.label.matplot_kwargs()
-        style_kwargs.pop("va")
-        style_kwargs.pop("ha")
+        label_style_kwargs = style.label.matplot_kwargs()
+        label_style_kwargs.pop("va")
+        label_style_kwargs.pop("ha")
+
+        if self.dec_max > 75 or self.dec_min < -75:
+            # if the extent is near the poles, then plot the RA gridlines again
+            # because cartopy does not extend lines to poles
+            for ra in ra_locations:
+                self.ax.plot(
+                    (ra * 15, ra * 15),
+                    (-90, 90),
+                    **line_style_kwargs,
+                    **self._plot_kwargs(),
+                )
 
         gridlines.xlocator = FixedLocator([ra_to_lon(r) for r in ra_locations])
         gridlines.xformatter = FuncFormatter(ra_formatter)
-        gridlines.xlabel_style = style_kwargs
+        gridlines.xlabel_style = label_style_kwargs
 
         gridlines.ylocator = FixedLocator(dec_locations)
         gridlines.yformatter = FuncFormatter(dec_formatter)
-        gridlines.ylabel_style = style_kwargs
+        gridlines.ylabel_style = label_style_kwargs
 
         if tick_marks:
             self._tick_marks(style, ra_tick_locations, dec_tick_locations)

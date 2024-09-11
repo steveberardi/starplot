@@ -342,7 +342,6 @@ class LineStyle(BaseStyle):
     edge_color: Optional[ColorStr] = None
     """Edge color of the line. _If the width or color is falsey then the line will NOT be drawn with an edge._"""
 
-    @cache
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         line_width = self.width * size_multiplier
 

@@ -28,6 +28,7 @@ def ellipse_points(
 
     return list(zip(x, y))
 
+
 @cache
 def ellipse():
     verts = ellipse_points(0, 0, 1, 0.5)
@@ -40,6 +41,7 @@ def ellipse():
     p = Path(verts, codes).transformed(transforms.Affine2D().rotate_deg(15))
 
     return p
+
 
 @cache
 def circle_cross():
