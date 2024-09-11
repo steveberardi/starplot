@@ -16,10 +16,12 @@ from starplot.data.dsos import DsoType
 from starplot.styles.helpers import merge_dict
 from starplot.styles.markers import ellipse, circle_cross
 
+
 ColorStr = Annotated[
     Color,
     PlainSerializer(
-        lambda c: c.as_hex() if c and c != "none" else None, return_type=str
+        lambda c: c.as_hex() if c and c != "none" else None,
+        return_type=str,
     ),
 ]
 
@@ -33,8 +35,9 @@ class BaseStyle(BaseModel):
     __hash__ = object.__hash__
 
     class Config:
-        use_enum_values = True
         extra = "forbid"
+        use_enum_values = True
+        validate_assignment = True
 
 
 class FillStyleEnum(str, Enum):

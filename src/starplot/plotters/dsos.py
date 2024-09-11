@@ -12,13 +12,15 @@ from starplot.data.dsos import (
 from starplot.models.dso import DSO, from_tuple
 from starplot.styles import MarkerSymbolEnum
 
+
 def _where(*args, **kwargs):
     where = kwargs.pop("where", [])
 
     if mag := kwargs.pop("mag", None):
         where.append(DSO.magnitude.is_null() | (DSO.magnitude <= mag))
     return where
-    
+
+
 class DsoPlotterMixin:
     def _plot_dso_polygon(self, polygon, style):
         coords = list(zip(*polygon.exterior.coords.xy))
@@ -27,7 +29,6 @@ class DsoPlotterMixin:
         coords.append(coords[0])
         self._polygon(coords, style.marker.to_polygon_style(), closed=False)
 
-    
     def messier(self, *args, **kwargs):
         """
         Plots Messier objects

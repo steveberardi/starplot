@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from starplot import MapPlot, Projection, Star
+from starplot import MapPlot, Projection, Star, DSO
 from starplot.styles import PlotStyle, extensions
 
 tz = timezone("America/Los_Angeles")
@@ -18,7 +18,10 @@ p = MapPlot(
 )
 p.constellations()
 p.stars(mag=4.6, where_labels=[Star.magnitude < 2.1])
-p.messier(mag=6, true_size=False, labels=None)
+
+p.galaxies(where=[DSO.magnitude < 8], true_size=False, labels=None)
+p.open_clusters(where=[DSO.magnitude < 8], true_size=False, labels=None)
+
 p.constellation_borders()
 p.ecliptic()
 p.celestial_equator()
