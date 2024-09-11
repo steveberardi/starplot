@@ -1,8 +1,9 @@
 
 - 🌑 Planet moons
+- ☄️ Comet model
+- 🌄 Horizon plots
 - ✴️ Custom markers
 - 🚀 Plotting Optimizations
-- 📐 Custom clip paths
 - ⚖️ Better auto font-size adjustment
 - 😄 🔭 Clear skies
 
