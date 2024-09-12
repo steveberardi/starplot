@@ -71,23 +71,14 @@ https://discord.gg/WewJJjshFu
 
 Contributing to Starplot is welcome and very much appreciated! Please see [here](CONTRIBUTING.md) for details.
 
-## Core Dependencies
-
-- matplotlib
-- pandas
-- numpy
-- geopandas
-- cartopy
-- skyfield
-- pydantic
-- adjustText
-
 ## Coming Soon
 - 🌑 Planet moons
 - ✴️ Custom markers
 - 🚀 Plotting Optimizations
-- 📐 Custom clip paths
+- ☄️ Comet model
+- 🌄 Horizon plots
 - ⚖️ Better auto font-size adjustment
+- 😄 🔭 Clear skies
 
 See more details on the [Public Roadmap](https://trello.com/b/sUksygn4/starplot-roadmap)
 
