@@ -34,8 +34,8 @@ p.celestial_equator()
 # plot the Milky Way
 p.milky_way()
 
-# plot a marker for the Coma Star Cluster (aka Melotte 111) and customize its style. 
-# Starplot also has functions for plotting circles, rectangles, polygons, and more. 
+# plot a marker for the Coma Star Cluster (aka Melotte 111) and customize its style.
+# Starplot also has functions for plotting circles, rectangles, polygons, and more.
 # See the reference for MapPlot for details.
 p.marker(
     ra=12.36,
