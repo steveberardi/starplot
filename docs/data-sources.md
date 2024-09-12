@@ -19,3 +19,5 @@
 
 ### **Milky Way Outline**
 - Created by Steve Berardi with QGIS + GDAL from NASA's [Deep Star Maps](https://svs.gsfc.nasa.gov/4851)
+
+<br/><br/>
