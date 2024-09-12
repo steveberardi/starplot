@@ -19,8 +19,8 @@ p = MapPlot(
 p.constellations()
 p.stars(mag=4.6, where_labels=[Star.magnitude < 2.1])
 
-p.galaxies(where=[DSO.magnitude < 8], true_size=False, labels=None)
-p.open_clusters(where=[DSO.magnitude < 8], true_size=False, labels=None)
+p.galaxies(where=[DSO.magnitude < 10], true_size=False, labels=None)
+p.open_clusters(where=[DSO.magnitude < 10], true_size=False, labels=None)
 
 p.constellation_borders()
 p.ecliptic()
