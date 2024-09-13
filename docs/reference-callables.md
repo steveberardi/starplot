@@ -1,4 +1,4 @@
-Callables allow you to define your own functions for calculating a few of the style properties for stars: size, alpha (opacity), and color. DSOs support callables for alpha only. Starplot has a few basic callables built-in, but you can also create your own.
+Callables allow you to define your own functions for calculating a few of the style properties for stars: size, alpha (opacity), color, and the star's label. DSOs support callables for alpha and labels only. Starplot has a few basic callables built-in, but you can also create your own.
 
 ???- tip "What's a Callable?"
 
