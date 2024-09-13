@@ -84,6 +84,23 @@ dso_association_stars:
     edge_color: 'hsl(136, 0%, 97%)'
     fill: none
     alpha: 0.8
+
+
+# other DSOs
+dso_unknown: &DSO
+  label:
+    font_color: hsl(136, 0%, 97%)
+  marker:
+    color: 'hsl(136, 0%, 97%)'
+    alpha: 0.28
+dso_dark_nebula: *DSO
+dso_hii_ionized_region: *DSO
+dso_supernova_remnant: *DSO
+dso_nova_star: *DSO
+dso_nonexistant: *DSO
+dso_unknown: *DSO
+dso_duplicate: *DSO
+
 ecliptic:
   label:
     font_color: '#777'

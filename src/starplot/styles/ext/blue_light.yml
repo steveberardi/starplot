@@ -36,6 +36,7 @@ constellation:
     alpha: 0.3
     color: '#6ba832'
     width: 3
+
 dso_double_star:
   marker:
     alpha: 0.6
@@ -67,6 +68,23 @@ dso_association_stars:
     edge_color: '#989400'
   label:
     font_color: '#989400'
+
+# other DSOs
+dso_unknown: &DSO
+  marker:
+    alpha: 0.5
+    color: hsl(91, 53%, 75%)
+    edge_color: hsl(91, 53%, 40%)
+  label:
+    font_color: hsl(91, 53%, 40%)
+dso_dark_nebula: *DSO
+dso_hii_ionized_region: *DSO
+dso_supernova_remnant: *DSO
+dso_nova_star: *DSO
+dso_nonexistant: *DSO
+dso_unknown: *DSO
+dso_duplicate: *DSO
+
 ecliptic:
   label:
     font_color: '#e33b3b'

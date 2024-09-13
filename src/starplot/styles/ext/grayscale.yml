@@ -38,6 +38,21 @@ dso_open_cluster:
     edge_color: '#000'
     fill: none
     alpha: 0.8
+
+
+# other DSOs
+dso_unknown: &DSO
+  marker:
+    color: '#000'
+    alpha: 0.28
+dso_dark_nebula: *DSO
+dso_hii_ionized_region: *DSO
+dso_supernova_remnant: *DSO
+dso_nova_star: *DSO
+dso_nonexistant: *DSO
+dso_unknown: *DSO
+dso_duplicate: *DSO
+
 ecliptic:
   label:
     font_color: '#777'

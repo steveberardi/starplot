@@ -95,10 +95,26 @@ dso_globular_cluster:
   marker:
     alpha: 0.68
     size: 10
-    symbol: circle_plus
     color: hsl(209, 50%, 92%)
     edge_color: null
     zorder: 100
+
+# other DSOs
+dso_unknown: &DSO
+  label:
+    font_color: hsl(209, 23%, 72%)
+  marker:
+    alpha: 0.46
+    color: hsl(209, 50%, 78%)
+    edge_color: hsl(209, 50%, 20%)
+    zorder: -500
+dso_dark_nebula: *DSO
+dso_hii_ionized_region: *DSO
+dso_supernova_remnant: *DSO
+dso_nova_star: *DSO
+dso_nonexistant: *DSO
+dso_unknown: *DSO
+dso_duplicate: *DSO
 
 info_text:
   font_color: hsl(209, 53%, 90%)
