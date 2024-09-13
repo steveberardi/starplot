@@ -51,7 +51,6 @@ def circle_cross():
         Path.MOVETO,
     ]
     codes.extend([Path.LINETO] * 98)
-
     codes.extend([Path.CLOSEPOLY])
 
     verts.extend(
@@ -64,6 +63,40 @@ def circle_cross():
     )
     codes.extend(
         [
+            Path.MOVETO,
+            Path.LINETO,
+            Path.MOVETO,
+            Path.LINETO,
+        ]
+    )
+
+    return Path(verts, codes)
+
+
+@cache
+def circle_line():
+    verts = ellipse_points(0, 0, 1, 1)
+
+    codes = [
+        Path.MOVETO,
+    ]
+    codes.extend([Path.LINETO] * 98)
+    codes.extend([Path.CLOSEPOLY])
+
+    verts.extend(
+        [
+            (-1.9, 0),
+            (1.9, 0),
+            (-1.9, 0.04),
+            (1.9, 0.04),
+            (-1.9, -0.04),
+            (1.9, -0.04),
+        ]
+    )
+    codes.extend(
+        [
+            Path.MOVETO,
+            Path.LINETO,
             Path.MOVETO,
             Path.LINETO,
             Path.MOVETO,
