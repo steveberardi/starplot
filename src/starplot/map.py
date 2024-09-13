@@ -355,6 +355,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Args:
             style: Styling of the constellations. If None, then the plot's style (specified when creating the plot) will be used
             labels: A dictionary where the keys are each constellation's 3-letter abbreviation, and the values are how the constellation will be labeled on the plot.
+            where: A list of expressions that determine which constellations to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
         """
         self.logger.debug("Plotting constellations...")
 
