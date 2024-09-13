@@ -108,7 +108,7 @@ ecliptic:
     color: '#777'
 milky_way:
   alpha: 0.1
-  color: hsl(136, 0%, 62%)
+  fill_color: hsl(136, 0%, 62%)
   edge_width: 0
 planets:
   label:

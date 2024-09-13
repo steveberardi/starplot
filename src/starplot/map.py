@@ -452,17 +452,17 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         mw = self._read_geo_package(DataFiles.MILKY_WAY.value)
 
         if not mw.empty:
-            style_kwargs = style.matplot_kwargs(size_multiplier=self._size_multiplier)
-            style_kwargs.pop("fill", None)
-
             # create union of all Milky Way patches
             gs = mw.geometry.to_crs(self._plate_carree)
             mw_union = gs.buffer(0.1).unary_union.buffer(-0.1)
+            points = list(zip(*mw_union.boundary.coords.xy))
 
-            self.ax.add_geometries(
-                [mw_union],
-                crs=self._plate_carree,
-                **style_kwargs,
+            # convert lon to RA and reverse so the coordinates are counterclockwise order
+            points = [(lon_to_ra(lon) * 15, dec) for lon, dec in reversed(points)]
+
+            self._polygon(
+                points,
+                style=style,
             )
 
     @use_style(ObjectStyle, "zenith")

@@ -131,7 +131,7 @@ gridlines:
     width: 1
 milky_way:
   alpha: 0.26
-  color: hsl(209, 50%, 54%)
+  fill_color: hsl(209, 50%, 54%)
   edge_width: 0
 planets:
   label:

@@ -841,7 +841,7 @@ class PlotStyle(BaseStyle):
 
     # Milky Way
     milky_way: PolygonStyle = PolygonStyle(
-        color="#d9d9d9",
+        fill_color="#d9d9d9",
         alpha=0.36,
         edge_width=0,
         zorder=ZOrderEnum.LAYER_2,

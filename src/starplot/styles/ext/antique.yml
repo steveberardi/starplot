@@ -63,7 +63,7 @@ ecliptic:
     alpha: 0.6
 milky_way:
   alpha: 0.14
-  color: hsl(48, 40%, 70%)
+  fill_color: hsl(48, 40%, 70%)
   edge_width: 0
 gridlines:
   label:

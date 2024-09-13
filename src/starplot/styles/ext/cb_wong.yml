@@ -104,7 +104,7 @@ ecliptic:
     color: hsl(26, 100%, 42%)
 milky_way:
   alpha: 0.18
-  color: hsl(202, 77%, 63%)
+  fill_color: hsl(202, 77%, 63%)
   edge_width: 0
 planets:
   marker:

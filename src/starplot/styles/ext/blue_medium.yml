@@ -42,7 +42,7 @@ planets:
     fill: full
 milky_way:
   alpha: 0.14
-  color: '#94c5e3'
+  fill_color: '#94c5e3'
   edge_width: 0
 gridlines:
   label:

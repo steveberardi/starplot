@@ -10,18 +10,19 @@ style = PlotStyle().extend(
             "font_size": 7,
             "font_alpha": 0.9,
         },
-        "background_color": "#d6d6d6",
+        # "background_color": "#d6d6d6",
     },
 )
 lyra = Constellation.get(name="Lyra")
 p = MapPlot(
     projection=Projection.STEREO_NORTH,
-    ra_min=17.4,
-    ra_max=20.2,
+    ra_min=17.8,
+    ra_max=20,
     dec_min=19,
     dec_max=53,
     style=style,
     resolution=3000,
+    clip_path=lyra.boundary,
 )
 p.messier(true_size=False, label_fn=lambda d: f"M{d.m}")
 p.stars(mag=9, bayer_labels=True)

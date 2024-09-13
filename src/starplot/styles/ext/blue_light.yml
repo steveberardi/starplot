@@ -92,7 +92,7 @@ ecliptic:
     color: '#e33b3b'
 milky_way:
   alpha: 0.16
-  color: '#94c5e3'
+  fill_color: '#94c5e3'
   edge_width: 0
 planets:
   marker:
