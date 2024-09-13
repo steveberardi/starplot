@@ -39,6 +39,7 @@ On line 16, we plot only the DSOs we want by passing the `where` keyword argumen
 | `(Star.hip.is_not_null()) | (Star.bv < 0)`       | Select stars that have a HIP id **OR** have a bluish color (bv < 0)       |
 | `Star.name.is_in(["Sirius", "Rigel", "Vega"])`   | Select stars with the names Sirius, Rigel, or Vega                        |
 | `(DSO.size.is_null()) | (DSO.size > 0.01)`       | Select DSOs that have no defined size **OR** are larger than 0.01 square degrees      |
+| `Star.geometry.intersects(m45.geometry)`         | Select stars that are within the Pleiades (M45) star cluster (assumes `m45 = DSO.get(m='45')`)     |
 
 ## Important Details
 

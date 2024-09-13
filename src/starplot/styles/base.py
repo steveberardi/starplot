@@ -131,6 +131,7 @@ class MarkerSymbolEnum(str, Enum):
     """\u2734"""
 
     ELLIPSE = "ellipse"
+    """\u2B2D"""
 
     def as_matplot(self) -> str:
         """Returns the matplotlib value of this marker"""
