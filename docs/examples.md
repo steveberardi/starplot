@@ -107,10 +107,10 @@
     </li>
 
     <li>
-        <a href="/examples/map-lyra">
-            <img src="/images/examples/map_lyra-sm.png" alt="Map of the Constellation Lyra" class="off-glb" loading="lazy"/>
+        <a href="/examples/map-canis-major">
+            <img src="/images/examples/map_canis_major-sm.png" alt="Map of the Constellation Canis Major" class="off-glb" loading="lazy"/>
 
-            <p class="example-card-title">Map of Lyra</p>
+            <p class="example-card-title">Map of Canis Major</p>
         </a>
     </li>
 
