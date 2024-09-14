@@ -8,6 +8,7 @@
 - Adds an ellipse marker for galaxies
 - Adds colors for some DSO labels that were missing them in some style extensions
 - Removed the kwarg `types` from `dsos`, so ALL DSO types are plotted by default
+- [**v0.12.1**] Fixes issue with plotting the Milky Way when it consists of multiple polygons
 
 ## v0.11.x
 [Documentation](https://archives.starplot.dev/0.11.4/)
