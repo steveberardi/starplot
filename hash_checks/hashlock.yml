@@ -27,11 +27,11 @@ map_orion_base:
   filename: /starplot/hash_checks/data/map-orion-base.png
   phash: be79d9260785709c
 map_orion_extra:
-  dhash: 1c1b3a6d2f646c171d1b1b6b2f646c871c1b1b6b2d646c07
+  dhash: 1c1b3a6d2f656c171d1b1b6b2f646c871c1b1b6b2d646c07
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: be71d11ee01fa4d0
 map_plot_custom_clip_path_virgo:
-  dhash: 020103130d0c04040327252d0d0c08040327250f0d0c0804
+  dhash: 020103130f0c04040327252d0d0c08040327250f0d0c0804
   filename: /starplot/hash_checks/data/map-custom-clip-path-virgo.png
   phash: e66cc983b3919336
 map_plot_limit_by_geometry:
@@ -73,7 +73,7 @@ optic_m45_camera:
 optic_m45_reflector:
   dhash: 8e173b712b338e4d8e173b712b338e4d8e173b712b338e4d
   filename: /starplot/hash_checks/data/optic-m45-reflector.png
-  phash: bb7b80e486869b93
+  phash: bb7b84e486868b93
 optic_m45_scope:
   dhash: 8e172b5133238e4d8e172b5133238e4d8e172b5133238e4d
   filename: /starplot/hash_checks/data/optic-m45-scope.png
