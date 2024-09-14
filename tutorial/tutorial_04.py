@@ -32,7 +32,9 @@ p.gridlines()  # add gridlines
 
 p.stars(mag=9, bayer_labels=True)  # include bayer labels with the stars
 
-p.dsos(mag=9, labels=None)
+p.nebula(mag=9, labels=None)
+p.open_clusters(mag=9, labels=None)
+
 p.constellations()
 p.constellation_borders()
 p.milky_way()

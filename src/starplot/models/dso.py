@@ -1,8 +1,12 @@
-from typing import Optional
+from typing import Optional, Union
+
+from shapely.geometry import Polygon, MultiPolygon
 
 from starplot.data.dsos import DsoType, load_ongc, ONGC_TYPE_MAP
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject, SkyObjectManager
+from starplot.models.geometry import to_24h
+from starplot import geod
 
 
 class DsoManager(SkyObjectManager):
@@ -59,6 +63,9 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     Index Catalogue (IC) identifier. *Note that this field is a string, to support objects like '4974 NED01'.*
     """
 
+    geometry: Union[Polygon, MultiPolygon] = None
+    """Shapely Polygon of the DSO's extent. Right ascension coordinates are in 24H format."""
+
     def __init__(
         self,
         ra: float,
@@ -73,6 +80,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         m: str = None,
         ngc: str = None,
         ic: str = None,
+        geometry: Union[Polygon, MultiPolygon] = None,
     ) -> None:
         super().__init__(ra, dec)
         self.name = name
@@ -85,6 +93,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         self.m = m
         self.ngc = ngc
         self.ic = ic
+        self.geometry = geometry
 
     def __repr__(self) -> str:
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
@@ -118,9 +127,45 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         pass
 
 
+def create_ellipse(d):
+    maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
+
+    if maj_ax is None:
+        return d.geometry
+
+    if angle is None:
+        angle = 0
+
+    maj_ax_degrees = (maj_ax / 60) / 2
+
+    if not min_ax:
+        min_ax_degrees = maj_ax_degrees
+    else:
+        min_ax_degrees = (min_ax / 60) / 2
+
+    points = geod.ellipse(
+        (d.ra_degrees / 15, d.dec_degrees),
+        min_ax_degrees * 2,
+        maj_ax_degrees * 2,
+        angle,
+        num_pts=100,
+    )
+
+    # points = [geod.to_radec(p) for p in points]
+    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
+    return Polygon(points)
+
+
 def from_tuple(d: tuple) -> DSO:
     magnitude = d.mag_v or d.mag_b or None
     magnitude = float(magnitude) if magnitude else None
+    geometry = d.geometry
+
+    if str(geometry.geom_type) not in ["Polygon", "MultiPolygon"]:
+        geometry = create_ellipse(d)
+
+    geometry = to_24h(geometry)
+
     return DSO(
         name=d.name,
         ra=d.ra_degrees / 15,
@@ -134,4 +179,5 @@ def from_tuple(d: tuple) -> DSO:
         m=d.m,
         ngc=d.ngc,
         ic=d.ic,
+        geometry=geometry,
     )

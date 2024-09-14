@@ -1,6 +1,8 @@
 background_color: hsl(209, 50%, 24%)
 figure_background_color: hsl(209, 43%, 15%)
 
+text_border_color: hsl(209, 50%, 24%)
+
 border_bg_color: hsl(209, 50%, 20%)
 border_font_color: hsl(209, 56%, 86%)
 border_line_color: hsl(209, 38%, 50%)
@@ -93,10 +95,26 @@ dso_globular_cluster:
   marker:
     alpha: 0.68
     size: 10
-    symbol: circle_plus
     color: hsl(209, 50%, 92%)
     edge_color: null
     zorder: 100
+
+# other DSOs
+dso_unknown: &DSO
+  label:
+    font_color: hsl(209, 23%, 72%)
+  marker:
+    alpha: 0.46
+    color: hsl(209, 50%, 78%)
+    edge_color: hsl(209, 50%, 20%)
+    zorder: -500
+dso_dark_nebula: *DSO
+dso_hii_ionized_region: *DSO
+dso_supernova_remnant: *DSO
+dso_nova_star: *DSO
+dso_nonexistant: *DSO
+dso_unknown: *DSO
+dso_duplicate: *DSO
 
 info_text:
   font_color: hsl(209, 53%, 90%)
@@ -113,7 +131,7 @@ gridlines:
     width: 1
 milky_way:
   alpha: 0.26
-  color: hsl(209, 50%, 54%)
+  fill_color: hsl(209, 50%, 54%)
   edge_width: 0
 planets:
   label:

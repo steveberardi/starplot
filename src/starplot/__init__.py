@@ -1,6 +1,6 @@
 """Star charts and maps"""
 
-__version__ = "0.11.4"
+__version__ = "0.12.0"
 
 from .base import BasePlot  # noqa: F401
 from .map import MapPlot, Projection  # noqa: F401

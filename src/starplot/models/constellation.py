@@ -1,15 +1,16 @@
+from shapely import Polygon
+
 from starplot.models.base import SkyObject, SkyObjectManager
+from starplot.models.geometry import to_24h
 from starplot.data import constellations
 
 
 class ConstellationManager(SkyObjectManager):
     @classmethod
     def all(cls):
-        for iau_id in constellations.iterator():
-            name, ra, dec = constellations.get(iau_id)
-            yield Constellation(
-                ra=ra, dec=dec, iau_id=iau_id, name=name.replace("\n", " ")
-            )
+        all_constellations = constellations.load()
+        for constellation in all_constellations.itertuples():
+            yield from_tuple(constellation)
 
 
 class Constellation(SkyObject):
@@ -25,16 +26,21 @@ class Constellation(SkyObject):
     name: str = None
     """Name"""
 
+    boundary: Polygon = None
+    """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in 24H format."""
+
     def __init__(
         self,
         ra: float,
         dec: float,
         iau_id: str,
         name: str = None,
+        boundary: Polygon = None,
     ) -> None:
         super().__init__(ra, dec)
         self.iau_id = iau_id.lower()
         self.name = name
+        self.boundary = boundary
 
     def __repr__(self) -> str:
         return f"Constellation(iau_id={self.iau_id}, name={self.name}, ra={self.ra}, dec={self.dec})"
@@ -70,3 +76,19 @@ class Constellation(SkyObject):
     def constellation(self):
         """Not applicable to Constellation model, raises `NotImplementedError`"""
         raise NotImplementedError()
+
+
+def from_tuple(c: tuple) -> Constellation:
+    geometry = c.geometry
+    if len(c.geometry.geoms) == 1:
+        geometry = c.geometry.geoms[0]
+
+    geometry = to_24h(geometry)
+
+    return Constellation(
+        ra=c.center_ra / 15,
+        dec=c.center_dec,
+        iau_id=c.iau_id,
+        name=c.name,
+        boundary=geometry,
+    )

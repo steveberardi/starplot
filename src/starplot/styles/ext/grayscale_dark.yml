@@ -1,6 +1,8 @@
 background_color: hsl(136, 0%, 10%)
 figure_background_color: hsl(136, 0%, 100%)
 
+text_border_color: hsl(136, 0%, 10%)
+
 border_bg_color: hsl(136, 0%, 20%)
 border_font_color: hsl(136, 0%, 90%)
 border_line_color: hsl(136, 0%, 54%)
@@ -82,6 +84,23 @@ dso_association_stars:
     edge_color: 'hsl(136, 0%, 97%)'
     fill: none
     alpha: 0.8
+
+
+# other DSOs
+dso_unknown: &DSO
+  label:
+    font_color: hsl(136, 0%, 97%)
+  marker:
+    color: 'hsl(136, 0%, 97%)'
+    alpha: 0.28
+dso_dark_nebula: *DSO
+dso_hii_ionized_region: *DSO
+dso_supernova_remnant: *DSO
+dso_nova_star: *DSO
+dso_nonexistant: *DSO
+dso_unknown: *DSO
+dso_duplicate: *DSO
+
 ecliptic:
   label:
     font_color: '#777'
@@ -89,7 +108,7 @@ ecliptic:
     color: '#777'
 milky_way:
   alpha: 0.1
-  color: hsl(136, 0%, 62%)
+  fill_color: hsl(136, 0%, 62%)
   edge_width: 0
 planets:
   label:

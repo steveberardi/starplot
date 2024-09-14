@@ -1,5 +1,7 @@
 background_color: '#fff'
 
+text_border_color: '#fff'
+
 border_bg_color: '#b5cbe3'
 border_font_color: '#2f4358'
 border_line_color: '#2f4358'
@@ -34,6 +36,7 @@ constellation:
     alpha: 0.3
     color: '#6ba832'
     width: 3
+
 dso_double_star:
   marker:
     alpha: 0.6
@@ -42,21 +45,46 @@ dso_galaxy:
     alpha: 0.5
     color: hsl(18, 68%, 75%)
     edge_color: hsl(18, 68%, 40%)
+  label:
+    font_color: hsl(18, 68%, 40%)
 dso_nebula:
   marker:
     alpha: 0.5
     color: hsl(91, 53%, 75%)
     edge_color: hsl(91, 53%, 40%)
+  label:
+    font_color: hsl(91, 53%, 40%)
 dso_open_cluster:
   marker:
     alpha: 0.3
     color: '#fffb68'
     edge_color: '#989400'
+  label:
+    font_color: '#989400'
 dso_association_stars:
   marker:
     alpha: 0.3
     color: '#fffb68'
     edge_color: '#989400'
+  label:
+    font_color: '#989400'
+
+# other DSOs
+dso_unknown: &DSO
+  marker:
+    alpha: 0.5
+    color: hsl(91, 53%, 75%)
+    edge_color: hsl(91, 53%, 40%)
+  label:
+    font_color: hsl(91, 53%, 40%)
+dso_dark_nebula: *DSO
+dso_hii_ionized_region: *DSO
+dso_supernova_remnant: *DSO
+dso_nova_star: *DSO
+dso_nonexistant: *DSO
+dso_unknown: *DSO
+dso_duplicate: *DSO
+
 ecliptic:
   label:
     font_color: '#e33b3b'
@@ -64,7 +92,7 @@ ecliptic:
     color: '#e33b3b'
 milky_way:
   alpha: 0.16
-  color: '#94c5e3'
+  fill_color: '#94c5e3'
   edge_width: 0
 planets:
   marker:

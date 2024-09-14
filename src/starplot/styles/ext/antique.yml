@@ -9,6 +9,8 @@
 background_color: hsl(48, 80%, 96%)
 figure_background_color: hsl(60, 9%, 29%)
 
+text_border_color: hsl(48, 80%, 96%)
+
 border_bg_color: hsl(60, 3%, 32%)
 border_font_color: hsl(60, 20%, 93%)
 border_line_color: hsl(60, 20%, 53%)
@@ -61,7 +63,7 @@ ecliptic:
     alpha: 0.6
 milky_way:
   alpha: 0.14
-  color: hsl(48, 40%, 70%)
+  fill_color: hsl(48, 40%, 70%)
   edge_width: 0
 gridlines:
   label:
@@ -113,26 +115,52 @@ dso_galaxy:
     alpha: 0.42
     color: hsl(26, 93%, 82%)
     edge_color:  hsl(26, 93%, 32%)
+  label:
+    font_color: hsl(26, 93%, 32%)
 dso_nebula:
   marker:
     alpha: 0.52
     color: hsl(71, 58%, 76%)
     edge_color: hsl(71, 58%, 36%)
+  label:
+    font_color: hsl(71, 58%, 36%)
 dso_open_cluster:
   marker:
     alpha: 0.52
     color: hsl(49, 92%, 77%)
     edge_color: hsl(49, 92%, 27%)
+  label:
+    font_color: hsl(49, 92%, 27%)
 dso_association_stars:
   marker:
     alpha: 0.52
     color: hsl(49, 92%, 77%)
     edge_color: hsl(49, 92%, 27%)
+  label:
+    font_color: hsl(49, 92%, 27%)
 dso_globular_cluster:
   marker:
     alpha: 0.5
     color: hsl(60, 53%, 76%)
     edge_color: hsl(60, 3%, 32%)
+  label:
+    font_color: hsl(60, 3%, 32%)
+
+# other DSOs
+dso_unknown: &DSO
+  marker:
+    alpha: 0.52
+    color: hsl(71, 58%, 76%)
+    edge_color: hsl(71, 58%, 36%)
+  label:
+    font_color: hsl(71, 58%, 36%)
+dso_dark_nebula: *DSO
+dso_hii_ionized_region: *DSO
+dso_supernova_remnant: *DSO
+dso_nova_star: *DSO
+dso_nonexistant: *DSO
+dso_unknown: *DSO
+dso_duplicate: *DSO
 
 legend:
   background_color: hsl(48, 50%, 98%)

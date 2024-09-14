@@ -70,6 +70,12 @@ profile:
 	$(DOCKER_RUN) "python -m cProfile -o temp/results.prof scripts/scratchpad.py && \
 	snakeviz -s -p 8080 -H 0.0.0.0 temp/results.prof"
 
+prep-dsos:
+	$(DOCKER_RUN) "python -m starplot.data.prep.dsos"
+
+prep-constellations:
+	$(DOCKER_RUN) "python -m starplot.data.prep.constellations"
+
 version:
 	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"
 

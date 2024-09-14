@@ -106,6 +106,14 @@
         </a>
     </li>
 
+    <li>
+        <a href="/examples/map-canis-major">
+            <img src="/images/examples/map_canis_major-sm.png" alt="Map of the Constellation Canis Major" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Map of Canis Major</p>
+        </a>
+    </li>
+
 </ul>
 
 

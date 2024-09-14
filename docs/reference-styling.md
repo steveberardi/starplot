@@ -292,6 +292,12 @@ When you only want to override one or two style properties, it can be tedious to
         show_docstring_attributes: true
         members: true
 
+::: starplot.styles.ZOrderEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
 ---
 
 ## Style Extensions

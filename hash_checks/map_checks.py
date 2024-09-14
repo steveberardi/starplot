@@ -4,7 +4,8 @@ from datetime import datetime
 import numpy as np
 from pytz import timezone
 
-from starplot import styles, DSO, Moon, Star
+from starplot import styles, DSO, Moon, Star, Constellation
+from starplot.data.dsos import BASIC_DSO_TYPES
 from starplot.map import MapPlot, Projection
 
 HERE = Path(__file__).resolve().parent
@@ -38,6 +39,7 @@ def _mercator():
             DSO.magnitude.is_null() | (DSO.magnitude <= 8),
             DSO.size.is_not_null(),
             DSO.size > 0.1,
+            DSO.type.is_in(BASIC_DSO_TYPES),
         ],
     )
     p.milky_way()
@@ -63,7 +65,14 @@ def _stereo_north():
         resolution=RESOLUTION,
     )
     p.stars(mag=9, bayer_labels=True)
-    p.dsos(mag=8, labels=None)
+    p.dsos(
+        labels=None,
+        true_size=False,
+        where=[
+            DSO.magnitude.is_null() | (DSO.magnitude <= 9),
+            DSO.type.is_in(BASIC_DSO_TYPES),
+        ],
+    )
     p.milky_way()
     p.gridlines()
     p.constellations()
@@ -125,8 +134,7 @@ def check_map_coma_berenices_dso_size():
         resolution=RESOLUTION,
     )
     p.stars(mag=8, bayer_labels=True)
-    p.galaxies(mag=11, true_size=False)
-    p.open_clusters(mag=11, true_size=True)
+    p.open_clusters(mag=8, true_size=True)
     p.gridlines()
     p.ecliptic()
     p.celestial_equator()
@@ -252,6 +260,7 @@ def check_map_wrapping():
     p.dsos(
         where=[
             DSO.magnitude.is_null() | (DSO.magnitude < 9),
+            DSO.type.is_in(BASIC_DSO_TYPES),
             DSO.size.is_not_null(),
             DSO.size > 0.1,
         ],
@@ -278,7 +287,15 @@ def check_map_mollweide():
     )
     p.stars(mag=4.2, mag_labels=1.8, style__marker__color="blue")
     p.constellations()
-    p.dsos(mag=4, labels=None)
+    p.dsos(
+        labels=None,
+        where=[
+            DSO.magnitude.is_null() | (DSO.magnitude <= 4),
+            DSO.size.is_not_null(),
+            DSO.size > 0.1,
+            DSO.type.is_in(BASIC_DSO_TYPES),
+        ],
+    )
     p.milky_way()
     p.gridlines(labels=False)
     p.export(filename, padding=0.1)
@@ -348,7 +365,7 @@ def check_map_moon_phase_waxing_crescent():
     return filename
 
 
-def check_map_plot_limit_constellation():
+def check_map_plot_limit_by_geometry():
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
         ra_min=18,
@@ -359,21 +376,118 @@ def check_map_plot_limit_constellation():
             {
                 "dso_open_cluster": {"marker": {"size": 20}},
                 "dso_galaxy": {"marker": {"size": 20}},
+                "dso_nebula": {"marker": {"size": 20}},
             }
         ),
         resolution=RESOLUTION,
     )
-    p.stars(mag=9, bayer_labels=True, where=[Star.constellation_id == "lyr"])
+    lyra = Constellation.get(iau_id="lyr")
+
+    p.stars(mag=9, bayer_labels=True, where=[Star.geometry.intersects(lyra.boundary)])
     p.dsos(
-        mag=9,
         labels=None,
-        where=[Star.constellation_id == "lyr"],
         true_size=False,
+        where=[
+            DSO.magnitude.is_null() | (DSO.magnitude < 9),
+            DSO.type.is_in(BASIC_DSO_TYPES),
+            DSO.geometry.intersects(lyra.boundary),
+        ],
+    )
+    p.constellations(where=[Constellation.boundary.intersects(lyra.boundary)])
+    p.constellation_borders()
+
+    filename = DATA_PATH / "map-limit-by-geometry.png"
+    p.export(filename)
+    p.close_fig()
+    return filename
+
+
+def check_map_plot_custom_clip_path_virgo():
+    virgo = Constellation.get(iau_id="vir")
+    p = MapPlot(
+        projection=Projection.MILLER,
+        ra_min=11,
+        ra_max=16,
+        dec_min=-29,
+        dec_max=17,
+        style=STYLE.extend(
+            {
+                "dso_open_cluster": {"marker": {"size": 20}},
+                "dso_galaxy": {"marker": {"size": 20}},
+            }
+        ),
+        resolution=RESOLUTION,
+        clip_path=virgo.boundary,
+    )
+
+    p.stars(mag=9, bayer_labels=True)
+    p.dsos(
+        labels=None,
+        true_size=False,
+        where=[
+            DSO.magnitude.is_null() | (DSO.magnitude < 9),
+            DSO.type.is_in(BASIC_DSO_TYPES),
+        ],
     )
     p.constellations()
     p.constellation_borders()
 
-    filename = DATA_PATH / "map-limit-constellation.png"
+    p.line(
+        coordinates=[
+            (13, 10),
+            (13.42, -11.1613),  # Spica
+        ],
+        style={
+            "color": "red",
+            "width": 9,
+        },
+    )
+
+    filename = DATA_PATH / "map-custom-clip-path-virgo.png"
+    p.export(filename)
+    p.close_fig()
+    return filename
+
+
+def check_map_label_callables():
+    p = MapPlot(
+        projection=Projection.MILLER,
+        ra_min=3.5,
+        ra_max=4,
+        dec_min=22,
+        dec_max=26,
+        style=STYLE.extend(
+            {
+                "dso_open_cluster": {
+                    "label": {
+                        "font_size": 28,
+                        "font_weight": "bold",
+                        "offset_x": 310,
+                        "offset_y": 240,
+                    }
+                },
+            }
+        ),
+        resolution=2000,
+    )
+    m45 = DSO.get(m="45")
+
+    p.open_clusters(
+        where=[
+            (DSO.magnitude.is_null()) | (DSO.magnitude < 12),
+            DSO.geometry.intersects(m45.geometry),
+            DSO.size > 0.08,
+        ],
+        label_fn=lambda d: f"M{d.m}" if d.m else "",
+    )
+
+    p.stars(
+        catalog="big-sky-mag11",
+        label_fn=lambda s: s.hip,
+        where=[Star.magnitude < 9.6, Star.geometry.intersects(m45.geometry)],
+    )
+
+    filename = DATA_PATH / "map-m45-label-callables.png"
     p.export(filename)
     p.close_fig()
     return filename

@@ -47,12 +47,14 @@ p.nebula(
         DSO.magnitude.is_null() | (DSO.magnitude < 12),
     ],
     true_size=True,
+    label_fn=lambda d: d.ic,
 )
 p.open_clusters(
     where=[
         DSO.magnitude.is_null() | (DSO.magnitude < 12),
     ],
     true_size=False,
+    label_fn=lambda d: d.ngc,
 )
 p.constellation_borders()
 p.ecliptic()

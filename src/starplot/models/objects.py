@@ -1,4 +1,4 @@
-from starplot.models import Star, DSO, Moon, Sun, Planet
+from starplot.models import Star, DSO, Moon, Sun, Planet, Constellation
 
 
 class ObjectList(object):
@@ -6,6 +6,9 @@ class ObjectList(object):
 
     stars: list[Star] = None
     """Stars"""
+
+    constellations: list[Constellation] = None
+    """Constellations"""
 
     dsos: list[DSO] = None
     """Deep Sky Objects (DSOs)"""
@@ -23,3 +26,4 @@ class ObjectList(object):
         self.stars = []
         self.dsos = []
         self.planets = []
+        self.constellations = []
