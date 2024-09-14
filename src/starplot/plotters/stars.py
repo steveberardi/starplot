@@ -1,14 +1,12 @@
 from typing import Callable, Mapping
 from functools import cache
 
-import numpy as np
-
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
 from starplot.data import bayer, stars
 from starplot.data.stars import StarCatalog, STAR_NAMES
-from starplot.models import Star
+from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, LabelStyle, use_style
 
 
@@ -177,28 +175,7 @@ class StarPlotterMixin:
         starz = []
 
         for star in nearby_stars_df.itertuples():
-            m = star.magnitude
-            ra, dec = star.ra, star.dec
-
-            if catalog == StarCatalog.HIPPARCOS:
-                hip_id = star.Index
-                tyc_id = None
-            else:
-                hip_id = star.hip
-                tyc_id = star.Index
-
-            obj = Star(
-                ra=ra / 15,
-                dec=dec,
-                magnitude=m,
-                bv=star.bv,
-                hip=hip_id,
-                tyc=tyc_id,
-            )
-
-            if np.isfinite(hip_id):
-                obj.hip = hip_id
-                obj.name = STAR_NAMES.get(hip_id)
+            obj = from_tuple(star, catalog)
 
             if not all([e.evaluate(obj) for e in where]):
                 continue

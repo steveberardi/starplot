@@ -15,14 +15,17 @@ class StarManager(SkyObjectManager):
         # TODO : add datetime kwarg
 
         for s in all_stars.itertuples():
-            hip_id = s.Index
-            obj = Star(ra=s.ra_hours, dec=s.dec_degrees, magnitude=s.magnitude, bv=s.bv)
+            yield from_tuple(s, catalog)
 
-            if np.isfinite(hip_id):
-                obj.hip = hip_id
-                obj.name = STAR_NAMES.get(hip_id)
+    @classmethod
+    def find(cls, where, catalog: StarCatalog = StarCatalog.HIPPARCOS):
+        all_objects = cls.all(catalog)
+        return super().find(where=where, all_objects=all_objects)
 
-            yield obj
+    @classmethod
+    def get(cls, catalog: StarCatalog = StarCatalog.HIPPARCOS, **kwargs):
+        all_objects = cls.all(catalog)
+        return super().get(all_objects=all_objects, **kwargs)
 
 
 class Star(SkyObject):
@@ -44,6 +47,9 @@ class Star(SkyObject):
     tyc: Optional[str] = None
     """Tycho ID, if available"""
 
+    ccdm: Optional[str] = None
+    """CCDM Component Identifier (if applicable)"""
+
     name: Optional[str] = None
     """Name, if available"""
 
@@ -59,6 +65,7 @@ class Star(SkyObject):
         hip: int = None,
         name: str = None,
         tyc: str = None,
+        ccdm: str = None,
         geometry: Point = None,
     ) -> None:
         super().__init__(ra, dec)
@@ -67,6 +74,7 @@ class Star(SkyObject):
         self.hip = hip if hip is not None and np.isfinite(hip) else None
         self.name = name
         self.tyc = tyc
+        self.ccdm = ccdm
         self.geometry = Point([ra, dec])
 
     def __repr__(self) -> str:
@@ -99,3 +107,29 @@ class Star(SkyObject):
 
         """
         pass
+
+
+def from_tuple(star: tuple, catalog: StarCatalog) -> Star:
+    m = star.magnitude
+    ra, dec = star.ra_hours, star.dec_degrees
+
+    if catalog == StarCatalog.HIPPARCOS:
+        hip_id = star.Index
+        tyc_id = None
+        ccdm = None
+    else:
+        hip_id = star.hip
+        tyc_id = star.Index
+        ccdm = star.ccdm
+
+    return Star(
+        ra=ra,
+        dec=dec,
+        magnitude=m,
+        bv=star.bv,
+        hip=hip_id,
+        tyc=tyc_id,
+        ccdm=ccdm,
+        name=STAR_NAMES.get(hip_id) if np.isfinite(hip_id) else None,
+        geometry=Point([ra, dec]),
+    )

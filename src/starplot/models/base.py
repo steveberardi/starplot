@@ -136,14 +136,16 @@ class SkyObjectManager(ABC):
         raise NotImplementedError
 
     @classmethod
-    def find(cls, where):
-        return [s for s in cls.all() if all([e.evaluate(s) for e in where])]
+    def find(cls, where, **kwargs):
+        all_objects = kwargs.pop("all_objects", None) or cls.all()
+        return [s for s in all_objects if all([e.evaluate(s) for e in where])]
 
     @classmethod
     def get(cls, **kwargs):
+        all_objects = kwargs.pop("all_objects", None) or cls.all()
         matches = [
             s
-            for s in cls.all()
+            for s in all_objects
             if all([getattr(s, kw) == value for kw, value in kwargs.items()])
         ]
 
