@@ -4,7 +4,7 @@
 - Adds kwarg to map plots to allow custom clip paths
 - Adds callables for star/dso labels
 - Adds a `line` function for plotting lines
-- Adds the standard marker for globular clusters (circle with a cross)
+- Adds the standard marker for globular clusters (circle with a cross) and double stars
 - Adds an ellipse marker for galaxies
 - Adds colors for some DSO labels that were missing them in some style extensions
 - Removed the kwarg `types` from `dsos`, so ALL DSO types are plotted by default
