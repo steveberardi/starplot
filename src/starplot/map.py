@@ -451,17 +451,27 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         """
         mw = self._read_geo_package(DataFiles.MILKY_WAY.value)
 
-        if not mw.empty:
-            # create union of all Milky Way patches
-            gs = mw.geometry.to_crs(self._plate_carree)
-            mw_union = gs.buffer(0.1).unary_union.buffer(-0.1)
-            points = list(zip(*mw_union.boundary.coords.xy))
+        if mw.empty:
+            return
 
+        def _prepare_polygon(p):
+            points = list(zip(*p.boundary.coords.xy))
             # convert lon to RA and reverse so the coordinates are counterclockwise order
-            points = [(lon_to_ra(lon) * 15, dec) for lon, dec in reversed(points)]
+            return [(lon_to_ra(lon) * 15, dec) for lon, dec in reversed(points)]
 
+        # create union of all Milky Way patches
+        gs = mw.geometry.to_crs(self._plate_carree)
+        mw_union = gs.buffer(0.1).unary_union.buffer(-0.1)
+        polygons = []
+
+        if mw_union.geom_type == "MultiPolygon":
+            polygons.extend([_prepare_polygon(polygon) for polygon in mw_union.geoms])
+        else:
+            polygons.append(_prepare_polygon(mw_union))
+
+        for polygon_points in polygons:
             self._polygon(
-                points,
+                polygon_points,
                 style=style,
             )
 

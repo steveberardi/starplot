@@ -491,3 +491,23 @@ def check_map_label_callables():
     p.export(filename)
     p.close_fig()
     return filename
+
+
+def check_map_milky_way_multi_polygon():
+    p = MapPlot(
+        projection=Projection.MILLER,
+        ra_min=17.5,
+        ra_max=19.5,
+        dec_min=-40,
+        dec_max=0,
+        style=STYLE,
+        resolution=2000,
+    )
+    p.stars(mag=6, bayer_labels=True)
+    p.constellations()
+    p.milky_way()
+
+    filename = DATA_PATH / "map-milky-way-multi-polygon.png"
+    p.export(filename)
+    p.close_fig()
+    return filename

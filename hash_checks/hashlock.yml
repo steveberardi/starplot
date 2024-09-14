@@ -14,6 +14,10 @@ map_label_callables:
   dhash: 80948c8c9c8c88a080988c8c9c8c88a0809c8d0d9d9c98a0
   filename: /starplot/hash_checks/data/map-m45-label-callables.png
   phash: b26ccd99316664cd
+map_milky_way_multi_polygon:
+  dhash: 351b89e4243a2604711b88e434322604751b88e424362624
+  filename: /starplot/hash_checks/data/map-milky-way-multi-polygon.png
+  phash: bc8bf89e90ce5a44
 map_mollweide:
   dhash: 0f2933632b3317070f2933632b3317070f295b6323130707
   filename: /starplot/hash_checks/data/map-mollweide.png
