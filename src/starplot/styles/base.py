@@ -401,7 +401,7 @@ class PolygonStyle(BaseStyle):
     fill_color: Optional[ColorStr] = None
     """Fill color of the polygon"""
 
-    line_style: LineStyleEnum = LineStyleEnum.SOLID
+    line_style: LineStyleEnum | tuple = LineStyleEnum.SOLID
     """Edge line style"""
 
     alpha: float = 1.0
@@ -419,6 +419,7 @@ class PolygonStyle(BaseStyle):
             linestyle=self.line_style,
             alpha=self.alpha,
             zorder=self.zorder,
+            capstyle="round",
         )
         if self.color:
             styles["color"] = self.color.as_hex()
