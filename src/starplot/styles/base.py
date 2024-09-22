@@ -332,8 +332,8 @@ class LineStyle(BaseStyle):
     color: ColorStr = ColorStr("#000")
     """Color of the line. Can be a hex, rgb, hsl, or word string."""
 
-    style: LineStyleEnum = LineStyleEnum.SOLID
-    """Style of the line (e.g. solid, dashed, etc)."""
+    style: LineStyleEnum | tuple = LineStyleEnum.SOLID
+    """Style of the line (e.g. solid, dashed, etc). Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
 
     dash_capstyle: DashCapStyleEnum = DashCapStyleEnum.PROJECTING
     """Style of dash endpoints"""
@@ -402,7 +402,7 @@ class PolygonStyle(BaseStyle):
     """Fill color of the polygon"""
 
     line_style: LineStyleEnum | tuple = LineStyleEnum.SOLID
-    """Edge line style"""
+    """Edge line style. Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
 
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
