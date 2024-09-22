@@ -450,35 +450,36 @@ def check_map_plot_custom_clip_path_virgo():
 
 
 def check_map_label_callables():
+    style = STYLE.extend(
+        {
+            "dso_open_cluster": {
+                "label": {
+                    "font_size": 28,
+                    "font_weight": "bold",
+                    "offset_x": 310,
+                    "offset_y": 240,
+                }
+            },
+        }
+    )
     p = MapPlot(
         projection=Projection.MILLER,
         ra_min=3.5,
         ra_max=4,
         dec_min=22,
         dec_max=26,
-        style=STYLE.extend(
-            {
-                "dso_open_cluster": {
-                    "label": {
-                        "font_size": 28,
-                        "font_weight": "bold",
-                        "offset_x": 310,
-                        "offset_y": 240,
-                    }
-                },
-            }
-        ),
+        style=style,
         resolution=2000,
     )
     m45 = DSO.get(m="45")
 
-    p.open_clusters(
-        where=[
-            (DSO.magnitude.is_null()) | (DSO.magnitude < 12),
-            DSO.geometry.intersects(m45.geometry),
-            DSO.size > 0.08,
-        ],
-        label_fn=lambda d: f"M{d.m}" if d.m else "",
+    p.polygon(
+        geometry=m45.geometry,
+        style__color=None,
+        style__fill_color=style.dso_open_cluster.marker.color,
+        style__edge_color="#000",
+        style__edge_width=4,
+        style__line_style=(0, (1.2, 8)),
     )
 
     p.stars(
