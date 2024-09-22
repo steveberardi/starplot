@@ -508,7 +508,7 @@ class BasePlot(ABC):
         """
         Plots a polygon.
 
-        Must pass in either `points` **or** `geometry` (but not both). 
+        Must pass in either `points` **or** `geometry` (but not both).
 
         Args:
             points: List of polygon points `[(ra, dec), ...]` - **must be in counterclockwise order**
