@@ -10,6 +10,7 @@ from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.lines import Line2D
 from pytz import timezone
+from shapely import Polygon
 
 from starplot import geod, models
 from starplot.data import load, ecliptic
@@ -498,13 +499,28 @@ class BasePlot(ABC):
         self.ax.add_patch(patch)
 
     @use_style(PolygonStyle)
-    def polygon(self, points: list, style: PolygonStyle):
-        """Plots a polygon of points
+    def polygon(
+        self,
+        style: PolygonStyle,
+        points: list = None,
+        geometry: Polygon = None,
+    ):
+        """
+        Plots a polygon.
+
+        Must pass in either `points` **or** `geometry` (but not both).
 
         Args:
             points: List of polygon points `[(ra, dec), ...]` - **must be in counterclockwise order**
+            geometry: A shapely Polygon. If this value is passed, then the `points` kwarg will be ignored.
             style: Style of polygon
         """
+        if points is None and geometry is None:
+            raise ValueError("Must pass points or geometry when plotting polygons.")
+
+        if geometry is not None:
+            points = list(zip(*geometry.exterior.coords.xy))
+
         _points = [(ra * 15, dec) for ra, dec in points]
         self._polygon(_points, style)
 
