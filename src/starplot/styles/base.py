@@ -1,7 +1,7 @@
 import json
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 from functools import cache
 
 import yaml
@@ -332,7 +332,7 @@ class LineStyle(BaseStyle):
     color: ColorStr = ColorStr("#000")
     """Color of the line. Can be a hex, rgb, hsl, or word string."""
 
-    style: LineStyleEnum | tuple = LineStyleEnum.SOLID
+    style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
     """Style of the line (e.g. solid, dashed, etc). Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
 
     dash_capstyle: DashCapStyleEnum = DashCapStyleEnum.PROJECTING
@@ -401,7 +401,7 @@ class PolygonStyle(BaseStyle):
     fill_color: Optional[ColorStr] = None
     """Fill color of the polygon"""
 
-    line_style: LineStyleEnum | tuple = LineStyleEnum.SOLID
+    line_style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
     """Edge line style. Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
 
     alpha: float = 1.0
