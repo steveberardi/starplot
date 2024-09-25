@@ -134,6 +134,9 @@ hip8:
 scripts:
 	$(DOCKER_RUN) "python ./scripts/$(SCRIPT).py"
 
+scripts-temp:
+	$(DOCKER_RUN) "python ./scripts/temp/$(SCRIPT).py"
+
 clean:
 	rm -rf __pycache__
 	rm -rf venv

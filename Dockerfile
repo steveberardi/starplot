@@ -9,6 +9,13 @@ RUN apt-get clean && apt-get update -y && apt-get install -y libgeos-dev libgdal
 # not required, but make the maps look better (especially greek letters)
 RUN mkdir -p /usr/share/fonts/truetype
 RUN wget https://github.com/google/fonts/raw/main/ofl/gfsdidot/GFSDidot-Regular.ttf -P /tmp/fonts
+RUN wget https://github.com/google/fonts/raw/main/ofl/hind/Hind-Regular.ttf -P /tmp/fonts
+RUN wget https://github.com/google/fonts/raw/main/ofl/hind/Hind-Light.ttf -P /tmp/fonts
+RUN wget https://github.com/google/fonts/raw/main/ofl/hind/Hind-Medium.ttf -P /tmp/fonts
+RUN wget https://github.com/google/fonts/raw/main/ofl/hind/Hind-SemiBold.ttf -P /tmp/fonts
+RUN wget https://github.com/google/fonts/raw/main/ofl/hind/Hind-Bold.ttf -P /tmp/fonts
+RUN wget https://github.com/google/fonts/raw/main/ofl/gentiumplus/GentiumPlus-Italic.ttf -P /tmp/fonts
+RUN wget https://github.com/google/fonts/raw/main/ofl/gentiumplus/GentiumPlus-Regular.ttf -P /tmp/fonts
 RUN install -m644 /tmp/fonts/*.ttf /usr/share/fonts/truetype/
 RUN fc-cache -f
 
