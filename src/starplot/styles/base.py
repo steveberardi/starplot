@@ -394,7 +394,7 @@ class PolygonStyle(BaseStyle):
         ```
     """
 
-    edge_width: int = 1
+    edge_width: float = 1
     """Width of the polygon's edge"""
 
     color: Optional[ColorStr] = None
@@ -450,7 +450,7 @@ class LabelStyle(BaseStyle):
     anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
     """Anchor point of label"""
 
-    font_size: int = 8
+    font_size: float = 8
     """Relative font size of the label"""
 
     font_weight: FontWeightEnum = FontWeightEnum.NORMAL
