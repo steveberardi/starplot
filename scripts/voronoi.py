@@ -92,10 +92,7 @@ for constellation in p.objects.constellations:
     polygons_sorted = [p_by_area[k] for k in sorted(p_by_area.keys(), reverse=True)]
 
     """
-        Try ranking by:
-            1. Longest span (x)
-            2. Biggest area
-            3. Closest to center (maybe?)
+        TODO: Turn this into a function on map plot class
     """
 
     constellation_centroid = constellation.boundary.centroid
