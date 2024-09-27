@@ -1,7 +1,7 @@
 import json
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, List
 from functools import cache
 
 import yaml
@@ -221,6 +221,11 @@ class AnchorPointEnum(str, Enum):
             style["ha"] = "center"
 
         return style
+    
+    @staticmethod
+    def from_str(value: str) -> 'AnchorPointEnum':
+        options ={ap.value: ap for ap in AnchorPointEnum}
+        return options.get(value)
 
 
 class ZOrderEnum(int, Enum):
@@ -389,7 +394,7 @@ class PolygonStyle(BaseStyle):
         ```
     """
 
-    edge_width: int = 1
+    edge_width: float = 1
     """Width of the polygon's edge"""
 
     color: Optional[ColorStr] = None
@@ -445,7 +450,7 @@ class LabelStyle(BaseStyle):
     anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
     """Anchor point of label"""
 
-    font_size: int = 8
+    font_size: float = 8
     """Relative font size of the label"""
 
     font_weight: FontWeightEnum = FontWeightEnum.NORMAL
@@ -588,6 +593,12 @@ class PlotStyle(BaseStyle):
     text_border_color: ColorStr = ColorStr("#fff")
     text_offset_x: float = 0.005
     text_offset_y: float = 0.005
+    text_anchor_fallbacks: List[AnchorPointEnum] = [
+        AnchorPointEnum.BOTTOM_RIGHT,
+        AnchorPointEnum.TOP_LEFT,
+        AnchorPointEnum.TOP_RIGHT,
+        AnchorPointEnum.BOTTOM_LEFT,
+    ]
 
     # Borders
     border_font_size: int = 18

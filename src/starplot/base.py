@@ -17,6 +17,7 @@ from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
 from starplot.styles import (
+    AnchorPointEnum,
     PlotStyle,
     MarkerStyle,
     ObjectStyle,
@@ -112,12 +113,13 @@ class BasePlot(ABC):
             self._background_clip_path.contains_points(extent.get_points())
         )
 
-    def _maybe_remove_label(self, label) -> None:
+    def _maybe_remove_label(self, label) -> bool:
+        """Returns true if the label is removed, else false"""
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
 
         if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]):
             label.remove()
-            return
+            return True
 
         if any(
             [
@@ -126,12 +128,13 @@ class BasePlot(ABC):
             ]
         ):
             label.remove()
-            return
+            return True
 
         self.labels.append(label)
         self._labels_rtree.insert(
             0, np.array((extent.x0, extent.y0, extent.x1, extent.y1))
         )
+        return False
 
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
         if label is not None and label not in self._legend_handles:
@@ -160,21 +163,51 @@ class BasePlot(ABC):
 
         x, y = self._prepare_coords(ra, dec)
         kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
-        label = self.ax.annotate(
-            text,
-            (x, y),
-            *args,
-            **kwargs,
-            **self._plot_kwargs(),
-        )
+
+        def plot_text(**kwargs):
+            return self.ax.annotate(
+                text,
+                (x, y),
+                *args,
+                **kwargs,
+                **self._plot_kwargs(),
+            )
+
+        label = plot_text(**kwargs)
+
         if kwargs.get("clip_on") is False:
             return
 
         label.set_clip_on(True)
         label.set_clip_path(self._background_clip_path)
 
-        if hide_on_collision:
-            self._maybe_remove_label(label)
+        if not hide_on_collision:
+            return
+
+        removed = self._maybe_remove_label(label)
+
+        if not removed:
+            return
+
+        original_va = kwargs.pop("va", None)
+        original_ha = kwargs.pop("ha", None)
+        original_offset_x, original_offset_y = kwargs.pop("xytext", (0, 0))
+        for a in self.style.text_anchor_fallbacks:
+            d = AnchorPointEnum.from_str(a).as_matplot()
+            va, ha = d["va"], d["ha"]
+            offset_x, offset_y = original_offset_x, original_offset_y
+            if original_ha != ha:
+                offset_x *= -1
+
+            if original_va != va:
+                offset_y *= -1
+
+            label = plot_text(**kwargs, va=va, ha=ha, xytext=(offset_x, offset_y))
+            removed = self._maybe_remove_label(label)
+
+            # TODO : add stars/objects to rtree and pick lowest collision position?
+            if removed is False:
+                return
 
     @use_style(LabelStyle)
     def text(
