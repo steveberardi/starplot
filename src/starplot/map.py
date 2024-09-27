@@ -428,7 +428,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             if inbounds:
                 self._objects.constellations.append(obj)
 
-        self._plot_constellation_labels(style.label, labels)
+        # self._plot_constellation_labels(style.label, labels)
+        self._plot_constellation_labels_experimental(style.label, labels)
 
     def _plot_constellation_labels(
         self,
@@ -441,6 +442,57 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             _, ra, dec = condata.get(con)
             text = labels.get(con.lower())
             self.text(text, ra, dec, style)
+
+    def _plot_constellation_labels_experimental(
+        self,
+        style: PathStyle = None,
+        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
+    ):
+        from shapely import voronoi_polygons, GeometryCollection, MultiPoint, intersection, delaunay_triangles, distance
+
+        def sorter(g):
+            d = distance(g.centroid, points.centroid)
+            # d = distance(g.centroid, constellation.boundary.centroid)
+            extent = abs(g.bounds[2] - g.bounds[0])
+            area = g.area/constellation.boundary.area
+            return (extent**2 + area) - (d**2)
+    
+        for constellation in self.objects.constellations:
+            constellation_stars = [s for s in self.objects.stars if s.constellation_id == constellation.iau_id]
+            points = MultiPoint([(s.ra, s.dec) for s in constellation_stars])
+            
+            triangles = delaunay_triangles(
+                geometry=points,
+                # tolerance=2,
+            )
+
+            polygons = []
+            for t in triangles.geoms:
+                try:
+                    inter = intersection(t, constellation.boundary)
+                except:
+                    continue
+                if inter.geom_type == "Polygon" and len(list(zip(*inter.exterior.coords.xy))) > 2:
+                    polygons.append(inter)
+
+
+            p_by_area = {pg.area: pg for pg in polygons}
+            polygons_sorted = [p_by_area[k] for k in sorted(p_by_area.keys(), reverse=True)]
+            constellation_centroid = constellation.boundary.centroid        
+
+            # sort by combination of horizontal extent and area
+            polygons_sorted = sorted(polygons_sorted, key=sorter, reverse=True)
+
+            if len(polygons_sorted) > 0:
+                i = 0
+                ra, dec = polygons_sorted[i].centroid.x, polygons_sorted[i].centroid.y
+            else:
+                ra, dec = constellation.ra, constellation.dec
+            
+            text = labels.get(constellation.iau_id)
+            style = style or self.style.constellation.label
+            self.text(text, ra, dec, style)
+    
 
     @use_style(PolygonStyle, "milky_way")
     def milky_way(self, style: PolygonStyle = None):

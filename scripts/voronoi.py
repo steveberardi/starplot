@@ -43,6 +43,8 @@ p.constellation_borders()
 
 print(len(p.objects.stars))
 
+p.export("temp/voronoi.png")
+exit()
 for constellation in p.objects.constellations:
     # con = "gem"
     # constellation = Constellation.get(iau_id=con)
