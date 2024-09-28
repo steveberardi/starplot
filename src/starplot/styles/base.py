@@ -283,7 +283,7 @@ class MarkerStyle(BaseStyle):
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     """Symbol for marker"""
 
-    size: int = 4
+    size: float = 4
     """Relative size of marker"""
 
     fill: FillStyleEnum = FillStyleEnum.NONE
@@ -320,7 +320,7 @@ class MarkerStyle(BaseStyle):
         plot_kwargs["s"] = plot_kwargs.pop("markersize") ** 2
 
         plot_kwargs["c"] = plot_kwargs.pop("color")
-        plot_kwargs["linewidths"] = self.edge_width * size_multiplier
+        plot_kwargs["linewidths"] = self.edge_width
         plot_kwargs["linestyle"] = self.line_style
         plot_kwargs["capstyle"] = self.dash_capstyle
 
@@ -443,7 +443,7 @@ class PolygonStyle(BaseStyle):
             edgecolor=self.edge_color.as_hex() if self.edge_color else "none",
             facecolor=self.fill_color.as_hex() if self.fill_color else "none",
             fill=True if self.fill_color else False,
-            linewidth=self.edge_width * size_multiplier,
+            linewidth=self.edge_width,
             linestyle=self.line_style,
             alpha=self.alpha,
             zorder=self.zorder,
