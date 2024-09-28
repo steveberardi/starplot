@@ -368,12 +368,11 @@ class BasePlot(ABC):
 
         x, y = self._prepare_coords(ra, dec)
 
-        self.ax.plot(
+        self.ax.scatter(
             x,
             y,
-            **style.marker.matplot_kwargs(size_multiplier=self._size_multiplier),
+            **style.marker.matplot_scatter_kwargs(size_multiplier=self._size_multiplier),
             **self._plot_kwargs(),
-            linestyle="None",
             clip_on=True,
             clip_path=self._background_clip_path,
         )

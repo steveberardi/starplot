@@ -271,8 +271,14 @@ class MarkerStyle(BaseStyle):
     edge_color: Optional[ColorStr] = ColorStr("#000")
     """Edge color of marker. Can be a hex, rgb, hsl, or word string."""
 
-    edge_width: int = 1
+    edge_width: float = 1
     """Edge width of marker. Not available for all marker symbols."""
+
+    line_style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
+    """Edge line style. Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
+
+    dash_capstyle: DashCapStyleEnum = DashCapStyleEnum.PROJECTING
+    """Style of dash endpoints"""
 
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     """Symbol for marker"""
@@ -293,7 +299,7 @@ class MarkerStyle(BaseStyle):
     def symbol_matplot(self) -> str:
         return MarkerSymbolEnum(self.symbol).as_matplot()
 
-    @cache
+
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex() if self.color else "none",
@@ -304,6 +310,23 @@ class MarkerStyle(BaseStyle):
             alpha=self.alpha,
             zorder=self.zorder,
         )
+    
+    def matplot_scatter_kwargs(self, size_multiplier: float = 1.0) -> dict:
+        plot_kwargs = self.matplot_kwargs(size_multiplier)
+        plot_kwargs["edgecolors"] = plot_kwargs.pop("markeredgecolor")
+        
+        # matplotlib's plot() function takes the marker size in points diameter
+        # and the scatter() function takes it in points squared
+        plot_kwargs["s"] = plot_kwargs.pop("markersize") ** 2
+
+        plot_kwargs["c"] = plot_kwargs.pop("color")
+        plot_kwargs["linewidths"] = self.edge_width * size_multiplier
+        plot_kwargs["linestyle"] = self.line_style
+        plot_kwargs["capstyle"] = self.dash_capstyle
+
+        plot_kwargs.pop("fillstyle")
+
+        return plot_kwargs
 
     def to_polygon_style(self):
         return PolygonStyle(

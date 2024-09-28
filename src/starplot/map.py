@@ -428,8 +428,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             if inbounds:
                 self._objects.constellations.append(obj)
 
-        # self._plot_constellation_labels(style.label, labels)
-        self._plot_constellation_labels_experimental(style.label, labels)
+        self._plot_constellation_labels(style.label, labels)
+        # self._plot_constellation_labels_experimental(style.label, labels)
 
     def _plot_constellation_labels(
         self,

@@ -35,7 +35,7 @@ map_orion_extra:
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: be71d11ee01fa4d0
 map_plot_custom_clip_path_virgo:
-  dhash: 020103130f0c04040327252d0d0c08040327250f0d0c0804
+  dhash: 030103130f0c04040327252d0d0c08040327250f0d0c0804
   filename: /starplot/hash_checks/data/map-custom-clip-path-virgo.png
   phash: e66cc983b3919336
 map_plot_limit_by_geometry:
@@ -49,7 +49,7 @@ map_scope_bino_fov:
 map_stereo_base:
   dhash: 627666f07c3c3436627666f0383c3436727666f2eccc9416
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
-  phash: 9dce6973429063ba
+  phash: 9dce7973429063b2
 map_with_planets:
   dhash: 62930d63899b32b362930563899b32b362930563899b32b3
   filename: /starplot/hash_checks/data/map-mercator-planets.png
