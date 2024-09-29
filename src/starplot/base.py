@@ -124,7 +124,8 @@ class BasePlot(ABC):
         if any(
             [
                 self._is_clipped(extent),
-                self.hide_colliding_labels and self._is_label_collision(extent),
+                self._is_label_collision(extent),
+                # self.hide_colliding_labels and self._is_label_collision(extent),
             ]
         ):
             label.remove()
@@ -163,26 +164,28 @@ class BasePlot(ABC):
 
         x, y = self._prepare_coords(ra, dec)
         kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
+        clip_on = kwargs.get("clip_on") or True
 
         def plot_text(**kwargs):
-            return self.ax.annotate(
+            label = self.ax.annotate(
                 text,
                 (x, y),
                 *args,
                 **kwargs,
                 **self._plot_kwargs(),
             )
+            if clip_on:
+                label.set_clip_on(True)
+                label.set_clip_path(self._background_clip_path)
+            return label
 
         label = plot_text(**kwargs)
 
-        if kwargs.get("clip_on") is False:
+        if not clip_on:
             return
 
-        label.set_clip_on(True)
-        label.set_clip_path(self._background_clip_path)
-
-        if not hide_on_collision:
-            return
+        # if not hide_on_collision:
+        #     return
 
         removed = self._maybe_remove_label(label)
 
@@ -192,7 +195,8 @@ class BasePlot(ABC):
         original_va = kwargs.pop("va", None)
         original_ha = kwargs.pop("ha", None)
         original_offset_x, original_offset_y = kwargs.pop("xytext", (0, 0))
-        for a in self.style.text_anchor_fallbacks:
+        anchor_fallbacks = self.style.text_anchor_fallbacks
+        for i, a in enumerate(anchor_fallbacks):
             d = AnchorPointEnum.from_str(a).as_matplot()
             va, ha = d["va"], d["ha"]
             offset_x, offset_y = original_offset_x, original_offset_y
@@ -203,11 +207,15 @@ class BasePlot(ABC):
                 offset_y *= -1
 
             label = plot_text(**kwargs, va=va, ha=ha, xytext=(offset_x, offset_y))
+
+            if not hide_on_collision and i == len(anchor_fallbacks) - 1:
+                break
+
             removed = self._maybe_remove_label(label)
 
             # TODO : add stars/objects to rtree and pick lowest collision position?
-            if removed is False:
-                return
+            if not removed:
+                break
 
     @use_style(LabelStyle)
     def text(
@@ -378,7 +386,7 @@ class BasePlot(ABC):
         )
 
         if label:
-            self.text(label, ra, dec, style.label)
+            self.text(label, ra, dec, style.label, hide_on_collision=self.hide_colliding_labels)
 
         if legend_label is not None:
             self._add_legend_handle_marker(legend_label, style.marker)

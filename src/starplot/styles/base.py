@@ -14,7 +14,7 @@ from typing_extensions import Annotated
 
 from starplot.data.dsos import DsoType
 from starplot.styles.helpers import merge_dict
-from starplot.styles.markers import ellipse, circle_cross, circle_line
+from starplot.styles.markers import ellipse, circle_cross, circle_crosshair, circle_line
 
 
 ColorStr = Annotated[
@@ -118,6 +118,9 @@ class MarkerSymbolEnum(str, Enum):
     CIRCLE_CROSS = "circle_cross"
     """\u1AA0"""
 
+    CIRCLE_CROSSHAIR = "circle_crosshair"
+    """"""
+
     CIRCLE_DOTTED_EDGE = "circle_dotted_edge"
     """\u25CC"""
 
@@ -150,6 +153,7 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.TRIANGLE: "^",
             MarkerSymbolEnum.CIRCLE_PLUS: "$\u2295$",
             MarkerSymbolEnum.CIRCLE_CROSS: circle_cross(),
+            MarkerSymbolEnum.CIRCLE_CROSSHAIR: circle_crosshair(),
             MarkerSymbolEnum.CIRCLE_DOTTED_EDGE: "$\u25CC$",
             MarkerSymbolEnum.CIRCLE_LINE: circle_line(),
             MarkerSymbolEnum.COMET: "$\u2604$",

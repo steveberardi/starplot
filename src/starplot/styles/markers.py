@@ -72,6 +72,43 @@ def circle_cross():
 
     return Path(verts, codes)
 
+@cache
+def circle_crosshair():
+    verts = ellipse_points(0, 0, 1, 1)
+
+    codes = [
+        Path.MOVETO,
+    ]
+    codes.extend([Path.LINETO] * 98)
+    codes.extend([Path.CLOSEPOLY])
+
+    verts.extend(
+        [
+            (-1, 0),
+            (-1.7, 0),
+            (0, 1),
+            (0, 1.7),
+            (1, 0),
+            (1.7, 0),
+            (0, -1),
+            (0, -1.7),
+        ]
+    )
+    codes.extend(
+        [
+            Path.MOVETO,
+            Path.LINETO,
+            Path.MOVETO,
+            Path.LINETO,
+            Path.MOVETO,
+            Path.LINETO,
+            Path.MOVETO,
+            Path.LINETO,
+        ]
+    )
+
+    return Path(verts, codes)
+
 
 @cache
 def circle_line():
