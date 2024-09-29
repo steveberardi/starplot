@@ -14,7 +14,7 @@ from typing_extensions import Annotated
 
 from starplot.data.dsos import DsoType
 from starplot.styles.helpers import merge_dict
-from starplot.styles.markers import ellipse, circle_cross, circle_crosshair, circle_line
+from starplot.styles.markers import ellipse, circle_cross, circle_crosshair, circle_line, circle_dot
 
 
 ColorStr = Annotated[
@@ -119,7 +119,10 @@ class MarkerSymbolEnum(str, Enum):
     """\u1AA0"""
 
     CIRCLE_CROSSHAIR = "circle_crosshair"
-    """"""
+    """No preview available, but this is the standard symbol for planetary nebulae"""
+
+    CIRCLE_DOT = "circle_dot"
+    """\u29BF"""
 
     CIRCLE_DOTTED_EDGE = "circle_dotted_edge"
     """\u25CC"""
@@ -154,6 +157,7 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.CIRCLE_PLUS: "$\u2295$",
             MarkerSymbolEnum.CIRCLE_CROSS: circle_cross(),
             MarkerSymbolEnum.CIRCLE_CROSSHAIR: circle_crosshair(),
+            MarkerSymbolEnum.CIRCLE_DOT: circle_dot(),
             MarkerSymbolEnum.CIRCLE_DOTTED_EDGE: "$\u25CC$",
             MarkerSymbolEnum.CIRCLE_LINE: circle_line(),
             MarkerSymbolEnum.COMET: "$\u2604$",
