@@ -14,7 +14,13 @@ from typing_extensions import Annotated
 
 from starplot.data.dsos import DsoType
 from starplot.styles.helpers import merge_dict
-from starplot.styles.markers import ellipse, circle_cross, circle_crosshair, circle_line, circle_dot
+from starplot.styles.markers import (
+    ellipse,
+    circle_cross,
+    circle_crosshair,
+    circle_line,
+    circle_dot,
+)
 
 
 ColorStr = Annotated[
@@ -229,10 +235,10 @@ class AnchorPointEnum(str, Enum):
             style["ha"] = "center"
 
         return style
-    
+
     @staticmethod
-    def from_str(value: str) -> 'AnchorPointEnum':
-        options ={ap.value: ap for ap in AnchorPointEnum}
+    def from_str(value: str) -> "AnchorPointEnum":
+        options = {ap.value: ap for ap in AnchorPointEnum}
         return options.get(value)
 
 
@@ -307,7 +313,6 @@ class MarkerStyle(BaseStyle):
     def symbol_matplot(self) -> str:
         return MarkerSymbolEnum(self.symbol).as_matplot()
 
-
     def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex() if self.color else "none",
@@ -318,11 +323,11 @@ class MarkerStyle(BaseStyle):
             alpha=self.alpha,
             zorder=self.zorder,
         )
-    
+
     def matplot_scatter_kwargs(self, size_multiplier: float = 1.0) -> dict:
         plot_kwargs = self.matplot_kwargs(size_multiplier)
         plot_kwargs["edgecolors"] = plot_kwargs.pop("markeredgecolor")
-        
+
         # matplotlib's plot() function takes the marker size in points diameter
         # and the scatter() function takes it in points squared
         plot_kwargs["s"] = plot_kwargs.pop("markersize") ** 2

@@ -86,7 +86,7 @@ dso_galaxy:
     font_color: '#b15d87'
 dso_nebula:
   marker:
-    alpha: 0.56
+    alpha: 0.6
     color: hsl(91, 62%, 82%)
     edge_color: hsl(91, 53%, 40%)
   label:

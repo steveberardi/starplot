@@ -16,6 +16,7 @@ RUN wget https://github.com/google/fonts/raw/main/ofl/hind/Hind-SemiBold.ttf -P 
 RUN wget https://github.com/google/fonts/raw/main/ofl/hind/Hind-Bold.ttf -P /tmp/fonts
 RUN wget https://github.com/google/fonts/raw/main/ofl/gentiumplus/GentiumPlus-Italic.ttf -P /tmp/fonts
 RUN wget https://github.com/google/fonts/raw/main/ofl/gentiumplus/GentiumPlus-Regular.ttf -P /tmp/fonts
+RUN apt-get install fonts-inter
 RUN install -m644 /tmp/fonts/*.ttf /usr/share/fonts/truetype/
 RUN fc-cache -f
 

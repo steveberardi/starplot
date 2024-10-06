@@ -379,14 +379,22 @@ class BasePlot(ABC):
         self.ax.scatter(
             x,
             y,
-            **style.marker.matplot_scatter_kwargs(size_multiplier=self._size_multiplier),
+            **style.marker.matplot_scatter_kwargs(
+                size_multiplier=self._size_multiplier
+            ),
             **self._plot_kwargs(),
             clip_on=True,
             clip_path=self._background_clip_path,
         )
 
         if label:
-            self.text(label, ra, dec, style.label, hide_on_collision=self.hide_colliding_labels)
+            self.text(
+                label,
+                ra,
+                dec,
+                style.label,
+                hide_on_collision=self.hide_colliding_labels,
+            )
 
         if legend_label is not None:
             self._add_legend_handle_marker(legend_label, style.marker)

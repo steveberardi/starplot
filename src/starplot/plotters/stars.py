@@ -4,7 +4,7 @@ from functools import cache
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
-from starplot.data import bayer, stars
+from starplot.data import bayer, stars, flamsteed
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, LabelStyle, use_style

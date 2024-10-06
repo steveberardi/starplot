@@ -72,6 +72,7 @@ def circle_cross():
 
     return Path(verts, codes)
 
+
 @cache
 def circle_crosshair():
     verts = ellipse_points(0, 0, 1, 1)
@@ -110,7 +111,6 @@ def circle_crosshair():
     return Path(verts, codes)
 
 
-
 @cache
 def circle_dot():
     verts = ellipse_points(0, 0, 1, 1)
@@ -121,13 +121,11 @@ def circle_dot():
     codes.extend([Path.LINETO] * 98)
     codes.extend([Path.CLOSEPOLY])
 
-
     verts.extend(ellipse_points(0, 0, 0.7, 0.7))
 
     codes.extend([Path.MOVETO])
     codes.extend([Path.LINETO] * 98)
     codes.extend([Path.CLOSEPOLY])
-
 
     return Path(verts, codes)
 

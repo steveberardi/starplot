@@ -1,7 +1,15 @@
 import time
 from datetime import datetime
 
-from shapely import voronoi_polygons, GeometryCollection, MultiPoint, intersection, normalize, delaunay_triangles, distance
+from shapely import (
+    voronoi_polygons,
+    GeometryCollection,
+    MultiPoint,
+    intersection,
+    normalize,
+    delaunay_triangles,
+    distance,
+)
 from pytz import timezone
 from matplotlib import patches
 from starplot import Star, DSO, Constellation
@@ -32,12 +40,12 @@ p = sp.MapPlot(
                     "font_size": 5,
                 }
             }
-        }
+        },
     ),
     resolution=4000,
 )
 
-p.stars(where=[Star.magnitude < 6], labels=None) #, size_fn=lambda s: 20)
+p.stars(where=[Star.magnitude < 6], labels=None)  # , size_fn=lambda s: 20)
 p.constellations()
 p.constellation_borders()
 
@@ -49,7 +57,9 @@ for constellation in p.objects.constellations:
     # con = "gem"
     # constellation = Constellation.get(iau_id=con)
     print(constellation.name)
-    constellation_stars = [s for s in p.objects.stars if s.constellation_id == constellation.iau_id]
+    constellation_stars = [
+        s for s in p.objects.stars if s.constellation_id == constellation.iau_id
+    ]
     print(len(constellation_stars))
 
     points = MultiPoint([(s.ra, s.dec) for s in constellation_stars])
@@ -80,7 +90,10 @@ for constellation in p.objects.constellations:
             inter = intersection(t, constellation.boundary)
         except:
             continue
-        if inter.geom_type == "Polygon" and len(list(zip(*inter.exterior.coords.xy))) > 2:
+        if (
+            inter.geom_type == "Polygon"
+            and len(list(zip(*inter.exterior.coords.xy))) > 2
+        ):
             # continue
             # p.polygon(
             #     geometry=inter,
@@ -88,7 +101,6 @@ for constellation in p.objects.constellations:
             #     style__alpha=0.13,
             # )
             polygons.append(inter)
-
 
     p_by_area = {pg.area: pg for pg in polygons}
     polygons_sorted = [p_by_area[k] for k in sorted(p_by_area.keys(), reverse=True)]
@@ -103,14 +115,14 @@ for constellation in p.objects.constellations:
         d = distance(g.centroid, points.centroid)
         # d = distance(g.centroid, constellation.boundary.centroid)
         extent = abs(g.bounds[2] - g.bounds[0])
-        area = g.area/constellation.boundary.area
+        area = g.area / constellation.boundary.area
         return (extent**2 + area) - (d**2)
 
     # sort by combination of horizontal extent and area
     polygons_sorted = sorted(polygons_sorted, key=sorter, reverse=True)
 
     # p_sort_distance_to_center = sorted(polygons_sorted, key=lambda pg: distance(pg.centroid, points.centroid))
-    
+
     i = 0
 
     p.polygon(
@@ -119,7 +131,7 @@ for constellation in p.objects.constellations:
         style__alpha=0.23,
     )
     p.marker(
-        polygons_sorted[i].centroid.x, 
+        polygons_sorted[i].centroid.x,
         polygons_sorted[i].centroid.y,
         label=None,
         style__marker__symbol="circle_cross",
@@ -128,7 +140,6 @@ for constellation in p.objects.constellations:
         style__marker__edge_color="red",
         style__marker__edge_width=6,
     )
-    
 
     # for big_p in polygons_sorted[:1]:
     #     # continue
@@ -138,8 +149,6 @@ for constellation in p.objects.constellations:
     #         style__fill_color="green",
     #         style__alpha=0.23,
     #     )
-
-
 
 
 p.export("temp/voronoi.png")
