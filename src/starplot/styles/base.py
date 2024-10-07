@@ -677,6 +677,7 @@ class PlotStyle(BaseStyle):
     bayer_labels: LabelStyle = LabelStyle(
         font_size=7,
         font_weight=FontWeightEnum.LIGHT,
+        font_name="GFS Didot",
         zorder=ZOrderEnum.LAYER_4,
         anchor_point=AnchorPointEnum.TOP_LEFT,
     )

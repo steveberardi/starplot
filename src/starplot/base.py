@@ -28,6 +28,7 @@ from starplot.styles import (
     MarkerSymbolEnum,
     PathStyle,
     PolygonStyle,
+    fonts,
 )
 from starplot.styles.helpers import use_style
 
@@ -93,6 +94,7 @@ class BasePlot(ABC):
         self.timescale = load.timescale().from_datetime(self.dt)
 
         self._objects = models.ObjectList()
+        fonts.load()
 
     def _plot_kwargs(self) -> dict:
         return {}
