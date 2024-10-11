@@ -27,6 +27,7 @@ p = OpticPlot(
     dt=dt,
     style=style,
     resolution=1600,
+    autoscale=True,
 )
 p.stars(
     mag=12,

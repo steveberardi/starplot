@@ -44,6 +44,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
+        scale: Scaling factor that will be applied to all relevant sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set scale to 2.
+        autoscale: If True, then the scale will be automatically set based on resolution
 
     Returns:
         OpticPlot: A new instance of an OpticPlot
@@ -65,6 +67,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         resolution: int = 2048,
         hide_colliding_labels: bool = True,
         raise_on_below_horizon: bool = True,
+        scale: float = 1.0,
+        autoscale: bool = False,
         *args,
         **kwargs,
     ) -> "OpticPlot":
@@ -74,6 +78,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             style,
             resolution,
             hide_colliding_labels,
+            scale=scale,
+            autoscale=autoscale,
             *args,
             **kwargs,
         )
@@ -193,6 +199,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         else:
             plotted.set_clip_path(self._background_clip_path)
 
+    @use_style(ObjectStyle, "star")
     def stars(
         self,
         mag: float = 6.0,
@@ -227,7 +234,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
         """
-        optic_star_multiplier = 0.4 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
+        optic_star_multiplier = 0.18 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
 
         def size_fn_mx(st: Star) -> float:
             return size_fn(st) * optic_star_multiplier
@@ -268,7 +275,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         )  # apply transform again because new xy limits will undo the transform
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        font_size = style.font_size * self._size_multiplier * 2
+        font_size = style.font_size * self.scale * 2
 
         column_labels = [
             "Target (Alt/Az)",
@@ -296,15 +303,13 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             edges="vertical",
         )
         table.auto_set_font_size(False)
-        table.set_fontsize(font_size)
+        table.set_fontsize(style.font_size)
         table.scale(1, 3.1)
 
         # Apply style to all cells
         for row in [0, 1]:
             for col in range(len(values)):
-                table[row, col].set_text_props(
-                    **style.matplot_kwargs(self._size_multiplier)
-                )
+                table[row, col].set_text_props(**style.matplot_kwargs(self.scale))
 
         # Apply some styles only to the header row
         for col in range(len(values)):
@@ -330,7 +335,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         inner_border = self.optic.patch(
             x,
             y,
-            linewidth=2 * self._size_multiplier,
+            linewidth=2 * self.scale,
             edgecolor=self.style.border_line_color.as_hex(),
             fill=False,
             zorder=ZOrderEnum.LAYER_5 + 100,
@@ -342,7 +347,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             x,
             y,
             padding=0.05,
-            linewidth=20 * self._size_multiplier,
+            linewidth=20 * self.scale,
             edgecolor=self.style.border_bg_color.as_hex(),
             fill=False,
             zorder=ZOrderEnum.LAYER_5,

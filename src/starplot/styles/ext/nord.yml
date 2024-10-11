@@ -30,7 +30,6 @@ constellation:
   label:
     font_alpha: 0.6
     font_color: rgb(230, 204, 147)
-    font_size: 7
     font_weight: light
   line:
     alpha: 0.36
@@ -128,7 +127,6 @@ planets:
 star:
   label:
     font_color: '#88c0d0'
-    font_size: 9
     font_weight: bold
   marker:
     color: '#88c0d0'
@@ -136,7 +134,6 @@ star:
 sun:
   label:
     font_color: '#88c0d0'
-    font_size: 9
     font_weight: bold
   marker:
     color: '#88c0d0'
@@ -144,7 +141,6 @@ sun:
 moon:
   label:
     font_color: '#88c0d0'
-    font_size: 9
     font_weight: bold
   marker:
     color: '#88c0d0'

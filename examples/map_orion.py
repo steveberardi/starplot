@@ -5,11 +5,6 @@ style = PlotStyle().extend(
     extensions.BLUE_LIGHT,
     extensions.MAP,
     {
-        "bayer_labels": {
-            "font_name": "GFS Didot",  # use a better font for Greek letters
-            "font_size": 7,
-            "font_alpha": 0.9,
-        },
         "legend": {
             "location": "lower right",  # show legend inside map
             "num_columns": 1,

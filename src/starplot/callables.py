@@ -1,7 +1,7 @@
 import math
 
 from typing import Callable
-
+import numpy as np
 from starplot.models import Star
 from starplot.utils import bv_to_hex_color
 
@@ -38,7 +38,7 @@ def size_by_magnitude_factory(
         else:
             size = base ** math.log(threshold - m)
 
-        return size
+        return size * 9
 
     return size_fn
 
@@ -60,6 +60,30 @@ def size_by_magnitude(star: Star) -> float:
     return _size_by_magnitude_default(star)
 
 
+def _size_by_magnitude(star: Star) -> float:
+    bins = [x for x in range(12)]
+    np.digitize(star.magnitude, bins=bins)
+    {i: 200 - (i + 1) ** 2 for i in range(12)}
+    # return sizes[b]
+    m = star.magnitude
+    if m < 1:
+        return 200
+    elif m < 2:
+        return 200
+    elif m < 3:
+        return 200
+    elif m < 4:
+        return 160
+    elif m < 5:
+        return 130
+    elif m < 6:
+        return 110
+    elif m < 7:
+        return 80
+
+    return 40
+
+
 def size_by_magnitude_simple(star: Star) -> float:
     """Very simple sizer by magnitude for map plots"""
     m = star.magnitude
@@ -78,13 +102,13 @@ def size_by_magnitude_for_optic(star: Star) -> float:
     m = star.magnitude
 
     if m < 4.6:
-        return (9 - m) ** 3.76
+        return (9 - m) ** 3.76 * 10
     elif m < 5.85:
-        return (9 - m) ** 3.72
+        return (9 - m) ** 3.72 * 10
     elif m < 9:
-        return (13 - m) ** 1.91
+        return (13 - m) ** 1.91 * 10
 
-    return 4.93
+    return 4.93 * 10
 
 
 def alpha_by_magnitude(star: Star) -> float:

@@ -31,6 +31,7 @@ def _mercator():
         dec_max=23.6,
         style=STYLE,
         resolution=RESOLUTION,
+        autoscale=True,
     )
     p.stars(mag=7.6, bayer_labels=True)
     p.dsos(
@@ -63,6 +64,7 @@ def _stereo_north():
         dec_max=55,
         style=STYLE,
         resolution=RESOLUTION,
+        autoscale=True,
     )
     p.stars(mag=9, bayer_labels=True)
     p.dsos(
@@ -132,6 +134,7 @@ def check_map_coma_berenices_dso_size():
             styles.extensions.MAP,
         ),
         resolution=RESOLUTION,
+        autoscale=True,
     )
     p.stars(mag=8, bayer_labels=True)
     p.open_clusters(mag=8, true_size=True)
@@ -165,6 +168,7 @@ def check_map_with_planets():
         hide_colliding_labels=False,
         style=STYLE,
         resolution=RESOLUTION,
+        autoscale=True,
     )
     p.stars(mag=3, labels=None)
     p.planets()
@@ -192,8 +196,9 @@ def check_map_scope_bino_fov():
         dec_max=28,
         dt=dt,
         style=style,
-        resolution=1000,
+        resolution=2000,
         star_catalog="big-sky-mag11",
+        scale=1,
     )
     p.stars(mag=12)
     p.scope_fov(
@@ -227,6 +232,7 @@ def check_map_custom_stars():
         dec_max=24,
         style=style,
         resolution=RESOLUTION,
+        autoscale=True,
     )
     p.stars(mag=6)
     p.text(
@@ -255,6 +261,7 @@ def check_map_wrapping():
         dec_max=64,
         style=style,
         resolution=RESOLUTION,
+        autoscale=True,
     )
     p.stars(mag=9, style={"marker": {"size": 40}})
     p.dsos(
@@ -284,6 +291,7 @@ def check_map_mollweide():
         projection=Projection.MOLLWEIDE,
         style=style,
         resolution=RESOLUTION,
+        autoscale=True,
     )
     p.stars(mag=4.2, mag_labels=1.8, style__marker__color="blue")
     p.constellations()
@@ -318,6 +326,7 @@ def check_map_gridlines():
         dec_max=67,
         style=style,
         resolution=RESOLUTION,
+        autoscale=True,
     )
 
     p.stars(mag=6, style__marker__size=45)
@@ -346,6 +355,7 @@ def check_map_moon_phase_waxing_crescent():
         **POWAY,
         dt=dt_dec_16,
         style=STYLE,
+        autoscale=True,
     )
     p.moon(
         true_size=True,
@@ -380,6 +390,7 @@ def check_map_plot_limit_by_geometry():
             }
         ),
         resolution=RESOLUTION,
+        autoscale=True,
     )
     lyra = Constellation.get(iau_id="lyr")
 
@@ -417,6 +428,7 @@ def check_map_plot_custom_clip_path_virgo():
             }
         ),
         resolution=RESOLUTION,
+        autoscale=True,
         clip_path=virgo.boundary,
     )
 
@@ -454,10 +466,10 @@ def check_map_label_callables():
         {
             "dso_open_cluster": {
                 "label": {
-                    "font_size": 28,
+                    # "font_size": 28,
                     "font_weight": "bold",
-                    "offset_x": 310,
-                    "offset_y": 240,
+                    # "offset_x": 310,
+                    # "offset_y": 240,
                 }
             },
         }
@@ -470,6 +482,7 @@ def check_map_label_callables():
         dec_max=26,
         style=style,
         resolution=2000,
+        autoscale=True,
     )
     m45 = DSO.get(m="45")
 
@@ -477,8 +490,8 @@ def check_map_label_callables():
         geometry=m45.geometry,
         style__color=None,
         style__fill_color=style.dso_open_cluster.marker.color,
-        style__edge_color="#000",
-        style__edge_width=4,
+        style__edge_color="red",
+        style__edge_width=6,
         style__line_style=(0, (1.2, 8)),
     )
 
@@ -499,10 +512,11 @@ def check_map_milky_way_multi_polygon():
         projection=Projection.MILLER,
         ra_min=17.5,
         ra_max=19.5,
-        dec_min=-40,
+        dec_min=-30,
         dec_max=0,
         style=STYLE,
-        resolution=2000,
+        resolution=3000,
+        autoscale=True,
     )
     p.stars(mag=6, bayer_labels=True)
     p.constellations()

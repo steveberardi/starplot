@@ -41,7 +41,6 @@ style = PlotStyle().extend(
     {
         "star": {
             "label": {
-                "font_size": 9,
                 "font_weight": "normal",
             }
         },
@@ -60,6 +59,7 @@ p = MapPlot(
     dec_max=80,
     style=style,
     resolution=2800,
+    autoscale=True,
 )
 
 # Plot the comet markers first, to ensure their labels are plotted
@@ -72,7 +72,7 @@ for t, ra, dec in radecs:
         legend_label="Comet NEOWISE",
         style={
             "marker": {
-                "size": 16,
+                "size": 40,
                 "symbol": "circle",
                 "fill": "full",
                 "color": "hsl(358, 78%, 58%)",
@@ -81,7 +81,7 @@ for t, ra, dec in radecs:
                 "zorder": 4096,
             },
             "label": {
-                "font_size": 17,
+                "font_size": 36,
                 "font_weight": "bold",
                 "font_color": "hsl(60, 70%, 72%)",
                 "zorder": 4096,

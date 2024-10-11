@@ -1,5 +1,4 @@
-from starplot import MapPlot, Projection
-from starplot.models import DSO
+from starplot import MapPlot, Projection, DSO, Star
 from starplot.styles import PlotStyle, extensions
 
 
@@ -7,10 +6,6 @@ style = PlotStyle().extend(
     extensions.BLUE_DARK,
     extensions.MAP,
 )
-
-style.star.label.font_size = 4
-style.constellation.label.font_size = 6
-style.constellation.line.width = 2
 
 p = MapPlot(
     projection=Projection.MILLER,
@@ -20,8 +15,9 @@ p = MapPlot(
     dec_max=80,
     style=style,
     resolution=6000,
+    scale=1,
 )
-p.stars(mag=8)
+p.stars(mag=8, where_labels=[Star.magnitude < 2.1])
 p.dsos(
     labels=None,
     where=[

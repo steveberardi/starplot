@@ -60,6 +60,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         clip_path: An optional Shapely Polygon that specifies the clip path of the plot -- only objects inside the polygon will be plotted. If `None` (the default), then the clip path will be the extent of the map you specified with the RA/DEC parameters.
+        scale: Scaling factor that will be applied to all relevant sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set scale to 2.
+        autoscale: If True, then the scale will be automatically set based on resolution
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -78,9 +80,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_MAP_STYLE,
-        resolution: int = 2048,
+        resolution: int = 4096,
         hide_colliding_labels: bool = True,
         clip_path: Polygon = None,
+        scale: float = 1.0,
+        autoscale: bool = False,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -90,6 +94,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             style,
             resolution,
             hide_colliding_labels,
+            scale=scale,
+            autoscale=autoscale,
             *args,
             **kwargs,
         )
@@ -249,7 +255,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if constellation_borders.empty:
             return
 
-        style_kwargs = style.matplot_kwargs(self._size_multiplier)
+        style_kwargs = style.matplot_kwargs(self.scale)
 
         geometries = []
 
@@ -325,9 +331,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         mls = MultiLineString(geometries)
         geometries = unary_union(mls)
 
-        style_kwargs = self.style.constellation_borders.matplot_kwargs(
-            size_multiplier=self._size_multiplier
-        )
+        style_kwargs = self.style.constellation_borders.matplot_kwargs(self.scale)
 
         for ls in list(geometries.geoms):
             # print(ls)
@@ -379,7 +383,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             transform = self._geodetic
 
         conline_hips = condata.lines()
-        style_kwargs = style.line.matplot_kwargs(size_multiplier=self._size_multiplier)
+        style_kwargs = style.line.matplot_kwargs(self.scale)
 
         for c in constellations_gdf.itertuples():
             obj = constellation_from_tuple(c)
@@ -449,8 +453,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
     ):
         from shapely import (
-            voronoi_polygons,
-            GeometryCollection,
             MultiPoint,
             intersection,
             delaunay_triangles,
@@ -481,7 +483,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             for t in triangles.geoms:
                 try:
                     inter = intersection(t, constellation.boundary)
-                except:
+                except Exception:
                     continue
                 if (
                     inter.geom_type == "Polygon"
@@ -493,7 +495,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             polygons_sorted = [
                 p_by_area[k] for k in sorted(p_by_area.keys(), reverse=True)
             ]
-            constellation_centroid = constellation.boundary.centroid
 
             # sort by combination of horizontal extent and area
             polygons_sorted = sorted(polygons_sorted, key=sorter, reverse=True)
@@ -620,7 +621,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
             TODO : investigate why line is extra thick on bottom when plotting line
             """
-            style_kwargs = style.line.matplot_kwargs(self._size_multiplier)
+            style_kwargs = style.line.matplot_kwargs(self.scale)
             style_kwargs["clip_on"] = False
             style_kwargs["edgecolor"] = style_kwargs.pop("color")
 
@@ -640,7 +641,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 x,
                 y,
                 dash_capstyle=style.line.dash_capstyle,
-                **style.line.matplot_kwargs(self._size_multiplier),
+                **style.line.matplot_kwargs(self.scale),
                 **style_kwargs,
                 **self._plot_kwargs(),
             )
@@ -663,10 +664,13 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         cardinal_directions = [north, east, south, west]
 
         text_kwargs = dict(
-            **style.label.matplot_kwargs(self._size_multiplier),
+            **style.label.matplot_kwargs(self.scale),
             hide_on_collision=False,
-            xytext=(style.label.offset_x, style.label.offset_y),
-            textcoords="offset pixels",
+            xytext=(
+                style.label.offset_x * self.scale,
+                style.label.offset_y * self.scale,
+            ),
+            textcoords="offset points",
             path_effects=[],
         )
 
@@ -675,7 +679,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         for i, position in enumerate(cardinal_directions):
             ra, dec, _ = position.radec()
-            self._text(ra.hours, dec.degrees, labels[i], **text_kwargs)
+            self._text(
+                ra.hours, dec.degrees, labels[i], auto_anchor=False, **text_kwargs
+            )
 
     @use_style(PathStyle, "gridlines")
     def gridlines(
@@ -866,7 +872,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             0.05,
             info,
             transform=self.ax.transAxes,
-            **style.matplot_kwargs(self._size_multiplier * 1.36),
+            **style.matplot_kwargs(self.scale),
         )
 
     def _plot_background_clip_path(self):
@@ -896,7 +902,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 fill=True,
                 facecolor=self.style.background_color.as_hex(),
                 # edgecolor=self.style.border_line_color.as_hex(),
-                linewidth=0,  # 4 * self._size_multiplier,
+                linewidth=0,
                 zorder=-2_000,
                 transform=self.ax.transAxes,
             )

@@ -4,7 +4,7 @@ from functools import cache
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
-from starplot.data import bayer, stars, flamsteed
+from starplot.data import bayer, stars
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, LabelStyle, use_style
@@ -160,8 +160,6 @@ class StarPlotterMixin:
         else:
             labels = {**STAR_NAMES, **labels}
 
-        star_size_multiplier = self._size_multiplier * style.marker.size / 5
-
         nearby_stars_df = self._load_stars(catalog, mag)
         nearby_stars = SkyfieldStar.from_dataframe(nearby_stars_df)
         astrometric = self.ephemeris["earth"].at(self.timescale).observe(nearby_stars)
@@ -180,7 +178,7 @@ class StarPlotterMixin:
             if not all([e.evaluate(obj) for e in where]):
                 continue
 
-            size = size_fn(obj) * star_size_multiplier
+            size = size_fn(obj) * self.scale**2
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()
 

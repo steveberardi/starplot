@@ -6,7 +6,6 @@ HERE = Path(__file__).resolve().parent
 FONTS_PATH = HERE / "fonts-library"
 
 
-
 def load():
     """Loads all fonts in ./fonts-library"""
     font_dirs = [FONTS_PATH]

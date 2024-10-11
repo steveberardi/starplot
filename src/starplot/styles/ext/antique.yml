@@ -41,7 +41,6 @@ celestial_equator:
     alpha: 0.62
 constellation:
   label:
-    font_size: 10
     font_weight: light
     font_color: hsl(60, 3%, 52%)
     font_alpha: 0.36
@@ -84,14 +83,12 @@ star:
     font_color: hsl(60, 3%, 42%)
 planets:
   marker:
-    size: 8
     symbol: circle
     alpha: 0.68
     fill: full
     color: hsl(26, 93%, 82%)
     edge_color: hsl(26, 93%, 52%)
   label:
-    font_size: 7
     font_color: hsl(60, 3%, 42%)
 sun:
   label:

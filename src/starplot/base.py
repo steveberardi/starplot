@@ -48,6 +48,8 @@ DEFAULT_FOV_STYLE = PolygonStyle(
 
 DEFAULT_STYLE = PlotStyle()
 
+DEFAULT_RESOLUTION = 4096
+
 
 class BasePlot(ABC):
     _background_clip_path = None
@@ -57,8 +59,10 @@ class BasePlot(ABC):
         dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_STYLE,
-        resolution: int = 2048,
+        resolution: int = 4096,
         hide_colliding_labels: bool = True,
+        scale: float = 1.0,
+        autoscale: bool = False,
         *args,
         **kwargs,
     ):
@@ -70,6 +74,11 @@ class BasePlot(ABC):
         self.figure_size = resolution * px
         self.resolution = resolution
         self.hide_colliding_labels = hide_colliding_labels
+
+        self.scale = scale
+        self.autoscale = autoscale
+        if self.autoscale:
+            self.scale = self.resolution / DEFAULT_RESOLUTION
 
         self.dt = dt or timezone("UTC").localize(datetime.now())
         self._ephemeris_name = ephemeris
@@ -87,10 +96,9 @@ class BasePlot(ABC):
         self.logger.setLevel(self.log_level)
 
         self.text_border = patheffects.withStroke(
-            linewidth=self.style.text_border_width,
+            linewidth=self.style.text_border_width * self.scale,
             foreground=self.style.text_border_color.as_hex(),
         )
-        self._size_multiplier = self.resolution / 3000
         self.timescale = load.timescale().from_datetime(self.dt)
 
         self._objects = models.ObjectList()
@@ -142,7 +150,7 @@ class BasePlot(ABC):
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
         if label is not None and label not in self._legend_handles:
             s = style.matplot_kwargs()
-            s["markersize"] = self.style.legend.symbol_size * self._size_multiplier
+            s["markersize"] = self.style.legend.symbol_size * self.scale
             self._legend_handles[label] = Line2D(
                 [],
                 [],
@@ -158,6 +166,7 @@ class BasePlot(ABC):
         dec: float,
         text: str,
         hide_on_collision: bool = True,
+        auto_anchor: bool = True,
         *args,
         **kwargs,
     ) -> None:
@@ -186,8 +195,8 @@ class BasePlot(ABC):
         if not clip_on:
             return
 
-        # if not hide_on_collision:
-        #     return
+        if not hide_on_collision and not auto_anchor:
+            return
 
         removed = self._maybe_remove_label(label)
 
@@ -243,10 +252,10 @@ class BasePlot(ABC):
             ra,
             dec,
             text,
-            **style.matplot_kwargs(self._size_multiplier),
+            **style.matplot_kwargs(self.scale),
             hide_on_collision=hide_on_collision,
-            xytext=(style.offset_x, style.offset_y),
-            textcoords="offset pixels",
+            xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
+            textcoords="offset points",
         )
 
     @property
@@ -265,7 +274,7 @@ class BasePlot(ABC):
             text: Title text to plot
             style: Styling of the title. If None, then the plot's style (specified when creating the plot) will be used
         """
-        style_kwargs = style.matplot_kwargs(self._size_multiplier)
+        style_kwargs = style.matplot_kwargs(self.scale)
         style_kwargs.pop("linespacing", None)
         style_kwargs["pad"] = style.line_spacing
         self.ax.set_title(text, **style_kwargs)
@@ -308,7 +317,7 @@ class BasePlot(ABC):
 
         self._legend = self.ax.legend(
             handles=self._legend_handles.values(),
-            **style.matplot_kwargs(size_multiplier=self._size_multiplier),
+            **style.matplot_kwargs(self.scale),
             **bbox_kwargs,
         ).set_zorder(
             # zorder is not a valid kwarg to legend(), so we have to set it afterwards
@@ -381,9 +390,7 @@ class BasePlot(ABC):
         self.ax.scatter(
             x,
             y,
-            **style.marker.matplot_scatter_kwargs(
-                size_multiplier=self._size_multiplier
-            ),
+            **style.marker.matplot_scatter_kwargs(self.scale),
             **self._plot_kwargs(),
             clip_on=True,
             clip_path=self._background_clip_path,
@@ -541,7 +548,7 @@ class BasePlot(ABC):
         patch = patches.Polygon(
             points,
             # closed=False, # needs to be false for circles at poles?
-            **style.matplot_kwargs(size_multiplier=self._size_multiplier),
+            **style.matplot_kwargs(self.scale),
             **kwargs,
             clip_on=True,
             clip_path=self._background_clip_path,
@@ -676,7 +683,7 @@ class BasePlot(ABC):
             y,
             clip_on=True,
             clip_path=self._background_clip_path,
-            **style.matplot_kwargs(self._size_multiplier),
+            **style.matplot_kwargs(self.scale),
             **self._plot_kwargs(),
         )
 
@@ -910,7 +917,7 @@ class BasePlot(ABC):
             y,
             dash_capstyle=style.line.dash_capstyle,
             clip_path=self._background_clip_path,
-            **style.line.matplot_kwargs(self._size_multiplier),
+            **style.line.matplot_kwargs(self.scale),
             **self._plot_kwargs(),
         )
 
@@ -947,7 +954,7 @@ class BasePlot(ABC):
             x,
             y,
             clip_path=self._background_clip_path,
-            **style.line.matplot_kwargs(self._size_multiplier),
+            **style.line.matplot_kwargs(self.scale),
             **self._plot_kwargs(),
         )
 

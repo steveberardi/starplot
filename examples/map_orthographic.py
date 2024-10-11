@@ -24,7 +24,7 @@ p = MapPlot(
     dec_min=-90,
     dec_max=90,
     style=style,
-    resolution=3200,
+    scale=0.8,  # lower the scale since it shows a large area
 )
 p.gridlines(labels=False)
 p.stars(mag=7.86, where_labels=[Star.magnitude < 6])
@@ -34,7 +34,7 @@ p.galaxies(where=[DSO.magnitude < 12], true_size=False, labels=None)
 p.nebula(where=[DSO.magnitude < 12], true_size=False, labels=None)
 
 p.constellations(
-    style={"label": {"font_size": 9, "font_alpha": 0.8}},
+    style={"label": {"font_alpha": 0.8}},
 )
 p.constellation_borders()
 p.ecliptic()

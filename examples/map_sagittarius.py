@@ -5,13 +5,9 @@ style = PlotStyle().extend(
     extensions.ANTIQUE,
     extensions.MAP,
     {
-        "bayer_labels": {
-            "font_name": "GFS Didot",
-            "font_size": 7,
-        },
         "dso_open_cluster": {
             "marker": {
-                "size": 17,
+                "size": 40,
             },
         },
     },
@@ -24,6 +20,7 @@ p = MapPlot(
     dec_max=-3,
     style=style,
     resolution=3000,
+    autoscale=True,
 )
 p.constellations()
 

@@ -1,18 +1,18 @@
 star:
   label:
-    font_size: 15
+    font_size: 20
   marker:
-    size: 30
+    size: 60
 bayer_labels:
   font_size: 15
 planets:
   marker:
-    size: 11
+    size: 30
 legend:
   location: "lower center"
 ecliptic:
   label:
-    font_size: 15
+    font_size: 20
 celestial_equator:
   label:
-    font_size: 15
+    font_size: 20

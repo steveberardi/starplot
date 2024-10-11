@@ -23,10 +23,9 @@ celestial_equator:
     alpha: 0.6
 constellation:
   label:
-    font_size: 7
     font_weight: light
   line:
-    alpha: 0.23
+    alpha: 0.36
     color: '#6ba832'
     width: 3
 ecliptic:
@@ -48,7 +47,6 @@ gridlines:
   label:
     font_alpha: 0.8
     font_color: '#2f4358'
-    font_size: 8
     font_weight: light
   line:
     alpha: 0.6
