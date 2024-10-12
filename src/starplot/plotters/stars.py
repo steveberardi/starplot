@@ -4,7 +4,7 @@ from functools import cache
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
-from starplot.data import bayer, stars
+from starplot.data import bayer, stars, flamsteed
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, LabelStyle, use_style
@@ -81,6 +81,7 @@ class StarPlotterMixin:
         style: LabelStyle,
         labels: Mapping[str, str],
         bayer_labels: bool,
+        flamsteed_labels: bool,
         label_fn: Callable[[Star], str],
     ):
         for s in star_objects:
@@ -89,12 +90,16 @@ class StarPlotterMixin:
 
             label = labels.get(s.hip) if label_fn is None else label_fn(s)
             bayer_desig = bayer.hip.get(s.hip)
+            flamsteed_num = flamsteed.hip.get(s.hip)
 
             if label:
-                self.text(label, s.ra, s.dec, style)
+                self.text(label, s.ra, s.dec, style, hide_on_collision=self.hide_colliding_labels)
 
             if bayer_labels and bayer_desig:
-                self.text(bayer_desig, s.ra, s.dec, self.style.bayer_labels)
+                self.text(bayer_desig, s.ra, s.dec, self.style.bayer_labels, hide_on_collision=self.hide_colliding_labels)
+            
+            if flamsteed_labels and flamsteed_num:
+                self.text(flamsteed_num, s.ra, s.dec, self.style.flamsteed_labels, hide_on_collision=self.hide_colliding_labels)
 
     def _prepare_star_coords(self, df):
         df["x"], df["y"] = (
@@ -119,6 +124,7 @@ class StarPlotterMixin:
         labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
         bayer_labels: bool = False,
+        flamsteed_labels: bool = False,
         *args,
         **kwargs,
     ):
@@ -139,6 +145,7 @@ class StarPlotterMixin:
             labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
+            flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
         """
         self.logger.debug("Plotting stars...")
 
@@ -214,5 +221,5 @@ class StarPlotterMixin:
         self._add_legend_handle_marker(legend_label, style.marker)
 
         self._star_labels(
-            star_objects, where_labels, style.label, labels, bayer_labels, label_fn
+            star_objects, where_labels, style.label, labels, bayer_labels, flamsteed_labels, label_fn
         )

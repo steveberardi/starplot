@@ -39,47 +39,47 @@ constellation:
 
 dso_double_star:
   marker:
-    alpha: 0.6
+    alpha: 0.9
 dso_galaxy:
   marker:
-    alpha: 0.5
+    alpha: 0.6
     color: hsl(18, 68%, 75%)
     edge_color: hsl(18, 68%, 40%)
   label:
     font_color: hsl(18, 68%, 40%)
 dso_nebula:
   marker:
-    alpha: 0.5
+    alpha: 0.76
     color: hsl(91, 53%, 75%)
     edge_color: hsl(91, 53%, 40%)
   label:
     font_color: hsl(91, 53%, 40%)
 dso_planetary_nebula:
   marker:
-    alpha: 0.5
+    alpha: 0.76
     color: hsl(91, 53%, 75%)
     edge_color: hsl(91, 53%, 40%)
   label:
     font_color: hsl(91, 53%, 40%)
 dso_open_cluster:
   marker:
-    alpha: 0.65
+    alpha: 0.76
     color: hsl(58, 95%, 85%)
     edge_color: hsl(58, 95%, 15%)
   label:
     font_color: '#989400'
 dso_association_stars:
   marker:
-    alpha: 0.3
-    color: '#fffb68'
-    edge_color: '#989400'
+    alpha: 0.76
+    color: hsl(58, 95%, 85%)
+    edge_color: hsl(58, 95%, 15%)
   label:
     font_color: '#989400'
 
 # other DSOs
 dso_unknown: &DSO
   marker:
-    alpha: 0.5
+    alpha: 0.76
     color: hsl(91, 53%, 75%)
     edge_color: hsl(91, 53%, 40%)
   label:

@@ -84,17 +84,16 @@ dso_open_cluster:
   label:
     font_color: hsl(209, 23%, 72%)
   marker:
-    size: 10
-    alpha: 0.52
-    fill: none
+    alpha: 0.78
+    color: hsl(209, 50%, 18%)
     edge_color: hsl(209, 50%, 92%)
     zorder: -500
 dso_association_stars:
   label:
     font_color: hsl(209, 23%, 72%)
   marker:
-    alpha: 0.52
-    fill: none
+    alpha: 0.78
+    color: hsl(209, 50%, 18%)
     edge_color: hsl(209, 50%, 92%)
     zorder: -500
 dso_globular_cluster:
@@ -102,9 +101,8 @@ dso_globular_cluster:
     font_color: hsl(209, 23%, 72%)
   marker:
     alpha: 0.68
-    size: 10
-    color: hsl(209, 50%, 92%)
-    edge_color: null
+    color: hsl(209, 50%, 18%)
+    edge_color: hsl(209, 50%, 92%)
     zorder: 100
 
 # other DSOs
@@ -169,7 +167,6 @@ sun:
   marker:
     color: hsl(209, 50%, 94%)
     edge_color: hsl(209, 50%, 94%)
-    size: 25
 
 legend:
   background_color: hsl(209, 50%, 26%)

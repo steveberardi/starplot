@@ -31,8 +31,8 @@ zenith:
 title:
   font_color: hsl(60, 20%, 93%)
 bayer_labels:
-  font_alpha: 0.74
-  font_color: '#000'
+  font_alpha: 0.86
+  font_color: hsl(60, 3%, 17%)
 celestial_equator:
   label:
     font_color: hsl(188, 35%, 56%)
@@ -43,16 +43,14 @@ constellation:
   label:
     font_weight: light
     font_color: hsl(60, 3%, 52%)
-    font_alpha: 0.36
+    font_alpha: 0.46
     font_name: "serif"
   line:
-    alpha: 0.2
+    alpha: 0.25
     color: hsl(48, 80%, 14%)
-    width: 1.46
 constellation_borders:
   color: hsl(37, 33%, 40%)
-  alpha: 0.44
-  width: 1.2
+  alpha: 0.5
   zorder: -500
 ecliptic:
   label:
@@ -77,10 +75,10 @@ gridlines:
     width: 1
 star:
   marker:
-    color: hsl(60, 12%, 32%)
+    color: hsl(60, 12%, 24%)
     edge_color: hsl(48, 80%, 96%)
   label:
-    font_color: hsl(60, 3%, 42%)
+    font_color: hsl(60, 3%, 24%)
 planets:
   marker:
     symbol: circle
@@ -106,45 +104,45 @@ moon:
 # DSOs
 dso_double_star:
   marker:
-    alpha: 0.6
+    alpha: 0.9
 dso_galaxy:
   marker:
-    alpha: 0.42
+    alpha: 0.62
     color: hsl(26, 93%, 82%)
     edge_color:  hsl(26, 93%, 32%)
   label:
     font_color: hsl(26, 93%, 32%)
 dso_nebula:
   marker:
-    alpha: 0.52
-    color: hsl(71, 58%, 76%)
-    edge_color: hsl(71, 58%, 36%)
+    alpha: 0.8
+    color: hsl(71, 58%, 80%)
+    edge_color: hsl(71, 58%, 30%)
   label:
-    font_color: hsl(71, 58%, 36%)
+    font_color: hsl(71, 58%, 30%)
 dso_planetary_nebula:
   marker:
-    alpha: 0.52
-    color: hsl(71, 58%, 76%)
-    edge_color: hsl(71, 58%, 36%)
+    alpha: 0.8
+    color: hsl(71, 58%, 80%)
+    edge_color: hsl(71, 58%, 30%)
   label:
-    font_color: hsl(71, 58%, 36%)
+    font_color: hsl(71, 58%, 30%)
 dso_open_cluster:
   marker:
-    alpha: 0.52
+    alpha: 0.8
     color: hsl(49, 92%, 77%)
     edge_color: hsl(49, 92%, 27%)
   label:
     font_color: hsl(49, 92%, 27%)
 dso_association_stars:
   marker:
-    alpha: 0.52
+    alpha: 0.8
     color: hsl(49, 92%, 77%)
     edge_color: hsl(49, 92%, 27%)
   label:
     font_color: hsl(49, 92%, 27%)
 dso_globular_cluster:
   marker:
-    alpha: 0.5
+    alpha: 0.8
     color: hsl(60, 53%, 76%)
     edge_color: hsl(60, 3%, 32%)
   label:
@@ -153,7 +151,7 @@ dso_globular_cluster:
 # other DSOs
 dso_unknown: &DSO
   marker:
-    alpha: 0.52
+    alpha: 0.8
     color: hsl(71, 58%, 76%)
     edge_color: hsl(71, 58%, 36%)
   label:

@@ -23,7 +23,7 @@ p = MapPlot(
     dec_min=-90,
     dec_max=90,
     style=style,
-    scale=0.86,  # lower the scale since it shows a large area
+    scale=0.9,  # lower the scale since it shows a large area
 )
 p.gridlines(labels=False)
 p.stars(mag=7.86, where_labels=[Star.magnitude < 6])

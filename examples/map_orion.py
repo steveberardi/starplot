@@ -1,4 +1,4 @@
-from starplot import MapPlot, Projection
+from starplot import MapPlot, Projection, Star
 from starplot.styles import PlotStyle, PolygonStyle, extensions
 
 style = PlotStyle().extend(
@@ -21,28 +21,16 @@ p = MapPlot(
     dec_max=25,
     style=style,
     resolution=3600,
+    autoscale=True,
 )
 p.gridlines()
-p.stars(mag=9, bayer_labels=True)
+p.stars(mag=9, bayer_labels=True, where_labels=[Star.magnitude < 4])
 p.open_clusters(mag=9, labels=None)
 p.nebula(mag=9, labels=None)
 p.constellations()
 p.constellation_borders()
 p.milky_way()
 p.ecliptic()
-
-p.ellipse(
-    (5.6, -1.2),
-    height_degrees=3,
-    width_degrees=5,
-    style=PolygonStyle(
-        fill_color="#ed7eed",
-        edge_color="#000",
-        alpha=0.2,
-    ),
-    angle=-22,
-)
-
 p.legend()
 
 p.export("map_orion.png", padding=0.3, transparent=True)

@@ -294,7 +294,7 @@ class MarkerStyle(BaseStyle):
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     """Symbol for marker"""
 
-    size: float = 28
+    size: float = 22
     """Size of marker in points"""
 
     fill: FillStyleEnum = FillStyleEnum.NONE
@@ -303,7 +303,7 @@ class MarkerStyle(BaseStyle):
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
-    zorder: int = -1
+    zorder: int = ZOrderEnum.LAYER_2
     """Zorder of marker"""
 
     @property
@@ -485,7 +485,7 @@ class LabelStyle(BaseStyle):
     anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
     """Anchor point of label"""
 
-    font_size: float = 20
+    font_size: float = 17
     """Font size of the label, in points"""
 
     font_weight: FontWeightEnum = FontWeightEnum.NORMAL
@@ -509,13 +509,13 @@ class LabelStyle(BaseStyle):
     line_spacing: Optional[float] = None
     """Spacing between lines of text"""
 
-    offset_x: int = 0
+    offset_x: float = 0
     """Horizontal offset of the label, in pixels. Negative values supported."""
 
-    offset_y: int = 0
+    offset_y: float = 0
     """Vertical offset of the label, in pixels. Negative values supported."""
 
-    zorder: int = 101
+    zorder: int = ZOrderEnum.LAYER_4
     """Zorder of the label"""
 
     def matplot_kwargs(self, scale: float = 1.0) -> dict:
@@ -580,7 +580,7 @@ class LegendStyle(BaseStyle):
     label_padding: float = 1.6
     """Padding between legend labels"""
 
-    symbol_size: int = 40
+    symbol_size: int = 34
     """Size of symbols in the legend, in points"""
 
     symbol_padding: float = 0.2
@@ -589,7 +589,7 @@ class LegendStyle(BaseStyle):
     border_padding: float = 1.28
     """Padding around legend border"""
 
-    font_size: int = 28
+    font_size: int = 23
     """Font size of the legend labels, in points"""
 
     font_color: ColorStr = ColorStr("#000")
@@ -665,7 +665,7 @@ class PlotStyle(BaseStyle):
     # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            fill=FillStyleEnum.FULL, zorder=ZOrderEnum.LAYER_3, size=40, edge_color=None
+            fill=FillStyleEnum.FULL, zorder=ZOrderEnum.LAYER_4, size=40, edge_color=None
         ),
         label=LabelStyle(
             font_size=24, font_weight=FontWeightEnum.BOLD, zorder=ZOrderEnum.LAYER_4
@@ -674,13 +674,25 @@ class PlotStyle(BaseStyle):
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
-        font_size=20,
+        font_size=18,
         font_weight=FontWeightEnum.LIGHT,
         font_name="GFS Didot",
         zorder=ZOrderEnum.LAYER_4,
         anchor_point=AnchorPointEnum.TOP_LEFT,
+        offset_x=-3,
+        offset_y=3,
     )
     """Styling for Bayer labels of stars"""
+
+    flamsteed_labels: LabelStyle = LabelStyle(
+        font_size=14,
+        font_weight=FontWeightEnum.NORMAL,
+        zorder=ZOrderEnum.LAYER_4,
+        anchor_point=AnchorPointEnum.BOTTOM_LEFT,
+        offset_x=-3,
+        offset_y=-3,
+    )
+    """Styling for Flamsteed number labels of stars"""
 
     planets: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
@@ -868,7 +880,7 @@ class PlotStyle(BaseStyle):
         line=LineStyle(color="#c8c8c8"),
         label=LabelStyle(
             font_size=25,
-            font_weight=FontWeightEnum.BOLD,
+            font_weight=FontWeightEnum.LIGHT,
             zorder=ZOrderEnum.LAYER_3,
             anchor_point=AnchorPointEnum.TOP_RIGHT,
         ),
@@ -877,9 +889,9 @@ class PlotStyle(BaseStyle):
 
     constellation_borders: LineStyle = LineStyle(
         color="#000",
-        width=1,
+        width=1.5,
         style=LineStyleEnum.DASHED,
-        alpha=0.2,
+        alpha=0.25,
         zorder=ZOrderEnum.LAYER_3,
     )
     """Styling for constellation borders (only applies to map plots)"""
@@ -889,7 +901,7 @@ class PlotStyle(BaseStyle):
         fill_color="#d9d9d9",
         alpha=0.36,
         edge_width=0,
-        zorder=ZOrderEnum.LAYER_2,
+        zorder=ZOrderEnum.LAYER_1,
     )
     """Styling for the Milky Way (only applies to map plots)"""
 
@@ -920,14 +932,14 @@ class PlotStyle(BaseStyle):
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(
             color="#777",
-            width=2,
+            width=3,
             style=LineStyleEnum.DOTTED,
             dash_capstyle=DashCapStyleEnum.ROUND,
-            alpha=0.8,
+            alpha=0.9,
             zorder=ZOrderEnum.LAYER_3,
         ),
         label=LabelStyle(
-            font_size=18,
+            font_size=22,
             font_color="#777",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
@@ -940,13 +952,13 @@ class PlotStyle(BaseStyle):
     celestial_equator: PathStyle = PathStyle(
         line=LineStyle(
             color="#999",
-            width=2,
+            width=3,
             style=LineStyleEnum.DASHED_DOTS,
             alpha=0.65,
             zorder=ZOrderEnum.LAYER_3,
         ),
         label=LabelStyle(
-            font_size=18,
+            font_size=22,
             font_color="#999",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=0.65,
