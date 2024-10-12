@@ -32,6 +32,10 @@ dso_nebula:
   marker:
     color: '#000'
     alpha: 0.28
+dso_planetary_nebula:
+  marker:
+    color: '#000'
+    alpha: 0.28
 dso_open_cluster:
   marker:
     color: null

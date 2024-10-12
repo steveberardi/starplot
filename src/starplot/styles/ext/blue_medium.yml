@@ -74,48 +74,55 @@ zenith:
 # DSOs
 dso_double_star:
   marker:
-    alpha: 0.6
+    alpha: 0.83
 dso_galaxy:
   marker:
-    alpha: 0.45
+    alpha: 0.64
     color: '#D99CBA'
     edge_color: '#b15d87'
   label:
     font_color: '#b15d87'
 dso_nebula:
   marker:
-    alpha: 0.6
+    alpha: 0.78
+    color: hsl(91, 62%, 82%)
+    edge_color: hsl(91, 53%, 40%)
+  label:
+    font_color: hsl(91, 53%, 40%)
+dso_planetary_nebula:
+  marker:
+    alpha: 0.78
     color: hsl(91, 62%, 82%)
     edge_color: hsl(91, 53%, 40%)
   label:
     font_color: hsl(91, 53%, 40%)
 dso_open_cluster:
   marker:
-    alpha: 0.65
-    color: hsl(58, 95%, 85%)
-    edge_color: hsl(58, 95%, 15%)
+    alpha: 0.78
+    color: hsl(58, 96%, 80%)
+    edge_color: hsl(58, 95%, 13%)
   label:
     font_color: '#989400'
 dso_association_stars:
   marker:
-    alpha: 0.65
-    color: hsl(58, 95%, 85%)
-    edge_color: hsl(58, 95%, 15%)
+    alpha: 0.78
+    color: hsl(58, 96%, 80%)
+    edge_color: hsl(58, 95%, 13%)
   label:
     font_color: '#989400'
 dso_globular_cluster:
   marker:
-    alpha: 0.8
-    color: '#c7c7c7'
-    edge_color: '#444'
+    alpha: 0.78
+    color: hsl(58, 96%, 80%)
+    edge_color: hsl(58, 95%, 13%)
   label:
-    font_color: '#444'
+    font_color: hsl(58, 95%, 13%)
 
 
 # other DSOs
 dso_unknown: &DSO
   marker:
-    alpha: 0.56
+    alpha: 0.68
     color: hsl(91, 62%, 82%)
     edge_color: hsl(91, 53%, 40%)
   label:

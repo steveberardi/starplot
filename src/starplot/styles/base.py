@@ -763,6 +763,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
             color="#555",
             alpha=0.8,
+            edge_width=1.2,
         ),
         label=LabelStyle(offset_x=7, offset_y=-6),
     )
@@ -779,6 +780,12 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(offset_x=1, offset_y=-1),
     )
     """Styling for nebulas"""
+
+    dso_planetary_nebula: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(symbol=MarkerSymbolEnum.CIRCLE_CROSSHAIR, fill=FillStyleEnum.FULL, edge_width=1.2),
+        label=LabelStyle(offset_x=1, offset_y=-1),
+    )
+    """Styling for planetary nebulas"""
 
     dso_double_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(symbol=MarkerSymbolEnum.CIRCLE_LINE, fill=FillStyleEnum.TOP),
@@ -994,7 +1001,7 @@ class PlotStyle(BaseStyle):
             DsoType.GROUP_OF_GALAXIES: self.dso_galaxy,
             # Nebulas ----------
             DsoType.NEBULA: self.dso_nebula,
-            DsoType.PLANETARY_NEBULA: self.dso_nebula,
+            DsoType.PLANETARY_NEBULA: self.dso_planetary_nebula,
             DsoType.EMISSION_NEBULA: self.dso_nebula,
             DsoType.STAR_CLUSTER_NEBULA: self.dso_nebula,
             DsoType.REFLECTION_NEBULA: self.dso_nebula,

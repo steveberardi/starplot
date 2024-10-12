@@ -58,6 +58,13 @@ dso_nebula:
     alpha: 0.7
     color: hsl(163, 99%, 31%)
     edge_color: hsl(163, 99%, 21%)
+dso_planetary_nebula:
+  label:
+    font_color: hsl(163, 99%, 31%)
+  marker:
+    alpha: 0.7
+    color: hsl(163, 99%, 31%)
+    edge_color: hsl(163, 99%, 21%)
 dso_open_cluster:
   label:
     font_color: hsl(56, 85%, 30%)
