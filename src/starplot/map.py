@@ -14,7 +14,7 @@ import geopandas as gpd
 import numpy as np
 
 from starplot import geod
-from starplot.base import BasePlot
+from starplot.base import BasePlot, DPI
 from starplot.data import DataFiles, constellations as condata, stars
 from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
 from starplot.mixins import ExtentMaskMixin
@@ -804,6 +804,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.figure_background_color.as_hex(),
             layout="constrained",
+            dpi=DPI,
         )
         bounds = self._latlon_bounds()
         center_lat = (bounds[2] + bounds[3]) / 2

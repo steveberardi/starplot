@@ -2,7 +2,6 @@ from datetime import datetime
 from pytz import timezone
 
 from starplot import MapPlot, Projection, Star, DSO
-from starplot.data import constellations
 from starplot.styles import PlotStyle, extensions
 
 
@@ -24,7 +23,7 @@ p = MapPlot(
     dec_min=-90,
     dec_max=90,
     style=style,
-    scale=0.8,  # lower the scale since it shows a large area
+    scale=0.86,  # lower the scale since it shows a large area
 )
 p.gridlines(labels=False)
 p.stars(mag=7.86, where_labels=[Star.magnitude < 6])

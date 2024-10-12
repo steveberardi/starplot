@@ -59,7 +59,7 @@ dso_nebula:
     font_color: '#52896e'
 dso_open_cluster:
   marker:
-    alpha: 0.32
+    alpha: 0.38
     color: '#d8d99c'
     edge_color: '#9d9f3c'
   label:

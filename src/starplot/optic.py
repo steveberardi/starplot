@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot import callables
-from starplot.base import BasePlot
+from starplot.base import BasePlot, DPI
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
@@ -234,7 +234,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
         """
-        optic_star_multiplier = 0.18 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
+        optic_star_multiplier = 0.57 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
 
         def size_fn_mx(st: Star) -> float:
             return size_fn(st) * optic_star_multiplier
@@ -275,7 +275,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         )  # apply transform again because new xy limits will undo the transform
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        font_size = style.font_size * self.scale * 2
+        font_size = style.font_size * self.scale
 
         column_labels = [
             "Target (Alt/Az)",
@@ -313,7 +313,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         # Apply some styles only to the header row
         for col in range(len(values)):
-            table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.15)
+            table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.2)
 
     def _plot_border(self):
         # since we're using AzimuthalEquidistant projection, the center will always be (0, 0)
@@ -371,6 +371,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.figure_background_color.as_hex(),
             layout="constrained",
+            dpi=DPI,
         )
         self.ax = plt.axes(projection=self._proj)
         self.ax.xaxis.set_visible(False)

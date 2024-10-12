@@ -13,9 +13,9 @@ p = MapPlot(
     dec_min=-35,
     dec_max=-9,
     style=style,
-    resolution=2000,
+    resolution=3600,
     clip_path=canis_major.boundary,
-    autoscale=True,
+    scale=1.25,
 )
 p.open_clusters(mag=8, true_size=False, label_fn=lambda d: f"{d.ngc}")
 p.stars(mag=9, bayer_labels=True, catalog="big-sky-mag11")

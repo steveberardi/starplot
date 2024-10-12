@@ -2,7 +2,7 @@ from skyfield.api import load
 from skyfield.data import mpc
 from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
 
-from starplot import MapPlot, Projection
+from starplot import MapPlot, Projection, Star
 from starplot.styles import PlotStyle, extensions
 
 # First, we use Skyfield to get comet data
@@ -81,7 +81,7 @@ for t, ra, dec in radecs:
                 "zorder": 4096,
             },
             "label": {
-                "font_size": 36,
+                "font_size": 46,
                 "font_weight": "bold",
                 "font_color": "hsl(60, 70%, 72%)",
                 "zorder": 4096,
@@ -90,7 +90,7 @@ for t, ra, dec in radecs:
     )
 
 p.gridlines(labels=False)
-p.stars(mag=6)
+p.stars(mag=6, where_labels=[Star.magnitude < 2.1])
 p.constellations()
 p.constellation_borders()
 p.milky_way()

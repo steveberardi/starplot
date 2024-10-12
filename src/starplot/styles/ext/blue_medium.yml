@@ -91,16 +91,16 @@ dso_nebula:
     font_color: hsl(91, 53%, 40%)
 dso_open_cluster:
   marker:
-    alpha: 0.4
-    color: '#fffb68'
-    edge_color: '#989400'
+    alpha: 0.65
+    color: hsl(58, 95%, 85%)
+    edge_color: hsl(58, 95%, 15%)
   label:
     font_color: '#989400'
 dso_association_stars:
   marker:
-    alpha: 0.4
-    color: '#fffb68'
-    edge_color: '#989400'
+    alpha: 0.65
+    color: hsl(58, 95%, 85%)
+    edge_color: hsl(58, 95%, 15%)
   label:
     font_color: '#989400'
 dso_globular_cluster:

@@ -294,7 +294,7 @@ class MarkerStyle(BaseStyle):
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     """Symbol for marker"""
 
-    size: float = 38
+    size: float = 28
     """Size of marker in points"""
 
     fill: FillStyleEnum = FillStyleEnum.NONE
@@ -342,8 +342,10 @@ class MarkerStyle(BaseStyle):
         return PolygonStyle(
             fill_color=self.color.as_hex() if self.color else None,
             edge_color=self.edge_color.as_hex() if self.edge_color else None,
+            edge_width=self.edge_width,
             alpha=self.alpha,
             zorder=self.zorder,
+            line_style=self.line_style,
         )
 
 
@@ -504,7 +506,7 @@ class LabelStyle(BaseStyle):
     font_family: Optional[str] = None
     """Font family (e.g. 'monospace', 'sans-serif', 'serif', etc)"""
 
-    line_spacing: Optional[int] = None
+    line_spacing: Optional[float] = None
     """Spacing between lines of text"""
 
     offset_x: int = 0
@@ -652,10 +654,10 @@ class PlotStyle(BaseStyle):
 
     # Info text
     info_text: LabelStyle = LabelStyle(
-        font_size=10,
+        font_size=30,
         zorder=ZOrderEnum.LAYER_5,
-        font_family="monospace",
-        line_spacing=2,
+        font_family="Inter",
+        line_spacing=1.2,
         anchor_point=AnchorPointEnum.BOTTOM_CENTER,
     )
     """Styling for info text (only applies to zenith and optic plots)"""
@@ -672,7 +674,7 @@ class PlotStyle(BaseStyle):
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
-        font_size=14,
+        font_size=20,
         font_weight=FontWeightEnum.LIGHT,
         font_name="GFS Didot",
         zorder=ZOrderEnum.LAYER_4,
@@ -687,7 +689,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.LEFT,
         ),
         label=LabelStyle(
-            font_size=14,
+            font_size=28,
             font_weight=FontWeightEnum.BOLD,
         ),
     )
@@ -703,7 +705,7 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_4,
         ),
         label=LabelStyle(
-            font_size=14,
+            font_size=28,
             font_weight=FontWeightEnum.BOLD,
         ),
     )
@@ -718,7 +720,7 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_4 - 100,
         ),
         label=LabelStyle(
-            font_size=20,
+            font_size=28,
             font_weight=FontWeightEnum.BOLD,
         ),
     )
@@ -727,8 +729,10 @@ class PlotStyle(BaseStyle):
     # Deep Sky Objects (DSOs)
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.POINT,
+            symbol=MarkerSymbolEnum.CIRCLE,
             fill=FillStyleEnum.FULL,
+            line_style=(0, (1, 2)),
+            edge_width=1.3,
         ),
         label=LabelStyle(
             font_weight=FontWeightEnum.LIGHT,
@@ -742,6 +746,8 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
             fill=FillStyleEnum.FULL,
+            line_style=(0, (1, 2)),
+            edge_width=1.3,
         ),
         label=LabelStyle(
             font_weight=FontWeightEnum.LIGHT,
@@ -775,7 +781,7 @@ class PlotStyle(BaseStyle):
     """Styling for nebulas"""
 
     dso_double_star: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(symbol=MarkerSymbolEnum.CIRCLE, fill=FillStyleEnum.TOP),
+        marker=MarkerStyle(symbol=MarkerSymbolEnum.CIRCLE_LINE, fill=FillStyleEnum.TOP),
         label=LabelStyle(offset_x=1, offset_y=-1),
     )
     """Styling for double stars"""

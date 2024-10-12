@@ -50,6 +50,8 @@ DEFAULT_STYLE = PlotStyle()
 
 DEFAULT_RESOLUTION = 4096
 
+DPI = 100
+
 
 class BasePlot(ABC):
     _background_clip_path = None
@@ -66,9 +68,9 @@ class BasePlot(ABC):
         *args,
         **kwargs,
     ):
-        px = 1 / plt.rcParams["figure.dpi"]  # pixel in inches
+        px = 1 / DPI #plt.rcParams["figure.dpi"]  # pixel in inches
 
-        self.pixels_per_point = plt.rcParams["figure.dpi"] / 72
+        self.pixels_per_point = DPI / 72
 
         self.style = style
         self.figure_size = resolution * px

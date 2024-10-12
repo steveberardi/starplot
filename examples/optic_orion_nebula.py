@@ -27,6 +27,7 @@ p = OpticPlot(
     dt=dt,
     style=style,
     resolution=1800,
+    autoscale=True,
 )
 p.stars(mag=15, color_fn=color_by_bv, bayer_labels=True)
 p.dsos(mag=4.1, labels=None)
