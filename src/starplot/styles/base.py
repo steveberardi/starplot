@@ -794,7 +794,11 @@ class PlotStyle(BaseStyle):
     """Styling for nebulas"""
 
     dso_planetary_nebula: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(symbol=MarkerSymbolEnum.CIRCLE_CROSSHAIR, fill=FillStyleEnum.FULL, edge_width=1.2),
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.CIRCLE_CROSSHAIR,
+            fill=FillStyleEnum.FULL,
+            edge_width=1.2,
+        ),
         label=LabelStyle(offset_x=1, offset_y=-1),
     )
     """Styling for planetary nebulas"""

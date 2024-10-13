@@ -93,13 +93,31 @@ class StarPlotterMixin:
             flamsteed_num = flamsteed.hip.get(s.hip)
 
             if label:
-                self.text(label, s.ra, s.dec, style, hide_on_collision=self.hide_colliding_labels)
+                self.text(
+                    label,
+                    s.ra,
+                    s.dec,
+                    style,
+                    hide_on_collision=self.hide_colliding_labels,
+                )
 
             if bayer_labels and bayer_desig:
-                self.text(bayer_desig, s.ra, s.dec, self.style.bayer_labels, hide_on_collision=self.hide_colliding_labels)
-            
+                self.text(
+                    bayer_desig,
+                    s.ra,
+                    s.dec,
+                    self.style.bayer_labels,
+                    hide_on_collision=self.hide_colliding_labels,
+                )
+
             if flamsteed_labels and flamsteed_num:
-                self.text(flamsteed_num, s.ra, s.dec, self.style.flamsteed_labels, hide_on_collision=self.hide_colliding_labels)
+                self.text(
+                    flamsteed_num,
+                    s.ra,
+                    s.dec,
+                    self.style.flamsteed_labels,
+                    hide_on_collision=self.hide_colliding_labels,
+                )
 
     def _prepare_star_coords(self, df):
         df["x"], df["y"] = (
@@ -221,5 +239,11 @@ class StarPlotterMixin:
         self._add_legend_handle_marker(legend_label, style.marker)
 
         self._star_labels(
-            star_objects, where_labels, style.label, labels, bayer_labels, flamsteed_labels, label_fn
+            star_objects,
+            where_labels,
+            style.label,
+            labels,
+            bayer_labels,
+            flamsteed_labels,
+            label_fn,
         )

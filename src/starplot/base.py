@@ -68,7 +68,7 @@ class BasePlot(ABC):
         *args,
         **kwargs,
     ):
-        px = 1 / DPI #plt.rcParams["figure.dpi"]  # pixel in inches
+        px = 1 / DPI  # plt.rcParams["figure.dpi"]  # pixel in inches
 
         self.pixels_per_point = DPI / 72
 
