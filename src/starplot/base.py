@@ -238,6 +238,8 @@ class BasePlot(ABC):
         dec: float,
         style: LabelStyle = None,
         hide_on_collision: bool = True,
+        *args,
+        **kwargs,
     ):
         """
         Plots text
@@ -256,8 +258,10 @@ class BasePlot(ABC):
             text,
             **style.matplot_kwargs(self.scale),
             hide_on_collision=hide_on_collision,
+            xycoords='data',
             xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
             textcoords="offset points",
+            **kwargs,
         )
 
     @property

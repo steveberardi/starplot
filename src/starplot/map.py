@@ -445,7 +445,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         for con in condata.iterator():
             _, ra, dec = condata.get(con)
             text = labels.get(con.lower())
-            self.text(text, ra, dec, style)
+            self.text(text, ra, dec, style, gid="constellations-label-name")
 
     def _plot_constellation_labels_experimental(
         self,

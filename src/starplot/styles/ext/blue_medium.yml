@@ -1,4 +1,4 @@
-background_color: '#f1f6ff'
+background_color: hsl(218, 80%, 99%) # '#f1f6ff'
 figure_background_color: '#fff'
 
 text_border_color: '#f1f6ff'
@@ -24,7 +24,7 @@ celestial_equator:
 constellation:
   label:
     font_alpha: 0.8
-    font_color: hsl(209, 36%, 5%)
+    font_color: hsl(212, 20%, 10%) #hsl(209, 36%, 5%)
   line:
     alpha: 0.36
     color: '#6ba832'

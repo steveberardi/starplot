@@ -64,6 +64,7 @@ class StarPlotterMixin:
             zorder=kwargs.pop("zorder", None) or style.marker.zorder,
             edgecolors=edge_colors,
             alpha=alphas,
+            gid="stars",
             **self._plot_kwargs(),
             **kwargs,
         )
@@ -77,6 +78,7 @@ class StarPlotterMixin:
     def _star_labels(
         self,
         star_objects: list[Star],
+        star_sizes: list[float],
         where_labels: list,
         style: LabelStyle,
         labels: Mapping[str, str],
@@ -84,8 +86,26 @@ class StarPlotterMixin:
         flamsteed_labels: bool,
         label_fn: Callable[[Star], str],
     ):
-        for s in star_objects:
+        def _offset(style, size):
+            if style.offset_x != "auto" or style.offset_y != "auto":
+                return style
+            
+            new_style = style.model_copy()
+            
+            x_direction = -1 if new_style.anchor_point.endswith("left") else 1
+            y_direction = -1 if new_style.anchor_point.startswith("bottom") else 1
+
+            offset = (size**0.5/2 - 0.0) / self.scale / 3
+
+            new_style.offset_x = offset * float(x_direction)
+            new_style.offset_y = offset * float(y_direction)
+
+            return new_style
+
+
+        for i, s in enumerate(star_objects):
             if where_labels and not all([e.evaluate(s) for e in where_labels]):
+                # bayer_desig = bayer.hip.get(s.hip)
                 continue
 
             label = labels.get(s.hip) if label_fn is None else label_fn(s)
@@ -97,8 +117,10 @@ class StarPlotterMixin:
                     label,
                     s.ra,
                     s.dec,
-                    style,
+                    # style,
+                    _offset(style, star_sizes[i]),
                     hide_on_collision=self.hide_colliding_labels,
+                    gid="stars-label-name",
                 )
 
             if bayer_labels and bayer_desig:
@@ -106,8 +128,10 @@ class StarPlotterMixin:
                     bayer_desig,
                     s.ra,
                     s.dec,
-                    self.style.bayer_labels,
+                    # self.style.bayer_labels,
+                    _offset(self.style.bayer_labels, star_sizes[i]),
                     hide_on_collision=self.hide_colliding_labels,
+                    gid="stars-label-bayer",
                 )
 
             if flamsteed_labels and flamsteed_num:
@@ -115,8 +139,9 @@ class StarPlotterMixin:
                     flamsteed_num,
                     s.ra,
                     s.dec,
-                    self.style.flamsteed_labels,
+                    _offset(self.style.flamsteed_labels, star_sizes[i]),
                     hide_on_collision=self.hide_colliding_labels,
+                    gid="stars-label-flamsteed",
                 )
 
     def _prepare_star_coords(self, df):
@@ -240,6 +265,7 @@ class StarPlotterMixin:
 
         self._star_labels(
             star_objects,
+            sizes,
             where_labels,
             style.label,
             labels,

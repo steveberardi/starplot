@@ -24,9 +24,9 @@ p = MapPlot(
     autoscale=True,
 )
 p.gridlines()
-p.stars(mag=9, bayer_labels=True, where_labels=[Star.magnitude < 4])
-p.open_clusters(mag=9, labels=None)
-p.nebula(mag=9, labels=None)
+p.stars(mag=9, bayer_labels=True, flamsteed_labels=True, where_labels=[Star.magnitude < 9])
+p.open_clusters(mag=9, labels=None, label_fn=lambda d: d.ngc)
+p.nebula(mag=9, labels=None, label_fn=lambda d: d.ngc)
 p.constellations()
 p.constellation_borders()
 p.milky_way()

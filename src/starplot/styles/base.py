@@ -509,10 +509,10 @@ class LabelStyle(BaseStyle):
     line_spacing: Optional[float] = None
     """Spacing between lines of text"""
 
-    offset_x: float = 0
+    offset_x: Union[float, int, str] = 0
     """Horizontal offset of the label, in pixels. Negative values supported."""
 
-    offset_y: float = 0
+    offset_y: Union[float, int, str] = 0
     """Vertical offset of the label, in pixels. Negative values supported."""
 
     zorder: int = ZOrderEnum.LAYER_4
@@ -633,6 +633,8 @@ class PlotStyle(BaseStyle):
         AnchorPointEnum.TOP_LEFT,
         AnchorPointEnum.TOP_RIGHT,
         AnchorPointEnum.BOTTOM_LEFT,
+        AnchorPointEnum.BOTTOM_CENTER,
+        AnchorPointEnum.TOP_CENTER,
     ]
 
     # Borders
@@ -665,10 +667,10 @@ class PlotStyle(BaseStyle):
     # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            fill=FillStyleEnum.FULL, zorder=ZOrderEnum.LAYER_4, size=40, edge_color=None
+            fill=FillStyleEnum.FULL, zorder=ZOrderEnum.LAYER_3 + 1, size=40, edge_color=None
         ),
         label=LabelStyle(
-            font_size=24, font_weight=FontWeightEnum.BOLD, zorder=ZOrderEnum.LAYER_4
+            font_size=24, font_weight=FontWeightEnum.BOLD, zorder=ZOrderEnum.LAYER_3 + 1
         ),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""

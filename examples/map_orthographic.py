@@ -33,7 +33,7 @@ p.galaxies(where=[DSO.magnitude < 12], true_size=False, labels=None)
 p.nebula(where=[DSO.magnitude < 12], true_size=False, labels=None)
 
 p.constellations(
-    style={"label": {"font_alpha": 0.8}},
+    style={"label": {"font_alpha": 0.4}},
 )
 p.constellation_borders()
 p.ecliptic()
