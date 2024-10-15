@@ -95,7 +95,7 @@ class StarPlotterMixin:
             x_direction = -1 if new_style.anchor_point.endswith("left") else 1
             y_direction = -1 if new_style.anchor_point.startswith("bottom") else 1
 
-            offset = (size**0.5/2 - 0.0) / self.scale / 3
+            offset = (size**0.5/2 - 0.0) / self.scale / 3 # why is the 3 needed?
 
             new_style.offset_x = offset * float(x_direction)
             new_style.offset_y = offset * float(y_direction)

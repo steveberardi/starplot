@@ -485,7 +485,13 @@ class LabelStyle(BaseStyle):
     anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
     """Anchor point of label"""
 
-    font_size: float = 17
+    border_width: float = 2
+    """Width of border (also known as 'halos') around the text, in points"""
+
+    border_color: Optional[ColorStr] = None
+    """Color of border (also known as 'halos') around the text"""
+
+    font_size: float = 15
     """Font size of the label, in points"""
 
     font_weight: FontWeightEnum = FontWeightEnum.NORMAL
@@ -500,7 +506,7 @@ class LabelStyle(BaseStyle):
     font_style: FontStyleEnum = FontStyleEnum.NORMAL
     """Style of the label (e.g. normal, italic, etc)"""
 
-    font_name: Optional[str] = "Hind"
+    font_name: Optional[str] = "Inter"
     """Name of the font to use"""
 
     font_family: Optional[str] = None
@@ -533,6 +539,12 @@ class LabelStyle(BaseStyle):
             style["family"] = self.font_family
         if self.line_spacing:
             style["linespacing"] = self.line_spacing
+        
+        if self.border_width != 0 and self.border_color is not None:
+            style["path_effects"] = [patheffects.withStroke(
+                linewidth=self.border_width * scale,
+                foreground=self.border_color.as_hex(),
+            )]
 
         style.update(AnchorPointEnum(self.anchor_point).as_matplot())
 
