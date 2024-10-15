@@ -482,15 +482,6 @@ class LabelStyle(BaseStyle):
         ```
     """
 
-    anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
-    """Anchor point of label"""
-
-    border_width: float = 2
-    """Width of border (also known as 'halos') around the text, in points"""
-
-    border_color: Optional[ColorStr] = None
-    """Color of border (also known as 'halos') around the text"""
-
     font_size: float = 15
     """Font size of the label, in points"""
 
@@ -514,6 +505,15 @@ class LabelStyle(BaseStyle):
 
     line_spacing: Optional[float] = None
     """Spacing between lines of text"""
+
+    anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
+    """Anchor point of label"""
+
+    border_width: float = 2
+    """Width of border (also known as 'halos') around the text, in points"""
+
+    border_color: Optional[ColorStr] = None
+    """Color of border (also known as 'halos') around the text"""
 
     offset_x: Union[float, int, str] = 0
     """Horizontal offset of the label, in pixels. Negative values supported."""
