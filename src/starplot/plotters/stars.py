@@ -107,6 +107,13 @@ class StarPlotterMixin:
                 # bayer_desig = bayer.hip.get(s.hip)
                 continue
 
+            if s.hip and s.hip in self._labeled_stars or s.tyc and s.tyc in self._labeled_stars:
+                continue
+            elif s.hip:
+                self._labeled_stars.append(s.hip)
+            elif s.tyc:
+                self._labeled_stars.append(s.tyc)
+
             label = labels.get(s.hip) if label_fn is None else label_fn(s)
             bayer_desig = bayer.hip.get(s.hip)
             flamsteed_num = flamsteed.hip.get(s.hip)
@@ -142,6 +149,8 @@ class StarPlotterMixin:
                     hide_on_collision=self.hide_colliding_labels,
                     gid="stars-label-flamsteed",
                 )
+            
+            
 
     def _prepare_star_coords(self, df):
         df["x"], df["y"] = (

@@ -104,6 +104,7 @@ class BasePlot(ABC):
         self.timescale = load.timescale().from_datetime(self.dt)
 
         self._objects = models.ObjectList()
+        self._labeled_stars = []
         fonts.load()
 
     def _plot_kwargs(self) -> dict:
