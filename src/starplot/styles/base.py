@@ -539,12 +539,14 @@ class LabelStyle(BaseStyle):
             style["family"] = self.font_family
         if self.line_spacing:
             style["linespacing"] = self.line_spacing
-        
+
         if self.border_width != 0 and self.border_color is not None:
-            style["path_effects"] = [patheffects.withStroke(
-                linewidth=self.border_width * scale,
-                foreground=self.border_color.as_hex(),
-            )]
+            style["path_effects"] = [
+                patheffects.withStroke(
+                    linewidth=self.border_width * scale,
+                    foreground=self.border_color.as_hex(),
+                )
+            ]
 
         style.update(AnchorPointEnum(self.anchor_point).as_matplot())
 
@@ -679,7 +681,10 @@ class PlotStyle(BaseStyle):
     # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            fill=FillStyleEnum.FULL, zorder=ZOrderEnum.LAYER_3 + 1, size=40, edge_color=None
+            fill=FillStyleEnum.FULL,
+            zorder=ZOrderEnum.LAYER_3 + 1,
+            size=40,
+            edge_color=None,
         ),
         label=LabelStyle(
             font_size=24, font_weight=FontWeightEnum.BOLD, zorder=ZOrderEnum.LAYER_3 + 1

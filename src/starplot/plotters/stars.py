@@ -89,19 +89,18 @@ class StarPlotterMixin:
         def _offset(style, size):
             if style.offset_x != "auto" or style.offset_y != "auto":
                 return style
-            
+
             new_style = style.model_copy()
-            
+
             x_direction = -1 if new_style.anchor_point.endswith("left") else 1
             y_direction = -1 if new_style.anchor_point.startswith("bottom") else 1
 
-            offset = (size**0.5/2 - 0.0) / self.scale / 3 # why is the 3 needed?
+            offset = (size**0.5 / 2 - 0.0) / self.scale / 3  # why is the 3 needed?
 
             new_style.offset_x = offset * float(x_direction)
             new_style.offset_y = offset * float(y_direction)
 
             return new_style
-
 
         for i, s in enumerate(star_objects):
             if where_labels and not all([e.evaluate(s) for e in where_labels]):
