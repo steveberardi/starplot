@@ -80,34 +80,23 @@ class StarPlotterMixin:
         star_objects: list[Star],
         star_sizes: list[float],
         where_labels: list,
-        style: LabelStyle,
+        style: ObjectStyle,
         labels: Mapping[str, str],
         bayer_labels: bool,
         flamsteed_labels: bool,
         label_fn: Callable[[Star], str],
     ):
-        def _offset(style, size):
-            if style.offset_x != "auto" or style.offset_y != "auto":
-                return style
-
-            new_style = style.model_copy()
-
-            x_direction = -1 if new_style.anchor_point.endswith("left") else 1
-            y_direction = -1 if new_style.anchor_point.startswith("bottom") else 1
-
-            offset = (size**0.5 / 2 - 0.0) / self.scale / 3  # why is the 3 needed?
-
-            new_style.offset_x = offset * float(x_direction)
-            new_style.offset_y = offset * float(y_direction)
-
-            return new_style
-
         for i, s in enumerate(star_objects):
             if where_labels and not all([e.evaluate(s) for e in where_labels]):
                 # bayer_desig = bayer.hip.get(s.hip)
                 continue
 
-            if s.hip and s.hip in self._labeled_stars or s.tyc and s.tyc in self._labeled_stars:
+            if (
+                s.hip
+                and s.hip in self._labeled_stars
+                or s.tyc
+                and s.tyc in self._labeled_stars
+            ):
                 continue
             elif s.hip:
                 self._labeled_stars.append(s.hip)
@@ -124,7 +113,12 @@ class StarPlotterMixin:
                     s.ra,
                     s.dec,
                     # style,
-                    _offset(style, star_sizes[i]),
+                    # _offset(style, star_sizes[i]),
+                    style=style.label.offset_from_marker(
+                        marker_symbol=style.marker.symbol,
+                        marker_size=star_sizes[i],
+                        scale=self.scale,
+                    ),
                     hide_on_collision=self.hide_colliding_labels,
                     gid="stars-label-name",
                 )
@@ -135,7 +129,12 @@ class StarPlotterMixin:
                     s.ra,
                     s.dec,
                     # self.style.bayer_labels,
-                    _offset(self.style.bayer_labels, star_sizes[i]),
+                    # _offset(self.style.bayer_labels, star_sizes[i]),
+                    style=self.style.bayer_labels.offset_from_marker(
+                        marker_symbol=style.marker.symbol,
+                        marker_size=star_sizes[i],
+                        scale=self.scale,
+                    ),
                     hide_on_collision=self.hide_colliding_labels,
                     gid="stars-label-bayer",
                 )
@@ -145,12 +144,15 @@ class StarPlotterMixin:
                     flamsteed_num,
                     s.ra,
                     s.dec,
-                    _offset(self.style.flamsteed_labels, star_sizes[i]),
+                    # _offset(self.style.flamsteed_labels, star_sizes[i]),
+                    style=self.style.flamsteed_labels.offset_from_marker(
+                        marker_symbol=style.marker.symbol,
+                        marker_size=star_sizes[i],
+                        scale=self.scale,
+                    ),
                     hide_on_collision=self.hide_colliding_labels,
                     gid="stars-label-flamsteed",
                 )
-            
-            
 
     def _prepare_star_coords(self, df):
         df["x"], df["y"] = (
@@ -271,13 +273,14 @@ class StarPlotterMixin:
 
         self._add_legend_handle_marker(legend_label, style.marker)
 
-        self._star_labels(
-            star_objects,
-            sizes,
-            where_labels,
-            style.label,
-            labels,
-            bayer_labels,
-            flamsteed_labels,
-            label_fn,
-        )
+        if labels:
+            self._star_labels(
+                star_objects,
+                sizes,
+                where_labels,
+                style,
+                labels,
+                bayer_labels,
+                flamsteed_labels,
+                label_fn,
+            )

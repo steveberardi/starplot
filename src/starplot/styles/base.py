@@ -1,4 +1,5 @@
 import json
+
 from enum import Enum
 from pathlib import Path
 from typing import Optional, Union, List
@@ -32,6 +33,9 @@ ColorStr = Annotated[
 
 
 HERE = Path(__file__).resolve().parent
+
+PI = 3.141592653589793
+SQR_2 = 1.41421356237
 
 
 class BaseStyle(BaseModel):
@@ -551,6 +555,31 @@ class LabelStyle(BaseStyle):
         style.update(AnchorPointEnum(self.anchor_point).as_matplot())
 
         return style
+
+    def offset_from_marker(self, marker_symbol, marker_size, scale: float = 1.0):
+        if self.offset_x != "auto" or self.offset_y != "auto":
+            return self
+
+        new_style = self.model_copy()
+
+        x_direction = -1 if new_style.anchor_point.endswith("left") else 1
+        y_direction = -1 if new_style.anchor_point.startswith("bottom") else 1
+
+        offset = (marker_size**0.5 / 2) / scale
+
+        # matplotlib seems to use marker size differently depending on symbol (for scatter)
+        # it is NOT strictly the area of the bounding box of the marker
+        if marker_symbol == MarkerSymbolEnum.POINT:
+            offset /= PI
+        elif marker_symbol != MarkerSymbolEnum.SQUARE:
+            offset /= SQR_2
+
+        offset += 1
+
+        new_style.offset_x = offset * float(x_direction)
+        new_style.offset_y = offset * float(y_direction)
+
+        return new_style
 
 
 class ObjectStyle(BaseStyle):

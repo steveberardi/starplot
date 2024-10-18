@@ -4,7 +4,7 @@ constellation:
     font_size: 38
     font_weight: heavy
   line:
-    width: 2.46
+    width: 3.2
 star:
   label:
     font_size: 22
