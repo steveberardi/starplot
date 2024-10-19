@@ -385,6 +385,10 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         conline_hips = condata.lines()
         style_kwargs = style.line.matplot_kwargs(self.scale)
 
+        bg_extent = self._background_clip_path.get_window_extent(
+            renderer=self.fig.canvas.get_renderer()
+        )
+
         for c in constellations_gdf.itertuples():
             obj = constellation_from_tuple(c)
 
@@ -420,14 +424,55 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 # s1_ra, s1_dec = self._proj.transform_point(s1_ra, s1.dec_degrees, self._geodetic)
                 # s2_ra, s2_dec = self._proj.transform_point(s2_ra, s2.dec_degrees, self._geodetic)
 
-                self.ax.plot(
+                constellation_line = self.ax.plot(
                     [s1_ra, s2_ra],
                     [s1_dec, s2_dec],
                     transform=transform,
                     **style_kwargs,
                     clip_on=True,
                     clip_path=self._background_clip_path,
+                )[0]
+
+                extent = constellation_line.get_window_extent(
+                    renderer=self.fig.canvas.get_renderer()
                 )
+                x_diff = extent.xmax - extent.xmin
+                if extent.xmin < 0:
+                    continue
+
+                if obj.name == "Orion":
+                    result = self._proj.transform_point(s1_ra, s2_dec, self._geodetic)
+                    display_coords = self.ax.transData.transform(result)
+                    print((extent.xmin, extent.ymin, extent.xmax, extent.ymax))
+                    print(display_coords)
+
+
+                if (s1_ra < -360 or s2_ra < -360) and x_diff > (
+                    bg_extent.xmax - bg_extent.xmin
+                ) * 0.6:
+                    extent_1 = np.array(
+                        (bg_extent.xmin, extent.ymin, extent.xmin, extent.ymax)
+                    )
+                    extent_2 = np.array(
+                        (extent.xmax, extent.ymin, bg_extent.xmax, extent.ymax)
+                    )
+                    self._constellations_rtree.insert(
+                        0,
+                        extent_1,
+                        obj=obj.name,
+                    )
+                    self._constellations_rtree.insert(
+                        0,
+                        extent_2,
+                        obj=obj.name,
+                    )
+
+                else:
+                    self._constellations_rtree.insert(
+                        0,
+                        np.array((extent.xmin, extent.ymin, extent.xmax, extent.ymax)),
+                        obj=obj.name,
+                    )
 
             if inbounds:
                 self._objects.constellations.append(obj)
@@ -445,7 +490,14 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         for con in condata.iterator():
             _, ra, dec = condata.get(con)
             text = labels.get(con.lower())
-            self.text(text, ra, dec, style, gid="constellations-label-name")
+            self.text(
+                text,
+                ra,
+                dec,
+                style,
+                hide_on_collision=False,
+                gid="constellations-label-name",
+            )
 
     def _plot_constellation_labels_experimental(
         self,

@@ -64,14 +64,14 @@ dso_planetary_nebula:
 dso_open_cluster:
   marker:
     alpha: 0.78
-    color: hsl(58, 96%, 80%)
+    color: hsl(58, 97%, 80%)
     edge_color: hsl(58, 95%, 13%)
   label:
     font_color: '#989400'
 dso_association_stars:
   marker:
     alpha: 0.78
-    color: hsl(58, 96%, 80%)
+    color: hsl(58, 97%, 80%)
     edge_color: hsl(58, 95%, 13%)
   label:
     font_color: '#989400'

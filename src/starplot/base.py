@@ -88,6 +88,10 @@ class BasePlot(ABC):
 
         self.labels = []
         self._labels_rtree = rtree.index.Index()
+
+        # self.labels = []
+        self._constellations_rtree = rtree.index.Index()
+
         self._background_clip_path = None
 
         self._legend = None
@@ -121,6 +125,14 @@ class BasePlot(ABC):
         )
         return len(ix) > 0
 
+    def _is_object_collision(self, extent) -> bool:
+        ix = list(
+            self._constellations_rtree.intersection(
+                (extent.x0, extent.y0, extent.x1, extent.y1)
+            )
+        )
+        return len(ix) > 0
+
     def _is_clipped(self, extent) -> bool:
         return self._background_clip_path is not None and not all(
             self._background_clip_path.contains_points(extent.get_points())
@@ -134,13 +146,12 @@ class BasePlot(ABC):
             label.remove()
             return True
 
-        if any(
-            [
-                self._is_clipped(extent),
-                self._is_label_collision(extent),
-                # self.hide_colliding_labels and self._is_label_collision(extent),
-            ]
+        if (
+            self._is_clipped(extent)
+            or self._is_label_collision(extent)
+            # or self._is_object_collision(extent)
         ):
+            # self.hide_colliding_labels and self._is_label_collision(extent),
             label.remove()
             return True
 
