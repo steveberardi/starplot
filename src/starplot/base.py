@@ -149,7 +149,7 @@ class BasePlot(ABC):
         if (
             self._is_clipped(extent)
             or self._is_label_collision(extent)
-            # or self._is_object_collision(extent)
+            or self._is_object_collision(extent)
         ):
             # self.hide_colliding_labels and self._is_label_collision(extent),
             label.remove()

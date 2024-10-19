@@ -40,6 +40,24 @@ warnings.filterwarnings("ignore", module="shapely")
 DEFAULT_MAP_STYLE = PlotStyle().extend(extensions.MAP)
 
 
+def points(start, end, num_points=100):
+    """Generates points along a line segment.
+
+    Args:
+        start (tuple): (x, y) coordinates of the starting point.
+        end (tuple): (x, y) coordinates of the ending point.
+        num_points (int): Number of points to generate.
+
+    Returns:
+        list: List of (x, y) coordinates of the generated points.
+    """
+
+    x_coords = np.linspace(start[0], end[0], num_points)
+    y_coords = np.linspace(start[1], end[1], num_points)
+
+    return list(zip(x_coords, y_coords))
+
+
 class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """Creates a new map plot.
 
@@ -385,9 +403,9 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         conline_hips = condata.lines()
         style_kwargs = style.line.matplot_kwargs(self.scale)
 
-        bg_extent = self._background_clip_path.get_window_extent(
-            renderer=self.fig.canvas.get_renderer()
-        )
+        # bg_extent = self._background_clip_path.get_window_extent(
+        #     renderer=self.fig.canvas.get_renderer()
+        # )
 
         for c in constellations_gdf.itertuples():
             obj = constellation_from_tuple(c)
@@ -436,41 +454,24 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 extent = constellation_line.get_window_extent(
                     renderer=self.fig.canvas.get_renderer()
                 )
-                x_diff = extent.xmax - extent.xmin
+
                 if extent.xmin < 0:
                     continue
 
-                if obj.name == "Orion":
-                    result = self._proj.transform_point(s1_ra, s2_dec, self._geodetic)
-                    display_coords = self.ax.transData.transform(result)
-                    print((extent.xmin, extent.ymin, extent.xmax, extent.ymax))
-                    print(display_coords)
+                start = self._proj.transform_point(s1_ra, s1_dec, self._geodetic)
+                end = self._proj.transform_point(s2_ra, s2_dec, self._geodetic)
+                radius = style_kwargs.get("linewidth") or 1
 
+                if any([np.isnan(n) for n in start + end]):
+                    continue
 
-                if (s1_ra < -360 or s2_ra < -360) and x_diff > (
-                    bg_extent.xmax - bg_extent.xmin
-                ) * 0.6:
-                    extent_1 = np.array(
-                        (bg_extent.xmin, extent.ymin, extent.xmin, extent.ymax)
-                    )
-                    extent_2 = np.array(
-                        (extent.xmax, extent.ymin, bg_extent.xmax, extent.ymax)
-                    )
+                for x, y in points(start, end, 25):
+                    x0, y0 = self.ax.transData.transform((x, y))
+                    if x0 < 0 or y0 < 0:
+                        continue
                     self._constellations_rtree.insert(
                         0,
-                        extent_1,
-                        obj=obj.name,
-                    )
-                    self._constellations_rtree.insert(
-                        0,
-                        extent_2,
-                        obj=obj.name,
-                    )
-
-                else:
-                    self._constellations_rtree.insert(
-                        0,
-                        np.array((extent.xmin, extent.ymin, extent.xmax, extent.ymax)),
+                        np.array((x0 - radius, y0 - radius, x0 + radius, y0 + radius)),
                         obj=obj.name,
                     )
 
