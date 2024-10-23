@@ -91,6 +91,7 @@ class BasePlot(ABC):
 
         # self.labels = []
         self._constellations_rtree = rtree.index.Index()
+        self._stars_rtree = rtree.index.Index()
 
         self._background_clip_path = None
 
@@ -133,6 +134,12 @@ class BasePlot(ABC):
         )
         return len(ix) > 0
 
+    def _is_star_collision(self, extent) -> bool:
+        ix = list(
+            self._stars_rtree.intersection((extent.x0, extent.y0, extent.x1, extent.y1))
+        )
+        return len(ix) > 0
+
     def _is_clipped(self, extent) -> bool:
         return self._background_clip_path is not None and not all(
             self._background_clip_path.contains_points(extent.get_points())
@@ -150,6 +157,7 @@ class BasePlot(ABC):
             self._is_clipped(extent)
             or self._is_label_collision(extent)
             or self._is_object_collision(extent)
+            or self._is_star_collision(extent)
         ):
             # self.hide_colliding_labels and self._is_label_collision(extent),
             label.remove()
@@ -173,6 +181,51 @@ class BasePlot(ABC):
                 linestyle="None",
                 label=label,
             )
+
+    def _collision_score(self, label) -> int:
+        config = {
+            "labels": 1.0,  # always fail
+            "stars": 0.5,
+            "constellations": 0.8,
+            "anchors": [
+                ("bottom right", 0),
+                ("top right", 0.2),
+                ("top left", 0.5),
+            ],
+            "on_fail": "plot",
+        }
+        extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+
+        if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]):
+            return 1
+        
+        x_labels = len(list(
+            self._labels_rtree.intersection(
+                (extent.x0, extent.y0, extent.x1, extent.y1)
+            )
+        )) * config["labels"]
+
+        if x_labels >= 1:
+            return 1
+
+        x_constellations = len(list(
+            self._constellations_rtree.intersection(
+                (extent.x0, extent.y0, extent.x1, extent.y1)
+            )
+        )) * config["constellations"]
+        
+        if x_constellations >= 1:
+            return 1
+
+        x_stars = len(list(
+            self._stars_rtree.intersection((extent.x0, extent.y0, extent.x1, extent.y1))
+        ))* config["stars"]
+        if x_stars  >= 1:
+            return 1
+
+
+        return sum([x_labels, x_constellations, x_stars]) / 3
+
 
     def _text(
         self,
@@ -231,6 +284,10 @@ class BasePlot(ABC):
             if original_va != va:
                 offset_y *= -1
 
+            if ha == "center":
+                offset_x = 0
+                offset_y = 0
+
             label = plot_text(**kwargs, va=va, ha=ha, xytext=(offset_x, offset_y))
 
             if not hide_on_collision and i == len(anchor_fallbacks) - 1:
@@ -238,7 +295,6 @@ class BasePlot(ABC):
 
             removed = self._maybe_remove_label(label)
 
-            # TODO : add stars/objects to rtree and pick lowest collision position?
             if not removed:
                 break
 
