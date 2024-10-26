@@ -34,7 +34,7 @@ constellation:
     font_alpha: 0.2
     font_color: '#000'
   line:
-    alpha: 0.5
+    alpha: 0.64
     color: '#6ba832'
     width: 3
 
@@ -43,7 +43,7 @@ dso_double_star:
     alpha: 0.9
 dso_galaxy:
   marker:
-    alpha: 0.8
+    alpha: 1
     # color: hsl(18, 68%, 75%)
     color: hsl(330, 75%, 85%)
     edge_color: hsl(330, 35%, 53%)
@@ -53,36 +53,36 @@ dso_galaxy:
     # font_color: hsl(18, 68%, 40%)
 dso_nebula:
   marker:
-    alpha: 0.76
-    color: hsl(91, 53%, 75%)
-    edge_color: hsl(91, 53%, 40%)
+    alpha: 0.8
+    color: hsl(91, 63%, 80%)
+    edge_color: hsl(91, 63%, 40%)
   label:
-    font_color: hsl(91, 53%, 40%)
+    font_color: hsl(91, 63%, 40%)
 dso_planetary_nebula:
   marker:
-    alpha: 0.76
-    color: hsl(91, 53%, 75%)
-    edge_color: hsl(91, 53%, 40%)
+    alpha: 1
+    color: hsl(91, 63%, 80%)
+    edge_color: hsl(91, 63%, 40%)
   label:
-    font_color: hsl(91, 53%, 40%)
+    font_color: hsl(91, 63%, 40%)
 dso_open_cluster:
   marker:
-    alpha: 0.8
-    color: hsl(58, 97%, 80%)
+    alpha: 1
+    color: hsl(58, 97%, 82%)
     edge_color: hsl(58, 95%, 13%)
   label:
     font_color: '#989400'
 dso_association_stars:
   marker:
-    alpha: 0.8
-    color: hsl(58, 97%, 80%)
+    alpha: 1
+    color: hsl(58, 97%, 82%)
     edge_color: hsl(58, 95%, 13%)
   label:
     font_color: '#989400'
 dso_globular_cluster:
   marker:
-    alpha: 0.8
-    color: hsl(58, 97%, 80%)
+    alpha: 1
+    color: hsl(58, 97%, 82%)
     edge_color: hsl(58, 95%, 13%)
   label:
     font_color: '#989400'
@@ -108,7 +108,7 @@ ecliptic:
     font_color: '#e33b3b'
   line:
     color: hsl(359, 80%, 53%) #'#e33b3b'
-    alpha: 0.8
+    alpha: 1
     style: [0, [0.13, 2]]
 milky_way:
   alpha: 0.2

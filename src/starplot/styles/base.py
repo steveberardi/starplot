@@ -385,7 +385,7 @@ class LineStyle(BaseStyle):
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
-    zorder: int = -1
+    zorder: int = ZOrderEnum.LAYER_2
     """Zorder of the line"""
 
     edge_width: int = 0
@@ -722,7 +722,7 @@ class PlotStyle(BaseStyle):
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
-        font_size=18,
+        font_size=17,
         font_weight=FontWeightEnum.LIGHT,
         font_name="GFS Didot",
         zorder=ZOrderEnum.LAYER_4,
@@ -733,7 +733,7 @@ class PlotStyle(BaseStyle):
     """Styling for Bayer labels of stars"""
 
     flamsteed_labels: LabelStyle = LabelStyle(
-        font_size=14,
+        font_size=13,
         font_weight=FontWeightEnum.NORMAL,
         zorder=ZOrderEnum.LAYER_4,
         anchor_point=AnchorPointEnum.BOTTOM_LEFT,
@@ -845,7 +845,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE_CROSSHAIR,
             fill=FillStyleEnum.FULL,
-            edge_width=1.2,
+            edge_width=1.6,
         ),
         label=LabelStyle(offset_x=1, offset_y=-1),
     )

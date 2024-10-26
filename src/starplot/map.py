@@ -289,6 +289,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 transform=self._plate_carree,
                 clip_on=True,
                 clip_path=self._background_clip_path,
+                gid="constellations-border",
                 **style_kwargs,
             )
 
@@ -449,6 +450,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                     **style_kwargs,
                     clip_on=True,
                     clip_path=self._background_clip_path,
+                    gid="constellations-line",
                 )[0]
 
                 extent = constellation_line.get_window_extent(
@@ -789,6 +791,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             ypadding=12,
             clip_on=True,
             clip_path=self._background_clip_path,
+            gid="gridlines",
             **line_style_kwargs,
         )
 
@@ -806,6 +809,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 self.ax.plot(
                     (ra * 15, ra * 15),
                     (-90, 90),
+                    gid="gridlines",
                     **line_style_kwargs,
                     **self._plot_kwargs(),
                 )

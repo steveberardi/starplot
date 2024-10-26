@@ -87,9 +87,12 @@ class StarPlotterMixin:
         flamsteed_labels: bool,
         label_fn: Callable[[Star], str],
     ):
+        _bayer = []
+        _flamsteed = []
+
+        # Plot all star common names first
         for i, s in enumerate(star_objects):
             if where_labels and not all([e.evaluate(s) for e in where_labels]):
-                # bayer_desig = bayer.hip.get(s.hip)
                 continue
 
             if (
@@ -125,35 +128,39 @@ class StarPlotterMixin:
                 )
 
             if bayer_labels and bayer_desig:
-                self.text(
-                    bayer_desig,
-                    s.ra,
-                    s.dec,
-                    # self.style.bayer_labels,
-                    # _offset(self.style.bayer_labels, star_sizes[i]),
-                    style=self.style.bayer_labels.offset_from_marker(
-                        marker_symbol=style.marker.symbol,
-                        marker_size=star_sizes[i],
-                        scale=self.scale,
-                    ),
-                    hide_on_collision=self.hide_colliding_labels,
-                    gid="stars-label-bayer",
-                )
+                _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i]))
 
             if flamsteed_labels and flamsteed_num:
-                self.text(
-                    flamsteed_num,
-                    s.ra,
-                    s.dec,
-                    # _offset(self.style.flamsteed_labels, star_sizes[i]),
-                    style=self.style.flamsteed_labels.offset_from_marker(
-                        marker_symbol=style.marker.symbol,
-                        marker_size=star_sizes[i],
-                        scale=self.scale,
-                    ),
-                    hide_on_collision=self.hide_colliding_labels,
-                    gid="stars-label-flamsteed",
-                )
+                _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i]))
+
+        # Plot bayer/flamsteed
+        for bayer_desig, ra, dec, star_size in _bayer:
+            self.text(
+                bayer_desig,
+                ra,
+                dec,
+                style=self.style.bayer_labels.offset_from_marker(
+                    marker_symbol=style.marker.symbol,
+                    marker_size=star_size,
+                    scale=self.scale,
+                ),
+                hide_on_collision=self.hide_colliding_labels,
+                gid="stars-label-bayer",
+            )
+
+        for flamsteed_num, ra, dec, star_size in _flamsteed:
+            self.text(
+                flamsteed_num,
+                ra,
+                dec,
+                style=self.style.flamsteed_labels.offset_from_marker(
+                    marker_symbol=style.marker.symbol,
+                    marker_size=star_size,
+                    scale=self.scale,
+                ),
+                hide_on_collision=self.hide_colliding_labels,
+                gid="stars-label-flamsteed",
+            )
 
     def _prepare_star_coords(self, df):
         df["x"], df["y"] = (
