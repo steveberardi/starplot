@@ -196,7 +196,9 @@ class BasePlot(ABC):
         }
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
 
-        if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]) or self._is_clipped(extent):
+        if any(
+            [np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]
+        ) or self._is_clipped(extent):
             return 1
 
         x_labels = (
@@ -557,6 +559,7 @@ class BasePlot(ABC):
         style: Union[dict, ObjectStyle],
         legend_label: str = None,
         skip_bounds_check: bool = False,
+        **kwargs,
     ) -> None:
         """Plots a marker
 
@@ -582,6 +585,7 @@ class BasePlot(ABC):
             **self._plot_kwargs(),
             clip_on=True,
             clip_path=self._background_clip_path,
+            gid=kwargs.get("gid_marker") or "marker",
         )
 
         if label:
@@ -591,6 +595,7 @@ class BasePlot(ABC):
                 dec,
                 style.label,
                 hide_on_collision=self.hide_colliding_labels,
+                gid=kwargs.get("gid_label") or "marker-label",
             )
 
         if legend_label is not None:
@@ -631,11 +636,14 @@ class BasePlot(ABC):
                     (p.ra, p.dec),
                     p.apparent_size,
                     polygon_style,
+                    gid="planet-marker",
                 )
                 self._add_legend_handle_marker(legend_label, style.marker)
 
                 if label:
-                    self.text(label.upper(), p.ra, p.dec, style.label)
+                    self.text(
+                        label.upper(), p.ra, p.dec, style.label, gid="planet-label"
+                    )
             else:
                 self.marker(
                     ra=p.ra,
@@ -643,6 +651,8 @@ class BasePlot(ABC):
                     label=label.upper() if label else None,
                     style=style,
                     legend_label=legend_label,
+                    gid_marker="planet-marker",
+                    gid_label="planet-label",
                 )
 
     @use_style(ObjectStyle, "sun")
@@ -683,13 +693,14 @@ class BasePlot(ABC):
                 (s.ra, s.dec),
                 s.apparent_size,
                 style=polygon_style,
+                gid="sun-marker",
             )
 
             style.marker.symbol = MarkerSymbolEnum.CIRCLE
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
-                self.text(label, s.ra, s.dec, style.label)
+                self.text(label, s.ra, s.dec, style.label, gid="sun-label")
 
         else:
             self.marker(
@@ -698,6 +709,8 @@ class BasePlot(ABC):
                 label=label,
                 style=style,
                 legend_label=legend_label,
+                gid_marker="sun-marker",
+                gid_label="sun-label",
             )
 
     @abstractmethod
@@ -749,6 +762,7 @@ class BasePlot(ABC):
         style: PolygonStyle,
         points: list = None,
         geometry: Polygon = None,
+        **kwargs,
     ):
         """
         Plots a polygon.
@@ -767,7 +781,7 @@ class BasePlot(ABC):
             points = list(zip(*geometry.exterior.coords.xy))
 
         _points = [(ra * 15, dec) for ra, dec in points]
-        self._polygon(_points, style)
+        self._polygon(_points, style, gid=kwargs.get("gid") or "polygon")
 
     @use_style(PolygonStyle)
     def rectangle(
@@ -777,7 +791,6 @@ class BasePlot(ABC):
         width_degrees: float,
         style: PolygonStyle,
         angle: float = 0,
-        *args,
         **kwargs,
     ):
         """Plots a rectangle
@@ -795,7 +808,7 @@ class BasePlot(ABC):
             width_degrees,
             angle,
         )
-        self._polygon(points, style)
+        self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
     @use_style(PolygonStyle)
     def ellipse(
@@ -808,6 +821,7 @@ class BasePlot(ABC):
         num_pts: int = 100,
         start_angle: int = 0,
         end_angle: int = 360,
+        **kwargs,
     ):
         """Plots an ellipse
 
@@ -829,7 +843,7 @@ class BasePlot(ABC):
             start_angle,
             end_angle,
         )
-        self._polygon(points, style)
+        self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
     @use_style(PolygonStyle)
     def circle(
@@ -838,6 +852,7 @@ class BasePlot(ABC):
         radius_degrees: float,
         style: PolygonStyle,
         num_pts: int = 100,
+        **kwargs,
     ):
         """Plots a circle
 
@@ -854,10 +869,11 @@ class BasePlot(ABC):
             style=style,
             angle=0,
             num_pts=num_pts,
+            gid=kwargs.get("gid") or "polygon",
         )
 
     @use_style(LineStyle)
-    def line(self, coordinates: list[tuple[float, float]], style: LineStyle):
+    def line(self, coordinates: list[tuple[float, float]], style: LineStyle, **kwargs):
         """Plots a line
 
         Args:
@@ -871,6 +887,7 @@ class BasePlot(ABC):
             y,
             clip_on=True,
             clip_path=self._background_clip_path,
+            gid=kwargs.get("gid") or "line",
             **style.matplot_kwargs(self.scale),
             **self._plot_kwargs(),
         )
@@ -925,13 +942,14 @@ class BasePlot(ABC):
                     (m.ra, m.dec),
                     m.apparent_size,
                     style=polygon_style,
+                    gid="moon-marker",
                 )
 
             style.marker.symbol = MarkerSymbolEnum.CIRCLE
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
-                self.text(label, m.ra, m.dec, style.label)
+                self.text(label, m.ra, m.dec, style.label, gid="moon-label")
 
         else:
             self.marker(
@@ -940,6 +958,8 @@ class BasePlot(ABC):
                 label=label,
                 style=style,
                 legend_label=legend_label,
+                gid_marker="moon-marker",
+                gid_label="moon-label",
             )
 
     def _moon_with_phase(
@@ -1006,6 +1026,7 @@ class BasePlot(ABC):
             num_pts=num_pts,
             angle=0,
             end_angle=180,  # plot as a semicircle
+            gid="moon-marker",
         )
         # Plot right side
         self.ellipse(
@@ -1016,6 +1037,7 @@ class BasePlot(ABC):
             num_pts=num_pts,
             angle=180,
             end_angle=180,  # plot as a semicircle
+            gid="moon-marker",
         )
         # Plot middle
         self.ellipse(
@@ -1023,6 +1045,7 @@ class BasePlot(ABC):
             radius_degrees * 2,
             radius_degrees,
             style=middle,
+            gid="moon-marker",
         )
 
     def _fov_circle(
@@ -1105,6 +1128,7 @@ class BasePlot(ABC):
             y,
             dash_capstyle=style.line.dash_capstyle,
             clip_path=self._background_clip_path,
+            gid="ecliptic-line",
             **style.line.matplot_kwargs(self.scale),
             **self._plot_kwargs(),
         )
@@ -1115,7 +1139,7 @@ class BasePlot(ABC):
 
                 for i in range(0, len(inbounds), label_spacing):
                     ra, dec = inbounds[i]
-                    self.text(label, ra, dec, style.label)
+                    self.text(label, ra, dec, style.label, gid="ecliptic-label")
 
     @use_style(PathStyle, "celestial_equator")
     def celestial_equator(
@@ -1142,6 +1166,7 @@ class BasePlot(ABC):
             x,
             y,
             clip_path=self._background_clip_path,
+            gid="celestial-equator-line",
             **style.line.matplot_kwargs(self.scale),
             **self._plot_kwargs(),
         )
@@ -1149,4 +1174,10 @@ class BasePlot(ABC):
         if label:
             label_spacing = (self.ra_max - self.ra_min) / 3
             for ra in np.arange(self.ra_min, self.ra_max, label_spacing):
-                self.text(label, ra, 0.25, style.label)
+                self.text(
+                    label,
+                    ra,
+                    0.25,
+                    style.label,
+                    gid="celestial-equator-label",
+                )

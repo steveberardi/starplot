@@ -222,7 +222,9 @@ class DsoPlotterMixin:
                         )
 
                 if label:
-                    self.text(label, ra / 15, dec, style.label)
+                    self.text(
+                        label, ra / 15, dec, style.label, gid=f"dso-{d.type}-label"
+                    )
 
             else:
                 # if no major axis, then just plot as a marker
@@ -232,6 +234,8 @@ class DsoPlotterMixin:
                     label=label,
                     style=style,
                     skip_bounds_check=True,
+                    gid_marker=f"dso-{d.type}-marker",
+                    gid_label=f"dso-{d.type}-label",
                 )
 
             self._objects.dsos.append(_dso)
