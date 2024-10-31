@@ -846,6 +846,7 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.CIRCLE_CROSSHAIR,
             fill=FillStyleEnum.FULL,
             edge_width=1.6,
+            size=26,
         ),
         label=LabelStyle(offset_x=1, offset_y=-1),
     )
