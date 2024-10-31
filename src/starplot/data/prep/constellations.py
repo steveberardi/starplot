@@ -58,7 +58,7 @@ def build_constellations():
         constellation_dict = {
             "id": cid.lower(),
             "iau_id": cid.lower(),
-            "name": props[0],
+            "name": props[0].replace("\n", " "),
             "center_ra": props[1] * 15,
             "center_dec": props[2],
             "lines_hip_ids": ",".join(
@@ -103,6 +103,6 @@ gdf.to_file(
     DATA_LIBRARY / "constellations.gpkg", driver="GPKG", engine="pyogrio", index=True
 )
 
-print(gdf.loc["uma"])
+print(gdf.loc["cmi"])
 
 print("Total Constellations: " + str(len(constellation_records)))
