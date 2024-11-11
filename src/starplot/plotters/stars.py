@@ -128,13 +128,13 @@ class StarPlotterMixin:
                 )
 
             if bayer_labels and bayer_desig:
-                _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i]))
+                _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i], s.hip))
 
             if flamsteed_labels and flamsteed_num:
-                _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i]))
+                _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i], s.hip))
 
         # Plot bayer/flamsteed
-        for bayer_desig, ra, dec, star_size in _bayer:
+        for bayer_desig, ra, dec, star_size, _ in _bayer:
             self.text(
                 bayer_desig,
                 ra,
@@ -148,7 +148,9 @@ class StarPlotterMixin:
                 gid="stars-label-bayer",
             )
 
-        for flamsteed_num, ra, dec, star_size in _flamsteed:
+        for flamsteed_num, ra, dec, star_size, hip in _flamsteed:
+            if hip in bayer.hip:
+                continue
             self.text(
                 flamsteed_num,
                 ra,
