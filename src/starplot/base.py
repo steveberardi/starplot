@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Dict, Union
 import logging
+import warnings
 
 import numpy as np
 import rtree
@@ -31,6 +32,12 @@ from starplot.styles import (
     fonts,
 )
 from starplot.styles.helpers import use_style
+
+# ignore noisy matplotlib warnings
+warnings.filterwarnings(
+    "ignore",
+    message="Setting the 'color' property will override the edgecolor or facecolor properties",
+)
 
 LOGGER = logging.getLogger("starplot")
 LOG_HANDLER = logging.StreamHandler()
