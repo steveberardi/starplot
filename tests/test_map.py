@@ -68,6 +68,7 @@ def test_map_objects_list_planets():
 
     assert len(p.objects.planets) == 8
 
+
 def test_marker_no_label():
     p = MapPlot(
         projection=Projection.MERCATOR,
