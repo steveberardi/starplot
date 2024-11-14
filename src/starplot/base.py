@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Dict, Union
+from typing import Dict, Union, Optional
 import logging
 
 import numpy as np
@@ -313,8 +313,8 @@ class BasePlot(ABC):
         self,
         ra: float,
         dec: float,
-        label: str,
         style: Union[dict, ObjectStyle],
+        label: Optional[str] = None,
         legend_label: str = None,
         skip_bounds_check: bool = False,
     ) -> None:
