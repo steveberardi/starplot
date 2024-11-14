@@ -11,6 +11,7 @@
 - [**v0.12.1**] Fixes issue with plotting the Milky Way when it consists of multiple polygons
 - [**v0.12.2**] Allows tuples for line styles on polygons and adds geometry kwarg to polygon function
 - [**v0.12.3**] Fixes bug with constellation names
+- [**v0.12.4**] Makes labels on markers default to None
 
 ## v0.11.x
 [Documentation](https://archives.starplot.dev/0.11.4/)

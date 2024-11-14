@@ -70,33 +70,5 @@ def test_map_objects_list_planets():
 
 
 def test_marker_no_label():
-    p = MapPlot(
-        projection=Projection.MERCATOR,
-        ra_min=0,
-        ra_max=24,
-        dec_min=-40,
-        dec_max=40,
-    )
-
-    p.marker(
-        ra=10,
-        dec=0,
-        style={
-            "marker": {
-                "size": 28,
-                "symbol": "circle",
-                "fill": "full",
-                "color": "#ed7eed",
-                "edge_color": "#e0c1e0",
-                "alpha": 0.4,
-                "zorder": 100,
-            },
-            "label": {
-                "zorder": 200,
-                "font_size": 12,
-                "font_weight": "bold",
-                "font_color": "ed7eed",
-                "font_alpha": 0.8,
-            },
-        },
-    )
+    p = MapPlot(projection=Projection.MERCATOR)
+    p.marker(ra=10, dec=0, style__marker__color="blue")
