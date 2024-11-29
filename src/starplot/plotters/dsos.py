@@ -231,8 +231,8 @@ class DsoPlotterMixin:
                 self.marker(
                     ra=ra / 15,
                     dec=dec,
-                    label=label,
                     style=style,
+                    label=label,
                     skip_bounds_check=True,
                     gid_marker=f"dso-{d.type}-marker",
                     gid_label=f"dso-{d.type}-label",

@@ -40,7 +40,6 @@ p.milky_way()
 p.marker(
     ra=12.36,
     dec=25.85,
-    label="Mel 111",
     style={
         "marker": {
             "size": 28,
@@ -57,6 +56,7 @@ p.marker(
             "font_alpha": 0.8,
         },
     },
+    label="Mel 111",
 )
 p.horizon()
 
