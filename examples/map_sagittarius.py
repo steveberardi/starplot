@@ -1,4 +1,4 @@
-from starplot import MapPlot, Projection, DSO, Star
+from starplot import MapPlot, Projection, DSO, Star, callables
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -27,7 +27,7 @@ p.constellation_borders()
 
 p.stars(
     where=[Star.magnitude <= 3],
-    style__marker__size=140,
+    size_fn=lambda d: callables.size_by_magnitude(d) * 4, # make them 4x bigger
     style__marker__symbol="star_8",
     style__marker__zorder=200,
 )

@@ -46,7 +46,7 @@ def size_by_magnitude_factory(
 _size_by_magnitude_default = size_by_magnitude_factory(7.6, 4)
 
 
-def size_by_magnitude(star: Star) -> float:
+def size_by_magnitude_old(star: Star) -> float:
     """
     Calculates size by logarithmic scale of magnitude:
 
@@ -58,6 +58,33 @@ def size_by_magnitude(star: Star) -> float:
     ```
     """
     return _size_by_magnitude_default(star)
+
+def size_by_magnitude(star: Star) -> float:
+    mag = star.magnitude
+    size = 0
+    if mag <= 0:
+        size = 3800
+    elif mag <= 1:      # 0..1
+        size = 2400
+    elif mag <= 2:      # 1..2
+        size = 1600
+    elif mag <= 3:      # 2..3
+        size = 1000
+    elif mag <= 4:      # 3..4
+        size = 600
+    elif mag <= 5:      # 4..5
+        size = 300
+    elif mag <= 6:      # 5..6
+        size = 120
+    elif mag <= 7:      # 7..8
+        size = 60
+    elif mag <= 8:      # 8..9
+        size = 40
+    else:               # > 9
+        size = 20
+
+    return size
+
 
 
 def _size_by_magnitude(star: Star) -> float:

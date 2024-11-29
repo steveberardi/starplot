@@ -15,13 +15,13 @@ p = MapPlot(
     dec_max=80,
     style=style,
     resolution=6000,
-    scale=1,
+    scale=0.8,
 )
-p.stars(mag=8, where_labels=[Star.magnitude < 2.1])
+p.stars(mag=6, where_labels=[Star.magnitude < 2.1])
 p.dsos(
     labels=None,
     where=[
-        DSO.magnitude <= 8,
+        DSO.magnitude <= 6,
         DSO.size > 0.05,
     ],
 )
