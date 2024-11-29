@@ -23,10 +23,11 @@ p = MapPlot(
     autoscale=True,
 )
 p.constellations()
+p.constellation_borders()
 
 p.stars(
     where=[Star.magnitude <= 3],
-    style__marker__size=72,
+    style__marker__size=140,
     style__marker__symbol="star_8",
     style__marker__zorder=200,
 )
@@ -53,7 +54,6 @@ p.open_clusters(
     true_size=False,
     label_fn=lambda d: d.ngc,
 )
-p.constellation_borders()
 p.ecliptic()
 p.celestial_equator()
 p.milky_way()

@@ -418,6 +418,9 @@ class BasePlot(ABC):
                 break
 
             removed = self._maybe_remove_label(label)
+            # if text == "Nunki":
+            #     print(removed)
+            #     print(len(self._labels_rtree))
             if not removed:
                 break
 
@@ -442,6 +445,9 @@ class BasePlot(ABC):
             style: Styling of the text
             hide_on_collision: If True, then the text will not be plotted if it collides with another label
         """
+        if not self.in_bounds(ra, dec):
+            return
+        
         style = style or LabelStyle()
         self._text(
             ra,

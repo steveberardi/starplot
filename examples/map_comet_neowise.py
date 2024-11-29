@@ -90,9 +90,9 @@ for t, ra, dec in radecs:
     )
 
 p.gridlines(labels=False)
-p.stars(mag=6, where_labels=[Star.magnitude < 2.1])
 p.constellations()
 p.constellation_borders()
+p.stars(mag=6, where_labels=[Star.magnitude < 2])
 p.milky_way()
 p.legend()
 

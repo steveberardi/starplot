@@ -24,13 +24,15 @@ p = MapPlot(
     autoscale=True,
 )
 p.gridlines()
-p.stars(
-    mag=9, bayer_labels=True, flamsteed_labels=True, where_labels=[Star.magnitude < 9]
-)
-p.open_clusters(mag=9, labels=None, label_fn=lambda d: d.ngc)
-p.nebula(mag=9, labels=None, label_fn=lambda d: d.ngc)
 p.constellations()
 p.constellation_borders()
+
+p.stars(
+    mag=8, bayer_labels=True, where_labels=[Star.magnitude < 5]
+)
+p.open_clusters(mag=9, labels=None, label_fn=lambda d: d.ngc, true_size=False)
+p.nebula(mag=9, labels=None, label_fn=lambda d: d.ngc)
+
 p.milky_way()
 p.ecliptic()
 p.legend()

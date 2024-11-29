@@ -671,7 +671,7 @@ class PlotStyle(BaseStyle):
 
     figure_background_color: ColorStr = ColorStr("#fff")
 
-    text_border_width: int = 3
+    text_border_width: int = 0
     text_border_color: ColorStr = ColorStr("#fff")
     text_offset_x: float = 0.005
     text_offset_y: float = 0.005
@@ -720,19 +720,19 @@ class PlotStyle(BaseStyle):
             edge_color=None,
         ),
         label=LabelStyle(
-            font_size=24, font_weight=FontWeightEnum.BOLD, zorder=ZOrderEnum.LAYER_3 + 1
+            font_size=24, font_weight=FontWeightEnum.BOLD, zorder=ZOrderEnum.LAYER_3 + 1, offset_x="auto",  offset_y="auto"
         ),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
-        font_size=17,
+        font_size=21,
         font_weight=FontWeightEnum.LIGHT,
         font_name="GFS Didot",
         zorder=ZOrderEnum.LAYER_4,
         anchor_point=AnchorPointEnum.TOP_LEFT,
-        offset_x=-3,
-        offset_y=3,
+        offset_x="auto",
+        offset_y="auto",
     )
     """Styling for Bayer labels of stars"""
 

@@ -17,11 +17,11 @@ p = MapPlot(
     clip_path=canis_major.boundary,
     scale=1.25,
 )
-p.open_clusters(mag=8, true_size=False, label_fn=lambda d: f"{d.ngc}")
-p.stars(mag=9, bayer_labels=True, catalog="big-sky-mag11")
 p.constellations(
     where=[Constellation.iau_id == "cma"],
 )
 p.constellation_borders()
+p.open_clusters(mag=8, true_size=False, label_fn=lambda d: f"{d.ngc}")
+p.stars(mag=9, bayer_labels=True, catalog="big-sky-mag11")
 p.ax.set_axis_off()
 p.export("map_canis_major.png", padding=0, transparent=True)
