@@ -152,7 +152,14 @@ class BasePlot(ABC):
             self._background_clip_path.contains_points(extent.get_points())
         )
 
-    def _maybe_remove_label(self, label) -> bool:
+    def _add_label_to_rtree(self, label, extent=None):
+        extent = extent or label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+        self.labels.append(label)
+        self._labels_rtree.insert(
+            0, np.array((extent.x0, extent.y0, extent.x1, extent.y1))
+        )
+
+    def _maybe_remove_label(self, label, remove_on_collision=True, remove_on_clipped=True) -> bool:
         """Returns true if the label is removed, else false"""
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
 
@@ -160,20 +167,18 @@ class BasePlot(ABC):
             label.remove()
             return True
 
-        if (
-            self._is_clipped(extent)
-            or self._is_label_collision(extent)
+        if remove_on_clipped and self._is_clipped(extent):
+            label.remove()
+            return True
+    
+        if remove_on_collision and (
+            self._is_label_collision(extent)
             or self._is_object_collision(extent)
             # or self._is_star_collision(extent)
         ):
-            # self.hide_colliding_labels and self._is_label_collision(extent),
             label.remove()
             return True
 
-        self.labels.append(label)
-        self._labels_rtree.insert(
-            0, np.array((extent.x0, extent.y0, extent.x1, extent.y1))
-        )
         return False
 
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
@@ -357,7 +362,7 @@ class BasePlot(ABC):
         dec: float,
         text: str,
         hide_on_collision: bool = True,
-        auto_anchor: bool = True,
+        force: bool = False,
         *args,
         **kwargs,
     ) -> None:
@@ -383,15 +388,13 @@ class BasePlot(ABC):
 
         label = plot_text(**kwargs)
 
-        if not clip_on:
+        if force:
             return
-
-        if not hide_on_collision and not auto_anchor:
-            return
-
-        removed = self._maybe_remove_label(label)
+        
+        removed = self._maybe_remove_label(label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on)
 
         if not removed:
+            self._add_label_to_rtree(label)
             return
 
         original_va = kwargs.pop("va", None)
@@ -413,15 +416,10 @@ class BasePlot(ABC):
                 offset_y = 0
 
             label = plot_text(**kwargs, va=va, ha=ha, xytext=(offset_x, offset_y))
+            removed = self._maybe_remove_label(label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on)
 
-            if not hide_on_collision and i == len(anchor_fallbacks) - 1:
-                break
-
-            removed = self._maybe_remove_label(label)
-            # if text == "Nunki":
-            #     print(removed)
-            #     print(len(self._labels_rtree))
             if not removed:
+                self._add_label_to_rtree(label)
                 break
 
     @use_style(LabelStyle)

@@ -735,7 +735,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         for i, position in enumerate(cardinal_directions):
             ra, dec, _ = position.radec()
             self._text(
-                ra.hours, dec.degrees, labels[i], auto_anchor=False, **text_kwargs
+                ra.hours, dec.degrees, labels[i], force=True, **text_kwargs
             )
 
     @use_style(PathStyle, "gridlines")
