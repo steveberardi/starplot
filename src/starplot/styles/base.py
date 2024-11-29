@@ -20,6 +20,7 @@ from starplot.styles.markers import (
     circle_crosshair,
     circle_line,
     circle_dot,
+    circle_dotted_rings,
 )
 
 
@@ -134,6 +135,8 @@ class MarkerSymbolEnum(str, Enum):
     CIRCLE_DOTTED_EDGE = "circle_dotted_edge"
     """\u25CC"""
 
+    CIRCLE_DOTTED_RINGS = "circle_dotted_rings"
+
     CIRCLE_LINE = "circle_line"
     """\u29B5"""
 
@@ -166,6 +169,7 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.CIRCLE_CROSSHAIR: circle_crosshair(),
             MarkerSymbolEnum.CIRCLE_DOT: circle_dot(),
             MarkerSymbolEnum.CIRCLE_DOTTED_EDGE: "$\u25CC$",
+            MarkerSymbolEnum.CIRCLE_DOTTED_RINGS: circle_dotted_rings(),
             MarkerSymbolEnum.CIRCLE_LINE: circle_line(),
             MarkerSymbolEnum.COMET: "$\u2604$",
             MarkerSymbolEnum.STAR_8: "$\u2734$",
