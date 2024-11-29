@@ -395,8 +395,8 @@ class BasePlot(ABC):
                 self.marker(
                     ra=p.ra,
                     dec=p.dec,
-                    label=label.upper() if label else None,
                     style=style,
+                    label=label.upper() if label else None,
                     legend_label=legend_label,
                 )
 
@@ -450,8 +450,8 @@ class BasePlot(ABC):
             self.marker(
                 ra=s.ra,
                 dec=s.dec,
-                label=label,
                 style=style,
+                label=label,
                 legend_label=legend_label,
             )
 
@@ -692,8 +692,8 @@ class BasePlot(ABC):
             self.marker(
                 ra=m.ra,
                 dec=m.dec,
-                label=label,
                 style=style,
+                label=label,
                 legend_label=legend_label,
             )
 

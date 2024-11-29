@@ -68,8 +68,6 @@ for t, ra, dec in radecs:
     p.marker(
         ra=ra,
         dec=dec,
-        label=label,
-        legend_label="Comet NEOWISE",
         style={
             "marker": {
                 "size": 16,
@@ -87,6 +85,8 @@ for t, ra, dec in radecs:
                 "zorder": 4096,
             },
         },
+        label=label,
+        legend_label="Comet NEOWISE",
     )
 
 p.gridlines(labels=False)
