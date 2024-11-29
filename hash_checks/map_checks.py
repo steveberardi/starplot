@@ -91,7 +91,6 @@ def check_map_orion_extra():
     mercator_base.marker(
         ra=4.5,
         dec=5,
-        label="hello worldzz label offset",
         style={
             "marker": {
                 "size": 30,
@@ -104,6 +103,7 @@ def check_map_orion_extra():
                 "offset_y": -100,
             },
         },
+        label="hello worldzz label offset",
         legend_label="hello legend",
     )
     mercator_base.circle(

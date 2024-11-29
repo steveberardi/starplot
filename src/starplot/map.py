@@ -499,11 +499,11 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         ra, dec, _ = zenith.radec()
 
         self.marker(
-            ra.hours,
-            dec.degrees,
-            label,
-            style,
-            legend_label,
+            ra=ra.hours,
+            dec=dec.degrees,
+            style=style,
+            label=label,
+            legend_label=legend_label,
         )
 
     @use_style(PathStyle, "horizon")
