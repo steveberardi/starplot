@@ -12,6 +12,9 @@
 - [**v0.12.2**] Allows tuples for line styles on polygons and adds geometry kwarg to polygon function
 - [**v0.12.3**] Fixes bug with constellation names
 - [**v0.12.4**] Makes labels on markers default to None
+- [**v0.12.5**]
+    - Fixes bug with a few constellation ids
+    - Fixes bug with `zenith()` function on map plots
 
 ## v0.11.x
 [Documentation](https://archives.starplot.dev/0.11.4/)
