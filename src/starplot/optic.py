@@ -235,9 +235,10 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
         """
         optic_star_multiplier = 0.57 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
-
-        def size_fn_mx(st: Star) -> float:
-            return size_fn(st) * optic_star_multiplier
+        size_fn_mx = None
+        
+        if size_fn is not None:
+            size_fn_mx = lambda s: size_fn(s) * optic_star_multiplier
 
         super().stars(
             mag=mag,
