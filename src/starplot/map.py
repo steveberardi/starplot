@@ -37,7 +37,7 @@ from starplot.utils import lon_to_ra, ra_to_lon
 warnings.filterwarnings("ignore", module="cartopy")
 warnings.filterwarnings("ignore", module="shapely")
 
-DEFAULT_MAP_STYLE = PlotStyle().extend(extensions.MAP)
+DEFAULT_MAP_STYLE = PlotStyle() #.extend(extensions.MAP)
 
 
 def points(start, end, num_points=100):
