@@ -363,6 +363,7 @@ class BasePlot(ABC):
         text: str,
         hide_on_collision: bool = True,
         force: bool = False,
+        clip_on: bool = True,
         *args,
         **kwargs,
     ) -> None:
@@ -371,7 +372,6 @@ class BasePlot(ABC):
 
         x, y = self._prepare_coords(ra, dec)
         kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
-        clip_on = kwargs.get("clip_on") or True
 
         def plot_text(**kwargs):
             label = self.ax.annotate(
