@@ -936,8 +936,8 @@ class PlotStyle(BaseStyle):
     constellation: PathStyle = PathStyle(
         line=LineStyle(color="#c8c8c8"),
         label=LabelStyle(
-            font_size=25,
-            font_weight=FontWeightEnum.LIGHT,
+            font_size=21,
+            font_weight=FontWeightEnum.NORMAL,
             zorder=ZOrderEnum.LAYER_3,
             anchor_point=AnchorPointEnum.TOP_RIGHT,
         ),
