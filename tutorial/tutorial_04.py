@@ -21,7 +21,7 @@ p = MapPlot(
     dec_max=27,
     style=style,
     resolution=3600,
-    autoscale=True,
+    autoscale=True, # automatically adjust the scale based on the resolution
 )
 
 p.gridlines()  # add gridlines

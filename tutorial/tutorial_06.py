@@ -19,9 +19,13 @@ p.constellations()
 p.constellation_borders()
 
 p.stars(
-    where=[Star.magnitude <= 3],  # select the brightest stars
-    size_fn=lambda d: callables.size_by_magnitude(d) * 2,  # make them 2x bigger
-    style__marker__symbol="star_8",  # use an 8-pointed star for bright star markers
+    # select the brightest stars:
+    where=[Star.magnitude <= 3],
+    # here we make the stars 2x bigger by passing in a custom size function (i.e. a callable)
+    # you'll learn more about this later in the tutorial...
+    size_fn=lambda d: callables.size_by_magnitude(d) * 2,
+    # use an 8-pointed star for bright star markers:
+    style__marker__symbol="star_8",  
     style__label__offset_x=8,
     style__label__offset_y=-8,
     style__label__border_width=2,
@@ -55,7 +59,6 @@ p.globular_clusters(
         DSO.magnitude.is_null() | (DSO.magnitude < 10),
     ],
     true_size=False,
-    label_fn=lambda d: d.ngc,
 )
 
 p.ecliptic()
