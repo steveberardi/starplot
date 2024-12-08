@@ -22,12 +22,16 @@ p = jupiter.create_optic(
     ),
     style=PlotStyle().extend(extensions.GRAYSCALE_DARK),
     raise_on_below_horizon=False,
+    autoscale=True,
 )
 p.planets(
     true_size=True,
-    style__label__offset_x=64,
-    style__label__offset_y=-20,
-    style__label__font_size=26,
+    # since we're plotting the planets as their "true size"
+    # the 'auto' offset won't work (it's not supported yet!)
+    # so we manually set the offsets here:
+    style__label__offset_x=86,
+    style__label__offset_y=-40,
+    style__label__font_size=56,
     style__marker__color="#fcdb72",
 )
 p.export("tutorial_07.png", padding=0)

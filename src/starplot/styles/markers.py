@@ -130,7 +130,6 @@ def circle_dot():
     return Path(verts, codes)
 
 
-
 @cache
 def circle_dotted_rings(num_rings=2):
     verts = ellipse_points(0, 0, 1, 1)
@@ -148,13 +147,11 @@ def circle_dotted_rings(num_rings=2):
 
         for k in range(step, 100, step):
             if k % (step * 2):
-                verts.extend(ring_verts[k:k+step])
+                verts.extend(ring_verts[k : k + step])
                 codes.extend([Path.MOVETO])
                 codes.extend([Path.LINETO] * (step - 1))
-    
 
     return Path(verts, codes)
-
 
 
 @cache

@@ -27,9 +27,7 @@ p.gridlines()
 p.constellations()
 p.constellation_borders()
 
-p.stars(
-    mag=8, bayer_labels=True, where_labels=[Star.magnitude < 5]
-)
+p.stars(mag=8, bayer_labels=True, where_labels=[Star.magnitude < 5])
 p.open_clusters(mag=9, labels=None, label_fn=lambda d: d.ngc, true_size=False)
 p.nebula(mag=9, labels=None, label_fn=lambda d: d.ngc)
 

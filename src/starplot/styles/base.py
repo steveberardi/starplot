@@ -517,17 +517,17 @@ class LabelStyle(BaseStyle):
     anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
     """Anchor point of label"""
 
-    border_width: float = 2
+    border_width: float = 0
     """Width of border (also known as 'halos') around the text, in points"""
 
     border_color: Optional[ColorStr] = None
     """Color of border (also known as 'halos') around the text"""
 
     offset_x: Union[float, int, str] = 0
-    """Horizontal offset of the label, in pixels. Negative values supported."""
+    """Horizontal offset of the label, in points. Negative values supported."""
 
     offset_y: Union[float, int, str] = 0
-    """Vertical offset of the label, in pixels. Negative values supported."""
+    """Vertical offset of the label, in points. Negative values supported."""
 
     zorder: int = ZOrderEnum.LAYER_4
     """Zorder of the label"""
@@ -571,12 +571,16 @@ class LabelStyle(BaseStyle):
 
         offset = (marker_size**0.5 / 2) / scale
 
+        # plot_kwargs["s"] = ((plot_kwargs.pop("markersize") / scale) ** 2) * (scale**2)
+
         # matplotlib seems to use marker size differently depending on symbol (for scatter)
         # it is NOT strictly the area of the bounding box of the marker
-        if marker_symbol == MarkerSymbolEnum.POINT:
+        if marker_symbol in [MarkerSymbolEnum.POINT]:
             offset /= PI
+
         elif marker_symbol != MarkerSymbolEnum.SQUARE:
             offset /= SQR_2
+            offset *= scale
 
         offset += 1
 
@@ -720,7 +724,11 @@ class PlotStyle(BaseStyle):
             edge_color=None,
         ),
         label=LabelStyle(
-            font_size=24, font_weight=FontWeightEnum.BOLD, zorder=ZOrderEnum.LAYER_3 + 1, offset_x="auto",  offset_y="auto"
+            font_size=24,
+            font_weight=FontWeightEnum.BOLD,
+            zorder=ZOrderEnum.LAYER_3 + 1,
+            offset_x="auto",
+            offset_y="auto",
         ),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
@@ -741,8 +749,8 @@ class PlotStyle(BaseStyle):
         font_weight=FontWeightEnum.NORMAL,
         zorder=ZOrderEnum.LAYER_4,
         anchor_point=AnchorPointEnum.BOTTOM_LEFT,
-        offset_x=-3,
-        offset_y=-3,
+        offset_x="auto",
+        offset_y="auto",
     )
     """Styling for Flamsteed number labels of stars"""
 
@@ -755,6 +763,8 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=28,
             font_weight=FontWeightEnum.BOLD,
+            offset_x="auto",
+            offset_y="auto",
         ),
     )
     """Styling for planets"""
@@ -771,6 +781,8 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=28,
             font_weight=FontWeightEnum.BOLD,
+            offset_x="auto",
+            offset_y="auto",
         ),
     )
     """Styling for the moon"""
@@ -799,9 +811,11 @@ class PlotStyle(BaseStyle):
             edge_width=1.3,
         ),
         label=LabelStyle(
-            font_weight=FontWeightEnum.LIGHT,
-            offset_x=7,
-            offset_y=-6,
+            # font_weight=FontWeightEnum.LIGHT,
+            # offset_x=7,
+            # offset_y=-6,
+            offset_x="auto",
+            offset_y="auto",
         ),
     )
     """Styling for open star clusters"""

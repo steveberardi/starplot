@@ -64,7 +64,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_OPTIC_STYLE,
-        resolution: int = 2048,
+        resolution: int = 4096,
         hide_colliding_labels: bool = True,
         raise_on_below_horizon: bool = True,
         scale: float = 1.0,
@@ -234,11 +234,14 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
         """
-        optic_star_multiplier = 0.57 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
+        # optic_star_multiplier = 0.57 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
+        optic_star_multiplier = 1 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
         size_fn_mx = None
-        
+
         if size_fn is not None:
-            size_fn_mx = lambda s: size_fn(s) * optic_star_multiplier
+
+            def size_fn_mx(s):
+                return size_fn(s) * optic_star_multiplier
 
         super().stars(
             mag=mag,

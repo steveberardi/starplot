@@ -4,13 +4,6 @@ from starplot.styles import PlotStyle, extensions
 style = PlotStyle().extend(
     extensions.ANTIQUE,
     extensions.MAP,
-    {
-        "dso_open_cluster": {
-            "marker": {
-                "size": 40,
-            },
-        },
-    },
 )
 p = MapPlot(
     projection=Projection.MILLER,
@@ -19,7 +12,7 @@ p = MapPlot(
     dec_min=-51.6,
     dec_max=-3,
     style=style,
-    resolution=3000,
+    resolution=4000,
     autoscale=True,
 )
 p.constellations()
@@ -27,7 +20,7 @@ p.constellation_borders()
 
 p.stars(
     where=[Star.magnitude <= 3],
-    size_fn=lambda d: callables.size_by_magnitude(d) * 4, # make them 4x bigger
+    size_fn=lambda d: callables.size_by_magnitude(d) * 2,  # make them 2x bigger
     style__marker__symbol="star_8",
     style__marker__zorder=200,
 )
@@ -48,6 +41,13 @@ p.nebula(
     label_fn=lambda d: d.ic,
 )
 p.open_clusters(
+    where=[
+        DSO.magnitude.is_null() | (DSO.magnitude < 12),
+    ],
+    true_size=False,
+    label_fn=lambda d: d.ngc,
+)
+p.globular_clusters(
     where=[
         DSO.magnitude.is_null() | (DSO.magnitude < 12),
     ],

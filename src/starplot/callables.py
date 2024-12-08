@@ -59,32 +59,32 @@ def size_by_magnitude_old(star: Star) -> float:
     """
     return _size_by_magnitude_default(star)
 
+
 def size_by_magnitude(star: Star) -> float:
     mag = star.magnitude
     size = 0
     if mag <= 0:
         size = 3800
-    elif mag <= 1:      # 0..1
+    elif mag <= 1:  # 0..1
         size = 2400
-    elif mag <= 2:      # 1..2
+    elif mag <= 2:  # 1..2
         size = 1600
-    elif mag <= 3:      # 2..3
+    elif mag <= 3:  # 2..3
         size = 1000
-    elif mag <= 4:      # 3..4
+    elif mag <= 4:  # 3..4
         size = 600
-    elif mag <= 5:      # 4..5
+    elif mag <= 5:  # 4..5
         size = 300
-    elif mag <= 6:      # 5..6
+    elif mag <= 6:  # 5..6
         size = 120
-    elif mag <= 7:      # 7..8
+    elif mag <= 7:  # 7..8
         size = 60
-    elif mag <= 8:      # 8..9
+    elif mag <= 8:  # 8..9
         size = 40
-    else:               # > 9
+    else:  # > 9
         size = 20
 
     return size
-
 
 
 def _size_by_magnitude(star: Star) -> float:
@@ -129,13 +129,13 @@ def size_by_magnitude_for_optic(star: Star) -> float:
     m = star.magnitude
 
     if m < 4.6:
-        return (9 - m) ** 3.76 * 10
+        return (9 - m) ** 3.72 * 9
     elif m < 5.85:
-        return (9 - m) ** 3.72 * 10
+        return (9 - m) ** 3.72 * 9
     elif m < 9:
-        return (13 - m) ** 1.91 * 10
+        return (13 - m) ** 1.91 * 9
 
-    return 4.93 * 10
+    return 4.93 * 9
 
 
 def alpha_by_magnitude(star: Star) -> float:

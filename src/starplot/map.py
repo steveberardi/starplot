@@ -28,7 +28,6 @@ from starplot.styles import (
     PlotStyle,
     PolygonStyle,
     PathStyle,
-    extensions,
 )
 from starplot.styles.helpers import use_style
 from starplot.utils import lon_to_ra, ra_to_lon
@@ -37,7 +36,7 @@ from starplot.utils import lon_to_ra, ra_to_lon
 warnings.filterwarnings("ignore", module="cartopy")
 warnings.filterwarnings("ignore", module="shapely")
 
-DEFAULT_MAP_STYLE = PlotStyle() #.extend(extensions.MAP)
+DEFAULT_MAP_STYLE = PlotStyle()  # .extend(extensions.MAP)
 
 
 def points(start, end, num_points=100):
@@ -734,9 +733,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         for i, position in enumerate(cardinal_directions):
             ra, dec, _ = position.radec()
-            self._text(
-                ra.hours, dec.degrees, labels[i], force=True, **text_kwargs
-            )
+            self._text(ra.hours, dec.degrees, labels[i], force=True, **text_kwargs)
 
     @use_style(PathStyle, "gridlines")
     def gridlines(

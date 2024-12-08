@@ -2,7 +2,7 @@ from starplot import MapPlot, Projection, Constellation
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.CB_WONG,
+    extensions.BLUE_LIGHT,
     extensions.MAP,
 )
 canis_major = Constellation.get(name="Canis Major")
@@ -15,7 +15,7 @@ p = MapPlot(
     style=style,
     resolution=3600,
     clip_path=canis_major.boundary,
-    scale=1.25,
+    scale=1.3,
 )
 p.constellations(
     where=[Constellation.iau_id == "cma"],

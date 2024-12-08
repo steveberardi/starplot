@@ -21,13 +21,16 @@ p = MapPlot(
     dec_max=27,
     style=style,
     resolution=3600,
+    autoscale=True,
 )
 
 p.gridlines()  # add gridlines
 p.constellations()
 p.constellation_borders()
 
-p.stars(mag=8, bayer_labels=True, flamsteed_labels=True)  # include Bayer and Flamsteed labels with the stars
+p.stars(
+    mag=8, bayer_labels=True, flamsteed_labels=True
+)  # include Bayer and Flamsteed labels with the stars
 
 p.nebula(mag=8, labels=None)
 p.open_clusters(mag=8, labels=None)

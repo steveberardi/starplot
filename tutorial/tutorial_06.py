@@ -1,16 +1,9 @@
-from starplot import MapPlot, Projection, DSO, Star
+from starplot import MapPlot, Projection, DSO, Star, callables
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
     extensions.ANTIQUE,
     extensions.MAP,
-    {
-        "dso_open_cluster": {
-            "marker": {
-                "size": 30,
-            },
-        },
-    },
 )
 p = MapPlot(
     projection=Projection.MILLER,
@@ -20,22 +13,21 @@ p = MapPlot(
     dec_max=-3,
     style=style,
     resolution=4000,
-    scale=1,
+    autoscale=True,
 )
 p.constellations()
 p.constellation_borders()
 
 p.stars(
     where=[Star.magnitude <= 3],  # select the brightest stars
-    style__marker__size=900,  # make them bigger
+    size_fn=lambda d: callables.size_by_magnitude(d) * 2,  # make them 2x bigger
     style__marker__symbol="star_8",  # use an 8-pointed star for bright star markers
     style__marker__zorder=200,
-    size_fn=None,
 )
 p.stars(
     where=[
         Star.magnitude > 3,  # select the dimmer stars
-        Star.magnitude < 10,
+        Star.magnitude < 9,
     ],
     bayer_labels=True,
     catalog="big-sky-mag11",
@@ -43,7 +35,7 @@ p.stars(
 
 p.nebula(
     where=[
-        # select DSOs which have no defined magnitude or less than 12
+        # select DSOs which have no defined magnitude or less than 10
         DSO.magnitude.is_null()
         | (DSO.magnitude < 10),
     ],

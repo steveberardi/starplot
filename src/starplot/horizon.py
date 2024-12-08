@@ -12,17 +12,14 @@ from starplot.base import BasePlot, DPI
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
-from starplot.optics import Optic
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
 from starplot.styles import (
     PlotStyle,
     ObjectStyle,
-    LabelStyle,
     extensions,
     use_style,
     ZOrderEnum,
 )
-from starplot.utils import azimuth_to_string
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -69,7 +66,7 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         autoscale: bool = False,
         *args,
         **kwargs,
-    ) -> "OpticPlot":
+    ) -> "HorizonPlot":
         super().__init__(
             dt,
             ephemeris,

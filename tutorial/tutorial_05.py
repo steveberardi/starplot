@@ -9,7 +9,6 @@ dt = datetime.now(timezone("US/Pacific")).replace(2024, 4, 8, 21, 0, 0)
 style = PlotStyle().extend(
     extensions.GRAYSCALE_DARK,
     extensions.OPTIC,
-    {"star": {"marker": {"size": 58}}},  # make the stars bigger
 )
 
 p = OpticPlot(
@@ -26,7 +25,8 @@ p = OpticPlot(
     ),
     dt=dt,
     style=style,
-    resolution=1600,
+    resolution=2048,
+    autoscale=True,
 )
 p.stars(mag=12, catalog="big-sky-mag11", bayer_labels=True)
 

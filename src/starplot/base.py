@@ -153,13 +153,17 @@ class BasePlot(ABC):
         )
 
     def _add_label_to_rtree(self, label, extent=None):
-        extent = extent or label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+        extent = extent or label.get_window_extent(
+            renderer=self.fig.canvas.get_renderer()
+        )
         self.labels.append(label)
         self._labels_rtree.insert(
             0, np.array((extent.x0, extent.y0, extent.x1, extent.y1))
         )
 
-    def _maybe_remove_label(self, label, remove_on_collision=True, remove_on_clipped=True) -> bool:
+    def _maybe_remove_label(
+        self, label, remove_on_collision=True, remove_on_clipped=True
+    ) -> bool:
         """Returns true if the label is removed, else false"""
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
 
@@ -170,7 +174,7 @@ class BasePlot(ABC):
         if remove_on_clipped and self._is_clipped(extent):
             label.remove()
             return True
-    
+
         if remove_on_collision and (
             self._is_label_collision(extent)
             or self._is_object_collision(extent)
@@ -390,8 +394,10 @@ class BasePlot(ABC):
 
         if force:
             return
-        
-        removed = self._maybe_remove_label(label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on)
+
+        removed = self._maybe_remove_label(
+            label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on
+        )
 
         if not removed:
             self._add_label_to_rtree(label)
@@ -416,7 +422,9 @@ class BasePlot(ABC):
                 offset_y = 0
 
             label = plot_text(**kwargs, va=va, ha=ha, xytext=(offset_x, offset_y))
-            removed = self._maybe_remove_label(label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on)
+            removed = self._maybe_remove_label(
+                label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on
+            )
 
             if not removed:
                 self._add_label_to_rtree(label)
@@ -445,8 +453,15 @@ class BasePlot(ABC):
         """
         if not self.in_bounds(ra, dec):
             return
-        
+
         style = style or LabelStyle()
+
+        if style.offset_x == "auto":
+            style.offset_x = 0
+
+        if style.offset_y == "auto":
+            style.offset_y = 0
+
         self._text(
             ra,
             dec,
@@ -600,11 +615,22 @@ class BasePlot(ABC):
         )
 
         if label:
+            label_style = style.label
+            if label_style.offset_x == "auto" or label_style.offset_y == "auto":
+                marker_size = ((style.marker.size / self.scale) ** 2) * (
+                    self.scale**2
+                )
+
+                label_style = label_style.offset_from_marker(
+                    marker_symbol=style.marker.symbol,
+                    marker_size=marker_size,
+                    scale=self.scale,
+                )
             self.text(
                 label,
                 ra,
                 dec,
-                style.label,
+                label_style,
                 hide_on_collision=self.hide_colliding_labels,
                 gid=kwargs.get("gid_label") or "marker-label",
             )

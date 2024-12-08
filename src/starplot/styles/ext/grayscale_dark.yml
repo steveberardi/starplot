@@ -26,7 +26,7 @@ info_text:
   font_color: hsl(136, 0%, 0%)
 star:
   label:
-    font_color: hsl(136, 0%, 68%)
+    font_color: hsl(136, 0%, 78%)
   marker:
     color: hsl(136, 0%, 92%)
     edge_color: hsl(136, 0%, 10%)
@@ -37,9 +37,9 @@ sun:
     color: hsl(136, 0%, 97%)
     edge_color: hsl(136, 0%, 97%)
 bayer_labels:
-  font_color: hsl(136, 0%, 40%)
+  font_color: hsl(136, 0%, 80%)
 flamsteed_labels:
-  font_color: hsl(136, 0%, 40%)
+  font_color: hsl(136, 0%, 80%)
 celestial_equator:
   label:
     font_color: '#999'
