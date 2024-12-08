@@ -83,7 +83,7 @@ from starplot import PlotStyle
 style = PlotStyle().extend(
     {
         "bayer_labels": {
-            "font_name": "GFS Didot",
+            "font_name": "Literata",
             "font_size": 10
         }
     }
@@ -92,7 +92,7 @@ style = PlotStyle().extend(
 Alternatively, you can do this:
 ```python
 style = PlotStyle()
-style.bayer_labels.font_name = "GFS Didot"
+style.bayer_labels.font_name = "Literata"
 style.bayer_labels.font_size = 10
 
 ```
@@ -152,8 +152,8 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     - `GRAYSCALE` - Optimized for printing in grayscale ([details](#extensions-grayscale))
     - `GRAYSCALE_DARK` - Like `GRAYSCALE`, but inverted (white stars, black background) ([details](#extensions-grayscale-dark))
     - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
-    - `BLUE_MEDIUM` - Medium brightness bluish gray colors ([details](#extensions-blue-medium))
-    - `BLUE_DARK` - Dark "Starplot blue" colors ([details](#extensions-blue-dark))
+    - `BLUE_MEDIUM` - Medium brightness blue colors ([details](#extensions-blue-medium))
+    - `BLUE_DARK` - Dark blue and contrasting colors ([details](#extensions-blue-dark))
     - `ANTIQUE` - Antique map inspired colors ([details](#extensions-antique))
     - `NORD` - Nord-inspired colors ([details](#extensions-nord))
 - **Plot types**

@@ -25,7 +25,7 @@ p.stars(
     # you'll learn more about this later in the tutorial...
     size_fn=lambda d: callables.size_by_magnitude(d) * 2,
     # use an 8-pointed star for bright star markers:
-    style__marker__symbol="star_8",  
+    style__marker__symbol="star_8",
     style__label__offset_x=8,
     style__label__offset_y=-8,
     style__label__border_width=2,
