@@ -134,7 +134,7 @@ def check_map_coma_berenices_dso_size():
             styles.extensions.MAP,
         ),
         resolution=RESOLUTION,
-        autoscale=True,
+        scale=1.5,
     )
     p.stars(mag=8, bayer_labels=True)
     p.open_clusters(mag=8, true_size=True)

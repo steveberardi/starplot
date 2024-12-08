@@ -27,8 +27,8 @@ style_blue = styles.PlotStyle().extend(
 POWAY = {"lat": 32.97, "lon": -117.038611}
 
 plot_kwargs = dict(
-    resolution=2000,
-    # autoscale=True,
+    resolution=2048,
+    autoscale=True,
 )
 
 
