@@ -3,17 +3,8 @@ FROM python:${PYTHON_VERSION}-bookworm AS base
 
 WORKDIR /starplot
 
+# Install required system libraries (GEOS + GDAL)
 RUN apt-get clean && apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
-
-# Install fonts
-# not required, but make the maps look better (especially greek letters)
-# RUN mkdir -p /usr/share/fonts/truetype
-# RUN wget https://github.com/google/fonts/raw/main/ofl/gfsdidot/GFSDidot-Regular.ttf -P /tmp/fonts
-# RUN wget https://github.com/google/fonts/raw/main/ofl/gentiumplus/GentiumPlus-Italic.ttf -P /tmp/fonts
-# RUN wget https://github.com/google/fonts/raw/main/ofl/gentiumplus/GentiumPlus-Regular.ttf -P /tmp/fonts
-# RUN apt-get install fonts-inter
-# RUN install -m644 /tmp/fonts/*.ttf /usr/share/fonts/truetype/
-# RUN fc-cache -f
 
 # ---------------------------------------------------------------------
 FROM base as dev

@@ -405,10 +405,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         conline_hips = condata.lines()
         style_kwargs = style.line.matplot_kwargs(self.scale)
 
-        # bg_extent = self._background_clip_path.get_window_extent(
-        #     renderer=self.fig.canvas.get_renderer()
-        # )
-
         for c in constellations_gdf.itertuples():
             obj = constellation_from_tuple(c)
 

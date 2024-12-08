@@ -234,8 +234,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
         """
-        # optic_star_multiplier = 0.57 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
-        optic_star_multiplier = 1 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
+        optic_star_multiplier = self.FIELD_OF_VIEW_MAX / self.optic.true_fov
         size_fn_mx = None
 
         if size_fn is not None:
