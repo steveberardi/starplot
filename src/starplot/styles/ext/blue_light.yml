@@ -56,7 +56,6 @@ dso_nebula: &DSO-NEB
   marker:
     alpha: 1
     color: hsl(98, 68%, 82%)
-    # color: hsl(91, 70%, 83%)
     edge_color: hsl(91, 63%, 24%)
   label:
     font_color: hsl(91, 63%, 29%)

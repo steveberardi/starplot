@@ -1172,7 +1172,7 @@ class BasePlot(ABC):
 
         if label:
             if len(inbounds) > 4:
-                label_spacing = int(len(inbounds) / 3) or 1
+                label_spacing = int(len(inbounds) / 2) or 1
 
                 for i in range(0, len(inbounds), label_spacing):
                     ra, dec = inbounds[i]

@@ -9,7 +9,7 @@ p = MapPlot(
     projection=Projection.MILLER,
     ra_min=15.6,
     ra_max=19.8,
-    dec_min=-45.6,
+    dec_min=-45.2,
     dec_max=-3,
     style=style,
     resolution=4000,
@@ -22,7 +22,10 @@ p.stars(
     where=[Star.magnitude <= 3],  # select the brightest stars
     size_fn=lambda d: callables.size_by_magnitude(d) * 2,  # make them 2x bigger
     style__marker__symbol="star_8",  # use an 8-pointed star for bright star markers
-    style__marker__zorder=200,
+    style__label__offset_x=8,
+    style__label__offset_y=-8,
+    style__label__border_width=2,
+    style__label__border_color="#fefaed",
 )
 p.stars(
     where=[
@@ -46,6 +49,13 @@ p.open_clusters(
         DSO.magnitude.is_null() | (DSO.magnitude < 10),
     ],
     true_size=False,
+)
+p.globular_clusters(
+    where=[
+        DSO.magnitude.is_null() | (DSO.magnitude < 10),
+    ],
+    true_size=False,
+    label_fn=lambda d: d.ngc,
 )
 
 p.ecliptic()

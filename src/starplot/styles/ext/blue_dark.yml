@@ -30,12 +30,14 @@ celestial_equator:
     font_color: hsl(209, 30%, 80%)
   line:
     color: hsl(209, 30%, 80%)
+
 ecliptic:
   label:
-    font_color: hsl(209, 30%, 80%)
+    font_color: '#e33b3b'
   line:
-    width: 1.6
-    color: hsl(209, 30%, 80%)
+    color: '#e33b3b'
+    alpha: 0.9
+
 constellation:
   label:
     font_alpha: 0.37
@@ -56,54 +58,42 @@ dso_double_star:
     alpha: 0.8
     color: '#88c0d0'
     edge_color: '#88c0d0'
+
+
 dso_galaxy:
-  label:
-    font_color: hsl(209, 23%, 72%)
   marker:
-    alpha: 0.16
-    color: hsl(209, 20%, 75%)
-    edge_color: hsl(209, 20%, 90%)
-    zorder: -600
-dso_nebula:
+    alpha: 1
+    color: hsl(330, 80%, 65%)
+    edge_color: hsl(330, 34%, 73%)
   label:
-    font_color: hsl(209, 23%, 72%)
+    font_color: hsl(330, 34%, 73%)
+
+dso_nebula: &DSO-NEB
   marker:
-    alpha: 0.46
-    color: hsl(209, 50%, 78%)
-    edge_color: hsl(209, 50%, 20%)
-    zorder: -500
-dso_planetary_nebula:
+    alpha: 1
+    color: hsl(98, 53%, 65%)
+    edge_color: hsl(91, 53%, 73%)
   label:
-    font_color: hsl(209, 23%, 72%)
+    font_color: hsl(91, 63%, 89%)
+dso_planetary_nebula: *DSO-NEB
+
+dso_open_cluster: &DSO-OC
   marker:
-    alpha: 0.46
-    color: hsl(209, 50%, 78%)
-    edge_color: hsl(209, 50%, 20%)
-    zorder: -500
-dso_open_cluster:
+    alpha: 1
+    color: hsl(58, 60%, 50%)
+    edge_color: "#000"
   label:
-    font_color: hsl(209, 23%, 72%)
-  marker:
-    alpha: 0.78
-    color: hsl(209, 50%, 18%)
-    edge_color: hsl(209, 50%, 92%)
-    zorder: -500
-dso_association_stars:
-  label:
-    font_color: hsl(209, 23%, 72%)
-  marker:
-    alpha: 0.78
-    color: hsl(209, 50%, 18%)
-    edge_color: hsl(209, 50%, 92%)
-    zorder: -500
+    font_color: hsl(58, 98%, 20%)
+dso_association_stars: *DSO-OC
+
 dso_globular_cluster:
   label:
     font_color: hsl(209, 23%, 72%)
   marker:
-    alpha: 0.68
-    color: hsl(209, 50%, 18%)
-    edge_color: hsl(209, 50%, 92%)
-    zorder: 100
+    alpha: 1
+    color: hsl(58, 60%, 50%)
+    edge_color: "#000"
+
 
 # other DSOs
 dso_unknown: &DSO

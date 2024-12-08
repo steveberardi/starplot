@@ -15,19 +15,41 @@ p = MapPlot(
     dec_max=80,
     style=style,
     resolution=6000,
+    # since this map has a very large extent, let's scale everything down
     scale=0.8,
 )
+p.constellations(
+    style__label__font_size=28,
+)
 p.stars(mag=6, where_labels=[Star.magnitude < 2.1])
-p.dsos(
+p.open_clusters(
     labels=None,
     where=[
-        DSO.magnitude <= 6,
-        DSO.size > 0.05,
+        DSO.magnitude <= 8,
     ],
+    true_size=False,
+)
+p.globular_clusters(
+    labels=None,
+    where=[
+        DSO.magnitude <= 9,
+    ],
+    true_size=False,
+)
+p.galaxies(
+    labels=None,
+    where=[
+        DSO.magnitude <= 10,
+    ],
+    true_size=False,
+)
+p.nebula(
+    labels=None,
+    where=[(DSO.magnitude <= 10) | (DSO.magnitude.is_null()), DSO.size > 0.05],
 )
 p.gridlines()
 p.milky_way()
-p.ecliptic(style={"line": {"style": "dashed"}})
+p.ecliptic()
 p.celestial_equator()
 
 p.export("map_big.png", padding=0.5)
