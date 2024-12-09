@@ -26,6 +26,11 @@ style_blue = styles.PlotStyle().extend(
 
 POWAY = {"lat": 32.97, "lon": -117.038611}
 
+plot_kwargs = dict(
+    resolution=2048,
+    autoscale=True,
+)
+
 
 def check_optic_polaris_binoculars():
     optic_plot = OpticPlot(
@@ -41,7 +46,7 @@ def check_optic_polaris_binoculars():
         ),
         dt=dt_dec_16,
         style=style_dark,
-        resolution=1600,
+        **plot_kwargs,
     )
     optic_plot.stars(mag=14)
     optic_plot.info()
@@ -65,7 +70,7 @@ def check_optic_orion_nebula_refractor():
         ),
         dt=dt_dec_16,
         style=style_dark,
-        resolution=1600,
+        **plot_kwargs,
     )
     optic_plot.stars(mag=12)
     optic_plot.nebula()
@@ -88,7 +93,7 @@ def check_optic_wrapping():
         ),
         dt=dt_dec_16,
         style=style_blue,
-        resolution=2000,
+        **plot_kwargs,
     )
     optic_plot.stars(
         where=[Star.magnitude < 8],
@@ -122,7 +127,7 @@ def check_optic_clipping():
         ),
         dt=dt_dec_16,
         style=style_blue,
-        resolution=1800,
+        **plot_kwargs,
     )
     optic_plot.stars(mag=12)
     optic_plot.dsos(mag=8.1, labels=None)
@@ -147,7 +152,7 @@ def check_optic_m45_binoculars():
         ),
         dt=dt_dec_16,
         style=style_dark,
-        resolution=1600,
+        **plot_kwargs,
     )
     optic_plot.stars(mag=12)
     optic_plot.info()
@@ -170,7 +175,7 @@ def check_optic_m45_scope():
         ),
         dt=dt_dec_16,
         style=style_dark,
-        resolution=1600,
+        **plot_kwargs,
     )
     optic_plot.stars(
         mag=12,
@@ -197,7 +202,7 @@ def check_optic_m45_reflector():
         ),
         dt=dt_dec_16,
         style=style_dark,
-        resolution=1600,
+        **plot_kwargs,
     )
     optic_plot.stars(mag=12)
     optic_plot.info()
@@ -221,7 +226,7 @@ def check_optic_m45_camera():
         ),
         dt=dt_dec_16,
         style=style_dark,
-        resolution=1600,
+        **plot_kwargs,
     )
     optic_plot.stars(mag=12, style__marker__symbol=styles.MarkerSymbolEnum.STAR)
     optic_plot.info()
@@ -247,7 +252,7 @@ def check_optic_camera_rotated():
         ),
         dt=dt_dec_16,
         style=style_dark,
-        resolution=1600,
+        **plot_kwargs,
     )
     optic_plot.stars(mag=12)
     optic_plot.info()
@@ -268,7 +273,7 @@ def check_optic_solar_eclipse_binoculars():
         style=styles.PlotStyle().extend(
             styles.extensions.BLUE_MEDIUM,
         ),
-        resolution=2000,
+        **plot_kwargs,
     )
     optic_plot.stars(mag=14)
     optic_plot.moon(true_size=True, show_phase=True)
@@ -290,6 +295,7 @@ def check_optic_moon_phase_waxing_crescent():
         dt=dt_dec_16,
         style=style_dark,
         raise_on_below_horizon=False,
+        **plot_kwargs,
     )
     optic_plot.moon(
         true_size=True,
@@ -313,6 +319,7 @@ def check_optic_moon_phase_new():
         dt=dt_april_8,
         style=style_light,
         raise_on_below_horizon=False,
+        **plot_kwargs,
     )
     optic_plot.moon(
         true_size=True,
@@ -337,6 +344,7 @@ def check_optic_moon_phase_full():
         dt=dt_full_moon,
         style=style_dark,
         raise_on_below_horizon=False,
+        **plot_kwargs,
     )
     optic_plot.moon(
         true_size=True,

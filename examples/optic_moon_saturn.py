@@ -19,6 +19,7 @@ op = m.create_optic(
     optic=optics.Binoculars(magnification=15, fov=65),
     style=PlotStyle().extend(extensions.GRAYSCALE_DARK, extensions.OPTIC),
     resolution=2000,
+    autoscale=True,
 )
 op.moon(
     true_size=True,
@@ -27,8 +28,8 @@ op.moon(
 op.planets(
     true_size=True,
     style__marker__color="#ffe785",
-    style__label__offset_x=14,
-    style__label__offset_y=-14,
+    style__label__offset_x=6,
+    style__label__offset_y=-6,
 )
 op.stars(mag=12)
 

@@ -20,7 +20,7 @@ def alpha(s):
 p = MapPlot(
     projection=Projection.MOLLWEIDE,
     style=style,
-    resolution=4000,
+    resolution=4800,
 )
 
 p.stars(

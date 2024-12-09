@@ -23,6 +23,7 @@ p = antares.create_optic(
     ),
     style=style,
     raise_on_below_horizon=False,
+    autoscale=True,
 )
 
 p.stars(
