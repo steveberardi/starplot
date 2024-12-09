@@ -24,8 +24,8 @@ def get_example_names():
         if filename.endswith("examples.py"):
             continue
 
-        # if filename.endswith("milky_way_stars.py"):
-        #     continue
+        if filename.endswith("milky_way_stars.py"):
+            continue
 
         filenames.append(filename)
 

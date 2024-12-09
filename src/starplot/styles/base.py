@@ -582,7 +582,7 @@ class LabelStyle(BaseStyle):
             offset /= SQR_2
             offset *= scale
 
-        offset += 1
+        offset += 1.1
 
         new_style.offset_x = offset * float(x_direction)
         new_style.offset_y = offset * float(y_direction)

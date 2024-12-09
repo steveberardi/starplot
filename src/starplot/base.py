@@ -1170,13 +1170,12 @@ class BasePlot(ABC):
             **self._plot_kwargs(),
         )
 
-        if label:
-            if len(inbounds) > 4:
-                label_spacing = int(len(inbounds) / 2) or 1
+        if label and len(inbounds) > 4:
+            label_spacing = int(len(inbounds) / 4)
 
-                for i in range(0, len(inbounds), label_spacing):
-                    ra, dec = inbounds[i]
-                    self.text(label, ra, dec, style.label, gid="ecliptic-label")
+            for ra, dec in [inbounds[label_spacing], inbounds[label_spacing*2]]:
+                # ra, dec = inbounds[i]
+                self.text(label, ra, dec, style.label, gid="ecliptic-label")
 
     @use_style(PathStyle, "celestial_equator")
     def celestial_equator(
