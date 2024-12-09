@@ -809,6 +809,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
             line_style=(0, (1, 2)),
             edge_width=1.3,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(
             # font_weight=FontWeightEnum.LIGHT,
@@ -826,6 +827,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
             line_style=(0, (1, 2)),
             edge_width=1.3,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(
             font_weight=FontWeightEnum.LIGHT,
@@ -842,19 +844,28 @@ class PlotStyle(BaseStyle):
             color="#555",
             alpha=0.8,
             edge_width=1.2,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x=7, offset_y=-6),
     )
     """Styling for globular star clusters"""
 
     dso_galaxy: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(symbol=MarkerSymbolEnum.ELLIPSE, fill=FillStyleEnum.FULL),
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.ELLIPSE,
+            fill=FillStyleEnum.FULL,
+            zorder=ZOrderEnum.LAYER_3 - 1,
+        ),
         label=LabelStyle(offset_x=1, offset_y=-1),
     )
     """Styling for galaxies"""
 
     dso_nebula: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(symbol=MarkerSymbolEnum.SQUARE, fill=FillStyleEnum.FULL),
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.SQUARE,
+            fill=FillStyleEnum.FULL,
+            zorder=ZOrderEnum.LAYER_3 - 1,
+        ),
         label=LabelStyle(offset_x=1, offset_y=-1),
     )
     """Styling for nebulas"""
@@ -865,13 +876,18 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
             edge_width=1.6,
             size=26,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x=1, offset_y=-1),
     )
     """Styling for planetary nebulas"""
 
     dso_double_star: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(symbol=MarkerSymbolEnum.CIRCLE_LINE, fill=FillStyleEnum.TOP),
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.CIRCLE_LINE,
+            fill=FillStyleEnum.TOP,
+            zorder=ZOrderEnum.LAYER_3 - 1,
+        ),
         label=LabelStyle(offset_x=1, offset_y=-1),
     )
     """Styling for double stars"""
@@ -881,6 +897,7 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -891,6 +908,7 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -901,6 +919,7 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -911,6 +930,7 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -921,6 +941,7 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -931,6 +952,7 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -941,6 +963,7 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.SQUARE,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -962,7 +985,7 @@ class PlotStyle(BaseStyle):
         color="#000",
         width=1.5,
         style=LineStyleEnum.DASHED,
-        alpha=0.25,
+        alpha=0.4,
         zorder=ZOrderEnum.LAYER_3,
     )
     """Styling for constellation borders (only applies to map plots)"""
@@ -992,7 +1015,7 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=18,
             font_color="#000",
-            font_weight=FontWeightEnum.LIGHT,
+            # font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
             anchor_point=AnchorPointEnum.BOTTOM_CENTER,
         ),

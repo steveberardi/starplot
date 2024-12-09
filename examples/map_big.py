@@ -18,6 +18,7 @@ p = MapPlot(
     # since this map has a very large extent, let's scale everything down
     scale=0.8,
 )
+p.gridlines()
 p.constellations(
     style__label__font_size=28,
 )
@@ -47,7 +48,7 @@ p.nebula(
     labels=None,
     where=[(DSO.magnitude <= 10) | (DSO.magnitude.is_null()), DSO.size > 0.05],
 )
-p.gridlines()
+
 p.milky_way()
 p.ecliptic()
 p.celestial_equator()

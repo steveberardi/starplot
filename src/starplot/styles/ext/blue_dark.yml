@@ -36,7 +36,7 @@ ecliptic:
     font_color: '#e33b3b'
   line:
     color: '#e33b3b'
-    alpha: 0.9
+    alpha: 1
 
 constellation:
   label:
@@ -63,16 +63,16 @@ dso_double_star:
 dso_galaxy:
   marker:
     alpha: 1
-    color: hsl(330, 80%, 65%)
-    edge_color: hsl(330, 34%, 73%)
+    color: hsl(330, 70%, 66%)
+    edge_color: hsl(330, 54%, 30%)
   label:
     font_color: hsl(330, 34%, 73%)
 
 dso_nebula: &DSO-NEB
   marker:
     alpha: 1
-    color: hsl(98, 53%, 65%)
-    edge_color: hsl(91, 53%, 73%)
+    color: hsl(98, 68%, 62%)
+    edge_color: hsl(91, 53%, 10%)
   label:
     font_color: hsl(91, 63%, 89%)
 dso_planetary_nebula: *DSO-NEB

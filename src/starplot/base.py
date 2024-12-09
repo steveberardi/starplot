@@ -1173,7 +1173,7 @@ class BasePlot(ABC):
         if label and len(inbounds) > 4:
             label_spacing = int(len(inbounds) / 4)
 
-            for ra, dec in [inbounds[label_spacing], inbounds[label_spacing*2]]:
+            for ra, dec in [inbounds[label_spacing], inbounds[label_spacing * 2]]:
                 # ra, dec = inbounds[i]
                 self.text(label, ra, dec, style.label, gid="ecliptic-label")
 
