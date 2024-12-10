@@ -33,7 +33,7 @@ pip install starplot
 Here's a basic Docker container setup that'll get you up and running:
 
 ```docker
-FROM python:3.11.7-bookworm AS base
+FROM python:3.11.7-bookworm
 
 WORKDIR /starplot
 
