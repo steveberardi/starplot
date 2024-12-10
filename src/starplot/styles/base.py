@@ -524,10 +524,23 @@ class LabelStyle(BaseStyle):
     """Color of border (also known as 'halos') around the text"""
 
     offset_x: Union[float, int, str] = 0
-    """Horizontal offset of the label, in points. Negative values supported."""
+    """
+    Horizontal offset of the label, in points. Negative values supported.
+    
+    
+    **Auto Mode** (_experimental_): If the label is plotted as part of a marker (e.g. stars, via `marker()`, etc), then you can also
+    specify the offset as `"auto"` which will calculate the offset automatically based on the marker's size and place
+    the label just outside the marker (avoiding overlapping). To enable "auto" mode you have to specify BOTH offsets (x and y) as "auto."
+    """
 
     offset_y: Union[float, int, str] = 0
-    """Vertical offset of the label, in points. Negative values supported."""
+    """
+    Vertical offset of the label, in points. Negative values supported.
+    
+    **Auto Mode** (_experimental_): If the label is plotted as part of a marker (e.g. stars, via `marker()`, etc), then you can also
+    specify the offset as `"auto"` which will calculate the offset automatically based on the marker's size and place
+    the label just outside the marker (avoiding overlapping). To enable "auto" mode you have to specify BOTH offsets (x and y) as "auto."
+    """
 
     zorder: int = ZOrderEnum.LAYER_4
     """Zorder of the label"""
