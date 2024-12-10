@@ -102,6 +102,7 @@ test-3.12:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
+# Python 3.13 not supported yet!
 test-3.13: PYTHON_VERSION=3.13.1
 test-3.13:
 	$(DOCKER_BUILD_PYTHON)
