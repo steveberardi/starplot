@@ -39,7 +39,7 @@ Join other starplotters on [Discord :fontawesome-brands-discord:{ .fg-primary }]
 
 <figure markdown>
   <img src="images/examples/map_orion.png" width="900">
-  <figcaption>Map around the constellation Orion, with an ellipse around Orion's Belt (<a href="/examples/map-orion/">source code</a>)</figcaption>
+  <figcaption>Map around the constellation Orion (<a href="/examples/map-orion/">source code</a>)</figcaption>
 </figure>
 
 

@@ -45,6 +45,7 @@ p = sp.MapPlot(
         sp.styles.extensions.ZENITH,
     ),
     resolution=2000,
+    autoscale=True,
 )
 p.constellations()
 p.stars(mag=4.6)
@@ -72,12 +73,11 @@ https://discord.gg/WewJJjshFu
 Contributing to Starplot is welcome and very much appreciated! Please see [here](CONTRIBUTING.md) for details.
 
 ## Coming Soon
+- 🌄 Horizon plots
 - 🌑 Planet moons
 - ✴️ Custom markers
-- 🚀 Plotting Optimizations
 - ☄️ Comet model
-- 🌄 Horizon plots
-- ⚖️ Better auto font-size adjustment
+- 💫 Better constellation label placement
 - 😄 🔭 Clear skies
 
 See more details on the [Public Roadmap](https://trello.com/b/sUksygn4/starplot-roadmap)
