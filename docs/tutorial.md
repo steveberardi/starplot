@@ -15,7 +15,7 @@ Here's an overview of what the tutorial covers:
 8. [Using callables](tutorial/08.md)
 9. [Where to go from here](tutorial/09.md)
 
-Estimated time to complete: 1 hour
+Estimated time to complete: 30 minutes
 
 <br/>
 
