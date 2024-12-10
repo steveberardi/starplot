@@ -207,7 +207,7 @@ class StarPlotterMixin:
             where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
-            bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
+            bayer_labels: If True, then Bayer labels for stars will be plotted.
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
         """
         self.logger.debug("Plotting stars...")
