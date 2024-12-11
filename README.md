@@ -6,7 +6,7 @@
 
 **Starplot** is a Python library for creating star charts and maps of the sky.
 
-- ⭐ **Zenith Plots** - showing the stars from a specific time/location
+- ⭐ **Zenith Plots** - showing the whole sky from a specific time/location
 - 🗺️ **Map Plots** - including many map projections
 - 🔭 **Optic Plots** - simulates what you'll see through an optic (e.g. binoculars, telescope) from a time/location
 - 🪐 **Planets and Deep Sky Objects (DSOs)**
@@ -21,7 +21,7 @@
 *Map around the constellation Orion:*
 ![map-orion](https://starplot.dev/images/examples/map_orion.png)
 
-*Optic plot of The Pleiades through a refractor as seen from a specific time/location:*
+*The Pleiades star cluster, as seen through a refractor telescope from a specific time and location:*
 ![optic-pleiades](https://starplot.dev/images/examples/optic_m45.png)
 
 ## Basic Usage
