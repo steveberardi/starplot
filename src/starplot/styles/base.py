@@ -688,10 +688,11 @@ class PlotStyle(BaseStyle):
 
     figure_background_color: ColorStr = ColorStr("#fff")
 
-    text_border_width: int = 0
+    text_border_width: int = 2
+    """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `border_width` and `border_color` properties."""
+
     text_border_color: ColorStr = ColorStr("#fff")
-    text_offset_x: float = 0.005
-    text_offset_y: float = 0.005
+
     text_anchor_fallbacks: List[AnchorPointEnum] = [
         AnchorPointEnum.BOTTOM_RIGHT,
         AnchorPointEnum.TOP_LEFT,
@@ -700,6 +701,7 @@ class PlotStyle(BaseStyle):
         AnchorPointEnum.BOTTOM_CENTER,
         AnchorPointEnum.TOP_CENTER,
     ]
+    """If a label's preferred anchor point results in a collision, then these fallbacks will be tried in sequence until a collision-free position is found."""
 
     # Borders
     border_font_size: int = 18
