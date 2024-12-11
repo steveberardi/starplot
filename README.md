@@ -42,9 +42,8 @@ p = sp.MapPlot(
     dt=datetime.now(tz).replace(hour=22),
     style=sp.styles.PlotStyle().extend(
         sp.styles.extensions.BLUE_MEDIUM,
-        sp.styles.extensions.ZENITH,
     ),
-    resolution=2000,
+    resolution=3200,
     autoscale=True,
 )
 p.constellations()

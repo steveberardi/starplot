@@ -30,12 +30,10 @@ pip install starplot
 
 ## Docker
 
-Here's a basic Docker container setup that'll get you up and running:
+Here's a basic Docker container definition that'll get you up and running:
 
 ```docker
-FROM python:3.11.7-bookworm
-
-WORKDIR /starplot
+FROM python:3.11.11-bookworm
 
 # Install required system libraries (GEOS + GDAL)
 RUN apt-get clean && apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
