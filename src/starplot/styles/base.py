@@ -105,9 +105,6 @@ class MarkerSymbolEnum(str, Enum):
     SQUARE_STRIPES_DIAGONAL = "square_stripes_diagonal"
     """\u25A8"""
 
-    # SQUARE_CROSSHAIR = "square_crosshair"
-    # """\u2BD0"""
-
     STAR = "star"
     """\u2605"""
 
@@ -269,19 +266,6 @@ class ZOrderEnum(int, Enum):
 class MarkerStyle(BaseStyle):
     """
     Styling properties for markers.
-
-    ???- tip "Example Usage"
-        Creates a style for a red triangle marker:
-        ```python
-        m = MarkerStyle(
-            color="#b13737",
-            symbol="triangle",
-            size=8,
-            fill="full",
-            alpha=1.0,
-            zorder=100,
-        )
-        ```
     """
 
     color: Optional[ColorStr] = ColorStr("#000")
@@ -360,18 +344,6 @@ class MarkerStyle(BaseStyle):
 class LineStyle(BaseStyle):
     """
     Styling properties for lines.
-
-    ???- tip "Example Usage"
-        Creates a style for a dashed green line:
-        ```python
-        ls = LineStyle(
-            width=2,
-            color="#6ba832",
-            style="dashed",
-            alpha=0.2,
-            zorder=-10,
-        )
-        ```
     """
 
     width: float = 4
@@ -424,17 +396,6 @@ class LineStyle(BaseStyle):
 class PolygonStyle(BaseStyle):
     """
     Styling properties for polygons.
-
-    ???- tip "Example Usage"
-        Creates a style for a partially transparent blue polygon:
-        ```python
-        ps = PolygonStyle(
-                color="#d9d9d9",
-                alpha=0.36,
-                edge_width=0,
-                zorder=-10000,
-        )
-        ```
     """
 
     edge_width: float = 1
@@ -478,16 +439,6 @@ class PolygonStyle(BaseStyle):
 class LabelStyle(BaseStyle):
     """
     Styling properties for a label.
-
-    ???- tip "Example Usage"
-        Creates a style for a bold blue label:
-        ```python
-        ls = LabelStyle(
-                font_color="blue",
-                font_weight="bold",
-                zorder=1,
-        )
-        ```
     """
 
     font_size: float = 15
@@ -583,8 +534,6 @@ class LabelStyle(BaseStyle):
         y_direction = -1 if new_style.anchor_point.startswith("bottom") else 1
 
         offset = (marker_size**0.5 / 2) / scale
-
-        # plot_kwargs["s"] = ((plot_kwargs.pop("markersize") / scale) ** 2) * (scale**2)
 
         # matplotlib seems to use marker size differently depending on symbol (for scatter)
         # it is NOT strictly the area of the bounding box of the marker
@@ -682,7 +631,6 @@ class PlotStyle(BaseStyle):
     Defines the styling for a plot
     """
 
-    # Base
     background_color: ColorStr = ColorStr("#fff")
     """Background color of the map region"""
 
@@ -1030,7 +978,6 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=18,
             font_color="#000",
-            # font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
             anchor_point=AnchorPointEnum.BOTTOM_CENTER,
         ),
@@ -1050,7 +997,6 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=22,
             font_color="#777",
-            # font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
             zorder=ZOrderEnum.LAYER_3,
         ),
