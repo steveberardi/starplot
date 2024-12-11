@@ -15,6 +15,7 @@ p = MapPlot(
         extensions.NORD,
     ),
     resolution=3600,
+    autoscale=True,
 )
 p.constellations()
 p.stars(mag=4.6, where_labels=[Star.magnitude < 2.1])
@@ -32,7 +33,7 @@ p.marker(
     dec=25.85,
     style={
         "marker": {
-            "size": 28,
+            "size": 60,
             "symbol": "circle",
             "fill": "full",
             "color": "#ed7eed",
@@ -42,7 +43,7 @@ p.marker(
         },
         "label": {
             "zorder": 200,
-            "font_size": 12,
+            "font_size": 30,
             "font_weight": "bold",
             "font_color": "ed7eed",
             "font_alpha": 0.8,

@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot import callables
-from starplot.base import BasePlot
+from starplot.base import BasePlot, DPI
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
@@ -44,6 +44,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
+        scale: Scaling factor that will be applied to all sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set the scale to 2. At `scale=1` and `resolution=4096` (the default), all sizes are optimized visually for a map that covers 1-3 constellations. So, if you're creating a plot of a _larger_ extent, then it'd probably be good to decrease the scale (i.e. make everything smaller) -- and _increase_ the scale if you're plotting a very small area.
+        autoscale: If True, then the scale will be set automatically based on resolution.
 
     Returns:
         OpticPlot: A new instance of an OpticPlot
@@ -62,9 +64,11 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_OPTIC_STYLE,
-        resolution: int = 2048,
+        resolution: int = 4096,
         hide_colliding_labels: bool = True,
         raise_on_below_horizon: bool = True,
+        scale: float = 1.0,
+        autoscale: bool = False,
         *args,
         **kwargs,
     ) -> "OpticPlot":
@@ -74,6 +78,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             style,
             resolution,
             hide_colliding_labels,
+            scale=scale,
+            autoscale=autoscale,
             *args,
             **kwargs,
         )
@@ -193,6 +199,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         else:
             plotted.set_clip_path(self._background_clip_path)
 
+    @use_style(ObjectStyle, "star")
     def stars(
         self,
         mag: float = 6.0,
@@ -207,6 +214,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
         bayer_labels: bool = False,
+        flamsteed_labels: bool = False,
         *args,
         **kwargs,
     ):
@@ -225,12 +233,16 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
-            bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
+            bayer_labels: If True, then Bayer labels for stars will be plotted.
+            flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
         """
-        optic_star_multiplier = 0.4 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
+        optic_star_multiplier = self.FIELD_OF_VIEW_MAX / self.optic.true_fov
+        size_fn_mx = None
 
-        def size_fn_mx(st: Star) -> float:
-            return size_fn(st) * optic_star_multiplier
+        if size_fn is not None:
+
+            def size_fn_mx(s):
+                return size_fn(s) * optic_star_multiplier
 
         super().stars(
             mag=mag,
@@ -245,6 +257,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             labels=labels,
             legend_label=legend_label,
             bayer_labels=bayer_labels,
+            flamsteed_labels=flamsteed_labels,
             *args,
             **kwargs,
         )
@@ -268,7 +281,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         )  # apply transform again because new xy limits will undo the transform
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        font_size = style.font_size * self._size_multiplier * 2
+        font_size = style.font_size * self.scale
 
         column_labels = [
             "Target (Alt/Az)",
@@ -296,19 +309,17 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             edges="vertical",
         )
         table.auto_set_font_size(False)
-        table.set_fontsize(font_size)
+        table.set_fontsize(style.font_size)
         table.scale(1, 3.1)
 
         # Apply style to all cells
         for row in [0, 1]:
             for col in range(len(values)):
-                table[row, col].set_text_props(
-                    **style.matplot_kwargs(self._size_multiplier)
-                )
+                table[row, col].set_text_props(**style.matplot_kwargs(self.scale))
 
         # Apply some styles only to the header row
         for col in range(len(values)):
-            table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.15)
+            table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.2)
 
     def _plot_border(self):
         # since we're using AzimuthalEquidistant projection, the center will always be (0, 0)
@@ -330,7 +341,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         inner_border = self.optic.patch(
             x,
             y,
-            linewidth=2 * self._size_multiplier,
+            linewidth=2 * self.scale,
             edgecolor=self.style.border_line_color.as_hex(),
             fill=False,
             zorder=ZOrderEnum.LAYER_5 + 100,
@@ -342,7 +353,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             x,
             y,
             padding=0.05,
-            linewidth=20 * self._size_multiplier,
+            linewidth=20 * self.scale,
             edgecolor=self.style.border_bg_color.as_hex(),
             fill=False,
             zorder=ZOrderEnum.LAYER_5,
@@ -366,6 +377,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.figure_background_color.as_hex(),
             layout="constrained",
+            dpi=DPI,
         )
         self.ax = plt.axes(projection=self._proj)
         self.ax.xaxis.set_visible(False)

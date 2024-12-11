@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles
+from starplot import styles, Star
 from starplot.map import MapPlot, Projection
 
 HERE = Path(__file__).resolve().parent
@@ -26,8 +26,9 @@ def _zenith():
         dt=JUNE_2023,
         style=STYLE,
         resolution=RESOLUTION,
+        autoscale=True,
     )
-    p.stars(mag=4.6, style__marker__size=25)
+    p.stars(mag=4.6, where_labels=[Star.magnitude < 3])
     p.constellations()
     p.ecliptic(style__line__width=8)
     p.celestial_equator(style__line__width=8)

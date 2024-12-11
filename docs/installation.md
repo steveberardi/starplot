@@ -28,6 +28,19 @@ apt-get install libgeos-dev libgdal-dev
 pip install starplot
 ```
 
+## Docker
+
+Here's a basic Docker container definition that'll get you up and running:
+
+```docker
+FROM python:3.11.11-bookworm
+
+# Install required system libraries (GEOS + GDAL)
+RUN apt-get clean && apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
+
+RUN pip install starplot
+```
+
 !!! star "What about Windows?"
 
     I haven't tried installing Starplot on Windows, but if you have and would like to share instructions, please feel free to [open a pull request on GitHub](https://github.com/steveberardi/starplot) with an update to this file (`docs/installation.md`). Thanks! :)

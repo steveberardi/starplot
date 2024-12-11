@@ -26,11 +26,14 @@ p = OpticPlot(
     ),
     dt=dt,
     style=style,
-    resolution=1600,
+    resolution=2048,
+    autoscale=True,
 )
 p.stars(
     mag=12,
     color_fn=color_by_bv,
+    style__label__offset_x="auto",
+    style__label__offset_y="auto",
 )
 p.info()
 p.export("optic_m45.png", padding=0.1, transparent=True)

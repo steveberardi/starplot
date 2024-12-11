@@ -1,8 +1,8 @@
 import json
+
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Union
-from functools import cache
+from typing import Optional, Union, List
 
 import yaml
 
@@ -14,7 +14,14 @@ from typing_extensions import Annotated
 
 from starplot.data.dsos import DsoType
 from starplot.styles.helpers import merge_dict
-from starplot.styles.markers import ellipse, circle_cross, circle_line
+from starplot.styles.markers import (
+    ellipse,
+    circle_cross,
+    circle_crosshair,
+    circle_line,
+    circle_dot,
+    circle_dotted_rings,
+)
 
 
 ColorStr = Annotated[
@@ -26,9 +33,10 @@ ColorStr = Annotated[
 ]
 
 
-FONT_SCALE = 2
-
 HERE = Path(__file__).resolve().parent
+
+PI = 3.141592653589793
+SQR_2 = 1.41421356237
 
 
 class BaseStyle(BaseModel):
@@ -97,9 +105,6 @@ class MarkerSymbolEnum(str, Enum):
     SQUARE_STRIPES_DIAGONAL = "square_stripes_diagonal"
     """\u25A8"""
 
-    # SQUARE_CROSSHAIR = "square_crosshair"
-    # """\u2BD0"""
-
     STAR = "star"
     """\u2605"""
 
@@ -118,8 +123,16 @@ class MarkerSymbolEnum(str, Enum):
     CIRCLE_CROSS = "circle_cross"
     """\u1AA0"""
 
+    CIRCLE_CROSSHAIR = "circle_crosshair"
+    """No preview available, but this is the standard symbol for planetary nebulae"""
+
+    CIRCLE_DOT = "circle_dot"
+    """\u29BF"""
+
     CIRCLE_DOTTED_EDGE = "circle_dotted_edge"
     """\u25CC"""
+
+    CIRCLE_DOTTED_RINGS = "circle_dotted_rings"
 
     CIRCLE_LINE = "circle_line"
     """\u29B5"""
@@ -150,7 +163,10 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.TRIANGLE: "^",
             MarkerSymbolEnum.CIRCLE_PLUS: "$\u2295$",
             MarkerSymbolEnum.CIRCLE_CROSS: circle_cross(),
+            MarkerSymbolEnum.CIRCLE_CROSSHAIR: circle_crosshair(),
+            MarkerSymbolEnum.CIRCLE_DOT: circle_dot(),
             MarkerSymbolEnum.CIRCLE_DOTTED_EDGE: "$\u25CC$",
+            MarkerSymbolEnum.CIRCLE_DOTTED_RINGS: circle_dotted_rings(),
             MarkerSymbolEnum.CIRCLE_LINE: circle_line(),
             MarkerSymbolEnum.COMET: "$\u2604$",
             MarkerSymbolEnum.STAR_8: "$\u2734$",
@@ -222,6 +238,11 @@ class AnchorPointEnum(str, Enum):
 
         return style
 
+    @staticmethod
+    def from_str(value: str) -> "AnchorPointEnum":
+        options = {ap.value: ap for ap in AnchorPointEnum}
+        return options.get(value)
+
 
 class ZOrderEnum(int, Enum):
     """
@@ -245,19 +266,6 @@ class ZOrderEnum(int, Enum):
 class MarkerStyle(BaseStyle):
     """
     Styling properties for markers.
-
-    ???- tip "Example Usage"
-        Creates a style for a red triangle marker:
-        ```python
-        m = MarkerStyle(
-            color="#b13737",
-            symbol="triangle",
-            size=8,
-            fill="full",
-            alpha=1.0,
-            zorder=100,
-        )
-        ```
     """
 
     color: Optional[ColorStr] = ColorStr("#000")
@@ -266,14 +274,20 @@ class MarkerStyle(BaseStyle):
     edge_color: Optional[ColorStr] = ColorStr("#000")
     """Edge color of marker. Can be a hex, rgb, hsl, or word string."""
 
-    edge_width: int = 1
-    """Edge width of marker. Not available for all marker symbols."""
+    edge_width: float = 1
+    """Edge width of marker, in points. Not available for all marker symbols."""
+
+    line_style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
+    """Edge line style. Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
+
+    dash_capstyle: DashCapStyleEnum = DashCapStyleEnum.PROJECTING
+    """Style of dash endpoints"""
 
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     """Symbol for marker"""
 
-    size: int = 4
-    """Relative size of marker"""
+    size: float = 22
+    """Size of marker in points"""
 
     fill: FillStyleEnum = FillStyleEnum.NONE
     """Fill style of marker"""
@@ -281,53 +295,59 @@ class MarkerStyle(BaseStyle):
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
-    zorder: int = -1
+    zorder: int = ZOrderEnum.LAYER_2
     """Zorder of marker"""
 
     @property
     def symbol_matplot(self) -> str:
         return MarkerSymbolEnum(self.symbol).as_matplot()
 
-    @cache
-    def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
+    def matplot_kwargs(self, scale: float = 1.0) -> dict:
         return dict(
             color=self.color.as_hex() if self.color else "none",
             markeredgecolor=self.edge_color.as_hex() if self.edge_color else "none",
             marker=MarkerSymbolEnum(self.symbol).as_matplot(),
-            markersize=self.size * size_multiplier * FONT_SCALE,
+            markersize=self.size * scale,
             fillstyle=self.fill,
             alpha=self.alpha,
             zorder=self.zorder,
         )
 
+    def matplot_scatter_kwargs(self, scale: float = 1.0) -> dict:
+        plot_kwargs = self.matplot_kwargs(scale)
+        plot_kwargs["edgecolors"] = plot_kwargs.pop("markeredgecolor")
+
+        # matplotlib's plot() function takes the marker size in points diameter
+        # and the scatter() function takes it in points squared
+        plot_kwargs["s"] = ((plot_kwargs.pop("markersize") / scale) ** 2) * (scale**2)
+
+        plot_kwargs["c"] = plot_kwargs.pop("color")
+        plot_kwargs["linewidths"] = self.edge_width * scale
+        plot_kwargs["linestyle"] = self.line_style
+        plot_kwargs["capstyle"] = self.dash_capstyle
+
+        plot_kwargs.pop("fillstyle")
+
+        return plot_kwargs
+
     def to_polygon_style(self):
         return PolygonStyle(
             fill_color=self.color.as_hex() if self.color else None,
             edge_color=self.edge_color.as_hex() if self.edge_color else None,
+            edge_width=self.edge_width,
             alpha=self.alpha,
             zorder=self.zorder,
+            line_style=self.line_style,
         )
 
 
 class LineStyle(BaseStyle):
     """
     Styling properties for lines.
-
-    ???- tip "Example Usage"
-        Creates a style for a dashed green line:
-        ```python
-        ls = LineStyle(
-            width=2,
-            color="#6ba832",
-            style="dashed",
-            alpha=0.2,
-            zorder=-10,
-        )
-        ```
     """
 
-    width: float = 2
-    """Width of line"""
+    width: float = 4
+    """Width of line in points"""
 
     color: ColorStr = ColorStr("#000")
     """Color of the line. Can be a hex, rgb, hsl, or word string."""
@@ -341,17 +361,17 @@ class LineStyle(BaseStyle):
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
-    zorder: int = -1
+    zorder: int = ZOrderEnum.LAYER_2
     """Zorder of the line"""
 
     edge_width: int = 0
-    """Width of the line's edge. _If the width or color is falsey then the line will NOT be drawn with an edge._"""
+    """Width of the line's edge in points. _If the width or color is falsey then the line will NOT be drawn with an edge._"""
 
     edge_color: Optional[ColorStr] = None
     """Edge color of the line. _If the width or color is falsey then the line will NOT be drawn with an edge._"""
 
-    def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
-        line_width = self.width * size_multiplier
+    def matplot_kwargs(self, scale: float = 1.0) -> dict:
+        line_width = self.width * scale
 
         result = dict(
             color=self.color.as_hex(),
@@ -365,7 +385,7 @@ class LineStyle(BaseStyle):
         if self.edge_width and self.edge_color:
             result["path_effects"] = [
                 patheffects.withStroke(
-                    linewidth=line_width + 2 * self.edge_width * size_multiplier,
+                    linewidth=line_width + 2 * self.edge_width * scale,
                     foreground=self.edge_color.as_hex(),
                 )
             ]
@@ -376,21 +396,10 @@ class LineStyle(BaseStyle):
 class PolygonStyle(BaseStyle):
     """
     Styling properties for polygons.
-
-    ???- tip "Example Usage"
-        Creates a style for a partially transparent blue polygon:
-        ```python
-        ps = PolygonStyle(
-                color="#d9d9d9",
-                alpha=0.36,
-                edge_width=0,
-                zorder=-10000,
-        )
-        ```
     """
 
-    edge_width: int = 1
-    """Width of the polygon's edge"""
+    edge_width: float = 1
+    """Width of the polygon's edge in points"""
 
     color: Optional[ColorStr] = None
     """If specified, this will be the fill color AND edge color of the polygon"""
@@ -410,12 +419,12 @@ class PolygonStyle(BaseStyle):
     zorder: int = -1
     """Zorder of the polygon"""
 
-    def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
+    def matplot_kwargs(self, scale: float = 1.0) -> dict:
         styles = dict(
             edgecolor=self.edge_color.as_hex() if self.edge_color else "none",
             facecolor=self.fill_color.as_hex() if self.fill_color else "none",
             fill=True if self.fill_color else False,
-            linewidth=self.edge_width * size_multiplier,
+            linewidth=self.edge_width * scale,
             linestyle=self.line_style,
             alpha=self.alpha,
             zorder=self.zorder,
@@ -430,23 +439,10 @@ class PolygonStyle(BaseStyle):
 class LabelStyle(BaseStyle):
     """
     Styling properties for a label.
-
-    ???- tip "Example Usage"
-        Creates a style for a bold blue label:
-        ```python
-        ls = LabelStyle(
-                font_color="blue",
-                font_weight="bold",
-                zorder=1,
-        )
-        ```
     """
 
-    anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
-    """Anchor point of label"""
-
-    font_size: int = 8
-    """Relative font size of the label"""
+    font_size: float = 15
+    """Font size of the label, in points"""
 
     font_weight: FontWeightEnum = FontWeightEnum.NORMAL
     """Font weight (e.g. normal, bold, ultra bold, etc)"""
@@ -460,28 +456,50 @@ class LabelStyle(BaseStyle):
     font_style: FontStyleEnum = FontStyleEnum.NORMAL
     """Style of the label (e.g. normal, italic, etc)"""
 
-    font_name: Optional[str] = None
+    font_name: Optional[str] = "Inter"
     """Name of the font to use"""
 
     font_family: Optional[str] = None
     """Font family (e.g. 'monospace', 'sans-serif', 'serif', etc)"""
 
-    line_spacing: Optional[int] = None
+    line_spacing: Optional[float] = None
     """Spacing between lines of text"""
 
-    offset_x: int = 0
-    """Horizontal offset of the label, in pixels. Negative values supported."""
+    anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
+    """Anchor point of label"""
 
-    offset_y: int = 0
-    """Vertical offset of the label, in pixels. Negative values supported."""
+    border_width: float = 0
+    """Width of border (also known as 'halos') around the text, in points"""
 
-    zorder: int = 101
+    border_color: Optional[ColorStr] = None
+    """Color of border (also known as 'halos') around the text"""
+
+    offset_x: Union[float, int, str] = 0
+    """
+    Horizontal offset of the label, in points. Negative values supported.
+    
+    
+    **Auto Mode** (_experimental_): If the label is plotted as part of a marker (e.g. stars, via `marker()`, etc), then you can also
+    specify the offset as `"auto"` which will calculate the offset automatically based on the marker's size and place
+    the label just outside the marker (avoiding overlapping). To enable "auto" mode you have to specify BOTH offsets (x and y) as "auto."
+    """
+
+    offset_y: Union[float, int, str] = 0
+    """
+    Vertical offset of the label, in points. Negative values supported.
+    
+    **Auto Mode** (_experimental_): If the label is plotted as part of a marker (e.g. stars, via `marker()`, etc), then you can also
+    specify the offset as `"auto"` which will calculate the offset automatically based on the marker's size and place
+    the label just outside the marker (avoiding overlapping). To enable "auto" mode you have to specify BOTH offsets (x and y) as "auto."
+    """
+
+    zorder: int = ZOrderEnum.LAYER_4
     """Zorder of the label"""
 
-    def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
+    def matplot_kwargs(self, scale: float = 1.0) -> dict:
         style = dict(
             color=self.font_color.as_hex(),
-            fontsize=self.font_size * size_multiplier * FONT_SCALE,
+            fontsize=self.font_size * scale,
             fontstyle=self.font_style,
             fontname=self.font_name,
             weight=self.font_weight,
@@ -494,9 +512,44 @@ class LabelStyle(BaseStyle):
         if self.line_spacing:
             style["linespacing"] = self.line_spacing
 
+        if self.border_width != 0 and self.border_color is not None:
+            style["path_effects"] = [
+                patheffects.withStroke(
+                    linewidth=self.border_width * scale,
+                    foreground=self.border_color.as_hex(),
+                )
+            ]
+
         style.update(AnchorPointEnum(self.anchor_point).as_matplot())
 
         return style
+
+    def offset_from_marker(self, marker_symbol, marker_size, scale: float = 1.0):
+        if self.offset_x != "auto" or self.offset_y != "auto":
+            return self
+
+        new_style = self.model_copy()
+
+        x_direction = -1 if new_style.anchor_point.endswith("left") else 1
+        y_direction = -1 if new_style.anchor_point.startswith("bottom") else 1
+
+        offset = (marker_size**0.5 / 2) / scale
+
+        # matplotlib seems to use marker size differently depending on symbol (for scatter)
+        # it is NOT strictly the area of the bounding box of the marker
+        if marker_symbol in [MarkerSymbolEnum.POINT]:
+            offset /= PI
+
+        elif marker_symbol != MarkerSymbolEnum.SQUARE:
+            offset /= SQR_2
+            offset *= scale
+
+        offset += 1.1
+
+        new_style.offset_x = offset * float(x_direction)
+        new_style.offset_y = offset * float(y_direction)
+
+        return new_style
 
 
 class ObjectStyle(BaseStyle):
@@ -540,8 +593,8 @@ class LegendStyle(BaseStyle):
     label_padding: float = 1.6
     """Padding between legend labels"""
 
-    symbol_size: int = 16
-    """Relative size of symbols in the legend"""
+    symbol_size: int = 34
+    """Size of symbols in the legend, in points"""
 
     symbol_padding: float = 0.2
     """Padding between each symbol and its label"""
@@ -549,8 +602,8 @@ class LegendStyle(BaseStyle):
     border_padding: float = 1.28
     """Padding around legend border"""
 
-    font_size: int = 9
-    """Relative font size of the legend labels"""
+    font_size: int = 23
+    """Font size of the legend labels, in points"""
 
     font_color: ColorStr = ColorStr("#000")
     """Font color for legend labels"""
@@ -558,12 +611,12 @@ class LegendStyle(BaseStyle):
     zorder: int = ZOrderEnum.LAYER_5
     """Zorder of the legend"""
 
-    def matplot_kwargs(self, size_multiplier: float = 1.0) -> dict:
+    def matplot_kwargs(self, scale: float = 1.0) -> dict:
         return dict(
             loc=self.location,
             ncols=self.num_columns,
             framealpha=self.background_alpha,
-            fontsize=self.font_size * size_multiplier * FONT_SCALE,
+            fontsize=self.font_size * scale,
             labelcolor=self.font_color.as_hex(),
             borderpad=self.border_padding,
             labelspacing=self.label_padding,
@@ -578,16 +631,25 @@ class PlotStyle(BaseStyle):
     Defines the styling for a plot
     """
 
-    # Base
     background_color: ColorStr = ColorStr("#fff")
     """Background color of the map region"""
 
     figure_background_color: ColorStr = ColorStr("#fff")
 
-    text_border_width: int = 3
+    text_border_width: int = 2
+    """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `border_width` and `border_color` properties."""
+
     text_border_color: ColorStr = ColorStr("#fff")
-    text_offset_x: float = 0.005
-    text_offset_y: float = 0.005
+
+    text_anchor_fallbacks: List[AnchorPointEnum] = [
+        AnchorPointEnum.BOTTOM_RIGHT,
+        AnchorPointEnum.TOP_LEFT,
+        AnchorPointEnum.TOP_RIGHT,
+        AnchorPointEnum.BOTTOM_LEFT,
+        AnchorPointEnum.BOTTOM_CENTER,
+        AnchorPointEnum.TOP_CENTER,
+    ]
+    """If a label's preferred anchor point results in a collision, then these fallbacks will be tried in sequence until a collision-free position is found."""
 
     # Borders
     border_font_size: int = 18
@@ -608,10 +670,10 @@ class PlotStyle(BaseStyle):
 
     # Info text
     info_text: LabelStyle = LabelStyle(
-        font_size=10,
+        font_size=30,
         zorder=ZOrderEnum.LAYER_5,
-        font_family="monospace",
-        line_spacing=2,
+        font_family="Inter",
+        line_spacing=1.2,
         anchor_point=AnchorPointEnum.BOTTOM_CENTER,
     )
     """Styling for info text (only applies to zenith and optic plots)"""
@@ -619,31 +681,53 @@ class PlotStyle(BaseStyle):
     # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            fill=FillStyleEnum.FULL, zorder=ZOrderEnum.LAYER_3, size=36, edge_color=None
+            fill=FillStyleEnum.FULL,
+            zorder=ZOrderEnum.LAYER_3 + 1,
+            size=40,
+            edge_color=None,
         ),
         label=LabelStyle(
-            font_size=9, font_weight=FontWeightEnum.BOLD, zorder=ZOrderEnum.LAYER_4
+            font_size=24,
+            font_weight=FontWeightEnum.BOLD,
+            zorder=ZOrderEnum.LAYER_3 + 2,
+            offset_x="auto",
+            offset_y="auto",
         ),
     )
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
-        font_size=7,
+        font_size=21,
         font_weight=FontWeightEnum.LIGHT,
+        font_name="GFS Didot",
         zorder=ZOrderEnum.LAYER_4,
         anchor_point=AnchorPointEnum.TOP_LEFT,
+        offset_x="auto",
+        offset_y="auto",
     )
     """Styling for Bayer labels of stars"""
+
+    flamsteed_labels: LabelStyle = LabelStyle(
+        font_size=13,
+        font_weight=FontWeightEnum.NORMAL,
+        zorder=ZOrderEnum.LAYER_4,
+        anchor_point=AnchorPointEnum.BOTTOM_LEFT,
+        offset_x="auto",
+        offset_y="auto",
+    )
+    """Styling for Flamsteed number labels of stars"""
 
     planets: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            size=4,
+            size=50,
             fill=FillStyleEnum.LEFT,
         ),
         label=LabelStyle(
-            font_size=8,
+            font_size=28,
             font_weight=FontWeightEnum.BOLD,
+            offset_x="auto",
+            offset_y="auto",
         ),
     )
     """Styling for planets"""
@@ -651,15 +735,17 @@ class PlotStyle(BaseStyle):
     moon: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            size=14,
+            size=50,
             fill=FillStyleEnum.FULL,
             color="#c8c8c8",
             alpha=1,
             zorder=ZOrderEnum.LAYER_4,
         ),
         label=LabelStyle(
-            font_size=8,
+            font_size=28,
             font_weight=FontWeightEnum.BOLD,
+            offset_x="auto",
+            offset_y="auto",
         ),
     )
     """Styling for the moon"""
@@ -667,13 +753,13 @@ class PlotStyle(BaseStyle):
     sun: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SUN,
-            size=14,
+            size=80,
             fill=FillStyleEnum.FULL,
             color="#000",
             zorder=ZOrderEnum.LAYER_4 - 100,
         ),
         label=LabelStyle(
-            font_size=8,
+            font_size=28,
             font_weight=FontWeightEnum.BOLD,
         ),
     )
@@ -683,14 +769,17 @@ class PlotStyle(BaseStyle):
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            size=7,
             fill=FillStyleEnum.FULL,
+            line_style=(0, (1, 2)),
+            edge_width=1.3,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(
-            font_size=7,
-            font_weight=FontWeightEnum.LIGHT,
-            offset_x=10,
-            offset_y=-10,
+            # font_weight=FontWeightEnum.LIGHT,
+            # offset_x=7,
+            # offset_y=-6,
+            offset_x="auto",
+            offset_y="auto",
         ),
     )
     """Styling for open star clusters"""
@@ -698,14 +787,15 @@ class PlotStyle(BaseStyle):
     dso_association_stars: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            size=7,
             fill=FillStyleEnum.FULL,
+            line_style=(0, (1, 2)),
+            edge_width=1.3,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(
-            font_size=7,
             font_weight=FontWeightEnum.LIGHT,
-            offset_x=10,
-            offset_y=-10,
+            offset_x=7,
+            offset_y=-6,
         ),
     )
     """Styling for associations of stars"""
@@ -713,113 +803,132 @@ class PlotStyle(BaseStyle):
     dso_globular_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE_CROSS,
-            size=7,
             fill=FillStyleEnum.FULL,
             color="#555",
             alpha=0.8,
+            edge_width=1.2,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(font_size=7, offset_x=10, offset_y=-10),
+        label=LabelStyle(offset_x=7, offset_y=-6),
     )
     """Styling for globular star clusters"""
 
     dso_galaxy: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.ELLIPSE, size=7, fill=FillStyleEnum.FULL
+            symbol=MarkerSymbolEnum.ELLIPSE,
+            fill=FillStyleEnum.FULL,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(font_size=7, offset_x=10, offset_y=-10),
+        label=LabelStyle(offset_x=1, offset_y=-1),
     )
     """Styling for galaxies"""
 
     dso_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE, size=7, fill=FillStyleEnum.FULL
+            symbol=MarkerSymbolEnum.SQUARE,
+            fill=FillStyleEnum.FULL,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(font_size=7, offset_x=10, offset_y=-10),
+        label=LabelStyle(offset_x=1, offset_y=-1),
     )
     """Styling for nebulas"""
 
+    dso_planetary_nebula: ObjectStyle = ObjectStyle(
+        marker=MarkerStyle(
+            symbol=MarkerSymbolEnum.CIRCLE_CROSSHAIR,
+            fill=FillStyleEnum.FULL,
+            edge_width=1.6,
+            size=26,
+            zorder=ZOrderEnum.LAYER_3 - 1,
+        ),
+        label=LabelStyle(offset_x=1, offset_y=-1),
+    )
+    """Styling for planetary nebulas"""
+
     dso_double_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE, size=7, fill=FillStyleEnum.TOP
+            symbol=MarkerSymbolEnum.CIRCLE_LINE,
+            fill=FillStyleEnum.TOP,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(font_size=7),
+        label=LabelStyle(offset_x=1, offset_y=-1),
     )
     """Styling for double stars"""
 
     dso_dark_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(font_size=7),
+        label=LabelStyle(),
     )
     """Styling for dark nebulas"""
 
     dso_hii_ionized_region: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(font_size=7),
+        label=LabelStyle(),
     )
     """Styling for HII Ionized regions"""
 
     dso_supernova_remnant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(font_size=7),
+        label=LabelStyle(),
     )
     """Styling for supernova remnants"""
 
     dso_nova_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(font_size=7),
+        label=LabelStyle(),
     )
     """Styling for nova stars"""
 
     dso_nonexistant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(font_size=7),
+        label=LabelStyle(),
     )
     """Styling for 'nonexistent' (as designated by OpenNGC) deep sky objects"""
 
     dso_unknown: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(font_size=7),
+        label=LabelStyle(),
     )
     """Styling for 'unknown' (as designated by OpenNGC) types of deep sky objects"""
 
     dso_duplicate: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            size=7,
             fill=FillStyleEnum.TOP,
             color="#000",
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(font_size=7),
+        label=LabelStyle(),
     )
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
@@ -827,8 +936,8 @@ class PlotStyle(BaseStyle):
     constellation: PathStyle = PathStyle(
         line=LineStyle(color="#c8c8c8"),
         label=LabelStyle(
-            font_size=7,
-            font_weight=FontWeightEnum.LIGHT,
+            font_size=21,
+            font_weight=FontWeightEnum.NORMAL,
             zorder=ZOrderEnum.LAYER_3,
             anchor_point=AnchorPointEnum.TOP_RIGHT,
         ),
@@ -837,9 +946,9 @@ class PlotStyle(BaseStyle):
 
     constellation_borders: LineStyle = LineStyle(
         color="#000",
-        width=2,
+        width=1.5,
         style=LineStyleEnum.DASHED,
-        alpha=0.2,
+        alpha=0.4,
         zorder=ZOrderEnum.LAYER_3,
     )
     """Styling for constellation borders (only applies to map plots)"""
@@ -849,7 +958,7 @@ class PlotStyle(BaseStyle):
         fill_color="#d9d9d9",
         alpha=0.36,
         edge_width=0,
-        zorder=ZOrderEnum.LAYER_2,
+        zorder=ZOrderEnum.LAYER_1,
     )
     """Styling for the Milky Way (only applies to map plots)"""
 
@@ -867,9 +976,8 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_2,
         ),
         label=LabelStyle(
-            font_size=9,
+            font_size=18,
             font_color="#000",
-            font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
             anchor_point=AnchorPointEnum.BOTTOM_CENTER,
         ),
@@ -880,16 +988,15 @@ class PlotStyle(BaseStyle):
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(
             color="#777",
-            width=2,
+            width=3,
             style=LineStyleEnum.DOTTED,
             dash_capstyle=DashCapStyleEnum.ROUND,
-            alpha=0.8,
+            alpha=1,
             zorder=ZOrderEnum.LAYER_3,
         ),
         label=LabelStyle(
-            font_size=6,
+            font_size=22,
             font_color="#777",
-            font_weight=FontWeightEnum.LIGHT,
             font_alpha=1,
             zorder=ZOrderEnum.LAYER_3,
         ),
@@ -900,13 +1007,13 @@ class PlotStyle(BaseStyle):
     celestial_equator: PathStyle = PathStyle(
         line=LineStyle(
             color="#999",
-            width=2,
+            width=3,
             style=LineStyleEnum.DASHED_DOTS,
             alpha=0.65,
             zorder=ZOrderEnum.LAYER_3,
         ),
         label=LabelStyle(
-            font_size=6,
+            font_size=22,
             font_color="#999",
             font_weight=FontWeightEnum.LIGHT,
             font_alpha=0.65,
@@ -918,7 +1025,7 @@ class PlotStyle(BaseStyle):
     horizon: PathStyle = PathStyle(
         line=LineStyle(
             color="#fff",
-            width=64,
+            width=80,
             edge_width=4,
             edge_color="#000",
             style=LineStyleEnum.SOLID,
@@ -929,7 +1036,7 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             anchor_point=AnchorPointEnum.CENTER,
             font_color="#000",
-            font_size=23,
+            font_size=64,
             font_weight=FontWeightEnum.BOLD,
             zorder=ZOrderEnum.LAYER_5,
         ),
@@ -961,7 +1068,7 @@ class PlotStyle(BaseStyle):
             DsoType.GROUP_OF_GALAXIES: self.dso_galaxy,
             # Nebulas ----------
             DsoType.NEBULA: self.dso_nebula,
-            DsoType.PLANETARY_NEBULA: self.dso_nebula,
+            DsoType.PLANETARY_NEBULA: self.dso_planetary_nebula,
             DsoType.EMISSION_NEBULA: self.dso_nebula,
             DsoType.STAR_CLUSTER_NEBULA: self.dso_nebula,
             DsoType.REFLECTION_NEBULA: self.dso_nebula,
