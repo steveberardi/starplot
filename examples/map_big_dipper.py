@@ -21,16 +21,9 @@ p.stars(
         Star.dec > 45,
         Star.dec < 64,
     ],
-    # By default, star sizes are calculated based on their magnitude first,
-    # but then that result will be multiplied by the star's marker size in the PlotStyle
-    # so, adjusting the star marker size is a way to make all stars bigger or smaller
-    style__marker__size=100,
     style__marker__symbol="star",
     style__marker__color="#ffff73",
-    style__label__font_size=17,
+    style__label__font_size=20,
     style__label__font_weight="normal",
-    style__label__anchor_point="bottom right",
-    style__label__offset_x=5,
-    style__label__offset_y=-20,
 )
 p.export("map_big_dipper.png", transparent=True)

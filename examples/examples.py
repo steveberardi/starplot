@@ -10,7 +10,7 @@ from multiprocessing import Pool
 start = time.time()
 
 skip = [
-    # "map_milky_way_stars.py"
+    "map_milky_way_stars.py"
 ]
 
 def thumbnail(filename, max_dimension=900):
