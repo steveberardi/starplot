@@ -254,28 +254,29 @@ class StarPlotterMixin:
 
             starz.append((star.x, star.y, size, alpha, color, obj))
 
-            if getattr(self, "_geodetic", None):
-                # TODO : clean up!
-                x, y = self._proj.transform_point(
-                    star.ra * -1, star.dec, self._geodetic
-                )
-                x0, y0 = self.ax.transData.transform((x, y))
+            # Experimental code for keeping spatial index of plotted stars (for better label placement)
+            # if getattr(self, "_geodetic", None):
+            #     # TODO : clean up!
+            #     x, y = self._proj.transform_point(
+            #         star.ra * -1, star.dec, self._geodetic
+            #     )
+            #     x0, y0 = self.ax.transData.transform((x, y))
 
-                if (
-                    x0 < 0
-                    or y0 < 0
-                    or obj.magnitude > 5
-                    or np.isnan(x0)
-                    or np.isnan(y0)
-                ):
-                    continue
-                radius = 1 + (5 - obj.magnitude)
-                # radius = max(((size**0.5 / 2) / self.scale)/1.44 - 6, 0) #size / self.scale**2 / 200
-                self._stars_rtree.insert(
-                    0,
-                    np.array((x0 - radius, y0 - radius, x0 + radius, y0 + radius)),
-                    obj=star.x,
-                )
+            #     if (
+            #         x0 < 0
+            #         or y0 < 0
+            #         or obj.magnitude > 5
+            #         or np.isnan(x0)
+            #         or np.isnan(y0)
+            #     ):
+            #         continue
+            #     radius = 1 + (5 - obj.magnitude)
+            #     # radius = max(((size**0.5 / 2) / self.scale)/1.44 - 6, 0) #size / self.scale**2 / 200
+            #     self._stars_rtree.insert(
+            #         0,
+            #         np.array((x0 - radius, y0 - radius, x0 + radius, y0 + radius)),
+            #         obj=star.x,
+            #     )
 
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 
