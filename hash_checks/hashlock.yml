@@ -63,9 +63,9 @@ optic_camera_rotated:
   filename: /starplot/hash_checks/data/optic-camera-rotated-m45.png
   phash: bc6cc6941ed97285
 optic_clipping:
-  dhash: 70d898f062e4f85d70d898f0eae4f85971e0c4a2b692ec71
+  dhash: 70d898f066e4fc5d70d898f0eae4f85971f098eaf6f4fc71
   filename: /starplot/hash_checks/data/optic-clipping.png
-  phash: 95696a87279a7871
+  phash: 95696a872f9a7870
 optic_m45_binoculars:
   dhash: 8e173b7133330e4d8e173b7133330e4d8e173b7133330e4d
   filename: /starplot/hash_checks/data/optic-m45-binoculars.png
