@@ -2,7 +2,7 @@ from typing import Callable, Mapping
 from functools import cache
 
 from skyfield.api import Star as SkyfieldStar
-import numpy as np
+# import numpy as np
 
 from starplot import callables
 from starplot.data import bayer, stars, flamsteed

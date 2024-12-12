@@ -9,16 +9,14 @@ from multiprocessing import Pool
 
 start = time.time()
 
-skip = [
-    "map_milky_way_stars.py"
-]
+skip = ["map_milky_way_stars.py"]
+
 
 def thumbnail(filename, max_dimension=900):
     print(filename)
     img = Image.open(filename)
     img.thumbnail((max_dimension, max_dimension), Image.LANCZOS)
     img.save(f"{filename[:-4]}-sm.png", optimize=True)
-
 
 
 def get_example_names():
