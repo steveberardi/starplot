@@ -12,7 +12,7 @@ def size_by_magnitude_factory(
     base: float = 20,
 ) -> Callable[[Star], float]:
     """
-    Creates a new version of `size_by_magnitude` with a custom threshold and base multiplier:
+    Creates a new version of `size_by_magnitude_log` with a custom threshold and base multiplier:
 
     ```python
     if magnitude >= threshold:
@@ -46,7 +46,7 @@ def size_by_magnitude_factory(
 _size_by_magnitude_default = size_by_magnitude_factory(7.6, 4)
 
 
-def size_by_magnitude_old(star: Star) -> float:
+def size_by_magnitude_log(star: Star) -> float:
     """
     Calculates size by logarithmic scale of magnitude:
 
@@ -61,6 +61,33 @@ def size_by_magnitude_old(star: Star) -> float:
 
 
 def size_by_magnitude(star: Star) -> float:
+    """
+    Simple sizing by magnitude, using a step size of 1.
+
+    ```python
+    if mag <= 0:
+        size = 3800
+    elif mag <= 1:  # 0..1
+        size = 2400
+    elif mag <= 2:  # 1..2
+        size = 1600
+    elif mag <= 3:  # 2..3
+        size = 1000
+    elif mag <= 4:  # 3..4
+        size = 600
+    elif mag <= 5:  # 4..5
+        size = 300
+    elif mag <= 6:  # 5..6
+        size = 120
+    elif mag <= 7:  # 6..7
+        size = 60
+    elif mag <= 8:  # 7..8
+        size = 40
+    else:           # > 8
+        size = 20
+
+    ```
+    """
     mag = star.magnitude
     size = 0
     if mag <= 0:
@@ -77,11 +104,11 @@ def size_by_magnitude(star: Star) -> float:
         size = 300
     elif mag <= 6:  # 5..6
         size = 120
-    elif mag <= 7:  # 7..8
+    elif mag <= 7:  # 6..7
         size = 60
-    elif mag <= 8:  # 8..9
+    elif mag <= 8:  # 7..8
         size = 40
-    else:  # > 9
+    else:           # > 8
         size = 20
 
     return size
