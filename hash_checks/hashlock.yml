@@ -111,6 +111,6 @@ optic_wrapping:
   filename: /starplot/hash_checks/data/optic-wrapping.png
   phash: d1846e1b792ef138
 zenith_base:
-  dhash: 1771c49e9e7d338e1771c49e8e7d338e1779c49e9e5d370e
+  dhash: 1771c49e9e7d338e1779c49c9e5d338e1779c49c9e7d370e
   filename: /starplot/hash_checks/data/zenith-base.png
-  phash: ba41ea3be13c8764
+  phash: bb41aa3be13c8764
