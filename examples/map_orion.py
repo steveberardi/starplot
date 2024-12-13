@@ -1,5 +1,5 @@
-from starplot import MapPlot, Projection, Star
-from starplot.styles import PlotStyle, PolygonStyle, extensions
+from starplot import MapPlot, Projection, Star, DSO
+from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
     extensions.BLUE_LIGHT,
@@ -28,7 +28,19 @@ p.constellations()
 p.constellation_borders()
 
 p.stars(mag=8, bayer_labels=True, where_labels=[Star.magnitude < 5])
-p.open_clusters(mag=9, labels=None, label_fn=lambda d: d.ngc, true_size=False)
+
+p.open_clusters(
+    where=[DSO.size < 1, DSO.magnitude < 9],
+    labels=None,
+    label_fn=lambda d: d.ngc,
+    true_size=False,
+)
+p.open_clusters(
+    # plot larger clusters as their true apparent size
+    where=[DSO.size > 1, (DSO.magnitude < 9) | (DSO.magnitude.is_null())],
+    labels=None,
+)
+
 p.nebula(mag=9, labels=None, label_fn=lambda d: d.ngc)
 
 p.milky_way()
