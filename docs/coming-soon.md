@@ -1,10 +1,9 @@
 
+- 🌄 Horizon plots
 - 🌑 Planet moons
 - ☄️ Comet model
-- 🌄 Horizon plots
 - ✴️ Custom markers
-- 🚀 Plotting Optimizations
-- ⚖️ Better auto font-size adjustment
+- 💫 Better constellation label placement
 - 😄 🔭 Clear skies
 
 <br/>

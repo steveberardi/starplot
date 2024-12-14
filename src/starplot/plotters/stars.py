@@ -3,11 +3,13 @@ from functools import cache
 
 from skyfield.api import Star as SkyfieldStar
 
+# import numpy as np
+
 from starplot import callables
-from starplot.data import bayer, stars
+from starplot.data import bayer, stars, flamsteed
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.models.star import Star, from_tuple
-from starplot.styles import ObjectStyle, LabelStyle, use_style
+from starplot.styles import ObjectStyle, use_style
 
 
 class StarPlotterMixin:
@@ -64,6 +66,7 @@ class StarPlotterMixin:
             zorder=kwargs.pop("zorder", None) or style.marker.zorder,
             edgecolors=edge_colors,
             alpha=alphas,
+            gid="stars",
             **self._plot_kwargs(),
             **kwargs,
         )
@@ -77,24 +80,90 @@ class StarPlotterMixin:
     def _star_labels(
         self,
         star_objects: list[Star],
+        star_sizes: list[float],
         where_labels: list,
-        style: LabelStyle,
+        style: ObjectStyle,
         labels: Mapping[str, str],
         bayer_labels: bool,
+        flamsteed_labels: bool,
         label_fn: Callable[[Star], str],
     ):
-        for s in star_objects:
+        _bayer = []
+        _flamsteed = []
+
+        # Plot all star common names first
+        for i, s in enumerate(star_objects):
             if where_labels and not all([e.evaluate(s) for e in where_labels]):
                 continue
 
+            if (
+                s.hip
+                and s.hip in self._labeled_stars
+                or s.tyc
+                and s.tyc in self._labeled_stars
+            ):
+                continue
+            elif s.hip:
+                self._labeled_stars.append(s.hip)
+            elif s.tyc:
+                self._labeled_stars.append(s.tyc)
+
             label = labels.get(s.hip) if label_fn is None else label_fn(s)
             bayer_desig = bayer.hip.get(s.hip)
+            flamsteed_num = flamsteed.hip.get(s.hip)
 
             if label:
-                self.text(label, s.ra, s.dec, style)
+                self.text(
+                    label,
+                    s.ra,
+                    s.dec,
+                    # style,
+                    # _offset(style, star_sizes[i]),
+                    style=style.label.offset_from_marker(
+                        marker_symbol=style.marker.symbol,
+                        marker_size=star_sizes[i],
+                        scale=self.scale,
+                    ),
+                    hide_on_collision=self.hide_colliding_labels,
+                    gid="stars-label-name",
+                )
 
             if bayer_labels and bayer_desig:
-                self.text(bayer_desig, s.ra, s.dec, self.style.bayer_labels)
+                _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i], s.hip))
+
+            if flamsteed_labels and flamsteed_num:
+                _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i], s.hip))
+
+        # Plot bayer/flamsteed
+        for bayer_desig, ra, dec, star_size, _ in _bayer:
+            self.text(
+                bayer_desig,
+                ra,
+                dec,
+                style=self.style.bayer_labels.offset_from_marker(
+                    marker_symbol=style.marker.symbol,
+                    marker_size=star_size,
+                    scale=self.scale,
+                ),
+                hide_on_collision=self.hide_colliding_labels,
+                gid="stars-label-bayer",
+            )
+
+        for flamsteed_num, ra, dec, star_size, hip in _flamsteed:
+            if hip in bayer.hip:
+                continue
+            self.text(
+                flamsteed_num,
+                ra,
+                dec,
+                style=self.style.flamsteed_labels.offset_from_marker(
+                    marker_symbol=style.marker.symbol,
+                    marker_size=star_size,
+                    scale=self.scale,
+                ),
+                hide_on_collision=self.hide_colliding_labels,
+                gid="stars-label-flamsteed",
+            )
 
     def _prepare_star_coords(self, df):
         df["x"], df["y"] = (
@@ -119,6 +188,7 @@ class StarPlotterMixin:
         labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
         bayer_labels: bool = False,
+        flamsteed_labels: bool = False,
         *args,
         **kwargs,
     ):
@@ -138,7 +208,8 @@ class StarPlotterMixin:
             where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
-            bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
+            bayer_labels: If True, then Bayer labels for stars will be plotted.
+            flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
         """
         self.logger.debug("Plotting stars...")
 
@@ -160,8 +231,6 @@ class StarPlotterMixin:
         else:
             labels = {**STAR_NAMES, **labels}
 
-        star_size_multiplier = self._size_multiplier * style.marker.size / 5
-
         nearby_stars_df = self._load_stars(catalog, mag)
         nearby_stars = SkyfieldStar.from_dataframe(nearby_stars_df)
         astrometric = self.ephemeris["earth"].at(self.timescale).observe(nearby_stars)
@@ -180,11 +249,35 @@ class StarPlotterMixin:
             if not all([e.evaluate(obj) for e in where]):
                 continue
 
-            size = size_fn(obj) * star_size_multiplier
+            size = size_fn(obj) * self.scale**2
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()
 
             starz.append((star.x, star.y, size, alpha, color, obj))
+
+            # Experimental code for keeping spatial index of plotted stars (for better label placement)
+            # if getattr(self, "_geodetic", None):
+            #     # TODO : clean up!
+            #     x, y = self._proj.transform_point(
+            #         star.ra * -1, star.dec, self._geodetic
+            #     )
+            #     x0, y0 = self.ax.transData.transform((x, y))
+
+            #     if (
+            #         x0 < 0
+            #         or y0 < 0
+            #         or obj.magnitude > 5
+            #         or np.isnan(x0)
+            #         or np.isnan(y0)
+            #     ):
+            #         continue
+            #     radius = 1 + (5 - obj.magnitude)
+            #     # radius = max(((size**0.5 / 2) / self.scale)/1.44 - 6, 0) #size / self.scale**2 / 200
+            #     self._stars_rtree.insert(
+            #         0,
+            #         np.array((x0 - radius, y0 - radius, x0 + radius, y0 + radius)),
+            #         obj=star.x,
+            #     )
 
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 
@@ -215,6 +308,14 @@ class StarPlotterMixin:
 
         self._add_legend_handle_marker(legend_label, style.marker)
 
-        self._star_labels(
-            star_objects, where_labels, style.label, labels, bayer_labels, label_fn
-        )
+        if labels:
+            self._star_labels(
+                star_objects,
+                sizes,
+                where_labels,
+                style,
+                labels,
+                bayer_labels,
+                flamsteed_labels,
+                label_fn,
+            )

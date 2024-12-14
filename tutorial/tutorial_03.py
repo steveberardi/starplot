@@ -16,8 +16,12 @@ p = MapPlot(
     style=PlotStyle().extend(
         extensions.BLUE_MEDIUM,
     ),
-    resolution=3600,
+    resolution=4000,
+    scale=0.9,
 )
+# we plot the constellations first, because Starplot will use the constellation
+# lines to determine where to place labels for stars (labels will look better if they're
+# not crossing a constellation line)
 p.constellations()
 p.stars(mag=4.6)
 
@@ -42,18 +46,18 @@ p.marker(
     dec=25.85,
     style={
         "marker": {
-            "size": 28,
+            "size": 80,
             "symbol": "circle",
             "fill": "full",
             "color": "#ed7eed",
             "edge_color": "#e0c1e0",
-            "alpha": 0.4,
+            "alpha": 0.8,
         },
         "label": {
-            "font_size": 12,
+            "font_size": 25,
             "font_weight": "bold",
             "font_color": "#c83cc8",
-            "font_alpha": 0.8,
+            "font_alpha": 1,
         },
     },
     label="Mel 111",

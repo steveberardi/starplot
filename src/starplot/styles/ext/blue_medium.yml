@@ -1,4 +1,6 @@
-background_color: '#f1f6ff'
+# blue_medium
+
+background_color: hsl(218, 85%, 97%)
 figure_background_color: '#fff'
 
 text_border_color: '#f1f6ff'
@@ -13,28 +15,30 @@ star:
   marker:
     edge_color: '#f1f6ff'
 bayer_labels:
-  font_alpha: 0.8
+  font_alpha: 1
   font_color: '#000'
+
+constellation:
+  label:
+    font_alpha: 0.8
+    font_color: hsl(212, 20%, 10%)
+  line:
+    alpha: 0.48
+    color: '#6ba832'
+
 celestial_equator:
   label:
     font_color: '#2d5ec2'
   line:
-    color: '#2d5ec2'
-    alpha: 0.6
-constellation:
-  label:
-    font_size: 7
-    font_weight: light
-  line:
-    alpha: 0.23
-    color: '#6ba832'
-    width: 3
+    color: hsl(220, 62%, 47%)
+    alpha: 0.8
 ecliptic:
   label:
     font_color: '#e33b3b'
   line:
-    color: '#e33b3b'
-    alpha: 0.6
+    color: hsl(360, 85%, 56%)
+    alpha: 0.9
+
 planets:
   marker:
     alpha: 0.4
@@ -46,15 +50,13 @@ milky_way:
   edge_width: 0
 gridlines:
   label:
-    font_alpha: 0.8
+    font_alpha: 1
     font_color: '#2f4358'
-    font_size: 8
     font_weight: light
   line:
     alpha: 0.6
     color: '#888'
     style: solid
-    width: 1
 sun:
   marker:
     color: '#ffd22e'
@@ -74,50 +76,52 @@ zenith:
     font_color: '#b979b7'
 
 # DSOs
-dso_double_star:
-  marker:
-    alpha: 0.6
+
 dso_galaxy:
   marker:
-    alpha: 0.45
-    color: '#D99CBA'
-    edge_color: '#b15d87'
+    alpha: 1
+    color: hsl(330, 80%, 85%)
+    edge_color: hsl(330, 34%, 33%)
   label:
-    font_color: '#b15d87'
-dso_nebula:
+    font_color: hsl(330, 34%, 33%)
+
+dso_nebula: &DSO-NEB
   marker:
-    alpha: 0.56
-    color: hsl(91, 62%, 82%)
-    edge_color: hsl(91, 53%, 40%)
+    alpha: 1
+    color: hsl(98, 68%, 82%)
+    edge_color: hsl(91, 63%, 24%)
   label:
-    font_color: hsl(91, 53%, 40%)
-dso_open_cluster:
+    font_color: hsl(91, 63%, 29%)
+dso_planetary_nebula:
   marker:
-    alpha: 0.4
-    color: '#fffb68'
-    edge_color: '#989400'
+    alpha: 1
+    color: hsl(96, 76%, 82%)
+    edge_color: hsl(91, 63%, 24%)
   label:
-    font_color: '#989400'
-dso_association_stars:
+    font_color: hsl(91, 63%, 29%)
+
+dso_open_cluster: &DSO-OC
   marker:
-    alpha: 0.4
-    color: '#fffb68'
-    edge_color: '#989400'
+    alpha: 1
+    color: hsl(58, 98%, 77%)
+    edge_color: "#000"
   label:
-    font_color: '#989400'
+    font_color: hsl(58, 98%, 20%)
+dso_association_stars: *DSO-OC
+
 dso_globular_cluster:
   marker:
-    alpha: 0.8
-    color: '#c7c7c7'
-    edge_color: '#444'
+    alpha: 1
+    color: hsl(58, 98%, 77%)
+    edge_color: "#000"
   label:
-    font_color: '#444'
+    font_color: '#989400'
 
 
 # other DSOs
 dso_unknown: &DSO
   marker:
-    alpha: 0.56
+    alpha: 1
     color: hsl(91, 62%, 82%)
     edge_color: hsl(91, 53%, 40%)
   label:

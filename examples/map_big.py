@@ -1,5 +1,4 @@
-from starplot import MapPlot, Projection
-from starplot.models import DSO
+from starplot import MapPlot, Projection, DSO, Star
 from starplot.styles import PlotStyle, extensions
 
 
@@ -7,10 +6,6 @@ style = PlotStyle().extend(
     extensions.BLUE_DARK,
     extensions.MAP,
 )
-
-style.star.label.font_size = 4
-style.constellation.label.font_size = 6
-style.constellation.line.width = 2
 
 p = MapPlot(
     projection=Projection.MILLER,
@@ -20,18 +15,42 @@ p = MapPlot(
     dec_max=80,
     style=style,
     resolution=6000,
+    # since this map has a very large extent, let's scale everything down
+    scale=0.8,
 )
-p.stars(mag=8)
-p.dsos(
+p.gridlines()
+p.constellations(
+    style__label__font_size=28,
+)
+p.stars(mag=6, where_labels=[Star.magnitude < 2.1])
+p.open_clusters(
     labels=None,
     where=[
         DSO.magnitude <= 8,
-        DSO.size > 0.05,
     ],
+    true_size=False,
 )
-p.gridlines()
+p.globular_clusters(
+    labels=None,
+    where=[
+        DSO.magnitude <= 9,
+    ],
+    true_size=False,
+)
+p.galaxies(
+    labels=None,
+    where=[
+        DSO.magnitude <= 10,
+    ],
+    true_size=False,
+)
+p.nebula(
+    labels=None,
+    where=[(DSO.magnitude <= 10) | (DSO.magnitude.is_null()), DSO.size > 0.05],
+)
+
 p.milky_way()
-p.ecliptic(style={"line": {"style": "dashed"}})
+p.ecliptic()
 p.celestial_equator()
 
 p.export("map_big.png", padding=0.5)

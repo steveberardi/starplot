@@ -6,7 +6,7 @@
 
 **Starplot** is a Python library for creating star charts and maps of the sky.
 
-- ⭐ **Zenith Plots** - showing the stars from a specific time/location
+- ⭐ **Zenith Plots** - showing the whole sky from a specific time/location
 - 🗺️ **Map Plots** - including many map projections
 - 🔭 **Optic Plots** - simulates what you'll see through an optic (e.g. binoculars, telescope) from a time/location
 - 🪐 **Planets and Deep Sky Objects (DSOs)**
@@ -21,7 +21,7 @@
 *Map around the constellation Orion:*
 ![map-orion](https://starplot.dev/images/examples/map_orion.png)
 
-*Optic plot of The Pleiades through a refractor as seen from a specific time/location:*
+*The Pleiades star cluster, as seen through a refractor telescope from a specific time and location:*
 ![optic-pleiades](https://starplot.dev/images/examples/optic_m45.png)
 
 ## Basic Usage
@@ -42,9 +42,9 @@ p = sp.MapPlot(
     dt=datetime.now(tz).replace(hour=22),
     style=sp.styles.PlotStyle().extend(
         sp.styles.extensions.BLUE_MEDIUM,
-        sp.styles.extensions.ZENITH,
     ),
-    resolution=2000,
+    resolution=3200,
+    autoscale=True,
 )
 p.constellations()
 p.stars(mag=4.6)
@@ -72,12 +72,11 @@ https://discord.gg/WewJJjshFu
 Contributing to Starplot is welcome and very much appreciated! Please see [here](CONTRIBUTING.md) for details.
 
 ## Coming Soon
+- 🌄 Horizon plots
 - 🌑 Planet moons
 - ✴️ Custom markers
-- 🚀 Plotting Optimizations
 - ☄️ Comet model
-- 🌄 Horizon plots
-- ⚖️ Better auto font-size adjustment
+- 💫 Better constellation label placement
 - 😄 🔭 Clear skies
 
 See more details on the [Public Roadmap](https://trello.com/b/sUksygn4/starplot-roadmap)

@@ -5,11 +5,6 @@ style = PlotStyle().extend(
     extensions.BLUE_LIGHT,
     extensions.MAP,
     {
-        "bayer_labels": {
-            "font_name": "GFS Didot",  # use a better font for Greek letters
-            "font_size": 7,
-            "font_alpha": 0.9,
-        },
         "legend": {
             "location": "lower right",  # show legend inside map
             "num_columns": 1,
@@ -26,17 +21,20 @@ p = MapPlot(
     dec_max=27,
     style=style,
     resolution=3600,
+    autoscale=True,  # automatically adjust the scale based on the resolution
 )
 
 p.gridlines()  # add gridlines
-
-p.stars(mag=9, bayer_labels=True)  # include bayer labels with the stars
-
-p.nebula(mag=9, labels=None)
-p.open_clusters(mag=9, labels=None)
-
 p.constellations()
 p.constellation_borders()
+
+p.stars(
+    mag=8, bayer_labels=True, flamsteed_labels=True
+)  # include Bayer and Flamsteed labels with the stars
+
+p.nebula(mag=8, labels=None)
+p.open_clusters(mag=8, labels=None)
+
 p.milky_way()
 p.ecliptic()
 

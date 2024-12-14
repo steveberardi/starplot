@@ -26,9 +26,9 @@ info_text:
   font_color: hsl(136, 0%, 0%)
 star:
   label:
-    font_color: hsl(136, 0%, 90%)
+    font_color: hsl(136, 0%, 78%)
   marker:
-    color: hsl(136, 0%, 97%)
+    color: hsl(136, 0%, 92%)
     edge_color: hsl(136, 0%, 10%)
 sun:
   label:
@@ -37,7 +37,9 @@ sun:
     color: hsl(136, 0%, 97%)
     edge_color: hsl(136, 0%, 97%)
 bayer_labels:
-  font_color: hsl(136, 0%, 77%)
+  font_color: hsl(136, 0%, 80%)
+flamsteed_labels:
+  font_color: hsl(136, 0%, 80%)
 celestial_equator:
   label:
     font_color: '#999'
@@ -47,7 +49,7 @@ constellation:
   label:
     font_color: hsl(136, 0%, 77%)
   line:
-    color: hsl(136, 0%, 42%)
+    color: hsl(136, 0%, 30%)
 constellation_borders:
   color: hsl(136, 0%, 42%)
   alpha: 0.5
@@ -65,6 +67,12 @@ dso_galaxy:
     symbol: diamond
     fill: top
 dso_nebula:
+  label:
+    font_color: hsl(136, 0%, 97%)
+  marker:
+    color: 'hsl(136, 0%, 97%)'
+    alpha: 0.28
+dso_planetary_nebula:
   label:
     font_color: hsl(136, 0%, 97%)
   marker:

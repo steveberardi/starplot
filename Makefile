@@ -22,7 +22,7 @@ DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot star
 export PYTHONPATH=./src/
 
 # ------------------------------------------------------------------
-build: PYTHON_VERSION=3.11.7
+build: PYTHON_VERSION=3.11.11
 build: DOCKER_BUILD_ARGS=-t starplot-dev
 build:
 	touch -a .env
@@ -82,23 +82,29 @@ version:
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------
-test-3.9: PYTHON_VERSION=3.9.18
+test-3.9: PYTHON_VERSION=3.9.21
 test-3.9:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test-3.10: PYTHON_VERSION=3.10.13
+test-3.10: PYTHON_VERSION=3.10.16
 test-3.10:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test-3.11: PYTHON_VERSION=3.11.7
+test-3.11: PYTHON_VERSION=3.11.11
 test-3.11:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test-3.12: PYTHON_VERSION=3.12.1
+test-3.12: PYTHON_VERSION=3.12.8
 test-3.12:
+	$(DOCKER_BUILD_PYTHON)
+	$(DOCKER_RUN_PYTHON_TEST)
+
+# Python 3.13 not supported yet!
+test-3.13: PYTHON_VERSION=3.13.1
+test-3.13:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
@@ -133,6 +139,9 @@ hip8:
 
 scripts:
 	$(DOCKER_RUN) "python ./scripts/$(SCRIPT).py"
+
+allsky:
+	$(DOCKER_RUN) "python ./scripts/temp/allsky.py"
 
 clean:
 	rm -rf __pycache__

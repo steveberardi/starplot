@@ -31,48 +31,63 @@ celestial_equator:
     color: '#2d5ec2'
 constellation:
   label:
-    font_color: '#c5c5c5'
+    font_alpha: 0.27
+    font_color: '#000'
   line:
-    alpha: 0.3
+    alpha: 0.52
     color: '#6ba832'
     width: 3
 
 dso_double_star:
   marker:
-    alpha: 0.6
+    alpha: 1
+
 dso_galaxy:
   marker:
-    alpha: 0.5
-    color: hsl(18, 68%, 75%)
-    edge_color: hsl(18, 68%, 40%)
+    alpha: 1
+    color: hsl(330, 80%, 85%)
+    edge_color: hsl(330, 34%, 43%)
+    # edge_color: hsl(18, 68%, 40%)
   label:
-    font_color: hsl(18, 68%, 40%)
-dso_nebula:
+    font_color: hsl(330, 34%, 43%)
+    # font_color: hsl(18, 68%, 40%)
+
+dso_nebula: &DSO-NEB
   marker:
-    alpha: 0.5
-    color: hsl(91, 53%, 75%)
-    edge_color: hsl(91, 53%, 40%)
+    alpha: 1
+    color: hsl(98, 68%, 82%)
+    edge_color: hsl(91, 63%, 24%)
   label:
-    font_color: hsl(91, 53%, 40%)
-dso_open_cluster:
+    font_color: hsl(91, 63%, 29%)
+dso_planetary_nebula:
   marker:
-    alpha: 0.3
-    color: '#fffb68'
-    edge_color: '#989400'
+    alpha: 1
+    color: hsl(96, 76%, 82%)
+    edge_color: hsl(91, 63%, 24%)
   label:
-    font_color: '#989400'
-dso_association_stars:
+    font_color: hsl(91, 63%, 29%)
+
+dso_open_cluster: &DSO-OC
   marker:
-    alpha: 0.3
-    color: '#fffb68'
-    edge_color: '#989400'
+    alpha: 1
+    color: hsl(58, 98%, 77%)
+    edge_color: "#000"
+  label:
+    font_color: hsl(58, 98%, 20%)
+dso_association_stars: *DSO-OC
+
+dso_globular_cluster:
+  marker:
+    alpha: 1
+    color: hsl(58, 98%, 77%)
+    edge_color: "#000"
   label:
     font_color: '#989400'
 
 # other DSOs
 dso_unknown: &DSO
   marker:
-    alpha: 0.5
+    alpha: 0.76
     color: hsl(91, 53%, 75%)
     edge_color: hsl(91, 53%, 40%)
   label:
@@ -89,10 +104,13 @@ ecliptic:
   label:
     font_color: '#e33b3b'
   line:
-    color: '#e33b3b'
+    # color: hsl(360, 100%, 50%)
+    color: hsl(359, 98%, 49%)
+    alpha: 1
+    style: [0, [0.14, 2]]
 milky_way:
-  alpha: 0.16
-  fill_color: '#94c5e3'
+  alpha: 0.2
+  fill_color: hsl(203, 70%, 83%)
   edge_width: 0
 planets:
   marker:

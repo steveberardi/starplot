@@ -5,9 +5,14 @@ import glob
 import time
 
 from PIL import Image
-from multiprocessing import Pool, Process
+from multiprocessing import Pool
 
 start = time.time()
+
+skip = [
+    # "map_milky_way_stars.py",
+    # "stuff.py",
+]
 
 
 def thumbnail(filename, max_dimension=900):
@@ -23,16 +28,17 @@ def get_example_names():
     for filename in glob.iglob("*.py"):
         if filename.endswith("examples.py"):
             continue
+
+        if filename in skip:
+            continue
+
         filenames.append(filename)
 
     return filenames
 
 
 def run_example(filename):
-    import subprocess
-
     print(f"Running {filename}")
-
     subprocess.call(["python", filename])
 
 
@@ -41,16 +47,6 @@ processes = []
 
 with Pool(5) as pool:
     pool.map(run_example, example_files)
-
-# Run all examples
-# for filename in glob.iglob("*.py"):
-#     if filename.endswith("examples.py"):
-#         continue
-
-#     # if filename != "map_lyra.py":
-#     #     continue
-#     print(f"Running {filename}")
-#     subprocess.call(f"python {filename}", shell=True)
 
 # Create thumbnail images for the examples list page
 image_files = glob.glob("*.png")

@@ -9,7 +9,10 @@ from starplot.data import DataFiles
 
 # constellation_borders = gpd.read_file(DataFiles.CONSTELLATION_BORDERS.value)
 constellation_borders = gpd.read_file("raw/i.constellations.borders.json")
-constellation_borders.to_file("build/constellation_borders.gpkg", driver="GPKG")
+# constellation_borders.to_file("build/constellation_borders.gpkg", driver="GPKG")
+constellation_borders.to_file(
+    "src/starplot/data/library/constellation_borders_inv.gpkg", driver="GPKG"
+)
 
 # constellation_lines = gpd.read_file(DataFiles.CONSTELLATION_LINES.value)
 # print(constellation_lines.has_sindex)

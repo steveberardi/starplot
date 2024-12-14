@@ -1,4 +1,17 @@
+## v0.13.x
+
+- Adds a `scale` factor to control sizing of all objects/text
+- Adds an "auto" option for label offsets from markers
+- Adds constellation lines to label collision detection
+- Adds a `gid` to plotted objects to make exported SVGs easier to work with in external applications (e.g. Inkscape)
+- Adds Flamsteed numbers to stars
+- Adds all star names from IAU
+- Adds the standard symbol for planetary nebulae
+- Adds a border size/color property to label styles
+- Bundles fonts: Inter & GFS Didot
+
 ## v0.12.x
+[Documentation](https://archives.starplot.dev/0.12.5/)
 
 - Adds Shapely geometry to all sky object models, including support for `intersects` in `where` clauses
 - Adds kwarg to map plots to allow custom clip paths

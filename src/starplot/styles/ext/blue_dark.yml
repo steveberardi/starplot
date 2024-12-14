@@ -30,12 +30,14 @@ celestial_equator:
     font_color: hsl(209, 30%, 80%)
   line:
     color: hsl(209, 30%, 80%)
+
 ecliptic:
   label:
-    font_color: hsl(209, 30%, 80%)
+    font_color: '#e33b3b'
   line:
-    width: 1.6
-    color: hsl(209, 30%, 80%)
+    color: '#e33b3b'
+    alpha: 1
+
 constellation:
   label:
     font_alpha: 0.37
@@ -56,48 +58,43 @@ dso_double_star:
     alpha: 0.8
     color: '#88c0d0'
     edge_color: '#88c0d0'
+
+
 dso_galaxy:
-  label:
-    font_color: hsl(209, 23%, 72%)
   marker:
-    alpha: 0.16
-    color: hsl(209, 20%, 75%)
-    edge_color: hsl(209, 20%, 90%)
-    zorder: -600
-dso_nebula:
+    alpha: 1
+    color: hsl(330, 70%, 66%)
+    edge_color: hsl(330, 54%, 30%)
   label:
-    font_color: hsl(209, 23%, 72%)
+    font_color: hsl(330, 34%, 73%)
+
+dso_nebula: &DSO-NEB
   marker:
-    alpha: 0.46
-    color: hsl(209, 50%, 78%)
-    edge_color: hsl(209, 50%, 20%)
-    zorder: -500
-dso_open_cluster:
+    alpha: 1
+    # color: hsl(98, 63%, 66%)
+    color: hsl(110, 52%, 62%)
+    edge_color: hsl(91, 53%, 10%)
   label:
-    font_color: hsl(209, 23%, 72%)
+    font_color: hsl(91, 63%, 89%)
+dso_planetary_nebula: *DSO-NEB
+
+dso_open_cluster: &DSO-OC
   marker:
-    size: 10
-    alpha: 0.52
-    fill: none
-    edge_color: hsl(209, 50%, 92%)
-    zorder: -500
-dso_association_stars:
+    alpha: 1
+    color: hsl(58, 64%, 50%)
+    edge_color: "#000"
   label:
-    font_color: hsl(209, 23%, 72%)
-  marker:
-    alpha: 0.52
-    fill: none
-    edge_color: hsl(209, 50%, 92%)
-    zorder: -500
+    font_color: hsl(58, 98%, 20%)
+dso_association_stars: *DSO-OC
+
 dso_globular_cluster:
+  marker:
+    alpha: 1
+    color: hsl(58, 64%, 50%)
+    edge_color: "#000"
   label:
     font_color: hsl(209, 23%, 72%)
-  marker:
-    alpha: 0.68
-    size: 10
-    color: hsl(209, 50%, 92%)
-    edge_color: null
-    zorder: 100
+
 
 # other DSOs
 dso_unknown: &DSO
@@ -161,7 +158,6 @@ sun:
   marker:
     color: hsl(209, 50%, 94%)
     edge_color: hsl(209, 50%, 94%)
-    size: 25
 
 legend:
   background_color: hsl(209, 50%, 26%)

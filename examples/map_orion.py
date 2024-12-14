@@ -1,15 +1,10 @@
-from starplot import MapPlot, Projection
-from starplot.styles import PlotStyle, PolygonStyle, extensions
+from starplot import MapPlot, Projection, Star, DSO
+from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
     extensions.BLUE_LIGHT,
     extensions.MAP,
     {
-        "bayer_labels": {
-            "font_name": "GFS Didot",  # use a better font for Greek letters
-            "font_size": 7,
-            "font_alpha": 0.9,
-        },
         "legend": {
             "location": "lower right",  # show legend inside map
             "num_columns": 1,
@@ -26,28 +21,30 @@ p = MapPlot(
     dec_max=25,
     style=style,
     resolution=3600,
+    autoscale=True,
 )
 p.gridlines()
-p.stars(mag=9, bayer_labels=True)
-p.open_clusters(mag=9, labels=None)
-p.nebula(mag=9, labels=None)
 p.constellations()
 p.constellation_borders()
-p.milky_way()
-p.ecliptic()
 
-p.ellipse(
-    (5.6, -1.2),
-    height_degrees=3,
-    width_degrees=5,
-    style=PolygonStyle(
-        fill_color="#ed7eed",
-        edge_color="#000",
-        alpha=0.2,
-    ),
-    angle=-22,
+p.stars(mag=8, bayer_labels=True, where_labels=[Star.magnitude < 5])
+
+p.open_clusters(
+    where=[DSO.size < 1, DSO.magnitude < 9],
+    labels=None,
+    label_fn=lambda d: d.ngc,
+    true_size=False,
+)
+p.open_clusters(
+    # plot larger clusters as their true apparent size
+    where=[DSO.size > 1, (DSO.magnitude < 9) | (DSO.magnitude.is_null())],
+    labels=None,
 )
 
+p.nebula(mag=9, labels=None, label_fn=lambda d: d.ngc)
+
+p.milky_way()
+p.ecliptic()
 p.legend()
 
 p.export("map_orion.png", padding=0.3, transparent=True)

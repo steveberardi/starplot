@@ -24,20 +24,26 @@ dso_double_star:
     color: '#000'
 dso_galaxy:
   marker:
-    color: '#000'
-    alpha: 0.6
-    symbol: diamond
-    fill: top
+    color: null
+    fill: none
+    alpha: 1
+    symbol: ellipse
 dso_nebula:
   marker:
-    color: '#000'
-    alpha: 0.28
+    color: '#c8c8c8'
+    fill: full
+    alpha: 1
+dso_planetary_nebula:
+  marker:
+    color: null
+    fill: none
+    alpha: 1
 dso_open_cluster:
   marker:
     color: null
     edge_color: '#000'
     fill: none
-    alpha: 0.8
+    alpha: 1
 
 
 # other DSOs
