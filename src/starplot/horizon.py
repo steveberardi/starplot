@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Callable, Mapping
+from functools import cache
 
 import pandas as pd
 
@@ -7,12 +8,17 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
 
+from starplot.coordinates import CoordinateSystem
 from starplot import callables
 from starplot.base import BasePlot, DPI
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
-from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
+from starplot.plotters import (
+    ConstellationPlotterMixin,
+    StarPlotterMixin,
+    DsoPlotterMixin,
+)
 from starplot.styles import (
     PlotStyle,
     ObjectStyle,
@@ -28,7 +34,13 @@ pd.options.mode.chained_assignment = None  # default='warn'
 DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
 
 
-class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
+class HorizonPlot(
+    BasePlot,
+    ExtentMaskMixin,
+    ConstellationPlotterMixin,
+    StarPlotterMixin,
+    DsoPlotterMixin,
+):
     """Creates a new horizon plot.
 
     Args:
@@ -50,6 +62,8 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         OpticPlot: A new instance of an OpticPlot
 
     """
+
+    _coordinate_system = CoordinateSystem.AZ_ALT
 
     FIELD_OF_VIEW_MAX = 9.0
 
@@ -88,6 +102,7 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.lat = lat
         self.lon = lon
 
+        self._geodetic = ccrs.Geodetic()
         self._crs = ccrs.CRS(
             proj4_params=[
                 ("proj", "latlong"),
@@ -100,6 +115,7 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self._init_plot()
         self._adjust_radec_minmax()
 
+    @cache
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
         point = SkyfieldStar(ra_hours=ra, dec_degrees=dec)
@@ -111,6 +127,7 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def _plot_kwargs(self) -> dict:
         return dict(transform=self._crs)
 
+    @cache
     def in_bounds(self, ra, dec) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
 
@@ -317,6 +334,6 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         # - constellation borders
         # - gridlines
         # - milky way
-        
+
         self._plot_background_clip_path()
         self._fit_to_ax()

@@ -13,6 +13,7 @@ from skyfield.api import Star as SkyfieldStar, wgs84
 import geopandas as gpd
 import numpy as np
 
+from starplot.coordinates import CoordinateSystem
 from starplot import geod
 from starplot.base import BasePlot, DPI
 from starplot.data import DataFiles, constellations as condata, stars
@@ -84,6 +85,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         MapPlot: A new instance of a MapPlot
 
     """
+
+    _coordinate_system = CoordinateSystem.RA_DEC
 
     def __init__(
         self,
