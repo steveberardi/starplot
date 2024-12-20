@@ -6,7 +6,7 @@ from starplot.data import DataFiles, constellations as condata, stars
 from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
 from starplot.models.constellation import from_tuple as constellation_from_tuple
 from starplot.projections import Projection
-from starplot.styles import PathStyle
+from starplot.styles import PathStyle, LineStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
 
@@ -151,4 +151,62 @@ class ConstellationPlotterMixin:
                 hide_on_collision=False,
                 # hide_on_collision=self.hide_colliding_labels,
                 gid="constellations-label-name",
+            )
+
+
+    @use_style(LineStyle, "constellation_borders")
+    def constellation_borders(self, style: LineStyle = None):
+        """Plots the constellation borders
+
+        Args:
+            style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
+        """
+        constellation_borders = gpd.read_file(
+            DataFiles.CONSTELLATION_BORDERS.value,
+            engine="pyogrio",
+            use_arrow=True,
+            bbox=self._extent_mask(),
+        )
+
+        if constellation_borders.empty:
+            return
+
+        style_kwargs = style.matplot_kwargs(self.scale)
+
+        geometries = []
+
+        for _, c in constellation_borders.iterrows():
+            for ls in c.geometry.geoms:
+                geometries.append(ls)
+
+        for ls in geometries:
+            x, y = ls.xy
+            x = list(x)
+            y = list(y)
+
+            if self._coordinate_system == CoordinateSystem.RA_DEC:
+                x_coords = list(x)
+                y_coords = list(y)
+
+            elif self._coordinate_system == CoordinateSystem.AZ_ALT:
+                x_coords = []
+                y_coords = []
+
+                for r, d in zip(x, y):
+                    az, alt = self._prepare_coords(r / 15, d)
+                    x_coords.append(az)
+                    y_coords.append(alt)
+
+
+            else:
+                raise ValueError("Unrecognized coordinate system")
+            
+            self.ax.plot(
+                x_coords,
+                y_coords,
+                transform=self._plate_carree,
+                clip_on=True,
+                clip_path=self._background_clip_path,
+                gid="constellations-border",
+                **style_kwargs,
             )

@@ -103,6 +103,7 @@ class HorizonPlot(
         self.lon = lon
 
         self._geodetic = ccrs.Geodetic()
+        self._plate_carree = ccrs.PlateCarree()
         self._crs = ccrs.CRS(
             proj4_params=[
                 ("proj", "latlong"),
@@ -329,8 +330,10 @@ class HorizonPlot(
         self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
         self.ax.gridlines()
 
-        # TODO : missing from optic/horizon:
+        # done
         # - constellations
+
+        # TODO : missing from optic/horizon:
         # - constellation borders
         # - gridlines
         # - milky way
