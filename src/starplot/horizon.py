@@ -19,6 +19,8 @@ from starplot.styles import (
     extensions,
     use_style,
     ZOrderEnum,
+    PolygonStyle,
+    PathStyle,
 )
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -81,6 +83,7 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.logger.debug("Creating HorizonPlot...")
         self.alt = altitude
         self.az = azimuth
+        self.center_alt = sum(altitude) / 2
         self.center_az = sum(azimuth) / 2
         self.lat = lat
         self.lon = lon
@@ -119,12 +122,7 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             True if the coordinate is in bounds, otherwise False
         """
         az, alt = self._prepare_coords(ra, dec)
-        return (
-            az < self.az[1]
-            and az > self.az[0]
-            and alt < self.alt[1]
-            and alt > self.alt[0]
-        )
+        return self.in_bounds_altaz(alt, az)
 
     def in_bounds_altaz(self, alt, az, scale: float = 1) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
@@ -136,7 +134,9 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        # x, y = self._proj.transform_point(az, alt, self._crs)
+        if self.az[0] > 360 or self.az[1] > 360 and az < 90:
+            az += 360
+
         return (
             az < self.az[1]
             and az > self.az[0]
@@ -153,12 +153,6 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.location = earth + wgs84.latlon(self.lat, self.lon)
         self.observe = self.location.at(self.timescale).observe
 
-        # get radec at center horizon
-        center = self.location.at(self.timescale).from_altaz(
-            alt_degrees=0, az_degrees=self.center_az
-        )
-        print(self.center_az)
-        print(center.radec())
         locations = [
             self.location.at(self.timescale).from_altaz(
                 alt_degrees=self.alt[0], az_degrees=self.az[0]
@@ -169,6 +163,9 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             self.location.at(self.timescale).from_altaz(
                 alt_degrees=self.alt[1], az_degrees=self.center_az
             ),  # top center
+            self.location.at(self.timescale).from_altaz(
+                alt_degrees=self.center_alt, az_degrees=self.center_az
+            ),  # center
             # self.location.at(self.timescale).from_altaz(alt_degrees=self.alt[1], az_degrees=self.az[0]), # upper left
             # self.location.at(self.timescale).from_altaz(alt_degrees=self.alt[1], az_degrees=self.az[1]), # upper right
         ]
@@ -203,33 +200,27 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         #     raise ValueError("Target is below horizon at specified time/location.")
 
     def _adjust_radec_minmax(self):
-        # self.ra_min = self.ra - self.optic.true_fov / 15 * 1.08
-        # self.ra_max = self.ra + self.optic.true_fov / 15 * 1.08
-        # self.dec_max = self.dec + self.optic.true_fov / 2 * 1.03
-        # self.dec_min = self.dec - self.optic.true_fov / 2 * 1.03
-
         if self.dec_max > 70 or self.dec_min < -70:
             # naive method of getting all the stars near the poles
             self.ra_min = 0
             self.ra_max = 24
 
-        # TODO : below are in ra/dec - need to convert to alt/az
-        # adjust declination to match extent
-        extent = self.ax.get_extent(crs=ccrs.PlateCarree())
-        self.dec_min = extent[2]
-        self.dec_max = extent[3]
+        self.dec_min -= 10
+        self.dec_max += 10
+        self.ra_min -= 2
+        self.ra_max += 2
 
-        # adjust right ascension to match extent
-        if self.ra_max < 24:
-            ra_min = (-1 * extent[1]) / 15
-            ra_max = (-1 * extent[0]) / 15
+        # # adjust right ascension to match extent
+        # if self.ra_max < 24:
+        #     ra_min = (-1 * extent[1]) / 15
+        #     ra_max = (-1 * extent[0]) / 15
 
-            if ra_min < 0 or ra_max < 0:
-                ra_min += 24
-                ra_max += 24
+        #     if ra_min < 0 or ra_max < 0:
+        #         ra_min += 24
+        #         ra_max += 24
 
-            self.ra_min = ra_min
-            self.ra_max = ra_max
+        #     self.ra_min = ra_min
+        #     self.ra_max = ra_max
 
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
@@ -247,113 +238,31 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         )
         return df
 
-    def _scatter_stars(self, ras, decs, sizes, alphas, colors, style=None, **kwargs):
-        plotted = super()._scatter_stars(
-            ras, decs, sizes, alphas, colors, style, **kwargs
+    @use_style(PathStyle, "horizon")
+    def horizon(self, style: PathStyle = None):
+        # style_kwargs = style.line.matplot_kwargs(self.scale)
+
+        bottom = patches.Polygon(
+            [
+                (0, 0),
+                (1, 0),
+                (1, -0.08),
+                (0, -0.08),
+                (0, 0),
+            ],
+            color=style.line.color.as_hex(),
+            transform=self.ax.transAxes,
+            clip_on=False,
         )
+        self.ax.add_patch(bottom)
 
-        if type(self._background_clip_path) == patches.Rectangle:
-            # convert to generic path to handle possible rotation angle:
-            clip_path = path.Path(self._background_clip_path.get_corners())
-            plotted.set_clip_path(clip_path, transform=self.ax.transData)
-        else:
-            plotted.set_clip_path(self._background_clip_path)
-
-    @use_style(ObjectStyle, "star")
-    def stars(
-        self,
-        mag: float = 6.0,
-        catalog: StarCatalog = StarCatalog.HIPPARCOS,
-        style: ObjectStyle = None,
-        rasterize: bool = False,
-        size_fn: Callable[[Star], float] = callables.size_by_magnitude,
-        alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
-        color_fn: Callable[[Star], str] = None,
-        where: list = None,
-        where_labels: list = None,
-        labels: Mapping[int, str] = STAR_NAMES,
-        legend_label: str = "Star",
-        bayer_labels: bool = False,
-        *args,
-        **kwargs,
-    ):
-        """
-        Plots stars
-
-        Args:
-            mag: Limiting magnitude of stars to plot
-            catalog: The catalog of stars to use
-            style: If `None`, then the plot's style for stars will be used
-            rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
-            size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
-            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
-            color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
-            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
-            legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
-            bayer_labels: If True, then Bayer labels for stars will be plotted. Set this to False if you want to hide Bayer labels.
-        """
-        # optic_star_multiplier = 0.57 * (self.FIELD_OF_VIEW_MAX / self.optic.true_fov)
-
-        # def size_fn_mx(st: Star) -> float:
-        #     return size_fn(st) * optic_star_multiplier
-
-        super().stars(
-            mag=mag,
-            catalog=catalog,
-            style=style,
-            rasterize=rasterize,
-            size_fn=size_fn,
-            alpha_fn=alpha_fn,
-            color_fn=color_fn,
-            where=where,
-            where_labels=where_labels,
-            labels=labels,
-            legend_label=legend_label,
-            bayer_labels=bayer_labels,
-            *args,
-            **kwargs,
+        self.ax.annotate(
+            str(int(self.center_az)),
+            (0.5, -0.04),
+            xycoords=self.ax.transAxes,
+            **style.label.matplot_kwargs(self.scale),
+            clip_on=False,
         )
-
-    def _plot_border(self):
-        # since we're using AzimuthalEquidistant projection, the center will always be (0, 0)
-        x = 0
-        y = 0
-
-        # Background of Viewable Area
-        self._background_clip_path = self.optic.patch(
-            x,
-            y,
-            facecolor=self.style.background_color.as_hex(),
-            linewidth=0,
-            fill=True,
-            zorder=ZOrderEnum.LAYER_1,
-        )
-        self.ax.add_patch(self._background_clip_path)
-
-        # Inner Border
-        inner_border = self.optic.patch(
-            x,
-            y,
-            linewidth=2 * self.scale,
-            edgecolor=self.style.border_line_color.as_hex(),
-            fill=False,
-            zorder=ZOrderEnum.LAYER_5 + 100,
-        )
-        self.ax.add_patch(inner_border)
-
-        # Outer border
-        outer_border = self.optic.patch(
-            x,
-            y,
-            padding=0.05,
-            linewidth=20 * self.scale,
-            edgecolor=self.style.border_bg_color.as_hex(),
-            fill=False,
-            zorder=ZOrderEnum.LAYER_5,
-        )
-        self.ax.add_patch(outer_border)
 
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
@@ -361,6 +270,20 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         )
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
+
+    def _plot_background_clip_path(self):
+        self._background_clip_path = patches.Rectangle(
+            (0, 0),
+            width=1,
+            height=1,
+            facecolor=self.style.background_color.as_hex(),
+            linewidth=0,
+            fill=True,
+            zorder=-3_000,
+            transform=self.ax.transAxes,
+        )
+
+        self.ax.add_patch(self._background_clip_path)
 
     def _init_plot(self):
         self._proj = ccrs.LambertAzimuthalEqualArea(
@@ -381,18 +304,19 @@ class HorizonPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         bounds = [
             self.az[0],
-            self.az[1] * 1.2,
+            self.az[1],
             self.alt[0],
             self.alt[1],
         ]
-        print(bounds)
 
         self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
         self.ax.gridlines()
 
-        # self._plot_border()
+        # TODO : missing from optic/horizon:
+        # - constellations
+        # - constellation borders
+        # - gridlines
+        # - milky way
+        
+        self._plot_background_clip_path()
         self._fit_to_ax()
-
-        # self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
-        # self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
-        # self.optic.transform(self.ax)

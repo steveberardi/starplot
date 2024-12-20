@@ -496,6 +496,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 dec,
                 style,
                 hide_on_collision=False,
+                # hide_on_collision=self.hide_colliding_labels,
                 gid="constellations-label-name",
             )
 
@@ -516,13 +517,15 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             # d = distance(g.centroid, constellation.boundary.centroid)
             extent = abs(g.bounds[2] - g.bounds[0])
             area = g.area / constellation.boundary.area
+            return ((extent**3)) * area**2
+            return ((extent**2) - (d)) * area**2
             return (extent**2 + area) - (d**2)
 
         for constellation in self.objects.constellations:
             constellation_stars = [
                 s
                 for s in self.objects.stars
-                if s.constellation_id == constellation.iau_id
+                if s.constellation_id == constellation.iau_id and s.magnitude < 4
             ]
             points = MultiPoint([(s.ra, s.dec) for s in constellation_stars])
 
@@ -559,7 +562,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
             text = labels.get(constellation.iau_id)
             style = style or self.style.constellation.label
-            self.text(text, ra, dec, style)
+            style.anchor_point = "center"
+            self.text(text, ra, dec, style, hide_on_collision=False)
 
     @use_style(PolygonStyle, "milky_way")
     def milky_way(self, style: PolygonStyle = None):
