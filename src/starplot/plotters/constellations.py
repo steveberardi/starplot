@@ -217,13 +217,13 @@ class ConstellationPlotterMixin:
             )
 
             # self.ax.plot(
-            #     x_coords,
-            #     y_coords,
+            #     x,
+            #     y,
             #     transform=self._plate_carree,
             #     clip_on=True,
             #     clip_path=self._background_clip_path,
             #     gid="constellations-border",
-            #     **style_kwargs,
+            #     **style.matplot_kwargs(self.scale),
             # )
 
     def _constellation_borders(self):

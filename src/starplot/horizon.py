@@ -5,16 +5,13 @@ from functools import cache
 import pandas as pd
 
 from cartopy import crs as ccrs
-from matplotlib import pyplot as plt, patches, path
+from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator
 from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot.coordinates import CoordinateSystem
-from starplot import callables
 from starplot.base import BasePlot, DPI
-from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.mixins import ExtentMaskMixin
-from starplot.models import Star
 from starplot.plotters import (
     ConstellationPlotterMixin,
     StarPlotterMixin,
@@ -23,11 +20,8 @@ from starplot.plotters import (
 )
 from starplot.styles import (
     PlotStyle,
-    ObjectStyle,
     extensions,
     use_style,
-    ZOrderEnum,
-    PolygonStyle,
     PathStyle,
 )
 
@@ -47,11 +41,10 @@ class HorizonPlot(
     """Creates a new horizon plot.
 
     Args:
-        optic: Optic instance that defines optical parameters
-        ra: Right ascension of target center, in hours (0...24)
-        dec: Declination of target center, in degrees (-90...90)
         lat: Latitude of observer's location
         lon: Longitude of observer's location
+        altitude: Tuple of altitude range to plot (min, max)
+        azimuth: Tuple of azimuth range to plot (min, max)
         dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
@@ -62,7 +55,7 @@ class HorizonPlot(
         autoscale: If True, then the scale will be automatically set based on resolution
 
     Returns:
-        OpticPlot: A new instance of an OpticPlot
+        HorizonPlot: A new instance of an HorizonPlot
 
     """
 
@@ -79,7 +72,7 @@ class HorizonPlot(
         dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_OPTIC_STYLE,
-        resolution: int = 2048,
+        resolution: int = 4096,
         hide_colliding_labels: bool = True,
         scale: float = 1.0,
         autoscale: bool = False,

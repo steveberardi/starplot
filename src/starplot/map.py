@@ -21,7 +21,11 @@ from starplot.data import DataFiles, constellations as condata, stars
 from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.constellation import from_tuple as constellation_from_tuple
-from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
+from starplot.plotters import (
+    ConstellationPlotterMixin,
+    StarPlotterMixin,
+    DsoPlotterMixin,
+)
 from starplot.projections import Projection
 from starplot.styles import (
     ObjectStyle,
@@ -59,7 +63,13 @@ def points(start, end, num_points=100):
     return list(zip(x_coords, y_coords))
 
 
-class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
+class MapPlot(
+    BasePlot,
+    ExtentMaskMixin,
+    StarPlotterMixin,
+    DsoPlotterMixin,
+    ConstellationPlotterMixin,
+):
     """Creates a new map plot.
 
     !!! star "Note"
