@@ -9,7 +9,7 @@ from starplot.projections import Projection
 from starplot.styles import PathStyle, LineStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
-
+from starplot.utils import lon_to_ra, ra_to_lon
 
 class ConstellationPlotterMixin:
     @use_style(PathStyle, "constellation")
@@ -161,11 +161,16 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
         """
+        extent = self._extent_mask()
+        extent = (ra_to_lon(self.ra_min), self.dec_min, ra_to_lon(self.ra_max), self.dec_max)
+
         constellation_borders = gpd.read_file(
             DataFiles.CONSTELLATION_BORDERS.value,
             engine="pyogrio",
             use_arrow=True,
-            bbox=self._extent_mask(),
+            bbox=extent,
+            # bbox=self._extent_mask(),
+            # TODO : fix bbox here
         )
 
         if constellation_borders.empty:

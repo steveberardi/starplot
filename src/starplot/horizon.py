@@ -18,6 +18,7 @@ from starplot.plotters import (
     ConstellationPlotterMixin,
     StarPlotterMixin,
     DsoPlotterMixin,
+    MilkyWayPlotterMixin,
 )
 from starplot.styles import (
     PlotStyle,
@@ -40,6 +41,7 @@ class HorizonPlot(
     ConstellationPlotterMixin,
     StarPlotterMixin,
     DsoPlotterMixin,
+    MilkyWayPlotterMixin,
 ):
     """Creates a new horizon plot.
 
@@ -332,11 +334,12 @@ class HorizonPlot(
 
         # done
         # - constellations
-
+        # - milky way
+        
         # TODO : missing from optic/horizon:
         # - constellation borders
         # - gridlines
-        # - milky way
+        
 
         self._plot_background_clip_path()
         self._fit_to_ax()
