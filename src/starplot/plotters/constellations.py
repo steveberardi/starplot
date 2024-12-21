@@ -32,6 +32,7 @@ class ConstellationPlotterMixin:
         self.logger.debug("Plotting constellations...")
 
         labels = labels or {}
+        labels_to_plot = {}
         where = where or []
 
         constellations_gdf = gpd.read_file(
@@ -131,8 +132,9 @@ class ConstellationPlotterMixin:
 
             if inbounds:
                 self._objects.constellations.append(obj)
+                labels_to_plot[obj.iau_id] = labels.get(obj.iau_id)
 
-        self._plot_constellation_labels(style.label, labels)
+        self._plot_constellation_labels(style.label, labels_to_plot)
 
     def _plot_constellation_labels(
         self,
