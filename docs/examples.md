@@ -57,6 +57,14 @@
             <p class="example-card-title">Milky Way Stars</p>
         </a>
     </li>
+    
+    <li>
+        <a href="/examples/horizon-sgr/">
+            <img src="/images/examples/horizon_sgr-sm.png" alt="Horizon Plot of Sagittarius" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Horizon Plot</p>
+        </a>
+    </li>
 
     <li>
         <a href="/examples/map-big-dipper/">
