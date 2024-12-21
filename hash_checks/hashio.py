@@ -15,6 +15,7 @@ from rich.console import Console
 import map_checks
 import optic_checks
 import zenith_checks
+import horizon_checks
 
 TEMPLATE_NAME = "template.html"
 
@@ -154,6 +155,7 @@ if __name__ == "__main__":
     callables = Hashio.find_functions(map_checks)
     callables += Hashio.find_functions(zenith_checks)
     callables += Hashio.find_functions(optic_checks)
+    callables += Hashio.find_functions(horizon_checks)
 
     h = Hashio(callables=callables)
 

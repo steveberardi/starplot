@@ -1,3 +1,7 @@
+horizon_base:
+  dhash: bb55667a7eb57015bb5d667a5eb77211bb556e785fb57211
+  filename: /starplot/hash_checks/data/horizon-base.png
+  phash: 9fc0688949cf68e7
 map_coma_berenices_dso_size:
   dhash: 8a848cece098c0c0a2848cece098c6c08a8a92e2ec92c282
   filename: /starplot/hash_checks/data/map-coma-berenices-dso-size.png
