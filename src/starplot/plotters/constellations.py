@@ -11,6 +11,7 @@ from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
 from starplot.utils import lon_to_ra, ra_to_lon
 
+
 class ConstellationPlotterMixin:
     @use_style(PathStyle, "constellation")
     def constellations(
@@ -153,7 +154,6 @@ class ConstellationPlotterMixin:
                 gid="constellations-label-name",
             )
 
-
     @use_style(LineStyle, "constellation_borders")
     def constellation_borders(self, style: LineStyle = None):
         """Plots the constellation borders
@@ -162,7 +162,12 @@ class ConstellationPlotterMixin:
             style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
         """
         extent = self._extent_mask()
-        extent = (ra_to_lon(self.ra_min), self.dec_min, ra_to_lon(self.ra_max), self.dec_max)
+        extent = (
+            ra_to_lon(24 - self.ra_min),
+            self.dec_min,
+            ra_to_lon(24 - self.ra_max),
+            self.dec_max,
+        )
 
         constellation_borders = gpd.read_file(
             DataFiles.CONSTELLATION_BORDERS.value,
@@ -176,8 +181,6 @@ class ConstellationPlotterMixin:
         if constellation_borders.empty:
             return
 
-        style_kwargs = style.matplot_kwargs(self.scale)
-
         geometries = []
 
         for _, c in constellation_borders.iterrows():
@@ -189,29 +192,109 @@ class ConstellationPlotterMixin:
             x = list(x)
             y = list(y)
 
-            if self._coordinate_system == CoordinateSystem.RA_DEC:
-                x_coords = list(x)
-                y_coords = list(y)
+            x = [24 - (x0 / 15) for x0 in x]
 
-            elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-                x_coords = []
-                y_coords = []
+            # if self._coordinate_system == CoordinateSystem.RA_DEC:
+            #     x_coords = list(x)
+            #     y_coords = list(y)
 
-                for r, d in zip(x, y):
-                    az, alt = self._prepare_coords(r / 15, d)
-                    x_coords.append(az)
-                    y_coords.append(alt)
+            # elif self._coordinate_system == CoordinateSystem.AZ_ALT:
+            #     x_coords = []
+            #     y_coords = []
 
+            #     for r, d in zip(x, y):
+            #         az, alt = self._prepare_coords(r / 15, d)
+            #         x_coords.append(az)
+            #         y_coords.append(alt)
+            # else:
+            #     raise ValueError("Unrecognized coordinate system")
 
-            else:
-                raise ValueError("Unrecognized coordinate system")
-            
-            self.ax.plot(
-                x_coords,
-                y_coords,
-                transform=self._plate_carree,
-                clip_on=True,
-                clip_path=self._background_clip_path,
-                gid="constellations-border",
-                **style_kwargs,
+            self.line(
+                coordinates=zip(x, y),
+                style=style,
             )
+
+            # self.ax.plot(
+            #     x_coords,
+            #     y_coords,
+            #     transform=self._plate_carree,
+            #     clip_on=True,
+            #     clip_path=self._background_clip_path,
+            #     gid="constellations-border",
+            #     **style_kwargs,
+            # )
+
+    def _constellation_borders(self):
+        from shapely import LineString, MultiLineString, Polygon
+        from shapely.ops import unary_union
+
+        constellation_borders = gpd.read_file(
+            DataFiles.CONSTELLATIONS.value,
+            engine="pyogrio",
+            use_arrow=True,
+            bbox=self._extent_mask(),
+        )
+
+        if constellation_borders.empty:
+            return
+
+        geometries = []
+
+        for i, constellation in constellation_borders.iterrows():
+            geometry_types = constellation.geometry.geom_type
+
+            # equinox = LineString([[0, 90], [0, -90]])
+            """
+            Problems:
+                - Need to handle multipolygon borders too (SER)
+                - Shapely's union doesn't handle geodesy (e.g. TRI + AND)
+                - ^^ TRI is plotted with ra < 360, but AND has ra > 360
+                - ^^ idea: create union first and then remove duplicate lines?
+            
+                TODO: create new static data file of constellation border lines
+            """
+
+            if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
+                polygons = [constellation.geometry]
+
+            elif "MultiPolygon" in geometry_types:
+                polygons = constellation.geometry.geoms
+
+            for p in polygons:
+                coords = list(zip(*p.exterior.coords.xy))
+                # coords = [(ra * -1, dec) for ra, dec in coords]
+
+                new_coords = []
+
+                for i, c in enumerate(coords):
+                    ra, dec = c
+                    if i > 0:
+                        if new_coords[i - 1][0] - ra > 60:
+                            ra += 360
+
+                        elif ra - new_coords[i - 1][0] > 60:
+                            new_coords[i - 1][0] += 360
+
+                    new_coords.append([ra, dec])
+
+                ls = LineString(new_coords)
+                geometries.append(ls)
+
+        mls = MultiLineString(geometries)
+        geometries = unary_union(mls)
+
+        for ls in list(geometries.geoms):
+            x, y = ls.xy
+
+            self.line(zip(x, y), self.style.constellation_borders)
+            # x, y = ls.xy
+            # newx = [xx * -1 for xx in list(x)]
+            # self.ax.plot(
+            #     # list(x),
+            #     newx,
+            #     list(y),
+            #     # **self._plot_kwargs(),
+            #     # transform=self._geodetic,
+            #     transform=self._plate_carree,
+            #     **style_kwargs,
+            # )

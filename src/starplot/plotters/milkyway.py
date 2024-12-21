@@ -14,12 +14,19 @@ class MilkyWayPlotterMixin:
         Args:
             style: Styling of the Milky Way. If None, then the plot's style (specified when creating the plot) will be used
         """
+        extent = self._extent_mask()
+        extent = (
+            ra_to_lon(24 - self.ra_min),
+            self.dec_min,
+            ra_to_lon(24 - self.ra_max),
+            self.dec_max,
+        )
+
         mw = gpd.read_file(
             DataFiles.MILKY_WAY.value,
             engine="pyogrio",
             use_arrow=True,
-            # bbox=self._extent_mask(),
-            # TODO : fix bbox here
+            bbox=extent,
         )
 
         if mw.empty:

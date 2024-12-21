@@ -225,22 +225,13 @@ class HorizonPlot(
             self.ra_min = 0
             self.ra_max = 24
 
-        self.dec_min -= 10
-        self.dec_max += 10
-        self.ra_min -= 2
-        self.ra_max += 2
+        self.dec_min -= 20
+        self.dec_max += 20
+        self.ra_min -= 4
+        self.ra_max += 4
 
-        # # adjust right ascension to match extent
-        # if self.ra_max < 24:
-        #     ra_min = (-1 * extent[1]) / 15
-        #     ra_max = (-1 * extent[0]) / 15
-
-        #     if ra_min < 0 or ra_max < 0:
-        #         ra_min += 24
-        #         ra_max += 24
-
-        #     self.ra_min = ra_min
-        #     self.ra_max = ra_max
+        if self.ra_min < 0:
+            self.ra_min = 0
 
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
@@ -259,15 +250,17 @@ class HorizonPlot(
         return df
 
     @use_style(PathStyle, "horizon")
-    def horizon(self, style: PathStyle = None):
-        # style_kwargs = style.line.matplot_kwargs(self.scale)
-
+    def horizon(
+        self,
+        style: PathStyle = None,
+        labels: list = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
+    ):
         bottom = patches.Polygon(
             [
                 (0, 0),
                 (1, 0),
-                (1, -0.08),
-                (0, -0.08),
+                (1, -0.1 * self.scale),
+                (0, -0.1 * self.scale),
                 (0, 0),
             ],
             color=style.line.color.as_hex(),
@@ -276,13 +269,39 @@ class HorizonPlot(
         )
         self.ax.add_patch(bottom)
 
-        self.ax.annotate(
-            str(int(self.center_az)),
-            (0.5, -0.04),
-            xycoords=self.ax.transAxes,
-            **style.label.matplot_kwargs(self.scale),
-            clip_on=False,
-        )
+        if not labels:
+            return
+
+        labeled_az = [
+            0,
+            45,
+            90,
+            135,
+            180,
+            225,
+            270,
+            315,
+        ]
+
+        az_to_ax = lambda d: (d - self.az[0]) / (self.az[1] - self.az[0])
+
+        for az, label in zip(labeled_az, labels):
+            if az > self.az[0] and az < self.az[1]:
+                self.ax.annotate(
+                    label,
+                    (az_to_ax(az), -0.06),
+                    xycoords=self.ax.transAxes,
+                    **style.label.matplot_kwargs(self.scale),
+                    clip_on=False,
+                )
+
+                self.ax.annotate(
+                    str(az) + "\u00b0",
+                    (az_to_ax(az), -0.015),
+                    xycoords=self.ax.transAxes,
+                    **style.label.matplot_kwargs(self.scale / 2),
+                    clip_on=False,
+                )
 
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
@@ -330,16 +349,16 @@ class HorizonPlot(
         ]
 
         self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
-        self.ax.gridlines()
+        # self.ax.gridlines()
 
         # done
         # - constellations
         # - milky way
-        
+
         # TODO : missing from optic/horizon:
         # - constellation borders
         # - gridlines
-        
+        # - fix bounds bbox
 
         self._plot_background_clip_path()
         self._fit_to_ax()
