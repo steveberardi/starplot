@@ -1,5 +1,6 @@
+import math
 from datetime import datetime
-from typing import Callable, Mapping
+from typing import Callable
 from functools import cache
 
 import pandas as pd
@@ -299,7 +300,8 @@ class HorizonPlot(
 
         az_labels = {az: label for az, label in zip(labeled_az, labels)}
 
-        az_to_ax = lambda d: (d - self.az[0]) / (self.az[1] - self.az[0])
+        def az_to_ax(d):
+            return (d - self.az[0]) / (self.az[1] - self.az[0])
 
         for az in range(self.az[0], self.az[1], 1):
             az = int(az)

@@ -1,7 +1,7 @@
 from starplot.data import DataFiles
 from starplot.styles import PolygonStyle
 from starplot.styles.helpers import use_style
-from starplot.utils import lon_to_ra, ra_to_lon
+from starplot.utils import lon_to_ra
 
 
 class MilkyWayPlotterMixin:

@@ -9,7 +9,6 @@ from starplot.projections import Projection
 from starplot.styles import PathStyle, LineStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
-from starplot.utils import lon_to_ra, ra_to_lon
 
 
 class ConstellationPlotterMixin:
@@ -204,7 +203,7 @@ class ConstellationPlotterMixin:
                 raise ValueError("Unrecognized coordinate system")
 
     def _constellation_borders(self):
-        from shapely import LineString, MultiLineString, Polygon
+        from shapely import LineString, MultiLineString
         from shapely.ops import unary_union
 
         constellation_borders = gpd.read_file(
