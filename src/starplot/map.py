@@ -2,6 +2,7 @@ import datetime
 import math
 import warnings
 from typing import Callable
+from functools import cache
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
@@ -169,6 +170,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def _prepare_coords(self, ra: float, dec: float) -> (float, float):
         return ra * 15, dec
 
+    @cache
     def in_bounds(self, ra: float, dec: float) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
 
