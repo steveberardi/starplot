@@ -3,6 +3,7 @@ from typing import Callable, Mapping
 from functools import cache
 
 import pandas as pd
+import geopandas as gpd
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
@@ -24,6 +25,7 @@ from starplot.styles import (
     use_style,
     PathStyle,
 )
+from starplot.utils import lon_to_ra, ra_to_lon
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -242,6 +244,24 @@ class HorizonPlot(
             nearby_stars_alt.degrees,
         )
         return df
+
+    def _read_geo_package(self, filename: str):
+        """Returns GeoDataFrame of a GeoPackage file"""
+
+        extent = self._extent_mask()
+        extent = (
+            ra_to_lon(24 - self.ra_min),
+            self.dec_min,
+            ra_to_lon(24 - self.ra_max),
+            self.dec_max,
+        )
+
+        return gpd.read_file(
+            filename,
+            engine="pyogrio",
+            use_arrow=True,
+            bbox=extent,
+        )
 
     @use_style(PathStyle, "horizon")
     def horizon(

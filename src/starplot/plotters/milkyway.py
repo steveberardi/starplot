@@ -1,5 +1,3 @@
-import geopandas as gpd
-
 from starplot.data import DataFiles
 from starplot.styles import PolygonStyle
 from starplot.styles.helpers import use_style
@@ -14,20 +12,8 @@ class MilkyWayPlotterMixin:
         Args:
             style: Styling of the Milky Way. If None, then the plot's style (specified when creating the plot) will be used
         """
-        extent = self._extent_mask()
-        extent = (
-            ra_to_lon(24 - self.ra_min),
-            self.dec_min,
-            ra_to_lon(24 - self.ra_max),
-            self.dec_max,
-        )
 
-        mw = gpd.read_file(
-            DataFiles.MILKY_WAY.value,
-            engine="pyogrio",
-            use_arrow=True,
-            bbox=extent,
-        )
+        mw = self._read_geo_package(DataFiles.MILKY_WAY.value)
 
         if mw.empty:
             return
