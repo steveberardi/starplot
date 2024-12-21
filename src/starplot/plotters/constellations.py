@@ -163,21 +163,8 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
         """
-        extent = self._extent_mask()
-        extent = (
-            ra_to_lon(24 - self.ra_min),
-            self.dec_min,
-            ra_to_lon(24 - self.ra_max),
-            self.dec_max,
-        )
-
-        constellation_borders = gpd.read_file(
-            DataFiles.CONSTELLATION_BORDERS.value,
-            engine="pyogrio",
-            use_arrow=True,
-            bbox=extent,
-            # bbox=self._extent_mask(),
-            # TODO : fix bbox here
+        constellation_borders = self._read_geo_package(
+            DataFiles.CONSTELLATION_BORDERS.value
         )
 
         if constellation_borders.empty:
@@ -194,37 +181,27 @@ class ConstellationPlotterMixin:
             x = list(x)
             y = list(y)
 
-            x = [24 - (x0 / 15) for x0 in x]
+            if self._coordinate_system == CoordinateSystem.RA_DEC:
+                self.ax.plot(
+                    x,
+                    y,
+                    transform=self._plate_carree,
+                    clip_on=True,
+                    clip_path=self._background_clip_path,
+                    gid="constellations-border",
+                    **style.matplot_kwargs(self.scale),
+                )
 
-            # if self._coordinate_system == CoordinateSystem.RA_DEC:
-            #     x_coords = list(x)
-            #     y_coords = list(y)
+            elif self._coordinate_system == CoordinateSystem.AZ_ALT:
+                x = [24 - (x0 / 15) for x0 in x]
 
-            # elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-            #     x_coords = []
-            #     y_coords = []
+                self.line(
+                    coordinates=zip(x, y),
+                    style=style,
+                )
 
-            #     for r, d in zip(x, y):
-            #         az, alt = self._prepare_coords(r / 15, d)
-            #         x_coords.append(az)
-            #         y_coords.append(alt)
-            # else:
-            #     raise ValueError("Unrecognized coordinate system")
-
-            self.line(
-                coordinates=zip(x, y),
-                style=style,
-            )
-
-            # self.ax.plot(
-            #     x,
-            #     y,
-            #     transform=self._plate_carree,
-            #     clip_on=True,
-            #     clip_path=self._background_clip_path,
-            #     gid="constellations-border",
-            #     **style.matplot_kwargs(self.scale),
-            # )
+            else:
+                raise ValueError("Unrecognized coordinate system")
 
     def _constellation_borders(self):
         from shapely import LineString, MultiLineString, Polygon
@@ -300,3 +277,68 @@ class ConstellationPlotterMixin:
             #     transform=self._plate_carree,
             #     **style_kwargs,
             # )
+
+    def _plot_constellation_labels_experimental(
+        self,
+        style: PathStyle = None,
+        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
+    ):
+        from shapely import (
+            MultiPoint,
+            intersection,
+            delaunay_triangles,
+            distance,
+        )
+
+        def sorter(g):
+            d = distance(g.centroid, points.centroid)
+            # d = distance(g.centroid, constellation.boundary.centroid)
+            extent = abs(g.bounds[2] - g.bounds[0])
+            area = g.area / constellation.boundary.area
+            return ((extent**3)) * area**2
+            return ((extent**2) - (d)) * area**2
+            return (extent**2 + area) - (d**2)
+
+        for constellation in self.objects.constellations:
+            constellation_stars = [
+                s
+                for s in self.objects.stars
+                if s.constellation_id == constellation.iau_id and s.magnitude < 4
+            ]
+            points = MultiPoint([(s.ra, s.dec) for s in constellation_stars])
+
+            triangles = delaunay_triangles(
+                geometry=points,
+                # tolerance=2,
+            )
+
+            polygons = []
+            for t in triangles.geoms:
+                try:
+                    inter = intersection(t, constellation.boundary)
+                except Exception:
+                    continue
+                if (
+                    inter.geom_type == "Polygon"
+                    and len(list(zip(*inter.exterior.coords.xy))) > 2
+                ):
+                    polygons.append(inter)
+
+            p_by_area = {pg.area: pg for pg in polygons}
+            polygons_sorted = [
+                p_by_area[k] for k in sorted(p_by_area.keys(), reverse=True)
+            ]
+
+            # sort by combination of horizontal extent and area
+            polygons_sorted = sorted(polygons_sorted, key=sorter, reverse=True)
+
+            if len(polygons_sorted) > 0:
+                i = 0
+                ra, dec = polygons_sorted[i].centroid.x, polygons_sorted[i].centroid.y
+            else:
+                ra, dec = constellation.ra, constellation.dec
+
+            text = labels.get(constellation.iau_id)
+            style = style or self.style.constellation.label
+            style.anchor_point = "center"
+            self.text(text, ra, dec, style, hide_on_collision=False)
