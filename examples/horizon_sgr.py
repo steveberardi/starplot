@@ -8,9 +8,7 @@ from starplot.styles import PlotStyle, extensions
 style = PlotStyle().extend(
     extensions.BLUE_MEDIUM,
     extensions.MAP,
-    {
-        "figure_background_color": "hsl(212, 27%, 48%)"
-    }
+    {"figure_background_color": "hsl(212, 27%, 48%)"},
 )
 
 dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
@@ -18,7 +16,7 @@ dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
 p = HorizonPlot(
     altitude=(0, 60),
     azimuth=(175, 275),
-    lat=36.606111,      # Lone Pine, California
+    lat=36.606111,  # Lone Pine, California
     lon=-118.079444,
     dt=dt,
     style=style,
@@ -27,7 +25,7 @@ p = HorizonPlot(
 )
 
 p.constellations()
-p.milky_way() 
+p.milky_way()
 
 p.stars(where=[Star.magnitude < 5])
 p.messier(where=[DSO.magnitude < 12], true_size=False, label_fn=lambda d: f"M{d.m}")

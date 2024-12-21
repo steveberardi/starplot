@@ -7,7 +7,8 @@ from starplot.utils import lon_to_ra
 class MilkyWayPlotterMixin:
     @use_style(PolygonStyle, "milky_way")
     def milky_way(self, style: PolygonStyle = None):
-        """Plots the Milky Way
+        """
+        Plots the Milky Way
 
         Args:
             style: Styling of the Milky Way. If None, then the plot's style (specified when creating the plot) will be used
