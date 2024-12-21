@@ -6,6 +6,7 @@ import pandas as pd
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches, path
+from matplotlib.ticker import FixedLocator
 from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot.coordinates import CoordinateSystem
@@ -283,25 +284,109 @@ class HorizonPlot(
             315,
         ]
 
+        az_labels = {az: label for az, label in zip(labeled_az, labels)}
+
         az_to_ax = lambda d: (d - self.az[0]) / (self.az[1] - self.az[0])
 
-        for az, label in zip(labeled_az, labels):
-            if az > self.az[0] and az < self.az[1]:
+        for az in range(self.az[0], self.az[1], 1):
+            az = int(az)
+
+            if az_labels.get(az):
                 self.ax.annotate(
-                    label,
-                    (az_to_ax(az), -0.06),
+                    az_labels.get(az),
+                    (az_to_ax(az), -0.074 * self.scale),
                     xycoords=self.ax.transAxes,
                     **style.label.matplot_kwargs(self.scale),
                     clip_on=False,
                 )
 
+            if az % 15 == 0:
                 self.ax.annotate(
                     str(az) + "\u00b0",
-                    (az_to_ax(az), -0.015),
+                    (az_to_ax(az), -0.011 * self.scale),
                     xycoords=self.ax.transAxes,
-                    **style.label.matplot_kwargs(self.scale / 2),
+                    **self.style.gridlines.label.matplot_kwargs(self.scale),
                     clip_on=False,
                 )
+
+            elif az % 5 == 0 and az > self.az[0] + 2:
+                self.ax.annotate(
+                    "|",
+                    (az_to_ax(az), -0.011 * self.scale),
+                    xycoords=self.ax.transAxes,
+                    **self.style.gridlines.label.matplot_kwargs(self.scale / 2),
+                    clip_on=False,
+                )
+
+        self.ax.plot(
+            [0, 1],
+            [-0.04 * self.scale, -0.04 * self.scale],
+            lw=1,
+            color=style.label.font_color.as_hex(),
+            clip_on=False,
+            transform=self.ax.transAxes,
+        )
+
+    @use_style(PathStyle, "gridlines")
+    def gridlines(
+        self,
+        style: PathStyle = None,
+        labels: bool = True,
+        ra_locations: list[float] = None,
+        dec_locations: list[float] = None,
+        ra_formatter_fn: Callable[[float], str] = None,
+        dec_formatter_fn: Callable[[float], str] = None,
+        tick_marks: bool = False,
+        ra_tick_locations: list[float] = None,
+        dec_tick_locations: list[float] = None,
+    ):
+        """Plots gridlines
+
+        Args:
+            style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
+            labels: If True, then labels for each gridline will be plotted on the outside of the axes.
+            ra_locations: List of Right Ascension locations for the gridlines (in hours, 0...24). Defaults to every 1 hour.
+            dec_locations: List of Declination locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
+            ra_formatter_fn: Callable for creating labels of right ascension gridlines
+            dec_formatter_fn: Callable for creating labels of declination gridlines
+            tick_marks: If True, then tick marks will be plotted outside the axis. **Only supported for rectangular projections (e.g. Mercator, Miller)**
+            ra_tick_locations: List of Right Ascension locations for the tick marks (in hours, 0...24)
+            dec_tick_locations: List of Declination locations for the tick marks (in degrees, -90...90)
+        """
+
+        ra_formatter_fn_default = lambda r: f"{math.floor(r)}h"  # noqa: E731
+        dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
+
+        ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
+        dec_formatter_fn = dec_formatter_fn or dec_formatter_fn_default
+
+        def ra_formatter(x, pos) -> str:
+            ra = lon_to_ra(x)
+            return ra_formatter_fn(ra)
+
+        def dec_formatter(x, pos) -> str:
+            return dec_formatter_fn(x)
+
+        x_locations = [x for x in range(-180, 180, 15)]
+        y_locations = [d for d in range(-80, 90, 10)]
+
+        line_style_kwargs = style.line.matplot_kwargs()
+        gridlines = self.ax.gridlines(
+            draw_labels=False,
+            x_inline=False,
+            y_inline=False,
+            rotate_labels=False,
+            xpadding=12,
+            ypadding=12,
+            clip_on=True,
+            clip_path=self._background_clip_path,
+            gid="gridlines",
+            **line_style_kwargs,
+        )
+
+        gridlines.xlocator = FixedLocator(x_locations)
+
+        gridlines.ylocator = FixedLocator(y_locations)
 
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(

@@ -120,7 +120,6 @@ gridlines:
   label:
     font_alpha: 1
     font_color: hsl(209, 53%, 94%)
-    font_weight: light
   line:
     alpha: 0.7
     color: hsl(209, 53%, 37%)
