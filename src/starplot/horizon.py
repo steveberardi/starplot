@@ -1,6 +1,4 @@
-import math
 from datetime import datetime
-from typing import Callable
 from functools import cache
 
 import pandas as pd
@@ -26,7 +24,7 @@ from starplot.styles import (
     use_style,
     PathStyle,
 )
-from starplot.utils import lon_to_ra, ra_to_lon
+from starplot.utils import ra_to_lon
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
