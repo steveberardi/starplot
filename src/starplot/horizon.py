@@ -93,6 +93,17 @@ class HorizonPlot(
             *args,
             **kwargs,
         )
+
+        if azimuth[0] >= azimuth[1]:
+            raise ValueError("Azimuth min must be less than max")
+        if azimuth[1] - azimuth[0] > 180:
+            raise ValueError("Azimuth range cannot be greater than 180 degrees")
+
+        if altitude[0] >= altitude[1]:
+            raise ValueError("Altitude min must be less than max")
+        if altitude[1] - altitude[0] > 90:
+            raise ValueError("Altitude range cannot be greater than 90 degrees")
+
         self.logger.debug("Creating HorizonPlot...")
         self.alt = altitude
         self.az = azimuth
@@ -208,14 +219,6 @@ class HorizonPlot(
             if self.dec_max is None or dec > self.dec_max:
                 self.dec_max = dec
 
-        # self.star = SkyfieldStar(ra_hours=self.ra, dec_degrees=self.dec)
-        # self.position = self.observe(self.star)
-        # self.pos_apparent = self.position.apparent()
-        # self.pos_alt, self.pos_az, _ = self.pos_apparent.altaz()
-
-        # if self.pos_alt.degrees < 0 and self.raise_on_below_horizon:
-        #     raise ValueError("Target is below horizon at specified time/location.")
-
     def _adjust_radec_minmax(self):
         if self.dec_max > 70 or self.dec_min < -70:
             # naive method of getting all the stars near the poles
@@ -270,6 +273,15 @@ class HorizonPlot(
         style: PathStyle = None,
         labels: list = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
     ):
+        """
+        Plots rectangle for horizon that shows cardinal directions and azimuth labels.
+
+        """
+
+        # TODO:
+        # - add args for show_azimuth
+        # - add arg for show_cardinal_directions
+
         bottom = patches.Polygon(
             [
                 (0, 0),
@@ -346,44 +358,21 @@ class HorizonPlot(
     def gridlines(
         self,
         style: PathStyle = None,
-        labels: bool = True,
-        ra_locations: list[float] = None,
-        dec_locations: list[float] = None,
-        ra_formatter_fn: Callable[[float], str] = None,
-        dec_formatter_fn: Callable[[float], str] = None,
-        tick_marks: bool = False,
-        ra_tick_locations: list[float] = None,
-        dec_tick_locations: list[float] = None,
+        az_locations: list[float] = None,
+        alt_locations: list[float] = None,
     ):
-        """Plots gridlines
+        """
+        Plots gridlines
 
         Args:
             style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
-            labels: If True, then labels for each gridline will be plotted on the outside of the axes.
-            ra_locations: List of Right Ascension locations for the gridlines (in hours, 0...24). Defaults to every 1 hour.
-            dec_locations: List of Declination locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
-            ra_formatter_fn: Callable for creating labels of right ascension gridlines
-            dec_formatter_fn: Callable for creating labels of declination gridlines
-            tick_marks: If True, then tick marks will be plotted outside the axis. **Only supported for rectangular projections (e.g. Mercator, Miller)**
-            ra_tick_locations: List of Right Ascension locations for the tick marks (in hours, 0...24)
-            dec_tick_locations: List of Declination locations for the tick marks (in degrees, -90...90)
+            az_locations: List of azimuth locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees
+            alt_locations: List of altitude locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
+
         """
-
-        ra_formatter_fn_default = lambda r: f"{math.floor(r)}h"  # noqa: E731
-        dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
-
-        ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
-        dec_formatter_fn = dec_formatter_fn or dec_formatter_fn_default
-
-        def ra_formatter(x, pos) -> str:
-            ra = lon_to_ra(x)
-            return ra_formatter_fn(ra)
-
-        def dec_formatter(x, pos) -> str:
-            return dec_formatter_fn(x)
-
-        x_locations = [x for x in range(-180, 180, 15)]
-        y_locations = [d for d in range(-80, 90, 10)]
+        x_locations = az_locations or [x for x in range(0, 360, 15)]
+        x_locations = [x - 180 for x in x_locations]
+        y_locations = alt_locations or [d for d in range(-90, 90, 10)]
 
         line_style_kwargs = style.line.matplot_kwargs()
         gridlines = self.ax.gridlines(
@@ -398,9 +387,7 @@ class HorizonPlot(
             gid="gridlines",
             **line_style_kwargs,
         )
-
         gridlines.xlocator = FixedLocator(x_locations)
-
         gridlines.ylocator = FixedLocator(y_locations)
 
     def _fit_to_ax(self) -> None:
@@ -449,16 +436,6 @@ class HorizonPlot(
         ]
 
         self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
-        # self.ax.gridlines()
-
-        # done
-        # - constellations
-        # - milky way
-
-        # TODO : missing from optic/horizon:
-        # - constellation borders
-        # - gridlines
-        # - fix bounds bbox
 
         self._plot_background_clip_path()
         self._fit_to_ax()
