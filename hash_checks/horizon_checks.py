@@ -46,3 +46,31 @@ def check_horizon_base():
     filename = DATA_PATH / "horizon-base.png"
     horizon_base.export(filename)
     return filename
+
+
+def check_horizon_north_celestial_pole():
+    dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
+
+    p = HorizonPlot(
+        altitude=(0, 70),
+        azimuth=(310,410),
+        lat=36.606111,  # Lone Pine, California
+        lon=-118.079444,
+        dt=dt,
+        style=STYLE,
+        resolution=RESOLUTION,
+        scale=0.9,
+    )
+    p.constellations()
+    p.constellation_borders()
+    p.milky_way()
+    p.stars(where=[Star.magnitude < 5])
+    p.messier(where=[DSO.magnitude < 12], true_size=False, label_fn=lambda d: f"M{d.m}")
+    p.planets()
+    p.ecliptic()
+    p.horizon()
+    p.gridlines()
+
+    filename = DATA_PATH / "horizon-north-celestial-pole.png"
+    p.export(filename)
+    return filename
