@@ -53,7 +53,7 @@ def check_horizon_north_celestial_pole():
 
     p = HorizonPlot(
         altitude=(0, 70),
-        azimuth=(310,410),
+        azimuth=(310, 410),
         lat=36.606111,  # Lone Pine, California
         lon=-118.079444,
         dt=dt,
