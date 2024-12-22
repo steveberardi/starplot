@@ -319,6 +319,9 @@ class HorizonPlot(
         for az in range(self.az[0], self.az[1], 1):
             az = int(az)
 
+            if az >= 360:
+                az -= 360
+
             if labels.get(az):
                 self.ax.annotate(
                     labels.get(az),
