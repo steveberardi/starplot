@@ -13,6 +13,7 @@ from matplotlib.lines import Line2D
 from pytz import timezone
 from shapely import Polygon
 
+from starplot.coordinates import CoordinateSystem
 from starplot import geod, models
 from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
@@ -62,6 +63,7 @@ DPI = 100
 
 class BasePlot(ABC):
     _background_clip_path = None
+    _coordinate_system = CoordinateSystem.RA_DEC
 
     def __init__(
         self,

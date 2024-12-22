@@ -7,6 +7,7 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
 
+from starplot.coordinates import CoordinateSystem
 from starplot import callables
 from starplot.base import BasePlot, DPI
 from starplot.data.stars import StarCatalog, STAR_NAMES
@@ -51,6 +52,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         OpticPlot: A new instance of an OpticPlot
 
     """
+
+    _coordinate_system = CoordinateSystem.AZ_ALT
 
     FIELD_OF_VIEW_MAX = 9.0
 
