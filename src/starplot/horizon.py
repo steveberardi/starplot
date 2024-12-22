@@ -313,7 +313,7 @@ class HorizonPlot(
         az_labels = {az: label for az, label in zip(labeled_az, labels)}
 
         def az_to_ax(d):
-            return (d - self.az[0]) / (self.az[1] - self.az[0])
+            return self._to_ax(d, self.alt[0])[0]
 
         for az in range(self.az[0], self.az[1], 1):
             az = int(az)
@@ -390,6 +390,14 @@ class HorizonPlot(
         gridlines.xlocator = FixedLocator(x_locations)
         gridlines.ylocator = FixedLocator(y_locations)
 
+    @cache
+    def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
+        """Converts az/alt to axes coordinates"""
+        x, y = self._proj.transform_point(az, alt, self._crs)
+        data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
+        x_axes, y_axes = data_to_axes.transform((x, y))
+        return x_axes, y_axes
+    
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
             self.fig.dpi_scale_trans.inverted()
