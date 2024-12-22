@@ -30,7 +30,18 @@ from starplot.utils import lon_to_ra, ra_to_lon
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
-DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
+DEFAULT_HORIZON_STYLE = PlotStyle().extend(extensions.MAP)
+
+DEFAULT_HORIZON_LABELS = {
+    0: "N",
+    45: "NE",
+    90: "E",
+    135: "SE",
+    180: "S",
+    225: "SW",
+    270: "W",
+    315: "NW",
+}
 
 
 class HorizonPlot(
@@ -74,7 +85,7 @@ class HorizonPlot(
         azimuth: tuple[float, float],
         dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
-        style: PlotStyle = DEFAULT_OPTIC_STYLE,
+        style: PlotStyle = DEFAULT_HORIZON_STYLE,
         resolution: int = 4096,
         hide_colliding_labels: bool = True,
         scale: float = 1.0,
@@ -271,17 +282,23 @@ class HorizonPlot(
     def horizon(
         self,
         style: PathStyle = None,
-        labels: list = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
+        labels: dict[int, str] = DEFAULT_HORIZON_LABELS,
+        show_degree_labels: bool = True,
+        degree_step: int = 15,
+        show_ticks: bool = True,
+        tick_step: int = 5,
     ):
         """
         Plots rectangle for horizon that shows cardinal directions and azimuth labels.
 
+        Args:
+            style: Style of the horizon path. If None, then the plot's style definition will be used.
+            labels: Dictionary that maps azimuth values (0...360) to their cardinal direction labels (e.g. "N"). Default is to label each 45deg direction (e.g. "N", "NE", "E", etc)
+            show_degree_labels: If True, then azimuth degree labels will be plotted on the horizon path
+            degree_step: Step size for degree labels
+            show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
+            tick_step: Step size for tick marks
         """
-
-        # TODO:
-        # - add args for show_azimuth
-        # - add arg for show_cardinal_directions
-
         bottom = patches.Polygon(
             [
                 (0, 0),
@@ -296,38 +313,22 @@ class HorizonPlot(
         )
         self.ax.add_patch(bottom)
 
-        if not labels:
-            return
-
-        labeled_az = [
-            0,
-            45,
-            90,
-            135,
-            180,
-            225,
-            270,
-            315,
-        ]
-
-        az_labels = {az: label for az, label in zip(labeled_az, labels)}
-
         def az_to_ax(d):
             return self._to_ax(d, self.alt[0])[0]
 
         for az in range(self.az[0], self.az[1], 1):
             az = int(az)
 
-            if az_labels.get(az):
+            if labels.get(az):
                 self.ax.annotate(
-                    az_labels.get(az),
+                    labels.get(az),
                     (az_to_ax(az), -0.074 * self.scale),
                     xycoords=self.ax.transAxes,
                     **style.label.matplot_kwargs(self.scale),
                     clip_on=False,
                 )
 
-            if az % 15 == 0:
+            if show_degree_labels and az % degree_step == 0:
                 self.ax.annotate(
                     str(az) + "\u00b0",
                     (az_to_ax(az), -0.011 * self.scale),
@@ -336,7 +337,7 @@ class HorizonPlot(
                     clip_on=False,
                 )
 
-            elif az % 5 == 0 and az > self.az[0] + 2:
+            elif show_ticks and az % tick_step == 0 and az > self.az[0] + 2:
                 self.ax.annotate(
                     "|",
                     (az_to_ax(az), -0.011 * self.scale),
@@ -397,7 +398,7 @@ class HorizonPlot(
         data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
         x_axes, y_axes = data_to_axes.transform((x, y))
         return x_axes, y_axes
-    
+
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
             self.fig.dpi_scale_trans.inverted()
