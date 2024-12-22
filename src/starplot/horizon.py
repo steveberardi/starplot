@@ -321,7 +321,7 @@ class HorizonPlot(
         def az_to_ax(d):
             return self._to_ax(d, self.alt[0])[0]
 
-        for az in range(self.az[0], self.az[1], 1):
+        for az in range(self.az[0] + 2, self.az[1], 1):
             az = int(az)
 
             if az >= 360:
@@ -345,7 +345,7 @@ class HorizonPlot(
                     clip_on=False,
                 )
 
-            elif show_ticks and az % tick_step == 0 and az > self.az[0] + 2:
+            elif show_ticks and az % tick_step == 0:
                 self.ax.annotate(
                     "|",
                     (az_to_ax(az), -0.011 * self.scale),

@@ -8,6 +8,7 @@
 
 - ⭐ **Zenith Plots** - showing the whole sky from a specific time/location
 - 🗺️ **Map Plots** - including many map projections
+- 🌃 **Horizon Plots** - shows the horizon at a specific time and place
 - 🔭 **Optic Plots** - simulates what you'll see through an optic (e.g. binoculars, telescope) from a time/location
 - 🪐 **Planets and Deep Sky Objects (DSOs)**
 - 🎨 **Custom Styles** - for all objects
