@@ -140,6 +140,13 @@ class ConstellationPlotterMixin:
         style: PathStyle = None,
         labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
     ):
+        """
+        TODO:
+        1. plot label, if removed then get size in display coords
+        2. generate random points in polygon, convert to display coords, test for intersections
+        3. plot best score
+        
+        """
         style = style or self.style.constellation.label
 
         for con in condata.iterator():

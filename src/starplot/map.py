@@ -329,38 +329,48 @@ class MapPlot(
         )
         x = []
         y = []
-        verts = []
-
-        # TODO : handle map edges better
 
         for ra, dec in points:
             ra = ra / 15
             x0, y0 = self._prepare_coords(ra, dec)
             x.append(x0)
             y.append(y0)
-            verts.append((x0, y0))
 
         style_kwargs = {}
         if self.projection == Projection.ZENITH:
             """
-            For zenith projections, we plot the horizon as a patch because
-            plottting as a line results in extra pixels on bottom.
-
-            TODO : investigate why line is extra thick on bottom when plotting line
+            For zenith projections, we plot the horizon as a patch to make a more perfect circle
             """
             style_kwargs = style.line.matplot_kwargs(self.scale)
             style_kwargs["clip_on"] = False
             style_kwargs["edgecolor"] = style_kwargs.pop("color")
-
-            patch = patches.Polygon(
-                verts,
+            patch = patches.Circle(
+                (0.50, 0.50),
+                radius=0.454,
                 facecolor=None,
                 fill=False,
-                transform=self._crs,
+                transform=self.ax.transAxes,
                 **style_kwargs,
             )
             self.ax.add_patch(patch)
+            self._background_clip_path = patch
 
+            if not labels:
+                return
+            
+            label_ax_coords = [
+                (0.5, 0.95), # north
+                (0.045, 0.5), # east
+                (0.5, 0.045), # south
+                (0.954, 0.5), # west
+                
+            ]
+            for label, coords in zip(labels, label_ax_coords):
+                ra, dec = self._ax_to_radec(*coords)
+                self.text(label, ra, dec, hide_on_collision=False, style=style.label, force=True, clip_on=False)
+            
+            return
+        
         else:
             style_kwargs["clip_on"] = True
             style_kwargs["clip_path"] = self._background_clip_path
@@ -372,13 +382,6 @@ class MapPlot(
                 **style_kwargs,
                 **self._plot_kwargs(),
             )
-
-        # self.circle(
-        #     (ra.hours, dec.degrees),
-        #     90,
-        #     style,
-        #     num_pts=200,
-        # )
 
         if not labels:
             return
@@ -602,6 +605,13 @@ class MapPlot(
             transform=self.ax.transAxes,
             **style.matplot_kwargs(self.scale),
         )
+
+    def _ax_to_radec(self, x, y):
+        trans = self.ax.transAxes + self.ax.transData.inverted()
+        x_projected, y_projected = trans.transform((x, y)) # axes to data
+        x_ra, y_ra = self._crs.transform_point(x_projected, y_projected, self._proj)
+        return (x_ra+360) / 15, y_ra
+
 
     def _plot_background_clip_path(self):
         def to_axes(points):

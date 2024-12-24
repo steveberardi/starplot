@@ -17,6 +17,7 @@ p = MapPlot(
     resolution=3600,
     autoscale=True,
 )
+p.horizon()
 p.constellations()
 p.stars(mag=4.6, where_labels=[Star.magnitude < 2.1])
 
@@ -51,6 +52,5 @@ p.marker(
     },
     label="Mel 111",
 )
-p.horizon()
 
 p.export("star_chart_detail.png", transparent=True, padding=0.1)

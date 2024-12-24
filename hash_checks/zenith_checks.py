@@ -28,12 +28,12 @@ def _zenith():
         resolution=RESOLUTION,
         autoscale=True,
     )
-    p.stars(mag=4.6, where_labels=[Star.magnitude < 3])
+    p.horizon()
     p.constellations()
+    p.stars(mag=4.6, where_labels=[Star.magnitude < 3])
     p.ecliptic(style__line__width=8)
     p.celestial_equator(style__line__width=8)
     p.legend(style__location=styles.LegendLocationEnum.OUTSIDE_BOTTOM)
-    p.horizon()
     return p
 
 

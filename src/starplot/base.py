@@ -97,8 +97,6 @@ class BasePlot(ABC):
 
         self.labels = []
         self._labels_rtree = rtree.index.Index()
-
-        # self.labels = []
         self._constellations_rtree = rtree.index.Index()
         self._stars_rtree = rtree.index.Index()
 
@@ -150,8 +148,9 @@ class BasePlot(ABC):
         return len(ix) > 0
 
     def _is_clipped(self, extent) -> bool:
+        radius = -1.5 * int(self._background_clip_path.get_linewidth())
         return self._background_clip_path is not None and not all(
-            self._background_clip_path.contains_points(extent.get_points())
+            self._background_clip_path.contains_points(extent.get_points(), radius=radius)
         )
 
     def _add_label_to_rtree(self, label, extent=None):
@@ -453,7 +452,7 @@ class BasePlot(ABC):
             style: Styling of the text
             hide_on_collision: If True, then the text will not be plotted if it collides with another label
         """
-        if not self.in_bounds(ra, dec):
+        if not text or not self.in_bounds(ra, dec):
             return
 
         style = style or LabelStyle()
