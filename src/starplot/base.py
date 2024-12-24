@@ -150,7 +150,9 @@ class BasePlot(ABC):
     def _is_clipped(self, extent) -> bool:
         radius = -1.5 * int(self._background_clip_path.get_linewidth())
         return self._background_clip_path is not None and not all(
-            self._background_clip_path.contains_points(extent.get_points(), radius=radius)
+            self._background_clip_path.contains_points(
+                extent.get_points(), radius=radius
+            )
         )
 
     def _add_label_to_rtree(self, label, extent=None):

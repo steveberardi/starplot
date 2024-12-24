@@ -357,20 +357,27 @@ class MapPlot(
 
             if not labels:
                 return
-            
+
             label_ax_coords = [
-                (0.5, 0.95), # north
-                (0.045, 0.5), # east
-                (0.5, 0.045), # south
-                (0.954, 0.5), # west
-                
+                (0.5, 0.95),  # north
+                (0.045, 0.5),  # east
+                (0.5, 0.045),  # south
+                (0.954, 0.5),  # west
             ]
             for label, coords in zip(labels, label_ax_coords):
                 ra, dec = self._ax_to_radec(*coords)
-                self.text(label, ra, dec, hide_on_collision=False, style=style.label, force=True, clip_on=False)
-            
+                self.text(
+                    label,
+                    ra,
+                    dec,
+                    hide_on_collision=False,
+                    style=style.label,
+                    force=True,
+                    clip_on=False,
+                )
+
             return
-        
+
         else:
             style_kwargs["clip_on"] = True
             style_kwargs["clip_path"] = self._background_clip_path
@@ -608,10 +615,9 @@ class MapPlot(
 
     def _ax_to_radec(self, x, y):
         trans = self.ax.transAxes + self.ax.transData.inverted()
-        x_projected, y_projected = trans.transform((x, y)) # axes to data
+        x_projected, y_projected = trans.transform((x, y))  # axes to data
         x_ra, y_ra = self._crs.transform_point(x_projected, y_projected, self._proj)
-        return (x_ra+360) / 15, y_ra
-
+        return (x_ra + 360) / 15, y_ra
 
     def _plot_background_clip_path(self):
         def to_axes(points):
