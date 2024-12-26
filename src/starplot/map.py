@@ -416,7 +416,8 @@ class MapPlot(
 
         for i, position in enumerate(cardinal_directions):
             ra, dec, _ = position.radec()
-            self._text(ra.hours, dec.degrees, labels[i], force=True, **text_kwargs)
+            x, y = self._prepare_coords(ra, dec)
+            self._text(x, y, labels[i], **text_kwargs)
 
     @use_style(PathStyle, "gridlines")
     def gridlines(

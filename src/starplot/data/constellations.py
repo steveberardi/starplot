@@ -104,6 +104,7 @@ properties = {
     "Vol": ("Volans", 8.01, -67.92),
     "Vul": ("Vulpecula", 20.13, 22.21),
 }
+CONSTELLATIONS = {k.lower(): v for k, v in properties.items()}
 
 CONSTELLATIONS_FULL_NAMES = {k.lower(): v[0].upper() for k, v in properties.items()}
 """Constellation full names"""
@@ -134,11 +135,11 @@ def load(**kwargs):
 
 
 def get(constellation_id: str):
-    return properties.get(constellation_id)
+    return CONSTELLATIONS.get(constellation_id)
 
 
 def iterator():
-    for c in properties.keys():
+    for c in CONSTELLATIONS.keys():
         yield c
 
 

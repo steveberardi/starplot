@@ -204,6 +204,8 @@ class AnchorPointEnum(str, Enum):
     """Options for the anchor point of labels"""
 
     CENTER = "center"
+    LEFT_CENTER = "left center"
+    RIGHT_CENTER = "right center"
     TOP_LEFT = "top left"
     TOP_RIGHT = "top right"
     TOP_CENTER = "top center"
@@ -235,6 +237,12 @@ class AnchorPointEnum(str, Enum):
         elif self.value == AnchorPointEnum.CENTER:
             style["va"] = "center"
             style["ha"] = "center"
+        elif self.value == AnchorPointEnum.LEFT_CENTER:
+            style["va"] = "center"
+            style["ha"] = "right"
+        elif self.value == AnchorPointEnum.RIGHT_CENTER:
+            style["va"] = "center"
+            style["ha"] = "left"
 
         return style
 
@@ -648,6 +656,8 @@ class PlotStyle(BaseStyle):
         AnchorPointEnum.BOTTOM_LEFT,
         AnchorPointEnum.BOTTOM_CENTER,
         AnchorPointEnum.TOP_CENTER,
+        AnchorPointEnum.RIGHT_CENTER,
+        AnchorPointEnum.LEFT_CENTER,
     ]
     """If a label's preferred anchor point results in a collision, then these fallbacks will be tried in sequence until a collision-free position is found."""
 
@@ -939,7 +949,7 @@ class PlotStyle(BaseStyle):
             font_size=21,
             font_weight=FontWeightEnum.NORMAL,
             zorder=ZOrderEnum.LAYER_3,
-            anchor_point=AnchorPointEnum.TOP_RIGHT,
+            anchor_point=AnchorPointEnum.CENTER,
         ),
     )
     """Styling for constellation lines and labels (only applies to map plots)"""

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Dict, Union, Optional
+from random import randrange
 import logging
 import warnings
 
@@ -11,7 +12,7 @@ from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.lines import Line2D
 from pytz import timezone
-from shapely import Polygon
+from shapely import Polygon, intersection
 
 from starplot.coordinates import CoordinateSystem
 from starplot import geod, models
@@ -33,6 +34,7 @@ from starplot.styles import (
     fonts,
 )
 from starplot.styles.helpers import use_style
+from starplot.geometry import random_point_in_polygon, unwrap_polygon
 
 # ignore noisy matplotlib warnings
 warnings.filterwarnings(
@@ -133,7 +135,7 @@ class BasePlot(ABC):
         )
         return len(ix) > 0
 
-    def _is_object_collision(self, extent) -> bool:
+    def _is_constellation_collision(self, extent) -> bool:
         ix = list(
             self._constellations_rtree.intersection(
                 (extent.x0, extent.y0, extent.x1, extent.y1)
@@ -165,7 +167,11 @@ class BasePlot(ABC):
         )
 
     def _maybe_remove_label(
-        self, label, remove_on_collision=True, remove_on_clipped=True
+        self,
+        label,
+        remove_on_collision=True,
+        remove_on_clipped=True,
+        remove_on_constellation_collision=True,
     ) -> bool:
         """Returns true if the label is removed, else false"""
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
@@ -179,9 +185,13 @@ class BasePlot(ABC):
             return True
 
         if remove_on_collision and (
-            self._is_label_collision(extent)
-            or self._is_object_collision(extent)
-            # or self._is_star_collision(extent)
+            self._is_label_collision(extent) or self._is_star_collision(extent)
+        ):
+            label.remove()
+            return True
+
+        if remove_on_constellation_collision and self._is_constellation_collision(
+            extent
         ):
             label.remove()
             return True
@@ -363,7 +373,19 @@ class BasePlot(ABC):
                 label = plot_text(**best[1])
                 add_label(label)
 
-    def _text(
+    def _text(self, x, y, text, **kwargs):
+        label = self.ax.annotate(
+            text,
+            (x, y),
+            **kwargs,
+            **self._plot_kwargs(),
+        )
+        if kwargs.get("clip_on"):
+            label.set_clip_on(True)
+            label.set_clip_path(self._background_clip_path)
+        return label
+    
+    def _text_point(
         self,
         ra: float,
         dec: float,
@@ -380,39 +402,16 @@ class BasePlot(ABC):
         x, y = self._prepare_coords(ra, dec)
         kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
 
-        def plot_text(**kwargs):
-            label = self.ax.annotate(
-                text,
-                (x, y),
-                *args,
-                **kwargs,
-                **self._plot_kwargs(),
-            )
-            if clip_on:
-                label.set_clip_on(True)
-                label.set_clip_path(self._background_clip_path)
-            return label
-
-        label = plot_text(**kwargs)
-
-        if force:
-            return
-
-        removed = self._maybe_remove_label(
-            label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on
-        )
-
-        if not removed:
-            self._add_label_to_rtree(label)
-            return
-
         original_va = kwargs.pop("va", None)
         original_ha = kwargs.pop("ha", None)
         original_offset_x, original_offset_y = kwargs.pop("xytext", (0, 0))
-        anchor_fallbacks = self.style.text_anchor_fallbacks
-        for i, a in enumerate(anchor_fallbacks):
+
+        anchors = [(original_va, original_ha)]
+        for a in self.style.text_anchor_fallbacks:
             d = AnchorPointEnum.from_str(a).as_matplot()
-            va, ha = d["va"], d["ha"]
+            anchors.append((d["va"], d["ha"]))
+
+        for va, ha in anchors:
             offset_x, offset_y = original_offset_x, original_offset_y
             if original_ha != ha:
                 offset_x *= -1
@@ -424,9 +423,63 @@ class BasePlot(ABC):
                 offset_x = 0
                 offset_y = 0
 
-            label = plot_text(**kwargs, va=va, ha=ha, xytext=(offset_x, offset_y))
+            label = self._text(x, y, text, **kwargs, va=va, ha=ha, xytext=(offset_x, offset_y))
             removed = self._maybe_remove_label(
                 label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on
+            )
+
+            if force or not removed:
+                self._add_label_to_rtree(label)
+                break
+
+    def _text_area(
+        self,
+        ra: float,
+        dec: float,
+        text: str,
+        area,
+        hide_on_collision: bool = True,
+        force: bool = False,
+        clip_on: bool = True,
+        *args,
+        **kwargs,
+    ) -> None:
+        kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
+
+        x, y = self._prepare_coords(ra, dec)
+        label = self._text(x, y, text, **kwargs)
+
+        removed = self._maybe_remove_label(
+            label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on
+        )
+
+        if not removed:
+            self._add_label_to_rtree(label)
+            return
+
+        if "MultiPolygon" == str(area.geom_type):
+            areas = [p for p in area.geoms]
+        else:
+            areas = [area]
+
+        new_areas = []
+
+        for a in areas:
+            unwrapped = unwrap_polygon(a)
+            buffer = unwrapped.area / 10 * -0.12 * self.scale
+            new_areas.append(unwrapped.buffer(buffer))
+
+        for _ in range(16):
+            poly = randrange(len(new_areas))
+            point = random_point_in_polygon(new_areas[poly])
+            x, y = self._prepare_coords(point.x, point.y)
+
+            label = self._text(x, y, text, **kwargs)
+            removed = self._maybe_remove_label(
+                label,
+                remove_on_collision=hide_on_collision,
+                remove_on_clipped=clip_on,
+                remove_on_constellation_collision=False,
             )
 
             if not removed:
@@ -465,17 +518,31 @@ class BasePlot(ABC):
         if style.offset_y == "auto":
             style.offset_y = 0
 
-        self._text(
-            ra,
-            dec,
-            text,
-            **style.matplot_kwargs(self.scale),
-            hide_on_collision=hide_on_collision,
-            xycoords="data",
-            xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
-            textcoords="offset points",
-            **kwargs,
-        )
+        if kwargs.get("area"):
+            self._text_area(
+                ra,
+                dec,
+                text,
+                area=kwargs.pop("area"),
+                **style.matplot_kwargs(self.scale),
+                hide_on_collision=hide_on_collision,
+                xycoords="data",
+                xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
+                textcoords="offset points",
+                **kwargs,
+            )
+        else:
+            self._text_point(
+                ra,
+                dec,
+                text,
+                **style.matplot_kwargs(self.scale),
+                hide_on_collision=hide_on_collision,
+                xycoords="data",
+                xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
+                textcoords="offset points",
+                **kwargs,
+            )
 
     @property
     def objects(self) -> models.ObjectList:
