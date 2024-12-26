@@ -119,19 +119,6 @@ class ConstellationPlotterMixin:
                 if any([np.isnan(n) for n in start + end]):
                     continue
 
-                start_x, start_y = self.ax.transData.transform(start)
-                radius_start = (9 - s1.magnitude) * 1
-                end_x, end_y = self.ax.transData.transform(end)
-                radius_end = (9 - s2.magnitude) * 1
-                self._stars_rtree.insert(
-                    0,
-                    (start_x - radius_start, start_y - radius_start, start_x + radius_start, start_y + radius_start),
-                )
-                self._stars_rtree.insert(
-                    0, (end_x - radius_end, end_y - radius_end, end_x + radius_end, end_y + radius_end)
-                )
-                
-
                 for x, y in points_on_line(start, end, 25):
                     x0, y0 = self.ax.transData.transform((x, y))
                     if x0 < 0 or y0 < 0:
@@ -144,20 +131,34 @@ class ConstellationPlotterMixin:
 
             if inbounds:
                 self._objects.constellations.append(obj)
-                _, ra, dec = condata.get(obj.iau_id)
-                self.text(
-                    labels.get(obj.iau_id),
-                    ra,
-                    dec,
-                    style.label,
-                    hide_on_collision=self.hide_colliding_labels,
-                    gid="constellations-label-name",
-                    area=obj.boundary,
-                )
+                # _, ra, dec = condata.get(obj.iau_id)
+                # self.text(
+                #     labels.get(obj.iau_id),
+                #     ra,
+                #     dec,
+                #     style.label,
+                #     hide_on_collision=self.hide_colliding_labels,
+                #     gid="constellations-label-name",
+                #     area=obj.boundary,
+                # )
                 labels_to_plot[obj.iau_id] = labels.get(obj.iau_id)
 
         # self._plot_constellation_labels(style.label, labels_to_plot)
         # self._plot_constellation_labels_experimental(style.label, labels_to_plot)
+
+    @use_style(PathStyle, "constellation")
+    def constellation_labels(self, style):
+        for c in self._objects.constellations:
+            _, ra, dec = condata.get(c.iau_id)
+            self.text(
+                CONSTELLATIONS_FULL_NAMES.get(c.iau_id),
+                ra,
+                dec,
+                style.label,
+                hide_on_collision=self.hide_colliding_labels,
+                gid="constellations-label-name",
+                area=c.boundary,
+            )
 
     def _plot_constellation_labels(
         self,

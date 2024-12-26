@@ -30,6 +30,7 @@ p.milky_way()
 p.stars(where=[Star.magnitude < 5])
 p.messier(where=[DSO.magnitude < 12], true_size=False, label_fn=lambda d: f"M{d.m}")
 
+p.constellation_labels()
 p.planets()
 p.ecliptic()
 p.horizon()

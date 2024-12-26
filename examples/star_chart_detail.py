@@ -25,6 +25,7 @@ p.galaxies(where=[DSO.magnitude < 10], true_size=False, labels=None)
 p.open_clusters(where=[DSO.magnitude < 10], true_size=False, labels=None)
 
 p.constellation_borders()
+p.constellation_labels()
 p.ecliptic()
 p.celestial_equator()
 p.milky_way()

@@ -49,6 +49,7 @@ p.nebula(
     where=[(DSO.magnitude <= 10) | (DSO.magnitude.is_null()), DSO.size > 0.05],
 )
 
+p.constellation_labels()
 p.milky_way()
 p.ecliptic()
 p.celestial_equator()

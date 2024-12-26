@@ -20,5 +20,6 @@ p = MapPlot(
 p.horizon()
 p.constellations()
 p.stars(mag=4.4, where_labels=[Star.magnitude < 2.4])
+p.constellation_labels()
 
 p.export("star_chart_basic.png", transparent=True, padding=0.1)

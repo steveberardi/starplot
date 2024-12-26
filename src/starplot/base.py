@@ -469,7 +469,7 @@ class BasePlot(ABC):
             buffer = unwrapped.area / 10 * -0.12 * self.scale
             new_areas.append(unwrapped.buffer(buffer))
 
-        for _ in range(16):
+        for _ in range(20):
             poly = randrange(len(new_areas))
             point = random_point_in_polygon(new_areas[poly])
             x, y = self._prepare_coords(point.x, point.y)

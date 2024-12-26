@@ -139,10 +139,18 @@ class HorizonPlot(
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
         point = SkyfieldStar(ra_hours=ra, dec_degrees=dec)
-        position = self.observe(point)
-        pos_apparent = position.apparent()
-        pos_alt, pos_az, _ = pos_apparent.altaz()
+        position = self.observe(point).apparent()
+        pos_alt, pos_az, _ = position.altaz()
         return pos_az.degrees, pos_alt.degrees
+
+    def _prepare_star_coords(self, df):
+        stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
+        nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
+        df["x"], df["y"] = (
+            nearby_stars_az.degrees,
+            nearby_stars_alt.degrees,
+        )
+        return df
 
     def _plot_kwargs(self) -> dict:
         return dict(transform=self._crs)
@@ -248,15 +256,6 @@ class HorizonPlot(
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_altaz(y, x)  # alt = y, az = x
-
-    def _prepare_star_coords(self, df):
-        stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
-        nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
-        df["x"], df["y"] = (
-            nearby_stars_az.degrees,
-            nearby_stars_alt.degrees,
-        )
-        return df
 
     def _read_geo_package(self, filename: str):
         """Returns GeoDataFrame of a GeoPackage file"""
