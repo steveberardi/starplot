@@ -12,7 +12,7 @@ from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.lines import Line2D
 from pytz import timezone
-from shapely import Polygon, intersection
+from shapely import Polygon, intersection, Point
 
 from starplot.coordinates import CoordinateSystem
 from starplot import geod, models
@@ -34,7 +34,11 @@ from starplot.styles import (
     fonts,
 )
 from starplot.styles.helpers import use_style
-from starplot.geometry import random_point_in_polygon, unwrap_polygon
+from starplot.geometry import (
+    random_point_in_polygon,
+    unwrap_polygon,
+    random_point_in_polygon_at_distance,
+)
 
 # ignore noisy matplotlib warnings
 warnings.filterwarnings(
@@ -127,26 +131,16 @@ class BasePlot(ABC):
     def _prepare_coords(self, ra, dec) -> tuple[float, float]:
         return ra, dec
 
-    def _is_label_collision(self, extent) -> bool:
-        ix = list(
-            self._labels_rtree.intersection(
-                (extent.x0, extent.y0, extent.x1, extent.y1)
-            )
-        )
+    def _is_label_collision(self, bbox) -> bool:
+        ix = list(self._labels_rtree.intersection(bbox))
         return len(ix) > 0
 
-    def _is_constellation_collision(self, extent) -> bool:
-        ix = list(
-            self._constellations_rtree.intersection(
-                (extent.x0, extent.y0, extent.x1, extent.y1)
-            )
-        )
+    def _is_constellation_collision(self, bbox) -> bool:
+        ix = list(self._constellations_rtree.intersection(bbox))
         return len(ix) > 0
 
-    def _is_star_collision(self, extent) -> bool:
-        ix = list(
-            self._stars_rtree.intersection((extent.x0, extent.y0, extent.x1, extent.y1))
-        )
+    def _is_star_collision(self, bbox) -> bool:
+        ix = list(self._stars_rtree.intersection(bbox))
         return len(ix) > 0
 
     def _is_clipped(self, extent) -> bool:
@@ -163,7 +157,7 @@ class BasePlot(ABC):
         )
         self.labels.append(label)
         self._labels_rtree.insert(
-            0, np.array((extent.x0, extent.y0, extent.x1, extent.y1))
+            0, np.array((extent.x0 - 1, extent.y0 - 1, extent.x1 + 1, extent.y1 + 1))
         )
 
     def _maybe_remove_label(
@@ -172,9 +166,16 @@ class BasePlot(ABC):
         remove_on_collision=True,
         remove_on_clipped=True,
         remove_on_constellation_collision=True,
+        padding=0,
     ) -> bool:
         """Returns true if the label is removed, else false"""
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+        bbox = (
+            extent.x0 - padding,
+            extent.y0 - padding,
+            extent.x1 + padding,
+            extent.y1 + padding,
+        )
 
         if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]):
             label.remove()
@@ -185,14 +186,12 @@ class BasePlot(ABC):
             return True
 
         if remove_on_collision and (
-            self._is_label_collision(extent) or self._is_star_collision(extent)
+            self._is_label_collision(bbox) or self._is_star_collision(bbox)
         ):
             label.remove()
             return True
 
-        if remove_on_constellation_collision and self._is_constellation_collision(
-            extent
-        ):
+        if remove_on_constellation_collision and self._is_constellation_collision(bbox):
             label.remove()
             return True
 
@@ -452,7 +451,7 @@ class BasePlot(ABC):
         label = self._text(x, y, text, **kwargs)
 
         removed = self._maybe_remove_label(
-            label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on
+            label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on, padding=1
         )
 
         if not removed:
@@ -468,12 +467,21 @@ class BasePlot(ABC):
 
         for a in areas:
             unwrapped = unwrap_polygon(a)
-            buffer = unwrapped.area / 10 * -0.15 * self.scale
+            buffer = unwrapped.area / 10 * -0.1 * self.scale
             new_areas.append(unwrapped.buffer(buffer))
 
-        for _ in range(20):
+        for d in range(1, 300, 4):
+            distance = d / 10
             poly = randrange(len(new_areas))
-            point = random_point_in_polygon(new_areas[poly])
+
+            # point = random_point_in_polygon(new_areas[poly])
+            point = random_point_in_polygon_at_distance(
+                new_areas[poly], Point(ra, dec), distance, max_iterations=200
+            )
+
+            if point is None:
+                continue
+
             x, y = self._prepare_coords(point.x, point.y)
 
             label = self._text(x, y, text, **kwargs)
@@ -482,6 +490,7 @@ class BasePlot(ABC):
                 remove_on_collision=hide_on_collision,
                 remove_on_clipped=clip_on,
                 remove_on_constellation_collision=False,
+                padding=3,
             )
 
             if not removed:

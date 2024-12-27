@@ -22,6 +22,7 @@ from starplot.projections import Projection
 from starplot.styles import PathStyle, LineStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
+from starplot.geometry import wrapped_polygon_adjustment
 
 
 class ConstellationPlotterMixin:
@@ -46,6 +47,7 @@ class ConstellationPlotterMixin:
         labels = labels or {}
         labels_to_plot = {}
         where = where or []
+        ctr = 0
 
         constellations_gdf = gpd.read_file(
             DataFiles.CONSTELLATIONS.value,
@@ -141,7 +143,7 @@ class ConstellationPlotterMixin:
                         continue
                     constellation_points_to_index.append(
                         (
-                            len(constellation_points_to_index),
+                            ctr,
                             (
                                 display_x - radius,
                                 display_y - radius,
@@ -151,6 +153,7 @@ class ConstellationPlotterMixin:
                             None,
                         )
                     )
+                    ctr += 1
 
             if inbounds:
                 self._objects.constellations.append(obj)
@@ -171,7 +174,7 @@ class ConstellationPlotterMixin:
         # self._plot_constellation_labels_experimental(style.label, labels_to_plot)
 
     @use_style(PathStyle, "constellation")
-    def constellation_labels(
+    def constellation_labels_deprecated(
         self, style, labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES
     ):
         for c in self._objects.constellations:
@@ -347,19 +350,6 @@ class ConstellationPlotterMixin:
         style: PathStyle = None,
         labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
     ):
-        # TODO : only use constellation line stars???
-        # skip label if it falls outside constellation boundary
-
-        # def distance_to_line(ra, dec):
-        #     a, b = self._prepare_coords(ra, dec)
-        #     data_xy = self._proj.transform_point(a, b, self._crs)
-        #     display_x, display_y = self.ax.transData.transform(data_xy)
-
-        #     near = self._constellations_rtree.nearest(
-        #             (display_x, display_y, display_x, display_y), num_results=1
-        #         )
-        #     near = list(near)
-        #     return distance(Point((near[0], near[1])), Point((display_x, display_y)))
 
         def sorter(g):
             # higher score is better
@@ -420,7 +410,6 @@ class ConstellationPlotterMixin:
             else:
                 ra, dec = constellation.ra, constellation.dec
 
-            
             text = labels.get(constellation.iau_id)
             style = style or self.style.constellation.label
             style.anchor_point = "center"
@@ -434,4 +423,48 @@ class ConstellationPlotterMixin:
                 if len(polygons_sorted)
                 else constellation.boundary,
             )
-            
+
+    def constellation_labels(
+        self,
+        style: PathStyle = None,
+        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
+    ):
+        """
+        Plots constellation labels
+
+        TODO:
+            make this work without plotting constellations first
+        """
+        for constellation in self.objects.constellations:
+            constellation_line_stars = [
+                s
+                for s in self.objects.stars
+                if s.constellation_id == constellation.iau_id
+                and s.hip in CONSTELLATION_HIP_IDS[constellation.iau_id]
+            ]
+            if not constellation_line_stars:
+                continue
+
+            points_line = MultiPoint([(s.ra, s.dec) for s in constellation_line_stars])
+            centroid = points_line.centroid
+
+            adjustment = wrapped_polygon_adjustment(constellation.boundary)
+
+            if (adjustment > 0 and centroid.x < 12) or (
+                adjustment < 0 and centroid.x > 12
+            ):
+                x = centroid.x + adjustment
+            else:
+                x = centroid.x
+
+            text = labels.get(constellation.iau_id)
+            style = style or self.style.constellation.label
+            style.anchor_point = "center"
+            self.text(
+                text,
+                x,
+                centroid.y,
+                style,
+                hide_on_collision=self.hide_colliding_labels,
+                area=constellation.boundary,
+            )

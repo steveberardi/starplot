@@ -280,7 +280,7 @@ class StarPlotterMixin:
                 ):
                     continue
 
-                radius = ((size**0.5 / 2) / self.scale) / 3.14
+                radius = ((size**0.5 / 2) / self.scale) / 3.14 * 1
                 bbox = np.array(
                     (
                         display_x - radius,
