@@ -12,7 +12,7 @@ from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.lines import Line2D
 from pytz import timezone
-from shapely import Polygon, intersection, Point
+from shapely import Polygon, Point
 
 from starplot.coordinates import CoordinateSystem
 from starplot import geod, models
@@ -35,7 +35,6 @@ from starplot.styles import (
 )
 from starplot.styles.helpers import use_style
 from starplot.geometry import (
-    random_point_in_polygon,
     unwrap_polygon,
     random_point_in_polygon_at_distance,
 )
@@ -451,7 +450,10 @@ class BasePlot(ABC):
         label = self._text(x, y, text, **kwargs)
 
         removed = self._maybe_remove_label(
-            label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on, padding=1
+            label,
+            remove_on_collision=hide_on_collision,
+            remove_on_clipped=clip_on,
+            padding=1,
         )
 
         if not removed:
@@ -648,6 +650,7 @@ class BasePlot(ABC):
             **kwargs: Any keyword arguments to pass through to matplotlib's `savefig` method
 
         """
+        self.logger.debug("Exporting...")
         self.fig.savefig(
             filename,
             format=format,

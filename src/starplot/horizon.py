@@ -24,7 +24,6 @@ from starplot.styles import (
     use_style,
     PathStyle,
 )
-from starplot.utils import ra_to_lon
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
