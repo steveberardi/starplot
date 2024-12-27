@@ -395,9 +395,9 @@ class BasePlot(ABC):
         clip_on: bool = True,
         *args,
         **kwargs,
-    ) -> None:
+    ):
         if not text:
-            return
+            return None
 
         x, y = self._prepare_coords(ra, dec)
         kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
@@ -432,7 +432,7 @@ class BasePlot(ABC):
 
             if force or not removed:
                 self._add_label_to_rtree(label)
-                break
+                return label
 
     def _text_area(
         self,
@@ -521,7 +521,7 @@ class BasePlot(ABC):
             style.offset_y = 0
 
         if kwargs.get("area"):
-            self._text_area(
+            return self._text_area(
                 ra,
                 dec,
                 text,
@@ -534,7 +534,7 @@ class BasePlot(ABC):
                 **kwargs,
             )
         else:
-            self._text_point(
+            return self._text_point(
                 ra,
                 dec,
                 text,

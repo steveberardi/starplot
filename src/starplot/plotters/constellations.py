@@ -1,11 +1,22 @@
 import geopandas as gpd
 import numpy as np
 
+import rtree
 from shapely import MultiPolygon
+from shapely import (
+    Point,
+    MultiPoint,
+    intersection,
+    delaunay_triangles,
+    distance,
+)
 
 from starplot.coordinates import CoordinateSystem
 from starplot.data import DataFiles, constellations as condata, stars
-from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
+from starplot.data.constellations import (
+    CONSTELLATIONS_FULL_NAMES,
+    CONSTELLATION_HIP_IDS,
+)
 from starplot.models.constellation import from_tuple as constellation_from_tuple
 from starplot.projections import Projection
 from starplot.styles import PathStyle, LineStyle
@@ -57,6 +68,7 @@ class ConstellationPlotterMixin:
 
         conline_hips = condata.lines()
         style_kwargs = style.line.matplot_kwargs(self.scale)
+        constellation_points_to_index = []
 
         for c in constellations_gdf.itertuples():
             obj = constellation_from_tuple(c)
@@ -83,7 +95,9 @@ class ConstellationPlotterMixin:
                 elif s2_ra - s1_ra > 60:
                     s1_ra += 360
 
-                if self.in_bounds(s1_ra / 15, s1_dec) and self.in_bounds(s2_ra / 15, s2_dec):
+                if self.in_bounds(s1_ra / 15, s1_dec) and self.in_bounds(
+                    s2_ra / 15, s2_dec
+                ):
                     inbounds = True
 
                 if self._coordinate_system == CoordinateSystem.RA_DEC:
@@ -125,23 +139,34 @@ class ConstellationPlotterMixin:
                     display_x, display_y = self.ax.transData.transform((x, y))
                     if display_x < 0 or display_y < 0:
                         continue
-                    self._constellations_rtree.insert(
-                        0,
-                        np.array(
+                    constellation_points_to_index.append(
+                        (
+                            len(constellation_points_to_index),
                             (
                                 display_x - radius,
                                 display_y - radius,
                                 display_x + radius,
                                 display_y + radius,
-                            )
-                        ),
-                        obj=obj.name,
+                            ),
+                            None,
+                        )
                     )
 
             if inbounds:
                 self._objects.constellations.append(obj)
                 labels_to_plot[obj.iau_id] = labels.get(obj.iau_id)
 
+        if self._constellations_rtree.get_size() == 0:
+            self._constellations_rtree = rtree.index.Index(
+                constellation_points_to_index
+            )
+        else:
+            for bbox in constellation_points_to_index:
+                self._constellations_rtree.insert(
+                    0,
+                    bbox,
+                    None,
+                )
         # self._plot_constellation_labels(style.label, labels_to_plot)
         # self._plot_constellation_labels_experimental(style.label, labels_to_plot)
 
@@ -178,11 +203,12 @@ class ConstellationPlotterMixin:
 
         """
         style = style or self.style.constellation.label
+        self._constellation_labels = []
 
         for con in condata.iterator():
             _, ra, dec = condata.get(con)
             text = labels.get(con.lower())
-            self.text(
+            label = self.text(
                 text,
                 ra,
                 dec,
@@ -191,6 +217,8 @@ class ConstellationPlotterMixin:
                 # hide_on_collision=self.hide_colliding_labels,
                 gid="constellations-label-name",
             )
+            if label is not None:
+                self._constellation_labels.append(label)
 
     @use_style(LineStyle, "constellation_borders")
     def constellation_borders(self, style: LineStyle = None):
@@ -319,22 +347,31 @@ class ConstellationPlotterMixin:
         style: PathStyle = None,
         labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
     ):
-        from shapely import (
-            MultiPoint,
-            intersection,
-            delaunay_triangles,
-            distance,
-        )
+        # TODO : only use constellation line stars???
+        # skip label if it falls outside constellation boundary
+
+        # def distance_to_line(ra, dec):
+        #     a, b = self._prepare_coords(ra, dec)
+        #     data_xy = self._proj.transform_point(a, b, self._crs)
+        #     display_x, display_y = self.ax.transData.transform(data_xy)
+
+        #     near = self._constellations_rtree.nearest(
+        #             (display_x, display_y, display_x, display_y), num_results=1
+        #         )
+        #     near = list(near)
+        #     return distance(Point((near[0], near[1])), Point((display_x, display_y)))
 
         def sorter(g):
-            d = distance(g.centroid, points.centroid)
+            # higher score is better
+            d = distance(g.centroid, points_line.centroid)
             # d = distance(g.centroid, constellation.boundary.centroid)
             extent = abs(g.bounds[2] - g.bounds[0])
             area = g.area / constellation.boundary.area
             # return ((extent**3)) * area**2
             # return ((extent**2) - (d/2)) * area**2
             # print(str(extent) + " " + str(area) + " " + str(d))
-            return (extent/2 + area) - (d/5)
+            return d**2 * -1
+            return (extent / 2 + area) - (d / 5)
 
         for constellation in self.objects.constellations:
             constellation_stars = [
@@ -342,12 +379,20 @@ class ConstellationPlotterMixin:
                 for s in self.objects.stars
                 if s.constellation_id == constellation.iau_id and s.magnitude < 5
             ]
+            constellation_line_stars = [
+                s
+                for s in self.objects.stars
+                if s.constellation_id == constellation.iau_id
+                and s.hip in CONSTELLATION_HIP_IDS[constellation.iau_id]
+            ]
             points = MultiPoint([(s.ra, s.dec) for s in constellation_stars])
+            points_line = MultiPoint([(s.ra, s.dec) for s in constellation_line_stars])
 
             triangles = delaunay_triangles(
                 geometry=points,
                 tolerance=2,
             )
+            print(constellation.name + " " + str(len(triangles.geoms)))
 
             polygons = []
             for t in triangles.geoms:
@@ -375,6 +420,7 @@ class ConstellationPlotterMixin:
             else:
                 ra, dec = constellation.ra, constellation.dec
 
+            
             text = labels.get(constellation.iau_id)
             style = style or self.style.constellation.label
             style.anchor_point = "center"
@@ -388,19 +434,4 @@ class ConstellationPlotterMixin:
                 if len(polygons_sorted)
                 else constellation.boundary,
             )
-
-    @use_style(PathStyle, "constellation")
-    def adjust(
-        self, style, labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES
-    ):
-        for c in self._objects.constellations:
-            _, ra, dec = condata.get(c.iau_id)
-            self.text(
-                labels.get(c.iau_id),
-                ra,
-                dec,
-                style.label,
-                hide_on_collision=self.hide_colliding_labels,
-                gid="constellations-label-name",
-                area=c.boundary,
-            )
+            
