@@ -45,14 +45,16 @@ celestial_equator:
     font_color: '#999'
   line:
     color: '#999'
-constellation:
-  label:
-    font_color: hsl(136, 0%, 77%)
-  line:
-    color: hsl(136, 0%, 30%)
+
+# Constellations
+constellation_labels:
+  font_color: hsl(136, 0%, 77%)
+constellation_lines:
+  color: hsl(136, 0%, 30%)
 constellation_borders:
   color: hsl(136, 0%, 42%)
   alpha: 0.5
+
 dso_double_star:
   label:
     font_color: hsl(136, 0%, 97%)

@@ -942,17 +942,8 @@ class PlotStyle(BaseStyle):
     )
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
-    # Constellations
-    constellation: PathStyle = PathStyle(
-        line=LineStyle(color="#c8c8c8"),
-        label=LabelStyle(
-            font_size=21,
-            font_weight=FontWeightEnum.NORMAL,
-            zorder=ZOrderEnum.LAYER_3,
-            anchor_point=AnchorPointEnum.CENTER,
-        ),
-    )
-    """Styling for constellation lines and labels (only applies to map plots)"""
+    constellation_lines: LineStyle = LineStyle(color="#c8c8c8")
+    """Styling for constellation lines"""
 
     constellation_borders: LineStyle = LineStyle(
         color="#000",
@@ -961,7 +952,15 @@ class PlotStyle(BaseStyle):
         alpha=0.4,
         zorder=ZOrderEnum.LAYER_3,
     )
-    """Styling for constellation borders (only applies to map plots)"""
+    """Styling for constellation borders"""
+
+    constellation_labels: LabelStyle = LabelStyle(
+        font_size=21,
+        font_weight=FontWeightEnum.NORMAL,
+        zorder=ZOrderEnum.LAYER_3,
+        anchor_point=AnchorPointEnum.CENTER,
+    )
+    """Styling for constellation labels"""
 
     # Milky Way
     milky_way: PolygonStyle = PolygonStyle(

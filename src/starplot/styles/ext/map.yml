@@ -1,9 +1,12 @@
-constellation:
-  label:
-    font_size: 38
-    font_weight: heavy
-  line:
-    width: 3.4
+# Map Styles
+
+constellation_lines:
+  width: 3.4
+
+constellation_labels:
+  font_size: 38
+  font_weight: heavy
+
 star:
   label:
     font_size: 22

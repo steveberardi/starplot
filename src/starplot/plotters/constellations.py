@@ -14,32 +14,29 @@ from starplot.data.constellations import (
 )
 from starplot.models.constellation import from_tuple as constellation_from_tuple
 from starplot.projections import Projection
-from starplot.styles import PathStyle, LineStyle
+from starplot.styles import PathStyle, LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
 from starplot.geometry import wrapped_polygon_adjustment
 
 
 class ConstellationPlotterMixin:
-    @use_style(PathStyle, "constellation")
+    @use_style(LineStyle, "constellation_lines")
     def constellations(
         self,
-        style: PathStyle = None,
-        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
+        style: LineStyle = None,
         where: list = None,
     ):
-        """Plots the constellation lines and/or labels.
+        """Plots the constellation lines **only**. To plot constellation borders and/or labels, see separate functions for them.
 
         **Important:** If you're plotting the constellation lines, then it's good to plot them _first_, because Starplot will use the constellation lines to determine where to place labels that are plotted afterwards (labels will look better if they're not crossing a constellation line).
 
         Args:
             style: Styling of the constellations. If None, then the plot's style (specified when creating the plot) will be used
-            labels: A dictionary where the keys are each constellation's 3-letter abbreviation, and the values are how the constellation will be labeled on the plot.
             where: A list of expressions that determine which constellations to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
         """
-        self.logger.debug("Plotting constellations...")
+        self.logger.debug("Plotting constellation lines...")
 
-        labels = labels or {}
         where = where or []
         ctr = 0
 
@@ -63,7 +60,7 @@ class ConstellationPlotterMixin:
             transform = self._geodetic
 
         conline_hips = condata.lines()
-        style_kwargs = style.line.matplot_kwargs(self.scale)
+        style_kwargs = style.matplot_kwargs(self.scale)
         constellation_points_to_index = []
 
         for c in constellations_gdf.itertuples():
@@ -247,20 +244,7 @@ class ConstellationPlotterMixin:
             else:
                 raise ValueError("Unrecognized coordinate system")
 
-    def constellation_labels(
-        self,
-        style: PathStyle = None,
-        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
-        auto_adjust: bool = True,
-    ):
-        """
-        Plots constellation labels
-
-        TODO:
-            make this work without plotting constellations first
-        """
-        self.logger.debug("Plotting constellation labels...")
-
+    def _constellation_labels_auto(self, style, labels):
         for constellation in self.objects.constellations:
             constellation_line_stars = [
                 s
@@ -284,8 +268,7 @@ class ConstellationPlotterMixin:
                 x = centroid.x
 
             text = labels.get(constellation.iau_id)
-            style = style or self.style.constellation.label
-            style.anchor_point = "center"
+
             self.text(
                 text,
                 x,
@@ -293,4 +276,45 @@ class ConstellationPlotterMixin:
                 style,
                 hide_on_collision=self.hide_colliding_labels,
                 area=constellation.boundary,
+                gid="constellations-label-name",
             )
+
+    def _constellation_labels_static(self, style, labels):
+        for con in condata.iterator():
+            _, ra, dec = condata.get(con)
+            text = labels.get(con.lower())
+            label = self.text(
+                text,
+                ra,
+                dec,
+                style,
+                hide_on_collision=self.hide_colliding_labels,
+                gid="constellations-label-name",
+            )
+            if label is not None:
+                self._constellation_labels.append(label)
+
+    @use_style(LabelStyle, "constellation_labels")
+    def constellation_labels(
+        self,
+        style: LabelStyle = None,
+        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
+        auto_adjust: bool = True,
+    ):
+        """
+        Plots constellation labels
+
+        Args:
+            style: Styling of the constellation labels. If None, then the plot's style (specified when creating the plot) will be used
+            labels: A dictionary where the keys are each constellation's 3-letter IAU abbreviation, and the values are how the constellation will be labeled on the plot.
+            auto_adjust: If True (the default), then labels will be automatically adjusted to avoid collisions with other labels and stars (Important: you must plot stars and constellations first for this to work)
+
+        TODO:
+            make this work without plotting constellations first
+        """
+        self.logger.debug("Plotting constellation labels...")
+
+        if auto_adjust:
+            self._constellation_labels_auto(style, labels)
+        else:
+            self._constellation_labels_static(style, labels)
