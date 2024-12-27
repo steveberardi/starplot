@@ -1,4 +1,10 @@
+## v0.14.x
+- Adds horizon plots, which show what the sky looks like from the horizon at a specific time and place
+- Improved auto placement of constellation labels
+- Separates styles and functions for constellation lines and labels
+
 ## v0.13.x
+[Documentation](https://archives.starplot.dev/0.13.0/)
 
 - Adds a `scale` factor to control sizing of all objects/text
 - Adds an "auto" option for label offsets from markers
