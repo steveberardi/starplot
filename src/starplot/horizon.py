@@ -267,7 +267,6 @@ class HorizonPlot(
         #     lon_min = self.ra_max * 15 - 180 # ra_to_lon(24 - self.ra_max)
         #     lon_max = self.ra_min * 15 - 180 # ra_to_lon(24 - self.ra_min)
 
-
         # extent = self._extent_mask()
         # extent = (
         #     lon_min,
@@ -275,7 +274,6 @@ class HorizonPlot(
         #     lon_max,
         #     self.dec_max,
         # )
-        
 
         return gpd.read_file(
             filename,

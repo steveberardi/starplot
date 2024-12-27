@@ -384,7 +384,7 @@ class BasePlot(ABC):
             label.set_clip_on(True)
             label.set_clip_path(self._background_clip_path)
         return label
-    
+
     def _text_point(
         self,
         ra: float,
@@ -423,7 +423,9 @@ class BasePlot(ABC):
                 offset_x = 0
                 offset_y = 0
 
-            label = self._text(x, y, text, **kwargs, va=va, ha=ha, xytext=(offset_x, offset_y))
+            label = self._text(
+                x, y, text, **kwargs, va=va, ha=ha, xytext=(offset_x, offset_y)
+            )
             removed = self._maybe_remove_label(
                 label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on
             )
@@ -466,7 +468,7 @@ class BasePlot(ABC):
 
         for a in areas:
             unwrapped = unwrap_polygon(a)
-            buffer = unwrapped.area / 10 * -0.12 * self.scale
+            buffer = unwrapped.area / 10 * -0.15 * self.scale
             new_areas.append(unwrapped.buffer(buffer))
 
         for _ in range(20):

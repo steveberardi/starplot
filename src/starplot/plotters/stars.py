@@ -7,6 +7,7 @@ from skyfield.api import Star as SkyfieldStar
 import numpy as np
 
 from starplot import callables
+from starplot.coordinates import CoordinateSystem
 from starplot.data import bayer, stars, flamsteed
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.models.star import Star, from_tuple
@@ -259,29 +260,35 @@ class StarPlotterMixin:
 
             starz.append((star.x, star.y, size, alpha, color, obj))
 
-            # Experimental code for keeping spatial index of plotted stars (for better label placement)
+            # Update spatial index of plotted stars
             if getattr(self, "_geodetic", None):
-                # TODO : clean up!
-                x, y = self._proj.transform_point(
-                    star.ra * -1, star.dec, self._geodetic
-                )
-                if self._coordinate_system == "radec":
-                    x0, y0 = self.ax.transData.transform((x, y))
-                else:
-                    pt = self._proj.transform_point(star.x, star.y, self._crs)
-                    x0, y0 = self.ax.transData.transform(pt)
+                if self._coordinate_system == CoordinateSystem.RA_DEC:
+                    data_xy = self._proj.transform_point(
+                        star.ra * -1, star.dec, self._geodetic
+                    )
+                elif self._coordinate_system == CoordinateSystem.AZ_ALT:
+                    data_xy = self._proj.transform_point(star.x, star.y, self._crs)
+
+                display_x, display_y = self.ax.transData.transform(data_xy)
 
                 if (
-                    x0 < 0
-                    or y0 < 0
+                    display_x < 0
+                    or display_y < 0
                     or obj.magnitude > 5
-                    or np.isnan(x0)
-                    or np.isnan(y0)
+                    or np.isnan(display_x)
+                    or np.isnan(display_y)
                 ):
                     continue
 
                 radius = ((size**0.5 / 2) / self.scale) / 3.14
-                bbox = np.array((x0 - radius, y0 - radius, x0 + radius, y0 + radius))
+                bbox = np.array(
+                    (
+                        display_x - radius,
+                        display_y - radius,
+                        display_x + radius,
+                        display_y + radius,
+                    )
+                )
 
                 if self._stars_rtree.get_size() > 0:
                     self._stars_rtree.insert(
@@ -290,6 +297,7 @@ class StarPlotterMixin:
                         None,
                     )
                 else:
+                    # if the index has no stars yet, then wait until end to load for better performance
                     stars_to_index.append((ctr, bbox, None))
 
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size

@@ -1,6 +1,8 @@
 import geopandas as gpd
 import numpy as np
 
+from shapely import MultiPolygon
+
 from starplot.coordinates import CoordinateSystem
 from starplot.data import DataFiles, constellations as condata, stars
 from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
@@ -81,7 +83,7 @@ class ConstellationPlotterMixin:
                 elif s2_ra - s1_ra > 60:
                     s1_ra += 360
 
-                if self.in_bounds(s1_ra / 15, s1_dec):
+                if self.in_bounds(s1_ra / 15, s1_dec) and self.in_bounds(s2_ra / 15, s2_dec):
                     inbounds = True
 
                 if self._coordinate_system == CoordinateSystem.RA_DEC:
@@ -99,10 +101,10 @@ class ConstellationPlotterMixin:
                     [x1, x2],
                     [y1, y2],
                     transform=transform,
-                    **style_kwargs,
                     clip_on=True,
                     clip_path=self._background_clip_path,
                     gid="constellations-line",
+                    **style_kwargs,
                 )[0]
 
                 extent = constellation_line.get_window_extent(
@@ -120,38 +122,37 @@ class ConstellationPlotterMixin:
                     continue
 
                 for x, y in points_on_line(start, end, 25):
-                    x0, y0 = self.ax.transData.transform((x, y))
-                    if x0 < 0 or y0 < 0:
+                    display_x, display_y = self.ax.transData.transform((x, y))
+                    if display_x < 0 or display_y < 0:
                         continue
                     self._constellations_rtree.insert(
                         0,
-                        np.array((x0 - radius, y0 - radius, x0 + radius, y0 + radius)),
+                        np.array(
+                            (
+                                display_x - radius,
+                                display_y - radius,
+                                display_x + radius,
+                                display_y + radius,
+                            )
+                        ),
                         obj=obj.name,
                     )
 
             if inbounds:
                 self._objects.constellations.append(obj)
-                # _, ra, dec = condata.get(obj.iau_id)
-                # self.text(
-                #     labels.get(obj.iau_id),
-                #     ra,
-                #     dec,
-                #     style.label,
-                #     hide_on_collision=self.hide_colliding_labels,
-                #     gid="constellations-label-name",
-                #     area=obj.boundary,
-                # )
                 labels_to_plot[obj.iau_id] = labels.get(obj.iau_id)
 
         # self._plot_constellation_labels(style.label, labels_to_plot)
         # self._plot_constellation_labels_experimental(style.label, labels_to_plot)
 
     @use_style(PathStyle, "constellation")
-    def constellation_labels(self, style):
+    def constellation_labels(
+        self, style, labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES
+    ):
         for c in self._objects.constellations:
             _, ra, dec = condata.get(c.iau_id)
             self.text(
-                CONSTELLATIONS_FULL_NAMES.get(c.iau_id),
+                labels.get(c.iau_id),
                 ra,
                 dec,
                 style.label,
@@ -330,21 +331,22 @@ class ConstellationPlotterMixin:
             # d = distance(g.centroid, constellation.boundary.centroid)
             extent = abs(g.bounds[2] - g.bounds[0])
             area = g.area / constellation.boundary.area
-            return ((extent**3)) * area**2
-            return ((extent**2) - (d)) * area**2
-            return (extent**2 + area) - (d**2)
+            # return ((extent**3)) * area**2
+            # return ((extent**2) - (d/2)) * area**2
+            # print(str(extent) + " " + str(area) + " " + str(d))
+            return (extent/2 + area) - (d/5)
 
         for constellation in self.objects.constellations:
             constellation_stars = [
                 s
                 for s in self.objects.stars
-                if s.constellation_id == constellation.iau_id and s.magnitude < 4
+                if s.constellation_id == constellation.iau_id and s.magnitude < 5
             ]
             points = MultiPoint([(s.ra, s.dec) for s in constellation_stars])
 
             triangles = delaunay_triangles(
                 geometry=points,
-                # tolerance=2,
+                tolerance=2,
             )
 
             polygons = []
@@ -382,7 +384,23 @@ class ConstellationPlotterMixin:
                 dec,
                 style,
                 hide_on_collision=self.hide_colliding_labels,
-                area=polygons_sorted[0]
+                area=MultiPolygon(polygons_sorted[:3])
                 if len(polygons_sorted)
                 else constellation.boundary,
+            )
+
+    @use_style(PathStyle, "constellation")
+    def adjust(
+        self, style, labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES
+    ):
+        for c in self._objects.constellations:
+            _, ra, dec = condata.get(c.iau_id)
+            self.text(
+                labels.get(c.iau_id),
+                ra,
+                dec,
+                style.label,
+                hide_on_collision=self.hide_colliding_labels,
+                gid="constellations-label-name",
+                area=c.boundary,
             )
