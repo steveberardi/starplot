@@ -736,8 +736,10 @@ class PlotStyle(BaseStyle):
     planets: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            size=50,
+            size=28,
             fill=FillStyleEnum.LEFT,
+            zorder=ZOrderEnum.LAYER_3,
+            alpha=1,
         ),
         label=LabelStyle(
             font_size=28,
@@ -1007,7 +1009,7 @@ class PlotStyle(BaseStyle):
             style=LineStyleEnum.DOTTED,
             dash_capstyle=DashCapStyleEnum.ROUND,
             alpha=1,
-            zorder=ZOrderEnum.LAYER_3,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(
             font_size=22,

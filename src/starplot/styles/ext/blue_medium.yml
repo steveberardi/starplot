@@ -20,10 +20,10 @@ bayer_labels:
 
 # Constellations
 constellation_labels:
-  font_alpha: 0.8
-  font_color: hsl(212, 20%, 10%)
+  font_alpha: 0.75
+  font_color: hsl(212, 20%, 34%)
 constellation_lines:
-  alpha: 0.48
+  alpha: 0.5
   color: '#6ba832'
 
 celestial_equator:
@@ -41,8 +41,8 @@ ecliptic:
 
 planets:
   marker:
-    alpha: 0.4
-    color: '#f89d00'
+    alpha: 1
+    color: hsl(37, 78%, 80%)
     fill: full
 milky_way:
   alpha: 0.14

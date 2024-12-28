@@ -12,15 +12,15 @@ title: Star Charts and Maps of the Sky in Python
 Starplot is a Python library for creating star charts and maps of the sky.
 {.text-subtitle}
 
-- ⭐ **Zenith Plots** - showing the stars from a specific time/location
+- ⭐ **Zenith Plots** - shows the entire sky at a specific time and place
 
-- 🗺️ **Map Plots** - including stereographic and perspective projections
+- 🗺️ **Map Plots** - including many projections
 
 - 🌃 **Horizon Plots** - shows the horizon at a specific time and place
 
-- 🔭 **Optic Plots** - simulates what you'll see through an optic (e.g. telescope) from a time/location
+- 🔭 **Optic Plots** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
 
-- 🪐 **Planets and Deep Sky Objects (DSOs)**
+- 🪐 **Planets and Deep Sky Objects (DSOs)** - more than 14,000 objects built-in
 
 - 🎨 **Custom Styles** - for all objects
 
