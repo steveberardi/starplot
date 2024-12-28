@@ -5,6 +5,7 @@ import rtree
 from shapely import (
     MultiPoint,
 )
+from matplotlib.collections import LineCollection
 
 from starplot.coordinates import CoordinateSystem
 from starplot.data import DataFiles, constellations as condata, stars
@@ -62,6 +63,7 @@ class ConstellationPlotterMixin:
         conline_hips = condata.lines()
         style_kwargs = style.matplot_kwargs(self.scale)
         constellation_points_to_index = []
+        lines = []
 
         for c in constellations_gdf.itertuples():
             obj = constellation_from_tuple(c)
@@ -104,26 +106,11 @@ class ConstellationPlotterMixin:
                 else:
                     raise ValueError("Unrecognized coordinate system")
 
-                constellation_line = self.ax.plot(
-                    [x1, x2],
-                    [y1, y2],
-                    transform=transform,
-                    clip_on=True,
-                    clip_path=self._background_clip_path,
-                    gid="constellations-line",
-                    **style_kwargs,
-                )[0]
-
-                extent = constellation_line.get_window_extent(
-                    renderer=self.fig.canvas.get_renderer()
-                )
-
-                if extent.xmin < 0:
-                    continue
+                lines.append([(x1, y1), (x2, y2)])
 
                 start = self._proj.transform_point(x1, y1, self._geodetic)
                 end = self._proj.transform_point(x2, y2, self._geodetic)
-                radius = style_kwargs.get("linewidth") or 1
+                radius = style.width or 1
 
                 if any([np.isnan(n) for n in start + end]):
                     continue
@@ -148,6 +135,19 @@ class ConstellationPlotterMixin:
 
             if inbounds:
                 self._objects.constellations.append(obj)
+
+        style_kwargs = style.matplot_line_collection_kwargs(self.scale)
+
+        line_collection = LineCollection(
+            lines,
+            **style_kwargs,
+            transform=transform,
+            clip_on=True,
+            clip_path=self._background_clip_path,
+            gid="constellations-line",
+        )
+
+        self.ax.add_collection(line_collection)
 
         if self._constellations_rtree.get_size() == 0:
             self._constellations_rtree = rtree.index.Index(
@@ -212,6 +212,8 @@ class ConstellationPlotterMixin:
             return
 
         geometries = []
+        border_lines = []
+        transform = self._plate_carree
 
         for _, c in constellation_borders.iterrows():
             for ls in c.geometry.geoms:
@@ -223,26 +225,28 @@ class ConstellationPlotterMixin:
             y = list(y)
 
             if self._coordinate_system == CoordinateSystem.RA_DEC:
-                self.ax.plot(
-                    x,
-                    y,
-                    transform=self._plate_carree,
-                    clip_on=True,
-                    clip_path=self._background_clip_path,
-                    gid="constellations-border",
-                    **style.matplot_kwargs(self.scale),
-                )
+                border_lines.append(list(zip(x, y)))
 
             elif self._coordinate_system == CoordinateSystem.AZ_ALT:
                 x = [24 - (x0 / 15) for x0 in x]
-
-                self.line(
-                    coordinates=zip(x, y),
-                    style=style,
-                )
+                border_lines.append(list(zip(x, y)))
+                transform = self._crs
 
             else:
                 raise ValueError("Unrecognized coordinate system")
+
+        style_kwargs = style.matplot_line_collection_kwargs(self.scale)
+
+        line_collection = LineCollection(
+            border_lines,
+            **style_kwargs,
+            transform=transform,
+            clip_on=True,
+            clip_path=self._background_clip_path,
+            gid="constellations-border",
+        )
+
+        self.ax.add_collection(line_collection)
 
     def _constellation_labels_auto(self, style, labels):
         for constellation in self.objects.constellations:

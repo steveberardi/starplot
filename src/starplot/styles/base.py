@@ -400,6 +400,12 @@ class LineStyle(BaseStyle):
 
         return result
 
+    def matplot_line_collection_kwargs(self, scale: float = 1.0) -> dict:
+        plot_kwargs = self.matplot_kwargs(scale)
+        plot_kwargs["linewidths"] = plot_kwargs.pop("linewidth")
+        plot_kwargs["colors"] = plot_kwargs.pop("color")
+        return plot_kwargs
+
 
 class PolygonStyle(BaseStyle):
     """
