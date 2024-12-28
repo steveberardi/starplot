@@ -227,7 +227,8 @@ class ConstellationPlotterMixin:
 
             elif self._coordinate_system == CoordinateSystem.AZ_ALT:
                 x = [24 - (x0 / 15) for x0 in x]
-                border_lines.append(list(zip(x, y)))
+                coords = [self._prepare_coords(*p) for p in list(zip(x, y))]
+                border_lines.append(coords)
                 transform = self._crs
 
             else:
