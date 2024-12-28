@@ -271,106 +271,6 @@ class BasePlot(ABC):
 
         return sum([x_labels, x_constellations, x_stars]) / 3
 
-    def _text_experimental(
-        self,
-        ra: float,
-        dec: float,
-        text: str,
-        hide_on_collision: bool = True,
-        auto_anchor: bool = True,
-        *args,
-        **kwargs,
-    ) -> None:
-        if not text:
-            return
-
-        x, y = self._prepare_coords(ra, dec)
-        kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
-        clip_on = kwargs.get("clip_on") or True
-
-        def plot_text(**kwargs):
-            label = self.ax.annotate(
-                text,
-                (x, y),
-                *args,
-                **kwargs,
-                **self._plot_kwargs(),
-            )
-            if clip_on:
-                label.set_clip_on(True)
-                label.set_clip_path(self._background_clip_path)
-            return label
-
-        def add_label(label):
-            extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-            self.labels.append(label)
-            self._labels_rtree.insert(
-                0, np.array((extent.x0, extent.y0, extent.x1, extent.y1))
-            )
-
-        label = plot_text(**kwargs)
-
-        if not clip_on:
-            add_label(label)
-            return
-
-        if not hide_on_collision and not auto_anchor:
-            add_label(label)
-            return
-
-        # removed = self._maybe_remove_label(label)
-        collision = self._collision_score(label)
-
-        if collision == 0:
-            add_label(label)
-            return
-
-        label.remove()
-
-        collision_scores = []
-        original_va = kwargs.pop("va", None)
-        original_ha = kwargs.pop("ha", None)
-        original_offset_x, original_offset_y = kwargs.pop("xytext", (0, 0))
-        anchor_fallbacks = self.style.text_anchor_fallbacks
-        for i, a in enumerate(anchor_fallbacks):
-            d = AnchorPointEnum.from_str(a).as_matplot()
-            va, ha = d["va"], d["ha"]
-            offset_x, offset_y = original_offset_x, original_offset_y
-            if original_ha != ha:
-                offset_x *= -1
-
-            if original_va != va:
-                offset_y *= -1
-
-            if ha == "center":
-                offset_x = 0
-                offset_y = 0
-
-            pt_kwargs = dict(**kwargs, va=va, ha=ha, xytext=(offset_x, offset_y))
-            label = plot_text(**pt_kwargs)
-
-            # if not hide_on_collision and i == len(anchor_fallbacks) - 1:
-            #     break
-
-            collision = self._collision_score(label)
-            if collision == 0:
-                add_label(label)
-                return
-
-            if collision < 1:
-                collision_scores.append((collision, pt_kwargs))
-
-            label.remove()
-            # removed = self._maybe_remove_label(label)
-            # if not removed:
-            #     break
-        if len(collision_scores) > 0:
-            best = sorted(collision_scores, key=lambda c: c[0])[0]
-            # return
-            if best[0] < 1:
-                label = plot_text(**best[1])
-                add_label(label)
-
     def _text(self, x, y, text, **kwargs):
         label = self.ax.annotate(
             text,
@@ -469,23 +369,20 @@ class BasePlot(ABC):
 
         for a in areas:
             unwrapped = unwrap_polygon(a)
-            buffer = unwrapped.area / 10 * -0.1 * self.scale
+            buffer = unwrapped.area / 10 * -0.05 * self.scale
             new_areas.append(unwrapped.buffer(buffer))
 
-        for d in range(1, 300, 4):
+        for d in range(1, 300, 1):
             distance = d / 10
             poly = randrange(len(new_areas))
-
-            # point = random_point_in_polygon(new_areas[poly])
             point = random_point_in_polygon_at_distance(
-                new_areas[poly], Point(ra, dec), distance, max_iterations=200
+                new_areas[poly], Point(ra, dec), distance, max_iterations=500
             )
 
             if point is None:
                 continue
 
             x, y = self._prepare_coords(point.x, point.y)
-
             label = self._text(x, y, text, **kwargs)
             removed = self._maybe_remove_label(
                 label,
@@ -497,7 +394,7 @@ class BasePlot(ABC):
 
             if not removed:
                 self._add_label_to_rtree(label)
-                break
+                return label
 
     @use_style(LabelStyle)
     def text(
@@ -520,7 +417,7 @@ class BasePlot(ABC):
             style: Styling of the text
             hide_on_collision: If True, then the text will not be plotted if it collides with another label
         """
-        if not text or not self.in_bounds(ra, dec):
+        if not text:
             return
 
         style = style or LabelStyle()

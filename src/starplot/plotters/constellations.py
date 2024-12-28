@@ -90,9 +90,7 @@ class ConstellationPlotterMixin:
                 elif s2_ra - s1_ra > 60:
                     s1_ra += 360
 
-                if self.in_bounds(s1_ra / 15, s1_dec) and self.in_bounds(
-                    s2_ra / 15, s2_dec
-                ):
+                if not inbounds and self.in_bounds(s1.ra_hours, s1_dec):
                     inbounds = True
 
                 if self._coordinate_system == CoordinateSystem.RA_DEC:
@@ -253,8 +251,7 @@ class ConstellationPlotterMixin:
             constellation_line_stars = [
                 s
                 for s in self.objects.stars
-                if s.constellation_id == constellation.iau_id
-                and s.hip in CONSTELLATION_HIP_IDS[constellation.iau_id]
+                if s.hip in CONSTELLATION_HIP_IDS[constellation.iau_id]
             ]
             if not constellation_line_stars:
                 continue
