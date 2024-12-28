@@ -291,7 +291,6 @@ class BasePlot(ABC):
         hide_on_collision: bool = True,
         force: bool = False,
         clip_on: bool = True,
-        *args,
         **kwargs,
     ):
         if not text:
@@ -341,42 +340,36 @@ class BasePlot(ABC):
         hide_on_collision: bool = True,
         force: bool = False,
         clip_on: bool = True,
-        *args,
+        settings: dict = None,
         **kwargs,
     ) -> None:
         kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
 
-        x, y = self._prepare_coords(ra, dec)
-        label = self._text(x, y, text, **kwargs)
+        avoid_constellation_lines = settings.get("avoid_constellation_lines", False)
+        padding = settings.get("label_padding", 3)
+        buffer = settings.get("buffer", 0.1)
+        max_distance = settings.get("max_distance", 300)
+        distance_step_size = settings.get("distance_step_size", 1)
+        point_iterations = settings.get("point_generation_max_iterations", 500)
 
-        removed = self._maybe_remove_label(
-            label,
-            remove_on_collision=hide_on_collision,
-            remove_on_clipped=clip_on,
-            padding=1,
+        areas = (
+            [p for p in area.geoms] if "MultiPolygon" == str(area.geom_type) else [area]
         )
-
-        if not removed:
-            self._add_label_to_rtree(label)
-            return
-
-        if "MultiPolygon" == str(area.geom_type):
-            areas = [p for p in area.geoms]
-        else:
-            areas = [area]
-
         new_areas = []
 
         for a in areas:
             unwrapped = unwrap_polygon(a)
-            buffer = unwrapped.area / 10 * -0.05 * self.scale
+            buffer = unwrapped.area / 10 * -1 * buffer * self.scale
             new_areas.append(unwrapped.buffer(buffer))
 
-        for d in range(1, 300, 1):
+        for d in range(0, max_distance, distance_step_size):
             distance = d / 10
             poly = randrange(len(new_areas))
             point = random_point_in_polygon_at_distance(
-                new_areas[poly], Point(ra, dec), distance, max_iterations=500
+                new_areas[poly],
+                Point(ra, dec),
+                distance,
+                max_iterations=point_iterations,
             )
 
             if point is None:
@@ -388,8 +381,8 @@ class BasePlot(ABC):
                 label,
                 remove_on_collision=hide_on_collision,
                 remove_on_clipped=clip_on,
-                remove_on_constellation_collision=False,
-                padding=3,
+                remove_on_constellation_collision=avoid_constellation_lines,
+                padding=padding,
             )
 
             if not removed:
@@ -404,7 +397,6 @@ class BasePlot(ABC):
         dec: float,
         style: LabelStyle = None,
         hide_on_collision: bool = True,
-        *args,
         **kwargs,
     ):
         """
@@ -433,12 +425,13 @@ class BasePlot(ABC):
                 ra,
                 dec,
                 text,
-                area=kwargs.pop("area"),
                 **style.matplot_kwargs(self.scale),
+                area=kwargs.pop("area"),
                 hide_on_collision=hide_on_collision,
                 xycoords="data",
                 xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
                 textcoords="offset points",
+                settings=kwargs.pop("auto_adjust_settings"),
                 **kwargs,
             )
         else:

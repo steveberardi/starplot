@@ -20,6 +20,16 @@ from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
 from starplot.geometry import wrapped_polygon_adjustment
 
+DEFAULT_AUTO_ADJUST_SETTINGS = {
+    "avoid_constellation_lines": False,
+    "point_generation_max_iterations": 500,
+    "distance_step_size": 1,
+    "max_distance": 300,
+    "label_padding": 3,
+    "buffer": 0.05,
+}
+"""Default settings for auto-adjusting constellation labels"""
+
 
 class ConstellationPlotterMixin:
     @use_style(LineStyle, "constellation_lines")
@@ -247,7 +257,7 @@ class ConstellationPlotterMixin:
 
         self.ax.add_collection(line_collection)
 
-    def _constellation_labels_auto(self, style, labels):
+    def _constellation_labels_auto(self, style, labels, settings):
         for constellation in self.objects.constellations:
             constellation_line_stars = [
                 s
@@ -278,6 +288,7 @@ class ConstellationPlotterMixin:
                 style,
                 hide_on_collision=self.hide_colliding_labels,
                 area=constellation.boundary,
+                auto_adjust_settings=settings,
                 gid="constellations-label-name",
             )
 
@@ -302,6 +313,7 @@ class ConstellationPlotterMixin:
         style: LabelStyle = None,
         labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
         auto_adjust: bool = True,
+        auto_adjust_settings: dict = DEFAULT_AUTO_ADJUST_SETTINGS,
     ):
         """
         Plots constellation labels
@@ -310,6 +322,7 @@ class ConstellationPlotterMixin:
             style: Styling of the constellation labels. If None, then the plot's style (specified when creating the plot) will be used
             labels: A dictionary where the keys are each constellation's 3-letter IAU abbreviation, and the values are how the constellation will be labeled on the plot.
             auto_adjust: If True (the default), then labels will be automatically adjusted to avoid collisions with other labels and stars **Important: you must plot stars and constellations first for this to work**. This uses a fairly simple method: for each constellation it finds the centroid of all plotted constellation stars with lines and then generates random points in the constellation boundary starting at the centroid and then progressively increasing the distance from the centroid.
+            auto_adjust_settings: Optional settings for the auto adjustment algorithm.
 
         TODO:
             make this work without plotting constellations first
@@ -318,6 +331,8 @@ class ConstellationPlotterMixin:
         self.logger.debug("Plotting constellation labels...")
 
         if auto_adjust:
-            self._constellation_labels_auto(style, labels)
+            settings = DEFAULT_AUTO_ADJUST_SETTINGS
+            settings.update(auto_adjust_settings)
+            self._constellation_labels_auto(style, labels, settings=settings)
         else:
             self._constellation_labels_static(style, labels)
