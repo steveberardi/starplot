@@ -311,10 +311,11 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellation labels. If None, then the plot's style (specified when creating the plot) will be used
             labels: A dictionary where the keys are each constellation's 3-letter IAU abbreviation, and the values are how the constellation will be labeled on the plot.
-            auto_adjust: If True (the default), then labels will be automatically adjusted to avoid collisions with other labels and stars (Important: you must plot stars and constellations first for this to work)
+            auto_adjust: If True (the default), then labels will be automatically adjusted to avoid collisions with other labels and stars **Important: you must plot stars and constellations first for this to work**. This uses a fairly simple method: for each constellation it finds the centroid of all plotted constellation stars with lines and then generates random points in the constellation boundary starting at the centroid and then progressively increasing the distance from the centroid.
 
         TODO:
             make this work without plotting constellations first
+
         """
         self.logger.debug("Plotting constellation labels...")
 
