@@ -119,8 +119,6 @@ class StarPlotterMixin:
                     label,
                     s.ra,
                     s.dec,
-                    # style,
-                    # _offset(style, star_sizes[i]),
                     style=style.label.offset_from_marker(
                         marker_symbol=style.marker.symbol,
                         marker_size=star_sizes[i],
@@ -254,33 +252,32 @@ class StarPlotterMixin:
             if not all([e.evaluate(obj) for e in where]):
                 continue
 
+            if self._coordinate_system == CoordinateSystem.RA_DEC:
+                data_xy = self._proj.transform_point(
+                    star.ra * -1, star.dec, self._geodetic
+                )
+            elif self._coordinate_system == CoordinateSystem.AZ_ALT:
+                data_xy = self._proj.transform_point(star.x, star.y, self._crs)
+            else:
+                raise ValueError("Unrecognized coordinate system")
+
+            display_x, display_y = self.ax.transData.transform(data_xy)
+
+            if (
+                display_x < 0
+                or display_y < 0
+                or np.isnan(display_x)
+                or np.isnan(display_y)
+                or self._is_clipped([(display_x, display_y)])
+            ):
+                continue
+
             size = size_fn(obj) * self.scale**2
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()
 
-            starz.append((star.x, star.y, size, alpha, color, obj))
-
-            # Update spatial index of plotted stars
-            if getattr(self, "_geodetic", None):
-                if self._coordinate_system == CoordinateSystem.RA_DEC:
-                    data_xy = self._proj.transform_point(
-                        star.ra * -1, star.dec, self._geodetic
-                    )
-                elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-                    data_xy = self._proj.transform_point(star.x, star.y, self._crs)
-
-                display_x, display_y = self.ax.transData.transform(data_xy)
-
-                if (
-                    display_x < 0
-                    or display_y < 0
-                    or obj.magnitude > 5
-                    or np.isnan(display_x)
-                    or np.isnan(display_y)
-                ):
-                    continue
-
-                radius = ((size**0.5 / 2) / self.scale) / 3.14 * 1
+            if obj.magnitude < 5:
+                radius = ((size**0.5 / 2) / self.scale) / 3.14
                 bbox = np.array(
                     (
                         display_x - radius,
@@ -299,6 +296,8 @@ class StarPlotterMixin:
                 else:
                     # if the index has no stars yet, then wait until end to load for better performance
                     stars_to_index.append((ctr, bbox, None))
+
+            starz.append((star.x, star.y, size, alpha, color, obj))
 
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 

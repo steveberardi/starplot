@@ -37,7 +37,6 @@ def random_point_in_polygon_at_distance(
     ctr = 0
     while ctr < max_iterations:
         ctr += 1
-
         angle = random.uniform(0, 2 * math.pi)
         new_x = origin_point.x + distance * math.cos(angle)
         new_y = origin_point.y + distance * math.sin(angle)

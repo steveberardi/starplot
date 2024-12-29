@@ -1,3 +1,5 @@
+import random
+
 from pathlib import Path
 from datetime import datetime
 
@@ -7,6 +9,8 @@ from pytz import timezone
 from starplot import styles, DSO, Moon, Star, Constellation
 from starplot.data.dsos import BASIC_DSO_TYPES
 from starplot.map import MapPlot, Projection
+
+random.seed(1)
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -33,6 +37,7 @@ def _mercator():
         resolution=RESOLUTION,
         autoscale=True,
     )
+    p.constellations()
     p.stars(mag=7.6, bayer_labels=True)
     p.dsos(
         labels=None,
@@ -47,8 +52,8 @@ def _mercator():
     p.gridlines()
     p.ecliptic()
     p.celestial_equator()
-    p.constellations()
     p.constellation_borders()
+    p.constellation_labels()
     return p
 
 
@@ -79,6 +84,7 @@ def _stereo_north():
     p.gridlines()
     p.constellations()
     p.constellation_borders()
+    p.constellation_labels()
     return p
 
 
@@ -143,6 +149,7 @@ def check_map_coma_berenices_dso_size():
     p.celestial_equator()
     p.constellations()
     p.constellation_borders()
+    p.constellation_labels()
     p.export(filename, padding=0.5)
     return filename
 
@@ -274,6 +281,7 @@ def check_map_wrapping():
     )
     p.gridlines()
     p.constellations()
+    p.constellation_labels()
     p.title("Andromeda + nebula + Vega")
     p.export(filename, padding=0.3)
     return filename
@@ -406,6 +414,7 @@ def check_map_plot_limit_by_geometry():
     )
     p.constellations(where=[Constellation.boundary.intersects(lyra.boundary)])
     p.constellation_borders()
+    p.constellation_labels()
 
     filename = DATA_PATH / "map-limit-by-geometry.png"
     p.export(filename)
@@ -443,6 +452,7 @@ def check_map_plot_custom_clip_path_virgo():
     )
     p.constellations()
     p.constellation_borders()
+    p.constellation_labels()
 
     p.line(
         coordinates=[
@@ -466,10 +476,7 @@ def check_map_label_callables():
         {
             "dso_open_cluster": {
                 "label": {
-                    # "font_size": 28,
                     "font_weight": "bold",
-                    # "offset_x": 310,
-                    # "offset_y": 240,
                 }
             },
         }

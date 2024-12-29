@@ -1,9 +1,13 @@
+import random
+
 from pathlib import Path
 from datetime import datetime
 
 from pytz import timezone
 
 from starplot import styles, DSO, Star, HorizonPlot
+
+random.seed(1)
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -37,6 +41,7 @@ def _horizon():
     p.planets()
     p.ecliptic()
     p.horizon()
+    p.constellation_labels()
     p.gridlines()
     return p
 
@@ -69,6 +74,7 @@ def check_horizon_north_celestial_pole():
     p.planets()
     p.ecliptic()
     p.horizon()
+    p.constellation_labels()
     p.gridlines()
 
     filename = DATA_PATH / "horizon-north-celestial-pole.png"

@@ -13,8 +13,9 @@ p = MapPlot(
     resolution=4000,
     scale=0.9,
 )
-p.constellations()
+p.constellations()  # Plot the constellation lines first
 p.stars(mag=4.6)
 p.horizon()
+p.constellation_labels()  # Plot the constellation labels last to avoid collisions
 
 p.export("tutorial_02.png", transparent=True)

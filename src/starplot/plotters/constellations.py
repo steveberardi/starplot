@@ -296,7 +296,7 @@ class ConstellationPlotterMixin:
         for con in condata.iterator():
             _, ra, dec = condata.get(con)
             text = labels.get(con.lower())
-            label = self.text(
+            self.text(
                 text,
                 ra,
                 dec,
@@ -304,8 +304,6 @@ class ConstellationPlotterMixin:
                 hide_on_collision=self.hide_colliding_labels,
                 gid="constellations-label-name",
             )
-            if label is not None:
-                self._constellation_labels.append(label)
 
     @use_style(LabelStyle, "constellation_labels")
     def constellation_labels(
@@ -316,7 +314,9 @@ class ConstellationPlotterMixin:
         auto_adjust_settings: dict = DEFAULT_AUTO_ADJUST_SETTINGS,
     ):
         """
-        Plots constellation labels
+        Plots constellation labels.
+
+        It's good to plot these last because they're area-based labels (vs point-based, like for star names), and area-based labels have more freedom to move around. If you plot area-based labels first, then it would limit the available space for point-based labels.
 
         Args:
             style: Styling of the constellation labels. If None, then the plot's style (specified when creating the plot) will be used

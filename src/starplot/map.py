@@ -365,15 +365,12 @@ class MapPlot(
                 (0.954, 0.5),  # west
             ]
             for label, coords in zip(labels, label_ax_coords):
-                ra, dec = self._ax_to_radec(*coords)
-                self.text(
+                self.ax.annotate(
                     label,
-                    ra,
-                    dec,
-                    hide_on_collision=False,
-                    style=style.label,
-                    force=True,
+                    coords,
+                    xycoords=self.ax.transAxes,
                     clip_on=False,
+                    **style.label.matplot_kwargs(self.scale),
                 )
 
             return

@@ -142,12 +142,10 @@ class BasePlot(ABC):
         ix = list(self._stars_rtree.intersection(bbox))
         return len(ix) > 0
 
-    def _is_clipped(self, extent) -> bool:
+    def _is_clipped(self, points) -> bool:
         radius = -1.5 * int(self._background_clip_path.get_linewidth())
         return self._background_clip_path is not None and not all(
-            self._background_clip_path.contains_points(
-                extent.get_points(), radius=radius
-            )
+            self._background_clip_path.contains_points(points, radius=radius)
         )
 
     def _add_label_to_rtree(self, label, extent=None):
@@ -175,12 +173,13 @@ class BasePlot(ABC):
             extent.x1 + padding,
             extent.y1 + padding,
         )
+        points = [(extent.x0, extent.y0), (extent.x1, extent.y1)]
 
         if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]):
             label.remove()
             return True
 
-        if remove_on_clipped and self._is_clipped(extent):
+        if remove_on_clipped and self._is_clipped(points):
             label.remove()
             return True
 
