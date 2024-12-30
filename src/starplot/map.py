@@ -1,6 +1,5 @@
 import datetime
 import math
-import warnings
 from typing import Callable
 from functools import cache
 
@@ -33,9 +32,6 @@ from starplot.styles import (
 from starplot.styles.helpers import use_style
 from starplot.utils import lon_to_ra, ra_to_lon
 
-# Silence noisy cartopy warnings
-warnings.filterwarnings("ignore", module="cartopy")
-warnings.filterwarnings("ignore", module="shapely")
 
 DEFAULT_MAP_STYLE = PlotStyle()  # .extend(extensions.MAP)
 
@@ -87,6 +83,7 @@ class MapPlot(
         clip_path: An optional Shapely Polygon that specifies the clip path of the plot -- only objects inside the polygon will be plotted. If `None` (the default), then the clip path will be the extent of the map you specified with the RA/DEC parameters.
         scale: Scaling factor that will be applied to all sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set the scale to 2. At `scale=1` and `resolution=4096` (the default), all sizes are optimized visually for a map that covers 1-3 constellations. So, if you're creating a plot of a _larger_ extent, then it'd probably be good to decrease the scale (i.e. make everything smaller) -- and _increase_ the scale if you're plotting a very small area.
         autoscale: If True, then the scale will be set automatically based on resolution.
+        suppress_warnings: If True (the default), then all warnings will be suppressed
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -112,6 +109,7 @@ class MapPlot(
         clip_path: Polygon = None,
         scale: float = 1.0,
         autoscale: bool = False,
+        suppress_warnings: bool = True,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -123,6 +121,7 @@ class MapPlot(
             hide_colliding_labels,
             scale=scale,
             autoscale=autoscale,
+            suppress_warnings=suppress_warnings,
             *args,
             **kwargs,
         )

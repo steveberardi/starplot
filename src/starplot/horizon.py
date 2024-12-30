@@ -64,6 +64,7 @@ class HorizonPlot(
         raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
         scale: Scaling factor that will be applied to all relevant sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set scale to 2.
         autoscale: If True, then the scale will be automatically set based on resolution
+        suppress_warnings: If True (the default), then all warnings will be suppressed
 
     Returns:
         HorizonPlot: A new instance of an HorizonPlot
@@ -87,6 +88,7 @@ class HorizonPlot(
         hide_colliding_labels: bool = True,
         scale: float = 1.0,
         autoscale: bool = False,
+        suppress_warnings: bool = True,
         *args,
         **kwargs,
     ) -> "HorizonPlot":
@@ -98,6 +100,7 @@ class HorizonPlot(
             hide_colliding_labels,
             scale=scale,
             autoscale=autoscale,
+            suppress_warnings=suppress_warnings,
             *args,
             **kwargs,
         )

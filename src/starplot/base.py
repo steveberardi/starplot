@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Dict, Union, Optional
 from random import randrange
 import logging
-import warnings
 
 import numpy as np
 import rtree
@@ -14,7 +13,7 @@ from pytz import timezone
 from shapely import Polygon, Point
 
 from starplot.coordinates import CoordinateSystem
-from starplot import geod, models
+from starplot import geod, models, warnings
 from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
@@ -38,11 +37,6 @@ from starplot.geometry import (
     random_point_in_polygon_at_distance,
 )
 
-# ignore noisy matplotlib warnings
-warnings.filterwarnings(
-    "ignore",
-    message="Setting the 'color' property will override the edgecolor or facecolor properties",
-)
 
 LOGGER = logging.getLogger("starplot")
 LOG_HANDLER = logging.StreamHandler()
@@ -78,11 +72,11 @@ class BasePlot(ABC):
         hide_colliding_labels: bool = True,
         scale: float = 1.0,
         autoscale: bool = False,
+        suppress_warnings: bool = True,
         *args,
         **kwargs,
     ):
         px = 1 / DPI  # plt.rcParams["figure.dpi"]  # pixel in inches
-
         self.pixels_per_point = DPI / 72
 
         self.style = style
@@ -94,6 +88,9 @@ class BasePlot(ABC):
         self.autoscale = autoscale
         if self.autoscale:
             self.scale = self.resolution / DEFAULT_RESOLUTION
+
+        if suppress_warnings:
+            warnings.suppress()
 
         self.dt = dt or timezone("UTC").localize(datetime.now())
         self._ephemeris_name = ephemeris

@@ -437,7 +437,7 @@ class PolygonStyle(BaseStyle):
         styles = dict(
             edgecolor=self.edge_color.as_hex() if self.edge_color else "none",
             facecolor=self.fill_color.as_hex() if self.fill_color else "none",
-            fill=True if self.fill_color else False,
+            fill=True if self.fill_color or self.color else False,
             linewidth=self.edge_width * scale,
             linestyle=self.line_style,
             alpha=self.alpha,
