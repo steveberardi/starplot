@@ -670,7 +670,8 @@ class BasePlot(ABC):
         Args:
             style: Styling of the Sun. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then the Sun's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
-            label: How the Sun will be labeled on the plot and legend
+            label: How the Sun will be labeled on the plot
+            legend_label: How the sun will be labeled in the legend
         """
         s = models.Sun.get(
             dt=self.dt, lat=self.lat, lon=self.lon, ephemeris=self._ephemeris_name
@@ -761,6 +762,7 @@ class BasePlot(ABC):
         style: PolygonStyle,
         points: list = None,
         geometry: Polygon = None,
+        legend_label: str = None,
         **kwargs,
     ):
         """
@@ -769,9 +771,11 @@ class BasePlot(ABC):
         Must pass in either `points` **or** `geometry` (but not both).
 
         Args:
+            style: Style of polygon
             points: List of polygon points `[(ra, dec), ...]` - **must be in counterclockwise order**
             geometry: A shapely Polygon. If this value is passed, then the `points` kwarg will be ignored.
-            style: Style of polygon
+            legend_label: Label for this object in the legend
+            
         """
         if points is None and geometry is None:
             raise ValueError("Must pass points or geometry when plotting polygons.")
@@ -782,6 +786,9 @@ class BasePlot(ABC):
         _points = [(ra * 15, dec) for ra, dec in points]
         self._polygon(_points, style, gid=kwargs.get("gid") or "polygon")
 
+        if legend_label is not None:
+            self._add_legend_handle_marker(legend_label, style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE))
+
     @use_style(PolygonStyle)
     def rectangle(
         self,
@@ -790,6 +797,7 @@ class BasePlot(ABC):
         width_degrees: float,
         style: PolygonStyle,
         angle: float = 0,
+        legend_label: str = None,
         **kwargs,
     ):
         """Plots a rectangle
@@ -798,8 +806,9 @@ class BasePlot(ABC):
             center: Center of rectangle (ra, dec)
             height_degrees: Height of rectangle (degrees)
             width_degrees: Width of rectangle (degrees)
-            angle: Angle of rotation clockwise (degrees)
             style: Style of rectangle
+            angle: Angle of rotation clockwise (degrees)
+            legend_label: Label for this object in the legend
         """
         points = geod.rectangle(
             center,
@@ -808,6 +817,9 @@ class BasePlot(ABC):
             angle,
         )
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
+
+        if legend_label is not None:
+            self._add_legend_handle_marker(legend_label, style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE))
 
     @use_style(PolygonStyle)
     def ellipse(
@@ -820,6 +832,7 @@ class BasePlot(ABC):
         num_pts: int = 100,
         start_angle: int = 0,
         end_angle: int = 360,
+        legend_label: str = None,
         **kwargs,
     ):
         """Plots an ellipse
@@ -831,6 +844,9 @@ class BasePlot(ABC):
             style: Style of ellipse
             angle: Angle of rotation clockwise (degrees)
             num_pts: Number of points to calculate for the ellipse polygon
+            start_angle: Angle to start at
+            end_angle: Angle to end at
+            legend_label: Label for this object in the legend
         """
 
         points = geod.ellipse(
@@ -844,6 +860,9 @@ class BasePlot(ABC):
         )
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
+        if legend_label is not None:
+            self._add_legend_handle_marker(legend_label, style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE))
+
     @use_style(PolygonStyle)
     def circle(
         self,
@@ -851,6 +870,7 @@ class BasePlot(ABC):
         radius_degrees: float,
         style: PolygonStyle,
         num_pts: int = 100,
+        legend_label: str = None,
         **kwargs,
     ):
         """Plots a circle
@@ -860,6 +880,7 @@ class BasePlot(ABC):
             radius_degrees: Radius of circle (degrees)
             style: Style of circle
             num_pts: Number of points to calculate for the circle polygon
+            legend_label: Label for this object in the legend
         """
         self.ellipse(
             center,
@@ -870,6 +891,9 @@ class BasePlot(ABC):
             num_pts=num_pts,
             gid=kwargs.get("gid") or "polygon",
         )
+
+        if legend_label is not None:
+            self._add_legend_handle_marker(legend_label, style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE))
 
     @use_style(LineStyle)
     def line(self, coordinates: list[tuple[float, float]], style: LineStyle, **kwargs):
