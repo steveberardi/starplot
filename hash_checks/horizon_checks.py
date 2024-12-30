@@ -5,7 +5,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, DSO, Star, HorizonPlot
+from starplot import styles, Star, HorizonPlot
 
 random.seed(1)
 
@@ -24,21 +24,19 @@ def _horizon():
     dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
 
     p = HorizonPlot(
-        altitude=(0, 60),
-        azimuth=(175, 275),
+        altitude=(0, 50),
+        azimuth=(150, 210),
         lat=36.606111,  # Lone Pine, California
         lon=-118.079444,
         dt=dt,
         style=STYLE,
         resolution=RESOLUTION,
-        scale=0.9,
+        scale=1.5,
     )
     p.constellations()
     p.constellation_borders()
     p.milky_way()
     p.stars(where=[Star.magnitude < 5])
-    p.messier(where=[DSO.magnitude < 12], true_size=False, label_fn=lambda d: f"M{d.m}")
-    p.planets()
     p.ecliptic()
     p.horizon()
     p.constellation_labels()
@@ -57,21 +55,19 @@ def check_horizon_north_celestial_pole():
     dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
 
     p = HorizonPlot(
-        altitude=(0, 70),
-        azimuth=(310, 410),
+        altitude=(0, 50),
+        azimuth=(330, 390),
         lat=36.606111,  # Lone Pine, California
         lon=-118.079444,
         dt=dt,
         style=STYLE,
         resolution=RESOLUTION,
-        scale=0.9,
+        scale=1.5,
     )
     p.constellations()
     p.constellation_borders()
     p.milky_way()
     p.stars(where=[Star.magnitude < 5])
-    p.messier(where=[DSO.magnitude < 12], true_size=False, label_fn=lambda d: f"M{d.m}")
-    p.planets()
     p.ecliptic()
     p.horizon()
     p.constellation_labels()

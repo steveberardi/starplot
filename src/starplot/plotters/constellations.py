@@ -287,7 +287,7 @@ class ConstellationPlotterMixin:
                 centroid.y,
                 style,
                 hide_on_collision=self.hide_colliding_labels,
-                area=constellation.boundary, # TODO : make this intersection with clip path
+                area=constellation.boundary,  # TODO : make this intersection with clip path
                 auto_adjust_settings=settings,
                 gid="constellations-label-name",
             )
