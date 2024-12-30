@@ -7,7 +7,6 @@ import warnings
 
 import numpy as np
 import rtree
-from adjustText import adjust_text as _adjust_text
 from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.lines import Line2D
@@ -174,6 +173,9 @@ class BasePlot(ABC):
             extent.y1 + padding,
         )
         points = [(extent.x0, extent.y0), (extent.x1, extent.y1)]
+
+        # if label.get_text() == "CANIS MAJOR":
+        #     print(bbox)
 
         if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]):
             label.remove()
@@ -384,6 +386,8 @@ class BasePlot(ABC):
                 padding=padding,
             )
 
+            # TODO : remove label if not fully inside area?
+
             if not removed:
                 self._add_label_to_rtree(label)
                 return label
@@ -510,18 +514,6 @@ class BasePlot(ABC):
         ).set_zorder(
             # zorder is not a valid kwarg to legend(), so we have to set it afterwards
             style.zorder
-        )
-
-    def adjust_text(self, ensure_inside_axes: bool = False, **kwargs) -> None:
-        """Adjust all the labels to avoid overlapping. This function uses the [adjustText](https://adjusttext.readthedocs.io/) library.
-
-        Args:
-            ensure_inside_axes: If True, then labels will be forced to stay within the axes
-            **kwargs: Any keyword arguments to pass through to [adjustText](https://adjusttext.readthedocs.io/en/latest/#adjustText.adjust_text)
-
-        """
-        _adjust_text(
-            self.labels, ax=self.ax, ensure_inside_axes=ensure_inside_axes, **kwargs
         )
 
     def close_fig(self) -> None:

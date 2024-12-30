@@ -25,7 +25,7 @@ DEFAULT_AUTO_ADJUST_SETTINGS = {
     "point_generation_max_iterations": 500,
     "distance_step_size": 1,
     "max_distance": 300,
-    "label_padding": 3,
+    "label_padding": 9,
     "buffer": 0.05,
 }
 """Default settings for auto-adjusting constellation labels"""
@@ -287,7 +287,7 @@ class ConstellationPlotterMixin:
                 centroid.y,
                 style,
                 hide_on_collision=self.hide_colliding_labels,
-                area=constellation.boundary,
+                area=constellation.boundary, # TODO : make this intersection with clip path
                 auto_adjust_settings=settings,
                 gid="constellations-label-name",
             )

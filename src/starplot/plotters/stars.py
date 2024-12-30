@@ -277,7 +277,10 @@ class StarPlotterMixin:
             color = color_fn(obj) or style.marker.color.as_hex()
 
             if obj.magnitude < 5:
-                radius = ((size**0.5 / 2) / self.scale) / 3.14
+                # radius = ((size**0.5 / 2) / self.scale) #/ 3.14
+                radius = size**0.5 / 4
+                # radius = ((size**0.5 / 2) / self.scale) / 3.14
+
                 bbox = np.array(
                     (
                         display_x - radius,
@@ -286,6 +289,8 @@ class StarPlotterMixin:
                         display_y + radius,
                     )
                 )
+                # if obj.name == "Sirius":
+                #     print(bbox)
 
                 if self._stars_rtree.get_size() > 0:
                     self._stars_rtree.insert(
