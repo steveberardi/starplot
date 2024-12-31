@@ -20,15 +20,24 @@ def unwrap_polygon(polygon: Polygon) -> Polygon:
     return Polygon(new_points)
 
 
-def random_point_in_polygon(polygon: Polygon) -> Point:
+def random_point_in_polygon(
+    polygon: Polygon, max_iterations: int = 100, seed: int = None
+) -> Point:
     """Returns a random point inside a shapely polygon"""
-    minx, miny, maxx, maxy = polygon.bounds
-    while True:
-        x = random.uniform(minx, maxx)
-        y = random.uniform(miny, maxy)
+    if seed:
+        random.seed(seed)
+
+    ctr = 0
+    x0, y0, x1, y1 = polygon.bounds
+
+    while ctr < max_iterations:
+        x = random.uniform(x0, x1)
+        y = random.uniform(y0, y1)
         point = Point(x, y)
         if polygon.contains(point):
             return point
+
+    return None
 
 
 def random_point_in_polygon_at_distance(
@@ -38,6 +47,7 @@ def random_point_in_polygon_at_distance(
     max_iterations: int = 100,
     seed: int = None,
 ) -> Point:
+    """Returns a random point inside a polygon, at a specified distance from the origin point"""
     if seed:
         random.seed(seed)
 
@@ -45,12 +55,12 @@ def random_point_in_polygon_at_distance(
     while ctr < max_iterations:
         ctr += 1
         angle = random.uniform(0, 2 * math.pi)
-        new_x = origin_point.x + distance * math.cos(angle)
-        new_y = origin_point.y + distance * math.sin(angle)
-        new_point = Point(new_x, new_y)
+        x = origin_point.x + distance * math.cos(angle)
+        y = origin_point.y + distance * math.sin(angle)
+        point = Point(x, y)
 
-        if polygon.contains(new_point):
-            return new_point
+        if polygon.contains(point):
+            return point
 
     return None
 
