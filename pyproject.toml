@@ -16,7 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dynamic = ["version", "description"]
-keywords = ["astronomy", "stars", "charts", "maps", "constellations"]
+keywords = ["astronomy", "stars", "charts", "maps", "constellations", "sky", "plotting"]
 dependencies = [
     "matplotlib >= 3.8.0",
     "numpy >= 1.26.2",
@@ -24,7 +24,6 @@ dependencies = [
     "pydantic >= 2.0.3",
     "shapely >= 2.0.1",
     "skyfield >= 1.41",
-    "adjustText >= 1.0",
     "cartopy >= 0.21.1",
     "geopandas >= 0.13.2",
     "pillow >= 10.0.0",

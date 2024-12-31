@@ -1,3 +1,6 @@
 class CoordinateSystem:
-    RA_DEC = 1
-    AZ_ALT = 2
+    RA_DEC = "radec"
+    AZ_ALT = "azalt"
+    AXES = "axes"
+    PROJECTED = "projected"
+    DISPLAY = "display"

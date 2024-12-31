@@ -1,11 +1,13 @@
 from typing import Callable, Mapping
 from functools import cache
 
+import rtree
 from skyfield.api import Star as SkyfieldStar
 
-# import numpy as np
+import numpy as np
 
 from starplot import callables
+from starplot.coordinates import CoordinateSystem
 from starplot.data import bayer, stars, flamsteed
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.models.star import Star, from_tuple
@@ -117,8 +119,6 @@ class StarPlotterMixin:
                     label,
                     s.ra,
                     s.dec,
-                    # style,
-                    # _offset(style, star_sizes[i]),
                     style=style.label.offset_from_marker(
                         marker_symbol=style.marker.symbol,
                         marker_size=star_sizes[i],
@@ -222,6 +222,7 @@ class StarPlotterMixin:
         color_fn = color_fn or (lambda d: color_hex)
 
         where = where or []
+        stars_to_index = []
 
         if where:
             mag = None
@@ -242,42 +243,66 @@ class StarPlotterMixin:
         self._prepare_star_coords(nearby_stars_df)
 
         starz = []
+        ctr = 0
 
         for star in nearby_stars_df.itertuples():
             obj = from_tuple(star, catalog)
+            ctr += 1
 
             if not all([e.evaluate(obj) for e in where]):
+                continue
+
+            if self._coordinate_system == CoordinateSystem.RA_DEC:
+                data_xy = self._proj.transform_point(
+                    star.ra * -1, star.dec, self._geodetic
+                )
+            elif self._coordinate_system == CoordinateSystem.AZ_ALT:
+                data_xy = self._proj.transform_point(star.x, star.y, self._crs)
+            else:
+                raise ValueError("Unrecognized coordinate system")
+
+            display_x, display_y = self.ax.transData.transform(data_xy)
+
+            if (
+                display_x < 0
+                or display_y < 0
+                or np.isnan(display_x)
+                or np.isnan(display_y)
+                or self._is_clipped([(display_x, display_y)])
+            ):
                 continue
 
             size = size_fn(obj) * self.scale**2
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()
 
+            if obj.magnitude < 5:
+                # radius = ((size**0.5 / 2) / self.scale) #/ 3.14
+                radius = size**0.5 / 4
+                # radius = ((size**0.5 / 2) / self.scale) / 3.14
+
+                bbox = np.array(
+                    (
+                        display_x - radius,
+                        display_y - radius,
+                        display_x + radius,
+                        display_y + radius,
+                    )
+                )
+                # if obj.name == "Sirius":
+                #     print(bbox)
+
+                if self._stars_rtree.get_size() > 0:
+                    self._stars_rtree.insert(
+                        0,
+                        bbox,
+                        None,
+                    )
+                else:
+                    # if the index has no stars yet, then wait until end to load for better performance
+                    stars_to_index.append((ctr, bbox, None))
+
             starz.append((star.x, star.y, size, alpha, color, obj))
-
-            # Experimental code for keeping spatial index of plotted stars (for better label placement)
-            # if getattr(self, "_geodetic", None):
-            #     # TODO : clean up!
-            #     x, y = self._proj.transform_point(
-            #         star.ra * -1, star.dec, self._geodetic
-            #     )
-            #     x0, y0 = self.ax.transData.transform((x, y))
-
-            #     if (
-            #         x0 < 0
-            #         or y0 < 0
-            #         or obj.magnitude > 5
-            #         or np.isnan(x0)
-            #         or np.isnan(y0)
-            #     ):
-            #         continue
-            #     radius = 1 + (5 - obj.magnitude)
-            #     # radius = max(((size**0.5 / 2) / self.scale)/1.44 - 6, 0) #size / self.scale**2 / 200
-            #     self._stars_rtree.insert(
-            #         0,
-            #         np.array((x0 - radius, y0 - radius, x0 + radius, y0 + radius)),
-            #         obj=star.x,
-            #     )
 
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 
@@ -307,6 +332,9 @@ class StarPlotterMixin:
         )
 
         self._add_legend_handle_marker(legend_label, style.marker)
+
+        if stars_to_index:
+            self._stars_rtree = rtree.index.Index(stars_to_index)
 
         if labels:
             self._star_labels(

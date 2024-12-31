@@ -8,17 +8,18 @@ border_line_color: '#000'
 
 title:
   font_color: '#000'
+
 celestial_equator:
   label:
     font_color: '#999'
   line:
     color: '#999'
-constellation:
-  line:
-    color: '#c8c8c8'
+
 star:
   marker:
     edge_color: '#fff'
+
+# DSOs
 dso_double_star:
   marker:
     color: '#000'

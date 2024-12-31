@@ -24,7 +24,6 @@ from starplot.styles import (
     use_style,
     PathStyle,
 )
-from starplot.utils import ra_to_lon
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -65,6 +64,7 @@ class HorizonPlot(
         raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
         scale: Scaling factor that will be applied to all relevant sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set scale to 2.
         autoscale: If True, then the scale will be automatically set based on resolution
+        suppress_warnings: If True (the default), then all warnings will be suppressed
 
     Returns:
         HorizonPlot: A new instance of an HorizonPlot
@@ -88,6 +88,7 @@ class HorizonPlot(
         hide_colliding_labels: bool = True,
         scale: float = 1.0,
         autoscale: bool = False,
+        suppress_warnings: bool = True,
         *args,
         **kwargs,
     ) -> "HorizonPlot":
@@ -99,6 +100,7 @@ class HorizonPlot(
             hide_colliding_labels,
             scale=scale,
             autoscale=autoscale,
+            suppress_warnings=suppress_warnings,
             *args,
             **kwargs,
         )
@@ -139,10 +141,18 @@ class HorizonPlot(
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
         point = SkyfieldStar(ra_hours=ra, dec_degrees=dec)
-        position = self.observe(point)
-        pos_apparent = position.apparent()
-        pos_alt, pos_az, _ = pos_apparent.altaz()
+        position = self.observe(point).apparent()
+        pos_alt, pos_az, _ = position.altaz()
         return pos_az.degrees, pos_alt.degrees
+
+    def _prepare_star_coords(self, df):
+        stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
+        nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
+        df["x"], df["y"] = (
+            nearby_stars_az.degrees,
+            nearby_stars_alt.degrees,
+        )
+        return df
 
     def _plot_kwargs(self) -> dict:
         return dict(transform=self._crs)
@@ -249,38 +259,29 @@ class HorizonPlot(
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_altaz(y, x)  # alt = y, az = x
 
-    def _prepare_star_coords(self, df):
-        stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
-        nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
-        df["x"], df["y"] = (
-            nearby_stars_az.degrees,
-            nearby_stars_alt.degrees,
-        )
-        return df
-
     def _read_geo_package(self, filename: str):
         """Returns GeoDataFrame of a GeoPackage file"""
 
-        if self.ra_min <= 0 and self.ra_max >= 24:
-            lon_min = -180
-            lon_max = 180
-        else:
-            lon_min = ra_to_lon(24 - self.ra_min)
-            lon_max = ra_to_lon(24 - self.ra_max)
+        # if self.ra_min <= 0 and self.ra_max >= 24:
+        #     lon_min = -180
+        #     lon_max = 180
+        # else:
+        #     lon_min = self.ra_max * 15 - 180 # ra_to_lon(24 - self.ra_max)
+        #     lon_max = self.ra_min * 15 - 180 # ra_to_lon(24 - self.ra_min)
 
-        extent = self._extent_mask()
-        extent = (
-            lon_min,
-            self.dec_min,
-            lon_max,
-            self.dec_max,
-        )
+        # extent = self._extent_mask()
+        # extent = (
+        #     lon_min,
+        #     self.dec_min,
+        #     lon_max,
+        #     self.dec_max,
+        # )
 
         return gpd.read_file(
             filename,
             engine="pyogrio",
             use_arrow=True,
-            bbox=extent,
+            # bbox=extent,
         )
 
     @use_style(PathStyle, "horizon")

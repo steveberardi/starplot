@@ -1,6 +1,5 @@
 import datetime
 import math
-import warnings
 from typing import Callable
 from functools import cache
 
@@ -33,9 +32,6 @@ from starplot.styles import (
 from starplot.styles.helpers import use_style
 from starplot.utils import lon_to_ra, ra_to_lon
 
-# Silence noisy cartopy warnings
-warnings.filterwarnings("ignore", module="cartopy")
-warnings.filterwarnings("ignore", module="shapely")
 
 DEFAULT_MAP_STYLE = PlotStyle()  # .extend(extensions.MAP)
 
@@ -87,6 +83,7 @@ class MapPlot(
         clip_path: An optional Shapely Polygon that specifies the clip path of the plot -- only objects inside the polygon will be plotted. If `None` (the default), then the clip path will be the extent of the map you specified with the RA/DEC parameters.
         scale: Scaling factor that will be applied to all sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set the scale to 2. At `scale=1` and `resolution=4096` (the default), all sizes are optimized visually for a map that covers 1-3 constellations. So, if you're creating a plot of a _larger_ extent, then it'd probably be good to decrease the scale (i.e. make everything smaller) -- and _increase_ the scale if you're plotting a very small area.
         autoscale: If True, then the scale will be set automatically based on resolution.
+        suppress_warnings: If True (the default), then all warnings will be suppressed
 
     Returns:
         MapPlot: A new instance of a MapPlot
@@ -112,6 +109,7 @@ class MapPlot(
         clip_path: Polygon = None,
         scale: float = 1.0,
         autoscale: bool = False,
+        suppress_warnings: bool = True,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -123,6 +121,7 @@ class MapPlot(
             hide_colliding_labels,
             scale=scale,
             autoscale=autoscale,
+            suppress_warnings=suppress_warnings,
             *args,
             **kwargs,
         )
@@ -329,37 +328,51 @@ class MapPlot(
         )
         x = []
         y = []
-        verts = []
-
-        # TODO : handle map edges better
 
         for ra, dec in points:
             ra = ra / 15
             x0, y0 = self._prepare_coords(ra, dec)
             x.append(x0)
             y.append(y0)
-            verts.append((x0, y0))
 
         style_kwargs = {}
         if self.projection == Projection.ZENITH:
             """
-            For zenith projections, we plot the horizon as a patch because
-            plottting as a line results in extra pixels on bottom.
-
-            TODO : investigate why line is extra thick on bottom when plotting line
+            For zenith projections, we plot the horizon as a patch to make a more perfect circle
             """
             style_kwargs = style.line.matplot_kwargs(self.scale)
             style_kwargs["clip_on"] = False
             style_kwargs["edgecolor"] = style_kwargs.pop("color")
-
-            patch = patches.Polygon(
-                verts,
+            patch = patches.Circle(
+                (0.50, 0.50),
+                radius=0.454,
                 facecolor=None,
                 fill=False,
-                transform=self._crs,
+                transform=self.ax.transAxes,
                 **style_kwargs,
             )
             self.ax.add_patch(patch)
+            self._background_clip_path = patch
+
+            if not labels:
+                return
+
+            label_ax_coords = [
+                (0.5, 0.95),  # north
+                (0.045, 0.5),  # east
+                (0.5, 0.045),  # south
+                (0.954, 0.5),  # west
+            ]
+            for label, coords in zip(labels, label_ax_coords):
+                self.ax.annotate(
+                    label,
+                    coords,
+                    xycoords=self.ax.transAxes,
+                    clip_on=False,
+                    **style.label.matplot_kwargs(self.scale),
+                )
+
+            return
 
         else:
             style_kwargs["clip_on"] = True
@@ -372,13 +385,6 @@ class MapPlot(
                 **style_kwargs,
                 **self._plot_kwargs(),
             )
-
-        # self.circle(
-        #     (ra.hours, dec.degrees),
-        #     90,
-        #     style,
-        #     num_pts=200,
-        # )
 
         if not labels:
             return
@@ -406,7 +412,8 @@ class MapPlot(
 
         for i, position in enumerate(cardinal_directions):
             ra, dec, _ = position.radec()
-            self._text(ra.hours, dec.degrees, labels[i], force=True, **text_kwargs)
+            x, y = self._prepare_coords(ra, dec)
+            self._text(x, y, labels[i], **text_kwargs)
 
     @use_style(PathStyle, "gridlines")
     def gridlines(
@@ -602,6 +609,12 @@ class MapPlot(
             transform=self.ax.transAxes,
             **style.matplot_kwargs(self.scale),
         )
+
+    def _ax_to_radec(self, x, y):
+        trans = self.ax.transAxes + self.ax.transData.inverted()
+        x_projected, y_projected = trans.transform((x, y))  # axes to data
+        x_ra, y_ra = self._crs.transform_point(x_projected, y_projected, self._proj)
+        return (x_ra + 360) / 15, y_ra
 
     def _plot_background_clip_path(self):
         def to_axes(points):

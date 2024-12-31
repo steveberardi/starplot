@@ -46,19 +46,21 @@ celestial_equator:
   line:
     color: hsl(188, 35%, 76%)
     alpha: 0.62
-constellation:
-  label:
-    font_weight: light
-    font_color: hsl(60, 3%, 52%)
-    font_alpha: 0.46
-    font_name: "serif"
-  line:
-    alpha: 0.3
-    color: hsl(48, 80%, 14%)
+
+# Constellations
+constellation_lines:
+  alpha: 0.3
+  color: hsl(48, 80%, 14%)
+constellation_labels:
+  font_weight: light
+  font_color: hsl(60, 3%, 52%)
+  font_alpha: 0.46
+  font_name: "serif"
 constellation_borders:
   color: hsl(37, 33%, 40%)
   alpha: 0.8
   zorder: -500
+
 ecliptic:
   label:
     font_color: hsl(26, 63%, 50%)
