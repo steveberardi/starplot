@@ -61,7 +61,6 @@ class HorizonPlot(
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
         hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
-        raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
         scale: Scaling factor that will be applied to all relevant sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set scale to 2.
         autoscale: If True, then the scale will be automatically set based on resolution
         suppress_warnings: If True (the default), then all warnings will be suppressed
