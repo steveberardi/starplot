@@ -6,10 +6,11 @@
 
 **Starplot** is a Python library for creating star charts and maps of the sky.
 
-- ⭐ **Zenith Plots** - showing the whole sky from a specific time/location
+- ⭐ **Zenith Plots** - shows the entire sky at a specific time and place
 - 🗺️ **Map Plots** - including many map projections
-- 🔭 **Optic Plots** - simulates what you'll see through an optic (e.g. binoculars, telescope) from a time/location
-- 🪐 **Planets and Deep Sky Objects (DSOs)**
+- 🌃 **Horizon Plots** - shows the horizon at a specific time and place
+- 🔭 **Optic Plots** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
+- 🪐 **Planets and Deep Sky Objects (DSOs)** - more than 14,000 objects built-in
 - 🎨 **Custom Styles** - for all objects
 - 📥 **Export** - png, svg, jpeg
 - 🧭 **Label Collision Avoidance**
@@ -43,11 +44,12 @@ p = sp.MapPlot(
     style=sp.styles.PlotStyle().extend(
         sp.styles.extensions.BLUE_MEDIUM,
     ),
-    resolution=3200,
+    resolution=4096,
     autoscale=True,
 )
 p.constellations()
 p.stars(mag=4.6)
+p.constellation_labels()
 p.export("starchart.png")
 ```
 
@@ -72,11 +74,11 @@ https://discord.gg/WewJJjshFu
 Contributing to Starplot is welcome and very much appreciated! Please see [here](CONTRIBUTING.md) for details.
 
 ## Coming Soon
-- 🌄 Horizon plots
+- 🗄️ Data optimizations
+- 🧮 Coordinate system helpers
 - 🌑 Planet moons
 - ✴️ Custom markers
 - ☄️ Comet model
-- 💫 Better constellation label placement
 - 😄 🔭 Clear skies
 
 See more details on the [Public Roadmap](https://trello.com/b/sUksygn4/starplot-roadmap)

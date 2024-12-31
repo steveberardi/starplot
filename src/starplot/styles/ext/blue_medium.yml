@@ -5,7 +5,7 @@ figure_background_color: '#fff'
 
 text_border_color: '#f1f6ff'
 
-border_bg_color: '#7997b9'
+border_bg_color: hsl(212, 27%, 56%)
 border_font_color: '#f1f6ff'
 border_line_color: '#2f4358'
 
@@ -18,13 +18,13 @@ bayer_labels:
   font_alpha: 1
   font_color: '#000'
 
-constellation:
-  label:
-    font_alpha: 0.8
-    font_color: hsl(212, 20%, 10%)
-  line:
-    alpha: 0.48
-    color: '#6ba832'
+# Constellations
+constellation_labels:
+  font_alpha: 0.75
+  font_color: hsl(212, 20%, 34%)
+constellation_lines:
+  alpha: 0.5
+  color: '#6ba832'
 
 celestial_equator:
   label:
@@ -41,8 +41,8 @@ ecliptic:
 
 planets:
   marker:
-    alpha: 0.4
-    color: '#f89d00'
+    alpha: 1
+    color: hsl(37, 78%, 80%)
     fill: full
 milky_way:
   alpha: 0.14
@@ -51,8 +51,7 @@ milky_way:
 gridlines:
   label:
     font_alpha: 1
-    font_color: '#2f4358'
-    font_weight: light
+    font_color: '#f1f6ff'
   line:
     alpha: 0.6
     color: '#888'
@@ -64,7 +63,7 @@ sun:
 
 horizon:
   line:
-    color: '#7997b9'
+    color: hsl(212, 27%, 56%)
     edge_color: '#2f4358'
   label:
     font_color: '#f1f6ff'

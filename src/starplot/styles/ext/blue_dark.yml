@@ -38,15 +38,14 @@ ecliptic:
     color: '#e33b3b'
     alpha: 1
 
-constellation:
-  label:
-    font_alpha: 0.37
-    font_color: hsl(209, 23%, 80%)
-    font_weight: light
-  line:
-    alpha: 0.36
-    color: hsl(209, 23%, 76%)
-
+# Constellations
+constellation_lines:
+  alpha: 0.36
+  color: hsl(209, 23%, 76%)
+constellation_labels:
+  font_alpha: 0.37
+  font_color: hsl(209, 23%, 80%)
+  font_weight: light
 constellation_borders:
   width: 2
   color: hsl(209, 50%, 74%)
@@ -120,7 +119,6 @@ gridlines:
   label:
     font_alpha: 1
     font_color: hsl(209, 53%, 94%)
-    font_weight: light
   line:
     alpha: 0.7
     color: hsl(209, 53%, 37%)

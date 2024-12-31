@@ -29,14 +29,15 @@ celestial_equator:
     font_color: '#2d5ec2'
   line:
     color: '#2d5ec2'
-constellation:
-  label:
-    font_alpha: 0.27
-    font_color: '#000'
-  line:
-    alpha: 0.52
-    color: '#6ba832'
-    width: 3
+
+# Constellations
+constellation_labels:
+  font_alpha: 0.27
+  font_color: '#000'
+constellation_lines:
+  alpha: 0.52
+  color: '#6ba832'
+  width: 3
 
 dso_double_star:
   marker:

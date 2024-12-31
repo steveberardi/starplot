@@ -39,7 +39,7 @@ class Constellation(SkyObject):
     ) -> None:
         super().__init__(ra, dec)
         self.iau_id = iau_id.lower()
-        self.constellation_id = self.iau_id  # override from super()
+        self._constellation_id = self.iau_id  # override from super()
         self.name = name
         self.boundary = boundary
 

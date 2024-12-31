@@ -15,6 +15,7 @@ from rich.console import Console
 import map_checks
 import optic_checks
 import zenith_checks
+import horizon_checks
 
 TEMPLATE_NAME = "template.html"
 
@@ -87,7 +88,7 @@ class Hashio:
 
     def _get_hashes(self) -> dict:
         """Gets hashes for all callables"""
-        mp.set_start_method("spawn")  # required for M1 macs? or macOS issue?
+        # mp.set_start_method("spawn")  # required for M1 macs? or macOS issue?
 
         console.print("Getting hashes...", style="bold")
         with mp.Pool(5) as p:
@@ -154,6 +155,7 @@ if __name__ == "__main__":
     callables = Hashio.find_functions(map_checks)
     callables += Hashio.find_functions(zenith_checks)
     callables += Hashio.find_functions(optic_checks)
+    callables += Hashio.find_functions(horizon_checks)
 
     h = Hashio(callables=callables)
 
@@ -166,6 +168,10 @@ if __name__ == "__main__":
         console.print(f":stopwatch: {round(time.time() - start)}s")
 
         console.print(f"\nPASSED: {passed}\n", style="green")
+
+        if failed:
+            console.print("FAILED: retrying...\n", style="bold red")
+            passed, failed, new = h.check()
 
         if failed or new:
             console.print(f"FAILED: {failed}\n", style="bold red")

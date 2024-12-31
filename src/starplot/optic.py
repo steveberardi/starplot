@@ -7,6 +7,7 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
 
+from starplot.coordinates import CoordinateSystem
 from starplot import callables
 from starplot.base import BasePlot, DPI
 from starplot.data.stars import StarCatalog, STAR_NAMES
@@ -46,11 +47,14 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
         scale: Scaling factor that will be applied to all sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set the scale to 2. At `scale=1` and `resolution=4096` (the default), all sizes are optimized visually for a map that covers 1-3 constellations. So, if you're creating a plot of a _larger_ extent, then it'd probably be good to decrease the scale (i.e. make everything smaller) -- and _increase_ the scale if you're plotting a very small area.
         autoscale: If True, then the scale will be set automatically based on resolution.
+        suppress_warnings: If True (the default), then all warnings will be suppressed
 
     Returns:
         OpticPlot: A new instance of an OpticPlot
 
     """
+
+    _coordinate_system = CoordinateSystem.AZ_ALT
 
     FIELD_OF_VIEW_MAX = 9.0
 
@@ -69,6 +73,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         raise_on_below_horizon: bool = True,
         scale: float = 1.0,
         autoscale: bool = False,
+        suppress_warnings: bool = True,
         *args,
         **kwargs,
     ) -> "OpticPlot":
@@ -80,6 +85,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             hide_colliding_labels,
             scale=scale,
             autoscale=autoscale,
+            suppress_warnings=suppress_warnings,
             *args,
             **kwargs,
         )
@@ -242,7 +248,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if size_fn is not None:
 
             def size_fn_mx(s):
-                return size_fn(s) * optic_star_multiplier
+                return size_fn(s) * optic_star_multiplier * 0.68
 
         super().stars(
             mag=mag,

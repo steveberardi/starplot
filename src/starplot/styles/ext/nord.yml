@@ -27,13 +27,13 @@ celestial_equator:
   line:
     color: '#77A67F'
 
-constellation:
-  label:
-    font_alpha: 0.7
-    font_color: rgb(230, 204, 147)
-  line:
-    alpha: 0.36
-    color: rgb(230, 204, 147)
+# Constellations
+constellation_labels:
+  font_alpha: 0.7
+  font_color: rgb(230, 204, 147)
+constellation_lines:
+  alpha: 0.36
+  color: rgb(230, 204, 147)
 constellation_borders:
   color: hsl(220, 16%, 12%)
   alpha: 0.8

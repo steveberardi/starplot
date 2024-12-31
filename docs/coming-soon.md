@@ -1,9 +1,9 @@
 
-- 🌄 Horizon plots
+- 🗄️ Data optimizations
+- 🧮 Coordinate system helpers
 - 🌑 Planet moons
 - ☄️ Comet model
 - ✴️ Custom markers
-- 💫 Better constellation label placement
 - 😄 🔭 Clear skies
 
 <br/>

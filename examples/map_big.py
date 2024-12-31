@@ -19,9 +19,7 @@ p = MapPlot(
     scale=0.8,
 )
 p.gridlines()
-p.constellations(
-    style__label__font_size=28,
-)
+p.constellations()
 p.stars(mag=6, where_labels=[Star.magnitude < 2.1])
 p.open_clusters(
     labels=None,
@@ -49,6 +47,7 @@ p.nebula(
     where=[(DSO.magnitude <= 10) | (DSO.magnitude.is_null()), DSO.size > 0.05],
 )
 
+p.constellation_labels(style__font_size=28)
 p.milky_way()
 p.ecliptic()
 p.celestial_equator()

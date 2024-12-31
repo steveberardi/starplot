@@ -43,6 +43,7 @@ p.open_clusters(
 
 p.nebula(mag=9, labels=None, label_fn=lambda d: d.ngc)
 
+p.constellation_labels()
 p.milky_way()
 p.ecliptic()
 p.legend()

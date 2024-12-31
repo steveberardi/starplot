@@ -135,7 +135,7 @@ class MarkerSymbolEnum(str, Enum):
     CIRCLE_DOTTED_RINGS = "circle_dotted_rings"
 
     CIRCLE_LINE = "circle_line"
-    """\u29B5"""
+    """\u29B5  the standard symbol for double stars"""
 
     COMET = "comet"
     """\u2604"""
@@ -204,6 +204,8 @@ class AnchorPointEnum(str, Enum):
     """Options for the anchor point of labels"""
 
     CENTER = "center"
+    LEFT_CENTER = "left center"
+    RIGHT_CENTER = "right center"
     TOP_LEFT = "top left"
     TOP_RIGHT = "top right"
     TOP_CENTER = "top center"
@@ -235,6 +237,12 @@ class AnchorPointEnum(str, Enum):
         elif self.value == AnchorPointEnum.CENTER:
             style["va"] = "center"
             style["ha"] = "center"
+        elif self.value == AnchorPointEnum.LEFT_CENTER:
+            style["va"] = "center"
+            style["ha"] = "right"
+        elif self.value == AnchorPointEnum.RIGHT_CENTER:
+            style["va"] = "center"
+            style["ha"] = "left"
 
         return style
 
@@ -392,6 +400,12 @@ class LineStyle(BaseStyle):
 
         return result
 
+    def matplot_line_collection_kwargs(self, scale: float = 1.0) -> dict:
+        plot_kwargs = self.matplot_kwargs(scale)
+        plot_kwargs["linewidths"] = plot_kwargs.pop("linewidth")
+        plot_kwargs["colors"] = plot_kwargs.pop("color")
+        return plot_kwargs
+
 
 class PolygonStyle(BaseStyle):
     """
@@ -423,7 +437,7 @@ class PolygonStyle(BaseStyle):
         styles = dict(
             edgecolor=self.edge_color.as_hex() if self.edge_color else "none",
             facecolor=self.fill_color.as_hex() if self.fill_color else "none",
-            fill=True if self.fill_color else False,
+            fill=True if self.fill_color or self.color else False,
             linewidth=self.edge_width * scale,
             linestyle=self.line_style,
             alpha=self.alpha,
@@ -434,6 +448,21 @@ class PolygonStyle(BaseStyle):
             styles["color"] = self.color.as_hex()
 
         return styles
+
+    def to_marker_style(self, symbol: MarkerSymbolEnum):
+        color = self.color.as_hex() if self.color else None
+        fill_color = self.fill_color.as_hex() if self.fill_color else None
+        fill_style = FillStyleEnum.FULL if color or fill_color else FillStyleEnum.NONE
+        return MarkerStyle(
+            symbol=symbol,
+            color=color or fill_color,
+            fill=fill_style,
+            edge_color=self.edge_color.as_hex() if self.edge_color else None,
+            edge_width=self.edge_width,
+            alpha=self.alpha,
+            zorder=self.zorder,
+            line_style=self.line_style,
+        )
 
 
 class LabelStyle(BaseStyle):
@@ -648,6 +677,8 @@ class PlotStyle(BaseStyle):
         AnchorPointEnum.BOTTOM_LEFT,
         AnchorPointEnum.BOTTOM_CENTER,
         AnchorPointEnum.TOP_CENTER,
+        AnchorPointEnum.RIGHT_CENTER,
+        AnchorPointEnum.LEFT_CENTER,
     ]
     """If a label's preferred anchor point results in a collision, then these fallbacks will be tried in sequence until a collision-free position is found."""
 
@@ -720,8 +751,10 @@ class PlotStyle(BaseStyle):
     planets: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            size=50,
+            size=28,
             fill=FillStyleEnum.LEFT,
+            zorder=ZOrderEnum.LAYER_3,
+            alpha=1,
         ),
         label=LabelStyle(
             font_size=28,
@@ -932,17 +965,8 @@ class PlotStyle(BaseStyle):
     )
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
-    # Constellations
-    constellation: PathStyle = PathStyle(
-        line=LineStyle(color="#c8c8c8"),
-        label=LabelStyle(
-            font_size=21,
-            font_weight=FontWeightEnum.NORMAL,
-            zorder=ZOrderEnum.LAYER_3,
-            anchor_point=AnchorPointEnum.TOP_RIGHT,
-        ),
-    )
-    """Styling for constellation lines and labels (only applies to map plots)"""
+    constellation_lines: LineStyle = LineStyle(color="#c8c8c8")
+    """Styling for constellation lines"""
 
     constellation_borders: LineStyle = LineStyle(
         color="#000",
@@ -951,7 +975,15 @@ class PlotStyle(BaseStyle):
         alpha=0.4,
         zorder=ZOrderEnum.LAYER_3,
     )
-    """Styling for constellation borders (only applies to map plots)"""
+    """Styling for constellation borders"""
+
+    constellation_labels: LabelStyle = LabelStyle(
+        font_size=21,
+        font_weight=FontWeightEnum.NORMAL,
+        zorder=ZOrderEnum.LAYER_3,
+        anchor_point=AnchorPointEnum.CENTER,
+    )
+    """Styling for constellation labels"""
 
     # Milky Way
     milky_way: PolygonStyle = PolygonStyle(
@@ -976,7 +1008,7 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_2,
         ),
         label=LabelStyle(
-            font_size=18,
+            font_size=20,
             font_color="#000",
             font_alpha=1,
             anchor_point=AnchorPointEnum.BOTTOM_CENTER,
@@ -992,7 +1024,7 @@ class PlotStyle(BaseStyle):
             style=LineStyleEnum.DOTTED,
             dash_capstyle=DashCapStyleEnum.ROUND,
             alpha=1,
-            zorder=ZOrderEnum.LAYER_3,
+            zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(
             font_size=22,

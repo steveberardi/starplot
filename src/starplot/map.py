@@ -1,40 +1,37 @@
 import datetime
 import math
-import warnings
 from typing import Callable
+from functools import cache
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
 from matplotlib import path, patches, ticker
 from matplotlib.ticker import FuncFormatter, FixedLocator
-from shapely import LineString, MultiLineString, Polygon
-from shapely.ops import unary_union
+from shapely import Polygon
 from skyfield.api import Star as SkyfieldStar, wgs84
 import geopandas as gpd
 import numpy as np
 
+from starplot.coordinates import CoordinateSystem
 from starplot import geod
 from starplot.base import BasePlot, DPI
-from starplot.data import DataFiles, constellations as condata, stars
-from starplot.data.constellations import CONSTELLATIONS_FULL_NAMES
 from starplot.mixins import ExtentMaskMixin
-from starplot.models.constellation import from_tuple as constellation_from_tuple
-from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
+from starplot.plotters import (
+    ConstellationPlotterMixin,
+    StarPlotterMixin,
+    DsoPlotterMixin,
+    MilkyWayPlotterMixin,
+)
 from starplot.projections import Projection
 from starplot.styles import (
     ObjectStyle,
     LabelStyle,
-    LineStyle,
     PlotStyle,
-    PolygonStyle,
     PathStyle,
 )
 from starplot.styles.helpers import use_style
 from starplot.utils import lon_to_ra, ra_to_lon
 
-# Silence noisy cartopy warnings
-warnings.filterwarnings("ignore", module="cartopy")
-warnings.filterwarnings("ignore", module="shapely")
 
 DEFAULT_MAP_STYLE = PlotStyle()  # .extend(extensions.MAP)
 
@@ -57,7 +54,14 @@ def points(start, end, num_points=100):
     return list(zip(x_coords, y_coords))
 
 
-class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
+class MapPlot(
+    BasePlot,
+    ExtentMaskMixin,
+    StarPlotterMixin,
+    DsoPlotterMixin,
+    MilkyWayPlotterMixin,
+    ConstellationPlotterMixin,
+):
     """Creates a new map plot.
 
     !!! star "Note"
@@ -79,11 +83,14 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         clip_path: An optional Shapely Polygon that specifies the clip path of the plot -- only objects inside the polygon will be plotted. If `None` (the default), then the clip path will be the extent of the map you specified with the RA/DEC parameters.
         scale: Scaling factor that will be applied to all sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set the scale to 2. At `scale=1` and `resolution=4096` (the default), all sizes are optimized visually for a map that covers 1-3 constellations. So, if you're creating a plot of a _larger_ extent, then it'd probably be good to decrease the scale (i.e. make everything smaller) -- and _increase_ the scale if you're plotting a very small area.
         autoscale: If True, then the scale will be set automatically based on resolution.
+        suppress_warnings: If True (the default), then all warnings will be suppressed
 
     Returns:
         MapPlot: A new instance of a MapPlot
 
     """
+
+    _coordinate_system = CoordinateSystem.RA_DEC
 
     def __init__(
         self,
@@ -102,6 +109,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         clip_path: Polygon = None,
         scale: float = 1.0,
         autoscale: bool = False,
+        suppress_warnings: bool = True,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -113,6 +121,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             hide_colliding_labels,
             scale=scale,
             autoscale=autoscale,
+            suppress_warnings=suppress_warnings,
             *args,
             **kwargs,
         )
@@ -166,6 +175,7 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def _prepare_coords(self, ra: float, dec: float) -> (float, float):
         return ra * 15, dec
 
+    @cache
     def in_bounds(self, ra: float, dec: float) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
 
@@ -258,342 +268,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         return df
 
-    @use_style(LineStyle, "constellation_borders")
-    def constellation_borders(self, style: LineStyle = None):
-        """Plots the constellation borders
-
-        Args:
-            style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
-        """
-        constellation_borders = self._read_geo_package(
-            DataFiles.CONSTELLATION_BORDERS.value
-        )
-
-        if constellation_borders.empty:
-            return
-
-        style_kwargs = style.matplot_kwargs(self.scale)
-
-        geometries = []
-
-        for _, c in constellation_borders.iterrows():
-            for ls in c.geometry.geoms:
-                geometries.append(ls)
-
-        for ls in geometries:
-            x, y = ls.xy
-            self.ax.plot(
-                list(x),
-                list(y),
-                transform=self._plate_carree,
-                clip_on=True,
-                clip_path=self._background_clip_path,
-                gid="constellations-border",
-                **style_kwargs,
-            )
-
-    def _plot_constellation_borders(self):
-        """work in progress"""
-        constellation_borders = gpd.read_file(
-            DataFiles.CONSTELLATIONS.value,
-            engine="pyogrio",
-            use_arrow=True,
-            bbox=self._extent_mask(),
-        )
-
-        if constellation_borders.empty:
-            return
-
-        geometries = []
-
-        for i, constellation in constellation_borders.iterrows():
-            geometry_types = constellation.geometry.geom_type
-
-            # equinox = LineString([[0, 90], [0, -90]])
-            """
-            Problems:
-                - Need to handle multipolygon borders too (SER)
-                - Shapely's union doesn't handle geodesy (e.g. TRI + AND)
-                - ^^ TRI is plotted with ra < 360, but AND has ra > 360
-                - ^^ idea: create union first and then remove duplicate lines?
-            
-                TODO: create new static data file of constellation border lines
-            """
-
-            if "Polygon" in geometry_types and "MultiPolygon" not in geometry_types:
-                polygons = [constellation.geometry]
-
-            elif "MultiPolygon" in geometry_types:
-                polygons = constellation.geometry.geoms
-
-            for p in polygons:
-                coords = list(zip(*p.exterior.coords.xy))
-                # coords = [(ra * -1, dec) for ra, dec in coords]
-
-                new_coords = []
-
-                for i, c in enumerate(coords):
-                    ra, dec = c
-                    if i > 0:
-                        if new_coords[i - 1][0] - ra > 60:
-                            ra += 360
-
-                        elif ra - new_coords[i - 1][0] > 60:
-                            new_coords[i - 1][0] += 360
-
-                    new_coords.append([ra, dec])
-
-                ls = LineString(new_coords)
-                geometries.append(ls)
-
-        mls = MultiLineString(geometries)
-        geometries = unary_union(mls)
-
-        style_kwargs = self.style.constellation_borders.matplot_kwargs(self.scale)
-
-        for ls in list(geometries.geoms):
-            # print(ls)
-            x, y = ls.xy
-            newx = [xx * -1 for xx in list(x)]
-            self.ax.plot(
-                # list(x),
-                newx,
-                list(y),
-                # **self._plot_kwargs(),
-                # transform=self._geodetic,
-                transform=self._plate_carree,
-                **style_kwargs,
-            )
-
-    @use_style(PathStyle, "constellation")
-    def constellations(
-        self,
-        style: PathStyle = None,
-        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
-        where: list = None,
-    ):
-        """Plots the constellation lines and/or labels.
-
-        **Important:** If you're plotting the constellation lines, then it's good to plot them _first_, because Starplot will use the constellation lines to determine where to place labels that are plotted afterwards (labels will look better if they're not crossing a constellation line).
-
-        Args:
-            style: Styling of the constellations. If None, then the plot's style (specified when creating the plot) will be used
-            labels: A dictionary where the keys are each constellation's 3-letter abbreviation, and the values are how the constellation will be labeled on the plot.
-            where: A list of expressions that determine which constellations to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-        """
-        self.logger.debug("Plotting constellations...")
-
-        labels = labels or {}
-        where = where or []
-
-        constellations_gdf = gpd.read_file(
-            DataFiles.CONSTELLATIONS.value,
-            engine="pyogrio",
-            use_arrow=True,
-            bbox=self._extent_mask(),
-        )
-        stars_df = stars.load("hipparcos")
-
-        if constellations_gdf.empty:
-            return
-
-        if self.projection in [Projection.MERCATOR, Projection.MILLER]:
-            transform = self._plate_carree
-        else:
-            transform = self._geodetic
-
-        conline_hips = condata.lines()
-        style_kwargs = style.line.matplot_kwargs(self.scale)
-
-        for c in constellations_gdf.itertuples():
-            obj = constellation_from_tuple(c)
-
-            if not all([e.evaluate(obj) for e in where]):
-                continue
-
-            hiplines = conline_hips[c.iau_id]
-            inbounds = False
-
-            for s1_hip, s2_hip in hiplines:
-                s1 = stars_df.loc[s1_hip]
-                s2 = stars_df.loc[s2_hip]
-
-                s1_ra = s1.ra_hours * 15
-                s2_ra = s2.ra_hours * 15
-
-                s1_dec = s1.dec_degrees
-                s2_dec = s2.dec_degrees
-
-                if s1_ra - s2_ra > 60:
-                    s2_ra += 360
-
-                elif s2_ra - s1_ra > 60:
-                    s1_ra += 360
-
-                if self.in_bounds(s1_ra / 15, s1_dec):
-                    inbounds = True
-
-                s1_ra *= -1
-                s2_ra *= -1
-
-                # make lines straight
-                # s1_ra, s1_dec = self._proj.transform_point(s1_ra, s1.dec_degrees, self._geodetic)
-                # s2_ra, s2_dec = self._proj.transform_point(s2_ra, s2.dec_degrees, self._geodetic)
-
-                constellation_line = self.ax.plot(
-                    [s1_ra, s2_ra],
-                    [s1_dec, s2_dec],
-                    transform=transform,
-                    **style_kwargs,
-                    clip_on=True,
-                    clip_path=self._background_clip_path,
-                    gid="constellations-line",
-                )[0]
-
-                extent = constellation_line.get_window_extent(
-                    renderer=self.fig.canvas.get_renderer()
-                )
-
-                if extent.xmin < 0:
-                    continue
-
-                start = self._proj.transform_point(s1_ra, s1_dec, self._geodetic)
-                end = self._proj.transform_point(s2_ra, s2_dec, self._geodetic)
-                radius = style_kwargs.get("linewidth") or 1
-
-                if any([np.isnan(n) for n in start + end]):
-                    continue
-
-                for x, y in points(start, end, 25):
-                    x0, y0 = self.ax.transData.transform((x, y))
-                    if x0 < 0 or y0 < 0:
-                        continue
-                    self._constellations_rtree.insert(
-                        0,
-                        np.array((x0 - radius, y0 - radius, x0 + radius, y0 + radius)),
-                        obj=obj.name,
-                    )
-
-            if inbounds:
-                self._objects.constellations.append(obj)
-
-        self._plot_constellation_labels(style.label, labels)
-        # self._plot_constellation_labels_experimental(style.label, labels)
-
-    def _plot_constellation_labels(
-        self,
-        style: PathStyle = None,
-        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
-    ):
-        style = style or self.style.constellation.label
-
-        for con in condata.iterator():
-            _, ra, dec = condata.get(con)
-            text = labels.get(con.lower())
-            self.text(
-                text,
-                ra,
-                dec,
-                style,
-                hide_on_collision=False,
-                gid="constellations-label-name",
-            )
-
-    def _plot_constellation_labels_experimental(
-        self,
-        style: PathStyle = None,
-        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
-    ):
-        from shapely import (
-            MultiPoint,
-            intersection,
-            delaunay_triangles,
-            distance,
-        )
-
-        def sorter(g):
-            d = distance(g.centroid, points.centroid)
-            # d = distance(g.centroid, constellation.boundary.centroid)
-            extent = abs(g.bounds[2] - g.bounds[0])
-            area = g.area / constellation.boundary.area
-            return (extent**2 + area) - (d**2)
-
-        for constellation in self.objects.constellations:
-            constellation_stars = [
-                s
-                for s in self.objects.stars
-                if s.constellation_id == constellation.iau_id
-            ]
-            points = MultiPoint([(s.ra, s.dec) for s in constellation_stars])
-
-            triangles = delaunay_triangles(
-                geometry=points,
-                # tolerance=2,
-            )
-
-            polygons = []
-            for t in triangles.geoms:
-                try:
-                    inter = intersection(t, constellation.boundary)
-                except Exception:
-                    continue
-                if (
-                    inter.geom_type == "Polygon"
-                    and len(list(zip(*inter.exterior.coords.xy))) > 2
-                ):
-                    polygons.append(inter)
-
-            p_by_area = {pg.area: pg for pg in polygons}
-            polygons_sorted = [
-                p_by_area[k] for k in sorted(p_by_area.keys(), reverse=True)
-            ]
-
-            # sort by combination of horizontal extent and area
-            polygons_sorted = sorted(polygons_sorted, key=sorter, reverse=True)
-
-            if len(polygons_sorted) > 0:
-                i = 0
-                ra, dec = polygons_sorted[i].centroid.x, polygons_sorted[i].centroid.y
-            else:
-                ra, dec = constellation.ra, constellation.dec
-
-            text = labels.get(constellation.iau_id)
-            style = style or self.style.constellation.label
-            self.text(text, ra, dec, style)
-
-    @use_style(PolygonStyle, "milky_way")
-    def milky_way(self, style: PolygonStyle = None):
-        """Plots the Milky Way
-
-        Args:
-            style: Styling of the Milky Way. If None, then the plot's style (specified when creating the plot) will be used
-        """
-        mw = self._read_geo_package(DataFiles.MILKY_WAY.value)
-
-        if mw.empty:
-            return
-
-        def _prepare_polygon(p):
-            points = list(zip(*p.boundary.coords.xy))
-            # convert lon to RA and reverse so the coordinates are counterclockwise order
-            return [(lon_to_ra(lon) * 15, dec) for lon, dec in reversed(points)]
-
-        # create union of all Milky Way patches
-        gs = mw.geometry.to_crs(self._plate_carree)
-        mw_union = gs.buffer(0.1).unary_union.buffer(-0.1)
-        polygons = []
-
-        if mw_union.geom_type == "MultiPolygon":
-            polygons.extend([_prepare_polygon(polygon) for polygon in mw_union.geoms])
-        else:
-            polygons.append(_prepare_polygon(mw_union))
-
-        for polygon_points in polygons:
-            self._polygon(
-                polygon_points,
-                style=style,
-            )
-
     @use_style(ObjectStyle, "zenith")
     def zenith(
         self,
@@ -654,37 +328,51 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         )
         x = []
         y = []
-        verts = []
-
-        # TODO : handle map edges better
 
         for ra, dec in points:
             ra = ra / 15
             x0, y0 = self._prepare_coords(ra, dec)
             x.append(x0)
             y.append(y0)
-            verts.append((x0, y0))
 
         style_kwargs = {}
         if self.projection == Projection.ZENITH:
             """
-            For zenith projections, we plot the horizon as a patch because
-            plottting as a line results in extra pixels on bottom.
-
-            TODO : investigate why line is extra thick on bottom when plotting line
+            For zenith projections, we plot the horizon as a patch to make a more perfect circle
             """
             style_kwargs = style.line.matplot_kwargs(self.scale)
             style_kwargs["clip_on"] = False
             style_kwargs["edgecolor"] = style_kwargs.pop("color")
-
-            patch = patches.Polygon(
-                verts,
+            patch = patches.Circle(
+                (0.50, 0.50),
+                radius=0.454,
                 facecolor=None,
                 fill=False,
-                transform=self._crs,
+                transform=self.ax.transAxes,
                 **style_kwargs,
             )
             self.ax.add_patch(patch)
+            self._background_clip_path = patch
+
+            if not labels:
+                return
+
+            label_ax_coords = [
+                (0.5, 0.95),  # north
+                (0.045, 0.5),  # east
+                (0.5, 0.045),  # south
+                (0.954, 0.5),  # west
+            ]
+            for label, coords in zip(labels, label_ax_coords):
+                self.ax.annotate(
+                    label,
+                    coords,
+                    xycoords=self.ax.transAxes,
+                    clip_on=False,
+                    **style.label.matplot_kwargs(self.scale),
+                )
+
+            return
 
         else:
             style_kwargs["clip_on"] = True
@@ -697,13 +385,6 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 **style_kwargs,
                 **self._plot_kwargs(),
             )
-
-        # self.circle(
-        #     (ra.hours, dec.degrees),
-        #     90,
-        #     style,
-        #     num_pts=200,
-        # )
 
         if not labels:
             return
@@ -731,7 +412,8 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
         for i, position in enumerate(cardinal_directions):
             ra, dec, _ = position.radec()
-            self._text(ra.hours, dec.degrees, labels[i], force=True, **text_kwargs)
+            x, y = self._prepare_coords(ra, dec)
+            self._text(x, y, labels[i], **text_kwargs)
 
     @use_style(PathStyle, "gridlines")
     def gridlines(
@@ -927,6 +609,12 @@ class MapPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             transform=self.ax.transAxes,
             **style.matplot_kwargs(self.scale),
         )
+
+    def _ax_to_radec(self, x, y):
+        trans = self.ax.transAxes + self.ax.transData.inverted()
+        x_projected, y_projected = trans.transform((x, y))  # axes to data
+        x_ra, y_ra = self._crs.transform_point(x_projected, y_projected, self._proj)
+        return (x_ra + 360) / 15, y_ra
 
     def _plot_background_clip_path(self):
         def to_axes(points):

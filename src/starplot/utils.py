@@ -1,6 +1,7 @@
 import math
 from datetime import datetime
 
+import numpy as np
 from pytz import timezone
 
 
@@ -149,3 +150,21 @@ def azimuth_to_string(azimuth_degrees: int):
 
 def dt_or_now(dt):
     return dt or timezone("UTC").localize(datetime.now())
+
+
+def points_on_line(start, end, num_points=100):
+    """Generates points along a line segment.
+
+    Args:
+        start (tuple): (x, y) coordinates of the starting point.
+        end (tuple): (x, y) coordinates of the ending point.
+        num_points (int): Number of points to generate.
+
+    Returns:
+        list: List of (x, y) coordinates of the generated points.
+    """
+
+    x_coords = np.linspace(start[0], end[0], num_points)
+    y_coords = np.linspace(start[1], end[1], num_points)
+
+    return list(zip(x_coords, y_coords))

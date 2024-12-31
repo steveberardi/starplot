@@ -1,19 +1,19 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Dict, Union, Optional
+from random import randrange
 import logging
-import warnings
 
 import numpy as np
 import rtree
-from adjustText import adjust_text as _adjust_text
 from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.lines import Line2D
 from pytz import timezone
-from shapely import Polygon
+from shapely import Polygon, Point
 
-from starplot import geod, models
+from starplot.coordinates import CoordinateSystem
+from starplot import geod, models, warnings
 from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
@@ -32,12 +32,11 @@ from starplot.styles import (
     fonts,
 )
 from starplot.styles.helpers import use_style
-
-# ignore noisy matplotlib warnings
-warnings.filterwarnings(
-    "ignore",
-    message="Setting the 'color' property will override the edgecolor or facecolor properties",
+from starplot.geometry import (
+    unwrap_polygon,
+    random_point_in_polygon_at_distance,
 )
+
 
 LOGGER = logging.getLogger("starplot")
 LOG_HANDLER = logging.StreamHandler()
@@ -62,6 +61,7 @@ DPI = 100
 
 class BasePlot(ABC):
     _background_clip_path = None
+    _coordinate_system = CoordinateSystem.RA_DEC
 
     def __init__(
         self,
@@ -72,11 +72,11 @@ class BasePlot(ABC):
         hide_colliding_labels: bool = True,
         scale: float = 1.0,
         autoscale: bool = False,
+        suppress_warnings: bool = True,
         *args,
         **kwargs,
     ):
         px = 1 / DPI  # plt.rcParams["figure.dpi"]  # pixel in inches
-
         self.pixels_per_point = DPI / 72
 
         self.style = style
@@ -89,14 +89,15 @@ class BasePlot(ABC):
         if self.autoscale:
             self.scale = self.resolution / DEFAULT_RESOLUTION
 
+        if suppress_warnings:
+            warnings.suppress()
+
         self.dt = dt or timezone("UTC").localize(datetime.now())
         self._ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
 
         self.labels = []
         self._labels_rtree = rtree.index.Index()
-
-        # self.labels = []
         self._constellations_rtree = rtree.index.Index()
         self._stars_rtree = rtree.index.Index()
 
@@ -125,31 +126,22 @@ class BasePlot(ABC):
     def _prepare_coords(self, ra, dec) -> tuple[float, float]:
         return ra, dec
 
-    def _is_label_collision(self, extent) -> bool:
-        ix = list(
-            self._labels_rtree.intersection(
-                (extent.x0, extent.y0, extent.x1, extent.y1)
-            )
-        )
+    def _is_label_collision(self, bbox) -> bool:
+        ix = list(self._labels_rtree.intersection(bbox))
         return len(ix) > 0
 
-    def _is_object_collision(self, extent) -> bool:
-        ix = list(
-            self._constellations_rtree.intersection(
-                (extent.x0, extent.y0, extent.x1, extent.y1)
-            )
-        )
+    def _is_constellation_collision(self, bbox) -> bool:
+        ix = list(self._constellations_rtree.intersection(bbox))
         return len(ix) > 0
 
-    def _is_star_collision(self, extent) -> bool:
-        ix = list(
-            self._stars_rtree.intersection((extent.x0, extent.y0, extent.x1, extent.y1))
-        )
+    def _is_star_collision(self, bbox) -> bool:
+        ix = list(self._stars_rtree.intersection(bbox))
         return len(ix) > 0
 
-    def _is_clipped(self, extent) -> bool:
+    def _is_clipped(self, points) -> bool:
+        radius = -1.5 * int(self._background_clip_path.get_linewidth())
         return self._background_clip_path is not None and not all(
-            self._background_clip_path.contains_points(extent.get_points())
+            self._background_clip_path.contains_points(points, radius=radius)
         )
 
     def _add_label_to_rtree(self, label, extent=None):
@@ -158,28 +150,47 @@ class BasePlot(ABC):
         )
         self.labels.append(label)
         self._labels_rtree.insert(
-            0, np.array((extent.x0, extent.y0, extent.x1, extent.y1))
+            0, np.array((extent.x0 - 1, extent.y0 - 1, extent.x1 + 1, extent.y1 + 1))
         )
 
     def _maybe_remove_label(
-        self, label, remove_on_collision=True, remove_on_clipped=True
+        self,
+        label,
+        remove_on_collision=True,
+        remove_on_clipped=True,
+        remove_on_constellation_collision=True,
+        padding=0,
     ) -> bool:
         """Returns true if the label is removed, else false"""
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+        bbox = (
+            extent.x0 - padding,
+            extent.y0 - padding,
+            extent.x1 + padding,
+            extent.y1 + padding,
+        )
+        points = [(extent.x0, extent.y0), (extent.x1, extent.y1)]
+
+        # if label.get_text() == "CANIS MAJOR":
+        #     print(bbox)
+        # if label.get_text() == "Electra":
+        #     print(bbox)
 
         if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]):
             label.remove()
             return True
 
-        if remove_on_clipped and self._is_clipped(extent):
+        if remove_on_clipped and self._is_clipped(points):
             label.remove()
             return True
 
         if remove_on_collision and (
-            self._is_label_collision(extent)
-            or self._is_object_collision(extent)
-            # or self._is_star_collision(extent)
+            self._is_label_collision(bbox) or self._is_star_collision(bbox)
         ):
+            label.remove()
+            return True
+
+        if remove_on_constellation_collision and self._is_constellation_collision(bbox):
             label.remove()
             return True
 
@@ -260,107 +271,19 @@ class BasePlot(ABC):
 
         return sum([x_labels, x_constellations, x_stars]) / 3
 
-    def _text_experimental(
-        self,
-        ra: float,
-        dec: float,
-        text: str,
-        hide_on_collision: bool = True,
-        auto_anchor: bool = True,
-        *args,
-        **kwargs,
-    ) -> None:
-        if not text:
-            return
+    def _text(self, x, y, text, **kwargs):
+        label = self.ax.annotate(
+            text,
+            (x, y),
+            **kwargs,
+            **self._plot_kwargs(),
+        )
+        if kwargs.get("clip_on"):
+            label.set_clip_on(True)
+            label.set_clip_path(self._background_clip_path)
+        return label
 
-        x, y = self._prepare_coords(ra, dec)
-        kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
-        clip_on = kwargs.get("clip_on") or True
-
-        def plot_text(**kwargs):
-            label = self.ax.annotate(
-                text,
-                (x, y),
-                *args,
-                **kwargs,
-                **self._plot_kwargs(),
-            )
-            if clip_on:
-                label.set_clip_on(True)
-                label.set_clip_path(self._background_clip_path)
-            return label
-
-        def add_label(label):
-            extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-            self.labels.append(label)
-            self._labels_rtree.insert(
-                0, np.array((extent.x0, extent.y0, extent.x1, extent.y1))
-            )
-
-        label = plot_text(**kwargs)
-
-        if not clip_on:
-            add_label(label)
-            return
-
-        if not hide_on_collision and not auto_anchor:
-            add_label(label)
-            return
-
-        # removed = self._maybe_remove_label(label)
-        collision = self._collision_score(label)
-
-        if collision == 0:
-            add_label(label)
-            return
-
-        label.remove()
-
-        collision_scores = []
-        original_va = kwargs.pop("va", None)
-        original_ha = kwargs.pop("ha", None)
-        original_offset_x, original_offset_y = kwargs.pop("xytext", (0, 0))
-        anchor_fallbacks = self.style.text_anchor_fallbacks
-        for i, a in enumerate(anchor_fallbacks):
-            d = AnchorPointEnum.from_str(a).as_matplot()
-            va, ha = d["va"], d["ha"]
-            offset_x, offset_y = original_offset_x, original_offset_y
-            if original_ha != ha:
-                offset_x *= -1
-
-            if original_va != va:
-                offset_y *= -1
-
-            if ha == "center":
-                offset_x = 0
-                offset_y = 0
-
-            pt_kwargs = dict(**kwargs, va=va, ha=ha, xytext=(offset_x, offset_y))
-            label = plot_text(**pt_kwargs)
-
-            # if not hide_on_collision and i == len(anchor_fallbacks) - 1:
-            #     break
-
-            collision = self._collision_score(label)
-            if collision == 0:
-                add_label(label)
-                return
-
-            if collision < 1:
-                collision_scores.append((collision, pt_kwargs))
-
-            label.remove()
-            # removed = self._maybe_remove_label(label)
-            # if not removed:
-            #     break
-        if len(collision_scores) > 0:
-            best = sorted(collision_scores, key=lambda c: c[0])[0]
-            # return
-            if best[0] < 1:
-                label = plot_text(**best[1])
-                add_label(label)
-
-    def _text(
+    def _text_point(
         self,
         ra: float,
         dec: float,
@@ -368,48 +291,24 @@ class BasePlot(ABC):
         hide_on_collision: bool = True,
         force: bool = False,
         clip_on: bool = True,
-        *args,
         **kwargs,
-    ) -> None:
+    ):
         if not text:
-            return
+            return None
 
         x, y = self._prepare_coords(ra, dec)
         kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
 
-        def plot_text(**kwargs):
-            label = self.ax.annotate(
-                text,
-                (x, y),
-                *args,
-                **kwargs,
-                **self._plot_kwargs(),
-            )
-            if clip_on:
-                label.set_clip_on(True)
-                label.set_clip_path(self._background_clip_path)
-            return label
-
-        label = plot_text(**kwargs)
-
-        if force:
-            return
-
-        removed = self._maybe_remove_label(
-            label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on
-        )
-
-        if not removed:
-            self._add_label_to_rtree(label)
-            return
-
         original_va = kwargs.pop("va", None)
         original_ha = kwargs.pop("ha", None)
         original_offset_x, original_offset_y = kwargs.pop("xytext", (0, 0))
-        anchor_fallbacks = self.style.text_anchor_fallbacks
-        for i, a in enumerate(anchor_fallbacks):
+
+        anchors = [(original_va, original_ha)]
+        for a in self.style.text_anchor_fallbacks:
             d = AnchorPointEnum.from_str(a).as_matplot()
-            va, ha = d["va"], d["ha"]
+            anchors.append((d["va"], d["ha"]))
+
+        for va, ha in anchors:
             offset_x, offset_y = original_offset_x, original_offset_y
             if original_ha != ha:
                 offset_x *= -1
@@ -421,14 +320,78 @@ class BasePlot(ABC):
                 offset_x = 0
                 offset_y = 0
 
-            label = plot_text(**kwargs, va=va, ha=ha, xytext=(offset_x, offset_y))
+            label = self._text(
+                x, y, text, **kwargs, va=va, ha=ha, xytext=(offset_x, offset_y)
+            )
             removed = self._maybe_remove_label(
                 label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on
             )
 
+            if force or not removed:
+                self._add_label_to_rtree(label)
+                return label
+
+    def _text_area(
+        self,
+        ra: float,
+        dec: float,
+        text: str,
+        area,
+        hide_on_collision: bool = True,
+        force: bool = False,
+        clip_on: bool = True,
+        settings: dict = None,
+        **kwargs,
+    ) -> None:
+        kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
+
+        avoid_constellation_lines = settings.get("avoid_constellation_lines", False)
+        padding = settings.get("label_padding", 3)
+        buffer = settings.get("buffer", 0.1)
+        max_distance = settings.get("max_distance", 300)
+        distance_step_size = settings.get("distance_step_size", 1)
+        point_iterations = settings.get("point_generation_max_iterations", 500)
+        random_seed = settings.get("seed")
+
+        areas = (
+            [p for p in area.geoms] if "MultiPolygon" == str(area.geom_type) else [area]
+        )
+        new_areas = []
+
+        for a in areas:
+            unwrapped = unwrap_polygon(a)
+            buffer = unwrapped.area / 10 * -1 * buffer * self.scale
+            new_areas.append(unwrapped.buffer(buffer))
+
+        for d in range(0, max_distance, distance_step_size):
+            distance = d / 10
+            poly = randrange(len(new_areas))
+            point = random_point_in_polygon_at_distance(
+                new_areas[poly],
+                Point(ra, dec),
+                distance,
+                max_iterations=point_iterations,
+                seed=random_seed,
+            )
+
+            if point is None:
+                continue
+
+            x, y = self._prepare_coords(point.x, point.y)
+            label = self._text(x, y, text, **kwargs)
+            removed = self._maybe_remove_label(
+                label,
+                remove_on_collision=hide_on_collision,
+                remove_on_clipped=clip_on,
+                remove_on_constellation_collision=avoid_constellation_lines,
+                padding=padding,
+            )
+
+            # TODO : remove label if not fully inside area?
+
             if not removed:
                 self._add_label_to_rtree(label)
-                break
+                return label
 
     @use_style(LabelStyle)
     def text(
@@ -438,7 +401,6 @@ class BasePlot(ABC):
         dec: float,
         style: LabelStyle = None,
         hide_on_collision: bool = True,
-        *args,
         **kwargs,
     ):
         """
@@ -451,7 +413,7 @@ class BasePlot(ABC):
             style: Styling of the text
             hide_on_collision: If True, then the text will not be plotted if it collides with another label
         """
-        if not self.in_bounds(ra, dec):
+        if not text:
             return
 
         style = style or LabelStyle()
@@ -462,17 +424,32 @@ class BasePlot(ABC):
         if style.offset_y == "auto":
             style.offset_y = 0
 
-        self._text(
-            ra,
-            dec,
-            text,
-            **style.matplot_kwargs(self.scale),
-            hide_on_collision=hide_on_collision,
-            xycoords="data",
-            xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
-            textcoords="offset points",
-            **kwargs,
-        )
+        if kwargs.get("area"):
+            return self._text_area(
+                ra,
+                dec,
+                text,
+                **style.matplot_kwargs(self.scale),
+                area=kwargs.pop("area"),
+                hide_on_collision=hide_on_collision,
+                xycoords="data",
+                xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
+                textcoords="offset points",
+                settings=kwargs.pop("auto_adjust_settings"),
+                **kwargs,
+            )
+        else:
+            return self._text_point(
+                ra,
+                dec,
+                text,
+                **style.matplot_kwargs(self.scale),
+                hide_on_collision=hide_on_collision,
+                xycoords="data",
+                xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
+                textcoords="offset points",
+                **kwargs,
+            )
 
     @property
     def objects(self) -> models.ObjectList:
@@ -540,18 +517,6 @@ class BasePlot(ABC):
             style.zorder
         )
 
-    def adjust_text(self, ensure_inside_axes: bool = False, **kwargs) -> None:
-        """Adjust all the labels to avoid overlapping. This function uses the [adjustText](https://adjusttext.readthedocs.io/) library.
-
-        Args:
-            ensure_inside_axes: If True, then labels will be forced to stay within the axes
-            **kwargs: Any keyword arguments to pass through to [adjustText](https://adjusttext.readthedocs.io/en/latest/#adjustText.adjust_text)
-
-        """
-        _adjust_text(
-            self.labels, ax=self.ax, ensure_inside_axes=ensure_inside_axes, **kwargs
-        )
-
     def close_fig(self) -> None:
         """Closes the underlying matplotlib figure."""
         if self.fig:
@@ -567,6 +532,7 @@ class BasePlot(ABC):
             **kwargs: Any keyword arguments to pass through to matplotlib's `savefig` method
 
         """
+        self.logger.debug("Exporting...")
         self.fig.savefig(
             filename,
             format=format,
@@ -708,7 +674,8 @@ class BasePlot(ABC):
         Args:
             style: Styling of the Sun. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then the Sun's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
-            label: How the Sun will be labeled on the plot and legend
+            label: How the Sun will be labeled on the plot
+            legend_label: How the sun will be labeled in the legend
         """
         s = models.Sun.get(
             dt=self.dt, lat=self.lat, lon=self.lon, ephemeris=self._ephemeris_name
@@ -799,6 +766,7 @@ class BasePlot(ABC):
         style: PolygonStyle,
         points: list = None,
         geometry: Polygon = None,
+        legend_label: str = None,
         **kwargs,
     ):
         """
@@ -807,9 +775,11 @@ class BasePlot(ABC):
         Must pass in either `points` **or** `geometry` (but not both).
 
         Args:
+            style: Style of polygon
             points: List of polygon points `[(ra, dec), ...]` - **must be in counterclockwise order**
             geometry: A shapely Polygon. If this value is passed, then the `points` kwarg will be ignored.
-            style: Style of polygon
+            legend_label: Label for this object in the legend
+
         """
         if points is None and geometry is None:
             raise ValueError("Must pass points or geometry when plotting polygons.")
@@ -820,6 +790,12 @@ class BasePlot(ABC):
         _points = [(ra * 15, dec) for ra, dec in points]
         self._polygon(_points, style, gid=kwargs.get("gid") or "polygon")
 
+        if legend_label is not None:
+            self._add_legend_handle_marker(
+                legend_label,
+                style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
+            )
+
     @use_style(PolygonStyle)
     def rectangle(
         self,
@@ -828,6 +804,7 @@ class BasePlot(ABC):
         width_degrees: float,
         style: PolygonStyle,
         angle: float = 0,
+        legend_label: str = None,
         **kwargs,
     ):
         """Plots a rectangle
@@ -836,8 +813,9 @@ class BasePlot(ABC):
             center: Center of rectangle (ra, dec)
             height_degrees: Height of rectangle (degrees)
             width_degrees: Width of rectangle (degrees)
-            angle: Angle of rotation clockwise (degrees)
             style: Style of rectangle
+            angle: Angle of rotation clockwise (degrees)
+            legend_label: Label for this object in the legend
         """
         points = geod.rectangle(
             center,
@@ -846,6 +824,12 @@ class BasePlot(ABC):
             angle,
         )
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
+
+        if legend_label is not None:
+            self._add_legend_handle_marker(
+                legend_label,
+                style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
+            )
 
     @use_style(PolygonStyle)
     def ellipse(
@@ -858,6 +842,7 @@ class BasePlot(ABC):
         num_pts: int = 100,
         start_angle: int = 0,
         end_angle: int = 360,
+        legend_label: str = None,
         **kwargs,
     ):
         """Plots an ellipse
@@ -869,6 +854,9 @@ class BasePlot(ABC):
             style: Style of ellipse
             angle: Angle of rotation clockwise (degrees)
             num_pts: Number of points to calculate for the ellipse polygon
+            start_angle: Angle to start at
+            end_angle: Angle to end at
+            legend_label: Label for this object in the legend
         """
 
         points = geod.ellipse(
@@ -882,6 +870,12 @@ class BasePlot(ABC):
         )
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
+        if legend_label is not None:
+            self._add_legend_handle_marker(
+                legend_label,
+                style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE),
+            )
+
     @use_style(PolygonStyle)
     def circle(
         self,
@@ -889,6 +883,7 @@ class BasePlot(ABC):
         radius_degrees: float,
         style: PolygonStyle,
         num_pts: int = 100,
+        legend_label: str = None,
         **kwargs,
     ):
         """Plots a circle
@@ -898,6 +893,7 @@ class BasePlot(ABC):
             radius_degrees: Radius of circle (degrees)
             style: Style of circle
             num_pts: Number of points to calculate for the circle polygon
+            legend_label: Label for this object in the legend
         """
         self.ellipse(
             center,
@@ -908,6 +904,12 @@ class BasePlot(ABC):
             num_pts=num_pts,
             gid=kwargs.get("gid") or "polygon",
         )
+
+        if legend_label is not None:
+            self._add_legend_handle_marker(
+                legend_label,
+                style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE),
+            )
 
     @use_style(LineStyle)
     def line(self, coordinates: list[tuple[float, float]], style: LineStyle, **kwargs):

@@ -52,7 +52,7 @@ p.constellation_borders()
 print(len(p.objects.stars))
 
 p.export("temp/voronoi.png")
-exit()
+# exit()
 for constellation in p.objects.constellations:
     # con = "gem"
     # constellation = Constellation.get(iau_id=con)
@@ -71,7 +71,7 @@ for constellation in p.objects.constellations:
     )
     triangles = delaunay_triangles(
         geometry=points,
-        # tolerance=2,
+        tolerance=3,
     )
 
     # for polygon in polygons.geoms:
@@ -111,15 +111,21 @@ for constellation in p.objects.constellations:
 
     constellation_centroid = constellation.boundary.centroid
 
-    def sorter(g):
-        d = distance(g.centroid, points.centroid)
-        # d = distance(g.centroid, constellation.boundary.centroid)
-        extent = abs(g.bounds[2] - g.bounds[0])
-        area = g.area / constellation.boundary.area
-        return (extent**2 + area) - (d**2)
+    def sort_wrapper(text):
+        def sorter(g):
+            d = distance(g.centroid, points.centroid)
+            # d = distance(g.centroid, constellation.boundary.centroid)
+            extent = abs(g.bounds[2] - g.bounds[0])
+            area = g.area / constellation.boundary.area
+            # return area + (extent * len(text)/20)
+            return ((extent) - (d / 2)) * area**10
+
+        return sorter
 
     # sort by combination of horizontal extent and area
-    polygons_sorted = sorted(polygons_sorted, key=sorter, reverse=True)
+    polygons_sorted = sorted(
+        polygons_sorted, key=sort_wrapper(constellation.name), reverse=True
+    )
 
     # p_sort_distance_to_center = sorted(polygons_sorted, key=lambda pg: distance(pg.centroid, points.centroid))
 
@@ -141,14 +147,14 @@ for constellation in p.objects.constellations:
         style__marker__edge_width=6,
     )
 
-    # for big_p in polygons_sorted[:1]:
-    #     # continue
-    #     # if big_p.area < constellation.boundary.area/2:
-    #     p.polygon(
-    #         geometry=big_p,
-    #         style__fill_color="green",
-    #         style__alpha=0.23,
-    #     )
+    for big_p in polygons_sorted:
+        # continue
+        # if big_p.area < constellation.boundary.area/2:
+        p.polygon(
+            geometry=big_p,
+            style__edge_color="green",
+            style__alpha=0.23,
+        )
 
 
 p.export("temp/voronoi.png")

@@ -9,6 +9,7 @@ nav:
     - Tutorial: tutorial.md
     - Reference:
         - MapPlot: reference-mapplot.md
+        - HorizonPlot: reference-horizonplot.md
         - OpticPlot: reference-opticplot.md
         - Models: reference-models.md
         - Selecting Objects: reference-selecting-objects.md

@@ -40,4 +40,6 @@ p.ecliptic()
 
 p.legend()  # add a legend
 
+p.constellation_labels()  # Plot the constellation labels last for best placement
+
 p.export("tutorial_04.png", padding=0.2, transparent=True)

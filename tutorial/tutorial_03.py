@@ -19,7 +19,7 @@ p = MapPlot(
     resolution=4000,
     scale=0.9,
 )
-# we plot the constellations first, because Starplot will use the constellation
+# Again, we plot the constellations first, because Starplot will use the constellation
 # lines to determine where to place labels for stars (labels will look better if they're
 # not crossing a constellation line)
 p.constellations()
@@ -63,5 +63,7 @@ p.marker(
     label="Mel 111",
 )
 p.horizon()
+
+p.constellation_labels()  # Plot the constellation labels last for best placement
 
 p.export("tutorial_03.png", transparent=True)

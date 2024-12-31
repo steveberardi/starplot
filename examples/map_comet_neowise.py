@@ -93,6 +93,7 @@ p.gridlines(labels=False)
 p.constellations()
 p.constellation_borders()
 p.stars(mag=6, where_labels=[Star.magnitude < 2])
+p.constellation_labels()
 p.milky_way()
 p.legend()
 
