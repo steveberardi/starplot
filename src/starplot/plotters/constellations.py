@@ -27,6 +27,7 @@ DEFAULT_AUTO_ADJUST_SETTINGS = {
     "max_distance": 300,
     "label_padding": 9,
     "buffer": 0.05,
+    "seed": None,
 }
 """Default settings for auto-adjusting constellation labels"""
 

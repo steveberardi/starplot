@@ -1,5 +1,3 @@
-import random
-
 from pathlib import Path
 from datetime import datetime
 
@@ -10,8 +8,6 @@ from starplot import styles, DSO, Moon, Star, Constellation
 from starplot.data.dsos import BASIC_DSO_TYPES
 from starplot.map import MapPlot, Projection
 
-random.seed(1)
-
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
 STYLE = styles.PlotStyle().extend(
@@ -21,6 +17,8 @@ STYLE = styles.PlotStyle().extend(
 RESOLUTION = 3200
 
 POWAY = {"lat": 32.97, "lon": -117.038611}
+
+AUTO_ADJUST_SETTINGS = {"seed": 1}
 
 dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 
@@ -53,7 +51,7 @@ def _mercator():
     p.ecliptic()
     p.celestial_equator()
     p.constellation_borders()
-    p.constellation_labels()
+    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
     return p
 
 
@@ -84,7 +82,7 @@ def _stereo_north():
     p.gridlines()
     p.constellations()
     p.constellation_borders()
-    p.constellation_labels()
+    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
     return p
 
 
@@ -149,7 +147,7 @@ def check_map_coma_berenices_dso_size():
     p.celestial_equator()
     p.constellations()
     p.constellation_borders()
-    p.constellation_labels()
+    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
     p.export(filename, padding=0.5)
     return filename
 
@@ -281,7 +279,7 @@ def check_map_wrapping():
     )
     p.gridlines()
     p.constellations()
-    p.constellation_labels()
+    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
     p.title("Andromeda + nebula + Vega")
     p.export(filename, padding=0.3)
     return filename
@@ -414,7 +412,7 @@ def check_map_plot_limit_by_geometry():
     )
     p.constellations(where=[Constellation.boundary.intersects(lyra.boundary)])
     p.constellation_borders()
-    p.constellation_labels()
+    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
 
     filename = DATA_PATH / "map-limit-by-geometry.png"
     p.export(filename)
@@ -452,7 +450,7 @@ def check_map_plot_custom_clip_path_virgo():
     )
     p.constellations()
     p.constellation_borders()
-    p.constellation_labels()
+    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
 
     p.line(
         coordinates=[

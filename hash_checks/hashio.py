@@ -25,7 +25,6 @@ RESULTS_PATH = HERE / "results.html"
 
 console = Console()
 
-
 class Hashio:
     """
     Helper class that iterates through a list of callables that each return a filename for an image,
@@ -88,7 +87,7 @@ class Hashio:
 
     def _get_hashes(self) -> dict:
         """Gets hashes for all callables"""
-        mp.set_start_method("spawn")  # required for M1 macs? or macOS issue?
+        # mp.set_start_method("spawn")  # required for M1 macs? or macOS issue?
 
         console.print("Getting hashes...", style="bold")
         with mp.Pool(5) as p:
@@ -168,6 +167,10 @@ if __name__ == "__main__":
         console.print(f":stopwatch: {round(time.time() - start)}s")
 
         console.print(f"\nPASSED: {passed}\n", style="green")
+
+        if failed:
+            console.print("FAILED: retrying...\n", style="bold red")
+            passed, failed, new = h.check()
 
         if failed or new:
             console.print(f"FAILED: {failed}\n", style="bold red")

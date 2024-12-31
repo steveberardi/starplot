@@ -349,6 +349,7 @@ class BasePlot(ABC):
         max_distance = settings.get("max_distance", 300)
         distance_step_size = settings.get("distance_step_size", 1)
         point_iterations = settings.get("point_generation_max_iterations", 500)
+        random_seed = settings.get("seed")
 
         areas = (
             [p for p in area.geoms] if "MultiPolygon" == str(area.geom_type) else [area]
@@ -368,6 +369,7 @@ class BasePlot(ABC):
                 Point(ra, dec),
                 distance,
                 max_iterations=point_iterations,
+                seed=random_seed,
             )
 
             if point is None:
