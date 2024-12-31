@@ -25,6 +25,7 @@ RESULTS_PATH = HERE / "results.html"
 
 console = Console()
 
+
 class Hashio:
     """
     Helper class that iterates through a list of callables that each return a filename for an image,

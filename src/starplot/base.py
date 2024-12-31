@@ -777,7 +777,7 @@ class BasePlot(ABC):
             points: List of polygon points `[(ra, dec), ...]` - **must be in counterclockwise order**
             geometry: A shapely Polygon. If this value is passed, then the `points` kwarg will be ignored.
             legend_label: Label for this object in the legend
-            
+
         """
         if points is None and geometry is None:
             raise ValueError("Must pass points or geometry when plotting polygons.")
@@ -789,7 +789,10 @@ class BasePlot(ABC):
         self._polygon(_points, style, gid=kwargs.get("gid") or "polygon")
 
         if legend_label is not None:
-            self._add_legend_handle_marker(legend_label, style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE))
+            self._add_legend_handle_marker(
+                legend_label,
+                style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
+            )
 
     @use_style(PolygonStyle)
     def rectangle(
@@ -821,7 +824,10 @@ class BasePlot(ABC):
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
         if legend_label is not None:
-            self._add_legend_handle_marker(legend_label, style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE))
+            self._add_legend_handle_marker(
+                legend_label,
+                style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
+            )
 
     @use_style(PolygonStyle)
     def ellipse(
@@ -863,7 +869,10 @@ class BasePlot(ABC):
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
         if legend_label is not None:
-            self._add_legend_handle_marker(legend_label, style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE))
+            self._add_legend_handle_marker(
+                legend_label,
+                style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE),
+            )
 
     @use_style(PolygonStyle)
     def circle(
@@ -895,7 +904,10 @@ class BasePlot(ABC):
         )
 
         if legend_label is not None:
-            self._add_legend_handle_marker(legend_label, style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE))
+            self._add_legend_handle_marker(
+                legend_label,
+                style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE),
+            )
 
     @use_style(LineStyle)
     def line(self, coordinates: list[tuple[float, float]], style: LineStyle, **kwargs):

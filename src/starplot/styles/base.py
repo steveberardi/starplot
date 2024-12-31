@@ -453,13 +453,16 @@ class PolygonStyle(BaseStyle):
         return MarkerStyle(
             symbol=symbol,
             color=self.color.as_hex() if self.color else None,
-            fill=FillStyleEnum.FULL if self.color or self.fill_color else FillStyleEnum.NONE,
+            fill=FillStyleEnum.FULL
+            if self.color or self.fill_color
+            else FillStyleEnum.NONE,
             edge_color=self.edge_color.as_hex() if self.edge_color else None,
             edge_width=self.edge_width,
             alpha=self.alpha,
             zorder=self.zorder,
             line_style=self.line_style,
         )
+
 
 class LabelStyle(BaseStyle):
     """

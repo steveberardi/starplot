@@ -32,11 +32,15 @@ def unwrap_polygon(polygon: Polygon) -> Polygon:
 
 
 def random_point_in_polygon_at_distance(
-    polygon: Polygon, origin_point: Point, distance: int, max_iterations: int = 100, seed: int = None
+    polygon: Polygon,
+    origin_point: Point,
+    distance: int,
+    max_iterations: int = 100,
+    seed: int = None,
 ) -> Point:
     if seed:
         random.seed(seed)
-        
+
     ctr = 0
     while ctr < max_iterations:
         ctr += 1
