@@ -173,6 +173,8 @@ class BasePlot(ABC):
 
         # if label.get_text() == "CANIS MAJOR":
         #     print(bbox)
+        # if label.get_text() == "Electra":
+        #     print(bbox)
 
         if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]):
             label.remove()

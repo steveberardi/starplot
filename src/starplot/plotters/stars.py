@@ -278,8 +278,7 @@ class StarPlotterMixin:
 
             if obj.magnitude < 5:
                 # radius = ((size**0.5 / 2) / self.scale) #/ 3.14
-                radius = size**0.5 / 4
-                # radius = ((size**0.5 / 2) / self.scale) / 3.14
+                radius = size**0.5 / 5
 
                 bbox = np.array(
                     (
@@ -290,6 +289,8 @@ class StarPlotterMixin:
                     )
                 )
                 # if obj.name == "Sirius":
+                #     print(bbox)
+                # if obj.name == "Electra":
                 #     print(bbox)
 
                 if self._stars_rtree.get_size() > 0:

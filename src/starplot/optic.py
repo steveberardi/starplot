@@ -248,7 +248,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         if size_fn is not None:
 
             def size_fn_mx(s):
-                return size_fn(s) * optic_star_multiplier
+                return size_fn(s) * optic_star_multiplier * 0.68
 
         super().stars(
             mag=mag,

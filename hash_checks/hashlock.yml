@@ -1,7 +1,7 @@
 horizon_base:
-  dhash: 2f8b8d0d810376542f8b9d0d891b76542fcbdd8d801b7652
+  dhash: 2f8bcd0dc10376542f8bcd0dc11b76542fcbcd8d801b7652
   filename: /starplot/hash_checks/data/horizon-base.png
-  phash: f3a20cdd34b45a95
+  phash: e3a21cdd34b47295
 horizon_north_celestial_pole:
   dhash: 18aa4a68c232885419a84a68c232485439ab4ad8e2328854
   filename: /starplot/hash_checks/data/horizon-north-celestial-pole.png
@@ -27,15 +27,15 @@ map_milky_way_multi_polygon:
   filename: /starplot/hash_checks/data/map-milky-way-multi-polygon.png
   phash: be89be9856504e69
 map_mollweide:
-  dhash: 0b2b316b3b33070f0b2b316b3b33070f0b2b416b3333250f
+  dhash: 0b2b316b3b33070f0b2b316b3b33070f0b2b416b3b33250f
   filename: /starplot/hash_checks/data/map-mollweide.png
-  phash: bb4af2bc81669570
+  phash: bb4bf2bc81649564
 map_moon_phase_waxing_crescent:
   dhash: 0804084d4d4804080804084d4d4804080804084d4d480408
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b3cccc3333cccc31
 map_orion_base:
-  dhash: 18393b1e2e2f64681c393b5e2e2f64681c392b0e2e0f6448
+  dhash: 18393b5e2e2f64681c393b5e2e2f64681c392bce2e0f6448
   filename: /starplot/hash_checks/data/map-orion-base.png
   phash: bf785b2415a4359c
 map_orion_extra:
@@ -63,33 +63,33 @@ map_with_planets:
   filename: /starplot/hash_checks/data/map-mercator-planets.png
   phash: e8c29d89a67f5312
 map_wrapping:
-  dhash: 0f330c4d4953311d0f330c4d4953311d0f330c4d4953311d
+  dhash: 0f332c4d4953311d0f332c4d4953311d0f332c4d4953311d
   filename: /starplot/hash_checks/data/map-wrapping.png
   phash: ea34f8c98387a572
 optic_camera_rotated:
   dhash: 25468b13261c1a6525468b13261c1a6525468b13261c1a65
   filename: /starplot/hash_checks/data/optic-camera-rotated-m45.png
-  phash: ac6cc7941ed97285
+  phash: bc6cc6941ed97285
 optic_clipping:
-  dhash: 70d898f066e4fc5d70d898f0eae4f85971f098eaf6f0fc71
+  dhash: 70d898f062e4fc5d70d898f0eae4f85971f098f2e6e4fc71
   filename: /starplot/hash_checks/data/optic-clipping.png
   phash: 95696a872f9a7870
 optic_m45_binoculars:
-  dhash: 8e172b7123330e4d8e172b7123330e4d8e172b7123330e4d
+  dhash: 8e17237133330e4d8e17237133330e4d8e17237133330e4d
   filename: /starplot/hash_checks/data/optic-m45-binoculars.png
   phash: ae7b80f186d18ad3
 optic_m45_camera:
-  dhash: 4d715151716559754d715151716559754d71515171655975
+  dhash: 4d515151716559754d515151716559754d51515171655975
   filename: /starplot/hash_checks/data/optic-m45-camera.png
   phash: ba7b846e843b84d5
 optic_m45_reflector:
-  dhash: 8e1f2b7123330e4d8e1f2b7123330e4d8e1f2b7123330e4d
+  dhash: 8e172b7123330e4d8e172b7123330e4d8e172b7123330e4d
   filename: /starplot/hash_checks/data/optic-m45-reflector.png
-  phash: ba3b80e5c6b19a93
+  phash: ba7b80e5c6b19a92
 optic_m45_scope:
-  dhash: 8e173b5123230e4d8e173b5163230e4d8e173b51232b0e4d
+  dhash: 8e173b5123230e4d8e173b5123230e4d8e173b5123230e4d
   filename: /starplot/hash_checks/data/optic-m45-scope.png
-  phash: ae7b80e586b18e93
+  phash: aa7b84e586b18e93
 optic_moon_phase_full:
   dhash: 0e2b553333552b0e0e2b553333552b0e0e2b553333552b0e
   filename: /starplot/hash_checks/data/optic-moon-phase-full.png
@@ -109,16 +109,16 @@ optic_orion_nebula_refractor:
 optic_polaris_binoculars:
   dhash: 8e172b5523338e4d8e172b5523338e4d8e172b5523338e4d
   filename: /starplot/hash_checks/data/optic-binoculars-polaris.png
-  phash: aa6b84f186d18ed3
+  phash: aa7b84f182d18ed3
 optic_solar_eclipse_binoculars:
-  dhash: 0779e49a9ae461071759e09a9ae461170359c09c9cc06903
+  dhash: 0779649a9ae461071759e49a9ae461170359c09c9cc06903
   filename: /starplot/hash_checks/data/optic-binoculars-eclipse.png
   phash: b1ccce3131cece31
 optic_wrapping:
-  dhash: 71f0ec92d2d8650a71e0d4aca4c4782a71e8d4acacc4713a
+  dhash: 71f0ec92d2d8650a71e0d4aca4c4782a71e8d4aca4c4713a
   filename: /starplot/hash_checks/data/optic-wrapping.png
   phash: d1846e1b792ef138
 zenith_base:
-  dhash: 1779d496865d338e1779d494865d338e1779d49e865d330e
+  dhash: 1771d496865d338e1771d494865d338e1779d494865d330e
   filename: /starplot/hash_checks/data/zenith-base.png
-  phash: be40eb3be1389664
+  phash: be40ab3be1389764

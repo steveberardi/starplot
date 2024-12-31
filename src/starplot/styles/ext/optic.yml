@@ -1,6 +1,6 @@
 star:
   label:
-    font_size: 40
+    font_size: 36
   marker:
     size: 30
 bayer_labels:
