@@ -3,6 +3,8 @@
 - Improved auto placement of constellation labels
 - Separates styles and functions for constellation lines and labels
 - Plots constellation lines and borders as a `LineCollection` to improve performance
+- Adds option to suppress warnings from dependencies
+- Adds legend labels to shape functions
 
 ## v0.13.x
 [Documentation](https://archives.starplot.dev/0.13.0/)

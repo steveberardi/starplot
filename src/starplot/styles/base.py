@@ -135,7 +135,7 @@ class MarkerSymbolEnum(str, Enum):
     CIRCLE_DOTTED_RINGS = "circle_dotted_rings"
 
     CIRCLE_LINE = "circle_line"
-    """\u29B5"""
+    """\u29B5  the standard symbol for double stars"""
 
     COMET = "comet"
     """\u2604"""
