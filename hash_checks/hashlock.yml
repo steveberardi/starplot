@@ -39,7 +39,7 @@ map_orion_base:
   filename: /starplot/hash_checks/data/map-orion-base.png
   phash: bf785b2415a4359c
 map_orion_extra:
-  dhash: 1c393b3e2b67684f1d391b6f2b2768451c3b0b0e2b27684d
+  dhash: 1c393b3e2b67680f1d391b6f2b27680f1c3b0b0e2b276c0f
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: bf71d01ee017e491
 map_plot_custom_clip_path_virgo:

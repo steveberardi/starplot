@@ -119,6 +119,7 @@ def check_map_orion_extra():
             fill_color="blue",
             alpha=0.14,
         ),
+        legend_label="blue circle",
     )
     mercator_base.legend()
     mercator_base.export(filename, padding=0.5)

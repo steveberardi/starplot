@@ -450,12 +450,13 @@ class PolygonStyle(BaseStyle):
         return styles
 
     def to_marker_style(self, symbol: MarkerSymbolEnum):
+        color = self.color.as_hex() if self.color else None
+        fill_color = self.fill_color.as_hex() if self.fill_color else None
+        fill_style = FillStyleEnum.FULL if color or fill_color else FillStyleEnum.NONE
         return MarkerStyle(
             symbol=symbol,
-            color=self.color.as_hex() if self.color else None,
-            fill=FillStyleEnum.FULL
-            if self.color or self.fill_color
-            else FillStyleEnum.NONE,
+            color=color or fill_color,
+            fill=fill_style,
             edge_color=self.edge_color.as_hex() if self.edge_color else None,
             edge_width=self.edge_width,
             alpha=self.alpha,

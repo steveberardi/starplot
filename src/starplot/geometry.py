@@ -4,17 +4,6 @@ import math
 from shapely.geometry import Point, Polygon
 
 
-def random_point_in_polygon(polygon: Polygon) -> Point:
-    """Returns a random point inside a shapely polygon"""
-    minx, miny, maxx, maxy = polygon.bounds
-    while True:
-        x = random.uniform(minx, maxx)
-        y = random.uniform(miny, maxy)
-        point = Point(x, y)
-        if polygon.contains(point):
-            return point
-
-
 def unwrap_polygon(polygon: Polygon) -> Polygon:
     points = list(zip(*polygon.exterior.coords.xy))
     new_points = []
@@ -29,6 +18,17 @@ def unwrap_polygon(polygon: Polygon) -> Polygon:
         prev = x
 
     return Polygon(new_points)
+
+
+def random_point_in_polygon(polygon: Polygon) -> Point:
+    """Returns a random point inside a shapely polygon"""
+    minx, miny, maxx, maxy = polygon.bounds
+    while True:
+        x = random.uniform(minx, maxx)
+        y = random.uniform(miny, maxy)
+        point = Point(x, y)
+        if polygon.contains(point):
+            return point
 
 
 def random_point_in_polygon_at_distance(
