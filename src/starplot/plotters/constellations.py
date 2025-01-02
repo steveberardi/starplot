@@ -1,4 +1,3 @@
-import geopandas as gpd
 import numpy as np
 
 import rtree
@@ -56,7 +55,7 @@ class ConstellationPlotterMixin:
         mw = con.table("constellations")
         extent = self._extent_mask()
 
-        constellations_gdf = mw.filter(mw.geometry.intersects(extent)).to_pandas()
+        constellations_df = mw.filter(mw.geometry.intersects(extent)).to_pandas()
 
         # constellations_gdf = gpd.read_file(
         #     DataFiles.CONSTELLATIONS.value,
@@ -68,7 +67,7 @@ class ConstellationPlotterMixin:
         # TODO : avoid loading stars
         stars_df = stars.load("hipparcos")
 
-        if constellations_gdf.empty:
+        if constellations_df.empty:
             return
 
         if getattr(self, "projection", None) in [
@@ -84,7 +83,7 @@ class ConstellationPlotterMixin:
         constellation_points_to_index = []
         lines = []
 
-        for c in constellations_gdf.itertuples():
+        for c in constellations_df.itertuples():
             obj = constellation_from_tuple(c)
 
             if not all([e.evaluate(obj) for e in where]):

@@ -85,21 +85,35 @@ print(result.to_pandas())
 con = duckdb.connect(DataFiles.DATABASE.value)
 con.install_extension("spatial")
 con.load_extension("spatial")
+
+# Milky Way
 con.sql("DROP TABLE milky_way")
 con.sql(
     "CREATE TABLE milky_way AS (select * EXCLUDE geom, geom AS geometry from ST_Read('build/mw.gpkg'));"
 )
+con.sql("CREATE INDEX milky_way_geometry_idx ON milky_way USING RTREE (geometry);")
 
+# Constellations
 con.sql("DROP TABLE constellations")
 con.sql(
     f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{str(DataFiles.CONSTELLATIONS.value)}'));"
 )
-
-
-con.sql("CREATE INDEX milky_way_geometry_idx ON milky_way USING RTREE (geometry);")
 con.sql(
     "CREATE INDEX constellations_boundary_idx ON constellations USING RTREE (geometry);"
 )
+
+# Deep Sky Objects
+con.sql("DROP TABLE deep_sky_objects")
+con.sql(
+    f"CREATE TABLE deep_sky_objects AS (select * EXCLUDE geom, geom AS geometry from ST_Read('temp/ongc.gpkg'));"
+)
+con.sql(
+    "CREATE INDEX dso_idx ON deep_sky_objects USING RTREE (geometry);"
+)
+
+
+
+
 
 
 exit()
