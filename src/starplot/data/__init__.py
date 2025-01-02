@@ -7,6 +7,7 @@ from skyfield.api import Loader
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "library"
+DUCKDB_EXTENSION_PATH = DATA_PATH / "duckdb-extensions"
 
 load = Loader(DATA_PATH)
 
@@ -29,3 +30,5 @@ class DataFiles(str, Enum):
     # Downloaded Files
     _DOWNLOAD_PATH = Path(env("STARPLOT_DOWNLOAD_PATH", str(DATA_PATH)))
     BIG_SKY = _DOWNLOAD_PATH / "stars.bigsky.parquet"
+
+    DATABASE = DATA_PATH / "sky.db"

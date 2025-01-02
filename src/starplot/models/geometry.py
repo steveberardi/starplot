@@ -1,5 +1,6 @@
 from typing import Union
 
+from shapely import transform
 from shapely.geometry import Point, Polygon, MultiPolygon
 
 from starplot import geod, utils
@@ -33,12 +34,14 @@ def to_24h(geometry: Union[Point, Polygon, MultiPolygon]):
     if geometry_type == "MultiPolygon":
         polygons = []
         for p in geometry.geoms:
-            p24 = _to_poly24(p)
-            polygons.append(p24)
+            # p24 = _to_poly24(p)
+            polygons.append(transform(p, lambda p: p * [1/15, 1]))
         return MultiPolygon(polygons)
     elif geometry_type == "Polygon":
-        return _to_poly24(geometry)
+        return transform(geometry, lambda p: p * [1/15, 1])
+        # return _to_poly24(geometry)
     elif geometry_type == "Point":
-        return _to_point24(geometry)
+        return transform(geometry, lambda p: p * [1/15, 1])
+        # return _to_point24(geometry)
     else:
         raise ValueError(f"Unsupported geometry type: {geometry_type}")

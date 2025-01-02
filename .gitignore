@@ -9,6 +9,9 @@ hip8.dat
 CometEls.txt
 ongc.gpkg
 
+sky.db
+duckdb-extensions
+
 # Big Sky - Full Catalog
 # we ignore this because of its size (50+ MB)
 bigsky.stars.csv.gz

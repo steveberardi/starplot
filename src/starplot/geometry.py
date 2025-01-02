@@ -20,6 +20,28 @@ def unwrap_polygon(polygon: Polygon) -> Polygon:
     return Polygon(new_points)
 
 
+def unwrap_polygon_360(polygon: Polygon) -> Polygon:
+    points = list(zip(*polygon.exterior.coords.xy))
+    new_points = []
+    prev = None
+
+    for x, y in points:
+        if prev is not None and prev > 300 and x < 180:
+            x += 360
+        elif prev is not None and prev < 180 and x > 300:
+            x -= 360
+        new_points.append((x, y))
+        prev = x
+
+    return Polygon(new_points)
+
+
+def polygon_degrees_to_hours(polygon: Polygon) -> Polygon:
+    points = list(zip(*polygon.exterior.coords.xy))
+    new_points = [(ra / 15, dec) for ra, dec in points]
+    return Polygon(new_points)
+
+
 def random_point_in_polygon(
     polygon: Polygon, max_iterations: int = 100, seed: int = None
 ) -> Point:

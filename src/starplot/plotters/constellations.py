@@ -8,7 +8,7 @@ from shapely import (
 from matplotlib.collections import LineCollection
 
 from starplot.coordinates import CoordinateSystem
-from starplot.data import DataFiles, constellations as condata, stars
+from starplot.data import DataFiles, constellations as condata, stars, db
 from starplot.data.constellations import (
     CONSTELLATIONS_FULL_NAMES,
     CONSTELLATION_HIP_IDS,
@@ -52,12 +52,20 @@ class ConstellationPlotterMixin:
         where = where or []
         ctr = 0
 
-        constellations_gdf = gpd.read_file(
-            DataFiles.CONSTELLATIONS.value,
-            engine="pyogrio",
-            use_arrow=True,
-            bbox=self._extent_mask(),
-        )
+        con = db.connect()
+        mw = con.table("constellations")
+        extent = self._extent_mask()
+
+        constellations_gdf = mw.filter(mw.geometry.intersects(extent)).to_pandas()
+
+        # constellations_gdf = gpd.read_file(
+        #     DataFiles.CONSTELLATIONS.value,
+        #     engine="pyogrio",
+        #     use_arrow=True,
+        #     bbox=self._extent_mask(),
+        # )
+
+        # TODO : avoid loading stars
         stars_df = stars.load("hipparcos")
 
         if constellations_gdf.empty:

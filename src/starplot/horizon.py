@@ -242,14 +242,12 @@ class HorizonPlot(
             # naive method of getting all the stars near the poles
             self.ra_min = 0
             self.ra_max = 24
+        else:
+            self.ra_min = max(self.ra_min - 4, 0)
+            self.ra_max = min(self.ra_max + 4, 24)
 
         self.dec_min -= 20
         self.dec_max += 20
-        self.ra_min -= 4
-        self.ra_max += 4
-
-        if self.ra_min < 0:
-            self.ra_min = 0
 
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"

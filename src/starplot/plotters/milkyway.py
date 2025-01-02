@@ -1,12 +1,15 @@
-from starplot.data import DataFiles
+from shapely.ops import unary_union
+
+from starplot.data import db, DataFiles
 from starplot.styles import PolygonStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import lon_to_ra
+from starplot.geometry import unwrap_polygon_360, polygon_degrees_to_hours
 
 
 class MilkyWayPlotterMixin:
     @use_style(PolygonStyle, "milky_way")
-    def milky_way(self, style: PolygonStyle = None):
+    def milky_way_old(self, style: PolygonStyle = None):
         """
         Plots the Milky Way
 
@@ -37,5 +40,33 @@ class MilkyWayPlotterMixin:
         for polygon_points in polygons:
             self._polygon(
                 points=polygon_points,
+                style=style,
+            )
+
+    @use_style(PolygonStyle, "milky_way")
+    def milky_way(self, style: PolygonStyle = None):
+        """
+        Plots the Milky Way
+
+        Args:
+            style: Styling of the Milky Way. If None, then the plot's style (specified when creating the plot) will be used
+        """
+        con = db.connect()
+        mw = con.table("milky_way")
+        extent = self._extent_mask()
+
+        result = mw.filter(mw.geometry.intersects(extent)).to_pandas()
+        mw_union = unary_union(
+            [unwrap_polygon_360(row.geometry) for row in result.itertuples()]
+        )
+
+        if mw_union.geom_type == "MultiPolygon":
+            polygons = mw_union.geoms
+        else:
+            polygons = [mw_union]
+
+        for p in polygons:
+            self.polygon(
+                geometry=polygon_degrees_to_hours(p),
                 style=style,
             )

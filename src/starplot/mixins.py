@@ -12,8 +12,10 @@ class ExtentMaskMixin:
             coords = [
                 [self.ra_min * 15, self.dec_min],
                 [self.ra_max * 15, self.dec_min],
-                [self.ra_min * 15, self.dec_max],
+                # [self.ra_min * 15, self.dec_max],
                 [self.ra_max * 15, self.dec_max],
+                [self.ra_min * 15, self.dec_max],
+                [self.ra_min * 15, self.dec_min],
             ]
             return Polygon(coords)
 
@@ -21,14 +23,16 @@ class ExtentMaskMixin:
             coords_1 = [
                 [self.ra_min * 15, self.dec_min],
                 [360, self.dec_min],
-                [self.ra_min * 15, self.dec_max],
                 [360, self.dec_max],
+                [self.ra_min * 15, self.dec_max],
+                [self.ra_min * 15, self.dec_min],
             ]
             coords_2 = [
                 [0, self.dec_min],
                 [(self.ra_max - 24) * 15, self.dec_min],
-                [0, self.dec_max],
                 [(self.ra_max - 24) * 15, self.dec_max],
+                [0, self.dec_max],
+                [0, self.dec_min],
             ]
 
             return MultiPolygon(
