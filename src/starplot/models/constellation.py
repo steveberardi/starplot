@@ -1,7 +1,7 @@
 from shapely import Polygon
 
 from starplot.models.base import SkyObject, SkyObjectManager
-from starplot.models.geometry import to_24h
+from starplot.geometry import to_24h
 from starplot.data import constellations
 
 

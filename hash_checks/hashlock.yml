@@ -25,7 +25,7 @@ map_label_callables:
 map_milky_way_multi_polygon:
   dhash: 715f0b0880662c2d711f0b088076242d71530b088066ac2d
   filename: /starplot/hash_checks/data/map-milky-way-multi-polygon.png
-  phash: be89be9856504e69
+  phash: be89be9856504f68
 map_mollweide:
   dhash: 0b2b316b3b33070f0b2b316b3b33070f0b2b416b3b33250f
   filename: /starplot/hash_checks/data/map-mollweide.png
@@ -35,11 +35,11 @@ map_moon_phase_waxing_crescent:
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b3cccc3333cccc31
 map_orion_base:
-  dhash: 18393b5e2e2f64681c393b5e2e2f64681c392bce2e0f6448
+  dhash: 18393b5e2e2f64681c393b4e2e2f64681c392bce2e0f6468
   filename: /starplot/hash_checks/data/map-orion-base.png
   phash: bf785b2415a4359c
 map_orion_extra:
-  dhash: 1c393b3e2b67680f1d391b6f2b27680f1c3b0b0e2b276c0f
+  dhash: 1c393b3e2b67680f1d391b5f2b27680f1c3b0b0e2b276c0f
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: bf71d01ee017e491
 map_plot_custom_clip_path_virgo:
@@ -55,7 +55,7 @@ map_scope_bino_fov:
   filename: /starplot/hash_checks/data/map-scope-bino-fov.png
   phash: e6649931666c9979
 map_stereo_base:
-  dhash: 677666f0353a5412677666f431bcd412577666f0b598d412
+  dhash: 677666f0353a5412677666f431b8d412577666f0b598d412
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
   phash: 9dce6d624a9132ba
 map_with_planets:
@@ -119,6 +119,6 @@ optic_wrapping:
   filename: /starplot/hash_checks/data/optic-wrapping.png
   phash: d1846e1b792ef138
 zenith_base:
-  dhash: 1771d496865d338e1771d494865d338e1779d494865d330e
+  dhash: 1771d496865d338e1779d494865d338e1779d494865d330e
   filename: /starplot/hash_checks/data/zenith-base.png
-  phash: be40ab3be1389764
+  phash: be40ab3fe1389664

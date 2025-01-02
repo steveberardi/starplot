@@ -4,7 +4,7 @@ from starplot.data import db, DataFiles
 from starplot.styles import PolygonStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import lon_to_ra
-from starplot.geometry import unwrap_polygon_360, polygon_degrees_to_hours
+from starplot.geometry import unwrap_polygon_360, to_24h
 
 
 class MilkyWayPlotterMixin:
@@ -67,6 +67,6 @@ class MilkyWayPlotterMixin:
 
         for p in polygons:
             self.polygon(
-                geometry=polygon_degrees_to_hours(p),
+                geometry=to_24h(p),
                 style=style,
             )

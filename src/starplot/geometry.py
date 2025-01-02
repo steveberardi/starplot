@@ -1,7 +1,35 @@
 import random
 import math
+from typing import Union
 
-from shapely.geometry import Point, Polygon
+from shapely import transform
+from shapely.geometry import Point, Polygon, MultiPolygon
+
+from starplot import geod, utils
+
+
+def circle(center, diameter_degrees):
+    points = geod.ellipse(
+        center,
+        diameter_degrees,
+        diameter_degrees,
+        angle=0,
+        num_pts=100,
+    )
+    points = [
+        (round(24 - utils.lon_to_ra(lon), 4), round(dec, 4)) for lon, dec in points
+    ]
+    return Polygon(points)
+
+
+def to_24h(geometry: Union[Point, Polygon, MultiPolygon]):
+    geometry_type = str(geometry.geom_type)
+
+    if geometry_type == "MultiPolygon":
+        polygons = [transform(p, lambda c: c * [1/15, 1]) for p in geometry.geoms]
+        return MultiPolygon(polygons)
+    
+    return transform(geometry, lambda c: c * [1/15, 1])
 
 
 def unwrap_polygon(polygon: Polygon) -> Polygon:
@@ -33,12 +61,6 @@ def unwrap_polygon_360(polygon: Polygon) -> Polygon:
         new_points.append((x, y))
         prev = x
 
-    return Polygon(new_points)
-
-
-def polygon_degrees_to_hours(polygon: Polygon) -> Polygon:
-    points = list(zip(*polygon.exterior.coords.xy))
-    new_points = [(ra / 15, dec) for ra, dec in points]
     return Polygon(new_points)
 
 

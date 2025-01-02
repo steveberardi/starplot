@@ -8,7 +8,7 @@ from shapely import Polygon
 
 from starplot.data import load
 from starplot.models.base import SkyObject, SkyObjectManager
-from starplot.models.geometry import circle
+from starplot.geometry import circle
 from starplot.utils import dt_or_now
 
 

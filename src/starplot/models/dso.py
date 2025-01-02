@@ -5,7 +5,7 @@ from shapely.geometry import Polygon, MultiPolygon
 from starplot.data.dsos import DsoType, load_ongc, ONGC_TYPE_MAP
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject, SkyObjectManager
-from starplot.models.geometry import to_24h
+from starplot.geometry import to_24h
 from starplot import geod
 
 
