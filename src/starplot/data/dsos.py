@@ -1,29 +1,10 @@
-from enum import Enum
-from functools import cache
-
 import numpy as np
 from ibis import _, coalesce
 
 from starplot.data import DataFiles, db
 
-ZENITH_BASE = [
-    "M5",
-    "M13",
-    "M23",
-    "M31",
-    "M42",
-    "M44",
-    "M45",
-    "M47",
-    "M51",
-    "M55",
-    "M83",
-    "M93",
-    "M104",
-]
 
-
-class __DsoType(str, Enum):
+class __DsoType:
     """
     Types of deep sky objects (DSOs), as designated in OpenNGC
     """
