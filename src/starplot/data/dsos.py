@@ -2,6 +2,7 @@ from enum import Enum
 from functools import cache
 
 import numpy as np
+from ibis import _, coalesce
 
 from starplot.data import DataFiles, db
 
@@ -22,7 +23,7 @@ ZENITH_BASE = [
 ]
 
 
-class DsoType(str, Enum):
+class __DsoType(str, Enum):
     """
     Types of deep sky objects (DSOs), as designated in OpenNGC
     """
@@ -54,6 +55,38 @@ class DsoType(str, Enum):
     DUPLICATE_RECORD = "Duplicated record"
 
 
+class DsoType:
+    """
+    Types of deep sky objects (DSOs), as designated in OpenNGC
+    """
+
+    STAR = "*"
+    DOUBLE_STAR = "**"
+    ASSOCIATION_OF_STARS = "*Ass"
+
+    OPEN_CLUSTER = "OCl"
+    GLOBULAR_CLUSTER = "GCl"
+
+    GALAXY = "G"
+    GALAXY_PAIR = "GPair"
+    GALAXY_TRIPLET = "GTrpl"
+    GROUP_OF_GALAXIES = "GGroup"
+
+    NEBULA = "Neb"
+    PLANETARY_NEBULA = "PN"
+    EMISSION_NEBULA = "EmN"
+    STAR_CLUSTER_NEBULA = "Cl+N"
+    REFLECTION_NEBULA = "RfN"
+
+    DARK_NEBULA = "DrkN"
+    HII_IONIZED_REGION = "HII"
+    SUPERNOVA_REMNANT = "SNR"
+    NOVA_STAR = "Nova"
+    NONEXISTENT = "NonEx"
+    UNKNOWN = "Other"
+    DUPLICATE_RECORD = "Dup"
+
+
 ONGC_TYPE = {
     # Star Clusters ----------
     DsoType.OPEN_CLUSTER: "OCl",
@@ -83,7 +116,7 @@ ONGC_TYPE = {
     DsoType.DUPLICATE_RECORD: "Dup",
 }
 
-ONGC_TYPE_MAP = {v: k.value for k, v in ONGC_TYPE.items()}
+ONGC_TYPE_MAP = {v: k for k, v in ONGC_TYPE.items()}
 
 BASIC_DSO_TYPES = [
     # Star Clusters ----------
@@ -153,33 +186,22 @@ class DsoLabelMaker(dict):
 DSO_LABELS_DEFAULT = DsoLabelMaker()
 
 
-@cache
-def load_ongc(bbox=None):
+def load(extent=None, filters=None):
+    filters = filters or []
     con = db.connect()
-    dso = con.table("deep_sky_objects")
+    dsos = con.table("deep_sky_objects")
 
-    if bbox:
-        all_dsos = dso.filter(dso.geometry.intersects(bbox)).to_pandas()
-    else:
-        all_dsos = dso.to_pandas()
+    dsos = dsos.mutate(magnitude=coalesce(_.mag_v, _.mag_b, None))
 
-    # import geopandas as gpd
-    # if bbox:
-    #     all_dsos = gpd.read_file(
-    #         DataFiles.ONGC.value,
-    #         engine="pyogrio",
-    #         use_arrow=True,
-    #         bbox=bbox,
-    #     )
-    # else:
-    #     all_dsos = gpd.read_file(
-    #         DataFiles.ONGC.value,
-    #         engine="pyogrio",
-    #         use_arrow=True,
-    #     )
+    if extent:
+        dsos = dsos.filter(_.geometry.intersects(extent))
 
-    all_dsos = all_dsos.replace({np.nan: None})
-    all_dsos = all_dsos[
-        all_dsos["ra_degrees"].notnull() & all_dsos["dec_degrees"].notnull()
-    ]
-    return all_dsos
+    filters.extend([_.ra_degrees.notnull() & _.dec_degrees.notnull()])
+
+    for f in filters:
+        dsos = dsos.filter(f)
+
+    df = dsos.to_pandas()
+    df = df.replace({np.nan: None})
+
+    return df

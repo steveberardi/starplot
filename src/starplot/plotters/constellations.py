@@ -85,7 +85,6 @@ class ConstellationPlotterMixin:
             inbounds = False
 
             for s1_hip, s2_hip in hiplines:
-
                 if not CONSTELLATION_STAR_COORDS.get(s2_hip):
                     # print(s2_hip)
                     continue

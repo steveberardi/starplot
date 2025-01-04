@@ -2,7 +2,7 @@ from typing import Optional, Union
 
 from shapely.geometry import Polygon, MultiPolygon
 
-from starplot.data.dsos import DsoType, load_ongc, ONGC_TYPE_MAP
+from starplot.data.dsos import DsoType, load, ONGC_TYPE_MAP
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject, SkyObjectManager
 from starplot.geometry import to_24h
@@ -12,7 +12,7 @@ from starplot import geod
 class DsoManager(SkyObjectManager):
     @classmethod
     def all(cls):
-        all_dsos = load_ongc()
+        all_dsos = load()
 
         for d in all_dsos.itertuples():
             magnitude = d.mag_v or d.mag_b or None
