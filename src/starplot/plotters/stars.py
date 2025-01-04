@@ -15,39 +15,14 @@ from starplot.styles import ObjectStyle, use_style
 
 
 class StarPlotterMixin:
-    @cache
-    def _load_stars(self, catalog, limiting_magnitude=None):
-        stardata = stars.load(catalog)
+    def _load_stars(self, catalog, filters=None):
+        extent = self._extent_mask()
 
-        ra_buffer = (self.ra_max - self.ra_min) / 4
-        dec_buffer = (self.dec_max - self.dec_min) / 4
-
-        if limiting_magnitude is not None:
-            stardata = stardata[(stardata["magnitude"] <= limiting_magnitude)]
-
-        stardata = stardata[
-            (stardata["dec_degrees"] < self.dec_max + dec_buffer)
-            & (stardata["dec_degrees"] > self.dec_min - dec_buffer)
-        ]
-
-        if self.ra_max <= 24 and self.ra_min >= 0:
-            stardata = stardata[
-                (stardata["ra_hours"] < self.ra_max + ra_buffer)
-                & (stardata["ra_hours"] > self.ra_min - ra_buffer)
-            ]
-        elif self.ra_max > 24:
-            # handle wrapping
-            stardata = stardata[
-                (stardata["ra_hours"] > self.ra_min - ra_buffer)
-                | (stardata["ra_hours"] < self.ra_max - 24 + ra_buffer)
-            ]
-        elif self.ra_min < 0:
-            stardata = stardata[
-                (stardata["ra_hours"] > 24 + self.ra_min - ra_buffer)
-                | (stardata["ra_hours"] < self.ra_max + ra_buffer)
-            ]
-
-        return stardata
+        return stars.load(
+            extent=extent,
+            catalog=catalog,
+            filters=filters,
+        )
 
     def _scatter_stars(self, ras, decs, sizes, alphas, colors, style=None, **kwargs):
         style = style or self.style.star
@@ -175,7 +150,8 @@ class StarPlotterMixin:
     @use_style(ObjectStyle, "star")
     def stars(
         self,
-        mag: float = 6.0,
+        where: list = None,
+        where_labels: list = None,
         catalog: StarCatalog = StarCatalog.HIPPARCOS,
         style: ObjectStyle = None,
         rasterize: bool = False,
@@ -183,8 +159,6 @@ class StarPlotterMixin:
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
         label_fn: Callable[[Star], str] = None,
-        where: list = None,
-        where_labels: list = None,
         labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
         bayer_labels: bool = False,
@@ -196,7 +170,8 @@ class StarPlotterMixin:
         Plots stars
 
         Args:
-            mag: Limiting magnitude of stars to plot. For more control of what stars to plot, use the `where` kwarg. **Note:** if you pass `mag` and `where` then `mag` will be ignored
+            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             catalog: The catalog of stars to use: "hipparcos", "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
             style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
@@ -204,8 +179,6 @@ class StarPlotterMixin:
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
             label_fn: Callable for determining the label of each star. If `None`, then the names in the `labels` kwarg will be used.
-            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted.
@@ -224,15 +197,10 @@ class StarPlotterMixin:
         where = where or []
         stars_to_index = []
 
-        if where:
-            mag = None
+        labels = {} if labels is None else {**STAR_NAMES, **labels}
 
-        if labels is None:
-            labels = {}
-        else:
-            labels = {**STAR_NAMES, **labels}
+        nearby_stars_df = self._load_stars(catalog, filters=where)
 
-        nearby_stars_df = self._load_stars(catalog, mag)
         nearby_stars = SkyfieldStar.from_dataframe(nearby_stars_df)
         astrometric = self.ephemeris["earth"].at(self.timescale).observe(nearby_stars)
         stars_ra, stars_dec, _ = astrometric.radec()
@@ -249,13 +217,8 @@ class StarPlotterMixin:
             obj = from_tuple(star, catalog)
             ctr += 1
 
-            if not all([e.evaluate(obj) for e in where]):
-                continue
-
             if self._coordinate_system == CoordinateSystem.RA_DEC:
-                data_xy = self._proj.transform_point(
-                    star.ra * -1, star.dec, self._geodetic
-                )
+                data_xy = self._proj.transform_point(star.ra, star.dec, self._crs)
             elif self._coordinate_system == CoordinateSystem.AZ_ALT:
                 data_xy = self._proj.transform_point(star.x, star.y, self._crs)
             else:

@@ -32,3 +32,5 @@ class DataFiles(str, Enum):
     BIG_SKY = _DOWNLOAD_PATH / "stars.bigsky.parquet"
 
     DATABASE = DATA_PATH / "sky.db"
+
+    STARS = DATA_PATH / "stars.parquet"

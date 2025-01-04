@@ -5,13 +5,15 @@ from shapely import (
     MultiPoint,
 )
 from matplotlib.collections import LineCollection
+from ibis import _
 
 from starplot.coordinates import CoordinateSystem
-from starplot.data import DataFiles, constellations as condata, stars, db
+from starplot.data import DataFiles, constellations as condata, db
 from starplot.data.constellations import (
     CONSTELLATIONS_FULL_NAMES,
     CONSTELLATION_HIP_IDS,
 )
+from starplot.data.constellation_stars import CONSTELLATION_STAR_COORDS
 from starplot.models.constellation import from_tuple as constellation_from_tuple
 from starplot.projections import Projection
 from starplot.styles import PathStyle, LineStyle, LabelStyle
@@ -52,20 +54,10 @@ class ConstellationPlotterMixin:
         ctr = 0
 
         con = db.connect()
-        mw = con.table("constellations")
+        t = con.table("constellations")
         extent = self._extent_mask()
 
-        constellations_df = mw.filter(mw.geometry.intersects(extent)).to_pandas()
-
-        # constellations_gdf = gpd.read_file(
-        #     DataFiles.CONSTELLATIONS.value,
-        #     engine="pyogrio",
-        #     use_arrow=True,
-        #     bbox=self._extent_mask(),
-        # )
-
-        # TODO : avoid loading stars
-        stars_df = stars.load("hipparcos")
+        constellations_df = t.filter(_.geometry.intersects(extent)).to_pandas()
 
         if constellations_df.empty:
             return
@@ -93,14 +85,12 @@ class ConstellationPlotterMixin:
             inbounds = False
 
             for s1_hip, s2_hip in hiplines:
-                s1 = stars_df.loc[s1_hip]
-                s2 = stars_df.loc[s2_hip]
 
-                s1_ra = s1.ra_hours * 15
-                s2_ra = s2.ra_hours * 15
-
-                s1_dec = s1.dec_degrees
-                s2_dec = s2.dec_degrees
+                if not CONSTELLATION_STAR_COORDS.get(s2_hip):
+                    # print(s2_hip)
+                    continue
+                s1_ra, s1_dec = CONSTELLATION_STAR_COORDS.get(s1_hip)
+                s2_ra, s2_dec = CONSTELLATION_STAR_COORDS.get(s2_hip)
 
                 if s1_ra - s2_ra > 60:
                     s2_ra += 360
@@ -108,7 +98,7 @@ class ConstellationPlotterMixin:
                 elif s2_ra - s1_ra > 60:
                     s1_ra += 360
 
-                if not inbounds and self.in_bounds(s1.ra_hours, s1_dec):
+                if not inbounds and self.in_bounds(s1_ra / 15, s1_dec):
                     inbounds = True
 
                 if self._coordinate_system == CoordinateSystem.RA_DEC:
@@ -176,8 +166,6 @@ class ConstellationPlotterMixin:
                     bbox,
                     None,
                 )
-        # self._plot_constellation_labels(style.label, labels_to_plot)
-        # self._plot_constellation_labels_experimental(style.label, labels_to_plot)
 
     def _plot_constellation_labels(
         self,

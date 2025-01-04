@@ -1,8 +1,12 @@
 from enum import Enum
+from functools import cache
 
+
+from ibis import _
 from pandas import read_parquet
 
-from starplot.data import bigsky, DataFiles
+from starplot.data import bigsky, DataFiles, db
+from starplot.geometry import GLOBAL_EXTENT
 
 STAR_NAMES = {
     677: "Alpheratz",
@@ -467,7 +471,31 @@ def load_bigsky():
     return bigsky.load(DataFiles.BIG_SKY)
 
 
-def load(catalog: StarCatalog = StarCatalog.HIPPARCOS):
+def load(extent=None, catalog: StarCatalog = StarCatalog.HIPPARCOS, filters=None):
+    filters = filters or []
+    con = db.connect()
+
+    stars = con.read_parquet(DataFiles.BIG_SKY_MAG11.value, "stars")
+
+    stars = stars.mutate(
+        epoch_year=2000,
+        ra=_.ra_degrees,
+        dec=_.dec_degrees,
+        ra_hours=_.ra_degrees / 15,
+        # stars parquet does not have geometry field
+        geometry=_.ra_degrees.point(_.dec_degrees),
+    )
+
+    if extent:
+        stars = stars.filter(stars.geometry.intersects(extent))
+
+    for f in filters:
+        stars = stars.filter(f)
+
+    return stars.to_pandas()
+
+
+def load_old(catalog: StarCatalog = StarCatalog.HIPPARCOS):
     if catalog == StarCatalog.HIPPARCOS:
         return read_parquet(DataFiles.HIPPARCOS)
     elif catalog == StarCatalog.BIG_SKY_MAG11:

@@ -15,4 +15,3 @@ rtree==1.3.0
 requests==2.31.0
 duckdb==1.1.3
 ibis-framework[duckdb,geospatial]==9.5.0
-

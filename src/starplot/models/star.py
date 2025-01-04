@@ -114,12 +114,13 @@ def from_tuple(star: tuple, catalog: StarCatalog) -> Star:
     ra, dec = star.ra_hours, star.dec_degrees
 
     if catalog == StarCatalog.HIPPARCOS:
-        hip_id = star.Index
+        # hip_id = star.hip_id
+        hip_id = star.hip
         tyc_id = None
         ccdm = None
     else:
-        hip_id = star.hip
-        tyc_id = star.Index
+        hip_id = star.hip_id
+        tyc_id = star.tyc_id
         ccdm = star.ccdm
 
     return Star(

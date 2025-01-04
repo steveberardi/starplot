@@ -1,7 +1,10 @@
-from shapely import Polygon, MultiPolygon
+from functools import cache
+
+from shapely import Polygon, MultiPolygon, transform
 
 
 class ExtentMaskMixin:
+    @cache
     def _extent_mask(self):
         """
         Returns shapely geometry objects of extent (RA = 0...360)
@@ -12,7 +15,6 @@ class ExtentMaskMixin:
             coords = [
                 [self.ra_min * 15, self.dec_min],
                 [self.ra_max * 15, self.dec_min],
-                # [self.ra_min * 15, self.dec_max],
                 [self.ra_max * 15, self.dec_max],
                 [self.ra_min * 15, self.dec_max],
                 [self.ra_min * 15, self.dec_min],

@@ -7,6 +7,16 @@ from shapely.geometry import Point, Polygon, MultiPolygon
 
 from starplot import geod, utils
 
+GLOBAL_EXTENT = Polygon(
+    [
+        [0, -90],
+        [360, -90],
+        [360, 90],
+        [0, 90],
+        [0, -90],
+    ]
+)
+
 
 def circle(center, diameter_degrees):
     points = geod.ellipse(
@@ -26,10 +36,10 @@ def to_24h(geometry: Union[Point, Polygon, MultiPolygon]):
     geometry_type = str(geometry.geom_type)
 
     if geometry_type == "MultiPolygon":
-        polygons = [transform(p, lambda c: c * [1/15, 1]) for p in geometry.geoms]
+        polygons = [transform(p, lambda c: c * [1 / 15, 1]) for p in geometry.geoms]
         return MultiPolygon(polygons)
-    
-    return transform(geometry, lambda c: c * [1/15, 1])
+
+    return transform(geometry, lambda c: c * [1 / 15, 1])
 
 
 def unwrap_polygon(polygon: Polygon) -> Polygon:

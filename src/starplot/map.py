@@ -248,8 +248,8 @@ class MapPlot(
             bbox=bbox,
         )
 
-    def _load_stars(self, catalog, limiting_magnitude):
-        df = super()._load_stars(catalog, limiting_magnitude)
+    def _load_stars(self, catalog, filters):
+        df = super()._load_stars(catalog, filters)
 
         if self.projection == Projection.ZENITH:
             # filter stars for zenith plots to only include those above horizon
