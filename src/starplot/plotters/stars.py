@@ -207,7 +207,7 @@ class StarPlotterMixin:
 
         nearby_stars_df = star_results.to_pandas()
 
-        if self.projection == "zenith":
+        if getattr(self, "projection", None) == "zenith":
             # filter stars for zenith plots to only include those above horizon
             earth = self.ephemeris["earth"]
             self.location = earth + wgs84.latlon(self.lat, self.lon)
