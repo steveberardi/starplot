@@ -1,9 +1,8 @@
 from typing import Callable, Mapping
 
 import rtree
-from skyfield.api import Star as SkyfieldStar
-
 import numpy as np
+from skyfield.api import Star as SkyfieldStar, wgs84
 
 from starplot import callables
 from starplot.coordinates import CoordinateSystem
@@ -207,6 +206,22 @@ class StarPlotterMixin:
         label_row_ids = star_results_labeled.to_pandas()["rowid"].tolist()
 
         nearby_stars_df = star_results.to_pandas()
+
+        if self.projection == "zenith":
+            # filter stars for zenith plots to only include those above horizon
+            earth = self.ephemeris["earth"]
+            self.location = earth + wgs84.latlon(self.lat, self.lon)
+
+            stars_apparent = (
+                self.location.at(self.timescale)
+                .observe(SkyfieldStar.from_dataframe(nearby_stars_df))
+                .apparent()
+            )
+            # we only need altitude
+            stars_alt, _, _ = stars_apparent.altaz()
+            nearby_stars_df["alt"] = stars_alt.degrees
+            nearby_stars_df = nearby_stars_df[nearby_stars_df["alt"] > 0]
+
 
         nearby_stars = SkyfieldStar.from_dataframe(nearby_stars_df)
         astrometric = self.ephemeris["earth"].at(self.timescale).observe(nearby_stars)

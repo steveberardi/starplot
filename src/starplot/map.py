@@ -248,25 +248,25 @@ class MapPlot(
             bbox=bbox,
         )
 
-    def _load_stars(self, catalog, filters):
-        df = super()._load_stars(catalog, filters)
+    # def _load_stars(self, catalog, filters):
+    #     df = super()._load_stars(catalog, filters)
 
-        if self.projection == Projection.ZENITH:
-            # filter stars for zenith plots to only include those above horizon
-            earth = self.ephemeris["earth"]
-            self.location = earth + wgs84.latlon(self.lat, self.lon)
+    #     if self.projection == Projection.ZENITH:
+    #         # filter stars for zenith plots to only include those above horizon
+    #         earth = self.ephemeris["earth"]
+    #         self.location = earth + wgs84.latlon(self.lat, self.lon)
 
-            stars_apparent = (
-                self.location.at(self.timescale)
-                .observe(SkyfieldStar.from_dataframe(df))
-                .apparent()
-            )
-            # we only need altitude
-            stars_alt, _, _ = stars_apparent.altaz()
-            df["alt"] = stars_alt.degrees
-            df = df[df["alt"] > 0]
+    #         stars_apparent = (
+    #             self.location.at(self.timescale)
+    #             .observe(SkyfieldStar.from_dataframe(df))
+    #             .apparent()
+    #         )
+    #         # we only need altitude
+    #         stars_alt, _, _ = stars_apparent.altaz()
+    #         df["alt"] = stars_alt.degrees
+    #         df = df[df["alt"] > 0]
 
-        return df
+    #     return df
 
     @use_style(ObjectStyle, "zenith")
     def zenith(
