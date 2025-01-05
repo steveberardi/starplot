@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from matplotlib import path, patches, ticker
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import Polygon
-from skyfield.api import Star as SkyfieldStar, wgs84
+from skyfield.api import wgs84
 import geopandas as gpd
 import numpy as np
 
@@ -34,24 +34,6 @@ from starplot.utils import lon_to_ra, ra_to_lon
 
 
 DEFAULT_MAP_STYLE = PlotStyle()  # .extend(extensions.MAP)
-
-
-def points(start, end, num_points=100):
-    """Generates points along a line segment.
-
-    Args:
-        start (tuple): (x, y) coordinates of the starting point.
-        end (tuple): (x, y) coordinates of the ending point.
-        num_points (int): Number of points to generate.
-
-    Returns:
-        list: List of (x, y) coordinates of the generated points.
-    """
-
-    x_coords = np.linspace(start[0], end[0], num_points)
-    y_coords = np.linspace(start[1], end[1], num_points)
-
-    return list(zip(x_coords, y_coords))
 
 
 class MapPlot(
@@ -247,26 +229,6 @@ class MapPlot(
             use_arrow=True,
             bbox=bbox,
         )
-
-    # def _load_stars(self, catalog, filters):
-    #     df = super()._load_stars(catalog, filters)
-
-    #     if self.projection == Projection.ZENITH:
-    #         # filter stars for zenith plots to only include those above horizon
-    #         earth = self.ephemeris["earth"]
-    #         self.location = earth + wgs84.latlon(self.lat, self.lon)
-
-    #         stars_apparent = (
-    #             self.location.at(self.timescale)
-    #             .observe(SkyfieldStar.from_dataframe(df))
-    #             .apparent()
-    #         )
-    #         # we only need altitude
-    #         stars_alt, _, _ = stars_apparent.altaz()
-    #         df["alt"] = stars_alt.degrees
-    #         df = df[df["alt"] > 0]
-
-    #     return df
 
     @use_style(ObjectStyle, "zenith")
     def zenith(
