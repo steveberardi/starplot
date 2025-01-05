@@ -222,7 +222,6 @@ class StarPlotterMixin:
             nearby_stars_df["alt"] = stars_alt.degrees
             nearby_stars_df = nearby_stars_df[nearby_stars_df["alt"] > 0]
 
-
         nearby_stars = SkyfieldStar.from_dataframe(nearby_stars_df)
         astrometric = self.ephemeris["earth"].at(self.timescale).observe(nearby_stars)
         stars_ra, stars_dec, _ = astrometric.radec()
