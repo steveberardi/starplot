@@ -1,5 +1,4 @@
 from typing import Callable, Mapping
-from functools import cache
 
 import rtree
 from skyfield.api import Star as SkyfieldStar
@@ -156,7 +155,6 @@ class StarPlotterMixin:
         where_labels: list = None,
         catalog: StarCatalog = StarCatalog.HIPPARCOS,
         style: ObjectStyle = None,
-        rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
@@ -176,7 +174,6 @@ class StarPlotterMixin:
             where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             catalog: The catalog of stars to use: "hipparcos", "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
             style: If `None`, then the plot's style for stars will be used
-            rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
@@ -302,7 +299,6 @@ class StarPlotterMixin:
             edgecolors=style.marker.edge_color.as_hex()
             if style.marker.edge_color
             else "none",
-            rasterized=rasterize,
         )
 
         self._add_legend_handle_marker(legend_label, style.marker)
