@@ -1,8 +1,5 @@
-from pathlib import Path
-
 import ibis
 from ibis import _
-from pandas import read_parquet
 
 from starplot.data import bigsky, DataFiles, db
 
@@ -486,9 +483,6 @@ def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=
     if extent:
         stars = stars.filter(stars.geometry.intersects(extent))
 
-    for f in filters:
-        stars = stars.filter(f)
-
     stars = stars.join(designations, "hip", how="left")
 
-    return stars
+    return stars.filter(*filters)

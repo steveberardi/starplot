@@ -1,5 +1,6 @@
 import numpy as np
-from ibis import _, coalesce
+import ibis
+from ibis import _
 
 from starplot.data import db
 
@@ -140,17 +141,14 @@ def load(extent=None, filters=None):
     con = db.connect()
     dsos = con.table("deep_sky_objects")
 
-    dsos = dsos.mutate(magnitude=coalesce(_.mag_v, _.mag_b, None))
+    dsos = dsos.mutate(
+        magnitude=ibis.coalesce(_.mag_v, _.mag_b, None),
+        rowid=ibis.row_number(),
+    )
 
     if extent:
         dsos = dsos.filter(_.geometry.intersects(extent))
 
     filters.extend([_.ra_degrees.notnull() & _.dec_degrees.notnull()])
 
-    for f in filters:
-        dsos = dsos.filter(f)
-
-    df = dsos.to_pandas()
-    df = df.replace({np.nan: None})
-
-    return df
+    return dsos.filter(*filters)

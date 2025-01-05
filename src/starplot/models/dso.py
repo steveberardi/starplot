@@ -166,7 +166,7 @@ def from_tuple(d: tuple) -> DSO:
 
     geometry = to_24h(geometry)
 
-    return DSO(
+    dso = DSO(
         name=d.name,
         ra=d.ra_degrees / 15,
         dec=d.dec_degrees,
@@ -181,3 +181,7 @@ def from_tuple(d: tuple) -> DSO:
         ic=d.ic,
         geometry=geometry,
     )
+
+    dso._row_id = getattr(d, "rowid", None)
+
+    return dso

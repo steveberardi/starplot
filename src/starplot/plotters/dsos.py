@@ -1,6 +1,7 @@
 from typing import Callable, Mapping
 
 from ibis import _
+import numpy as np
 
 from starplot.data.dsos import (
     DsoType,
@@ -135,9 +136,18 @@ class DsoPlotterMixin:
             legend_labels = {**DSO_LEGEND_LABELS, **legend_labels}
 
         extent = self._extent_mask()
-        nearby_dsos = load(extent=extent, filters=where)
+        dso_results = load(extent=extent, filters=where)
 
-        for d in nearby_dsos.itertuples():
+        dso_results_labeled = dso_results
+        for f in where_labels:
+            dso_results_labeled = dso_results_labeled.filter(f)
+
+        label_row_ids = dso_results_labeled.to_pandas()["rowid"].tolist()
+
+        results_df = dso_results.to_pandas()
+        results_df = results_df.replace({np.nan: None})
+
+        for d in results_df.itertuples():
             ra = d.ra_degrees
             dec = d.dec_degrees
             dso_type = ONGC_TYPE_MAP[d.type]
@@ -153,7 +163,7 @@ class DsoPlotterMixin:
             _alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
             style.marker.alpha = _alpha_fn(_dso)
 
-            if where_labels and not all([e.evaluate(_dso) for e in where_labels]):
+            if _dso._row_id not in label_row_ids:
                 label = None
 
             if true_size and d.size_deg2 is not None:

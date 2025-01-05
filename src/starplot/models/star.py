@@ -125,9 +125,6 @@ def from_tuple(star: tuple) -> Star:
         name=getattr(star, "name", None),
         geometry=star.geometry,
     )
-    s._row_id = (getattr(star, "rowid", None),)
-
-    if s._row_id:
-        s._row_id = s._row_id[0]
+    s._row_id = getattr(star, "rowid", None)
 
     return s

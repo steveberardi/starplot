@@ -53,7 +53,7 @@ def to_parquet(source_path: str, destination_path: str):
     )
 
     # df = df.astype(dtype= {
-    #         'tyc_id': "object", 
+    #         'tyc_id': "object",
     #         'hip_id': "int64",
     #         "ccdm": "object",
     #         "magnitude": "float64",
@@ -64,7 +64,6 @@ def to_parquet(source_path: str, destination_path: str):
     #         "dec_mas_per_year": "float64",
     #         "parallax_mas": "float64",
     #     })
-   
 
     df = df.assign(epoch_year=2000)
 
