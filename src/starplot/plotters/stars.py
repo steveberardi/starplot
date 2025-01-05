@@ -12,6 +12,7 @@ from starplot.data import bayer, stars, flamsteed
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, use_style
+from starplot.profile import profile
 
 
 class StarPlotterMixin:
@@ -147,6 +148,7 @@ class StarPlotterMixin:
         )
         return df
 
+    @profile
     @use_style(ObjectStyle, "star")
     def stars(
         self,

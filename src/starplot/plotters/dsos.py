@@ -12,6 +12,7 @@ from starplot.data.dsos import (
 )
 from starplot.models.dso import DSO, from_tuple
 from starplot.styles import MarkerSymbolEnum
+from starplot.profile import profile
 
 
 class DsoPlotterMixin:
@@ -94,6 +95,7 @@ class DsoPlotterMixin:
         where.append(_.type.isin(nebula_types))
         self.dsos(where=where, **kwargs)
 
+    @profile
     def dsos(
         self,
         true_size: bool = True,
@@ -118,8 +120,6 @@ class DsoPlotterMixin:
         """
 
         # TODO: add kwarg styles
-
-        self.logger.debug("Plotting DSOs...")
 
         where = where or []
         where_labels = where_labels or []

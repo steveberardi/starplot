@@ -91,7 +91,9 @@ con.sql("DROP TABLE IF EXISTS constellation_borders")
 con.sql(
     f"CREATE TABLE constellation_borders AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{str(DataFiles.CONSTELLATION_BORDERS.value)}'));"
 )
-con.sql("CREATE INDEX constellation_borders_geometry_idx ON constellation_borders USING RTREE (geometry);")
+con.sql(
+    "CREATE INDEX constellation_borders_geometry_idx ON constellation_borders USING RTREE (geometry);"
+)
 
 
 # Deep Sky Objects

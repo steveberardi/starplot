@@ -16,6 +16,7 @@ from starplot.data.constellations import (
 from starplot.data.constellation_stars import CONSTELLATION_STAR_COORDS
 from starplot.models.constellation import from_tuple as constellation_from_tuple
 from starplot.projections import Projection
+from starplot.profile import profile
 from starplot.styles import PathStyle, LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
@@ -34,6 +35,7 @@ DEFAULT_AUTO_ADJUST_SETTINGS = {
 
 
 class ConstellationPlotterMixin:
+    @profile
     @use_style(LineStyle, "constellation_lines")
     def constellations(
         self,
@@ -200,6 +202,7 @@ class ConstellationPlotterMixin:
             if label is not None:
                 self._constellation_labels.append(label)
 
+    @profile
     @use_style(LineStyle, "constellation_borders")
     def constellation_borders(self, style: LineStyle = None):
         """Plots the constellation borders
@@ -207,8 +210,6 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
         """
-        self.logger.debug("Plotting constellation borders...")
-
         constellation_borders = self._read_geo_package(
             DataFiles.CONSTELLATION_BORDERS.value
         )
@@ -302,6 +303,7 @@ class ConstellationPlotterMixin:
                 gid="constellations-label-name",
             )
 
+    @profile
     @use_style(LabelStyle, "constellation_labels")
     def constellation_labels(
         self,
@@ -325,7 +327,6 @@ class ConstellationPlotterMixin:
             make this work without plotting constellations first
 
         """
-        self.logger.debug("Plotting constellation labels...")
 
         if auto_adjust:
             settings = DEFAULT_AUTO_ADJUST_SETTINGS

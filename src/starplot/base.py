@@ -36,7 +36,7 @@ from starplot.geometry import (
     unwrap_polygon,
     random_point_in_polygon_at_distance,
 )
-
+from starplot.profile import profile
 
 LOGGER = logging.getLogger("starplot")
 LOG_HANDLER = logging.StreamHandler()
@@ -522,6 +522,7 @@ class BasePlot(ABC):
         if self.fig:
             plt.close(self.fig)
 
+    @profile
     def export(self, filename: str, format: str = "png", padding: float = 0, **kwargs):
         """Exports the plot to an image file.
 
