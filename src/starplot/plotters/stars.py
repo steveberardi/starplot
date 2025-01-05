@@ -59,7 +59,7 @@ class StarPlotterMixin:
         self,
         star_objects: list[Star],
         star_sizes: list[float],
-        where_labels: list,
+        label_row_ids: list,
         style: ObjectStyle,
         labels: Mapping[str, str],
         bayer_labels: bool,
@@ -71,7 +71,7 @@ class StarPlotterMixin:
 
         # Plot all star common names first
         for i, s in enumerate(star_objects):
-            if where_labels and not all([e.evaluate(s) for e in where_labels]):
+            if s._row_id not in label_row_ids:
                 continue
 
             if (
@@ -186,7 +186,6 @@ class StarPlotterMixin:
             bayer_labels: If True, then Bayer labels for stars will be plotted.
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
         """
-        self.logger.debug("Plotting stars...")
 
         # fallback to style if callables are None
         color_hex = (
@@ -197,11 +196,20 @@ class StarPlotterMixin:
         color_fn = color_fn or (lambda d: color_hex)
 
         where = where or []
+        where_labels = where_labels or []
         stars_to_index = []
 
         labels = {} if labels is None else {**STAR_NAMES, **labels}
 
-        nearby_stars_df = self._load_stars(catalog, filters=where)
+        star_results = self._load_stars(catalog, filters=where)
+        
+        star_results_labeled = star_results
+        for f in where_labels:
+            star_results_labeled = star_results_labeled.filter(f)
+        
+        label_row_ids = star_results_labeled.to_pandas()['rowid'].tolist()
+
+        nearby_stars_df = star_results.to_pandas()
 
         nearby_stars = SkyfieldStar.from_dataframe(nearby_stars_df)
         astrometric = self.ephemeris["earth"].at(self.timescale).observe(nearby_stars)
@@ -216,7 +224,7 @@ class StarPlotterMixin:
         ctr = 0
 
         for star in nearby_stars_df.itertuples():
-            obj = from_tuple(star, catalog)
+            obj = from_tuple(star)
             ctr += 1
 
             if self._coordinate_system == CoordinateSystem.RA_DEC:
@@ -306,7 +314,7 @@ class StarPlotterMixin:
             self._star_labels(
                 star_objects,
                 sizes,
-                where_labels,
+                label_row_ids,
                 style,
                 labels,
                 bayer_labels,

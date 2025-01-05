@@ -1,12 +1,9 @@
-from enum import Enum
-from functools import cache
-
+import ibis
 
 from ibis import _
 from pandas import read_parquet
 
 from starplot.data import bigsky, DataFiles, db
-from starplot.geometry import GLOBAL_EXTENT
 
 STAR_NAMES = {
     677: "Alpheratz",
@@ -436,7 +433,7 @@ STAR_NAMES = {
 """Star names by their HIP id. You can override these values when calling `stars()`"""
 
 
-class StarCatalog(str, Enum):
+class StarCatalog:
     """Built-in star catalogs"""
 
     HIPPARCOS = "hipparcos"
@@ -476,6 +473,7 @@ def load(extent=None, catalog: StarCatalog = StarCatalog.HIPPARCOS, filters=None
     con = db.connect()
 
     stars = con.read_parquet(DataFiles.BIG_SKY_MAG11.value, "stars")
+    designations = con.table("star_designations")
 
     stars = stars.mutate(
         epoch_year=2000,
@@ -484,6 +482,7 @@ def load(extent=None, catalog: StarCatalog = StarCatalog.HIPPARCOS, filters=None
         ra_hours=_.ra_degrees / 15,
         # stars parquet does not have geometry field
         geometry=_.ra_degrees.point(_.dec_degrees),
+        rowid=ibis.row_number(),
     )
 
     if extent:
@@ -492,7 +491,9 @@ def load(extent=None, catalog: StarCatalog = StarCatalog.HIPPARCOS, filters=None
     for f in filters:
         stars = stars.filter(f)
 
-    return stars.to_pandas()
+    stars = stars.join(designations, "hip", how="left")
+
+    return stars
 
 
 def load_old(catalog: StarCatalog = StarCatalog.HIPPARCOS):

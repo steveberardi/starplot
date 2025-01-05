@@ -109,28 +109,25 @@ class Star(SkyObject):
         pass
 
 
-def from_tuple(star: tuple, catalog: StarCatalog) -> Star:
-    m = star.magnitude
+def from_tuple(star: tuple) -> Star:
     ra, dec = star.ra_hours, star.dec_degrees
 
-    if catalog == StarCatalog.HIPPARCOS:
-        # hip_id = star.hip_id
-        hip_id = star.hip
-        tyc_id = None
-        ccdm = None
-    else:
-        hip_id = star.hip_id
-        tyc_id = star.tyc_id
-        ccdm = star.ccdm
+    hip = getattr(star, "hip", None)
 
-    return Star(
+    s = Star(
         ra=ra,
         dec=dec,
-        magnitude=m,
-        bv=star.bv,
-        hip=hip_id,
-        tyc=tyc_id,
-        ccdm=ccdm,
-        name=STAR_NAMES.get(hip_id) if np.isfinite(hip_id) else None,
+        hip=hip,
+        magnitude=star.magnitude,
+        bv=getattr(star, "bv", None),
+        tyc=getattr(star, "tyc_id", None),
+        ccdm=getattr(star, "ccdm", None),
+        name=getattr(star, "name", None),
         geometry=star.geometry,
     )
+    s._row_id = getattr(star, "rowid", None),
+
+    if s._row_id:
+        s._row_id = s._row_id[0]
+
+    return s

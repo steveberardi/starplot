@@ -5,7 +5,7 @@ import pandas as pd
 from starplot.data import DATA_PATH, DataFiles, utils
 
 
-BIG_SKY_VERSION = "0.1.0"
+BIG_SKY_VERSION = "0.4.0"
 
 BIG_SKY_FILENAME = "bigsky.stars.csv.gz"
 
