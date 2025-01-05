@@ -22,7 +22,7 @@ class ExperimentalPlotterMixin:
         from shapely.ops import unary_union
 
         constellation_borders = gpd.read_file(
-            DataFiles.CONSTELLATIONS.value,
+            DataFiles.CONSTELLATIONS,
             engine="pyogrio",
             use_arrow=True,
             bbox=self._extent_mask(),

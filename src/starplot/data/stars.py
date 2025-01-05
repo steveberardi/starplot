@@ -1,5 +1,6 @@
-import ibis
+from pathlib import Path
 
+import ibis
 from ibis import _
 from pandas import read_parquet
 
@@ -436,9 +437,6 @@ STAR_NAMES = {
 class StarCatalog:
     """Built-in star catalogs"""
 
-    HIPPARCOS = "hipparcos"
-    """Hipparcos Catalog = 118,218 stars"""
-
     BIG_SKY_MAG11 = "big-sky-mag11"
     """
     [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 900k stars up to magnitude 11
@@ -461,18 +459,18 @@ class StarCatalog:
     """
 
 
-def load_bigsky():
-    if not bigsky.exists():
-        bigsky.download()
-
-    return bigsky.load(DataFiles.BIG_SKY)
-
-
-def load(extent=None, catalog: StarCatalog = StarCatalog.HIPPARCOS, filters=None):
+def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=None):
     filters = filters or []
     con = db.connect()
 
-    stars = con.read_parquet(DataFiles.BIG_SKY_MAG11.value, "stars")
+    if catalog == StarCatalog.BIG_SKY_MAG11:
+        stars = con.read_parquet(DataFiles.BIG_SKY_MAG11, "stars")
+    elif catalog == StarCatalog.BIG_SKY:
+        bigsky.download_if_not_exists()
+        stars = con.read_parquet(DataFiles.BIG_SKY, "stars")
+    else:
+        raise ValueError("Unrecognized star catalog.")
+
     designations = con.table("star_designations")
 
     stars = stars.mutate(
@@ -494,14 +492,3 @@ def load(extent=None, catalog: StarCatalog = StarCatalog.HIPPARCOS, filters=None
     stars = stars.join(designations, "hip", how="left")
 
     return stars
-
-
-def load_old(catalog: StarCatalog = StarCatalog.HIPPARCOS):
-    if catalog == StarCatalog.HIPPARCOS:
-        return read_parquet(DataFiles.HIPPARCOS)
-    elif catalog == StarCatalog.BIG_SKY_MAG11:
-        return bigsky.load(DataFiles.BIG_SKY_MAG11)
-    elif catalog == StarCatalog.BIG_SKY:
-        return bigsky.load(DataFiles.BIG_SKY)
-    else:
-        raise ValueError("Unrecognized star catalog.")

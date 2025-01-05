@@ -9,8 +9,9 @@ HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE.parent / "raw" / "iau"
 
 
-
-hips = list(set().union(bayer.hip.keys(), flamsteed.hip.keys(), stars.STAR_NAMES.keys()))
+hips = list(
+    set().union(bayer.hip.keys(), flamsteed.hip.keys(), stars.STAR_NAMES.keys())
+)
 hips.sort()
 
 star_records = [
@@ -24,21 +25,26 @@ star_records = [
 ]
 
 
-
 df = pd.DataFrame.from_records(star_records)
 
 df.set_index("hip")
 
-schema = pa.schema([
-    ('hip', pa.int32()),
-    ('name', pa.string()),
-    ('bayer', pa.string()),
-    ('flamsteed', pa.int32()),
-])
+schema = pa.schema(
+    [
+        ("hip", pa.int32()),
+        ("name", pa.string()),
+        ("bayer", pa.string()),
+        ("flamsteed", pa.int32()),
+    ]
+)
 
 df.to_csv("temp/star_designations.csv")
-df.to_parquet("temp/star_designations.parquet", engine='pyarrow', schema=schema, compression="gzip")
+df.to_parquet(
+    "temp/star_designations.parquet",
+    engine="pyarrow",
+    schema=schema,
+    compression="gzip",
+)
 
 
 print("Total: " + str(len(star_records)))
-

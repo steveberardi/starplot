@@ -6,13 +6,13 @@ from starplot.data import DataFiles
 
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 
-con = ibis.duckdb.connect(DataFiles.DATABASE.value)
+con = ibis.duckdb.connect(DataFiles.DATABASE)
 
 ibis.options.interactive = True
 
 print(con.list_tables())
 
-con = duckdb.connect(DataFiles.DATABASE.value)
+con = duckdb.connect(DataFiles.DATABASE)
 con.install_extension("spatial")
 con.load_extension("spatial")
 
@@ -26,7 +26,7 @@ con.sql("CREATE INDEX milky_way_geometry_idx ON milky_way USING RTREE (geometry)
 # Constellations
 con.sql("DROP TABLE IF EXISTS constellations")
 con.sql(
-    f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{str(DataFiles.CONSTELLATIONS.value)}'));"
+    f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{str(DataFiles.CONSTELLATIONS)}'));"
 )
 con.sql(
     "CREATE INDEX constellations_boundary_idx ON constellations USING RTREE (geometry);"
@@ -34,7 +34,7 @@ con.sql(
 
 con.sql("DROP TABLE IF EXISTS constellation_borders")
 con.sql(
-    f"CREATE TABLE constellation_borders AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{str(DataFiles.CONSTELLATION_BORDERS.value)}'));"
+    f"CREATE TABLE constellation_borders AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{str(DataFiles.CONSTELLATION_BORDERS)}'));"
 )
 con.sql(
     "CREATE INDEX constellation_borders_geometry_idx ON constellation_borders USING RTREE (geometry);"

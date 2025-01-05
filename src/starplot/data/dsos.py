@@ -1,39 +1,7 @@
 import numpy as np
 from ibis import _, coalesce
 
-from starplot.data import DataFiles, db
-
-
-class __DsoType:
-    """
-    Types of deep sky objects (DSOs), as designated in OpenNGC
-    """
-
-    STAR = "Star"
-    DOUBLE_STAR = "Double star"
-    ASSOCIATION_OF_STARS = "Association of stars"
-
-    OPEN_CLUSTER = "Open Cluster"
-    GLOBULAR_CLUSTER = "Globular Cluster"
-
-    GALAXY = "Galaxy"
-    GALAXY_PAIR = "Galaxy Pair"
-    GALAXY_TRIPLET = "Galaxy Triplet"
-    GROUP_OF_GALAXIES = "Group of galaxies"
-
-    NEBULA = "Nebula"
-    PLANETARY_NEBULA = "Planetary Nebula"
-    EMISSION_NEBULA = "Emission Nebula"
-    STAR_CLUSTER_NEBULA = "Star cluster + Nebula"
-    REFLECTION_NEBULA = "Reflection Nebula"
-
-    DARK_NEBULA = "Dark Nebula"
-    HII_IONIZED_REGION = "HII Ionized region"
-    SUPERNOVA_REMNANT = "Supernova remnant"
-    NOVA_STAR = "Nova star"
-    NONEXISTENT = "Nonexistent object"
-    UNKNOWN = "Object of other/unknown type"
-    DUPLICATE_RECORD = "Duplicated record"
+from starplot.data import db
 
 
 class DsoType:

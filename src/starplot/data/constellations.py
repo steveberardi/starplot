@@ -686,7 +686,7 @@ def load(**kwargs):
     from starplot.data import DataFiles
 
     cons = gpd.read_file(
-        DataFiles.CONSTELLATIONS.value,
+        DataFiles.CONSTELLATIONS,
         engine="pyogrio",
         use_arrow=True,
         **kwargs,

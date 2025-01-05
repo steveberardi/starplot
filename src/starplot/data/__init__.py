@@ -1,22 +1,27 @@
 import os
 
-from enum import Enum
 from pathlib import Path
 
 from skyfield.api import Loader
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "library"
-DUCKDB_EXTENSION_PATH = DATA_PATH / "duckdb-extensions"
-
-load = Loader(DATA_PATH)
 
 
 def env(name, default):
     return os.environ.get(name) or default
 
 
-class DataFiles(str, Enum):
+DOWNLOAD_PATH = Path(env("STARPLOT_DOWNLOAD_PATH", str(DATA_PATH)))
+DUCKDB_EXTENSION_PATH = Path(
+    env("STARPLOT_DUCKDB_EXTENSIONS_PATH", str(DATA_PATH / "duckdb-extensions"))
+)
+
+
+load = Loader(DATA_PATH)
+
+
+class DataFiles:
     # Built-In Files
     CONSTELLATION_LINES = DATA_PATH / "constellation_lines_inv.gpkg"
     CONSTELLATION_LINES_HIP = DATA_PATH / "constellation_lines_hips.json"
@@ -27,10 +32,6 @@ class DataFiles(str, Enum):
     ONGC = DATA_PATH / "ongc.gpkg.zip"
     CONSTELLATIONS = DATA_PATH / "constellations.gpkg"
 
-    # Downloaded Files
-    _DOWNLOAD_PATH = Path(env("STARPLOT_DOWNLOAD_PATH", str(DATA_PATH)))
-    BIG_SKY = _DOWNLOAD_PATH / "stars.bigsky.parquet"
+    BIG_SKY = DOWNLOAD_PATH / "stars.bigsky.parquet"
 
     DATABASE = DATA_PATH / "sky.db"
-
-    STARS = DATA_PATH / "stars.parquet"

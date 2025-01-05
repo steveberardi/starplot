@@ -14,8 +14,10 @@ duckdb-extensions
 
 # Big Sky - Full Catalog
 # we ignore this because of its size (50+ MB)
+bigsky.0.4.0.stars.csv.gz
 bigsky.stars.csv.gz
 stars.bigsky.parquet
+bigsky.0.4.0.stars.parquet
 
 hash_checks/data/*.png
 hash_checks/results.html

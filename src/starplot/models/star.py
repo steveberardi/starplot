@@ -4,12 +4,12 @@ import numpy as np
 from shapely import Point
 
 from starplot.models.base import SkyObject, SkyObjectManager
-from starplot.data.stars import StarCatalog, STAR_NAMES, load as _load_stars
+from starplot.data.stars import StarCatalog, load as _load_stars
 
 
 class StarManager(SkyObjectManager):
     @classmethod
-    def all(cls, catalog: StarCatalog = StarCatalog.HIPPARCOS):
+    def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11):
         all_stars = _load_stars(catalog)
 
         # TODO : add datetime kwarg
@@ -18,12 +18,12 @@ class StarManager(SkyObjectManager):
             yield from_tuple(s, catalog)
 
     @classmethod
-    def find(cls, where, catalog: StarCatalog = StarCatalog.HIPPARCOS):
+    def find(cls, where, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11):
         all_objects = cls.all(catalog)
         return super().find(where=where, all_objects=all_objects)
 
     @classmethod
-    def get(cls, catalog: StarCatalog = StarCatalog.HIPPARCOS, **kwargs):
+    def get(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, **kwargs):
         all_objects = cls.all(catalog)
         return super().get(all_objects=all_objects, **kwargs)
 
@@ -125,7 +125,7 @@ def from_tuple(star: tuple) -> Star:
         name=getattr(star, "name", None),
         geometry=star.geometry,
     )
-    s._row_id = getattr(star, "rowid", None),
+    s._row_id = (getattr(star, "rowid", None),)
 
     if s._row_id:
         s._row_id = s._row_id[0]

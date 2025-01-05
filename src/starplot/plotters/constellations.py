@@ -210,9 +210,7 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
         """
-        constellation_borders = self._read_geo_package(
-            DataFiles.CONSTELLATION_BORDERS.value
-        )
+        constellation_borders = self._read_geo_package(DataFiles.CONSTELLATION_BORDERS)
 
         if constellation_borders.empty:
             return

@@ -11,7 +11,7 @@ COLUMNS = [
     "Type",
 ]
 
-ongc = gpd.read_file(DataFiles.ONGC.value)
+ongc = gpd.read_file(DataFiles.ONGC)
 ongc = ongc.replace({np.nan: None})
 dsos = []
 

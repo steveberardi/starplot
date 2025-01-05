@@ -153,7 +153,7 @@ class StarPlotterMixin:
         self,
         where: list = None,
         where_labels: list = None,
-        catalog: StarCatalog = StarCatalog.HIPPARCOS,
+        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
@@ -172,7 +172,7 @@ class StarPlotterMixin:
         Args:
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            catalog: The catalog of stars to use: "hipparcos", "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
+            catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
             style: If `None`, then the plot's style for stars will be used
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
@@ -199,12 +199,12 @@ class StarPlotterMixin:
         labels = {} if labels is None else {**STAR_NAMES, **labels}
 
         star_results = self._load_stars(catalog, filters=where)
-        
+
         star_results_labeled = star_results
         for f in where_labels:
             star_results_labeled = star_results_labeled.filter(f)
-        
-        label_row_ids = star_results_labeled.to_pandas()['rowid'].tolist()
+
+        label_row_ids = star_results_labeled.to_pandas()["rowid"].tolist()
 
         nearby_stars_df = star_results.to_pandas()
 
