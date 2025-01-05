@@ -87,6 +87,13 @@ con.sql(
     "CREATE INDEX constellations_boundary_idx ON constellations USING RTREE (geometry);"
 )
 
+con.sql("DROP TABLE IF EXISTS constellation_borders")
+con.sql(
+    f"CREATE TABLE constellation_borders AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{str(DataFiles.CONSTELLATION_BORDERS.value)}'));"
+)
+con.sql("CREATE INDEX constellation_borders_geometry_idx ON constellation_borders USING RTREE (geometry);")
+
+
 # Deep Sky Objects
 con.sql("DROP TABLE IF EXISTS deep_sky_objects")
 con.sql(
@@ -96,7 +103,7 @@ con.sql("CREATE INDEX dso_idx ON deep_sky_objects USING RTREE (geometry);")
 
 
 # Stars
-con.sql("DROP TABLE IF EXISTS stars")
+# con.sql("DROP TABLE IF EXISTS stars")
 # con.sql(
 #     f"CREATE TABLE stars AS (select * EXCLUDE geom, geom AS geometry from ST_Read('build/stars.gpkg'));"
 # )
