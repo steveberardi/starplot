@@ -1,5 +1,6 @@
 import numpy as np
 
+import ibis
 import rtree
 from shapely import (
     MultiPoint,
@@ -57,9 +58,18 @@ class ConstellationPlotterMixin:
 
         con = db.connect()
         t = con.table("constellations")
-        extent = self._extent_mask()
+        t.mutate(
+            ra=_.center_ra / 15,
+            dec=_.center_dec,
+            rowid=ibis.row_number(),
+            boundary=_.geometry,
+        )
 
-        constellations_df = t.filter(_.geometry.intersects(extent)).to_pandas()
+        extent = self._extent_mask()
+        where.append(_.geometry.intersects(extent))
+        results = t.filter(*where)
+
+        constellations_df = results.to_pandas()
 
         if constellations_df.empty:
             return
@@ -79,9 +89,6 @@ class ConstellationPlotterMixin:
 
         for c in constellations_df.itertuples():
             obj = constellation_from_tuple(c)
-
-            if not all([e.evaluate(obj) for e in where]):
-                continue
 
             hiplines = conline_hips[c.iau_id]
             inbounds = False

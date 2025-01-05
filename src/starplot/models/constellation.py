@@ -1,4 +1,6 @@
-from shapely import Polygon
+from typing import Union
+
+from shapely import Polygon, MultiPolygon
 
 from starplot.models.base import SkyObject, SkyObjectManager
 from starplot.geometry import to_24h
@@ -26,7 +28,7 @@ class Constellation(SkyObject):
     name: str = None
     """Name"""
 
-    boundary: Polygon = None
+    boundary: Union[Polygon, MultiPolygon] = None
     """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in 24H format."""
 
     def __init__(
