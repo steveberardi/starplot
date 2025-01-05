@@ -75,7 +75,7 @@ class Star(SkyObject):
         self.name = name
         self.tyc = tyc
         self.ccdm = ccdm
-        self.geometry = Point([ra, dec])
+        self.geometry = geometry
 
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
@@ -132,5 +132,5 @@ def from_tuple(star: tuple, catalog: StarCatalog) -> Star:
         tyc=tyc_id,
         ccdm=ccdm,
         name=STAR_NAMES.get(hip_id) if np.isfinite(hip_id) else None,
-        geometry=Point([ra, dec]),
+        geometry=star.geometry,
     )
