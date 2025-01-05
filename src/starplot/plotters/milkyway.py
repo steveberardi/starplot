@@ -6,6 +6,7 @@ from starplot.styles.helpers import use_style
 from starplot.geometry import unwrap_polygon_360, to_24h
 from starplot.profile import profile
 
+
 class MilkyWayPlotterMixin:
     @profile
     @use_style(PolygonStyle, "milky_way")
