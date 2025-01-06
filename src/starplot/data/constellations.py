@@ -1,8 +1,10 @@
 import json
 
+import ibis
+from ibis import _
 from skyfield.data import stellarium
 
-from starplot.data import DataFiles, load as _load
+from starplot.data import DataFiles, db
 
 
 """
@@ -674,25 +676,24 @@ CONSTELLATION_HIP_IDS = {
 }
 
 
-def _load_deprecated():
-    with _load.open("constellations_hip.fab") as f:
-        consdata = stellarium.parse_constellations(f)
-    return consdata
-
-
-def load(**kwargs):
-    import geopandas as gpd
-    import numpy as np
-    from starplot.data import DataFiles
-
-    cons = gpd.read_file(
-        DataFiles.CONSTELLATIONS,
-        engine="pyogrio",
-        use_arrow=True,
-        **kwargs,
+def load(extent=None, filters=None):
+    filters = filters or []
+    con = db.connect()
+    c = con.table("constellations")
+    c.mutate(
+        ra=_.center_ra / 15,
+        dec=_.center_dec,
+        rowid=ibis.row_number(),
+        boundary=_.geometry,
     )
-    cons = cons.replace({np.nan: None})
-    return cons
+
+    if extent:
+        filters.append(_.geometry.intersects(extent))
+
+    if filters:
+        return c.filter(*filters)
+
+    return c
 
 
 def get(constellation_id: str):

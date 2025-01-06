@@ -1,6 +1,5 @@
 import numpy as np
 
-import ibis
 import rtree
 from shapely import (
     MultiPoint,
@@ -9,7 +8,7 @@ from matplotlib.collections import LineCollection
 from ibis import _
 
 from starplot.coordinates import CoordinateSystem
-from starplot.data import DataFiles, constellations as condata, db
+from starplot.data import DataFiles, constellations as condata
 from starplot.data.constellations import (
     CONSTELLATIONS_FULL_NAMES,
     CONSTELLATION_HIP_IDS,
@@ -56,19 +55,8 @@ class ConstellationPlotterMixin:
         where = where or []
         ctr = 0
 
-        con = db.connect()
-        t = con.table("constellations")
-        t.mutate(
-            ra=_.center_ra / 15,
-            dec=_.center_dec,
-            rowid=ibis.row_number(),
-            boundary=_.geometry,
-        )
-
         extent = self._extent_mask()
-        where.append(_.geometry.intersects(extent))
-        results = t.filter(*where)
-
+        results = condata.load(extent=extent, filters=where)
         constellations_df = results.to_pandas()
 
         if constellations_df.empty:

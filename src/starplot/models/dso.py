@@ -98,8 +98,8 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         """
         Get a DSO, by matching its attributes.
 
-        Example: 
-            
+        Example:
+
             d = DSO.get(m=13)
 
         Args:

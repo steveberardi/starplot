@@ -68,7 +68,7 @@ class Star(SkyObject):
     @classmethod
     def get(
         cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, **kwargs
-    ) -> Union["Star",  None]:
+    ) -> Union["Star", None]:
         """
         Get a Star, by matching its attributes as specified in `**kwargs`
 

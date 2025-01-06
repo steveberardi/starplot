@@ -153,5 +153,5 @@ def load(extent=None, filters=None):
 
     if filters:
         return dsos.filter(*filters)
-    
+
     return dsos

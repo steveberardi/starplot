@@ -1,26 +1,17 @@
-from typing import Union
+from typing import Union, Iterator
 
+from ibis import _
 from shapely import Polygon, MultiPolygon
 
-from starplot.models.base import SkyObject, SkyObjectManager
+from starplot.models.base import SkyObject
 from starplot.geometry import to_24h
 from starplot.data import constellations
-
-
-class ConstellationManager(SkyObjectManager):
-    @classmethod
-    def all(cls):
-        all_constellations = constellations.load()
-        for constellation in all_constellations.itertuples():
-            yield from_tuple(constellation)
 
 
 class Constellation(SkyObject):
     """
     Constellation model.
     """
-
-    _manager = ConstellationManager
 
     iau_id: str = None
     """International Astronomical Union (IAU) three-letter designation, all lowercase"""
@@ -49,21 +40,47 @@ class Constellation(SkyObject):
         return f"Constellation(iau_id={self.iau_id}, name={self.name}, ra={self.ra}, dec={self.dec})"
 
     @classmethod
-    def get(**kwargs) -> "Constellation":
+    def all(cls) -> Iterator["Constellation"]:
+        df = constellations.load().to_pandas()
+
+        for c in df.itertuples():
+            yield from_tuple(c)
+
+    @classmethod
+    def get(cls, **kwargs) -> "Constellation":
         """
         Get a Constellation, by matching its attributes.
 
-        Example: `hercules = Constellation.get(name="Hercules")`
+        Example:
+
+            hercules = Constellation.get(name="Hercules")
 
         Args:
             **kwargs: Attributes on the constellation you want to match
 
         Raises: `ValueError` if more than one constellation is matched
         """
-        pass
+        filters = []
+
+        for k, v in kwargs.items():
+            filters.append(getattr(_, k) == v)
+
+        df = constellations.load(filters=filters).to_pandas()
+
+        results = [from_tuple(c) for c in df.itertuples()]
+
+        if len(results) == 1:
+            return results[0]
+
+        if len(results) > 1:
+            raise ValueError(
+                "More than one match. Use find() instead or narrow your search."
+            )
+
+        return None
 
     @classmethod
-    def find(where: list) -> list["Constellation"]:
+    def find(cls, where: list) -> list["Constellation"]:
         """
         Find Constellations
 
@@ -74,7 +91,9 @@ class Constellation(SkyObject):
             List of Constellations that match all `where` expressions
 
         """
-        pass
+        df = constellations.load(filters=where).to_pandas()
+
+        return [from_tuple(c) for c in df.itertuples()]
 
     def constellation(self):
         """Not applicable to Constellation model, raises `NotImplementedError`"""
