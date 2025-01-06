@@ -102,7 +102,7 @@ class Meta(type):
         return Term(attr)
 
 
-class SkyObject(CreateMapMixin, CreateOpticMixin, metaclass=Meta):
+class SkyObject(CreateMapMixin, CreateOpticMixin):
     """
     Basic sky object model.
     """

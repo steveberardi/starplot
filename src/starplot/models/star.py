@@ -2,38 +2,16 @@ from typing import Optional
 
 import numpy as np
 from shapely import Point
+from ibis import _
 
-from starplot.models.base import SkyObject, SkyObjectManager
+from starplot.models.base import SkyObject
 from starplot.data.stars import StarCatalog, load as _load_stars
-
-
-class StarManager(SkyObjectManager):
-    @classmethod
-    def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11):
-        all_stars = _load_stars(catalog)
-
-        # TODO : add datetime kwarg
-
-        for s in all_stars.itertuples():
-            yield from_tuple(s, catalog)
-
-    @classmethod
-    def find(cls, where, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11):
-        all_objects = cls.all(catalog)
-        return super().find(where=where, all_objects=all_objects)
-
-    @classmethod
-    def get(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, **kwargs):
-        all_objects = cls.all(catalog)
-        return super().get(all_objects=all_objects, **kwargs)
 
 
 class Star(SkyObject):
     """
     Star model.
     """
-
-    _manager = StarManager
 
     magnitude: float
     """Magnitude"""
@@ -81,32 +59,75 @@ class Star(SkyObject):
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
 
     @classmethod
-    def get(**kwargs) -> "Star":
-        """
-        Get a Star, by matching its attributes.
+    def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11):
+        df = _load_stars(catalog=catalog).to_pandas()
 
-        Example: `sirius = Star.get(name="Sirius")`
+        for s in df.itertuples():
+            yield from_tuple(s)
+
+    @classmethod
+    def get(
+        cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, **kwargs
+    ) -> "Star" | None:
+        """
+        Get a Star, by matching its attributes as specified in `**kwargs`
+
+        Example:
+
+            sirius = Star.get(name="Sirius")
 
         Args:
+            catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
             **kwargs: Attributes on the star you want to match
 
         Raises: `ValueError` if more than one star is matched
+
+        Returns:
+            Star instance if there's exactly one match or `None` if there are zero matches
         """
-        pass
+        filters = []
+
+        for k, v in kwargs.items():
+            filters.append(getattr(_, k) == v)
+
+        df = _load_stars(
+            catalog=catalog,
+            filters=filters,
+        ).to_pandas()
+
+        results = [from_tuple(s) for s in df.itertuples()]
+
+        if len(results) == 1:
+            return results[0]
+
+        if len(results) > 1:
+            raise ValueError(
+                "More than one match. Use find() instead or narrow your search."
+            )
+
+        return None
 
     @classmethod
-    def find(where: list) -> list["Star"]:
+    def find(
+        cls, where: list, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11
+    ) -> list["Star"]:
         """
         Find Stars
 
         Args:
             where: A list of expressions that determine which stars to find. See [Selecting Objects](/reference-selecting-objects/) for details.
+            catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
 
         Returns:
             List of Stars that match all `where` expressions
 
         """
-        pass
+        df = _load_stars(
+            catalog=catalog,
+            filters=where,
+        ).to_pandas()
+
+        return [from_tuple(s) for s in df.itertuples()]
 
 
 def from_tuple(star: tuple) -> Star:

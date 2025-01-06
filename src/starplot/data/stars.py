@@ -485,4 +485,7 @@ def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=
 
     stars = stars.join(designations, "hip", how="left")
 
-    return stars.filter(*filters)
+    if filters:
+        return stars.filter(*filters)
+
+    return stars
