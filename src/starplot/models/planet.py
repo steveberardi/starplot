@@ -48,72 +48,8 @@ Retrieved on 18-APR-2024
 """
 
 
-class PlanetManager(SkyObjectManager):
-    @classmethod
-    def all(
-        cls,
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
-    ):
-        dt = dt_or_now(dt)
-        ephemeris = load(ephemeris)
-        timescale = load.timescale().from_datetime(dt)
-        earth = ephemeris["earth"]
-
-        for p in PlanetName:
-            planet = ephemeris[f"{p.value} barycenter"]
-
-            if lat is not None and lon is not None:
-                position = earth + wgs84.latlon(lat, lon)
-                astrometric = position.at(timescale).observe(planet)
-                apparent = astrometric.apparent()
-                ra, dec, distance = apparent.radec()
-            else:
-                astrometric = earth.at(timescale).observe(planet)
-                ra, dec, distance = astrometric.radec()
-
-            # angular diameter:
-            # https://rhodesmill.org/skyfield/examples.html#what-is-the-angular-diameter-of-a-planet-given-its-radius
-            apparent_diameter_degrees = Angle(
-                radians=np.arcsin(PLANET_RADIUS_KM[p] / distance.km) * 2.0
-            ).degrees
-
-            yield Planet(
-                ra=ra.hours,
-                dec=dec.degrees,
-                name=p,
-                dt=dt,
-                apparent_size=apparent_diameter_degrees,
-                geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees),
-            )
-
-    @classmethod
-    def find(cls):
-        raise NotImplementedError
-
-    @classmethod
-    def get(
-        cls,
-        name: str,
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
-    ):
-        dt = dt_or_now(dt)
-        for p in cls.all(dt, lat, lon, ephemeris):
-            if p.name.lower() == name.lower():
-                return p
-
-        return None
-
-
 class Planet(SkyObject):
     """Planet model."""
-
-    _manager = PlanetManager
 
     name: str
     """
@@ -156,6 +92,7 @@ class Planet(SkyObject):
 
     @classmethod
     def all(
+        cls,
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
@@ -170,10 +107,41 @@ class Planet(SkyObject):
             lon: Longitude of observing location
             ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
-        pass
+        dt = dt_or_now(dt)
+        ephemeris = load(ephemeris)
+        timescale = load.timescale().from_datetime(dt)
+        earth = ephemeris["earth"]
+
+        for p in PlanetName:
+            planet = ephemeris[f"{p.value} barycenter"]
+
+            if lat is not None and lon is not None:
+                position = earth + wgs84.latlon(lat, lon)
+                astrometric = position.at(timescale).observe(planet)
+                apparent = astrometric.apparent()
+                ra, dec, distance = apparent.radec()
+            else:
+                astrometric = earth.at(timescale).observe(planet)
+                ra, dec, distance = astrometric.radec()
+
+            # angular diameter:
+            # https://rhodesmill.org/skyfield/examples.html#what-is-the-angular-diameter-of-a-planet-given-its-radius
+            apparent_diameter_degrees = Angle(
+                radians=np.arcsin(PLANET_RADIUS_KM[p] / distance.km) * 2.0
+            ).degrees
+
+            yield Planet(
+                ra=ra.hours,
+                dec=dec.degrees,
+                name=p,
+                dt=dt,
+                apparent_size=apparent_diameter_degrees,
+                geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees),
+            )
 
     @classmethod
     def get(
+        cls,
         name: str,
         dt: datetime = None,
         lat: float = None,
@@ -190,4 +158,9 @@ class Planet(SkyObject):
             lon: Longitude of observing location
             ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
-        pass
+        dt = dt_or_now(dt)
+        for p in cls.all(dt, lat, lon, ephemeris):
+            if p.name.lower() == name.lower():
+                return p
+
+        return None

@@ -8,5 +8,5 @@ def test_download_path(monkeypatch):
 
     importlib.reload(data)
 
-    assert data.DOWNLOAD_PATH == "/testing"
-    assert data.DataFiles.BIG_SKY.startswith("/testing")
+    assert str(data.DOWNLOAD_PATH) == "/testing"
+    assert str(data.DataFiles.BIG_SKY).startswith("/testing")

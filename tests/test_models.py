@@ -4,37 +4,10 @@ import pytest
 
 from pytz import timezone
 
-from starplot import DSO, Star, Constellation, Sun, Moon, Planet
+from starplot import _, DSO, Star, Constellation, Sun, Moon, Planet
 
 
 class TestStar:
-    def test_star_true_expressions(self):
-        star = Star(ra=2, dec=20, magnitude=4, bv=2.12, name="fakestar")
-
-        expressions = [
-            Star.ra < 24,
-            Star.dec > 5,
-            Star.ra <= 2,
-            Star.hip.is_null(),
-            Star.name.is_in(["stuff", "sirius", "fakestar"]),
-            (Star.name == "wrong") | (Star.name == "fakestar"),
-            Star.name != "noname",
-            (Star.name == "bellatrix")
-            | ((Star.name == "fakestar") & (Star.magnitude < 5)),
-        ]
-        assert all([e.evaluate(star) for e in expressions])
-
-    def test_star_false_expressions(self):
-        star = Star(ra=2, dec=20, magnitude=4, bv=2.12, name="fakestar")
-
-        expressions = [
-            Star.ra > 4,
-            Star.dec < 5,
-            Star.hip.is_not_null(),
-            Star.name.is_not_in(["stuff", "sirius", "fakestar"]),
-            (Star.name == "wrong") | (Star.name != "fakestar"),
-        ]
-        assert not any([e.evaluate(star) for e in expressions])
 
     def test_star_get(self):
         sirius = Star.get(name="Sirius")
@@ -52,17 +25,17 @@ class TestStar:
             Star.get(name=None)
 
     def test_star_find(self):
-        hipstars = Star.find(where=[Star.hip.is_not_null()])
-        assert len(hipstars) == 118_218
+        hipstars = Star.find(where=[_.hip.notnull()])
+        assert len(hipstars) == 121_476
 
         names = {"Sirius", "Bellatrix", "Castor", "Vega"}
-        bright = Star.find(where=[Star.name.is_in(names)])
+        bright = Star.find(where=[_.name.isin(names)])
         assert len(bright) == 4
         assert set([s.name for s in bright]) == names
 
     def test_star_find_intersects(self):
         m45 = DSO.get(m="45")
-        m45_stars = Star.find(where=[Star.geometry.intersects(m45.geometry)])
+        m45_stars = Star.find(where=[_.geometry.intersects(m45.geometry)])
 
         for star in m45_stars:
             assert star.geometry.intersects(m45.geometry)
@@ -77,7 +50,7 @@ class TestConstellation:
 
     def test_constellation_find(self):
         results = Constellation.find(
-            where=[Constellation.name.is_in(["Canis Major", "Andromeda", "Orion"])]
+            where=[_.name.isin(["Canis Major", "Andromeda", "Orion"])]
         )
         assert len(results) == 3
 
@@ -93,11 +66,11 @@ class TestDSO:
         assert m13.constellation_id == "her"
 
     def test_dso_find_messier(self):
-        results = DSO.find(where=[DSO.m.is_not_null()])
+        results = DSO.find(where=[_.m.notnull()])
         assert len(results) == 110
 
     def test_dso_find_duplicate(self):
-        results = DSO.find(where=[DSO.ngc == "5273"])
+        results = DSO.find(where=[_.ngc == "5273"])
         assert len(results) == 2
 
         for r in results:
