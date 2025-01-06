@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union, Iterator
 
 import numpy as np
 from shapely import Point
@@ -59,7 +59,7 @@ class Star(SkyObject):
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
 
     @classmethod
-    def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11):
+    def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11) -> Iterator["Star"]:
         df = _load_stars(catalog=catalog).to_pandas()
 
         for s in df.itertuples():
@@ -68,7 +68,7 @@ class Star(SkyObject):
     @classmethod
     def get(
         cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, **kwargs
-    ) -> "Star" | None:
+    ) -> Union["Star",  None]:
         """
         Get a Star, by matching its attributes as specified in `**kwargs`
 

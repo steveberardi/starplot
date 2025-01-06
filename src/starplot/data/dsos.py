@@ -151,4 +151,7 @@ def load(extent=None, filters=None):
 
     filters.extend([_.ra_degrees.notnull() & _.dec_degrees.notnull()])
 
-    return dsos.filter(*filters)
+    if filters:
+        return dsos.filter(*filters)
+    
+    return dsos

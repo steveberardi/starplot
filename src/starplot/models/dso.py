@@ -1,5 +1,6 @@
-from typing import Optional, Union
+from typing import Optional, Union, Iterator
 
+from ibis import _
 from shapely.geometry import Polygon, MultiPolygon
 
 from starplot.data.dsos import DsoType, load, ONGC_TYPE_MAP
@@ -9,24 +10,11 @@ from starplot.geometry import to_24h
 from starplot import geod
 
 
-class DsoManager(SkyObjectManager):
-    @classmethod
-    def all(cls):
-        all_dsos = load()
-
-        for d in all_dsos.itertuples():
-            magnitude = d.mag_v or d.mag_b or None
-            magnitude = float(magnitude) if magnitude else None
-            yield from_tuple(d)
-
-
 class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     """
     Deep Sky Object (DSO) model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting DSOs.
     So, you can use any attributes of this model in your callables. Note that some may be null.
     """
-
-    _manager = DsoManager
 
     name: str
     """Name of the DSO (as specified in OpenNGC)"""
@@ -99,21 +87,47 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
 
     @classmethod
-    def get(**kwargs) -> "DSO":
+    def all(cls) -> Iterator["DSO"]:
+        df = load().to_pandas()
+
+        for d in df.itertuples():
+            yield from_tuple(d)
+
+    @classmethod
+    def get(cls, **kwargs) -> "DSO":
         """
         Get a DSO, by matching its attributes.
 
-        Example: `d = DSO.get(m=13)`
+        Example: 
+            
+            d = DSO.get(m=13)
 
         Args:
             **kwargs: Attributes on the DSO you want to match
 
         Raises: `ValueError` if more than one DSO is matched
         """
-        pass
+        filters = []
+
+        for k, v in kwargs.items():
+            filters.append(getattr(_, k) == v)
+
+        df = load(filters=filters).to_pandas()
+
+        results = [from_tuple(d) for d in df.itertuples()]
+
+        if len(results) == 1:
+            return results[0]
+
+        if len(results) > 1:
+            raise ValueError(
+                "More than one match. Use find() instead or narrow your search."
+            )
+
+        return None
 
     @classmethod
-    def find(where: list) -> list["DSO"]:
+    def find(cls, where: list) -> list["DSO"]:
         """
         Find DSOs
 
@@ -124,7 +138,8 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
             List of DSOs that match all `where` expressions
 
         """
-        pass
+        df = load(filters=where).to_pandas()
+        return [from_tuple(d) for d in df.itertuples()]
 
 
 def create_ellipse(d):
