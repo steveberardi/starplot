@@ -53,6 +53,8 @@ con.sql(
     "CREATE TABLE star_designations AS (SELECT * FROM read_parquet('temp/star_designations.parquet') )"
 )
 con.sql("CREATE UNIQUE INDEX star_designations_hip_idx ON star_designations (hip);")
+con.sql("CREATE UNIQUE INDEX star_designations_name_idx ON star_designations (name);")
+
 # Stars
 # con.sql("DROP TABLE IF EXISTS stars")
 # con.sql(

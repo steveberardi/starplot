@@ -25,7 +25,6 @@ class MoonPhase(str, Enum):
     WANING_CRESCENT = "Waning Crescent"
 
 
-
 class Moon(SkyObject):
     """Moon model. Only used for Earth's moon right now, but will potentially represent other planets' moons in future versions."""
 
@@ -48,7 +47,7 @@ class Moon(SkyObject):
     """Percent of illumination (0...1)"""
 
     geometry: Polygon = None
-    """Shapely Polygon of the moon's extent. Right ascension coordinates are in 24H format."""
+    """Shapely Polygon of the moon's extent. Right ascension coordinates are in degrees (0...360)."""
 
     def __init__(
         self,
@@ -152,7 +151,7 @@ class Moon(SkyObject):
             phase = MoonPhase.WANING_CRESCENT
 
         return Moon(
-            ra=ra.hours,
+            ra=ra.hours * 15,
             dec=dec.degrees,
             name="Moon",
             dt=dt,
@@ -160,5 +159,5 @@ class Moon(SkyObject):
             phase_angle=phase_angle,
             phase_description=phase.value,
             illumination=illumination,
-            geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees),
+            geometry=circle((ra.hours * 15, dec.degrees), apparent_diameter_degrees),
         )

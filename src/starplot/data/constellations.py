@@ -680,8 +680,8 @@ def load(extent=None, filters=None):
     filters = filters or []
     con = db.connect()
     c = con.table("constellations")
-    c.mutate(
-        ra=_.center_ra / 15,
+    c = c.mutate(
+        ra=_.center_ra,
         dec=_.center_dec,
         rowid=ibis.row_number(),
         boundary=_.geometry,

@@ -24,9 +24,9 @@ from starplot.geometry import wrapped_polygon_adjustment
 
 DEFAULT_AUTO_ADJUST_SETTINGS = {
     "avoid_constellation_lines": False,
-    "point_generation_max_iterations": 500,
-    "distance_step_size": 1,
-    "max_distance": 300,
+    "point_generation_max_iterations": 25,
+    "distance_step_size": 9,
+    "max_distance": 3_000,
     "label_padding": 9,
     "buffer": 0.05,
     "seed": None,
@@ -83,7 +83,6 @@ class ConstellationPlotterMixin:
 
             for s1_hip, s2_hip in hiplines:
                 if not CONSTELLATION_STAR_COORDS.get(s2_hip):
-                    # print(s2_hip)
                     continue
                 s1_ra, s1_dec = CONSTELLATION_STAR_COORDS.get(s1_hip)
                 s2_ra, s2_dec = CONSTELLATION_STAR_COORDS.get(s2_hip)
@@ -94,7 +93,7 @@ class ConstellationPlotterMixin:
                 elif s2_ra - s1_ra > 60:
                     s1_ra += 360
 
-                if not inbounds and self.in_bounds(s1_ra / 15, s1_dec):
+                if not inbounds and self.in_bounds(s1_ra, s1_dec):
                     inbounds = True
 
                 if self._coordinate_system == CoordinateSystem.RA_DEC:
@@ -103,8 +102,8 @@ class ConstellationPlotterMixin:
                     x1, x2 = s1_ra, s2_ra
                     y1, y2 = s1_dec, s2_dec
                 elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-                    x1, y1 = self._prepare_coords(s1_ra / 15, s1_dec)
-                    x2, y2 = self._prepare_coords(s2_ra / 15, s2_dec)
+                    x1, y1 = self._prepare_coords(s1_ra, s1_dec)
+                    x2, y2 = self._prepare_coords(s2_ra, s2_dec)
                 else:
                     raise ValueError("Unrecognized coordinate system")
 
@@ -227,7 +226,7 @@ class ConstellationPlotterMixin:
                 border_lines.append(list(zip(x, y)))
 
             elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-                x = [24 - (x0 / 15) for x0 in x]
+                x = [(24 - (x0 / 15)) * 15 for x0 in x]
                 coords = [self._prepare_coords(*p) for p in list(zip(x, y))]
                 border_lines.append(coords)
                 transform = self._crs
@@ -263,8 +262,8 @@ class ConstellationPlotterMixin:
 
             adjustment = wrapped_polygon_adjustment(constellation.boundary)
 
-            if (adjustment > 0 and centroid.x < 12) or (
-                adjustment < 0 and centroid.x > 12
+            if (adjustment > 0 and centroid.x < 180) or (
+                adjustment < 0 and centroid.x > 180
             ):
                 x = centroid.x + adjustment
             else:

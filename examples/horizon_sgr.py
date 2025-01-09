@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import HorizonPlot, Star, DSO
+from starplot import HorizonPlot, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -27,8 +27,8 @@ p = HorizonPlot(
 p.constellations()
 p.milky_way()
 
-p.stars(where=[Star.magnitude < 5])
-p.messier(where=[DSO.magnitude < 12], true_size=False, label_fn=lambda d: f"M{d.m}")
+p.stars(where=[_.magnitude < 5])
+p.messier(where=[_.magnitude < 12], true_size=False, label_fn=lambda d: f"M{d.m}")
 
 p.constellation_labels()
 p.planets()

@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from starplot import OpticPlot
+from starplot import OpticPlot, _
 from starplot.callables import color_by_bv
 from starplot.optics import Refractor
 from starplot.styles import PlotStyle, extensions
@@ -30,7 +30,7 @@ p = OpticPlot(
     autoscale=True,
 )
 p.stars(
-    mag=12,
+    where=[_.magnitude < 12],
     color_fn=color_by_bv,
 )
 p.info()

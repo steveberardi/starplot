@@ -154,9 +154,6 @@ class MapPlot(
     def _plot_kwargs(self) -> dict:
         return dict(transform=self._crs)
 
-    def _prepare_coords(self, ra: float, dec: float) -> (float, float):
-        return ra * 15, dec
-
     @cache
     def in_bounds(self, ra: float, dec: float) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
@@ -169,13 +166,13 @@ class MapPlot(
             True if the coordinate is in bounds, otherwise False
         """
         # TODO : try using pyproj transformer directly
-        x, y = self._proj.transform_point(ra * 15, dec, self._crs)
+        x, y = self._proj.transform_point(ra, dec, self._crs)
         data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
         x_axes, y_axes = data_to_axes.transform((x, y))
         return 0 <= x_axes <= 1 and 0 <= y_axes <= 1
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
-        return self.in_bounds(x / 15, y)
+        return self.in_bounds(x / 1, y)
 
     def _polygon(self, points, style, **kwargs):
         super()._polygon(points, style, transform=self._crs, **kwargs)
@@ -292,7 +289,6 @@ class MapPlot(
         y = []
 
         for ra, dec in points:
-            ra = ra / 15
             x0, y0 = self._prepare_coords(ra, dec)
             x.append(x0)
             y.append(y0)
@@ -576,14 +572,14 @@ class MapPlot(
         trans = self.ax.transAxes + self.ax.transData.inverted()
         x_projected, y_projected = trans.transform((x, y))  # axes to data
         x_ra, y_ra = self._crs.transform_point(x_projected, y_projected, self._proj)
-        return (x_ra + 360) / 15, y_ra
+        return (x_ra + 360), y_ra
 
     def _plot_background_clip_path(self):
         def to_axes(points):
             ax_points = []
 
             for ra, dec in points:
-                x, y = self._proj.transform_point(ra * 15, dec, self._crs)
+                x, y = self._proj.transform_point(ra, dec, self._crs)
                 data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
                 x_axes, y_axes = data_to_axes.transform((x, y))
                 ax_points.append([x_axes, y_axes])

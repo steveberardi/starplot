@@ -5,7 +5,7 @@ from shapely.geometry import Polygon, MultiPolygon
 
 from starplot.data.dsos import DsoType, load, ONGC_TYPE_MAP
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
-from starplot.models.base import SkyObject, SkyObjectManager
+from starplot.models.base import SkyObject
 from starplot.geometry import to_24h
 from starplot import geod
 
@@ -52,7 +52,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     """
 
     geometry: Union[Polygon, MultiPolygon] = None
-    """Shapely Polygon of the DSO's extent. Right ascension coordinates are in 24H format."""
+    """Shapely Polygon of the DSO's extent. Right ascension coordinates are in degrees (0...360)."""
 
     def __init__(
         self,
@@ -159,7 +159,7 @@ def create_ellipse(d):
         min_ax_degrees = (min_ax / 60) / 2
 
     points = geod.ellipse(
-        (d.ra_degrees / 15, d.dec_degrees),
+        (d.ra_degrees, d.dec_degrees),
         min_ax_degrees * 2,
         maj_ax_degrees * 2,
         angle,
@@ -179,18 +179,16 @@ def from_tuple(d: tuple) -> DSO:
     if str(geometry.geom_type) not in ["Polygon", "MultiPolygon"]:
         geometry = create_ellipse(d)
 
-    geometry = to_24h(geometry)
-
     dso = DSO(
         name=d.name,
-        ra=d.ra_degrees / 15,
+        ra=d.ra_degrees,
         dec=d.dec_degrees,
-        type=ONGC_TYPE_MAP[d.type],
+        type=d.type,
         maj_ax=d.maj_ax,
         min_ax=d.min_ax,
         angle=d.angle,
         magnitude=magnitude,
-        size=d.size_deg2,
+        size=d.size,
         m=d.m,
         ngc=d.ngc,
         ic=d.ic,

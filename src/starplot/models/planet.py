@@ -8,7 +8,7 @@ from skyfield.api import Angle, wgs84
 from shapely import Polygon
 
 from starplot.data import load
-from starplot.models.base import SkyObject, SkyObjectManager
+from starplot.models.base import SkyObject
 from starplot.geometry import circle
 from starplot.utils import dt_or_now
 
@@ -73,7 +73,7 @@ class Planet(SkyObject):
     """Apparent size (degrees)"""
 
     geometry: Polygon = None
-    """Shapely Polygon of the planet's extent. Right ascension coordinates are in 24H format."""
+    """Shapely Polygon of the planet's extent. Right ascension coordinates are in degrees (0...360)."""
 
     def __init__(
         self,
@@ -131,12 +131,14 @@ class Planet(SkyObject):
             ).degrees
 
             yield Planet(
-                ra=ra.hours,
+                ra=ra.hours * 15,
                 dec=dec.degrees,
                 name=p,
                 dt=dt,
                 apparent_size=apparent_diameter_degrees,
-                geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees),
+                geometry=circle(
+                    (ra.hours * 15, dec.degrees), apparent_diameter_degrees
+                ),
             )
 
     @classmethod

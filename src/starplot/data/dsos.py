@@ -144,6 +144,7 @@ def load(extent=None, filters=None):
     dsos = dsos.mutate(
         magnitude=ibis.coalesce(_.mag_v, _.mag_b, None),
         rowid=ibis.row_number(),
+        size=_.size_deg2,
     )
 
     if extent:

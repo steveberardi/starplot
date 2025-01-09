@@ -3,7 +3,7 @@ from shapely.ops import unary_union
 from starplot.data import db
 from starplot.styles import PolygonStyle
 from starplot.styles.helpers import use_style
-from starplot.geometry import unwrap_polygon_360, to_24h
+from starplot.geometry import unwrap_polygon_360
 from starplot.profile import profile
 
 
@@ -34,6 +34,6 @@ class MilkyWayPlotterMixin:
 
         for p in polygons:
             self.polygon(
-                geometry=to_24h(p),
+                geometry=p,
                 style=style,
             )

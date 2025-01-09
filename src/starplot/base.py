@@ -34,6 +34,7 @@ from starplot.styles import (
 from starplot.styles.helpers import use_style
 from starplot.geometry import (
     unwrap_polygon,
+    unwrap_polygon_360,
     random_point_in_polygon_at_distance,
 )
 from starplot.profile import profile
@@ -357,19 +358,20 @@ class BasePlot(ABC):
             [p for p in area.geoms] if "MultiPolygon" == str(area.geom_type) else [area]
         )
         new_areas = []
+        origin = Point(ra, dec)
 
         for a in areas:
-            unwrapped = unwrap_polygon(a)
+            unwrapped = unwrap_polygon_360(a)
             buffer = unwrapped.area / 10 * -1 * buffer * self.scale
             new_areas.append(unwrapped.buffer(buffer))
 
         for d in range(0, max_distance, distance_step_size):
-            distance = d / 10
+            distance = d / 20
             poly = randrange(len(new_areas))
             point = random_point_in_polygon_at_distance(
                 new_areas[poly],
-                Point(ra, dec),
-                distance,
+                origin_point=origin,
+                distance=distance,
                 max_iterations=point_iterations,
                 seed=random_seed,
             )
@@ -749,7 +751,6 @@ class BasePlot(ABC):
         raise NotImplementedError
 
     def _polygon(self, points: list, style: PolygonStyle, **kwargs):
-        points = [geod.to_radec(p) for p in points]
         points = [self._prepare_coords(*p) for p in points]
         patch = patches.Polygon(
             points,
@@ -788,8 +789,7 @@ class BasePlot(ABC):
         if geometry is not None:
             points = list(zip(*geometry.exterior.coords.xy))
 
-        _points = [(ra * 15, dec) for ra, dec in points]
-        self._polygon(_points, style, gid=kwargs.get("gid") or "polygon")
+        self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
         if legend_label is not None:
             self._add_legend_handle_marker(
@@ -1157,11 +1157,11 @@ class BasePlot(ABC):
         inbounds = []
 
         for ra, dec in ecliptic.RA_DECS:
-            x0, y0 = self._prepare_coords(ra, dec)
+            x0, y0 = self._prepare_coords(ra * 15, dec)
             x.append(x0)
             y.append(y0)
-            if self.in_bounds(ra, dec):
-                inbounds.append((ra, dec))
+            if self.in_bounds(ra * 15, dec):
+                inbounds.append((ra * 15, dec))
 
         self.ax.plot(
             x,
@@ -1196,7 +1196,7 @@ class BasePlot(ABC):
         # TODO : handle wrapping
 
         for ra in range(25):
-            x0, y0 = self._prepare_coords(ra, 0)
+            x0, y0 = self._prepare_coords(ra * 15, 0)
             x.append(x0)
             y.append(y0)
 

@@ -112,7 +112,7 @@ class CreateOpticMixin:
         from starplot import OpticPlot
 
         return OpticPlot(
-            ra=self.ra,
+            ra=self.ra / 15,
             dec=self.dec,
             *args,
             **kwargs,

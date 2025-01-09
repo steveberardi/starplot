@@ -139,7 +139,7 @@ class HorizonPlot(
     @cache
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
-        point = SkyfieldStar(ra_hours=ra, dec_degrees=dec)
+        point = SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec)
         position = self.observe(point).apparent()
         pos_alt, pos_az, _ = position.altaz()
         return pos_az.degrees, pos_alt.degrees

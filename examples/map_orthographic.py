@@ -1,7 +1,7 @@
 from datetime import datetime
 from pytz import timezone
 
-from starplot import MapPlot, Projection, Star, DSO
+from starplot import MapPlot, Projection, _
 from starplot.styles import PlotStyle, extensions
 
 
@@ -29,10 +29,10 @@ p.gridlines(labels=False)
 p.constellations()
 p.constellation_borders()
 
-p.stars(mag=7.86, where_labels=[Star.magnitude < 6])
-p.open_clusters(where=[DSO.magnitude < 12], true_size=False, labels=None)
-p.galaxies(where=[DSO.magnitude < 12], true_size=False, labels=None)
-p.nebula(where=[DSO.magnitude < 12], true_size=False, labels=None)
+p.stars(where=[_.magnitude < 8], where_labels=[_.magnitude < 5])
+p.open_clusters(where=[_.magnitude < 12], true_size=False, labels=None)
+p.galaxies(where=[_.magnitude < 12], true_size=False, labels=None)
+p.nebula(where=[_.magnitude < 12], true_size=False, labels=None)
 
 p.constellation_labels(style__font_alpha=0.4)
 p.ecliptic()

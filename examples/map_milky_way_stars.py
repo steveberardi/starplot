@@ -1,4 +1,4 @@
-from starplot import MapPlot, Projection, Star
+from starplot import MapPlot, Projection, _
 from starplot.styles import PlotStyle, extensions
 from starplot.callables import size_by_magnitude_factory, color_by_bv
 
@@ -24,7 +24,7 @@ p = MapPlot(
 )
 
 p.stars(
-    mag=11,
+    where=[_.magnitude < 11],
     size_fn=_sizer,
     alpha_fn=alpha,
     color_fn=color_by_bv,
@@ -33,7 +33,7 @@ p.stars(
     style__marker__edge_color="#c5c5c5",
 )
 p.stars(
-    where=[Star.magnitude < 6],
+    where=[_.magnitude < 6],
     size_fn=lambda s: _sizer(s) * 1.5,
     alpha_fn=lambda s: 0.4,
     color_fn=color_by_bv,

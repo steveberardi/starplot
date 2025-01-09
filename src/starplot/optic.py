@@ -114,7 +114,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
-        point = SkyfieldStar(ra_hours=ra, dec_degrees=dec)
+        point = SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec)
         position = self.observe(point)
         pos_apparent = position.apparent()
         pos_alt, pos_az, _ = pos_apparent.altaz()

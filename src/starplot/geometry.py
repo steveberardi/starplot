@@ -127,10 +127,10 @@ def wrapped_polygon_adjustment(polygon: Polygon) -> int:
     prev = None
 
     for ra, _ in points:
-        if prev is not None and prev > 20 and ra < 12:
-            return 24
-        elif prev is not None and prev < 12 and ra > 20:
-            return -24
+        if prev is not None and prev > 300 and ra < 180:
+            return 360
+        elif prev is not None and prev < 180 and ra > 300:
+            return -360
         prev = ra
 
     return 0

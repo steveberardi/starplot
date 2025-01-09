@@ -20,7 +20,7 @@ class Constellation(SkyObject):
     """Name"""
 
     boundary: Union[Polygon, MultiPolygon] = None
-    """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in 24H format."""
+    """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
 
     def __init__(
         self,
@@ -105,11 +105,9 @@ def from_tuple(c: tuple) -> Constellation:
     if len(c.geometry.geoms) == 1:
         geometry = c.geometry.geoms[0]
 
-    geometry = to_24h(geometry)
-
     return Constellation(
-        ra=c.center_ra / 15,
-        dec=c.center_dec,
+        ra=c.ra,
+        dec=c.dec,
         iau_id=c.iau_id,
         name=c.name,
         boundary=geometry,

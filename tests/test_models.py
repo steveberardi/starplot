@@ -8,7 +8,6 @@ from starplot import _, DSO, Star, Constellation, Sun, Moon, Planet
 
 
 class TestStar:
-
     def test_star_get(self):
         sirius = Star.get(name="Sirius")
         constellation = sirius.constellation()

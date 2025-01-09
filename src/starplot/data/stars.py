@@ -483,7 +483,14 @@ def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=
     if extent:
         stars = stars.filter(stars.geometry.intersects(extent))
 
-    stars = stars.join(designations, "hip", how="left")
+    stars = stars.join(
+        designations,
+        [
+            stars.hip == designations.hip,
+            (stars.ccdm == "A") | (stars.ccdm == "") | (stars.ccdm.isnull()),
+        ],
+        how="left",
+    )
 
     if filters:
         return stars.filter(*filters)

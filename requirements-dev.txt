@@ -11,6 +11,6 @@ mkdocs-glightbox==0.3.5
 griffe==0.44.0
 ruff==0.0.282
 ipython==7.12.0
-pygments==2.17.2
-rich==13.7.1
-snakeviz==2.2.0
+pygments==2.19.1
+rich==13.9.4
+snakeviz==2.2.2

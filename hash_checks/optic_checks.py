@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, optics, OpticPlot, callables, Star, Moon
+from starplot import styles, optics, OpticPlot, callables, Star, Moon, _
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -48,7 +48,7 @@ def check_optic_polaris_binoculars():
         style=style_dark,
         **plot_kwargs,
     )
-    optic_plot.stars(mag=14)
+    optic_plot.stars(where=[_.magnitude < 14])
     optic_plot.info()
     filename = DATA_PATH / "optic-binoculars-polaris.png"
     optic_plot.export(filename)
@@ -72,7 +72,7 @@ def check_optic_orion_nebula_refractor():
         style=style_dark,
         **plot_kwargs,
     )
-    optic_plot.stars(mag=12)
+    optic_plot.stars(where=[_.magnitude < 12])
     optic_plot.nebula()
     optic_plot.info()
     filename = DATA_PATH / "optic-orion-nebula-refractor.png"
@@ -96,12 +96,12 @@ def check_optic_wrapping():
         **plot_kwargs,
     )
     optic_plot.stars(
-        where=[Star.magnitude < 8],
+        where=[_.magnitude < 8],
         style__marker__symbol="star",
         style__marker__size=600,
     )
     optic_plot.rectangle(
-        center=(23.9, 17.5),
+        center=(23.9 * 15, 17.5),
         height_degrees=1,
         width_degrees=2,
         style__fill_color="red",
@@ -129,8 +129,8 @@ def check_optic_clipping():
         style=style_blue,
         **plot_kwargs,
     )
-    optic_plot.stars(mag=12)
-    optic_plot.dsos(mag=8.1, labels=None)
+    optic_plot.stars(where=[_.magnitude < 12])
+    optic_plot.dsos(where=[_.magnitude < 8.1], labels=None)
     optic_plot.nebula()
     optic_plot.title("Orion Nebula")
     filename = DATA_PATH / "optic-clipping.png"
@@ -154,7 +154,7 @@ def check_optic_m45_binoculars():
         style=style_dark,
         **plot_kwargs,
     )
-    optic_plot.stars(mag=12)
+    optic_plot.stars(where=[_.magnitude < 12])
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-binoculars.png"
     optic_plot.export(filename)
@@ -178,7 +178,7 @@ def check_optic_m45_scope():
         **plot_kwargs,
     )
     optic_plot.stars(
-        mag=12,
+        where=[_.magnitude < 12],
         color_fn=callables.color_by_bv,
         style={"label": {"font_color": "#7df597"}},
     )
@@ -204,7 +204,7 @@ def check_optic_m45_reflector():
         style=style_dark,
         **plot_kwargs,
     )
-    optic_plot.stars(mag=12)
+    optic_plot.stars(where=[_.magnitude < 12])
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-reflector.png"
     optic_plot.export(filename)
@@ -228,7 +228,9 @@ def check_optic_m45_camera():
         style=style_dark,
         **plot_kwargs,
     )
-    optic_plot.stars(mag=12, style__marker__symbol=styles.MarkerSymbolEnum.STAR)
+    optic_plot.stars(
+        where=[_.magnitude < 12], style__marker__symbol=styles.MarkerSymbolEnum.STAR
+    )
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-camera.png"
     optic_plot.export(filename)
@@ -254,7 +256,7 @@ def check_optic_camera_rotated():
         style=style_dark,
         **plot_kwargs,
     )
-    optic_plot.stars(mag=12)
+    optic_plot.stars(where=[_.magnitude < 12])
     optic_plot.info()
     filename = DATA_PATH / "optic-camera-rotated-m45.png"
     optic_plot.export(filename)
@@ -275,7 +277,7 @@ def check_optic_solar_eclipse_binoculars():
         ),
         **plot_kwargs,
     )
-    optic_plot.stars(mag=14)
+    optic_plot.stars(where=[_.magnitude < 14])
     optic_plot.moon(true_size=True, show_phase=True)
     optic_plot.sun(true_size=True)
     filename = DATA_PATH / "optic-binoculars-eclipse.png"

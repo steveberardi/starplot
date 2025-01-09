@@ -186,7 +186,7 @@ class DsoPlotterMixin:
 
                     if style.marker.symbol == MarkerSymbolEnum.SQUARE:
                         self.rectangle(
-                            (ra / 15, dec),
+                            (ra, dec),
                             min_ax_degrees * 2,
                             maj_ax_degrees * 2,
                             style=poly_style,
@@ -194,7 +194,7 @@ class DsoPlotterMixin:
                         )
                     else:
                         self.ellipse(
-                            (ra / 15, dec),
+                            (ra, dec),
                             min_ax_degrees * 2,
                             maj_ax_degrees * 2,
                             style=poly_style,
@@ -203,13 +203,13 @@ class DsoPlotterMixin:
 
                 if label:
                     self.text(
-                        label, ra / 15, dec, style.label, gid=f"dso-{d.type}-label"
+                        label, ra, dec, style.label, gid=f"dso-{d.type}-label"
                     )
 
             else:
                 # if no major axis, then just plot as a marker
                 self.marker(
-                    ra=ra / 15,
+                    ra=ra,
                     dec=dec,
                     style=style,
                     label=label,

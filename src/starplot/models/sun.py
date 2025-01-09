@@ -23,7 +23,7 @@ class Sun(SkyObject):
     """Apparent size (degrees)"""
 
     geometry: Polygon = None
-    """Shapely Polygon of the Sun's extent. Right ascension coordinates are in 24H format."""
+    """Shapely Polygon of the Sun's extent. Right ascension coordinates are in degrees (0...360)."""
 
     def __init__(
         self,
@@ -78,10 +78,10 @@ class Sun(SkyObject):
         ).degrees
 
         return Sun(
-            ra=ra.hours,
+            ra=ra.hours * 15,
             dec=dec.degrees,
             name="Sun",
             dt=dt,
             apparent_size=apparent_diameter_degrees,
-            geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees),
+            geometry=circle((ra.hours * 15, dec.degrees), apparent_diameter_degrees),
         )

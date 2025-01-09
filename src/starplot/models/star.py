@@ -32,7 +32,7 @@ class Star(SkyObject):
     """Name, if available"""
 
     geometry: Point = None
-    """Shapely Point of the star's position. Right ascension coordinates are in 24H format."""
+    """Shapely Point of the star's position. Right ascension coordinates are in degrees (0...360)."""
 
     def __init__(
         self,
@@ -131,14 +131,10 @@ class Star(SkyObject):
 
 
 def from_tuple(star: tuple) -> Star:
-    ra, dec = star.ra_hours, star.dec_degrees
-
-    hip = getattr(star, "hip", None)
-
     s = Star(
-        ra=ra,
-        dec=dec,
-        hip=hip,
+        ra=star.ra_degrees,
+        dec=star.dec_degrees,
+        hip=getattr(star, "hip", None),
         magnitude=star.magnitude,
         bv=getattr(star, "bv", None),
         tyc=getattr(star, "tyc_id", None),

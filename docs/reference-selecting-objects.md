@@ -76,11 +76,11 @@ Star.magnitude > 8 | Star.name == "Vega"
 
 ## Functions
 
-### ::: starplot.models.base.Term
+<!-- ### ::: starplot.models.base.Term
     options:
         inherited_members: true
         docstring_section_style: list
         show_root_heading: false
         show_docstring_attributes: true
         members_order: source
-        show_root_toc_entry: false
+        show_root_toc_entry: false -->
