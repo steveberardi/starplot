@@ -202,9 +202,7 @@ class DsoPlotterMixin:
                         )
 
                 if label:
-                    self.text(
-                        label, ra, dec, style.label, gid=f"dso-{d.type}-label"
-                    )
+                    self.text(label, ra, dec, style.label, gid=f"dso-{d.type}-label")
 
             else:
                 # if no major axis, then just plot as a marker

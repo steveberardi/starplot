@@ -27,9 +27,11 @@ class SkyObject(CreateMapMixin, CreateOpticMixin):
     constellation_id: Optional[str] = None
     """Identifier of the constellation that contains this object. The ID is the three-letter (all lowercase) abbreviation from the International Astronomical Union (IAU)."""
 
-    def __init__(self, ra: float, dec: float) -> None:
+    def __init__(self, ra: float, dec: float, constellation_id: str = None) -> None:
         self.ra = ra
         self.dec = dec
+        if constellation_id:
+            self._constellation_id = constellation_id
 
     @property
     def constellation_id(self):

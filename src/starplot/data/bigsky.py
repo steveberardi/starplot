@@ -25,12 +25,12 @@ def download(
     to_parquet(
         download_path,
         DataFiles.BIG_SKY,
-        digits,
     )
 
 
 def to_parquet(source_path: str, destination_path: str):
     import pyarrow as pa
+    import pyarrow.parquet as pq
 
     print("Preparing Big Sky Catalog for Starplot...")
 
@@ -48,22 +48,10 @@ def to_parquet(source_path: str, destination_path: str):
             "ra_mas_per_year",
             "dec_mas_per_year",
             "parallax_mas",
+            "constellation",
         ],
         compression="gzip",
     )
-
-    # df = df.astype(dtype= {
-    #         'tyc_id': "object",
-    #         'hip_id': "int64",
-    #         "ccdm": "object",
-    #         "magnitude": "float64",
-    #         "bv": "float64",
-    #         "ra_degrees_j2000": "float64",
-    #         "dec_degrees_j2000": "float64",
-    #         "ra_mas_per_year": "float64",
-    #         "dec_mas_per_year": "float64",
-    #         "parallax_mas": "float64",
-    #     })
 
     df = df.assign(epoch_year=2000)
 
@@ -75,7 +63,19 @@ def to_parquet(source_path: str, destination_path: str):
         }
     )
 
-    df.to_parquet(destination_path, engine="pyarrow", compression="gzip")
+    df = df.sort_values(["magnitude"])
+
+    table = pa.Table.from_pandas(df)
+    table = table.drop_columns("__index_level_0__")
+
+    pq.write_table(
+        table,
+        destination_path,
+        compression="none",
+        sorting_columns=[
+            pq.SortingColumn(df.columns.get_loc("magnitude")),
+        ],
+    )
 
     print(f"Done! {destination_path}")
 

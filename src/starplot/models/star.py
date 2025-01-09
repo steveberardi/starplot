@@ -45,8 +45,9 @@ class Star(SkyObject):
         tyc: str = None,
         ccdm: str = None,
         geometry: Point = None,
+        constellation_id: str = None,
     ) -> None:
-        super().__init__(ra, dec)
+        super().__init__(ra, dec, constellation_id)
         self.magnitude = magnitude
         self.bv = bv
         self.hip = hip if hip is not None and np.isfinite(hip) else None
@@ -141,6 +142,7 @@ def from_tuple(star: tuple) -> Star:
         ccdm=getattr(star, "ccdm", None),
         name=getattr(star, "name", None),
         geometry=star.geometry,
+        constellation_id=getattr(star, "constellation", None),
     )
     s._row_id = getattr(star, "rowid", None)
 

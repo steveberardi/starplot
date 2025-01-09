@@ -27,8 +27,10 @@ class DataFiles:
     CONSTELLATION_LINES_HIP = DATA_PATH / "constellation_lines_hips.json"
     CONSTELLATION_BORDERS = DATA_PATH / "constellation_borders_inv.gpkg"
     MILKY_WAY = DATA_PATH / "milkyway.gpkg"
-    HIPPARCOS = DATA_PATH / "stars.hipparcos.parquet"
-    BIG_SKY_MAG11 = DATA_PATH / "stars.bigsky.mag11.parquet"
+
+    # BIG_SKY_MAG11 = DATA_PATH / "stars.bigsky.mag11.parquet"
+    BIG_SKY_MAG11 = DATA_PATH / "stars.bigsky.0.4.0.mag10.parquet"
+
     ONGC = DATA_PATH / "ongc.gpkg.zip"
     CONSTELLATIONS = DATA_PATH / "constellations.gpkg"
 

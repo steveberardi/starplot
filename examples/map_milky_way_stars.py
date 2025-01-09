@@ -29,7 +29,7 @@ p.stars(
     alpha_fn=alpha,
     color_fn=color_by_bv,
     labels=None,
-    catalog="big-sky-mag11",
+    catalog="big-sky",
     style__marker__edge_color="#c5c5c5",
 )
 p.stars(
@@ -38,7 +38,7 @@ p.stars(
     alpha_fn=lambda s: 0.4,
     color_fn=color_by_bv,
     labels=None,
-    catalog="big-sky-mag11",
+    catalog="big-sky",
     style__marker__symbol="star_8",
     style__marker__edge_color=None,
 )
