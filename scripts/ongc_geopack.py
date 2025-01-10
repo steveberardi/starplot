@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 from shapely.geometry import Polygon, MultiPolygon
-
+from starplot import geod
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE.parent / "raw" / "ongc" / "outlines"
@@ -181,6 +181,38 @@ def walk_files(path=DATA_PATH):
             yield Path(os.path.join(dirpath, filename))
 
 
+def create_ellipse(d):
+    maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
+
+    if str(d.geometry.geom_type) in ["Polygon", "MultiPolygon"]:
+        return d.geometry
+
+    if np.isnan(maj_ax):
+        return d.geometry
+
+    if np.isnan(angle):
+        angle = 0
+
+    maj_ax_degrees = (maj_ax / 60) / 2
+
+    if np.isnan(min_ax):
+        min_ax_degrees = maj_ax_degrees
+    else:
+        min_ax_degrees = (min_ax / 60) / 2
+
+    points = geod.ellipse(
+        (d.ra_degrees, d.dec_degrees),
+        min_ax_degrees * 2,
+        maj_ax_degrees * 2,
+        angle,
+        num_pts=100,
+    )
+
+    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
+
+    return Polygon(points)
+
+
 gdf = read_csv()
 gdf = gdf.set_index("name")
 
@@ -231,19 +263,21 @@ for f in walk_files():
         elif dso_geom.area > MIN_SIZE:
             gdf.loc[name, "geometry"] = dso_geom
 
-
 # add size column
 gdf["size_deg2"] = gdf.apply(_size, axis=1)
 
-gdf_outlines = gpd.GeoDataFrame(
-    {"designation": outlines.keys(), "geometry": outlines.values()}
-)
 
-print(gdf.loc["NGC6405"])
+gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
+
+
+print(gdf.loc["NGC2168"])  # M35
 
 gdf.to_file("temp/ongc.gpkg", driver="GPKG", crs=CRS, index=True)
 
 # Create nebulae-only file
+# gdf_outlines = gpd.GeoDataFrame(
+#     {"designation": outlines.keys(), "geometry": outlines.values()}
+# )
 # gdf_outlines.to_file(BUILD_PATH / "nebulae.gpkg", driver="GPKG", crs=CRS, index=True)
 
 print("Total nebula outlines: " + str(len(outlines)))

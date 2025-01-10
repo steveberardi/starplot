@@ -1,12 +1,12 @@
 from typing import Optional, Union, Iterator
 
+import numpy as np
 from ibis import _
 from shapely.geometry import Polygon, MultiPolygon
 
 from starplot.data.dsos import DsoType, load, ONGC_TYPE_MAP
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject
-from starplot.geometry import to_24h
 from starplot import geod
 
 
@@ -145,37 +145,36 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
 def create_ellipse(d):
     maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
 
-    if maj_ax is None:
+    if np.isnan(maj_ax):
         return d.geometry
 
-    if angle is None:
+    if np.isnan(angle):
         angle = 0
 
     maj_ax_degrees = (maj_ax / 60) / 2
 
-    if not min_ax:
+    if np.isnan(min_ax):
         min_ax_degrees = maj_ax_degrees
     else:
         min_ax_degrees = (min_ax / 60) / 2
 
     points = geod.ellipse(
-        (d.ra_degrees, d.dec_degrees),
+        (d.ra, d.dec),
         min_ax_degrees * 2,
         maj_ax_degrees * 2,
         angle,
         num_pts=100,
     )
 
-    # points = [geod.to_radec(p) for p in points]
     points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
+
     return Polygon(points)
 
 
 def from_tuple(d: tuple) -> DSO:
-    geometry = d.geometry
-
-    if str(geometry.geom_type) not in ["Polygon", "MultiPolygon"]:
-        geometry = create_ellipse(d)
+    # geometry = d.geometry
+    # if str(geometry.geom_type) not in ["Polygon", "MultiPolygon"]:
+    #     geometry = create_ellipse(d)
 
     dso = DSO(
         name=d.name,
@@ -190,7 +189,7 @@ def from_tuple(d: tuple) -> DSO:
         m=d.m,
         ngc=d.ngc,
         ic=d.ic,
-        geometry=geometry,
+        geometry=d.geometry,
     )
 
     dso._row_id = getattr(d, "rowid", None)
