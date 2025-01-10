@@ -342,6 +342,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             zorder=ZOrderEnum.LAYER_1,
         )
         self.ax.add_patch(self._background_clip_path)
+        self._update_clip_path_polygon()
 
         # Inner Border
         inner_border = self.optic.patch(

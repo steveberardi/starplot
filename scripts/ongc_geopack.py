@@ -42,6 +42,7 @@ def _size(d):
 
     return size
 
+
 COLUMN_MAP = {
     "Name": "name",
     "Type": "type",
@@ -59,6 +60,7 @@ COLUMN_MAP = {
     "Const": "constellation",
 }
 """Input name -> output name"""
+
 
 def read_csv():
     df = pd.read_csv(
@@ -82,9 +84,7 @@ def read_csv():
     df.drop("RA", axis=1, inplace=True)
     df.drop("Dec", axis=1, inplace=True)
 
-    df = df.rename(
-        columns=COLUMN_MAP
-    )
+    df = df.rename(columns=COLUMN_MAP)
 
     gdf = gpd.GeoDataFrame(
         df,

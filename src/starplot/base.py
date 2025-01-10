@@ -63,6 +63,7 @@ DPI = 100
 
 class BasePlot(ABC):
     _background_clip_path = None
+    _clip_path_polygon: Polygon = None  # clip path in display coordinates
     _coordinate_system = CoordinateSystem.RA_DEC
 
     def __init__(
@@ -128,6 +129,10 @@ class BasePlot(ABC):
     def _prepare_coords(self, ra, dec) -> tuple[float, float]:
         return ra, dec
 
+    def _update_clip_path_polygon(self):
+        coords = self._background_clip_path.get_verts()
+        self._clip_path_polygon = Polygon(coords).buffer(-0.1)
+
     def _is_label_collision(self, bbox) -> bool:
         ix = list(self._labels_rtree.intersection(bbox))
         return len(ix) > 0
@@ -140,20 +145,14 @@ class BasePlot(ABC):
         ix = list(self._stars_rtree.intersection(bbox))
         return len(ix) > 0
 
-    @cache
-    def _clip_path_polygon(self):
-        coords = self._background_clip_path.get_verts()
-        return Polygon(coords).buffer(-0.1)
-        
     def _is_clipped(self, points) -> bool:
-        p = self._clip_path_polygon()
+        p = self._clip_path_polygon
 
         for x, y in points:
-            if not p.contains(Point(x,y)):
+            if not p.contains(Point(x, y)):
                 return True
-        
-        return False
 
+        return False
 
     def _add_label_to_rtree(self, label, extent=None):
         extent = extent or label.get_window_extent(

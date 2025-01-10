@@ -425,6 +425,7 @@ class HorizonPlot(
         )
 
         self.ax.add_patch(self._background_clip_path)
+        self._update_clip_path_polygon()
 
     def _init_plot(self):
         self._proj = ccrs.LambertAzimuthalEqualArea(
