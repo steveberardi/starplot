@@ -174,6 +174,7 @@ class BasePlot(ABC):
 
         # if label.get_text() == "CANIS MAJOR":
         #     print(bbox)
+        #     print(points)
         # if label.get_text() == "Electra":
         #     print(bbox)
 

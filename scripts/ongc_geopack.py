@@ -42,42 +42,48 @@ def _size(d):
 
     return size
 
+COLUMN_MAP = {
+    "Name": "name",
+    "Type": "type",
+    "RA": "ra",
+    "Dec": "dec",
+    "M": "m",
+    "NGC": "ngc",
+    "IC": "ic",
+    "MajAx": "maj_ax",
+    "MinAx": "min_ax",
+    "PosAng": "angle",
+    "B-Mag": "mag_b",
+    "V-Mag": "mag_v",
+    "Common names": "common_names",
+    "Const": "constellation",
+}
+"""Input name -> output name"""
 
 def read_csv():
     df = pd.read_csv(
         "raw/ongc/NGC.csv",
         sep=";",
+        usecols=COLUMN_MAP.keys(),
     )
     df_addendum = pd.read_csv(
         "raw/ongc/addendum.csv",
         sep=";",
+        usecols=COLUMN_MAP.keys(),
     )
     df = pd.concat([df, df_addendum])
     df["ra_degrees"] = df.apply(parse_ra, axis=1)
     df["dec_degrees"] = df.apply(parse_dec, axis=1)
 
-    df.drop("Identifiers", axis="columns")
-    df.drop("Sources", axis="columns")
     df["M"] = df.apply(parse_m, axis=1)
     df["IC"] = df.apply(parse_ic, axis=1)
     df["NGC"] = df.apply(parse_ngc, axis=1)
 
+    df.drop("RA", axis=1, inplace=True)
+    df.drop("Dec", axis=1, inplace=True)
+
     df = df.rename(
-        columns={
-            "Name": "name",
-            "Type": "type",
-            "M": "m",
-            "NGC": "ngc",
-            "IC": "ic",
-            "MajAx": "maj_ax",
-            "MinAx": "min_ax",
-            "PosAng": "angle",
-            "B-Mag": "mag_b",
-            "V-Mag": "mag_v",
-            "NED notes": "ned_notes",
-            "Common names": "common_names",
-            "Const": "constellation",
-        }
+        columns=COLUMN_MAP
     )
 
     gdf = gpd.GeoDataFrame(
@@ -235,7 +241,7 @@ gdf_outlines = gpd.GeoDataFrame(
 
 print(gdf.loc["NGC6405"])
 
-gdf.to_file(BUILD_PATH / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
+gdf.to_file("temp/ongc.gpkg", driver="GPKG", crs=CRS, index=True)
 
 # Create nebulae-only file
 # gdf_outlines.to_file(BUILD_PATH / "nebulae.gpkg", driver="GPKG", crs=CRS, index=True)

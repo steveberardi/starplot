@@ -24,8 +24,8 @@ from starplot.geometry import wrapped_polygon_adjustment
 
 DEFAULT_AUTO_ADJUST_SETTINGS = {
     "avoid_constellation_lines": False,
-    "point_generation_max_iterations": 25,
-    "distance_step_size": 9,
+    "point_generation_max_iterations": 10,
+    "distance_step_size": 2,
     "max_distance": 3_000,
     "label_padding": 9,
     "buffer": 0.05,

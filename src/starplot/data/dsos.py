@@ -142,9 +142,12 @@ def load(extent=None, filters=None):
     dsos = con.table("deep_sky_objects")
 
     dsos = dsos.mutate(
+        ra=_.ra_degrees,
+        dec=_.dec_degrees,
         magnitude=ibis.coalesce(_.mag_v, _.mag_b, None),
-        rowid=ibis.row_number(),
+        constellation_id=_.constellation,
         size=_.size_deg2,
+        rowid=ibis.row_number(),
     )
 
     if extent:
