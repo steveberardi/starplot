@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Dict, Union, Optional
 from random import randrange
+from functools import cache
 import logging
 
 import numpy as np
@@ -138,11 +139,20 @@ class BasePlot(ABC):
         ix = list(self._stars_rtree.intersection(bbox))
         return len(ix) > 0
 
+    @cache
+    def _clip_path_polygon(self):
+        coords = self._background_clip_path.get_verts()
+        return Polygon(coords).buffer(-0.1)
+        
     def _is_clipped(self, points) -> bool:
-        radius = -1.5 * int(self._background_clip_path.get_linewidth())
-        return self._background_clip_path is not None and not all(
-            self._background_clip_path.contains_points(points, radius=radius)
-        )
+        p = self._clip_path_polygon()
+
+        for x, y in points:
+            if not p.contains(Point(x,y)):
+                return True
+        
+        return False
+
 
     def _add_label_to_rtree(self, label, extent=None):
         extent = extent or label.get_window_extent(
