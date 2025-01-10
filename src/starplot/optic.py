@@ -391,9 +391,8 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")
 
-        self._plot_border()
         self._fit_to_ax()
-
         self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
         self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
         self.optic.transform(self.ax)
+        self._plot_border()
