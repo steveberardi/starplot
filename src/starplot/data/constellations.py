@@ -683,6 +683,7 @@ def load(extent=None, filters=None):
     c = c.mutate(
         ra=_.center_ra,
         dec=_.center_dec,
+        constellation_id=_.iau_id,
         rowid=ibis.row_number(),
         boundary=_.geometry,
     )

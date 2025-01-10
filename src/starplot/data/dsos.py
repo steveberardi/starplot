@@ -144,8 +144,8 @@ def load(extent=None, filters=None):
     dsos = dsos.mutate(
         ra=_.ra_degrees,
         dec=_.dec_degrees,
-        magnitude=ibis.coalesce(_.mag_v, _.mag_b, None),
         constellation_id=_.constellation,
+        magnitude=ibis.coalesce(_.mag_v, _.mag_b, None),
         size=_.size_deg2,
         rowid=ibis.row_number(),
     )

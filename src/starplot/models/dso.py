@@ -69,8 +69,9 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         ngc: str = None,
         ic: str = None,
         geometry: Union[Polygon, MultiPolygon] = None,
+        constellation_id: str = None,
     ) -> None:
-        super().__init__(ra, dec)
+        super().__init__(ra, dec, constellation_id)
         self.name = name
         self.type = type
         self.magnitude = magnitude
@@ -190,6 +191,7 @@ def from_tuple(d: tuple) -> DSO:
         ngc=d.ngc,
         ic=d.ic,
         geometry=d.geometry,
+        constellation_id=d.constellation_id,
     )
 
     dso._row_id = getattr(d, "rowid", None)

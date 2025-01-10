@@ -474,10 +474,10 @@ def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=
         epoch_year=2000,
         ra=_.ra_degrees,
         dec=_.dec_degrees,
+        constellation_id=_.constellation,
         ra_hours=_.ra_degrees / 15,
         # stars parquet does not have geometry field
         geometry=_.ra_degrees.point(_.dec_degrees),
-        constellation_id=_.constellation,
         rowid=ibis.row_number(),
     )
 

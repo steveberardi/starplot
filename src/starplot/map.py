@@ -542,9 +542,8 @@ class MapPlot(
 
         self.logger.debug(f"Projection = {self.projection.value.upper()}")
 
-        self._plot_background_clip_path()
-
         self._fit_to_ax()
+        self._plot_background_clip_path()
 
     @use_style(LabelStyle, "info_text")
     def info(self, style: LabelStyle = None):

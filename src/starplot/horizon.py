@@ -453,5 +453,5 @@ class HorizonPlot(
 
         self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
 
-        self._plot_background_clip_path()
         self._fit_to_ax()
+        self._plot_background_clip_path()
