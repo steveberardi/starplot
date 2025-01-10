@@ -133,8 +133,8 @@ class Star(SkyObject):
 
 def from_tuple(star: tuple) -> Star:
     s = Star(
-        ra=star.ra_degrees,
-        dec=star.dec_degrees,
+        ra=star.ra,
+        dec=star.dec,
         hip=getattr(star, "hip", None),
         magnitude=star.magnitude,
         bv=getattr(star, "bv", None),

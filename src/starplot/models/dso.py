@@ -172,8 +172,6 @@ def create_ellipse(d):
 
 
 def from_tuple(d: tuple) -> DSO:
-    magnitude = d.mag_v or d.mag_b or None
-    magnitude = float(magnitude) if magnitude else None
     geometry = d.geometry
 
     if str(geometry.geom_type) not in ["Polygon", "MultiPolygon"]:
@@ -181,13 +179,13 @@ def from_tuple(d: tuple) -> DSO:
 
     dso = DSO(
         name=d.name,
-        ra=d.ra_degrees,
-        dec=d.dec_degrees,
+        ra=d.ra,
+        dec=d.dec,
         type=d.type,
         maj_ax=d.maj_ax,
         min_ax=d.min_ax,
         angle=d.angle,
-        magnitude=magnitude,
+        magnitude=d.magnitude,
         size=d.size,
         m=d.m,
         ngc=d.ngc,
