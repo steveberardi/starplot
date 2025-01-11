@@ -1,4 +1,11 @@
+## v0.15.x
+- Replaces data backend with DuckDB + Ibis, making plotting 2-3x faster and object lookup up to 10x faster
+- Changes default unit of right ascension to degrees (0...360)
+- Improves performance of label placement
+
 ## v0.14.x
+[Documentation](https://archives.starplot.dev/0.14.0/)
+
 - Adds horizon plots, which show what the sky looks like from the horizon at a specific time and place
 - Improved auto placement of constellation labels
 - Separates styles and functions for constellation lines and labels
