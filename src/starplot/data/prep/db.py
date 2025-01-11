@@ -2,7 +2,7 @@ import duckdb
 import ibis
 
 from starplot import settings
-from starplot.data import DataFiles
+from starplot.data import DataFiles, RawDataFiles
 
 
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
@@ -18,7 +18,7 @@ con.install_extension("spatial")
 con.load_extension("spatial")
 
 # Milky Way
-milky_way_src = str(settings.BUILD_PATH / "constellations.gpkg")
+milky_way_src = str(RawDataFiles.MILKY_WAY)
 con.sql("DROP TABLE IF EXISTS milky_way")
 con.sql(
     f"CREATE TABLE milky_way AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{milky_way_src}'));"
@@ -35,9 +35,10 @@ con.sql(
     "CREATE INDEX constellations_boundary_idx ON constellations USING RTREE (geometry);"
 )
 
+constellation_borders_src = str(RawDataFiles.CONSTELLATION_BORDERS)
 con.sql("DROP TABLE IF EXISTS constellation_borders")
 con.sql(
-    f"CREATE TABLE constellation_borders AS (select * EXCLUDE geom, geom AS geometry from ST_Read('temp/constellation_borders_new.json'));"
+    f"CREATE TABLE constellation_borders AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_borders_src}'));"
 )
 con.sql(
     "CREATE INDEX constellation_borders_geometry_idx ON constellation_borders USING RTREE (geometry);"

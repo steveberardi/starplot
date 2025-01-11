@@ -27,6 +27,7 @@ bigsky.0.4.0.stars.parquet
 hash_checks/data/*.png
 hash_checks/results.html
 
+temp*
 temp.py
 temp/
 raw/

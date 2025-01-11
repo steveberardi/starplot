@@ -265,7 +265,7 @@ for f in walk_files():
 
 # add size column
 gdf["size_deg2"] = gdf.apply(_size, axis=1)
-# gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
+gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
 # gdf["geometry"] = gdf.apply(create_point, axis=1)
 
 print(gdf.loc["NGC2168"])  # M35

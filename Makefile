@@ -70,11 +70,17 @@ profile:
 	$(DOCKER_RUN) "python -m cProfile -o temp/results.prof scripts/scratchpad.py && \
 	snakeviz -s -p 8080 -H 0.0.0.0 temp/results.prof"
 
+db: prep-dsos prep-constellations prep-star-designations
+	$(DOCKER_RUN) "python -m starplot.data.prep.db"
+
 prep-dsos:
 	$(DOCKER_RUN) "python -m starplot.data.prep.dsos"
 
 prep-constellations:
 	$(DOCKER_RUN) "python -m starplot.data.prep.constellations"
+
+prep-star-designations:
+	$(DOCKER_RUN) "python -m starplot.data.prep.star_designations"
 
 version:
 	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"
@@ -154,4 +160,4 @@ clean:
 	rm -rf htmlcov
 	rm -f tests/data/*.png
 
-.PHONY: build test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts tutorial
+.PHONY: build test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts tutorial prep-dsos prep-constellations
