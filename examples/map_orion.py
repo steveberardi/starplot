@@ -41,7 +41,11 @@ p.open_clusters(
     labels=None,
 )
 
-p.nebula(where=[_.magnitude < 9], labels=None, label_fn=lambda d: d.ngc)
+p.nebula(
+    where=[(_.magnitude < 9) | (_.magnitude.isnull())],
+    labels=None,
+    label_fn=lambda d: d.ngc,
+)
 
 p.constellation_labels()
 p.milky_way()

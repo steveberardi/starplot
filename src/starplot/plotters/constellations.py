@@ -204,47 +204,40 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
         """
-        constellation_borders = self._read_geo_package(DataFiles.CONSTELLATION_BORDERS)
+        extent = self._extent_mask()
+        results = condata.load_borders(extent=extent)
+        borders_df = results.to_pandas()
 
-        if constellation_borders.empty:
+        if borders_df.empty:
             return
 
-        geometries = []
         border_lines = []
-        transform = self._plate_carree
-
-        for _, c in constellation_borders.iterrows():
-            for ls in c.geometry.geoms:
-                geometries.append(ls)
+        geometries = [line.geometry for line in borders_df.itertuples()]
 
         for ls in geometries:
-            x, y = ls.xy
-            x = list(x)
-            y = list(y)
+            if ls.length < 80:
+                ls = ls.segmentize(1)
+            
+            xy = [c for c in ls.coords]
 
             if self._coordinate_system == CoordinateSystem.RA_DEC:
-                border_lines.append(list(zip(x, y)))
+                border_lines.append(xy)
 
             elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-                x = [(24 - (x0 / 15)) * 15 for x0 in x]
-                coords = [self._prepare_coords(*p) for p in list(zip(x, y))]
+                coords = [self._prepare_coords(*p) for p in xy]
                 border_lines.append(coords)
-                transform = self._crs
 
             else:
                 raise ValueError("Unrecognized coordinate system")
 
-        style_kwargs = style.matplot_line_collection_kwargs(self.scale)
-
         line_collection = LineCollection(
             border_lines,
-            **style_kwargs,
-            transform=transform,
+            **style.matplot_line_collection_kwargs(self.scale),
+            transform=self._crs,
             clip_on=True,
             clip_path=self._background_clip_path,
             gid="constellations-border",
         )
-
         self.ax.add_collection(line_collection)
 
     def _constellation_labels_auto(self, style, labels, settings):

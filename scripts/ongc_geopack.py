@@ -208,7 +208,12 @@ def create_ellipse(d):
         num_pts=100,
     )
 
-    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
+    def fix_ra(r):
+        if r < 0:
+            r += 360
+        return round(r, 4)
+
+    points = [(fix_ra(ra), round(dec, 4)) for ra, dec in points]
 
     return Polygon(points)
 
@@ -271,6 +276,9 @@ gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
 
 
 print(gdf.loc["NGC2168"])  # M35
+
+print(gdf.loc["NGC6705"])  # M11
+
 
 gdf.to_file("temp/ongc.gpkg", driver="GPKG", crs=CRS, index=True)
 

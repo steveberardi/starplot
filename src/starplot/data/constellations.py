@@ -696,6 +696,26 @@ def load(extent=None, filters=None):
 
     return c
 
+def load_borders(extent=None, filters=None):
+    filters = filters or []
+    con = db.connect()
+    c = con.table("constellation_borders")
+    c = c.mutate(
+        # ra=_.center_ra,
+        # dec=_.center_dec,
+        # constellation_id=_.iau_id,
+        rowid=ibis.row_number(),
+        # boundary=_.geometry,
+    )
+
+    if extent:
+        filters.append(_.geometry.intersects(extent))
+
+    if filters:
+        return c.filter(*filters)
+
+    return c
+
 
 def get(constellation_id: str):
     return CONSTELLATIONS.get(constellation_id)
