@@ -81,6 +81,8 @@ def read_csv():
     df["IC"] = df.apply(parse_ic, axis=1)
     df["NGC"] = df.apply(parse_ngc, axis=1)
 
+    df["Const"] = df.apply(lambda d: str(d.Const).lower(), axis=1)
+
     df.drop("RA", axis=1, inplace=True)
     df.drop("Dec", axis=1, inplace=True)
 
@@ -135,7 +137,7 @@ def parse_ra(row):
     try:
         ra = row.RA
         h, m, s = ra.split(":")
-        return 15 * (float(h) + float(m) / 60 + float(s) / 3600)
+        return round(15 * (float(h) + float(m) / 60 + float(s) / 3600), 4)
     except Exception as e:
         print(row.Name)
         return None
@@ -153,7 +155,7 @@ def parse_dec(row):
         else:
             mx = 1
         h, m, s = dec[1:].split(":")
-        return mx * (float(h) + float(m) / 60 + float(s) / 3600)
+        return round(mx * (float(h) + float(m) / 60 + float(s) / 3600), 4)
     except Exception as e:
         print(row.Name)
         return None

@@ -60,10 +60,10 @@ def test_map_objects_list_planets():
     p.sun()
     p.moon()
 
-    assert p.objects.moon.ra == 19.502411822774185
+    assert p.objects.moon.ra == 292.53617734161276
     assert p.objects.moon.dt == dt
 
-    assert p.objects.sun.ra == 10.398849150787433
+    assert p.objects.sun.ra == 155.98273726181148
     assert p.objects.sun.dt == dt
 
     assert len(p.objects.planets) == 8

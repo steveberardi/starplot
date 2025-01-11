@@ -25,7 +25,7 @@ class TestStar:
 
     def test_star_find(self):
         hipstars = Star.find(where=[_.hip.notnull()])
-        assert len(hipstars) == 121_476
+        assert len(hipstars) == 368_330
 
         names = {"Sirius", "Bellatrix", "Castor", "Vega"}
         bright = Star.find(where=[_.name.isin(names)])
@@ -44,7 +44,7 @@ class TestConstellation:
     def test_constellation_get(self):
         hercules = Constellation.get(iau_id="her")
         assert hercules.name == "Hercules"
-        assert hercules.ra == 16.88
+        assert hercules.ra == 253.2
         assert hercules.dec == 34.86
 
     def test_constellation_find(self):
@@ -57,7 +57,7 @@ class TestConstellation:
 class TestDSO:
     def test_dso_get(self):
         m13 = DSO.get(m="13")
-        assert m13.ra == 16.6949
+        assert m13.ra == 250.4235
         assert m13.dec == 36.4613
         assert m13.m == "13"
         assert m13.ngc == "6205"
@@ -82,7 +82,7 @@ class TestMoon:
     def test_moon_get(self):
         dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
         m = Moon.get(dt)
-        assert m.ra == 19.502411822774185
+        assert m.ra == 292.53617734161276
         assert m.dec == -26.96492167310071
         assert m.dt == dt
         assert m.apparent_size == 0.5480758923848209
@@ -116,11 +116,11 @@ class TestSolarEclipse:
         m = Moon.get(dt=dt, lat=lat, lon=lon)
         s = Sun.get(dt=dt, lat=lat, lon=lon)
 
-        assert m.ra == 1.1740952571358825
+        assert m.ra == 17.611428857038238
         assert m.dec == 7.469561912433153
         assert m.apparent_size == 0.5615855003639567
 
-        assert s.ra == 1.1749494243027
+        assert s.ra == 17.624241364540502
         assert s.dec == 7.475828971935881
         assert s.apparent_size == 0.5321154425811137
 
@@ -129,7 +129,7 @@ class TestPlanet:
     def test_planet_get(self):
         dt = timezone("UTC").localize(datetime(2024, 4, 7, 21, 0, 0, 0))
         jupiter = Planet.get("jupiter", dt)
-        assert jupiter.ra == 3.086003716668181
+        assert jupiter.ra == 46.29005575002272
         assert jupiter.dec == 16.56207889273591
         assert jupiter.dt == dt
         assert jupiter.apparent_size == 0.009162890626143375

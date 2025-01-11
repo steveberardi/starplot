@@ -14,7 +14,7 @@ def test_stars_load_default():
     """By default, stars.load should load the Big Sky MAG-11 catalog"""
     result = stars.load()
     df = result.to_pandas()
-    assert len(df) == 981_852
+    assert len(df) == 368_330
 
 
 def test_stars_load_unrecognized_catalog():
