@@ -256,31 +256,6 @@ class HorizonPlot(
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_altaz(y, x)  # alt = y, az = x
 
-    def _read_geo_package(self, filename: str):
-        """Returns GeoDataFrame of a GeoPackage file"""
-
-        # if self.ra_min <= 0 and self.ra_max >= 24:
-        #     lon_min = -180
-        #     lon_max = 180
-        # else:
-        #     lon_min = self.ra_max * 15 - 180 # ra_to_lon(24 - self.ra_max)
-        #     lon_max = self.ra_min * 15 - 180 # ra_to_lon(24 - self.ra_min)
-
-        # extent = self._extent_mask()
-        # extent = (
-        #     lon_min,
-        #     self.dec_min,
-        #     lon_max,
-        #     self.dec_max,
-        # )
-
-        return gpd.read_file(
-            filename,
-            engine="pyogrio",
-            use_arrow=True,
-            # bbox=extent,
-        )
-
     @use_style(PathStyle, "horizon")
     def horizon(
         self,

@@ -215,18 +215,6 @@ class MapPlot(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
 
-    def _read_geo_package(self, filename: str):
-        """Returns GeoDataFrame of a GeoPackage file"""
-        extent = self.ax.get_extent(crs=self._plate_carree)
-        bbox = (extent[0], extent[2], extent[1], extent[3])
-
-        return gpd.read_file(
-            filename,
-            engine="pyogrio",
-            use_arrow=True,
-            bbox=bbox,
-        )
-
     @use_style(ObjectStyle, "zenith")
     def zenith(
         self,
