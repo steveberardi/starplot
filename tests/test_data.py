@@ -7,7 +7,7 @@ from starplot import data, settings
 
 @mock.patch.dict(os.environ, {"STARPLOT_DOWNLOAD_PATH": "/testing"})
 def test_download_path():
-    importlib.reload(settings) # must reload this first
+    importlib.reload(settings)  # must reload this first
     importlib.reload(data)
 
     assert os.environ.get("STARPLOT_DOWNLOAD_PATH") == "/testing"
