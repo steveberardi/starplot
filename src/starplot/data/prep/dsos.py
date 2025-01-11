@@ -16,6 +16,23 @@ IGNORE_OUTLINES = [
 ]
 MIN_SIZE = 0.1
 
+COLUMN_MAP = {
+    "Name": "name",
+    "Type": "type",
+    "RA": "ra",
+    "Dec": "dec",
+    "M": "m",
+    "NGC": "ngc",
+    "IC": "ic",
+    "MajAx": "maj_ax",
+    "MinAx": "min_ax",
+    "PosAng": "angle",
+    "B-Mag": "mag_b",
+    "V-Mag": "mag_v",
+    "Common names": "common_names",
+    "Const": "constellation",
+}
+"""Input name -> output name"""
 
 def _size(d):
     """Returns size (in sq degrees) of minimum bounding rectangle of a DSO"""
@@ -44,10 +61,12 @@ def read_csv():
     df = pd.read_csv(
         "raw/ongc/NGC.csv",
         sep=";",
+        usecols=COLUMN_MAP.keys(),
     )
     df_addendum = pd.read_csv(
         "raw/ongc/addendum.csv",
         sep=";",
+        usecols=COLUMN_MAP.keys(),
     )
     df = pd.concat([df, df_addendum])
 
@@ -56,45 +75,12 @@ def read_csv():
     df["M"] = df.apply(parse_m, axis=1)
     df["IC"] = df.apply(parse_ic, axis=1)
     df["NGC"] = df.apply(parse_ngc, axis=1)
+    df["Const"] = df.apply(lambda d: str(d.Const).lower(), axis=1)
 
-    df = df.rename(
-        columns={
-            "Name": "name",
-            "Type": "type",
-            "M": "m",
-            "NGC": "ngc",
-            "IC": "ic",
-            "MajAx": "maj_ax",
-            "MinAx": "min_ax",
-            "PosAng": "angle",
-            "B-Mag": "mag_b",
-            "V-Mag": "mag_v",
-            "NED notes": "ned_notes",
-            "Common names": "common_names",
-            "Const": "constellation",
-        }
-    )
+    df.drop("RA", axis=1, inplace=True)
+    df.drop("Dec", axis=1, inplace=True)
 
-    df = df.drop(
-        columns=[
-            "Cstar U-Mag",
-            "Cstar B-Mag",
-            "Cstar V-Mag",
-            "Cstar Names",
-            "ned_notes",
-            "constellation",
-            "OpenNGC notes",
-            "Sources",
-            "Hubble",
-            "Identifiers",
-            "J-Mag",
-            "H-Mag",
-            "K-Mag",
-            "RA",
-            "Dec",
-        ],
-        axis=1,
-    )
+    df = df.rename(columns=COLUMN_MAP)
 
     gdf = gpd.GeoDataFrame(
         df,
@@ -102,13 +88,12 @@ def read_csv():
         crs=CRS,
     )
 
-    gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
-    # gdf["geometry"] = gdf.apply(create_point, axis=1)
-
     return gdf
 
 
 def create_point(d):
+    if str(d.geometry.geom_type) in ["Polygon", "MultiPolygon"]:
+        return d.geometry
     return Point([d.ra_degrees, d.dec_degrees])
 
 
@@ -171,6 +156,9 @@ def parse_dec(row):
 def create_ellipse(d):
     maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
 
+    if str(d.geometry.geom_type) in ["Polygon", "MultiPolygon"]:
+        return d.geometry
+
     if np.isnan(maj_ax):
         return d.geometry
 
@@ -185,20 +173,21 @@ def create_ellipse(d):
         min_ax_degrees = (min_ax / 60) / 2
 
     points = geod.ellipse(
-        (d.ra_degrees / 15, d.dec_degrees),
+        (d.ra_degrees, d.dec_degrees),
         min_ax_degrees * 2,
         maj_ax_degrees * 2,
         angle,
         num_pts=100,
     )
 
-    points360 = []
-    for lon, dec in points:
-        if lon < 0:
-            lon += 360
-        points360.append([round(lon, 4), round(dec, 4)])
+    def fix_ra(r):
+        if r < 0:
+            r += 360
+        return round(r, 4)
 
-    return Polygon(points360)
+    points = [(fix_ra(ra), round(dec, 4)) for ra, dec in points]
+
+    return Polygon(points)
 
 
 def parse_designation_from_filename(filename):
@@ -276,18 +265,16 @@ for f in walk_files():
 
 # add size column
 gdf["size_deg2"] = gdf.apply(_size, axis=1)
+# gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
+# gdf["geometry"] = gdf.apply(create_point, axis=1)
 
-# print(gdf.loc["NGC1976"])
+print(gdf.loc["NGC2168"])  # M35
 
-print(gdf.loc["NGC6720"])  # ring nebula
-print(gdf.loc["Mel022"])  # M45
-# print("INDEX")
-# print(gdf.sindex.size)
+print(gdf.loc["NGC6705"])  # M11
 
-# gdf.to_file(BUILD_PATH / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
 
-gdf.set_crs(CRS, inplace=True)
-gdf.to_file(settings.BUILD_PATH / "ongc.gpkg", driver="GPKG", engine="pyogrio", index=True)
+# gdf.set_crs(CRS, inplace=True)
+gdf.to_file(settings.BUILD_PATH / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
 # crs=CRS, engine="pyogrio",
 
 print("Total nebula outlines: " + str(len(outlines)))

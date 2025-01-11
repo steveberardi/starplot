@@ -284,11 +284,6 @@ print(gdf.loc["NGC6705"])  # M11
 
 gdf.to_file("temp/ongc.gpkg", driver="GPKG", crs=CRS, index=True)
 
-# Create nebulae-only file
-# gdf_outlines = gpd.GeoDataFrame(
-#     {"designation": outlines.keys(), "geometry": outlines.values()}
-# )
-# gdf_outlines.to_file(BUILD_PATH / "nebulae.gpkg", driver="GPKG", crs=CRS, index=True)
 
 print("Total nebula outlines: " + str(len(outlines)))
 # result = gpd.read_file(HERE.parent / "build" / "ngc.gpkg")
