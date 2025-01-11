@@ -1,6 +1,6 @@
 from functools import cache
 
-from shapely import Polygon, MultiPolygon, transform
+from shapely import Polygon, MultiPolygon
 
 
 class ExtentMaskMixin:

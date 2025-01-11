@@ -42,6 +42,9 @@ Home = "https://starplot.dev"
 Documentation = "https://starplot.dev"
 Source = "https://github.com/steveberardi/starplot"
 
+[project.scripts]
+starplot = "starplot.cli:main"
+
 [tool.pytest.ini_options]
 testpaths = ["./tests"]
 filterwarnings = ["ignore::DeprecationWarning"]

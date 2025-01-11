@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, Star, _
+from starplot import styles, _
 from starplot.map import MapPlot, Projection
 
 HERE = Path(__file__).resolve().parent

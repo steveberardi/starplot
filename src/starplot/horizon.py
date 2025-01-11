@@ -2,7 +2,6 @@ from datetime import datetime
 from functools import cache
 
 import pandas as pd
-import geopandas as gpd
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches

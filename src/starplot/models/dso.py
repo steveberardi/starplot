@@ -4,7 +4,7 @@ import numpy as np
 from ibis import _
 from shapely.geometry import Polygon, MultiPolygon
 
-from starplot.data.dsos import DsoType, load, ONGC_TYPE_MAP
+from starplot.data.dsos import DsoType, load
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject
 from starplot import geod

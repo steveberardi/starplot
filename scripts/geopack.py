@@ -31,6 +31,7 @@ def lon_to_ra(lon: float):
         ra += 24
     return ra
 
+
 for feature in geo_json.get("features"):
     geometry = feature.get("geometry")
     ctr = 0
@@ -67,9 +68,7 @@ with open("temp/constellation_borders_new_temp.json", "w") as outfile:
 
 constellation_borders = gpd.read_file("temp/constellation_borders_new_temp.json")
 
-constellation_borders.to_file(
-    "temp/constellation_borders_new.json", driver="GeoJSON"
-)
+constellation_borders.to_file("temp/constellation_borders_new.json", driver="GeoJSON")
 
 # constellation_borders["geometry"] = constellation_borders["geometry"].transform(fix_ra)
 

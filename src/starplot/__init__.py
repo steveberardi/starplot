@@ -16,4 +16,4 @@ from .models import (
     ObjectList,  # noqa: F401
 )
 from .styles import *  # noqa: F401 F403
-from ibis import _
+from ibis import _ # noqa: F401 F403

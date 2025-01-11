@@ -2,7 +2,8 @@ import os
 
 import pandas as pd
 
-from starplot.data import DATA_PATH, DOWNLOAD_PATH, DataFiles, utils
+from starplot import settings
+from starplot.data import DataFiles, utils
 
 
 BIG_SKY_VERSION = "0.4.0"
@@ -14,7 +15,7 @@ DIGITS = 4
 
 
 def download(
-    download_path: str = str(DOWNLOAD_PATH / BIG_SKY_FILENAME),
+    download_path: str = str(settings.DOWNLOAD_PATH / BIG_SKY_FILENAME),
     digits: int = 4,
 ):
     utils.download(
@@ -85,5 +86,5 @@ def exists(path) -> bool:
 
 
 def download_if_not_exists():
-    if not exists(DOWNLOAD_PATH / BIG_SKY_FILENAME):
+    if not exists(settings.DOWNLOAD_PATH / BIG_SKY_FILENAME):
         download()

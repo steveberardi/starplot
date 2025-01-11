@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Dict, Union, Optional
 from random import randrange
-from functools import cache
 import logging
 
 import numpy as np
@@ -34,7 +33,6 @@ from starplot.styles import (
 )
 from starplot.styles.helpers import use_style
 from starplot.geometry import (
-    unwrap_polygon,
     unwrap_polygon_360,
     random_point_in_polygon_at_distance,
 )

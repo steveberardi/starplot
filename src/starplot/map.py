@@ -9,7 +9,6 @@ from matplotlib import path, patches, ticker
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import Polygon
 from skyfield.api import wgs84
-import geopandas as gpd
 import numpy as np
 
 from starplot.coordinates import CoordinateSystem

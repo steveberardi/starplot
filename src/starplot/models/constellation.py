@@ -4,7 +4,6 @@ from ibis import _
 from shapely import Polygon, MultiPolygon
 
 from starplot.models.base import SkyObject
-from starplot.geometry import to_24h
 from starplot.data import constellations
 
 

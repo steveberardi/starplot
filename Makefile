@@ -129,6 +129,9 @@ flit-publish: DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
 flit-publish:
 	$(DOCKER_RUN) "python -m flit publish"
 
+flit-install:
+	FLIT_ROOT_INSTALL=1 flit install
+
 # ------------------------------------------------------------------
 # Utils
 ephemeris:

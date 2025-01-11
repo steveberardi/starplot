@@ -2,7 +2,6 @@ import json
 
 import ibis
 from ibis import _
-from skyfield.data import stellarium
 
 from starplot.data import DataFiles, db
 
@@ -695,6 +694,7 @@ def load(extent=None, filters=None):
         return c.filter(*filters)
 
     return c
+
 
 def load_borders(extent=None, filters=None):
     filters = filters or []

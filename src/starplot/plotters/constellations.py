@@ -5,10 +5,9 @@ from shapely import (
     MultiPoint,
 )
 from matplotlib.collections import LineCollection
-from ibis import _
 
 from starplot.coordinates import CoordinateSystem
-from starplot.data import DataFiles, constellations as condata
+from starplot.data import constellations as condata
 from starplot.data.constellations import (
     CONSTELLATIONS_FULL_NAMES,
     CONSTELLATION_HIP_IDS,
@@ -217,7 +216,7 @@ class ConstellationPlotterMixin:
         for ls in geometries:
             if ls.length < 80:
                 ls = ls.segmentize(1)
-            
+
             xy = [c for c in ls.coords]
 
             if self._coordinate_system == CoordinateSystem.RA_DEC:

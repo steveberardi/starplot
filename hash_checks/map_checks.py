@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 from pytz import timezone
 
-from starplot import styles, DSO, Moon, Star, Constellation, _
+from starplot import styles, DSO, Moon, Constellation, _
 from starplot.data.dsos import BASIC_DSO_TYPES
 from starplot.map import MapPlot, Projection
 

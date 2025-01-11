@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, Star, HorizonPlot, _
+from starplot import styles, HorizonPlot, _
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
