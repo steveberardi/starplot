@@ -7,6 +7,12 @@ import pyarrow.parquet as pq
 
 from shapely.geometry import Point
 
+"""
+    This script creates a smaller parquet file with stars from Big Sky Mag 11
+
+    Set limit to limiting magnitude of destination file
+"""
+
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE.parent / "raw"
 
