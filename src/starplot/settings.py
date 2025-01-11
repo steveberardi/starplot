@@ -20,3 +20,7 @@ DUCKDB_EXTENSION_PATH = Path(
     env("STARPLOT_DUCKDB_EXTENSIONS_PATH", str(DATA_PATH / "duckdb-extensions"))
 )
 """Path for DuckDB extensions"""
+
+
+RAW_DATA_PATH = STARPLOT_PATH.parent.parent / "raw"
+BUILD_PATH = STARPLOT_PATH.parent.parent / "build"

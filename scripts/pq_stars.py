@@ -14,7 +14,7 @@ CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 
 BIGSKY_VERSION = "0.4.0"
 
-limit = 10
+limit = 9
 star_records = []
 
 

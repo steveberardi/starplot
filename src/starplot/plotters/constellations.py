@@ -7,7 +7,7 @@ from shapely import (
 from matplotlib.collections import LineCollection
 
 from starplot.coordinates import CoordinateSystem
-from starplot.data import constellations as condata
+from starplot.data import constellations as condata, constellation_lines as conlines
 from starplot.data.constellations import (
     CONSTELLATIONS_FULL_NAMES,
     CONSTELLATION_HIP_IDS,
@@ -69,7 +69,6 @@ class ConstellationPlotterMixin:
         else:
             transform = self._geodetic
 
-        conline_hips = condata.lines()
         style_kwargs = style.matplot_kwargs(self.scale)
         constellation_points_to_index = []
         lines = []
@@ -77,7 +76,7 @@ class ConstellationPlotterMixin:
         for c in constellations_df.itertuples():
             obj = constellation_from_tuple(c)
 
-            hiplines = conline_hips[c.iau_id]
+            hiplines = conlines.hips[c.iau_id]
             inbounds = False
 
             for s1_hip, s2_hip in hiplines:

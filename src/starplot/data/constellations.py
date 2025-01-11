@@ -1,9 +1,7 @@
-import json
-
 import ibis
 from ibis import _
 
-from starplot.data import DataFiles, db
+from starplot.data import db
 
 
 """
@@ -724,8 +722,3 @@ def get(constellation_id: str):
 def iterator():
     for c in CONSTELLATIONS.keys():
         yield c
-
-
-def lines():
-    with open(DataFiles.CONSTELLATION_LINES_HIP, "r") as conlines:
-        return json.loads(conlines.read())

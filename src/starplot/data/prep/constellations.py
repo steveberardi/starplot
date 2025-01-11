@@ -3,11 +3,11 @@ import pandas as pd
 
 from shapely.geometry import Polygon, MultiPolygon
 
-from starplot.data import constellations
-from starplot.data.prep.utils import RAW_DATA_PATH, DATA_LIBRARY
+from starplot import settings
+from starplot.data import constellations, constellation_lines
 
 
-DATA_PATH = RAW_DATA_PATH / "iau"
+DATA_PATH = settings.RAW_DATA_PATH / "iau"
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 
 # - Three letter (index)
@@ -52,7 +52,7 @@ def parse_borders(lines):
 
 def build_constellations():
     constellation_records = []
-    con_lines = constellations.lines()
+    con_lines = constellation_lines.hips
 
     for cid, props in constellations.properties.items():
         constellation_dict = {
@@ -100,7 +100,7 @@ gdf = gpd.GeoDataFrame(
 )
 gdf = gdf.set_index("id")
 gdf.to_file(
-    DATA_LIBRARY / "constellations.gpkg", driver="GPKG", engine="pyogrio", index=True
+    settings.BUILD_PATH / "constellations.gpkg", driver="GPKG", engine="pyogrio", index=True
 )
 
 print(gdf.loc["cmi"])
