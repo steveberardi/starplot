@@ -1,12 +1,4 @@
 import zipfile
-from pathlib import Path
-
-
-HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent.parent.parent.parent
-RAW_DATA_PATH = ROOT / "raw"
-BUILD_PATH = ROOT / "build"
-DATA_LIBRARY = HERE.parent / "library"
 
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 

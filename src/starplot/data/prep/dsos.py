@@ -7,10 +7,9 @@ import numpy as np
 
 from shapely.geometry import Polygon, MultiPolygon, Point
 
-from starplot import geod
-from starplot.data.prep.utils import RAW_DATA_PATH, DATA_LIBRARY, zip_file
+from starplot import geod, settings
 
-DATA_PATH = RAW_DATA_PATH / "ongc" / "outlines"
+DATA_PATH = settings.RAW_DATA_PATH / "ongc" / "outlines"
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 IGNORE_OUTLINES = [
     "IC0424",  # seems too big?
@@ -288,12 +287,10 @@ print(gdf.loc["Mel022"])  # M45
 # gdf.to_file(BUILD_PATH / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
 
 gdf.set_crs(CRS, inplace=True)
-gdf.to_file(DATA_LIBRARY / "ongc.gpkg", driver="GPKG", engine="pyogrio", index=True)
+gdf.to_file(settings.BUILD_PATH / "ongc.gpkg", driver="GPKG", engine="pyogrio", index=True)
 # crs=CRS, engine="pyogrio",
 
 print("Total nebula outlines: " + str(len(outlines)))
 # result = gpd.read_file(HERE.parent / "build" / "ngc.gpkg")
 # print(result)
 
-# Zip it up!
-zip_file(DATA_LIBRARY / "ongc.gpkg")
