@@ -128,9 +128,9 @@ class BasePlot(ABC):
     def _prepare_coords(self, ra, dec) -> tuple[float, float]:
         return ra, dec
 
-    def _update_clip_path_polygon(self):
+    def _update_clip_path_polygon(self, buffer=0):
         coords = self._background_clip_path.get_verts()
-        self._clip_path_polygon = Polygon(coords).buffer(-0.1)
+        self._clip_path_polygon = Polygon(coords).buffer(-1 * buffer)
 
     def _is_label_collision(self, bbox) -> bool:
         ix = list(self._labels_rtree.intersection(bbox))

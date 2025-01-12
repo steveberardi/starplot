@@ -29,7 +29,7 @@ def _horizon():
         dt=dt,
         style=STYLE,
         resolution=RESOLUTION,
-        scale=1.5,
+        scale=1,
     )
     p.constellations()
     p.constellation_borders()
@@ -60,7 +60,7 @@ def check_horizon_north_celestial_pole():
         dt=dt,
         style=STYLE,
         resolution=RESOLUTION,
-        scale=1.5,
+        scale=1,
     )
     p.constellations()
     p.constellation_borders()

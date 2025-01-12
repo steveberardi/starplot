@@ -15,7 +15,7 @@ STYLE = styles.PlotStyle().extend(
 
 JUNE_2023 = datetime.now(timezone("US/Pacific")).replace(2023, 6, 20, 21, 0, 0, 0)
 
-RESOLUTION = 2400
+RESOLUTION = 3800
 
 
 def _zenith():
