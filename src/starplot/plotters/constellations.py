@@ -19,15 +19,15 @@ from starplot.profile import profile
 from starplot.styles import PathStyle, LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
-from starplot.geometry import wrapped_polygon_adjustment
+from starplot.geometry import is_wrapped_polygon
 
 DEFAULT_AUTO_ADJUST_SETTINGS = {
     "avoid_constellation_lines": False,
     "point_generation_max_iterations": 10,
     "distance_step_size": 2,
     "max_distance": 3_000,
-    "label_padding": 9,
-    "buffer": 0.05,
+    "label_padding": 6,
+    "buffer": 0.3,
     "seed": None,
 }
 """Default settings for auto-adjusting constellation labels"""
@@ -91,7 +91,9 @@ class ConstellationPlotterMixin:
                 elif s2_ra - s1_ra > 60:
                     s1_ra += 360
 
-                if not inbounds and self.in_bounds(s1_ra, s1_dec):
+                if not inbounds and (
+                    self.in_bounds(s1_ra, s1_dec) or self.in_bounds(s2_ra, s2_dec)
+                ):
                     inbounds = True
 
                 if self._coordinate_system == CoordinateSystem.RA_DEC:
@@ -248,23 +250,29 @@ class ConstellationPlotterMixin:
             if not constellation_line_stars:
                 continue
 
-            points_line = MultiPoint([(s.ra, s.dec) for s in constellation_line_stars])
-            centroid = points_line.centroid
+            if is_wrapped_polygon(constellation.boundary):
+                starpoints = []
+                ra, dec = zip(*[(s.ra, s.dec) for s in constellation_line_stars])
+                new_ra = [r - 360 if r > 300 else r for r in ra]
+                starpoints = list(zip(new_ra, dec))
 
-            adjustment = wrapped_polygon_adjustment(constellation.boundary)
-
-            if (adjustment > 0 and centroid.x < 180) or (
-                adjustment < 0 and centroid.x > 180
-            ):
-                x = centroid.x + adjustment
             else:
-                x = centroid.x
+                ra, dec = zip(*[(s.ra, s.dec) for s in constellation_line_stars])
+                starpoints = list(zip(ra, dec))
 
+            points_line = MultiPoint(starpoints)
+            centroid = points_line.centroid
             text = labels.get(constellation.iau_id)
+
+            # if constellation.iau_id in ['umi', 'cass', 'pegs']:
+            #     self.logger.debug(f"constellations -> {constellation.iau_id}")
+            #     self.logger.debug(points_line)
+            #     self.logger.debug(centroid)
+            #     self.logger.debug(constellation.boundary)
 
             self.text(
                 text,
-                x,
+                centroid.x,
                 centroid.y,
                 style,
                 hide_on_collision=self.hide_colliding_labels,

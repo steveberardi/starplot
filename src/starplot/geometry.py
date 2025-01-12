@@ -3,7 +3,7 @@ import math
 from typing import Union
 
 from shapely import transform
-from shapely.geometry import Point, Polygon, MultiPolygon
+from shapely.geometry import Point, Polygon, MultiPolygon, MultiPoint
 
 from starplot import geod, utils
 
@@ -58,20 +58,41 @@ def unwrap_polygon(polygon: Polygon) -> Polygon:
     return Polygon(new_points)
 
 
-def unwrap_polygon_360(polygon: Polygon) -> Polygon:
+def unwrap_polygon_360_old(polygon: Polygon) -> Polygon:
     points = list(zip(*polygon.exterior.coords.xy))
     new_points = []
     prev = None
 
     for x, y in points:
         if prev is not None and prev > 300 and x < 180:
-            x += 360
-        elif prev is not None and prev < 180 and x > 300:
             x -= 360
+        elif prev is not None and prev < 180 and x > 300:
+            x += 360
         new_points.append((x, y))
         prev = x
 
     return Polygon(new_points)
+
+
+def unwrap_polygon_360(polygon: Polygon) -> Polygon:
+    ra, dec = [p for p in polygon.exterior.coords.xy]
+
+    if min(ra) < 180 and max(ra) > 300:
+        new_ra = [r + 360 if r < 50 else r for r in ra]
+        points = list(zip(new_ra, dec))
+        return Polygon(points)
+
+    return polygon
+
+
+def unwrap_polygon_360_inverse(polygon: Polygon) -> Polygon:
+    ra, dec = [p for p in polygon.exterior.coords.xy]
+
+    if min(ra) < 180 and max(ra) > 300:
+        new_ra = [r - 360 if r > 300 else r for r in ra]
+        return Polygon(list(zip(new_ra, dec)))
+
+    return polygon
 
 
 def random_point_in_polygon(
@@ -119,7 +140,7 @@ def random_point_in_polygon_at_distance(
     return None
 
 
-def wrapped_polygon_adjustment(polygon: Polygon) -> int:
+def wrapped_polygon_adjustment_old(polygon: Polygon) -> int:
     if "MultiPolygon" == str(polygon.geom_type):
         return 0
 
@@ -134,3 +155,27 @@ def wrapped_polygon_adjustment(polygon: Polygon) -> int:
         prev = ra
 
     return 0
+
+
+def wrapped_polygon_adjustment(polygon: Polygon) -> int:
+    if "MultiPolygon" == str(polygon.geom_type):
+        return 0
+
+    ra, _ = [p for p in polygon.exterior.coords.xy]
+
+    if min(ra) < 180 and max(ra) > 300:
+        return 360
+
+    return 0
+
+
+def is_wrapped_polygon(polygon: Polygon) -> bool:
+    if "MultiPolygon" == str(polygon.geom_type):
+        return False
+
+    ra, _ = [p for p in polygon.exterior.coords.xy]
+
+    if min(ra) < 180 and max(ra) > 300:
+        return True
+
+    return False
