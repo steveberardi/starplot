@@ -101,6 +101,7 @@ class BasePlot(ABC):
         self._labels_rtree = rtree.index.Index()
         self._constellations_rtree = rtree.index.Index()
         self._stars_rtree = rtree.index.Index()
+        self._markers_rtree = rtree.index.Index()
 
         self._background_clip_path = None
 
@@ -143,6 +144,10 @@ class BasePlot(ABC):
         ix = list(self._stars_rtree.intersection(bbox))
         return len(ix) > 0
 
+    def _is_marker_collision(self, bbox) -> bool:
+        ix = list(self._markers_rtree.intersection(bbox))
+        return len(ix) > 0
+    
     def _is_clipped(self, points) -> bool:
         p = self._clip_path_polygon
 
@@ -194,7 +199,7 @@ class BasePlot(ABC):
             return True
 
         if remove_on_collision and (
-            self._is_label_collision(bbox) or self._is_star_collision(bbox)
+            self._is_label_collision(bbox) or self._is_star_collision(bbox) or self._is_marker_collision(bbox)
         ):
             label.remove()
             return True
@@ -579,18 +584,34 @@ class BasePlot(ABC):
         if not skip_bounds_check and not self.in_bounds(ra, dec):
             return
 
+        # Plot marker
         x, y = self._prepare_coords(ra, dec)
-
+        style_kwargs = style.marker.matplot_scatter_kwargs(self.scale)
         self.ax.scatter(
             x,
             y,
-            **style.marker.matplot_scatter_kwargs(self.scale),
+            **style_kwargs,
             **self._plot_kwargs(),
             clip_on=True,
             clip_path=self._background_clip_path,
             gid=kwargs.get("gid_marker") or "marker",
         )
 
+        # Add to spatial index
+        data_xy = self._proj.transform_point(x, y, self._crs)
+        display_x, display_y = self.ax.transData.transform(data_xy)
+        radius = style_kwargs.get("s", 1) ** 0.5 / 5
+        bbox = np.array(
+            (
+                display_x - radius,
+                display_y - radius,
+                display_x + radius,
+                display_y + radius,
+            )
+        )
+        self._markers_rtree.insert(0, bbox, None)
+
+        # Plot label
         if label:
             label_style = style.label
             if label_style.offset_x == "auto" or label_style.offset_y == "auto":
