@@ -58,7 +58,7 @@ p = MapPlot(
     dec_min=5,
     dec_max=80,
     style=style,
-    resolution=2800,
+    resolution=3000,
     autoscale=True,
 )
 
@@ -83,6 +83,8 @@ for t, ra, dec in radecs:
                 "font_weight": "bold",
                 "font_color": "hsl(60, 70%, 72%)",
                 "zorder": 4096,
+                "offset_x": "auto",
+                "offset_y": "auto",
             },
         },
         label=label,

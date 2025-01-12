@@ -242,7 +242,7 @@ class MapPlot(
         ra, dec, _ = zenith.radec()
 
         self.marker(
-            ra=ra.hours,
+            ra=ra.hours * 15,
             dec=dec.degrees,
             style=style,
             label=label,
