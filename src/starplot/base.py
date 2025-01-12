@@ -128,7 +128,7 @@ class BasePlot(ABC):
     def _prepare_coords(self, ra, dec) -> tuple[float, float]:
         return ra, dec
 
-    def _update_clip_path_polygon(self, buffer=0):
+    def _update_clip_path_polygon(self, buffer=8):
         coords = self._background_clip_path.get_verts()
         self._clip_path_polygon = Polygon(coords).buffer(-1 * buffer)
 
