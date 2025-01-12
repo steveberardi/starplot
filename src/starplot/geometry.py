@@ -74,7 +74,7 @@ def unwrap_polygon_360_old(polygon: Polygon) -> Polygon:
     return Polygon(new_points)
 
 
-def unwrap_polygon_360(polygon: Polygon) -> Polygon:
+def unwrap_polygon_360_inverse(polygon: Polygon) -> Polygon:
     ra, dec = [p for p in polygon.exterior.coords.xy]
 
     if min(ra) < 180 and max(ra) > 300:
@@ -85,7 +85,7 @@ def unwrap_polygon_360(polygon: Polygon) -> Polygon:
     return polygon
 
 
-def unwrap_polygon_360_inverse(polygon: Polygon) -> Polygon:
+def unwrap_polygon_360(polygon: Polygon) -> Polygon:
     ra, dec = [p for p in polygon.exterior.coords.xy]
 
     if min(ra) < 180 and max(ra) > 300:

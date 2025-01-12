@@ -34,7 +34,6 @@ from starplot.styles import (
 from starplot.styles.helpers import use_style
 from starplot.geometry import (
     unwrap_polygon_360,
-    unwrap_polygon_360_inverse,
     random_point_in_polygon_at_distance,
 )
 from starplot.profile import profile
@@ -424,17 +423,11 @@ class BasePlot(ABC):
         origin = Point(ra, dec)
 
         for a in areas:
-            # unwrapped = unwrap_polygon_360(a)
-            unwrapped = unwrap_polygon_360_inverse(a)
+            unwrapped = unwrap_polygon_360(a)
             # new_buffer = unwrapped.area / 10 * -1 * buffer * self.scale
             # new_buffer = -1 * buffer * self.scale
             # new_poly = unwrapped.buffer(new_buffer)
             new_areas.append(unwrapped)
-
-        watched = ["Ursa Minors".upper(), "Cassiopeia".upper(), "PegasusC".upper()]
-        # if text in watched:
-        #     print(f"polygon area - {text}")
-        #     print(new_areas)
 
         for d in range(0, max_distance, distance_step_size):
             distance = d / 20
@@ -486,31 +479,10 @@ class BasePlot(ABC):
                 label = self._text(x, y, text, **kwargs)
 
             if is_open:
-                # if text in watched:
-                #     print(attempts)
-                #     print(origin)
-                #     print(point)
-                #     print(x, y)
-                #     print(new_areas[poly])
-
-                #     print(new_areas[poly].contains(Point(388.59939746848886, 63.66997348245647)))
-                #     self.polygon(geometry=new_areas[poly], style__color="red", style__alpha=0.4)
                 self._add_label_to_rtree(label)
                 return label
             elif label is not None:
                 label.remove()
-
-            # removed = self._maybe_remove_label(
-            #     label,
-            #     remove_on_collision=hide_on_collision,
-            #     remove_on_clipped=clip_on,
-            #     remove_on_constellation_collision=avoid_constellation_lines,
-            #     padding=padding,
-            # )
-
-            # if not removed:
-            #     self._add_label_to_rtree(label)
-            #     return label
 
     @use_style(LabelStyle)
     def text(

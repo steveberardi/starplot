@@ -264,12 +264,6 @@ class ConstellationPlotterMixin:
             centroid = points_line.centroid
             text = labels.get(constellation.iau_id)
 
-            # if constellation.iau_id in ['umi', 'cass', 'pegs']:
-            #     self.logger.debug(f"constellations -> {constellation.iau_id}")
-            #     self.logger.debug(points_line)
-            #     self.logger.debug(centroid)
-            #     self.logger.debug(constellation.boundary)
-
             self.text(
                 text,
                 centroid.x,
