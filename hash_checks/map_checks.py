@@ -269,7 +269,7 @@ def check_map_wrapping():
         resolution=RESOLUTION,
         autoscale=True,
     )
-    p.stars(where=[_.magnitude < 9], style={"marker": {"size": 40}})
+    p.stars(where=[_.magnitude < 9])
     p.dsos(
         where=[
             (_.magnitude.isnull()) | (_.magnitude < 9),

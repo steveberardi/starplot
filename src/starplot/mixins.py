@@ -11,7 +11,7 @@ class ExtentMaskMixin:
 
         If the extent crosses equinox, then two Polygons will be returned
         """
-        if self.ra_max < 24:
+        if self.ra_max <= 24:
             coords = [
                 [self.ra_min * 15, self.dec_min],
                 [self.ra_max * 15, self.dec_min],

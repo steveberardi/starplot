@@ -186,17 +186,20 @@ class MapPlot(
         ]
 
     def _adjust_radec_minmax(self):
+        # adjust declination to match extent
+        extent = self.ax.get_extent(crs=self._plate_carree)
+        self.dec_min = extent[2]
+        self.dec_max = extent[3]
+        
         # adjust the RA min/max if the DEC bounds is near the poles
         if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH] and (
             self.dec_max > 80 or self.dec_min < -80
         ):
             self.ra_min = 0
             self.ra_max = 24
-
-        # adjust declination to match extent
-        extent = self.ax.get_extent(crs=self._plate_carree)
-        self.dec_min = extent[2]
-        self.dec_max = extent[3]
+        else:
+            self.ra_min = max(0, self.ra_min - 1)
+            self.ra_max = min(0, self.ra_max + 1)
 
         # adjust right ascension to match extent
         if self.ra_max < 24:
