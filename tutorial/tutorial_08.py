@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import Star, optics, styles, callables
+from starplot import Star, optics, styles, callables, _
 
 tonight = datetime.now(timezone("America/Los_Angeles")).replace(hour=21)
 
@@ -27,10 +27,9 @@ p = antares.create_optic(
 )
 
 p.stars(
-    where=[Star.magnitude < 12],
-    where_labels=[Star.magnitude < 8],
+    where=[_.magnitude < 12],
+    where_labels=[_.magnitude < 8],
     bayer_labels=True,
-    catalog="big-sky-mag11",
     color_fn=callables.color_by_bv,  # <-- here's where we specify the callable
 )
 

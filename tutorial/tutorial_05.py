@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from starplot import OpticPlot
+from starplot import OpticPlot, _
 from starplot.optics import Binoculars
 from starplot.styles import PlotStyle, extensions
 
@@ -28,6 +28,6 @@ p = OpticPlot(
     resolution=2048,
     autoscale=True,
 )
-p.stars(mag=12, catalog="big-sky-mag11", bayer_labels=True)
+p.stars(where=[_.magnitude < 12], catalog="big-sky-mag11", bayer_labels=True)
 
 p.export("tutorial_05.png", padding=0.1, transparent=True)

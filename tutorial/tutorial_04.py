@@ -1,4 +1,4 @@
-from starplot import MapPlot, Projection
+from starplot import MapPlot, Projection, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -29,11 +29,11 @@ p.constellations()
 p.constellation_borders()
 
 p.stars(
-    mag=8, bayer_labels=True, flamsteed_labels=True
+    where=[_.magnitude < 8], bayer_labels=True, flamsteed_labels=True
 )  # include Bayer and Flamsteed labels with the stars
 
-p.nebula(mag=8, labels=None)
-p.open_clusters(mag=8, labels=None)
+p.nebula(where=[_.magnitude < 8], labels=None)
+p.open_clusters(where=[_.magnitude < 8], labels=None)
 
 p.milky_way()
 p.ecliptic()
