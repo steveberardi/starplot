@@ -16,6 +16,12 @@ brew install geos gdal
 pip install starplot
 ```
 
+3. (optional) **Setup Starplot:**
+```
+starplot setup --install-big-sky
+```
+This will install the required spatial extension for DuckDB and download the full Big Sky catalog. Starplot will do this automatically, but this `setup` command is a way to do it ahead of time (especially useful for deployed environments, continuous ingegration, etc).
+
 ## Linux (debian)
 
 1. **Install required system libraries:**
@@ -28,6 +34,12 @@ apt-get install libgeos-dev libgdal-dev
 pip install starplot
 ```
 
+3. (optional) **Setup Starplot:**
+```
+starplot setup --install-big-sky
+```
+This will install the required spatial extension for DuckDB and download the full Big Sky catalog. Starplot will do this automatically, but this `setup` command is a way to do it ahead of time (especially useful for deployed environments, continuous ingegration, etc).
+
 ## Docker
 
 Here's a basic Docker container definition that'll get you up and running:
@@ -39,6 +51,7 @@ FROM python:3.11.11-bookworm
 RUN apt-get clean && apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
 
 RUN pip install starplot
+RUN starplot setup --install-big-sky  # Optional!
 ```
 
 !!! star "What about Windows?"
