@@ -197,12 +197,9 @@ class MapPlot(
         ):
             self.ra_min = 0
             self.ra_max = 24
-        else:
-            self.ra_min = max(0, self.ra_min - 1)
-            self.ra_max = min(0, self.ra_max + 1)
 
-        # adjust right ascension to match extent
-        if self.ra_max < 24:
+        elif self.ra_max < 24:
+            # adjust right ascension to match extent
             ra_min = (-1 * extent[1]) / 15
             ra_max = (-1 * extent[0]) / 15
 
@@ -212,6 +209,10 @@ class MapPlot(
 
             self.ra_min = ra_min
             self.ra_max = ra_max
+
+        else:
+            self.ra_min = lon_to_ra(extent[1])
+            self.ra_max = lon_to_ra(extent[0]) + 24
 
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
