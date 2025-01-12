@@ -34,6 +34,7 @@ COLUMN_MAP = {
 }
 """Input name -> output name"""
 
+
 def _size(d):
     """Returns size (in sq degrees) of minimum bounding rectangle of a DSO"""
     size = None
@@ -280,4 +281,3 @@ gdf.to_file(settings.BUILD_PATH / "ongc.gpkg", driver="GPKG", crs=CRS, index=Tru
 print("Total nebula outlines: " + str(len(outlines)))
 # result = gpd.read_file(HERE.parent / "build" / "ngc.gpkg")
 # print(result)
-

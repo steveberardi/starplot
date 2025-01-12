@@ -7,22 +7,22 @@ from starplot.geometry import unwrap_polygon_360
 from starplot.profile import profile
 
 
-
 from shapely.ops import transform
 
-def round_coordinates(geom, ndigits=4):
-    
-   def _round_coords(x, y, z=None):
-      x = round(x, ndigits)
-      y = round(y, ndigits)
 
-      if z is not None:
-          z = round(x, ndigits)
-          return (x,y,z)
-      else:
-          return (x,y)
-   
-   return transform(_round_coords, geom)
+def round_coordinates(geom, ndigits=4):
+    def _round_coords(x, y, z=None):
+        x = round(x, ndigits)
+        y = round(y, ndigits)
+
+        if z is not None:
+            z = round(x, ndigits)
+            return (x, y, z)
+        else:
+            return (x, y)
+
+    return transform(_round_coords, geom)
+
 
 class MilkyWayPlotterMixin:
     @profile
@@ -38,7 +38,7 @@ class MilkyWayPlotterMixin:
         mw = con.table("milky_way")
 
         # df = mw.to_pandas()
-        
+
         # # df.geometry = shapely.set_precision(df.geometry, grid_size=0.0001)
         # df['geometry'] = df.geometry.apply(round_coordinates)
 

@@ -100,7 +100,10 @@ gdf = gpd.GeoDataFrame(
 )
 gdf = gdf.set_index("id")
 gdf.to_file(
-    settings.BUILD_PATH / "constellations.gpkg", driver="GPKG", engine="pyogrio", index=True
+    settings.BUILD_PATH / "constellations.gpkg",
+    driver="GPKG",
+    engine="pyogrio",
+    index=True,
 )
 
 print(gdf.loc["cmi"])

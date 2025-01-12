@@ -6,7 +6,6 @@ load = Loader(settings.DATA_PATH)
 
 
 class DataFiles:
-
     BIG_SKY_MAG11 = settings.DATA_PATH / "stars.bigsky.0.4.0.mag10.parquet"
 
     BIG_SKY = settings.DOWNLOAD_PATH / "stars.bigsky.parquet"
