@@ -52,18 +52,17 @@ def parse_borders(lines):
 
 def build_constellations():
     constellation_records = []
-    con_lines = constellation_lines.hips
+    # con_lines = constellation_lines.hips
 
     for cid, props in constellations.properties.items():
         constellation_dict = {
-            "id": cid.lower(),
             "iau_id": cid.lower(),
-            "name": props[0].replace("\n", " "),
+            "name": props[0], #.replace("\n", " "),
             "center_ra": props[1] * 15,
             "center_dec": props[2],
-            "lines_hip_ids": ",".join(
-                "-".join([str(h) for h in hips]) for hips in con_lines[cid.lower()]
-            ),
+            # "lines_hip_ids": ",".join(
+            #     "-".join([str(h) for h in hips]) for hips in con_lines[cid.lower()]
+            # ),
         }
         # print(cid)
 
@@ -72,20 +71,33 @@ def build_constellations():
             ser2_coords = []
             with open(DATA_PATH / "ser1.txt", "r") as ser1:
                 ser1_coords = parse_borders(ser1.readlines())
+                ser1_boundary = Polygon(ser1_coords)
+                ser1 = constellation_dict.copy()
+                ser1["name"] = "Serpens Caput"
+                ser1["iau_id"] = "ser1"
+                ser1["center_ra"] = 235.2685
+                ser1["center_dec"] = 9.3025
+                ser1["geometry"] = ser1_boundary
+                constellation_records.append(ser1)
+
 
             with open(DATA_PATH / "ser2.txt", "r") as ser2:
                 ser2_coords = parse_borders(ser2.readlines())
-
-            constellation_dict["geometry"] = MultiPolygon(
-                [Polygon(ser1_coords), Polygon(ser2_coords)]
-            )
+                ser2_boundary = Polygon(ser2_coords)
+                ser2 = constellation_dict.copy()
+                ser2["name"] = "Serpens Cauda"
+                ser2["iau_id"] = "ser2"
+                ser2["center_ra"] = 273.1001
+                ser2["center_dec"] = -7.2970
+                ser2["geometry"] = ser2_boundary
+                constellation_records.append(ser2)
 
         else:
             with open(DATA_PATH / f"{cid.lower()}.txt", "r") as borderfile:
                 coords = parse_borders(borderfile.readlines())
                 constellation_dict["geometry"] = Polygon(coords)
 
-        constellation_records.append(constellation_dict)
+            constellation_records.append(constellation_dict)
 
     return constellation_records
 
@@ -98,14 +110,13 @@ gdf = gpd.GeoDataFrame(
     geometry=df["geometry"],
     crs=CRS,
 )
-gdf = gdf.set_index("id")
 gdf.to_file(
     settings.BUILD_PATH / "constellations.gpkg",
     driver="GPKG",
     engine="pyogrio",
-    index=True,
+    # index=True,
 )
 
-print(gdf.loc["cmi"])
+print(gdf[ gdf["iau_id"] == "cmi"])
 
 print("Total Constellations: " + str(len(constellation_records)))
