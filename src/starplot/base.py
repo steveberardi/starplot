@@ -676,16 +676,17 @@ class BasePlot(ABC):
         # Add to spatial index
         data_xy = self._proj.transform_point(x, y, self._crs)
         display_x, display_y = self.ax.transData.transform(data_xy)
-        radius = style_kwargs.get("s", 1) ** 0.5 / 5
-        bbox = np.array(
-            (
-                display_x - radius,
-                display_y - radius,
-                display_x + radius,
-                display_y + radius,
+        if display_x > 0 and display_y > 0:
+            radius = style_kwargs.get("s", 1) ** 0.5 / 5
+            bbox = np.array(
+                (
+                    display_x - radius,
+                    display_y - radius,
+                    display_x + radius,
+                    display_y + radius,
+                )
             )
-        )
-        self._markers_rtree.insert(0, bbox, None)
+            self._markers_rtree.insert(0, bbox, None)
 
         # Plot label
         if label:

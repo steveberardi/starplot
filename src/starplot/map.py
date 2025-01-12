@@ -298,7 +298,7 @@ class MapPlot(
             )
             self.ax.add_patch(patch)
             self._background_clip_path = patch
-            self._update_clip_path_polygon(buffer=style.line.width/2 - 8)
+            self._update_clip_path_polygon(buffer=style.line.width/2 + 2 * style.line.edge_width)
 
             if not labels:
                 return
