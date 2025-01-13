@@ -348,7 +348,7 @@ class MapPlot(
 
         text_kwargs = dict(
             **style.label.matplot_kwargs(self.scale),
-            hide_on_collision=False,
+            # hide_on_collision=False,
             xytext=(
                 style.label.offset_x * self.scale,
                 style.label.offset_y * self.scale,
@@ -362,7 +362,7 @@ class MapPlot(
 
         for i, position in enumerate(cardinal_directions):
             ra, dec, _ = position.radec()
-            x, y = self._prepare_coords(ra, dec)
+            x, y = self._prepare_coords(ra.hours * 15, dec.degrees)
             self._text(x, y, labels[i], **text_kwargs)
 
     @use_style(PathStyle, "gridlines")
