@@ -13,7 +13,12 @@ class Constellation(SkyObject):
     """
 
     iau_id: str = None
-    """International Astronomical Union (IAU) three-letter designation, all lowercase"""
+    """
+    International Astronomical Union (IAU) three-letter designation, all lowercase.
+    
+    **Important**: Starplot treats Serpens as two separate constellations to make them easier to work with programatically. 
+    Serpens Caput has the `iau_id` of `ser1` and Serpens Cauda is `ser2`
+    """
 
     name: str = None
     """Name"""
