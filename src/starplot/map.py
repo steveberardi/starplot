@@ -271,7 +271,7 @@ class MapPlot(
         ra, dec, _ = zenith.radec()
 
         points = geod.ellipse(
-            center=(ra.hours, dec.degrees),
+            center=(ra.hours * 15, dec.degrees),
             height_degrees=180,
             width_degrees=180,
             num_pts=100,
@@ -348,17 +348,14 @@ class MapPlot(
 
         text_kwargs = dict(
             **style.label.matplot_kwargs(self.scale),
-            # hide_on_collision=False,
             xytext=(
                 style.label.offset_x * self.scale,
                 style.label.offset_y * self.scale,
             ),
             textcoords="offset points",
             path_effects=[],
+            clip_on=True,
         )
-
-        if self.projection == Projection.ZENITH:
-            text_kwargs["clip_on"] = False
 
         for i, position in enumerate(cardinal_directions):
             ra, dec, _ = position.radec()
