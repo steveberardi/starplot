@@ -498,7 +498,7 @@ class MapPlot(
             Projection.STEREOGRAPHIC,
             Projection.ZENITH,
         ]:
-            # Calculate LST to shift RA DEC to be in line with current date and time
+            # Calculate local sidereal time (LST) to shift RA DEC to be in line with current date and time
             lst = -(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
             self._proj = Projection.crs(self.projection, lon=lst, lat=self.lat)
         elif self.projection == Projection.LAMBERT_AZ_EQ_AREA:
