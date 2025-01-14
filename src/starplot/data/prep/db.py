@@ -52,6 +52,10 @@ con.sql(
     f"CREATE TABLE deep_sky_objects AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{dso_src}'));"
 )
 con.sql("CREATE INDEX dso_idx ON deep_sky_objects USING RTREE (geometry);")
+con.sql("CREATE UNIQUE INDEX dso_name_idx ON deep_sky_objects (name);")
+con.sql("CREATE INDEX dso_messier_idx ON deep_sky_objects (m);")
+con.sql("CREATE INDEX dso_ngc_idx ON deep_sky_objects (ngc);")
+con.sql("CREATE INDEX dso_ic_idx ON deep_sky_objects (ic);")
 
 
 star_designations_src = str(settings.BUILD_PATH / "star_designations.parquet")

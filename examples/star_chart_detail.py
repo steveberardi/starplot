@@ -12,7 +12,7 @@ p = MapPlot(
     lon=-116.836394,
     dt=dt,
     style=PlotStyle().extend(
-        extensions.NORD,
+        extensions.BLUE_GOLD,
     ),
     resolution=3600,
     autoscale=True,

@@ -154,6 +154,7 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
     - `BLUE_MEDIUM` - Medium brightness blue colors ([details](#extensions-blue-medium))
     - `BLUE_DARK` - Dark blue and contrasting colors ([details](#extensions-blue-dark))
+    - `BLUE_GOLD` - Dark blue / gold colors ([details](#extensions-blue-gold))
     - `ANTIQUE` - Antique map inspired colors ([details](#extensions-antique))
     - `NORD` - Nord-inspired colors ([details](#extensions-nord))
 - **Plot types**
@@ -308,6 +309,7 @@ When you only want to override one or two style properties, it can be tedious to
     - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
     - `BLUE_MEDIUM` - Medium brightness bluish gray colors ([details](#extensions-blue-medium))
     - `BLUE_DARK` - Dark "Starplot blue" colors ([details](#extensions-blue-dark))
+    - `BLUE_GOLD` - Dark blue / gold colors ([details](#extensions-blue-gold))
     - `ANTIQUE` - Antique map inspired colors ([details](#extensions-antique))
     - `NORD` - Nord-inspired colors ([details](#extensions-nord))
 - **Plot types**
@@ -376,6 +378,19 @@ Dark bluish gray colors
 
     ```yaml 
     --8<-- "src/starplot/styles/ext/blue_dark.yml"
+    ```
+</div>
+
+<!-- BLUE GOLD -->
+<h2 class="doc doc-heading" id="extensions-blue-gold"><code>BLUE_GOLD</code></h2>
+
+<div class="indent" markdown>
+Dark bluish gold colors
+
+???- star "Source"
+
+    ```yaml 
+    --8<-- "src/starplot/styles/ext/blue_gold.yml"
     ```
 </div>
 

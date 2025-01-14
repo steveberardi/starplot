@@ -1,4 +1,4 @@
-# blue_medium
+# blue_gold
 
 background_color: rgb(46, 61, 74)
 figure_background_color: '#fff'
@@ -30,6 +30,9 @@ constellation_labels:
 constellation_lines:
   alpha: 0.8
   color: rgb(34, 124, 130)
+constellation_borders:
+  color: hsl(208, 23%, 5%)
+
 
 celestial_equator:
   label:
@@ -39,9 +42,9 @@ celestial_equator:
     alpha: 0.8
 ecliptic:
   label:
-    font_color: '#e33b3b'
+    font_color: hsl(4, 60%, 54%)
   line:
-    color: hsl(360, 85%, 56%)
+    color: hsl(4, 60%, 54%)
     alpha: 0.9
 
 planets:
@@ -79,10 +82,10 @@ horizon:
 dso_galaxy:
   marker:
     alpha: 1
-    color: hsl(330, 80%, 85%)
-    edge_color: hsl(330, 34%, 33%)
+    color: hsl(328, 23%, 54%)
+    edge_color: hsl(328, 23%, 24%)
   label:
-    font_color: hsl(330, 34%, 33%)
+    font_color: hsl(328, 23%, 54%)
 
 dso_nebula: &DSO-NEB
   marker:

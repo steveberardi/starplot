@@ -3,6 +3,7 @@
 - Changes default unit of right ascension to degrees (0...360)
 - Improves performance of label placement
 - Separates the constellation Serpens into two "separate" parts (Cauda and Caput)
+- Adds a new "blue gold" style extension
 
 ## v0.14.x
 [Documentation](https://archives.starplot.dev/0.14.0/)
