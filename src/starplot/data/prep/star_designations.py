@@ -1,4 +1,4 @@
-from pathlib import Path
+import csv
 
 import pandas as pd
 import pyarrow as pa
@@ -26,8 +26,6 @@ star_records = [
 
 df = pd.DataFrame.from_records(star_records)
 
-df.set_index("hip")
-
 schema = pa.schema(
     [
         ("hip", pa.int32()),
@@ -43,6 +41,13 @@ df.to_parquet(
     schema=schema,
     compression="snappy",
 )
+
+with open(settings.BUILD_PATH / "star_designations.csv", "w") as csvfile:
+    fieldnames = ['hip', 'name', 'bayer', 'flamsteed']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(star_records)
+
 
 
 print("Total: " + str(len(star_records)))

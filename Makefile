@@ -70,17 +70,21 @@ profile:
 	$(DOCKER_RUN) "python -m cProfile -o temp/results.prof scripts/scratchpad.py && \
 	snakeviz -s -p 8080 -H 0.0.0.0 temp/results.prof"
 
-db: prep-dsos prep-constellations prep-star-designations
-	$(DOCKER_RUN) "python -m starplot.data.prep.db"
+db: build-data-clean build-dsos build-star-designations
+	$(DOCKER_RUN) "python data/scripts/db.py"
 
-prep-dsos:
-	$(DOCKER_RUN) "python -m starplot.data.prep.dsos"
+build-data-clean:
+	mkdir -p data/build
+	rm data/build/*
 
-prep-constellations:
-	$(DOCKER_RUN) "python -m starplot.data.prep.constellations"
+build-dsos:
+	$(DOCKER_RUN) "python data/scripts/dsos.py"
 
-prep-star-designations:
-	$(DOCKER_RUN) "python -m starplot.data.prep.star_designations"
+# prep-constellations:
+# 	$(DOCKER_RUN) "python -m starplot.data.prep.constellations"
+
+build-star-designations:
+	$(DOCKER_RUN) "python data/scripts/star_designations.py"
 
 version:
 	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"

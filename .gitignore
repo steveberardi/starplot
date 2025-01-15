@@ -17,6 +17,10 @@ sky.db
 stars.bigsky.0.4.0.mag10.parquet
 
 
+# Data Folder
+data/build/*
+!data/build/.keep
+
 # Big Sky - Full Catalog
 # we ignore this because of its size (50+ MB)
 bigsky.0.4.0.stars.csv.gz
@@ -30,7 +34,7 @@ hash_checks/results.html
 temp*
 temp.py
 temp/
-raw/
+# raw/
 scripts/temp/
 
 # Documentation Generated Files

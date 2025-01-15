@@ -190,7 +190,7 @@ class MapPlot(
         extent = self.ax.get_extent(crs=self._plate_carree)
         self.dec_min = extent[2]
         self.dec_max = extent[3]
-        
+
         # adjust the RA min/max if the DEC bounds is near the poles
         if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH] and (
             self.dec_max > 80 or self.dec_min < -80
@@ -302,7 +302,9 @@ class MapPlot(
             )
             self.ax.add_patch(patch)
             self._background_clip_path = patch
-            self._update_clip_path_polygon(buffer=style.line.width/2 + 2 * style.line.edge_width + 20)
+            self._update_clip_path_polygon(
+                buffer=style.line.width / 2 + 2 * style.line.edge_width + 20
+            )
 
             if not labels:
                 return

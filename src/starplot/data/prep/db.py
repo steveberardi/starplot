@@ -26,7 +26,7 @@ con.sql(
 con.sql("CREATE INDEX milky_way_geometry_idx ON milky_way USING RTREE (geometry);")
 
 # Constellations
-constellation_src = str(settings.BUILD_PATH / "constellations.gpkg")
+constellation_src = str(settings.BUILD_PATH / "constellations.json")
 con.sql("DROP TABLE IF EXISTS constellations")
 con.sql(
     f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_src}'));"
