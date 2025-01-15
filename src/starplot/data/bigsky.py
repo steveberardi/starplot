@@ -18,6 +18,9 @@ def download(
     download_path: str = str(settings.DOWNLOAD_PATH / BIG_SKY_FILENAME),
     digits: int = 4,
 ):
+    if not os.path.exists(settings.DOWNLOAD_PATH):
+        os.makedirs(settings.DOWNLOAD_PATH)
+
     utils.download(
         BIG_SKY_URL,
         download_path,

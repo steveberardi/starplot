@@ -133,7 +133,7 @@ def parse_ngc(row):
 def parse_ra(row):
     """Parses RA from ONGC CSV from HH:MM:SS to 0...360 degree float"""
     if row.Type == "NonEx":
-        print(f"Non Existent object, ignoring... {row.Name}")
+        # print(f"Non Existent object, ignoring... {row.Name}")
         return
 
     ra = row.RA
@@ -144,7 +144,7 @@ def parse_ra(row):
 def parse_dec(row):
     """Parses DEC from ONGC CSV from HH:MM:SS to -90...90 degree float"""
     if row.Type == "NonEx":
-        print(f"Non Existent object, ignoring... {row.Name}")
+        # print(f"Non Existent object, ignoring... {row.Name}")
         return
 
     dec = row.Dec
@@ -253,7 +253,7 @@ for f in walk_files():
         outlines[designation] = dso_geom
 
     if not ic and not ngc:
-        print(designation)
+        # print(designation)
         centroid = dso_geom.centroid
         gdf.loc[name, "geometry"] = dso_geom
         gdf.loc[name, "ra_degrees"] = round(centroid.x, 4)
@@ -271,15 +271,13 @@ gdf["size_deg2"] = gdf.apply(_size, axis=1)
 gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
 # gdf["geometry"] = gdf.apply(create_point, axis=1)
 
-print(gdf.loc["NGC2168"])  # M35
+# print(gdf.loc["NGC2168"])  # M35
 
-print(gdf.loc["NGC6705"])  # M11
-
-
+# print(gdf.loc["NGC6705"])  # M11
 # gdf.set_crs(CRS, inplace=True)
-gdf.to_file(BUILD_PATH / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
-# crs=CRS, engine="pyogrio",
 
-print("Total nebula outlines: " + str(len(outlines)))
-# result = gpd.read_file(HERE.parent / "build" / "ngc.gpkg")
-# print(result)
+gdf.to_file(BUILD_PATH / "ongc.gpkg", driver="GPKG", crs=CRS, index=True)
+
+print("Deep Sky Objects: " + str(len(gdf)))
+
+# print("Total nebula outlines: " + str(len(outlines)))

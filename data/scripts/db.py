@@ -1,13 +1,7 @@
-from pathlib import Path
-
 import duckdb
 import ibis
 
 from settings import BUILD_PATH, RAW_PATH
-
-# HERE = Path(__file__).resolve().parent
-# RAW_DATA_PATH = HERE / "raw"
-# BUILD_PATH = HERE / "build"
 
 # ibis.options.interactive = True
 # con = ibis.duckdb.connect(BUILD_PATH / "sky.db")
@@ -66,3 +60,4 @@ con.sql(
 con.sql("CREATE UNIQUE INDEX star_designations_hip_idx ON star_designations (hip);")
 con.sql("CREATE INDEX star_designations_name_idx ON star_designations (name);")
 
+print("Sky.db created!")

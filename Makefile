@@ -36,7 +36,7 @@ lint:
 	$(DOCKER_RUN) "ruff check src/ tests/ hash_checks/ $(ARGS)"
 
 format:
-	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ $(ARGS)"
+	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)"
 
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
@@ -71,7 +71,7 @@ profile:
 	snakeviz -s -p 8080 -H 0.0.0.0 temp/results.prof"
 
 db: build-data-clean build-dsos build-star-designations
-	$(DOCKER_RUN) "python data/scripts/db.py"
+	@$(DOCKER_RUN) "python data/scripts/db.py"
 	cp data/build/sky.db src/starplot/data/library
 
 build-data-clean:
@@ -79,10 +79,10 @@ build-data-clean:
 	rm -rf data/build/*
 
 build-dsos:
-	$(DOCKER_RUN) "python data/scripts/dsos.py"
+	@$(DOCKER_RUN) "python data/scripts/dsos.py"
 
 build-star-designations:
-	$(DOCKER_RUN) "python data/scripts/star_designations.py"
+	@$(DOCKER_RUN) "python data/scripts/star_designations.py"
 
 version:
 	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"

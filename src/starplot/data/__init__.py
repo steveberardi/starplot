@@ -12,7 +12,3 @@ class DataFiles:
 
     DATABASE = settings.DATA_PATH / "sky.db"
 
-
-class RawDataFiles:
-    MILKY_WAY = settings.DATA_PATH / "source" / "milkyway.json"
-    CONSTELLATION_BORDERS = settings.DATA_PATH / "source" / "constellation_borders.json"

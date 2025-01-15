@@ -10,14 +10,14 @@ star_records = []
 
 with open(RAW_PATH / "star_designations.csv", "r") as csvfile:
     reader = csv.DictReader(csvfile)
-    star_records = [row for row in reader]
-    # TODO : cast to ints
 
+    for row in reader:
+        star = row.copy()
+        star["hip"] = int(star["hip"])
+        # star["flamsteed"] = int(star["flamsteed"]) if star.get("flamsteed") else None
+        star_records.append(star)
 
 df = pd.DataFrame.from_records(star_records)
-
-
-df = df.astype({"hip": "int32"})
 
 schema = pa.schema(
     [
@@ -35,4 +35,4 @@ df.to_parquet(
     compression="none",
 )
 
-print("Total: " + str(len(star_records)))
+print("Star Designations: " + str(len(star_records)))

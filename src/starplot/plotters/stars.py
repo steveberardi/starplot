@@ -6,7 +6,7 @@ from skyfield.api import Star as SkyfieldStar, wgs84
 
 from starplot import callables
 from starplot.coordinates import CoordinateSystem
-from starplot.data import bayer, stars, flamsteed
+from starplot.data import stars
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, use_style
@@ -85,8 +85,8 @@ class StarPlotterMixin:
                 self._labeled_stars.append(s.tyc)
 
             label = labels.get(s.hip) if label_fn is None else label_fn(s)
-            bayer_desig = bayer.hip.get(s.hip)
-            flamsteed_num = flamsteed.hip.get(s.hip)
+            bayer_desig = s.bayer
+            flamsteed_num = s.flamsteed
 
             if label:
                 self.text(
@@ -103,13 +103,13 @@ class StarPlotterMixin:
                 )
 
             if bayer_labels and bayer_desig:
-                _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i], s.hip))
+                _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i]))
 
-            if flamsteed_labels and flamsteed_num:
-                _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i], s.hip))
+            if flamsteed_labels and flamsteed_num and not bayer_desig:
+                _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i]))
 
         # Plot bayer/flamsteed
-        for bayer_desig, ra, dec, star_size, _ in _bayer:
+        for bayer_desig, ra, dec, star_size in _bayer:
             self.text(
                 bayer_desig,
                 ra,
@@ -123,9 +123,7 @@ class StarPlotterMixin:
                 gid="stars-label-bayer",
             )
 
-        for flamsteed_num, ra, dec, star_size, hip in _flamsteed:
-            if hip in bayer.hip:
-                continue
+        for flamsteed_num, ra, dec, star_size in _flamsteed:
             self.text(
                 flamsteed_num,
                 ra,

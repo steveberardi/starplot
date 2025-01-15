@@ -13,7 +13,7 @@ STARPLOT_PATH = Path(__file__).resolve().parent
 DATA_PATH = STARPLOT_PATH / "data" / "library"
 """Path of starplot data"""
 
-DOWNLOAD_PATH = Path(env("STARPLOT_DOWNLOAD_PATH", str(DATA_PATH)))
+DOWNLOAD_PATH = Path(env("STARPLOT_DOWNLOAD_PATH", str(DATA_PATH / "downloads")))
 """Path for downloaded data"""
 
 DUCKDB_EXTENSION_PATH = Path(

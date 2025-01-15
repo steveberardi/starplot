@@ -31,6 +31,12 @@ class Star(SkyObject):
     name: Optional[str] = None
     """Name, if available"""
 
+    bayer: Optional[str] = None
+    """Bayer designation, if available"""
+
+    flamsteed: Optional[int] = None
+    """Flamsteed number, if available"""
+
     geometry: Point = None
     """Shapely Point of the star's position. Right ascension coordinates are in degrees (0...360)."""
 
@@ -46,6 +52,8 @@ class Star(SkyObject):
         ccdm: str = None,
         geometry: Point = None,
         constellation_id: str = None,
+        bayer: str = None,
+        flamsteed: int = None,
     ) -> None:
         super().__init__(ra, dec, constellation_id)
         self.magnitude = magnitude
@@ -55,6 +63,12 @@ class Star(SkyObject):
         self.tyc = tyc
         self.ccdm = ccdm
         self.geometry = geometry
+
+        if bayer: # and not np.isnan(bayer):
+            self.bayer = bayer
+        
+        if flamsteed: # and not np.isnan(flamsteed):
+            self.flamsteed = int(flamsteed)
 
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
@@ -143,6 +157,8 @@ def from_tuple(star: tuple) -> Star:
         name=getattr(star, "name", None),
         geometry=star.geometry,
         constellation_id=getattr(star, "constellation", None),
+        bayer=getattr(star, "bayer", None),
+        flamsteed=getattr(star, "flamsteed", None),
     )
     s._row_id = getattr(star, "rowid", None)
 
