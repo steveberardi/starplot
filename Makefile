@@ -72,16 +72,14 @@ profile:
 
 db: build-data-clean build-dsos build-star-designations
 	$(DOCKER_RUN) "python data/scripts/db.py"
+	cp data/build/sky.db src/starplot/data/library
 
 build-data-clean:
 	mkdir -p data/build
-	rm data/build/*
+	rm -rf data/build/*
 
 build-dsos:
 	$(DOCKER_RUN) "python data/scripts/dsos.py"
-
-# prep-constellations:
-# 	$(DOCKER_RUN) "python -m starplot.data.prep.constellations"
 
 build-star-designations:
 	$(DOCKER_RUN) "python data/scripts/star_designations.py"

@@ -62,12 +62,12 @@ def _size(d):
 
 def read_csv():
     df = pd.read_csv(
-        "raw/ongc/NGC.csv",
+        RAW_PATH / "ongc" / "NGC.csv",
         sep=";",
         usecols=COLUMN_MAP.keys(),
     )
     df_addendum = pd.read_csv(
-        "raw/ongc/addendum.csv",
+        RAW_PATH / "ongc" / "addendum.csv",
         sep=";",
         usecols=COLUMN_MAP.keys(),
     )
