@@ -1,7 +1,7 @@
 ## v0.15.x
 - Replaces data backend with DuckDB + Ibis, making plotting 2-3x faster and object lookup up to 10x faster
 - Changes default unit of right ascension to degrees (0...360)
-- Improves performance of label placement
+- Improves performance of constellation label placement
 - Separates the constellation Serpens into two "separate" parts (Cauda and Caput)
 - Adds a new "blue gold" style extension
 

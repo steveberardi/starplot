@@ -1,6 +1,6 @@
 Starplot is available on [PyPI](https://pypi.org/project/starplot/), but it's basically just a thin layer on top of Matplotlib, Skyfield, Cartopy, and others. So, before installing Starplot you'll need a few dependencies. Below are instructions for installing on macOS and Linux.
 
-Supported Python versions: 3.9+
+Supported Python versions: 3.9 - 3.12
 
 Required Dependencies: [GEOS](https://libgeos.org/), [GDAL](https://gdal.org/)
 
