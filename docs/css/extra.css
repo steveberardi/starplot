@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=GFS+Didot&display=swap');
+
 :root {
     --md-primary-fg-color:        hsl(209, 53%, 37%);
     --md-primary-fg-color--light: hsl(209, 53%, 70%);
@@ -379,4 +381,10 @@ code.raw {
         background-color: hsl(197, 36%, 30%);
         /* border: 1px solid hsl(207, 46%, 56%); */
     }
+}
+
+td[data-column-id=bayer] {
+    font-family: "GFS Didot", serif;
+    font-weight: 400;
+    font-style: normal;
 }

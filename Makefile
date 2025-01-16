@@ -84,6 +84,10 @@ build-dsos:
 build-star-designations:
 	@$(DOCKER_RUN) "python data/scripts/star_designations.py"
 
+build-doc-data:
+	@$(DOCKER_RUN) "python data/scripts/docdata.py"
+
+
 version:
 	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"
 

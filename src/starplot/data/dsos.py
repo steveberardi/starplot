@@ -67,27 +67,6 @@ ONGC_TYPE = {
 
 ONGC_TYPE_MAP = {v: k for k, v in ONGC_TYPE.items()}
 
-BASIC_DSO_TYPES = [
-    # Star Clusters ----------
-    DsoType.OPEN_CLUSTER,
-    DsoType.GLOBULAR_CLUSTER,
-    # Galaxies ----------
-    DsoType.GALAXY,
-    DsoType.GALAXY_PAIR,
-    DsoType.GALAXY_TRIPLET,
-    DsoType.GROUP_OF_GALAXIES,
-    # Nebulas ----------
-    DsoType.NEBULA,
-    DsoType.PLANETARY_NEBULA,
-    DsoType.EMISSION_NEBULA,
-    DsoType.STAR_CLUSTER_NEBULA,
-    DsoType.REFLECTION_NEBULA,
-    # Stars ----------
-    # DsoType.DOUBLE_STAR,
-    DsoType.ASSOCIATION_OF_STARS,
-]
-"""Default types of Deep Sky Objects (DSOs) that are plotted when you call `dsos()` on a plot"""
-
 DSO_LEGEND_LABELS = {
     # Galaxies ----------
     DsoType.GALAXY: "Galaxy",
