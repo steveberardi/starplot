@@ -11,4 +11,3 @@ class DataFiles:
     BIG_SKY = settings.DOWNLOAD_PATH / "stars.bigsky.parquet"
 
     DATABASE = settings.DATA_PATH / "sky.db"
-

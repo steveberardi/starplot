@@ -5,7 +5,7 @@ The table below shows all the constellations in Starplot's database, with their 
 
 Note that Serpens is treated as two separate constellations in Starplot.
 
-<div id="grid"></div>
+<div id="grid" class="constellations-data-grid"></div>
 
 <script>
 

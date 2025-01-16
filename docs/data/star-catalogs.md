@@ -1,5 +1,6 @@
 
 
+## `starplot.data.stars.StarCatalog`
 
 ::: starplot.data.stars.StarCatalog
     options:

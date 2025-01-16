@@ -383,8 +383,24 @@ code.raw {
     }
 }
 
+[data-column-id=bayer],[data-column-id=flamsteed] {
+    text-align: center;
+}
 td[data-column-id=bayer] {
     font-family: "GFS Didot", serif;
     font-weight: 400;
     font-style: normal;
+    font-size: 1.1rem;
+}
+
+.constellations-data-grid {
+    max-width: 600px;
+}
+
+.gridjs-search {
+    width: 400px !important;
+}
+.gridjs-search-input {
+    width: 400px !important;
+    border: 2px solid var(--md-primary-fg-color) !important;
 }

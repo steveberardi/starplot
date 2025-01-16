@@ -34,6 +34,11 @@ DEFAULT_AUTO_ADJUST_SETTINGS = {
 
 
 class ConstellationPlotterMixin:
+    def inbounds_temp(self, x, y):
+        data_x, data_y = self._proj.transform_point(x, y, self._geodetic)
+        display_x, display_y = self.ax.transData.transform((data_x, data_y))
+        return display_x > 0 and display_y > 0
+
     @profile
     @use_style(LineStyle, "constellation_lines")
     def constellations(
@@ -104,6 +109,10 @@ class ConstellationPlotterMixin:
                 elif self._coordinate_system == CoordinateSystem.AZ_ALT:
                     x1, y1 = self._prepare_coords(s1_ra, s1_dec)
                     x2, y2 = self._prepare_coords(s2_ra, s2_dec)
+                    if not self.inbounds_temp(x1, y1) and not self.inbounds_temp(
+                        x2, y2
+                    ):
+                        continue
                 else:
                     raise ValueError("Unrecognized coordinate system")
 

@@ -154,6 +154,12 @@ class HorizonPlot(
             nearby_stars_az.degrees,
             nearby_stars_alt.degrees,
         )
+        # df = df[
+        #     (df["x"] < self.az[1])
+        #     & (df["x"] > self.az[0])
+        #     & (df["y"] < self.alt[1])
+        #     & (df["y"] > self.alt[0])
+        # ]
         return df
 
     def _plot_kwargs(self) -> dict:
@@ -252,6 +258,15 @@ class HorizonPlot(
         self.dec_min -= 20
         self.dec_max += 20
 
+        # adjust alt/az
+        # extent = self.ax.get_extent(crs=self._plate_carree)
+        # self.alt = (extent[2], extent[3])
+        # if extent[0] < 0 or extent[1] < 0:
+        #     self.az = (extent[0] + 180, extent[1] + 180)
+        # else:
+        #     self.az = (extent[0], extent[1])
+
+        self.logger.debug(f"Extent = AZ ({self.az}) ALT ({self.alt})")
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
@@ -297,7 +312,7 @@ class HorizonPlot(
         def az_to_ax(d):
             return self._to_ax(d, self.alt[0])[0]
 
-        for az in range(self.az[0] + 2, self.az[1], 1):
+        for az in range(int(self.az[0] + 2), int(self.az[1]), 1):
             az = int(az)
 
             if az >= 360:
@@ -309,7 +324,7 @@ class HorizonPlot(
                     (az_to_ax(az), -0.074 * self.scale),
                     xycoords=self.ax.transAxes,
                     **style.label.matplot_kwargs(self.scale),
-                    clip_on=False,
+                    clip_on=True,
                 )
 
             if show_degree_labels and az % degree_step == 0:
@@ -318,7 +333,7 @@ class HorizonPlot(
                     (az_to_ax(az), -0.011 * self.scale),
                     xycoords=self.ax.transAxes,
                     **self.style.gridlines.label.matplot_kwargs(self.scale),
-                    clip_on=False,
+                    clip_on=True,
                 )
 
             elif show_ticks and az % tick_step == 0:
@@ -327,7 +342,7 @@ class HorizonPlot(
                     (az_to_ax(az), -0.011 * self.scale),
                     xycoords=self.ax.transAxes,
                     **self.style.gridlines.label.matplot_kwargs(self.scale / 2),
-                    clip_on=False,
+                    clip_on=True,
                 )
 
         self.ax.plot(
@@ -335,7 +350,7 @@ class HorizonPlot(
             [-0.04 * self.scale, -0.04 * self.scale],
             lw=1,
             color=style.label.font_color.as_hex(),
-            clip_on=False,
+            clip_on=True,
             transform=self.ax.transAxes,
         )
 

@@ -4,14 +4,17 @@ from ibis import _
 import numpy as np
 
 from starplot.data.dsos import (
-    DsoType,
-    ONGC_TYPE_MAP,
-    DSO_LEGEND_LABELS,
     DSO_LABELS_DEFAULT,
     DsoLabelMaker,
     load,
 )
-from starplot.models.dso import DSO, from_tuple
+from starplot.models.dso import (
+    DSO,
+    DsoType,
+    from_tuple,
+    ONGC_TYPE_MAP,
+    DSO_LEGEND_LABELS,
+)
 from starplot.styles import MarkerSymbolEnum
 from starplot.profile import profile
 

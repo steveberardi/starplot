@@ -1,3 +1,4 @@
+import math
 from typing import Optional, Union, Iterator
 
 import numpy as np
@@ -64,10 +65,10 @@ class Star(SkyObject):
         self.ccdm = ccdm
         self.geometry = geometry
 
-        if bayer: # and not np.isnan(bayer):
+        if bayer:
             self.bayer = bayer
-        
-        if flamsteed: # and not np.isnan(flamsteed):
+
+        if flamsteed and not math.isnan(flamsteed):
             self.flamsteed = int(flamsteed)
 
     def __repr__(self) -> str:

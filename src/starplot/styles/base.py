@@ -12,7 +12,7 @@ from pydantic.functional_serializers import PlainSerializer
 from matplotlib import patheffects
 from typing_extensions import Annotated
 
-from starplot.data.dsos import DsoType
+from starplot.models.dso import DsoType
 from starplot.styles.helpers import merge_dict
 from starplot.styles.markers import (
     ellipse,

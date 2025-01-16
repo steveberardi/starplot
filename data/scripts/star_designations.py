@@ -14,17 +14,17 @@ with open(RAW_PATH / "star_designations.csv", "r") as csvfile:
     for row in reader:
         star = row.copy()
         star["hip"] = int(star["hip"])
-        # star["flamsteed"] = int(star["flamsteed"]) if star.get("flamsteed") else None
+        star["flamsteed"] = int(star["flamsteed"]) if star.get("flamsteed") else None
         star_records.append(star)
 
 df = pd.DataFrame.from_records(star_records)
 
 schema = pa.schema(
     [
-        ("hip", pa.int32()),
+        ("hip", pa.int64()),
         ("name", pa.string()),
         ("bayer", pa.string()),
-        ("flamsteed", pa.string()),
+        ("flamsteed", pa.int64()),
     ]
 )
 

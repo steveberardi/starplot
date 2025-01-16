@@ -28,7 +28,6 @@ def create_dso_json():
 
         dsos.append(d)
 
-
     with open("docs/data/ongc.json", "w") as outfile:
         outfile.write(json.dumps(dsos))
 
@@ -73,7 +72,6 @@ def create_constellations_json():
 
     with open("docs/data/constellations.json", "w") as outfile:
         outfile.write(json.dumps(constellations))
-
 
 
 create_dso_json()

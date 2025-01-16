@@ -15,7 +15,6 @@ nav:
         - Selecting Objects: reference-selecting-objects.md
         - Styling: reference-styling.md
         - Callables: reference-callables.md
-        - DataDEP: reference-data.md
         - Data:
             - Star Catalogs: data/star-catalogs.md
             - Star Designations: data/star-designations.md

@@ -4,10 +4,38 @@ import numpy as np
 from ibis import _
 from shapely.geometry import Polygon, MultiPolygon
 
-from starplot.data.dsos import DsoType, load
+from starplot.data.dsos import load
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject
 from starplot import geod
+
+
+class DsoType:
+    """
+    Type of deep sky object (DSOs), as designated in OpenNGC
+    """
+
+    STAR = "*"
+    DOUBLE_STAR = "**"
+    ASSOCIATION_OF_STARS = "*Ass"
+    OPEN_CLUSTER = "OCl"
+    GLOBULAR_CLUSTER = "GCl"
+    GALAXY = "G"
+    GALAXY_PAIR = "GPair"
+    GALAXY_TRIPLET = "GTrpl"
+    GROUP_OF_GALAXIES = "GGroup"
+    NEBULA = "Neb"
+    PLANETARY_NEBULA = "PN"
+    EMISSION_NEBULA = "EmN"
+    STAR_CLUSTER_NEBULA = "Cl+N"
+    REFLECTION_NEBULA = "RfN"
+    DARK_NEBULA = "DrkN"
+    HII_IONIZED_REGION = "HII"
+    SUPERNOVA_REMNANT = "SNR"
+    NOVA_STAR = "Nova"
+    NONEXISTENT = "NonEx"
+    UNKNOWN = "Other"
+    DUPLICATE_RECORD = "Dup"
 
 
 class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
@@ -20,6 +48,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     """Name of the DSO (as specified in OpenNGC)"""
 
     type: DsoType
+    """Type of DSO"""
 
     magnitude: Optional[float] = None
     """Magnitude (if available)"""
@@ -197,3 +226,60 @@ def from_tuple(d: tuple) -> DSO:
     dso._row_id = getattr(d, "rowid", None)
 
     return dso
+
+
+ONGC_TYPE = {
+    # Star Clusters ----------
+    DsoType.OPEN_CLUSTER: "OCl",
+    DsoType.GLOBULAR_CLUSTER: "GCl",
+    # Galaxies ----------
+    DsoType.GALAXY: "G",
+    DsoType.GALAXY_PAIR: "GPair",
+    DsoType.GALAXY_TRIPLET: "GTrpl",
+    DsoType.GROUP_OF_GALAXIES: "GGroup",
+    # Nebulas ----------
+    DsoType.NEBULA: "Neb",
+    DsoType.PLANETARY_NEBULA: "PN",
+    DsoType.EMISSION_NEBULA: "EmN",
+    DsoType.STAR_CLUSTER_NEBULA: "Cl+N",
+    DsoType.REFLECTION_NEBULA: "RfN",
+    # Stars ----------
+    DsoType.STAR: "*",
+    DsoType.DOUBLE_STAR: "**",
+    DsoType.ASSOCIATION_OF_STARS: "*Ass",
+    # Others
+    DsoType.HII_IONIZED_REGION: "HII",
+    DsoType.DARK_NEBULA: "DrkN",
+    DsoType.SUPERNOVA_REMNANT: "SNR",
+    DsoType.NOVA_STAR: "Nova",
+    DsoType.NONEXISTENT: "NonEx",
+    DsoType.UNKNOWN: "Other",
+    DsoType.DUPLICATE_RECORD: "Dup",
+}
+
+ONGC_TYPE_MAP = {v: k for k, v in ONGC_TYPE.items()}
+
+DSO_LEGEND_LABELS = {
+    # Galaxies ----------
+    DsoType.GALAXY: "Galaxy",
+    DsoType.GALAXY_PAIR: "Galaxy",
+    DsoType.GALAXY_TRIPLET: "Galaxy",
+    DsoType.GROUP_OF_GALAXIES: "Galaxy",
+    # Nebulas ----------
+    DsoType.NEBULA: "Nebula",
+    DsoType.PLANETARY_NEBULA: "Nebula",
+    DsoType.EMISSION_NEBULA: "Nebula",
+    DsoType.STAR_CLUSTER_NEBULA: "Nebula",
+    DsoType.REFLECTION_NEBULA: "Nebula",
+    # Star Clusters ----------
+    DsoType.OPEN_CLUSTER: "Open Cluster",
+    DsoType.GLOBULAR_CLUSTER: "Globular Cluster",
+    # Stars ----------
+    DsoType.DOUBLE_STAR: "Double Star",
+    DsoType.ASSOCIATION_OF_STARS: "Association of stars",
+    DsoType.NOVA_STAR: "Nova Star",
+    # Others
+    DsoType.HII_IONIZED_REGION: "HII Ionized Region",
+    DsoType.DARK_NEBULA: "Dark Nebula",
+    DsoType.SUPERNOVA_REMNANT: "Supernova Remnant",
+}
