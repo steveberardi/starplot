@@ -131,9 +131,8 @@ class HorizonPlot(
             globe=ccrs.Globe(ellipse="sphere", flattening=0),
         )
 
-        
         self._init_plot()
-        
+
         self.altaz_mask = self._extent_mask_altaz()
         self.logger.debug(f"Extent = AZ ({self.az}) ALT ({self.alt})")
 
@@ -199,7 +198,7 @@ class HorizonPlot(
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_altaz(y, x)  # alt = y, az = x
-    
+
     def _polygon(self, points, style, **kwargs):
         super()._polygon(points, style, transform=self._crs, **kwargs)
 
@@ -247,7 +246,7 @@ class HorizonPlot(
 
         #     if self.dec_max is None or dec > self.dec_max:
         #         self.dec_max = dec
-        
+
         # if self.dec_max > 70 or self.dec_min < -70:
         #     # naive method of getting all the stars near the poles
         #     self.ra_min = 0
@@ -258,7 +257,7 @@ class HorizonPlot(
 
         # self.dec_min -= 10
         # self.dec_max += 10
-        
+
         self.ra_min = 0
         self.ra_max = 24
         self.dec_min = self.lat - 90
@@ -269,7 +268,7 @@ class HorizonPlot(
         )
 
     def _adjust_altaz_minmax(self):
-        """deprecated"""        
+        """deprecated"""
         extent = list(self.ax.get_extent(crs=self._plate_carree))
         self.alt = (extent[2], extent[3])
 

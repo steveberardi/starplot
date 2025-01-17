@@ -406,7 +406,7 @@ class BasePlot(ABC):
 
         avoid_constellation_lines = settings.get("avoid_constellation_lines", False)
         padding = settings.get("label_padding", 3)
-        buffer = settings.get("buffer", 0.1)
+        settings.get("buffer", 0.1)
         max_distance = settings.get("max_distance", 300)
         distance_step_size = settings.get("distance_step_size", 1)
         point_iterations = settings.get("point_generation_max_iterations", 500)

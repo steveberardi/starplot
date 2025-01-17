@@ -57,7 +57,7 @@ class ConstellationPlotterMixin:
         df = results.to_pandas()
         df = self._prepare_star_coords(df, limit_by_altaz=False)
 
-        return { star.hip: (star.x, star.y) for star in df.itertuples()}
+        return {star.hip: (star.x, star.y) for star in df.itertuples()}
 
     @profile
     @use_style(LineStyle, "constellation_lines")
@@ -122,11 +122,11 @@ class ConstellationPlotterMixin:
                     inbounds = True
                 elif not inbounds:
                     continue
-            
+
                 if self._coordinate_system == CoordinateSystem.RA_DEC:
                     x1 *= -1
                     x2 *= -1
-            
+
                 lines.append([(x1, y1), (x2, y2)])
 
                 start = self._proj.transform_point(x1, y1, self._geodetic)

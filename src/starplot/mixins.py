@@ -98,7 +98,7 @@ class ExtentMaskMixin:
                     Polygon(coords_2),
                 ]
             )
-        
+
     def _is_global_extent(self):
         """Returns True if the plot's RA/DEC range is the entire celestial sphere"""
         return all(

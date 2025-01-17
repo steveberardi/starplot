@@ -3,7 +3,7 @@ import math
 from typing import Union
 
 from shapely import transform
-from shapely.geometry import Point, Polygon, MultiPolygon, MultiPoint
+from shapely.geometry import Point, Polygon, MultiPolygon
 
 from starplot import geod, utils
 
