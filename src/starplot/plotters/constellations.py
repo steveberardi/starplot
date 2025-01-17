@@ -5,14 +5,16 @@ from shapely import (
     MultiPoint,
 )
 from matplotlib.collections import LineCollection
+from ibis import _
 
 from starplot.coordinates import CoordinateSystem
 from starplot.data import constellations as condata, constellation_lines as conlines
+from starplot.data.stars import load as load_stars, StarCatalog
 from starplot.data.constellations import (
     CONSTELLATIONS_FULL_NAMES,
     CONSTELLATION_HIP_IDS,
 )
-from starplot.data.constellation_stars import CONSTELLATION_STAR_COORDS
+from starplot.data.constellation_stars import CONSTELLATION_HIPS
 from starplot.models.constellation import from_tuple as constellation_from_tuple
 from starplot.projections import Projection
 from starplot.profile import profile
@@ -38,6 +40,24 @@ class ConstellationPlotterMixin:
         data_x, data_y = self._proj.transform_point(x, y, self._geodetic)
         display_x, display_y = self.ax.transData.transform((data_x, data_y))
         return display_x > 0 and display_y > 0
+
+    @profile
+    def _prepare_constellation_stars(self) -> dict[int, tuple[float, float]]:
+        """
+        Returns dictionary of stars and their position:
+
+        {hip: (x,y)}
+
+        Where (x, y) is the plotted coordinate system (RA/DEC or AZ/ALT)
+        """
+        results = load_stars(
+            catalog=StarCatalog.BIG_SKY_MAG11,
+            filters=[_.hip.isin(CONSTELLATION_HIPS)],
+        )
+        df = results.to_pandas()
+        df = self._prepare_star_coords(df, limit_by_altaz=False)
+
+        return { star.hip: (star.x, star.y) for star in df.itertuples()}
 
     @profile
     @use_style(LineStyle, "constellation_lines")
@@ -77,45 +97,36 @@ class ConstellationPlotterMixin:
         style_kwargs = style.matplot_kwargs(self.scale)
         constellation_points_to_index = []
         lines = []
+        constars = self._prepare_constellation_stars()
 
         for c in constellations_df.itertuples():
-            obj = constellation_from_tuple(c)
-
             hiplines = conlines.hips[c.iau_id]
             inbounds = False
 
             for s1_hip, s2_hip in hiplines:
-                if not CONSTELLATION_STAR_COORDS.get(s2_hip):
+                if not constars.get(s2_hip):
                     continue
-                s1_ra, s1_dec = CONSTELLATION_STAR_COORDS.get(s1_hip)
-                s2_ra, s2_dec = CONSTELLATION_STAR_COORDS.get(s2_hip)
+                s1_ra, s1_dec = constars.get(s1_hip)
+                s2_ra, s2_dec = constars.get(s2_hip)
 
                 if s1_ra - s2_ra > 60:
                     s2_ra += 360
-
                 elif s2_ra - s1_ra > 60:
                     s1_ra += 360
 
+                x1, x2 = s1_ra, s2_ra
+                y1, y2 = s1_dec, s2_dec
                 if not inbounds and (
-                    self.in_bounds(s1_ra, s1_dec) or self.in_bounds(s2_ra, s2_dec)
+                    self._in_bounds_xy(x1, y1) or self._in_bounds_xy(x2, y2)
                 ):
                     inbounds = True
-
+                elif not inbounds:
+                    continue
+            
                 if self._coordinate_system == CoordinateSystem.RA_DEC:
-                    s1_ra *= -1
-                    s2_ra *= -1
-                    x1, x2 = s1_ra, s2_ra
-                    y1, y2 = s1_dec, s2_dec
-                elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-                    x1, y1 = self._prepare_coords(s1_ra, s1_dec)
-                    x2, y2 = self._prepare_coords(s2_ra, s2_dec)
-                    if not self.inbounds_temp(x1, y1) and not self.inbounds_temp(
-                        x2, y2
-                    ):
-                        continue
-                else:
-                    raise ValueError("Unrecognized coordinate system")
-
+                    x1 *= -1
+                    x2 *= -1
+            
                 lines.append([(x1, y1), (x2, y2)])
 
                 start = self._proj.transform_point(x1, y1, self._geodetic)
@@ -144,6 +155,7 @@ class ConstellationPlotterMixin:
                     ctr += 1
 
             if inbounds:
+                obj = constellation_from_tuple(c)
                 self._objects.constellations.append(obj)
 
         style_kwargs = style.matplot_line_collection_kwargs(self.scale)

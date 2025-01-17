@@ -137,7 +137,7 @@ class StarPlotterMixin:
                 gid="stars-label-flamsteed",
             )
 
-    def _prepare_star_coords(self, df):
+    def _prepare_star_coords(self, df, limit_by_altaz=False):
         df["x"], df["y"] = (
             df["ra"],
             df["dec"],

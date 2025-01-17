@@ -171,7 +171,7 @@ class MapPlot(
         return 0 <= x_axes <= 1 and 0 <= y_axes <= 1
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
-        return self.in_bounds(x / 1, y)
+        return self.in_bounds(x, y)
 
     def _polygon(self, points, style, **kwargs):
         super()._polygon(points, style, transform=self._crs, **kwargs)
