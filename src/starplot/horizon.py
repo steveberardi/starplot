@@ -4,6 +4,7 @@ from datetime import datetime
 from functools import cache
 
 import pandas as pd
+import geopandas as gpd
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
@@ -160,13 +161,10 @@ class HorizonPlot(
             nearby_stars_alt.degrees,
         )
         if limit_by_altaz:
-            # TODO : adjust for multipolygon
-            df = df[
-                (df["x"] < self.az[1])
-                & (df["x"] > self.az[0])
-                & (df["y"] < self.alt[1])
-                & (df["y"] > self.alt[0])
-            ]
+            extent = self._extent_mask_altaz()
+            df["_geometry_az_alt"] = gpd.points_from_xy(df.x, df.y)
+            df = df[df["_geometry_az_alt"].intersects(extent)]
+
         return df
 
     def _plot_kwargs(self) -> dict:

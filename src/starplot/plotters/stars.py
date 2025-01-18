@@ -235,8 +235,8 @@ class StarPlotterMixin:
                 stars_ra.hours * 15,
                 stars_dec.degrees,
             )
-        stars_df = self._prepare_star_coords(stars_df)
 
+        stars_df = self._prepare_star_coords(stars_df)
         starz = []
         rtree_id = 1
 
