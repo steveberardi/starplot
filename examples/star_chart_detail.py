@@ -21,8 +21,8 @@ p.horizon()
 p.constellations()
 p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 2.1])
 
-p.galaxies(where=[_.magnitude < 10], true_size=False, labels=None)
-p.open_clusters(where=[_.magnitude < 10], true_size=False, labels=None)
+p.galaxies(where=[_.magnitude < 9], true_size=False, labels=None)
+p.open_clusters(where=[_.magnitude < 9], true_size=False, labels=None)
 
 p.constellation_borders()
 p.ecliptic()
@@ -36,18 +36,23 @@ p.marker(
         "marker": {
             "size": 60,
             "symbol": "circle",
-            "fill": "full",
-            "color": "#ed7eed",
-            "edge_color": "#e0c1e0",
-            "alpha": 0.4,
+            "fill": "none",
+            "color": None,
+            "edge_color": "hsl(44, 70%, 73%)",
+            "edge_width": 2,
+            "line_style": [1, [2, 3]],
+            "alpha": 1,
             "zorder": 100,
         },
         "label": {
             "zorder": 200,
-            "font_size": 30,
+            "font_size": 22,
             "font_weight": "bold",
-            "font_color": "#ed7eed",
+            "font_color": "hsl(44, 70%, 64%)",
             "font_alpha": 1,
+            "offset_x": "auto",
+            "offset_y": "auto",
+            "anchor_point": "top right",
         },
     },
     label="Mel 111",
