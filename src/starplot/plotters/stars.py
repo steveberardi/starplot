@@ -281,10 +281,6 @@ class StarPlotterMixin:
                         display_y + radius,
                     )
                 )
-                # if obj.name == "Sirius":
-                #     print(bbox)
-                # if obj.name == "Electra":
-                #     print(bbox)
 
                 if self._stars_rtree.get_size() > 0:
                     self._stars_rtree.insert(
