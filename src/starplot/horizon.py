@@ -1,3 +1,5 @@
+import math
+
 from datetime import datetime
 from functools import cache
 
@@ -302,12 +304,18 @@ class HorizonPlot(
             show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
             tick_step: Step size for tick marks
         """
+
+        if show_degree_labels or show_ticks:
+            patch_y = -0.11 * self.scale
+        else:
+            patch_y = -0.08 * self.scale
+
         bottom = patches.Polygon(
             [
                 (0, 0),
                 (1, 0),
-                (1, -0.1 * self.scale),
-                (0, -0.1 * self.scale),
+                (1, patch_y),
+                (0, patch_y),
                 (0, 0),
             ],
             color=style.line.color.as_hex(),
@@ -325,51 +333,47 @@ class HorizonPlot(
             if az >= 360:
                 az -= 360
 
+            x = az_to_ax(az)
+
+            if x <= 0.03 or x >= 0.97 or math.isnan(x):
+                continue
+
             if labels.get(az):
-                label = self.ax.annotate(
+                self.ax.annotate(
                     labels.get(az),
-                    (az_to_ax(az), -0.074 * self.scale),
+                    (x, patch_y + 0.027)
                     xycoords=self.ax.transAxes,
                     **style.label.matplot_kwargs(self.scale),
                     clip_on=True,
                 )
-                extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-                if extent.x0 < 0 or extent.x1 < 0:
-                    label.remove()
-                print(labels.get(az), extent.x0, extent.x1)
-                # self._maybe_remove_label(label)
 
             if show_degree_labels and az % degree_step == 0:
-                label = self.ax.annotate(
+                self.ax.annotate(
                     str(az) + "\u00b0",
-                    (az_to_ax(az), -0.011 * self.scale),
+                    (x, -0.011 * self.scale),
                     xycoords=self.ax.transAxes,
                     **self.style.gridlines.label.matplot_kwargs(self.scale),
                     clip_on=True,
                 )
-                extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-                if extent.x0 < 0 or extent.x1 < 0:
-                    label.remove()
-                # print(extent)
-                # self._maybe_remove_label(label)
 
             elif show_ticks and az % tick_step == 0:
                 self.ax.annotate(
                     "|",
-                    (az_to_ax(az), -0.011 * self.scale),
+                    (x, -0.011 * self.scale),
                     xycoords=self.ax.transAxes,
                     **self.style.gridlines.label.matplot_kwargs(self.scale / 2),
                     clip_on=True,
                 )
 
-        self.ax.plot(
-            [0, 1],
-            [-0.04 * self.scale, -0.04 * self.scale],
-            lw=1,
-            color=style.label.font_color.as_hex(),
-            clip_on=True,
-            transform=self.ax.transAxes,
-        )
+        if show_degree_labels or show_ticks:
+            self.ax.plot(
+                [0, 1],
+                [-0.04 * self.scale, -0.04 * self.scale],
+                lw=1,
+                color=style.label.font_color.as_hex(),
+                clip_on=False,
+                transform=self.ax.transAxes,
+            )
 
     @use_style(PathStyle, "gridlines")
     def gridlines(
