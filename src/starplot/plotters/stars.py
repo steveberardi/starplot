@@ -248,7 +248,7 @@ class StarPlotterMixin:
             ctr += 1
 
             if self._coordinate_system == CoordinateSystem.RA_DEC:
-                data_xy = self._proj.transform_point(star.ra, star.dec, self._crs)
+                data_xy = self._proj.transform_point(star.x, star.y, self._crs)
             elif self._coordinate_system == CoordinateSystem.AZ_ALT:
                 data_xy = self._proj.transform_point(star.x, star.y, self._crs)
             else:
