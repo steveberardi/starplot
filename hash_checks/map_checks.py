@@ -4,8 +4,7 @@ from datetime import datetime
 import numpy as np
 from pytz import timezone
 
-from starplot import styles, DSO, Moon, Constellation, _
-from starplot.data.dsos import BASIC_DSO_TYPES
+from starplot import styles, DSO, DsoType, Moon, Constellation, _
 from starplot.map import MapPlot, Projection
 
 HERE = Path(__file__).resolve().parent
@@ -19,6 +18,25 @@ RESOLUTION = 3200
 POWAY = {"lat": 32.97, "lon": -117.038611}
 
 AUTO_ADJUST_SETTINGS = {"seed": 1}
+
+BASIC_DSO_TYPES = [
+    # Star Clusters ----------
+    DsoType.OPEN_CLUSTER,
+    DsoType.GLOBULAR_CLUSTER,
+    # Galaxies ----------
+    DsoType.GALAXY,
+    DsoType.GALAXY_PAIR,
+    DsoType.GALAXY_TRIPLET,
+    DsoType.GROUP_OF_GALAXIES,
+    # Nebulas ----------
+    DsoType.NEBULA,
+    DsoType.PLANETARY_NEBULA,
+    DsoType.EMISSION_NEBULA,
+    DsoType.STAR_CLUSTER_NEBULA,
+    DsoType.REFLECTION_NEBULA,
+    # Stars ----------
+    DsoType.ASSOCIATION_OF_STARS,
+]
 
 dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 

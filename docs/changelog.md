@@ -4,6 +4,7 @@
 - Improves performance of constellation label placement
 - Separates the constellation Serpens into two "separate" parts (Cauda and Caput)
 - Adds a new "blue gold" style extension
+- Adds a new field to the constellation model: `star_hip_ids` which is a list of hip ids for stars that make up the lines in the constellation
 
 ## v0.14.x
 [Documentation](https://archives.starplot.dev/0.14.0/)
