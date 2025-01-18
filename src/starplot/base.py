@@ -96,6 +96,7 @@ class BasePlot(ABC):
         self.dt = dt or timezone("UTC").localize(datetime.now())
         self._ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
+        self.earth = self.ephemeris["earth"]
 
         self.labels = []
         self._labels_rtree = rtree.index.Index()

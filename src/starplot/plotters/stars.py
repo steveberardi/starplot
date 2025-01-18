@@ -5,7 +5,6 @@ import numpy as np
 from skyfield.api import Star as SkyfieldStar, wgs84
 
 from starplot import callables
-from starplot.coordinates import CoordinateSystem
 from starplot.data import stars
 from starplot.data.stars import StarCatalog
 from starplot.models.star import Star, from_tuple
@@ -90,7 +89,7 @@ class StarPlotterMixin:
                 label = labels.get(s.hip)
             else:
                 label = s.name
-            
+
             bayer_desig = s.bayer
             flamsteed_num = s.flamsteed
 
@@ -177,7 +176,7 @@ class StarPlotterMixin:
         1. Return value from `label_fn`
         2. Value for star's HIP id in `labels`
         3. IAU-designated name, as listed in the [data reference](/data/star-designations/)
-        
+
         Args:
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
@@ -214,46 +213,35 @@ class StarPlotterMixin:
 
         label_row_ids = star_results_labeled.to_pandas()["rowid"].tolist()
 
-        nearby_stars_df = star_results.to_pandas()
+        stars_df = star_results.to_pandas()
 
         if getattr(self, "projection", None) == "zenith":
             # filter stars for zenith plots to only include those above horizon
-            earth = self.ephemeris["earth"]
-            self.location = earth + wgs84.latlon(self.lat, self.lon)
-
+            self.location = self.earth + wgs84.latlon(self.lat, self.lon)
             stars_apparent = (
                 self.location.at(self.timescale)
-                .observe(SkyfieldStar.from_dataframe(nearby_stars_df))
+                .observe(SkyfieldStar.from_dataframe(stars_df))
                 .apparent()
             )
             # we only need altitude
             stars_alt, _, _ = stars_apparent.altaz()
-            nearby_stars_df["alt"] = stars_alt.degrees
-            nearby_stars_df = nearby_stars_df[nearby_stars_df["alt"] > 0]
+            stars_df["alt"] = stars_alt.degrees
+            stars_df = stars_df[stars_df["alt"] > 0]
 
-        nearby_stars = SkyfieldStar.from_dataframe(nearby_stars_df)
-        astrometric = self.ephemeris["earth"].at(self.timescale).observe(nearby_stars)
+        nearby_stars = SkyfieldStar.from_dataframe(stars_df)
+        astrometric = self.earth.at(self.timescale).observe(nearby_stars)
         stars_ra, stars_dec, _ = astrometric.radec()
-        nearby_stars_df["ra"], nearby_stars_df["dec"] = (
+        stars_df["ra"], stars_df["dec"] = (
             stars_ra.hours * 15,
             stars_dec.degrees,
         )
-        self._prepare_star_coords(nearby_stars_df)
+        stars_df = self._prepare_star_coords(stars_df)
 
         starz = []
-        ctr = 0
+        rtree_id = 1
 
-        for star in nearby_stars_df.itertuples():
-            obj = from_tuple(star)
-            ctr += 1
-
-            if self._coordinate_system == CoordinateSystem.RA_DEC:
-                data_xy = self._proj.transform_point(star.x, star.y, self._crs)
-            elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-                data_xy = self._proj.transform_point(star.x, star.y, self._crs)
-            else:
-                raise ValueError("Unrecognized coordinate system")
-
+        for star in stars_df.itertuples():
+            data_xy = self._proj.transform_point(star.x, star.y, self._crs)
             display_x, display_y = self.ax.transData.transform(data_xy)
 
             if (
@@ -265,14 +253,15 @@ class StarPlotterMixin:
             ):
                 continue
 
+            obj = from_tuple(star)
             size = size_fn(obj) * self.scale**2
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()
 
             if obj.magnitude < 5:
+                rtree_id += 1
                 # radius = ((size**0.5 / 2) / self.scale) #/ 3.14
                 radius = size**0.5 / 5
-
                 bbox = np.array(
                     (
                         display_x - radius,
@@ -281,7 +270,6 @@ class StarPlotterMixin:
                         display_y + radius,
                     )
                 )
-
                 if self._stars_rtree.get_size() > 0:
                     self._stars_rtree.insert(
                         0,
@@ -290,7 +278,7 @@ class StarPlotterMixin:
                     )
                 else:
                     # if the index has no stars yet, then wait until end to load for better performance
-                    stars_to_index.append((ctr, bbox, None))
+                    stars_to_index.append((rtree_id, bbox, None))
 
             starz.append((star.x, star.y, size, alpha, color, obj))
 
