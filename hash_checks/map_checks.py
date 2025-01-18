@@ -194,7 +194,7 @@ def check_map_with_planets():
         resolution=RESOLUTION,
         autoscale=True,
     )
-    p.stars(where=[_.magnitude < 3], labels=None)
+    p.stars(where=[_.magnitude < 3], where_labels=[False])
     p.planets()
     p.sun()
     p.ecliptic()

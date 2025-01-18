@@ -227,14 +227,14 @@ class StarPlotterMixin:
             stars_alt, _, _ = stars_apparent.altaz()
             stars_df["alt"] = stars_alt.degrees
             stars_df = stars_df[stars_df["alt"] > 0]
-
-        nearby_stars = SkyfieldStar.from_dataframe(stars_df)
-        astrometric = self.earth.at(self.timescale).observe(nearby_stars)
-        stars_ra, stars_dec, _ = astrometric.radec()
-        stars_df["ra"], stars_df["dec"] = (
-            stars_ra.hours * 15,
-            stars_dec.degrees,
-        )
+        else:
+            nearby_stars = SkyfieldStar.from_dataframe(stars_df)
+            astrometric = self.earth.at(self.timescale).observe(nearby_stars)
+            stars_ra, stars_dec, _ = astrometric.radec()
+            stars_df["ra"], stars_df["dec"] = (
+                stars_ra.hours * 15,
+                stars_dec.degrees,
+            )
         stars_df = self._prepare_star_coords(stars_df)
 
         starz = []

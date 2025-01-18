@@ -102,13 +102,13 @@ class DsoPlotterMixin:
     @profile
     def dsos(
         self,
+        where: list = None,
+        where_labels: list = None,
         true_size: bool = True,
         labels: Mapping[str, str] = DSO_LABELS_DEFAULT,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
         alpha_fn: Callable[[DSO], float] = None,
         label_fn: Callable[[DSO], str] = None,
-        where: list = None,
-        where_labels: list = None,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
