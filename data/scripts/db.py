@@ -6,8 +6,8 @@ from settings import BUILD_PATH, RAW_PATH
 # ibis.options.interactive = True
 # con = ibis.duckdb.connect(BUILD_PATH / "sky.db")
 # print(con.list_tables())
-
-con = duckdb.connect(BUILD_PATH / "sky.db")
+db_path = BUILD_PATH / "sky.db"
+con = duckdb.connect(db_path)
 con.install_extension("spatial")
 con.load_extension("spatial")
 
@@ -61,3 +61,12 @@ con.sql("CREATE UNIQUE INDEX star_designations_hip_idx ON star_designations (hip
 con.sql("CREATE INDEX star_designations_name_idx ON star_designations (name);")
 
 print("Sky.db created!")
+
+import hashlib
+
+with open(db_path, "rb") as f:
+    md5 = hashlib.md5()
+    while chunk := f.read(8192):
+        md5.update(chunk)
+
+print(file_hash.hexdigest()) 

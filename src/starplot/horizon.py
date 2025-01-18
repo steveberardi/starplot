@@ -341,7 +341,7 @@ class HorizonPlot(
             if labels.get(az):
                 self.ax.annotate(
                     labels.get(az),
-                    (x, patch_y + 0.027)
+                    (x, patch_y + 0.027),
                     xycoords=self.ax.transAxes,
                     **style.label.matplot_kwargs(self.scale),
                     clip_on=True,
