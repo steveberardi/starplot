@@ -31,7 +31,7 @@ constellation_lines:
   alpha: 0.8
   color: rgb(34, 124, 130)
 constellation_borders:
-  color: hsl(208, 23%, 5%)
+  color: hsl(208, 23%, 2%)
 
 
 celestial_equator:

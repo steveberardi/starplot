@@ -7,7 +7,7 @@ from skyfield.api import Star as SkyfieldStar, wgs84
 from starplot import callables
 from starplot.coordinates import CoordinateSystem
 from starplot.data import stars
-from starplot.data.stars import StarCatalog, STAR_NAMES
+from starplot.data.stars import StarCatalog
 from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, use_style
 from starplot.profile import profile
@@ -84,7 +84,13 @@ class StarPlotterMixin:
             elif s.tyc:
                 self._labeled_stars.append(s.tyc)
 
-            label = labels.get(s.hip) if label_fn is None else label_fn(s)
+            if label_fn is not None:
+                label = label_fn(s)
+            elif s.hip in labels:
+                label = labels.get(s.hip)
+            else:
+                label = s.name
+            
             bayer_desig = s.bayer
             flamsteed_num = s.flamsteed
 
@@ -153,10 +159,10 @@ class StarPlotterMixin:
         catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
-        alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
+        alpha_fn: Callable[[Star], float] = None,
         color_fn: Callable[[Star], str] = None,
         label_fn: Callable[[Star], str] = None,
-        labels: Mapping[int, str] = STAR_NAMES,
+        labels: Mapping[int, str] = None,
         legend_label: str = "Star",
         bayer_labels: bool = False,
         flamsteed_labels: bool = False,
@@ -166,16 +172,22 @@ class StarPlotterMixin:
         """
         Plots stars
 
+        Labels for stars are determined in this order:
+
+        1. Return value from `label_fn`
+        2. Value for star's HIP id in `labels`
+        3. IAU-designated name, as listed in the [data reference](/data/star-designations/)
+        
         Args:
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
             catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
             style: If `None`, then the plot's style for stars will be used
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
             label_fn: Callable for determining the label of each star. If `None`, then the names in the `labels` kwarg will be used.
-            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
+            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If `None`, then the star's IAU-designated name will be used.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted.
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
@@ -192,8 +204,7 @@ class StarPlotterMixin:
         where = where or []
         where_labels = where_labels or []
         stars_to_index = []
-
-        labels = {} if labels is None else {**STAR_NAMES, **labels}
+        labels = labels or {}
 
         star_results = self._load_stars(catalog, filters=where)
 
@@ -318,14 +329,13 @@ class StarPlotterMixin:
         if stars_to_index:
             self._stars_rtree = rtree.index.Index(stars_to_index)
 
-        if labels:
-            self._star_labels(
-                star_objects,
-                sizes,
-                label_row_ids,
-                style,
-                labels,
-                bayer_labels,
-                flamsteed_labels,
-                label_fn,
-            )
+        self._star_labels(
+            star_objects,
+            sizes,
+            label_row_ids,
+            style,
+            labels,
+            bayer_labels,
+            flamsteed_labels,
+            label_fn,
+        )
