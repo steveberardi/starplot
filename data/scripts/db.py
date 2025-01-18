@@ -2,6 +2,7 @@ import duckdb
 import ibis
 
 from settings import BUILD_PATH, RAW_PATH
+from starplot import Star, DSO, Constellation
 
 # ibis.options.interactive = True
 # con = ibis.duckdb.connect(BUILD_PATH / "sky.db")
@@ -46,7 +47,7 @@ con.sql(
     f"CREATE TABLE deep_sky_objects AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{dso_src}'));"
 )
 con.sql("CREATE INDEX dso_idx ON deep_sky_objects USING RTREE (geometry);")
-con.sql("CREATE UNIQUE INDEX dso_name_idx ON deep_sky_objects (name);")
+con.sql("CREATE INDEX dso_name_idx ON deep_sky_objects (name);")
 con.sql("CREATE INDEX dso_messier_idx ON deep_sky_objects (m);")
 con.sql("CREATE INDEX dso_ngc_idx ON deep_sky_objects (ngc);")
 con.sql("CREATE INDEX dso_ic_idx ON deep_sky_objects (ic);")
@@ -57,16 +58,19 @@ con.sql("DROP TABLE IF EXISTS star_designations")
 con.sql(
     f"CREATE TABLE star_designations AS (SELECT * FROM read_parquet('{star_designations_src}') )"
 )
-con.sql("CREATE UNIQUE INDEX star_designations_hip_idx ON star_designations (hip);")
+con.sql("CREATE INDEX star_designations_hip_idx ON star_designations (hip);")
 con.sql("CREATE INDEX star_designations_name_idx ON star_designations (name);")
 
 print("Sky.db created!")
 
-import hashlib
+all_stars = Star.find(where=[])
+print("Stars = " + str(len(all_stars)))
+assert len(all_stars) == 368_330
 
-with open(db_path, "rb") as f:
-    md5 = hashlib.md5()
-    while chunk := f.read(8192):
-        md5.update(chunk)
+all_dsos = DSO.find(where=[])
+print("DSOs = " + str(len(all_dsos)))
+assert len(all_dsos) == 14_036
 
-print(file_hash.hexdigest()) 
+all_constellations = Constellation.find(where=[])
+print("Constellations = " + str(len(all_constellations)))
+assert len(all_constellations) == 89
