@@ -6,7 +6,7 @@ The basic idea is that when you call `stars()` or `dsos()` you can pass a list o
 Let's check out a simple example:
 
 ## Example
-
+<div class="tutorial">
 ```python linenums="1" hl_lines="15-20"
 from starplot import MapPlot, Projection, _
 
@@ -29,6 +29,7 @@ p.dsos(
     ]
 )
 ```
+</div>
 On line 15, we plot only the DSOs we want by passing the `where` keyword argument. This argument contains a list of expressions that describe which objects you want to plot. Only the DSOs that satisfy ALL of these conditions will be plotted. In this example, we plot all DSOs that have a magnitude less than 12 AND a size greater than 0.08 square degrees.
 
 ### More Expression Examples
