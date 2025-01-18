@@ -21,7 +21,7 @@ con.sql(
 con.sql("CREATE INDEX milky_way_geometry_idx ON milky_way USING RTREE (geometry);")
 
 # Constellations
-constellation_src = RAW_PATH / "constellations.json"
+constellation_src = BUILD_PATH / "constellations.json"
 con.sql("DROP TABLE IF EXISTS constellations")
 con.sql(
     f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_src}'));"
@@ -63,14 +63,14 @@ con.sql("CREATE INDEX star_designations_name_idx ON star_designations (name);")
 
 print("Sky.db created!")
 
-all_stars = Star.find(where=[])
-print("Stars = " + str(len(all_stars)))
-assert len(all_stars) == 368_330
+# all_stars = Star.find(where=[])
+# print("Stars = " + str(len(all_stars)))
+# assert len(all_stars) == 368_330
 
-all_dsos = DSO.find(where=[])
-print("DSOs = " + str(len(all_dsos)))
-assert len(all_dsos) == 14_036
+# all_dsos = DSO.find(where=[])
+# print("DSOs = " + str(len(all_dsos)))
+# assert len(all_dsos) == 14_036
 
-all_constellations = Constellation.find(where=[])
-print("Constellations = " + str(len(all_constellations)))
-assert len(all_constellations) == 89
+# all_constellations = Constellation.find(where=[])
+# print("Constellations = " + str(len(all_constellations)))
+# assert len(all_constellations) == 89

@@ -23,6 +23,9 @@ class Constellation(SkyObject):
     name: str = None
     """Name"""
 
+    star_hip_ids: list[int] = None
+    """List of HIP ids for stars that are part of the _lines_ for this constellation."""
+
     boundary: Union[Polygon, MultiPolygon] = None
     """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
 
@@ -32,11 +35,13 @@ class Constellation(SkyObject):
         dec: float,
         iau_id: str,
         name: str = None,
+        star_hip_ids: list[int] = None,
         boundary: Polygon = None,
     ) -> None:
         super().__init__(ra, dec, constellation_id=iau_id.lower())
         self.iau_id = iau_id.lower()
         self.name = name
+        self.star_hip_ids = star_hip_ids
         self.boundary = boundary
 
     def __repr__(self) -> str:
@@ -69,7 +74,6 @@ class Constellation(SkyObject):
             filters.append(getattr(_, k) == v)
 
         df = constellations.load(filters=filters).to_pandas()
-
         results = [from_tuple(c) for c in df.itertuples()]
 
         if len(results) == 1:
@@ -109,5 +113,6 @@ def from_tuple(c: tuple) -> Constellation:
         dec=c.dec,
         iau_id=c.iau_id,
         name=c.name,
+        star_hip_ids=c.star_hip_ids,
         boundary=c.geometry,
     )

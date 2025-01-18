@@ -3,11 +3,11 @@ import pandas as pd
 
 from shapely.geometry import Polygon
 
-from starplot import settings
 from starplot.data import constellations
 
+from settings import BUILD_PATH, RAW_PATH
 
-DATA_PATH = settings.RAW_DATA_PATH / "iau"
+DATA_PATH = RAW_PATH / "iau"
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 
 # constellation_dict = {
@@ -18,7 +18,6 @@ CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 #     "lines_hip_ids": [],
 #     "borders": [],
 # }
-
 
 def parse_ra(ra_str):
     """Parses RA from border file HH MM SS to 0...360 degree float"""
@@ -45,6 +44,7 @@ def parse_borders(lines):
 
 def build_constellations():
     constellation_records = []
+    constellation_star_hips = constellations.CONSTELLATION_HIP_IDS
 
     for cid, props in constellations.properties.items():
         constellation_dict = {
@@ -52,9 +52,7 @@ def build_constellations():
             "name": props[0].replace("\n", " "),
             "center_ra": props[1] * 15,
             "center_dec": props[2],
-            # "lines_hip_ids": ",".join(
-            #     "-".join([str(h) for h in hips]) for hips in con_lines[cid.lower()]
-            # ),
+            "star_hip_ids": list(constellation_star_hips[cid.lower()])
         }
 
         if cid == "Ser":
@@ -98,19 +96,15 @@ df = pd.DataFrame.from_records(constellation_records)
 gdf = gpd.GeoDataFrame(
     df,
     geometry=df["geometry"],
-    crs=CRS,
+    # crs=CRS,
 )
+
 gdf.to_file(
-    settings.BUILD_PATH / "constellations.gpkg",
-    driver="GPKG",
-    engine="pyogrio",
-)
-gdf.to_file(
-    settings.BUILD_PATH / "constellations.json",
+    BUILD_PATH / "constellations.json",
     driver="GeoJSON",
     engine="pyogrio",
 )
 
-print(gdf[gdf["iau_id"] == "cmi"])
+# print(gdf[gdf["iau_id"] == "cmi"])
 
 print("Total Constellations: " + str(len(constellation_records)))
