@@ -398,20 +398,26 @@ td[data-column-id=bayer] {
 }
 
 #grid {
-    background-color: var(--md-primary-fg-color--light);
+    background-color: var(--md-primary-fg-color);
     padding: 4px;
     border-radius: 8px;
 
     th {
         background-color: hsl(209deg 53% 85%);
         font-weight: bold;
-        /* color: var(--md-primary-fg-color--dark); */
+        color: var(--md-code-hl-name-color);
+    }
+
+    td, th {
+        padding: 8px 12px;
+        vertical-align: middle;
     }
 }
 .gridjs-search {
-    width: 400px !important;
+    width: 100% !important;
 }
 .gridjs-search-input {
-    width: 400px !important;
+    padding: 0;
+    width: 100% !important;
     border: 1px solid var(--md-primary-fg-color) !important;
 }
