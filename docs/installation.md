@@ -20,7 +20,7 @@ pip install starplot
 ```
 starplot setup --install-big-sky
 ```
-This will install the required spatial extension for DuckDB and download the full Big Sky catalog. Starplot will do this automatically, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous ingegration, etc).
+This will install the required [spatial extension](https://duckdb.org/docs/extensions/spatial/overview.html) for DuckDB and download the full Big Sky catalog. Starplot will do this automatically, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
 
 ## Linux (debian)
 
@@ -38,7 +38,7 @@ pip install starplot
 ```
 starplot setup --install-big-sky
 ```
-This will install the required spatial extension for DuckDB and download the full Big Sky catalog. Starplot will do this automatically, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous ingegration, etc).
+This will install the required [spatial extension](https://duckdb.org/docs/extensions/spatial/overview.html) for DuckDB and download the full Big Sky catalog. Starplot will do this automatically, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
 
 ## Docker
 
