@@ -1,5 +1,5 @@
 
-When plotting [stars][starplot.MapPlot.stars] or [deep sky objects (DSOs)][starplot.MapPlot.dsos], you can select exactly which objects to plot by using expressions that reference fields on the object's model. Starplot uses [Ibis](https://ibis-project.org/) for handling these expressions and filtering data from the data backend, so if you're familar with that library then you already have a head start on selecting data in Starplot.
+When plotting [stars][starplot.MapPlot.stars], constellations, or [deep sky objects (DSOs)][starplot.MapPlot.dsos], you can select exactly which objects to plot by using expressions that reference fields on the object's model. Starplot uses [Ibis](https://ibis-project.org/) for handling these expressions and filtering data from the data backend, so if you're familar with that library then you already have a head start on selecting data in Starplot.
 
 The basic idea is that when you call `stars()` or `dsos()` you can pass a list of expressions that are used to determine which stars/DSOs are plotted. Only the stars/DSOs that satisfy ALL the conditions will be plotted.
 
@@ -29,35 +29,52 @@ p.dsos(
     ]
 )
 ```
-On line 15, we plot only the DSOs we want by passing the `where` keyword argument. This argument contains a list of expressions that describe which objects you want to plot. Only the DSOs that satisfy ALL of these conditions will be plotted.
+On line 15, we plot only the DSOs we want by passing the `where` keyword argument. This argument contains a list of expressions that describe which objects you want to plot. Only the DSOs that satisfy ALL of these conditions will be plotted. In this example, we plot all DSOs that have a magnitude less than 12 AND a size greater than 0.08 square degrees.
 
 ### More Expression Examples
 
-| Expression                                       | Description                           |
-| ------------------------------------------------ | ------------------------------------- |
-| `_.hip.notnull()`                                | Select stars that have a HIP id                                           |
-| `(_.hip.notnull()) | (_.bv < 0)`                 | Select stars that have a HIP id **OR** have a bluish color (bv < 0)       |
-| `_.name.isin(["Sirius", "Rigel", "Vega"])`       | Select stars with the names Sirius, Rigel, or Vega                        |
-| `(_.size.isnull()) | (_.size > 0.01)`            | Select DSOs that have no defined size **OR** are larger than 0.01 square degrees      |
-| `_.geometry.intersects(m45.geometry)`            | Select stars that are within the Pleiades (M45) star cluster (assumes `m45 = DSO.get(m='45')`)     |
+Select stars that have a HIP id
 
-Starplot supports all expressions from [Ibis](https://ibis-project.org/), so check out [their documentation](https://ibis-project.org/reference/expression-generic) for more details.
+    _.hip.notnull()
+
+<hr/>
+Select stars that have a HIP id **OR** have a bluish color (bv < 0):
+
+    (_.hip.notnull()) | (_.bv < 0)
+
+<hr/>
+Select stars with the names Sirius, Rigel, or Vega:
+
+    _.name.isin(["Sirius", "Rigel", "Vega"])
+
+<hr/>
+Select DSOs that have no defined size **OR** are larger than 0.01 square degrees:
+
+    (_.size.isnull()) | (_.size > 0.01)
+
+<hr/>
+Select stars that are within the Pleiades (M45) star cluster (assumes `m45 = DSO.get(m='45')`):
+
+    _.geometry.intersects(m45.geometry)
+
+!!! star "And more!"
+
+    Starplot supports all expressions from <a href="https://ibis-project.org/" target="_blank">Ibis</a>, so check out <a href="https://ibis-project.org/reference/expression-generic" target="_blank">their documentation :arrow_upper_right:</a> for more details.
 
 ## Important Details
 
 - When writing expressions, you can reference any field on the [model](/reference-models) you're filtering
 - See table below for a list of [operators](#operators) you can use in your expressions
-- Each field also has [functions](#functions) available to check for null, etc
-- You can combine expressions with the bitwise OR (`|`) / AND (`&`) operators, but you **must** put parenthesis around each expression when doing this (e.g. `(Star.magnitude > 8) | (Star.name == "Vega")`)
+- You can combine expressions with the bitwise OR (`|`) / AND (`&`) operators, but you **must** put parenthesis around each expression when doing this (e.g. `(_.magnitude > 8) | (_.name == "Vega")`)
 
 ## Operators
 
-| Operator        | Description                              | Example                              |
-| :-------------:   | ---------------------------------------- | ------------------------------------ |
-| `<`, `<=`       | Less than, less than or equal to         | `_.magnitude < 8`                 |
-| `>`, `>=`       | Greater than, greater than or equal to   | `_.magnitude >= 2`                 |
-| `==`            | Equals (handles `None` properly)         | `_.name == "Vega"`                |
-| `!=`            | NOT equal (handles `None` properly)      | `_.name != "NGC1976"`              |
+| Operator          | Description                                    | Example                  |
+| :-------------:   | ---------------------------------------------- | ------------------------ |
+| `<`, `<=`         | Less than, less than or equal to               | `_.magnitude < 8`        |
+| `>`, `>=`         | Greater than, greater than or equal to         | `_.magnitude >= 2`       |
+| `==`              | Equals                                         | `_.name == "Vega"`       |
+| `!=`              | NOT equal                                      | `_.name != "NGC1976"`    |
 
 There are also a few operators you can use to combine expressions:
 

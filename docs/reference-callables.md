@@ -4,7 +4,7 @@ Callables allow you to define your own functions for calculating a few of the st
 
     In Python, a "callable" is anything that can be "called" — e.g. a function or a class with `__call__` implemented.
 
-    As a simple example, here's how you can pass a callable to Python's `sorted` function to sort a list of strings by their lengths:
+    As a simple example, here's how you can pass a callable to Python's `sorted` function to sort a list of strings by their length:
     ```python
 
     >>> animals = ["elephant","cat", "dog", "tiger"]
@@ -14,6 +14,7 @@ Callables allow you to define your own functions for calculating a few of the st
     ['cat', 'dog', 'tiger', 'elephant']
     
     ```
+    
     In the example above, the value of `key` is the callable — in this case, a lambda function.
 
     Here's another way to write the code above:

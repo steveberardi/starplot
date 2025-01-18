@@ -397,10 +397,21 @@ td[data-column-id=bayer] {
     max-width: 600px;
 }
 
+#grid {
+    background-color: var(--md-primary-fg-color--light);
+    padding: 4px;
+    border-radius: 8px;
+
+    th {
+        background-color: hsl(209deg 53% 85%);
+        font-weight: bold;
+        /* color: var(--md-primary-fg-color--dark); */
+    }
+}
 .gridjs-search {
     width: 400px !important;
 }
 .gridjs-search-input {
     width: 400px !important;
-    border: 2px solid var(--md-primary-fg-color) !important;
+    border: 1px solid var(--md-primary-fg-color) !important;
 }

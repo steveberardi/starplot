@@ -20,6 +20,7 @@ nav:
             - Star Designations: data/star-designations.md
             - Deep Sky Objects: data/dsos.md
             - Constellations: data/constellations.md
+        - Settings: reference-settings.md
     - Data Sources: data-sources.md
     - License: license.md
     - Changelog: changelog.md

@@ -319,29 +319,39 @@ class HorizonPlot(
         def az_to_ax(d):
             return self._to_ax(d, self.alt[0])[0]
 
-        for az in range(int(self.az[0] + 2), int(self.az[1]), 1):
+        for az in range(int(self.az[0]), int(self.az[1]), 1):
             az = int(az)
 
             if az >= 360:
                 az -= 360
 
             if labels.get(az):
-                self.ax.annotate(
+                label = self.ax.annotate(
                     labels.get(az),
                     (az_to_ax(az), -0.074 * self.scale),
                     xycoords=self.ax.transAxes,
                     **style.label.matplot_kwargs(self.scale),
                     clip_on=True,
                 )
+                extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+                if extent.x0 < 0 or extent.x1 < 0:
+                    label.remove()
+                print(labels.get(az), extent.x0, extent.x1)
+                # self._maybe_remove_label(label)
 
             if show_degree_labels and az % degree_step == 0:
-                self.ax.annotate(
+                label = self.ax.annotate(
                     str(az) + "\u00b0",
                     (az_to_ax(az), -0.011 * self.scale),
                     xycoords=self.ax.transAxes,
                     **self.style.gridlines.label.matplot_kwargs(self.scale),
                     clip_on=True,
                 )
+                extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+                if extent.x0 < 0 or extent.x1 < 0:
+                    label.remove()
+                # print(extent)
+                # self._maybe_remove_label(label)
 
             elif show_ticks and az % tick_step == 0:
                 self.ax.annotate(
