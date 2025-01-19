@@ -31,24 +31,32 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
+    - name: Build sky.db
+      run: make db CI=true
     - name: Run Tests - Python 3.9
       run: make test-3.9 CI=true
   test-python-3-10:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
+    - name: Build sky.db
+      run: make db CI=true
     - name: Run Tests - Python 3.10
       run: make test-3.10 CI=true
   test-python-3-11:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
+    - name: Build sky.db
+      run: make db CI=true
     - name: Run Tests - Python 3.11
       run: make test-3.11 CI=true
   test-python-3-12:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
+    - name: Build sky.db
+      run: make db CI=true
     - name: Run Tests - Python 3.12
       run: make test-3.12 CI=true
   # Python 3.13 not supported yet, needs investigation!

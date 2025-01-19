@@ -7,7 +7,7 @@ WORKDIR /starplot
 RUN apt-get clean && apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
 
 # ---------------------------------------------------------------------
-FROM base as dev
+FROM base AS dev
 
 WORKDIR /starplot
 
