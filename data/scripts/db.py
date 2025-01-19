@@ -44,7 +44,7 @@ con.sql(
 
 
 # Deep Sky Objects
-dso_src = BUILD_PATH / "ongc.gpkg"
+dso_src = BUILD_PATH / "ongc.json"
 con.sql("DROP TABLE IF EXISTS deep_sky_objects")
 con.sql(
     f"CREATE TABLE deep_sky_objects AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{dso_src}'));"
