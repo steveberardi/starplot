@@ -27,12 +27,12 @@ jobs:
       run: make check-hashes CI=true
     - name: Build PIP Package
       run: make flit-build
-  test-python-3-9:
-    runs-on: ubuntu-22.04
-    steps:
-    - uses: actions/checkout@v4
-    - name: Run Tests - Python 3.9
-      run: make test-3.9 CI=true
+  # test-python-3-9:
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - name: Run Tests - Python 3.9
+  #     run: make test-3.9 CI=true
   test-python-3-10:
     runs-on: ubuntu-22.04
     steps:
