@@ -75,7 +75,6 @@ https://discord.gg/WewJJjshFu
 Contributing to Starplot is welcome and very much appreciated! Please see [here](CONTRIBUTING.md) for details.
 
 ## Coming Soon
-- 🗄️ Data optimizations
 - 🧮 Coordinate system helpers
 - 🌑 Planet moons
 - ✴️ Custom markers

@@ -87,10 +87,8 @@ build-star-designations:
 build-constellations:
 	@$(DOCKER_RUN) "python data/scripts/constellations.py"
 
-
 build-doc-data:
 	@$(DOCKER_RUN) "python data/scripts/docdata.py"
-
 
 version:
 	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"

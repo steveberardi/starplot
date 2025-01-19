@@ -19,6 +19,8 @@ jobs:
       run: make lint CI=true
     - name: Check Format
       run: make format CI=true ARGS=--check
+    - name: Build sky.db
+      run: make db CI=true
     - name: Run Tests
       run: make test CI=true
     - name: Check Image Hashes
