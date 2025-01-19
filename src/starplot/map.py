@@ -50,8 +50,8 @@ class MapPlot(
 
     Args:
         projection: Projection of the map
-        ra_min: Minimum right ascension of the map's extent, in hours (0...24)
-        ra_max: Maximum right ascension of the map's extent, in hours (0...24)
+        ra_min: Minimum right ascension of the map's extent, in degrees (0...360)
+        ra_max: Maximum right ascension of the map's extent, in degrees (0...360)
         dec_min: Minimum declination of the map's extent, in degrees (-90...90)
         dec_max: Maximum declination of the map's extent, in degrees (-90...90)
         lat: Latitude for perspective projections: Orthographic, Stereographic, and Zenith
@@ -77,7 +77,7 @@ class MapPlot(
         self,
         projection: Projection,
         ra_min: float = 0,
-        ra_max: float = 24,
+        ra_max: float = 360,
         dec_min: float = -90,
         dec_max: float = 90,
         lat: float = None,
@@ -135,7 +135,7 @@ class MapPlot(
 
         if self.projection == Projection.ZENITH and not self._is_global_extent():
             raise ValueError(
-                "Zenith projection requires a global extent: ra_min=0, ra_max=24, dec_min=-90, dec_max=90"
+                "Zenith projection requires a global extent: ra_min=0, ra_max=360, dec_min=-90, dec_max=90"
             )
 
         self._geodetic = ccrs.Geodetic()
@@ -158,7 +158,7 @@ class MapPlot(
         """Determine if a coordinate is within the bounds of the plot.
 
         Args:
-            ra: Right ascension, in hours (0...24)
+            ra: Right ascension, in degrees (0...360)
             dec: Declination, in degrees (-90...90)
 
         Returns:
@@ -179,8 +179,8 @@ class MapPlot(
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
         return [
-            -1 * self.ra_min * 15,
-            -1 * self.ra_max * 15,
+            -1 * self.ra_min,
+            -1 * self.ra_max,
             self.dec_min,
             self.dec_max,
         ]
@@ -196,23 +196,23 @@ class MapPlot(
             self.dec_max > 80 or self.dec_min < -80
         ):
             self.ra_min = 0
-            self.ra_max = 24
+            self.ra_max = 360
 
-        elif self.ra_max < 24:
+        elif self.ra_max < 360:
             # adjust right ascension to match extent
-            ra_min = (-1 * extent[1]) / 15
-            ra_max = (-1 * extent[0]) / 15
+            ra_min = extent[1] * -1
+            ra_max = extent[0] * -1
 
             if ra_min < 0 or ra_max < 0:
-                ra_min += 24
-                ra_max += 24
+                ra_min += 360
+                ra_max += 360
 
             self.ra_min = ra_min
             self.ra_max = ra_max
 
         else:
-            self.ra_min = lon_to_ra(extent[1])
-            self.ra_max = lon_to_ra(extent[0]) + 24
+            self.ra_min = lon_to_ra(extent[1]) * 15
+            self.ra_max = lon_to_ra(extent[0]) * 15 + 360
 
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
@@ -382,12 +382,12 @@ class MapPlot(
         Args:
             style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
             labels: If True, then labels for each gridline will be plotted on the outside of the axes.
-            ra_locations: List of Right Ascension locations for the gridlines (in hours, 0...24). Defaults to every 1 hour.
+            ra_locations: List of Right Ascension locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees.
             dec_locations: List of Declination locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
             ra_formatter_fn: Callable for creating labels of right ascension gridlines
             dec_formatter_fn: Callable for creating labels of declination gridlines
             tick_marks: If True, then tick marks will be plotted outside the axis. **Only supported for rectangular projections (e.g. Mercator, Miller)**
-            ra_tick_locations: List of Right Ascension locations for the tick marks (in hours, 0...24)
+            ra_tick_locations: List of Right Ascension locations for the tick marks (in degrees, 0...260)
             dec_tick_locations: List of Declination locations for the tick marks (in degrees, -90...90)
         """
 
@@ -404,7 +404,7 @@ class MapPlot(
         def dec_formatter(x, pos) -> str:
             return dec_formatter_fn(x)
 
-        ra_locations = ra_locations or [x for x in range(24)]
+        ra_locations = ra_locations or [x for x in range(0, 360, 15)]
         dec_locations = dec_locations or [d for d in range(-80, 90, 10)]
 
         line_style_kwargs = style.line.matplot_kwargs()
@@ -433,14 +433,14 @@ class MapPlot(
             # because cartopy does not extend lines to poles
             for ra in ra_locations:
                 self.ax.plot(
-                    (ra * 15, ra * 15),
+                    (ra, ra),
                     (-90, 90),
                     gid="gridlines",
                     **line_style_kwargs,
                     **self._plot_kwargs(),
                 )
 
-        gridlines.xlocator = FixedLocator([ra_to_lon(r) for r in ra_locations])
+        gridlines.xlocator = FixedLocator([ra_to_lon(r/15) for r in ra_locations])
         gridlines.xformatter = FuncFormatter(ra_formatter)
         gridlines.xlabel_style = label_style_kwargs
 
@@ -455,10 +455,10 @@ class MapPlot(
         def in_axes(ra):
             return self.in_bounds(ra, (self.dec_max + self.dec_min) / 2)
 
-        xticks = ra_tick_locations or [x for x in np.arange(0, 24, 0.125)]
+        xticks = ra_tick_locations or [x for x in np.arange(0, 360, 1.875)]
         yticks = dec_tick_locations or [x for x in np.arange(-90, 90, 1)]
 
-        inbound_xticks = [ra_to_lon(ra) for ra in xticks if in_axes(ra)]
+        inbound_xticks = [ra_to_lon(ra/15) for ra in xticks if in_axes(ra)]
         self.ax.set_xticks(inbound_xticks, crs=self._plate_carree)
         self.ax.xaxis.set_major_formatter(ticker.NullFormatter())
 

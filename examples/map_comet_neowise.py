@@ -53,8 +53,8 @@ style.legend.location = "lower center"
 
 p = MapPlot(
     projection=Projection.STEREO_NORTH,
-    ra_min=3,
-    ra_max=10,
+    ra_min=3 * 15,
+    ra_max=10 * 15,
     dec_min=5,
     dec_max=80,
     style=style,

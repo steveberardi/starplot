@@ -15,9 +15,9 @@ map_custom_stars:
   filename: /starplot/hash_checks/data/map-custom-stars.png
   phash: e61a5bb425a53dd0
 map_gridlines:
-  dhash: 0c219595224949230c219595224949230c21959522494923
+  dhash: 0c219595224949130c219595224949130c21959522494913
   filename: /starplot/hash_checks/data/map-gridlines.png
-  phash: cbb44b172d32728d
+  phash: cbb44b162d3262af
 map_label_callables:
   dhash: 80e04888984c889080988c8c9c8c98a0809a9d0d8d9e98a0
   filename: /starplot/hash_checks/data/map-m45-label-callables.png
@@ -35,11 +35,11 @@ map_moon_phase_waxing_crescent:
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b3cccc3333cccc31
 map_orion_base:
-  dhash: 18393b5e3e2d65681d393b5e2e2d65681c392bce2a2f6468
+  dhash: 18393b5e3e2f65681d393b5e2e2d65681c392bce2e2f6468
   filename: /starplot/hash_checks/data/map-orion-base.png
-  phash: be795a649505b594
+  phash: be795a649584b594
 map_orion_extra:
-  dhash: 193b3b7f3b656d4f193b1b7e2f656c4f1c3b0b4e2b256c4d
+  dhash: 193b3b7f3b656d17193b3b7f2b656d0f1c3b0b4e2b256c0f
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: be71e01ee117e491
 map_plot_custom_clip_path_virgo:
@@ -51,9 +51,9 @@ map_plot_limit_by_geometry:
   filename: /starplot/hash_checks/data/map-limit-by-geometry.png
   phash: a40999be6679539a
 map_scope_bino_fov:
-  dhash: 068080848ca088200696334d4d21924c0696334d4d21924c
+  dhash: 068080848ca08820068623454d21924c068623454d21924c
   filename: /starplot/hash_checks/data/map-scope-bino-fov.png
-  phash: e6649931666c9979
+  phash: e465997166649979
 map_stereo_base:
   dhash: 77766470353b5416777664f435185412777664f0b598d416
   filename: /starplot/hash_checks/data/map-stereo-north-base.png

@@ -1,7 +1,7 @@
 from datetime import datetime
 from pytz import timezone
 
-from starplot import Moon, optics
+from starplot import Moon, optics, _
 from starplot.styles import PlotStyle, extensions
 
 dt = datetime.now(timezone("US/Pacific")).replace(2024, 8, 20, 21, 0, 0)
@@ -31,6 +31,6 @@ op.planets(
     style__label__offset_x=6,
     style__label__offset_y=-6,
 )
-op.stars(mag=12)
+op.stars(where=[_.magnitude < 12])
 
 op.export("optic_moon_saturn.png", padding=0.1, transparent=True)

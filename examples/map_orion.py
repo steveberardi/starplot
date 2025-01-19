@@ -8,8 +8,8 @@ style = PlotStyle().extend(
 
 p = MapPlot(
     projection=Projection.MERCATOR,
-    ra_min=3.6,
-    ra_max=7.8,
+    ra_min=3.6 * 15,
+    ra_max=7.8 * 15,
     dec_min=-15,
     dec_max=25,
     style=style,

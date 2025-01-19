@@ -35,7 +35,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
 
     Args:
         optic: Optic instance that defines optical parameters
-        ra: Right ascension of target center, in hours (0...24)
+        ra: Right ascension of target center, in degrees (0...360)
         dec: Declination of target center, in degrees (-90...90)
         lat: Latitude of observer's location
         lon: Longitude of observer's location
@@ -127,7 +127,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         """Determine if a coordinate is within the bounds of the plot.
 
         Args:
-            ra: Right ascension, in hours (0...24)
+            ra: Right ascension, in degrees (0...360)
             dec: Declination, in degrees (-90...90)
 
         Returns:
@@ -156,7 +156,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         earth = self.ephemeris["earth"]
 
         self.location = earth + wgs84.latlon(self.lat, self.lon)
-        self.star = SkyfieldStar(ra_hours=self.ra, dec_degrees=self.dec)
+        self.star = SkyfieldStar(ra_hours=self.ra/15, dec_degrees=self.dec)
         self.observe = self.location.at(self.timescale).observe
         self.position = self.observe(self.star)
 
@@ -167,15 +167,15 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             raise ValueError("Target is below horizon at specified time/location.")
 
     def _adjust_radec_minmax(self):
-        self.ra_min = self.ra - self.optic.true_fov / 15 * 1.08
-        self.ra_max = self.ra + self.optic.true_fov / 15 * 1.08
+        self.ra_min = self.ra - self.optic.true_fov * 10
+        self.ra_max = self.ra + self.optic.true_fov * 10
         self.dec_max = self.dec + self.optic.true_fov / 2 * 1.03
         self.dec_min = self.dec - self.optic.true_fov / 2 * 1.03
 
         if self.dec > 70 or self.dec < -70:
             # naive method of getting all the stars near the poles
             self.ra_min = 0
-            self.ra_max = 24
+            self.ra_max = 360
 
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
@@ -208,15 +208,14 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     @use_style(ObjectStyle, "star")
     def stars(
         self,
-        mag: float = 6.0,
+        where: list = None,
+        where_labels: list = None,
         catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
         style: ObjectStyle = None,
         rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
-        where: list = None,
-        where_labels: list = None,
         labels: Mapping[int, str] = STAR_NAMES,
         legend_label: str = "Star",
         bayer_labels: bool = False,
@@ -228,15 +227,14 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Plots stars
 
         Args:
-            mag: Limiting magnitude of stars to plot
+            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             catalog: The catalog of stars to use
             style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
-            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted.
@@ -251,7 +249,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
                 return size_fn(s) * optic_star_multiplier * 0.68
 
         super().stars(
-            mag=mag,
             catalog=catalog,
             style=style,
             rasterize=rasterize,
@@ -298,7 +295,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         ]
         values = [
             f"{self.pos_alt.degrees:.0f}\N{DEGREE SIGN} / {self.pos_az.degrees:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az.degrees)})",
-            f"{self.ra:.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
+            f"{(self.ra / 15):.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
             f"{self.lat:.2f}\N{DEGREE SIGN}, {self.lon:.2f}\N{DEGREE SIGN}",
             dt_str,
             str(self.optic),

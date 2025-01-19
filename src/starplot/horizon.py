@@ -259,7 +259,7 @@ class HorizonPlot(
         # self.dec_max += 10
 
         self.ra_min = 0
-        self.ra_max = 24
+        self.ra_max = 360
         self.dec_min = self.lat - 90
         self.dec_max = self.lat + 90
 

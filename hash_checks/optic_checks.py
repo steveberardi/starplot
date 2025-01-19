@@ -35,7 +35,7 @@ plot_kwargs = dict(
 def check_optic_polaris_binoculars():
     optic_plot = OpticPlot(
         # Polaris
-        ra=2.51667,
+        ra=2.51667 * 15,
         dec=89.26,
         lat=32.97,
         lon=-117.038611,
@@ -58,7 +58,7 @@ def check_optic_polaris_binoculars():
 def check_optic_orion_nebula_refractor():
     optic_plot = OpticPlot(
         # Orion Nebula
-        ra=5.583,
+        ra=5.583 * 15,
         dec=-5.383,
         lat=32.97,
         lon=-117.038611,
@@ -82,7 +82,7 @@ def check_optic_orion_nebula_refractor():
 
 def check_optic_wrapping():
     optic_plot = OpticPlot(
-        ra=23.99,
+        ra=23.99 * 15,
         dec=17.573889,
         lat=32.97,
         lon=-117.038611,
@@ -115,7 +115,7 @@ def check_optic_wrapping():
 def check_optic_clipping():
     optic_plot = OpticPlot(
         # Orion Nebula
-        ra=5.583,
+        ra=5.583 * 15,
         dec=-5.383,
         lat=32.97,
         lon=-117.038611,
@@ -141,7 +141,7 @@ def check_optic_clipping():
 def check_optic_m45_binoculars():
     optic_plot = OpticPlot(
         # M45
-        ra=3.7836111111,
+        ra=3.7836111111 * 15,
         dec=24.1166666667,
         lat=32.97,
         lon=-117.038611,
@@ -164,7 +164,7 @@ def check_optic_m45_binoculars():
 def check_optic_m45_scope():
     optic_plot = OpticPlot(
         # M45
-        ra=3.7836111111,
+        ra=3.7836111111 * 15,
         dec=24.1166666667,
         lat=32.97,
         lon=-117.038611,
@@ -191,7 +191,7 @@ def check_optic_m45_scope():
 def check_optic_m45_reflector():
     optic_plot = OpticPlot(
         # M45
-        ra=3.7836111111,
+        ra=3.7836111111 * 15,
         dec=24.1166666667,
         lat=32.97,
         lon=-117.038611,
@@ -214,7 +214,7 @@ def check_optic_m45_reflector():
 def check_optic_m45_camera():
     optic_plot = OpticPlot(
         # M45
-        ra=3.7836111111,
+        ra=3.7836111111 * 15,
         dec=24.1166666667,
         lat=32.97,
         lon=-117.038611,
@@ -241,7 +241,7 @@ def check_optic_m45_camera():
 def check_optic_camera_rotated():
     optic_plot = OpticPlot(
         # M45
-        ra=3.7836111111,
+        ra=3.7836111111 * 15,
         dec=24.1166666667,
         lat=32.97,
         lon=-117.038611,
@@ -268,7 +268,7 @@ def check_optic_solar_eclipse_binoculars():
     optic_plot = OpticPlot(
         lat=33.363484,
         lon=-116.836394,
-        ra=1.16667,
+        ra=1.16667 * 15,
         dec=7.45,
         optic=optics.Binoculars(magnification=12, fov=65),
         dt=dt_april_8,

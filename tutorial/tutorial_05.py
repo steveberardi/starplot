@@ -13,7 +13,7 @@ style = PlotStyle().extend(
 
 p = OpticPlot(
     # target location - M44
-    ra=8.667,
+    ra=8.667 * 15,
     dec=19.67,
     # observer location - Palomar Mountain
     lat=33.363484,

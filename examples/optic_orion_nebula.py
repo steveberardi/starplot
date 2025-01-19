@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from starplot import OpticPlot, _
+from starplot import OpticPlot, DSO, _
 from starplot.callables import color_by_bv
 from starplot.optics import Refractor
 from starplot.styles import PlotStyle, extensions
@@ -12,10 +12,11 @@ style = PlotStyle().extend(
     extensions.OPTIC,
 )
 
+m42 = DSO.get(m="42")
 p = OpticPlot(
     # Orion Nebula
-    ra=5.583,
-    dec=-5.383,
+    ra=m42.ra,
+    dec=m42.dec,
     lat=32.97,
     lon=-117.038611,
     # TV-85

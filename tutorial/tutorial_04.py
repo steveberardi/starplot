@@ -15,8 +15,8 @@ style = PlotStyle().extend(
 
 p = MapPlot(
     projection=Projection.MERCATOR,  # specify a non-perspective projection
-    ra_min=3.6,  # limit the map to a specific area
-    ra_max=7.8,
+    ra_min=3.6 * 15,  # limit the map to a specific area
+    ra_max=7.8 * 15,
     dec_min=-15,
     dec_max=27,
     style=style,

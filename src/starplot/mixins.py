@@ -11,28 +11,28 @@ class ExtentMaskMixin:
 
         If the extent crosses equinox, then a MultiPolygon will be returned
         """
-        if self.ra_max <= 24:
+        if self.ra_max <= 360:
             coords = [
-                [self.ra_min * 15, self.dec_min],
-                [self.ra_max * 15, self.dec_min],
-                [self.ra_max * 15, self.dec_max],
-                [self.ra_min * 15, self.dec_max],
-                [self.ra_min * 15, self.dec_min],
+                [self.ra_min, self.dec_min],
+                [self.ra_max, self.dec_min],
+                [self.ra_max, self.dec_max],
+                [self.ra_min, self.dec_max],
+                [self.ra_min, self.dec_min],
             ]
             return Polygon(coords)
 
         else:
             coords_1 = [
-                [self.ra_min * 15, self.dec_min],
+                [self.ra_min, self.dec_min],
                 [360, self.dec_min],
                 [360, self.dec_max],
-                [self.ra_min * 15, self.dec_max],
-                [self.ra_min * 15, self.dec_min],
+                [self.ra_min, self.dec_max],
+                [self.ra_min, self.dec_min],
             ]
             coords_2 = [
                 [0, self.dec_min],
-                [(self.ra_max - 24) * 15, self.dec_min],
-                [(self.ra_max - 24) * 15, self.dec_max],
+                [(self.ra_max - 360), self.dec_min],
+                [(self.ra_max - 360), self.dec_max],
                 [0, self.dec_max],
                 [0, self.dec_min],
             ]
@@ -104,7 +104,7 @@ class ExtentMaskMixin:
         return all(
             [
                 self.ra_min == 0,
-                self.ra_max == 24,
+                self.ra_max == 360,
                 self.dec_min == -90,
                 self.dec_max == 90,
             ]
@@ -132,14 +132,14 @@ class CreateMapMixin:
             height_degrees=height_degrees,
             width_degrees=width_degrees,
         )
-        ra_min = ex[0][0] / 15
-        ra_max = ex[2][0] / 15
+        ra_min = ex[0][0]
+        ra_max = ex[2][0]
         dec_min = ex[0][1]
         dec_max = ex[2][1]
 
         # handle wrapping
         if ra_max < ra_min:
-            ra_max += 24
+            ra_max += 360
 
         p = MapPlot(
             ra_min=ra_min,
@@ -167,7 +167,7 @@ class CreateOpticMixin:
         from starplot import OpticPlot
 
         return OpticPlot(
-            ra=self.ra / 15,
+            ra=self.ra,
             dec=self.dec,
             *args,
             **kwargs,

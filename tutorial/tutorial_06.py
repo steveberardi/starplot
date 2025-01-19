@@ -7,8 +7,8 @@ style = PlotStyle().extend(
 )
 p = MapPlot(
     projection=Projection.MILLER,
-    ra_min=15.6,
-    ra_max=19.8,
+    ra_min=15.6 * 15,
+    ra_max=19.8 * 15,
     dec_min=-45.2,
     dec_max=-3,
     style=style,

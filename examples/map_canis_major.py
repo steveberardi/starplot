@@ -8,8 +8,8 @@ style = PlotStyle().extend(
 canis_major = Constellation.get(name="Canis Major")
 p = MapPlot(
     projection=Projection.MILLER,
-    ra_min=6,
-    ra_max=7.6,
+    ra_min=6 * 15,
+    ra_max=7.6 * 15,
     dec_min=-35,
     dec_max=-9,
     style=style,

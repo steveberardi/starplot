@@ -45,8 +45,8 @@ def _mercator():
     # returns a mercator plot of Orion
     p = MapPlot(
         projection=Projection.MERCATOR,
-        ra_min=3.6,
-        ra_max=7.8,
+        ra_min=3.6 * 15,
+        ra_max=7.8 * 15,
         dec_min=-16,
         dec_max=23.6,
         style=STYLE,
@@ -79,8 +79,8 @@ mercator_base = _mercator()
 def _stereo_north():
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
-        ra_min=17,
-        ra_max=20,
+        ra_min=17 * 15,
+        ra_max=20 * 15,
         dec_min=30,
         dec_max=55,
         style=STYLE,
@@ -113,7 +113,7 @@ def check_map_orion_base():
 def check_map_orion_extra():
     filename = DATA_PATH / "map-orion-extra.png"
     mercator_base.marker(
-        ra=4.5,
+        ra=4.5 * 15,
         dec=5,
         style={
             "marker": {
@@ -148,8 +148,8 @@ def check_map_coma_berenices_dso_size():
     filename = DATA_PATH / "map-coma-berenices-dso-size.png"
     p = MapPlot(
         projection=Projection.MILLER,
-        ra_min=12,
-        ra_max=13.5,
+        ra_min=12 * 15,
+        ra_max=13.5 * 15,
         dec_min=15,
         dec_max=32,
         style=styles.PlotStyle().extend(
@@ -185,7 +185,7 @@ def check_map_with_planets():
     p = MapPlot(
         projection=Projection.MILLER,
         ra_min=0,
-        ra_max=24,
+        ra_max=24 * 15,
         dec_min=-40,
         dec_max=40,
         dt=dt,
@@ -214,8 +214,8 @@ def check_map_scope_bino_fov():
 
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
-        ra_min=52 / 15,
-        ra_max=62 / 15,
+        ra_min=52 / 1,
+        ra_max=62 / 1,
         dec_min=20,
         dec_max=28,
         dt=dt,
@@ -250,8 +250,8 @@ def check_map_custom_stars():
 
     p = MapPlot(
         projection=Projection.MERCATOR,
-        ra_min=3.6,
-        ra_max=7.8,
+        ra_min=3.6 * 15,
+        ra_max=7.8 * 15,
         dec_min=-16,
         dec_max=24,
         style=style,
@@ -279,8 +279,8 @@ def check_map_wrapping():
 
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
-        ra_min=18,
-        ra_max=26,
+        ra_min=18 * 15,
+        ra_max=26 * 15,
         dec_min=30,
         dec_max=64,
         style=style,
@@ -349,8 +349,8 @@ def check_map_gridlines():
 
     p = MapPlot(
         projection=Projection.MILLER,
-        ra_min=10,
-        ra_max=15,
+        ra_min=10 * 15,
+        ra_max=15 * 15,
         dec_min=31,
         dec_max=67,
         style=style,
@@ -363,7 +363,7 @@ def check_map_gridlines():
     p.gridlines(tick_marks=True)
 
     p.gridlines(
-        ra_locations=list(np.arange(0, 24, 0.25)),
+        ra_locations=list(np.arange(0, 360, 3.75)),
         ra_formatter_fn=lambda d: None,
         dec_formatter_fn=lambda d: None,
         dec_locations=list(np.arange(-90, 90, 1)),
@@ -392,7 +392,7 @@ def check_map_moon_phase_waxing_crescent():
         label=None,
     )
     p.gridlines(
-        ra_locations=list(np.arange(0, 24, 0.05)),
+        ra_locations=list(np.arange(0, 24*15, 0.05*15)),
         ra_formatter_fn=lambda d: None,
         dec_formatter_fn=lambda d: None,
         dec_locations=list(np.arange(-90, 90, 0.25)),
@@ -407,8 +407,8 @@ def check_map_moon_phase_waxing_crescent():
 def check_map_plot_limit_by_geometry():
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
-        ra_min=18,
-        ra_max=20,
+        ra_min=18 * 15,
+        ra_max=20 * 15,
         dec_min=23,
         dec_max=50,
         style=STYLE.extend(
@@ -449,8 +449,8 @@ def check_map_plot_custom_clip_path_virgo():
     virgo = Constellation.get(iau_id="vir")
     p = MapPlot(
         projection=Projection.MILLER,
-        ra_min=11,
-        ra_max=16,
+        ra_min=11 * 15,
+        ra_max=16 * 15,
         dec_min=-29,
         dec_max=17,
         style=STYLE.extend(
@@ -506,8 +506,8 @@ def check_map_label_callables():
     )
     p = MapPlot(
         projection=Projection.MILLER,
-        ra_min=3.5,
-        ra_max=4,
+        ra_min=3.5 * 15,
+        ra_max=4 * 15,
         dec_min=22,
         dec_max=26,
         style=style,
@@ -540,8 +540,8 @@ def check_map_label_callables():
 def check_map_milky_way_multi_polygon():
     p = MapPlot(
         projection=Projection.MILLER,
-        ra_min=17.5,
-        ra_max=19.5,
+        ra_min=17.5 * 15,
+        ra_max=19.5 * 15,
         dec_min=-30,
         dec_max=0,
         style=STYLE,
