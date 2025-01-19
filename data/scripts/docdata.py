@@ -4,7 +4,8 @@ import numpy as np
 
 
 def create_dso_json():
-    from starplot.data.dsos import DSO_LEGEND_LABELS, load
+    from starplot.models.dso import DSO_LEGEND_LABELS
+    from starplot.data.dsos import load
 
     ongc = load().to_pandas()
     ongc = ongc.replace({np.nan: None})
