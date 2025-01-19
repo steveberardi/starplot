@@ -18,6 +18,7 @@ BIG_SKY_MAG11_PQ_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.mag11.parquet"
 def get_url(version: str = BIG_SKY_VERSION, filename: str = BIG_SKY_FILENAME):
     return f"https://github.com/steveberardi/bigsky/releases/download/v{version}/{filename}"
 
+
 def download(
     url: str = None,
     download_path: str = settings.DOWNLOAD_PATH,
