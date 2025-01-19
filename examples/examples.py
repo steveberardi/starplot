@@ -7,7 +7,7 @@ import time
 from PIL import Image
 from multiprocessing import Pool
 
-start = time.time()
+
 
 skip = [
     # "map_milky_way_stars.py",
@@ -42,19 +42,21 @@ def run_example(filename):
     subprocess.call(["python", filename])
 
 
-example_files = get_example_names()
-processes = []
+if __name__ == "__main__":
+    start = time.time()
+    example_files = get_example_names()
+    processes = []
 
-with Pool(5) as pool:
-    pool.map(run_example, example_files)
+    with Pool(5) as pool:
+        pool.map(run_example, example_files)
 
-# Create thumbnail images for the examples list page
-image_files = glob.glob("*.png")
-pool = Pool(5)
-results = pool.map(thumbnail, image_files)
+    # Create thumbnail images for the examples list page
+    image_files = glob.glob("*.png")
+    pool = Pool(5)
+    results = pool.map(thumbnail, image_files)
 
-# Copy all images to docs directory
-print("Copying images to examples directory...")
-subprocess.call("cp *.png ../docs/images/examples/", shell=True)
+    # Copy all images to docs directory
+    print("Copying images to examples directory...")
+    subprocess.call("cp *.png ../docs/images/examples/", shell=True)
 
-print(f"{time.time() - start}")
+    print(f"{time.time() - start}")
