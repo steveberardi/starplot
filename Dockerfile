@@ -20,6 +20,7 @@ ENV PYTHONPATH=/starplot/src/
 
 RUN git config --global --add safe.directory /starplot
 
+RUN mkdir -p data/build
 RUN python data/scripts/bigsky_mag11.py
 RUN python data/scripts/dsos.py
 RUN python data/scripts/star_designations.py
