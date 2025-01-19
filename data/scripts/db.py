@@ -1,9 +1,10 @@
 import duckdb
 import ibis
+import subprocess
 
 from settings import BUILD_PATH, RAW_PATH
 from starplot import Star, DSO, Constellation
-
+from starplot.data import DataFiles
 # ibis.options.interactive = True
 # con = ibis.duckdb.connect(BUILD_PATH / "sky.db")
 # print(con.list_tables())
@@ -62,15 +63,22 @@ con.sql("CREATE INDEX star_designations_hip_idx ON star_designations (hip);")
 con.sql("CREATE INDEX star_designations_name_idx ON star_designations (name);")
 
 print("Sky.db created!")
+con.close()
 
-# all_stars = Star.find(where=[])
-# print("Stars = " + str(len(all_stars)))
-# assert len(all_stars) == 368_330
 
-# all_dsos = DSO.find(where=[])
-# print("DSOs = " + str(len(all_dsos)))
-# assert len(all_dsos) == 14_036
+db_destination = DataFiles.DATABASE
 
-# all_constellations = Constellation.find(where=[])
-# print("Constellations = " + str(len(all_constellations)))
-# assert len(all_constellations) == 89
+# subprocess.call(f"cp data/build/sky.db src/starplot/data/library", shell=True)
+subprocess.call(f"cp {str(db_path)} {str(db_destination)}", shell=True)
+
+all_stars = Star.find(where=[])
+print("Stars = " + str(len(all_stars)))
+assert len(all_stars) == 981_853
+
+all_dsos = DSO.find(where=[])
+print("DSOs = " + str(len(all_dsos)))
+assert len(all_dsos) == 14_036
+
+all_constellations = Constellation.find(where=[])
+print("Constellations = " + str(len(all_constellations)))
+assert len(all_constellations) == 89

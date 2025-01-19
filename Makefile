@@ -17,7 +17,7 @@ DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bas
 DOCKER_BUILDER=starplot-builder
 
 DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" --target dev .
-DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-$(PYTHON_VERSION)
+DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) starplot-$(PYTHON_VERSION)
 
 export PYTHONPATH=./src/
 
@@ -72,7 +72,7 @@ profile:
 
 db: build-data-clean build-stars-mag11 build-dsos build-star-designations build-constellations
 	@$(DOCKER_RUN) "python data/scripts/db.py"
-	cp data/build/sky.db src/starplot/data/library
+# cp data/build/sky.db src/starplot/data/library
 
 build-data-clean:
 	mkdir -p data/build
