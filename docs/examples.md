@@ -122,6 +122,14 @@
         </a>
     </li>
 
+    <li>
+        <a href="/examples/horizon-double-cluster/">
+            <img src="/images/examples/horizon_double_cluster-sm.png" alt="Double Cluster on the Horizon" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Double Cluster on the Horizon</p>
+        </a>
+    </li>
+
 </ul>
 
 

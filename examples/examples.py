@@ -8,7 +8,6 @@ from PIL import Image
 from multiprocessing import Pool
 
 
-
 skip = [
     # "map_milky_way_stars.py",
     # "stuff.py",
