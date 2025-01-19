@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import pandas as pd
 
@@ -9,26 +10,35 @@ from starplot.data import DataFiles, utils
 BIG_SKY_VERSION = "0.4.0"
 BIG_SKY_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.csv.gz"
 BIG_SKY_PQ_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.parquet"
-BIG_SKY_URL = f"https://github.com/steveberardi/bigsky/releases/download/v{BIG_SKY_VERSION}/{BIG_SKY_FILENAME}"
 
-DIGITS = 4
+BIG_SKY_MAG11_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.mag11.csv.gz"
+BIG_SKY_MAG11_PQ_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.mag11.parquet"
 
+
+def get_url(version: str = BIG_SKY_VERSION, filename: str = BIG_SKY_FILENAME):
+    return f"https://github.com/steveberardi/bigsky/releases/download/v{version}/{filename}"
 
 def download(
-    download_path: str = str(settings.DOWNLOAD_PATH / BIG_SKY_FILENAME),
-    digits: int = 4,
+    url: str = None,
+    download_path: str = settings.DOWNLOAD_PATH,
+    download_filename: str = BIG_SKY_FILENAME,
+    build_file: str = DataFiles.BIG_SKY,
 ):
-    if not os.path.exists(settings.DOWNLOAD_PATH):
-        os.makedirs(settings.DOWNLOAD_PATH)
+    url = url or get_url()
+    download_path = Path(download_path)
 
+    if not os.path.exists(download_path):
+        os.makedirs(download_path)
+
+    full_download_path = download_path / download_filename
     utils.download(
-        BIG_SKY_URL,
-        download_path,
+        url,
+        full_download_path,
         "Big Sky Star Catalog",
     )
     to_parquet(
-        download_path,
-        DataFiles.BIG_SKY,
+        full_download_path,
+        build_file,
     )
 
 

@@ -27,6 +27,7 @@ bigsky.0.4.0.stars.csv.gz
 bigsky.stars.csv.gz
 stars.bigsky.parquet
 bigsky.0.4.0.stars.parquet
+bigsky*.parquet
 
 hash_checks/data/*.png
 hash_checks/results.html
