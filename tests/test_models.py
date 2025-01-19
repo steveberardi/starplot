@@ -25,7 +25,7 @@ class TestStar:
 
     def test_star_find(self):
         hipstars = Star.find(where=[_.hip.notnull()])
-        assert len(hipstars) == 368_330
+        assert len(hipstars) == 121_477
 
         names = {"Sirius", "Bellatrix", "Castor", "Vega"}
         bright = Star.find(where=[_.name.isin(names)])

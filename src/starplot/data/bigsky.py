@@ -100,5 +100,5 @@ def exists(path) -> bool:
 
 
 def download_if_not_exists():
-    if not exists(settings.DOWNLOAD_PATH / BIG_SKY_FILENAME):
+    if not exists(DataFiles.BIG_SKY):
         download()

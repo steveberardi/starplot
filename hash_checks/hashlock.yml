@@ -19,9 +19,9 @@ map_gridlines:
   filename: /starplot/hash_checks/data/map-gridlines.png
   phash: cbb44b162d3262af
 map_label_callables:
-  dhash: 80e04888984c889080988c8c9c8c98a0809a9d0d8d9e98a0
+  dhash: 80e04888984c889080988c8c9c8c88a0809a9d0d8d9e98a0
   filename: /starplot/hash_checks/data/map-m45-label-callables.png
-  phash: b332cdc93ce6268c
+  phash: b330cdc93c66669c
 map_milky_way_multi_polygon:
   dhash: 711f0b0c80662c2c711f0b088066242d79530b0880662c2d
   filename: /starplot/hash_checks/data/map-milky-way-multi-polygon.png
@@ -51,7 +51,7 @@ map_plot_limit_by_geometry:
   filename: /starplot/hash_checks/data/map-limit-by-geometry.png
   phash: a40999be6679539a
 map_scope_bino_fov:
-  dhash: 068080848ca08820068623454d21924c068623454d21924c
+  dhash: 86c092848ca28400868633454d21920c868633454d21920c
   filename: /starplot/hash_checks/data/map-scope-bino-fov.png
   phash: e465997166649979
 map_stereo_base:
@@ -111,7 +111,7 @@ optic_polaris_binoculars:
   filename: /starplot/hash_checks/data/optic-binoculars-polaris.png
   phash: aa7b84f182d18ed3
 optic_solar_eclipse_binoculars:
-  dhash: 0779649a9ae469071759e49a9ae461170359c09c9cc06903
+  dhash: 0779649a9ae461071759e49a9ae461170359c09c9cc06903
   filename: /starplot/hash_checks/data/optic-binoculars-eclipse.png
   phash: b1ccce3131cece31
 optic_wrapping:
