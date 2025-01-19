@@ -1,9 +1,9 @@
 ---
-title: Double Cluster on the Horizon
+title: Finding the Double Cluster on the Horizon
 ---
 [:octicons-arrow-left-24: Back to Examples](/examples)
 
-# Double Cluster on the Horizon {.example-header}
+# Finding the Double Cluster on the Horizon {.example-header}
 
 ![horizon-double-cluster](/images/examples/horizon_double_cluster.png)
 
