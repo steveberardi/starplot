@@ -5,6 +5,7 @@ import subprocess
 from settings import BUILD_PATH, RAW_PATH
 from starplot import Star, DSO, Constellation
 from starplot.data import DataFiles
+
 # ibis.options.interactive = True
 # con = ibis.duckdb.connect(BUILD_PATH / "sky.db")
 # print(con.list_tables())
