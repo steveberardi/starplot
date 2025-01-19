@@ -34,7 +34,7 @@ class TestStar:
 
     def test_star_find_intersects(self):
         m45 = DSO.get(m="45")
-        m45_stars = Star.find(where=[_.geometry.intersects(m45.geometry)])
+        m45_stars = Star.find(where=[_.geometry.intersects(m45.geometry), _.magnitude < 8])
 
         for star in m45_stars:
             assert star.geometry.intersects(m45.geometry)

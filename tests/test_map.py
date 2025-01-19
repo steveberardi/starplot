@@ -30,8 +30,8 @@ def test_map_radec_invalid():
 def test_map_objects_list():
     p = MapPlot(
         projection=Projection.MERCATOR,
-        ra_min=8.3,
-        ra_max=8.8,
+        ra_min=8.3 * 15,
+        ra_max=8.8 * 15,
         dec_min=19.4,
         dec_max=19.8,
     )
@@ -51,7 +51,7 @@ def test_map_objects_list_planets():
     p = MapPlot(
         projection=Projection.MILLER,
         ra_min=0,
-        ra_max=24,
+        ra_max=24 * 15,
         dec_min=-40,
         dec_max=40,
         dt=dt,
@@ -71,4 +71,4 @@ def test_map_objects_list_planets():
 
 def test_marker_no_label():
     p = MapPlot(projection=Projection.MERCATOR)
-    p.marker(ra=10, dec=0, style__marker__color="blue")
+    p.marker(ra=150, dec=0, style__marker__color="blue")
