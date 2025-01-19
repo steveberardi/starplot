@@ -4,7 +4,7 @@ DE421_URL=https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_v
 ifeq ($(CI), true)
  DR_ARGS=
 else
- DR_ARGS=-it
+ DR_ARGS=-it --env-file ./.env
 endif
 
 ifeq ($(PROFILE), true)
@@ -13,7 +13,7 @@ else
  SCRATCH_ARGS=
 endif
 
-DOCKER_RUN=docker run --rm --env-file ./.env $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
+DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 
 DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" --target dev .
