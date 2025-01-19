@@ -24,7 +24,7 @@ RUN python data/scripts/bigsky_mag11.py
 RUN python data/scripts/dsos.py
 RUN python data/scripts/star_designations.py
 RUN python data/scripts/constellations.py
-RUN python data/scripts/docdata.py
 RUN python data/scripts/db.py
+RUN python data/scripts/docdata.py
 
 CMD ["bash", "-c", "python -m pytest . && python hash_checks/hashio.py check"]
