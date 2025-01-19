@@ -156,7 +156,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         earth = self.ephemeris["earth"]
 
         self.location = earth + wgs84.latlon(self.lat, self.lon)
-        self.star = SkyfieldStar(ra_hours=self.ra/15, dec_degrees=self.dec)
+        self.star = SkyfieldStar(ra_hours=self.ra / 15, dec_degrees=self.dec)
         self.observe = self.location.at(self.timescale).observe
         self.position = self.observe(self.star)
 

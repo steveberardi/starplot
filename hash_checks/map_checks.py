@@ -392,7 +392,7 @@ def check_map_moon_phase_waxing_crescent():
         label=None,
     )
     p.gridlines(
-        ra_locations=list(np.arange(0, 24*15, 0.05*15)),
+        ra_locations=list(np.arange(0, 24 * 15, 0.05 * 15)),
         ra_formatter_fn=lambda d: None,
         dec_formatter_fn=lambda d: None,
         dec_locations=list(np.arange(-90, 90, 0.25)),

@@ -440,7 +440,7 @@ class MapPlot(
                     **self._plot_kwargs(),
                 )
 
-        gridlines.xlocator = FixedLocator([ra_to_lon(r/15) for r in ra_locations])
+        gridlines.xlocator = FixedLocator([ra_to_lon(r / 15) for r in ra_locations])
         gridlines.xformatter = FuncFormatter(ra_formatter)
         gridlines.xlabel_style = label_style_kwargs
 
@@ -458,7 +458,7 @@ class MapPlot(
         xticks = ra_tick_locations or [x for x in np.arange(0, 360, 1.875)]
         yticks = dec_tick_locations or [x for x in np.arange(-90, 90, 1)]
 
-        inbound_xticks = [ra_to_lon(ra/15) for ra in xticks if in_axes(ra)]
+        inbound_xticks = [ra_to_lon(ra / 15) for ra in xticks if in_axes(ra)]
         self.ax.set_xticks(inbound_xticks, crs=self._plate_carree)
         self.ax.xaxis.set_major_formatter(ticker.NullFormatter())
 
