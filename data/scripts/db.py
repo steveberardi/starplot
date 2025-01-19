@@ -9,6 +9,7 @@ from starplot.data import DataFiles
 # ibis.options.interactive = True
 # con = ibis.duckdb.connect(BUILD_PATH / "sky.db")
 # print(con.list_tables())
+
 db_path = BUILD_PATH / "sky.db"
 con = duckdb.connect(db_path)
 con.install_extension("spatial")
@@ -67,10 +68,7 @@ print("Sky.db created!")
 con.close()
 
 
-db_destination = DataFiles.DATABASE
-
-# subprocess.call(f"cp data/build/sky.db src/starplot/data/library", shell=True)
-subprocess.call(f"cp {str(db_path)} {str(db_destination)}", shell=True)
+subprocess.call(f"cp {str(db_path)} {str(DataFiles.DATABASE)}", shell=True)
 
 all_stars = Star.find(where=[])
 print("Stars = " + str(len(all_stars)))

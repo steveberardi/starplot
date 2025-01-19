@@ -99,6 +99,17 @@ def exists(path) -> bool:
     return os.path.isfile(path)
 
 
-def download_if_not_exists():
-    if not exists(DataFiles.BIG_SKY):
-        download()
+def download_if_not_exists(
+    filename: str = DataFiles.BIG_SKY,
+    url: str = None,
+    download_path: str = settings.DOWNLOAD_PATH,
+    download_filename: str = BIG_SKY_FILENAME,
+    build_file: str = DataFiles.BIG_SKY,
+):
+    if not exists(filename):
+        download(
+            url=url,
+            download_path=download_path,
+            download_filename=download_filename,
+            build_file=build_file,
+        )
