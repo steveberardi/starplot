@@ -3,7 +3,7 @@ When plotting [stars][starplot.MapPlot.stars], [constellations][starplot.MapPlot
 
 Starplot uses [Ibis](https://ibis-project.org/) for handling these expressions, so if you're familar with that library then you already have a head start on selecting data in Starplot.
 
-#### Let's check out a simple example:
+Let's check out a simple example:
 
 <div class="tutorial">
 ```python linenums="1" hl_lines="15-20"
