@@ -1,5 +1,7 @@
 import sys
 
+from starplot.styles import fonts
+
 COMMANDS = ["setup"]
 
 
@@ -11,6 +13,8 @@ def setup(options):
 
     con = db.connect()
     con.load_extension("spatial")
+
+    fonts.load()
 
     print(f"Installed to: {settings.DUCKDB_EXTENSION_PATH}")
 
