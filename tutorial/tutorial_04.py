@@ -34,7 +34,9 @@ p.stars(
 
 
 p.nebula(where=[(_.magnitude < 9) | (_.magnitude.isnull())], where_labels=[False])
-p.open_clusters(where=[(_.magnitude < 9) | (_.magnitude.isnull())], where_labels=[False])
+p.open_clusters(
+    where=[(_.magnitude < 9) | (_.magnitude.isnull())], where_labels=[False]
+)
 
 p.milky_way()
 p.ecliptic()

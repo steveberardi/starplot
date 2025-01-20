@@ -11,7 +11,7 @@ style = PlotStyle().extend(
     extensions.OPTIC,
 )
 
-m45 = DSO.get(m="45") # lookup The Pleiades (M45)
+m45 = DSO.get(m="45")  # lookup The Pleiades (M45)
 
 p = OpticPlot(
     # target location via the DSO model instance
