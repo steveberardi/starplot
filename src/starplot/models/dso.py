@@ -1,13 +1,11 @@
 from typing import Optional, Union, Iterator
 
-import numpy as np
 from ibis import _
 from shapely.geometry import Polygon, MultiPolygon
 
 from starplot.data.dsos import load
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject
-from starplot import geod
 
 
 class DsoType:
@@ -172,40 +170,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         return [from_tuple(d) for d in df.itertuples()]
 
 
-def create_ellipse(d):
-    maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
-
-    if np.isnan(maj_ax):
-        return d.geometry
-
-    if np.isnan(angle):
-        angle = 0
-
-    maj_ax_degrees = (maj_ax / 60) / 2
-
-    if np.isnan(min_ax):
-        min_ax_degrees = maj_ax_degrees
-    else:
-        min_ax_degrees = (min_ax / 60) / 2
-
-    points = geod.ellipse(
-        (d.ra, d.dec),
-        min_ax_degrees * 2,
-        maj_ax_degrees * 2,
-        angle,
-        num_pts=100,
-    )
-
-    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
-
-    return Polygon(points)
-
-
 def from_tuple(d: tuple) -> DSO:
-    # geometry = d.geometry
-    # if str(geometry.geom_type) not in ["Polygon", "MultiPolygon"]:
-    #     geometry = create_ellipse(d)
-
     dso = DSO(
         name=d.name,
         ra=d.ra,
@@ -222,9 +187,7 @@ def from_tuple(d: tuple) -> DSO:
         geometry=d.geometry,
         constellation_id=d.constellation_id,
     )
-
     dso._row_id = getattr(d, "rowid", None)
-
     return dso
 
 
