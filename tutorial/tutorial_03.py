@@ -26,16 +26,17 @@ p.constellations()
 p.stars(where=[_.magnitude < 4.6])
 
 # plot galaxies and open clusters with a limiting magnitude of 9
-# and do NOT plot their true apparent size
-p.galaxies(where=[_.magnitude < 9], true_size=False, labels=None)
+# but do NOT plot their labels or their true apparent size
+p.galaxies(where=[_.magnitude < 9], where_labels=[False], true_size=False)
 p.open_clusters(
-    where=[(_.magnitude < 9) | (_.magnitude.isnull())], true_size=False, labels=None
+    where=[(_.magnitude < 9) | (_.magnitude.isnull())],
+    where_labels=[False],
+    true_size=False,
 )
 
-# plot constellation borders, the ecliptic, and celestial equator
+# plot constellation borders and the ecliptic
 p.constellation_borders()
 p.ecliptic()
-p.celestial_equator()
 
 # plot the Milky Way
 p.milky_way()

@@ -62,7 +62,6 @@ p.globular_clusters(
 )
 
 p.ecliptic()
-p.celestial_equator()
 p.milky_way()
 p.constellation_labels()
 

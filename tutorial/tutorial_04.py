@@ -7,7 +7,7 @@ style = PlotStyle().extend(
     {
         "legend": {
             "location": "lower right",  # show legend inside map
-            "num_columns": 1,
+            "num_columns": 3,
             "background_alpha": 1,
         },
     },
@@ -32,8 +32,9 @@ p.stars(
     where=[_.magnitude < 8], bayer_labels=True, flamsteed_labels=True
 )  # include Bayer and Flamsteed labels with the stars
 
-p.nebula(where=[_.magnitude < 8], labels=None)
-p.open_clusters(where=[_.magnitude < 8], labels=None)
+
+p.nebula(where=[(_.magnitude < 9) | (_.magnitude.isnull())], where_labels=[False])
+p.open_clusters(where=[(_.magnitude < 9) | (_.magnitude.isnull())], where_labels=[False])
 
 p.milky_way()
 p.ecliptic()
