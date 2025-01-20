@@ -13,8 +13,9 @@ WORKDIR /starplot
 
 COPY . .
 
-RUN pip install -r requirements.txt
-RUN pip install -r requirements-dev.txt
+RUN pip install uv
+RUN uv pip install --system -r requirements.txt
+RUN uv pip install --system -r requirements-dev.txt
 
 ENV PYTHONPATH=/starplot/src/
 
