@@ -1,75 +1,78 @@
 import duckdb
-import ibis
 import subprocess
 
 from settings import BUILD_PATH, RAW_PATH
 from starplot import Star, DSO, Constellation
 from starplot.data import DataFiles
 
-# ibis.options.interactive = True
-# con = ibis.duckdb.connect(BUILD_PATH / "sky.db")
-# print(con.list_tables())
-
 db_path = BUILD_PATH / "sky.db"
+
 con = duckdb.connect(db_path)
+
 con.install_extension("spatial")
 con.load_extension("spatial")
 
 # Milky Way
 milky_way_src = RAW_PATH / "milkyway.json"
-con.sql("DROP TABLE IF EXISTS milky_way")
-con.sql(
-    f"CREATE TABLE milky_way AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{milky_way_src}'));"
+con.execute(
+    (
+        "DROP TABLE IF EXISTS milky_way;"
+        f"CREATE TABLE milky_way AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{milky_way_src}'));"
+        "CREATE INDEX milky_way_geometry_idx ON milky_way USING RTREE (geometry);"
+    ),
 )
-con.sql("CREATE INDEX milky_way_geometry_idx ON milky_way USING RTREE (geometry);")
 
 # Constellations
 constellation_src = BUILD_PATH / "constellations.json"
-con.sql("DROP TABLE IF EXISTS constellations")
 con.sql(
-    f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_src}'));"
-)
-con.sql(
-    "CREATE INDEX constellations_boundary_idx ON constellations USING RTREE (geometry);"
+    (
+        "DROP TABLE IF EXISTS constellations;"
+        f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_src}'));"
+        "CREATE INDEX constellations_boundary_idx ON constellations USING RTREE (geometry);"
+    )
 )
 
 constellation_borders_src = RAW_PATH / "constellation_borders.json"
-con.sql("DROP TABLE IF EXISTS constellation_borders")
 con.sql(
-    f"CREATE TABLE constellation_borders AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_borders_src}'));"
-)
-con.sql(
-    "CREATE INDEX constellation_borders_geometry_idx ON constellation_borders USING RTREE (geometry);"
+    (
+        "DROP TABLE IF EXISTS constellation_borders;"
+        f"CREATE TABLE constellation_borders AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_borders_src}'));"
+        "CREATE INDEX constellation_borders_geometry_idx ON constellation_borders USING RTREE (geometry);"
+    )
 )
 
 
 # Deep Sky Objects
 dso_src = BUILD_PATH / "ongc.json"
-con.sql("DROP TABLE IF EXISTS deep_sky_objects")
 con.sql(
-    f"CREATE TABLE deep_sky_objects AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{dso_src}'));"
+    (
+        "DROP TABLE IF EXISTS deep_sky_objects;"
+        f"CREATE TABLE deep_sky_objects AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{dso_src}'));"
+        "CREATE INDEX dso_idx ON deep_sky_objects USING RTREE (geometry);"
+        "CREATE INDEX dso_name_idx ON deep_sky_objects (name);"
+        "CREATE INDEX dso_messier_idx ON deep_sky_objects (m);"
+        "CREATE INDEX dso_ngc_idx ON deep_sky_objects (ngc);"
+        "CREATE INDEX dso_ic_idx ON deep_sky_objects (ic);"
+    )
 )
-con.sql("CREATE INDEX dso_idx ON deep_sky_objects USING RTREE (geometry);")
-con.sql("CREATE INDEX dso_name_idx ON deep_sky_objects (name);")
-con.sql("CREATE INDEX dso_messier_idx ON deep_sky_objects (m);")
-con.sql("CREATE INDEX dso_ngc_idx ON deep_sky_objects (ngc);")
-con.sql("CREATE INDEX dso_ic_idx ON deep_sky_objects (ic);")
-
 
 star_designations_src = BUILD_PATH / "star_designations.parquet"
-con.sql("DROP TABLE IF EXISTS star_designations")
 con.sql(
-    f"CREATE TABLE star_designations AS (SELECT * FROM read_parquet('{star_designations_src}') )"
+    (
+        "DROP TABLE IF EXISTS star_designations;"
+        f"CREATE TABLE star_designations AS (SELECT * FROM read_parquet('{star_designations_src}') );"
+        "CREATE INDEX star_designations_hip_idx ON star_designations (hip);"
+        "CREATE INDEX star_designations_name_idx ON star_designations (name);"
+    )
 )
-con.sql("CREATE INDEX star_designations_hip_idx ON star_designations (hip);")
-con.sql("CREATE INDEX star_designations_name_idx ON star_designations (name);")
 
 print("Sky.db created!")
 con.close()
 
-
+# Copy database to starplot data library
 subprocess.call(f"cp {str(db_path)} {str(DataFiles.DATABASE)}", shell=True)
 
+# Assert correct number of objects were imported
 all_stars = Star.find(where=[])
 print("Stars = " + str(len(all_stars)))
 assert len(all_stars) == 981_853
