@@ -75,6 +75,10 @@ def create_constellations_json():
         outfile.write(json.dumps(constellations))
 
 
-create_dso_json()
-create_star_designation_json()
-create_constellations_json()
+def build():
+    create_dso_json()
+    create_star_designation_json()
+    create_constellations_json()
+
+if __name__ == "__main__":
+    build()

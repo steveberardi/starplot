@@ -70,9 +70,9 @@ profile:
 	$(DOCKER_RUN) "python -m cProfile -o temp/results.prof scripts/scratchpad.py && \
 	snakeviz -s -p 8080 -H 0.0.0.0 temp/results.prof"
 
-db: build-data-clean build-stars-mag11 build-dsos build-star-designations build-constellations
+# builds ALL data files and then database:
+db: 
 	@$(DOCKER_RUN) "python data/scripts/db.py"
-# cp data/build/sky.db src/starplot/data/library
 
 build-data-clean:
 	mkdir -p data/build

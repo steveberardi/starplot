@@ -2,37 +2,41 @@ import csv
 
 import pandas as pd
 import pyarrow as pa
-import numpy as np
 
 from settings import RAW_PATH, BUILD_PATH
 
-star_records = []
 
-with open(RAW_PATH / "star_designations.csv", "r") as csvfile:
-    reader = csv.DictReader(csvfile)
+def build():
+    star_records = []
 
-    for row in reader:
-        star = row.copy()
-        star["hip"] = int(star["hip"])
-        star["flamsteed"] = int(star["flamsteed"]) if star.get("flamsteed") else None
-        star_records.append(star)
+    with open(RAW_PATH / "star_designations.csv", "r") as csvfile:
+        reader = csv.DictReader(csvfile)
 
-df = pd.DataFrame.from_records(star_records)
+        for row in reader:
+            star = row.copy()
+            star["hip"] = int(star["hip"])
+            star["flamsteed"] = int(star["flamsteed"]) if star.get("flamsteed") else None
+            star_records.append(star)
 
-schema = pa.schema(
-    [
-        ("hip", pa.int64()),
-        ("name", pa.string()),
-        ("bayer", pa.string()),
-        ("flamsteed", pa.int64()),
-    ]
-)
+    df = pd.DataFrame.from_records(star_records)
 
-df.to_parquet(
-    BUILD_PATH / "star_designations.parquet",
-    engine="pyarrow",
-    schema=schema,
-    compression="none",
-)
+    schema = pa.schema(
+        [
+            ("hip", pa.int64()),
+            ("name", pa.string()),
+            ("bayer", pa.string()),
+            ("flamsteed", pa.int64()),
+        ]
+    )
 
-print("Star Designations: " + str(len(star_records)))
+    df.to_parquet(
+        BUILD_PATH / "star_designations.parquet",
+        engine="pyarrow",
+        schema=schema,
+        compression="none",
+    )
+
+    print("Star Designations: " + str(len(star_records)))
+
+if __name__ == "__main__":
+    build()

@@ -7,9 +7,11 @@ import numpy as np
 
 from shapely.geometry import Polygon, MultiPolygon, Point
 
-from starplot import geod
+from starplot import geod, warnings
 
 from settings import BUILD_PATH, RAW_PATH
+
+warnings.suppress()
 
 DATA_PATH = RAW_PATH / "ongc" / "outlines"
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
@@ -214,70 +216,73 @@ def walk_files(path=DATA_PATH):
         for filename in sorted(filenames):
             yield Path(os.path.join(dirpath, filename))
 
+def build():
+    gdf = read_csv()
+    gdf = gdf.set_index("name")
 
-gdf = read_csv()
-gdf = gdf.set_index("name")
+    outlines = {}
 
-outlines = {}
+    for f in walk_files():
+        designation, ic, ngc, level = parse_designation_from_filename(f.name)
+        name, _ = f.name.split("_")
 
-for f in walk_files():
-    designation, ic, ngc, level = parse_designation_from_filename(f.name)
-    name, _ = f.name.split("_")
+        if level == "lv3" or name in IGNORE_OUTLINES:
+            continue
+        # if designation in d['designation']:
+        #     continue
 
-    if level == "lv3" or name in IGNORE_OUTLINES:
-        continue
-    # if designation in d['designation']:
-    #     continue
+        dso_df = pd.read_csv(f, sep="\t")
+        polygons = []
+        current_poly = []
 
-    dso_df = pd.read_csv(f, sep="\t")
-    polygons = []
-    current_poly = []
+        for i, row in dso_df.iterrows():
+            cont_flag = row["Cont_Flag"]
+            ra = row["RAJ2000"]
+            dec = row["DEJ2000"]
+            current_poly.append([ra, dec])
 
-    for i, row in dso_df.iterrows():
-        cont_flag = row["Cont_Flag"]
-        ra = row["RAJ2000"]
-        dec = row["DEJ2000"]
-        current_poly.append([ra, dec])
+            if cont_flag == "*":
+                # a * indicates this is the last point in the current polygon
+                polygons.append(current_poly)
+                current_poly = []
 
-        if cont_flag == "*":
-            # a * indicates this is the last point in the current polygon
-            polygons.append(current_poly)
-            current_poly = []
+        if len(polygons) > 1:
+            dso_geom = MultiPolygon([Polygon(p) for p in polygons])
+        else:
+            dso_geom = Polygon(polygons[0])
 
-    if len(polygons) > 1:
-        dso_geom = MultiPolygon([Polygon(p) for p in polygons])
-    else:
-        dso_geom = Polygon(polygons[0])
+        if dso_geom.area > MIN_SIZE:
+            outlines[designation] = dso_geom
 
-    if dso_geom.area > MIN_SIZE:
-        outlines[designation] = dso_geom
-
-    if not ic and not ngc:
-        # print(designation)
-        centroid = dso_geom.centroid
-        gdf.loc[name, "geometry"] = dso_geom
-        gdf.loc[name, "ra_degrees"] = round(centroid.x, 4)
-        gdf.loc[name, "dec_degrees"] = round(centroid.y, 4)
-        gdf.loc[name, "type"] = "Neb"
-    else:
-        if gdf.loc[name].empty:
-            print(f"NGC/IC object not found: {name}")
-        elif dso_geom.area > MIN_SIZE:
+        if not ic and not ngc:
+            # print(designation)
+            centroid = dso_geom.centroid
             gdf.loc[name, "geometry"] = dso_geom
+            gdf.loc[name, "ra_degrees"] = round(centroid.x, 4)
+            gdf.loc[name, "dec_degrees"] = round(centroid.y, 4)
+            gdf.loc[name, "type"] = "Neb"
+        else:
+            if gdf.loc[name].empty:
+                print(f"NGC/IC object not found: {name}")
+            elif dso_geom.area > MIN_SIZE:
+                gdf.loc[name, "geometry"] = dso_geom
 
 
-# add size column
-gdf["size_deg2"] = gdf.apply(_size, axis=1)
-gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
-# gdf["geometry"] = gdf.apply(create_point, axis=1)
+    # add size column
+    gdf["size_deg2"] = gdf.apply(_size, axis=1)
+    gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
+    # gdf["geometry"] = gdf.apply(create_point, axis=1)
 
-# print(gdf.loc["NGC2168"])  # M35
+    # print(gdf.loc["NGC2168"])  # M35
 
-# print(gdf.loc["NGC6705"])  # M11
-# gdf.set_crs(CRS, inplace=True)
+    # print(gdf.loc["NGC6705"])  # M11
+    # gdf.set_crs(CRS, inplace=True)
 
-gdf.to_file(BUILD_PATH / "ongc.json", driver="GeoJSON", engine="pyogrio")
+    gdf.to_file(BUILD_PATH / "ongc.json", driver="GeoJSON", engine="pyogrio")
 
-print("Deep Sky Objects: " + str(len(gdf)))
+    print("Deep Sky Objects: " + str(len(gdf)))
 
-# print("Total nebula outlines: " + str(len(outlines)))
+    # print("Total nebula outlines: " + str(len(outlines)))
+
+if __name__ == "__main__":
+    build()

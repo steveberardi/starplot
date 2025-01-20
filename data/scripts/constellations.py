@@ -81,22 +81,23 @@ def build_constellations():
 
     return constellation_records
 
+def build():
+    constellation_records = build_constellations()
+    df = pd.DataFrame.from_records(constellation_records)
 
-constellation_records = build_constellations()
-df = pd.DataFrame.from_records(constellation_records)
+    gdf = gpd.GeoDataFrame(
+        df,
+        geometry=df["geometry"],
+        # crs=CRS,
+    )
 
-gdf = gpd.GeoDataFrame(
-    df,
-    geometry=df["geometry"],
-    # crs=CRS,
-)
+    gdf.to_file(
+        BUILD_PATH / "constellations.json",
+        driver="GeoJSON",
+        engine="pyogrio",
+    )
+    print("Total Constellations: " + str(len(constellation_records)))
 
-gdf.to_file(
-    BUILD_PATH / "constellations.json",
-    driver="GeoJSON",
-    engine="pyogrio",
-)
 
-# print(gdf[gdf["iau_id"] == "cmi"])
-
-print("Total Constellations: " + str(len(constellation_records)))
+if __name__ == "__main__":
+    build()
