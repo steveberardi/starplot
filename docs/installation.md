@@ -4,30 +4,22 @@ Supported Python versions: 3.10 / 3.11 / 3.12
 
 Required Dependencies: [GEOS](https://libgeos.org/), [GDAL](https://gdal.org/)
 
-## macOS
 
-1. **Install required system libraries (via [Homebrew](https://brew.sh/)):**
-```
-brew install geos gdal
-```
 
-2. **Install Starplot:**
-```
-pip install starplot
-```
 
-3. (optional) **Setup Starplot:**
-```
-starplot setup --install-big-sky
-```
-This will install the required [spatial extension](https://duckdb.org/docs/extensions/spatial/overview.html) for DuckDB and download the full Big Sky catalog. Starplot will do this automatically, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
+## macOS / Linux (debian)
 
-## Linux (debian)
+1. **Install required system libraries**
 
-1. **Install required system libraries:**
-```
-apt-get install libgeos-dev libgdal-dev
-```
+    macOS (via [Homebrew](https://brew.sh/)):
+    ```
+    brew install geos gdal
+    ```
+
+    Linux (debian):
+    ```
+    apt-get install libgeos-dev libgdal-dev
+    ```
 
 2. **Install Starplot:**
 ```
@@ -38,7 +30,7 @@ pip install starplot
 ```
 starplot setup --install-big-sky
 ```
-This will install the required [spatial extension](https://duckdb.org/docs/extensions/spatial/overview.html) for DuckDB and download the full Big Sky catalog. Starplot will do this automatically, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
+This will install the required [spatial extension](https://duckdb.org/docs/extensions/spatial/overview.html) for DuckDB, build the matplotlib font cache, and download the full Big Sky catalog. Starplot will do this automatically, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
 
 ## Docker
 

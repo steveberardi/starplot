@@ -1,11 +1,10 @@
 
-When plotting [stars][starplot.MapPlot.stars], constellations, or [deep sky objects (DSOs)][starplot.MapPlot.dsos], you can select exactly which objects to plot by using expressions that reference fields on the object's model. Starplot uses [Ibis](https://ibis-project.org/) for handling these expressions and filtering data from the data backend, so if you're familar with that library then you already have a head start on selecting data in Starplot.
+When plotting [stars][starplot.MapPlot.stars], [constellations][starplot.MapPlot.constellations], or [deep sky objects (DSOs)][starplot.MapPlot.dsos], you can select exactly which objects to plot by using expressions that reference fields on the object's model. Only the objects that satisfy ALL the conditions will be plotted.
 
-The basic idea is that when you call `stars()` or `dsos()` you can pass a list of expressions that are used to determine which stars/DSOs are plotted. Only the stars/DSOs that satisfy ALL the conditions will be plotted.
+Starplot uses [Ibis](https://ibis-project.org/) for handling these expressions, so if you're familar with that library then you already have a head start on selecting data in Starplot.
 
-Let's check out a simple example:
+#### Let's check out a simple example:
 
-## Example
 <div class="tutorial">
 ```python linenums="1" hl_lines="15-20"
 from starplot import MapPlot, Projection, _
@@ -13,10 +12,10 @@ from starplot import MapPlot, Projection, _
 # Create a simple map around Orion
 p = MapPlot(
     projection=Projection.MERCATOR,
-    ra_min=3.4,
-    ra_max=8,
+    ra_min=3 * 15,
+    ra_max=8 * 15,
     dec_min=-16,
-    dec_max=25.6,
+    dec_max=25,
 )
 
 # Plot all DSOs that satisfy two conditions:
@@ -30,11 +29,13 @@ p.dsos(
 )
 ```
 </div>
-On line 15, we plot only the DSOs we want by passing the `where` keyword argument. This argument contains a list of expressions that describe which objects you want to plot. Only the DSOs that satisfy ALL of these conditions will be plotted. In this example, we plot all DSOs that have a magnitude less than 12 AND a size greater than 0.08 square degrees.
+On line 15, we plot only the DSOs we want by passing the `where` keyword argument. This argument contains a list of expressions that describe which objects you want to plot. Only the objects that satisfy ALL of these conditions will be plotted. In this example, we plot all DSOs that have a magnitude less than 12 AND a size greater than 0.08 square degrees.
+
+When building expressions, you use the underscore, `_`, to reference fields on the model. This is kind of a ["magic variable" in Ibis (known as the Underscore API)](https://ibis-project.org/how-to/analytics/chain_expressions) which makes it easy to work with data and chain expressions together.
 
 ### More Expression Examples
 
-Select stars that have a HIP id
+Select stars that have a non-null HIP id:
 
     _.hip.notnull()
 
