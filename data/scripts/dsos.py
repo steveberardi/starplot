@@ -216,6 +216,7 @@ def walk_files(path=DATA_PATH):
         for filename in sorted(filenames):
             yield Path(os.path.join(dirpath, filename))
 
+
 def build():
     gdf = read_csv()
     gdf = gdf.set_index("name")
@@ -267,7 +268,6 @@ def build():
             elif dso_geom.area > MIN_SIZE:
                 gdf.loc[name, "geometry"] = dso_geom
 
-
     # add size column
     gdf["size_deg2"] = gdf.apply(_size, axis=1)
     gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
@@ -283,6 +283,7 @@ def build():
     print("Deep Sky Objects: " + str(len(gdf)))
 
     # print("Total nebula outlines: " + str(len(outlines)))
+
 
 if __name__ == "__main__":
     build()

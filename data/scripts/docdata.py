@@ -80,5 +80,6 @@ def build():
     create_star_designation_json()
     create_constellations_json()
 
+
 if __name__ == "__main__":
     build()

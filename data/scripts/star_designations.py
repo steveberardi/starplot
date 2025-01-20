@@ -15,7 +15,9 @@ def build():
         for row in reader:
             star = row.copy()
             star["hip"] = int(star["hip"])
-            star["flamsteed"] = int(star["flamsteed"]) if star.get("flamsteed") else None
+            star["flamsteed"] = (
+                int(star["flamsteed"]) if star.get("flamsteed") else None
+            )
             star_records.append(star)
 
     df = pd.DataFrame.from_records(star_records)
@@ -37,6 +39,7 @@ def build():
     )
 
     print("Star Designations: " + str(len(star_records)))
+
 
 if __name__ == "__main__":
     build()

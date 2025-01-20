@@ -11,9 +11,10 @@ import bigsky_mag11, constellations, dsos, star_designations
 
 db_path = BUILD_PATH / "sky.db"
 
+
 def build_all():
     os.makedirs(BUILD_PATH, exist_ok=True)
-    
+
     bigsky_mag11.build()
     constellations.build()
     dsos.build()
@@ -59,7 +60,6 @@ def build_db():
         )
     )
 
-
     # Deep Sky Objects
     dso_src = BUILD_PATH / "ongc.json"
     con.sql(
@@ -87,9 +87,11 @@ def build_db():
     print("Sky.db created!")
     con.close()
 
+
 def copy_to_library():
     # Copy database to starplot data library
     subprocess.call(f"cp {str(db_path)} {str(DataFiles.DATABASE)}", shell=True)
+
 
 def assert_counts():
     # Assert correct number of objects were imported
@@ -104,6 +106,7 @@ def assert_counts():
     all_constellations = Constellation.find(where=[])
     print("Constellations = " + str(len(all_constellations)))
     assert len(all_constellations) == 89
+
 
 if __name__ == "__main__":
     build_all()

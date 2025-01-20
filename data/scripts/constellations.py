@@ -81,6 +81,7 @@ def build_constellations():
 
     return constellation_records
 
+
 def build():
     constellation_records = build_constellations()
     df = pd.DataFrame.from_records(constellation_records)
