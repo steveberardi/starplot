@@ -9,7 +9,7 @@ from shapely.geometry import Polygon, MultiPolygon, Point
 
 from starplot import geod, warnings
 
-from settings import BUILD_PATH, RAW_PATH
+from data_settings import BUILD_PATH, RAW_PATH
 
 warnings.suppress()
 

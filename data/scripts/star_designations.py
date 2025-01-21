@@ -3,7 +3,7 @@ import csv
 import pandas as pd
 import pyarrow as pa
 
-from settings import RAW_PATH, BUILD_PATH
+from data_settings import RAW_PATH, BUILD_PATH
 
 
 def build():

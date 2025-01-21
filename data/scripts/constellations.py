@@ -5,7 +5,7 @@ from shapely.geometry import Polygon
 
 from starplot.data import constellations
 
-from settings import BUILD_PATH, RAW_PATH
+from data_settings import BUILD_PATH, RAW_PATH
 
 DATA_PATH = RAW_PATH / "iau"
 CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"

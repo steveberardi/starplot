@@ -3,11 +3,12 @@ import subprocess
 
 import duckdb
 
-from settings import BUILD_PATH, RAW_PATH
+
 from starplot import Star, DSO, Constellation
 from starplot.data import DataFiles
 
 import bigsky_mag11, constellations, dsos, star_designations
+from data_settings import BUILD_PATH, RAW_PATH
 
 db_path = BUILD_PATH / "sky.db"
 

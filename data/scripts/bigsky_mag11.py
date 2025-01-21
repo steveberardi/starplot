@@ -1,16 +1,22 @@
-from starplot.data import DataFiles, bigsky
+from starplot.data import DataFiles, utils, bigsky
 
 
-from settings import BUILD_PATH, RAW_PATH
+from data_settings import RAW_PATH
 
 
 def build():
-    bigsky.download_if_not_exists(
-        filename=str(RAW_PATH / bigsky.BIG_SKY_MAG11_FILENAME),
-        url=bigsky.get_url(bigsky.BIG_SKY_VERSION, bigsky.BIG_SKY_MAG11_FILENAME),
-        download_path=RAW_PATH,
-        download_filename=bigsky.BIG_SKY_MAG11_FILENAME,
-        build_file=DataFiles.BIG_SKY_MAG11,
+    full_download_path = RAW_PATH / bigsky.BIG_SKY_MAG11_FILENAME
+
+    if not bigsky.exists(full_download_path):
+        utils.download(
+            url=bigsky.get_url(bigsky.BIG_SKY_VERSION, bigsky.BIG_SKY_MAG11_FILENAME),
+            download_path=full_download_path,
+            description="Big Sky Star Catalog",
+        )
+
+    bigsky.to_parquet(
+        full_download_path,
+        DataFiles.BIG_SKY_MAG11,
     )
 
 
