@@ -20,14 +20,14 @@ jobs:
     - name: Check Format
       run: make format CI=true ARGS=--check
     
+    - name: Build sky.db
+      run: make db CI=true
+
     - name: Run Tests
       run: make test CI=true
     
     - name: Check Image Hashes
       run: make check-hashes CI=true
-    
-    - name: Build sky.db
-      run: make db CI=true
     
     - name: Build
       run: make flit-build
