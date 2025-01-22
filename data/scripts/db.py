@@ -1,8 +1,7 @@
 import os
-import subprocess
+import shutil
 
 import duckdb
-
 
 from starplot import Star, DSO, Constellation
 from starplot.data import DataFiles
@@ -14,6 +13,8 @@ db_path = BUILD_PATH / "sky.db"
 
 
 def build_all():
+    # remove build directory, recreate it
+    shutil.rmtree(BUILD_PATH)
     os.makedirs(BUILD_PATH, exist_ok=True)
 
     bigsky_mag11.build()
@@ -91,7 +92,7 @@ def build_db():
 
 def copy_to_library():
     # Copy database to starplot data library
-    subprocess.call(f"cp {str(db_path)} {str(DataFiles.DATABASE)}", shell=True)
+    shutil.copy(db_path, DataFiles.DATABASE)
 
 
 def assert_counts():
