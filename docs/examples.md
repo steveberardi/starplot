@@ -124,7 +124,7 @@
 
     <li>
         <a href="/examples/horizon-double-cluster/">
-            <img src="/images/examples/horizon_double_cluster-sm.png" alt="Double Cluster on the Horizon" class="off-glb" loading="lazy"/>
+            <img src="/images/examples/horizon_double_cluster-sm.png" alt="Finding the Double Cluster in Perseus" class="off-glb" loading="lazy"/>
 
             <p class="example-card-title">Finding the Double Cluster</p>
         </a>

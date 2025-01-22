@@ -4,9 +4,6 @@ Supported Python versions: 3.10 / 3.11 / 3.12
 
 Required Dependencies: [GEOS](https://libgeos.org/), [GDAL](https://gdal.org/)
 
-
-
-
 ## macOS / Linux (debian)
 
 1. **Install required system libraries**
