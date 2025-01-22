@@ -18,7 +18,7 @@ def create_dso_json():
         d = {
             "Name": dso.name,
             "Type": DSO_LEGEND_LABELS.get(dso.type),
-            "RA": round(dso.ra_degrees / 15, 2),
+            "RA": round(dso.ra_degrees, 2),
             "DEC": round(dso.dec_degrees, 2),
             "Magnitude": dso.mag_v or dso.mag_b or "None",
             "Major Axis": dso.maj_ax,

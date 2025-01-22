@@ -14,7 +14,8 @@ db_path = BUILD_PATH / "sky.db"
 
 def build_all():
     # remove build directory, recreate it
-    shutil.rmtree(BUILD_PATH)
+    if os.path.exists(BUILD_PATH):
+        shutil.rmtree(BUILD_PATH)
     os.makedirs(BUILD_PATH, exist_ok=True)
 
     bigsky_mag11.build()

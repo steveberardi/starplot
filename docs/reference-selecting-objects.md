@@ -59,7 +59,7 @@ Select stars that are within the Pleiades (M45) star cluster (assumes `m45 = DSO
 
     _.geometry.intersects(m45.geometry)
 
-!!! star "And more!"
+!!! star "But wait, there's more!"
 
     Starplot supports all expressions from <a href="https://ibis-project.org/" target="_blank">Ibis</a>, so check out <a href="https://ibis-project.org/reference/expression-generic" target="_blank">their documentation :arrow_upper_right:</a> for more details.
 
