@@ -43,6 +43,12 @@ Source = "https://github.com/steveberardi/starplot"
 [project.scripts]
 starplot = "starplot.cli:main"
 
+[tool.flit.sdist]
+include = [
+    "src/starplot/data/library/sky.db", 
+    "src/starplot/data/library/bigsky*.parquet",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["./tests"]
 filterwarnings = ["ignore::DeprecationWarning"]

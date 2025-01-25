@@ -11,9 +11,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Use build gitignore
-      run: rm .gitignore && mv build.gitignore .gitignore
-
     - name: Build Docker Image
       run: make build
     
