@@ -33,10 +33,10 @@ from starplot.styles import (
 )
 from starplot.styles.helpers import use_style
 from starplot.geometry import (
-    unwrap_polygon,
+    unwrap_polygon_360,
     random_point_in_polygon_at_distance,
 )
-
+from starplot.profile import profile
 
 LOGGER = logging.getLogger("starplot")
 LOG_HANDLER = logging.StreamHandler()
@@ -48,7 +48,11 @@ LOGGER.addHandler(LOG_HANDLER)
 
 
 DEFAULT_FOV_STYLE = PolygonStyle(
-    fill_color=None, edge_color="red", line_style="dashed", edge_width=4, zorder=1000
+    fill_color=None,
+    edge_color="red",
+    line_style=[1, [2, 3]],
+    edge_width=3,
+    zorder=-1000,
 )
 """Default style for plotting scope and bino field of view circles"""
 
@@ -61,6 +65,7 @@ DPI = 100
 
 class BasePlot(ABC):
     _background_clip_path = None
+    _clip_path_polygon: Polygon = None  # clip path in display coordinates
     _coordinate_system = CoordinateSystem.RA_DEC
 
     def __init__(
@@ -95,11 +100,13 @@ class BasePlot(ABC):
         self.dt = dt or timezone("UTC").localize(datetime.now())
         self._ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
+        self.earth = self.ephemeris["earth"]
 
         self.labels = []
         self._labels_rtree = rtree.index.Index()
         self._constellations_rtree = rtree.index.Index()
         self._stars_rtree = rtree.index.Index()
+        self._markers_rtree = rtree.index.Index()
 
         self._background_clip_path = None
 
@@ -126,6 +133,10 @@ class BasePlot(ABC):
     def _prepare_coords(self, ra, dec) -> tuple[float, float]:
         return ra, dec
 
+    def _update_clip_path_polygon(self, buffer=8):
+        coords = self._background_clip_path.get_verts()
+        self._clip_path_polygon = Polygon(coords).buffer(-1 * buffer)
+
     def _is_label_collision(self, bbox) -> bool:
         ix = list(self._labels_rtree.intersection(bbox))
         return len(ix) > 0
@@ -138,11 +149,18 @@ class BasePlot(ABC):
         ix = list(self._stars_rtree.intersection(bbox))
         return len(ix) > 0
 
+    def _is_marker_collision(self, bbox) -> bool:
+        ix = list(self._markers_rtree.intersection(bbox))
+        return len(ix) > 0
+
     def _is_clipped(self, points) -> bool:
-        radius = -1.5 * int(self._background_clip_path.get_linewidth())
-        return self._background_clip_path is not None and not all(
-            self._background_clip_path.contains_points(points, radius=radius)
-        )
+        p = self._clip_path_polygon
+
+        for x, y in points:
+            if not p.contains(Point(x, y)):
+                return True
+
+        return False
 
     def _add_label_to_rtree(self, label, extent=None):
         extent = extent or label.get_window_extent(
@@ -152,6 +170,53 @@ class BasePlot(ABC):
         self._labels_rtree.insert(
             0, np.array((extent.x0 - 1, extent.y0 - 1, extent.x1 + 1, extent.y1 + 1))
         )
+
+    def _is_open_space(
+        self,
+        bbox: tuple[float, float, float, float],
+        padding=0,
+        avoid_clipped=True,
+        avoid_label_collisions=True,
+        avoid_marker_collisions=True,
+        avoid_constellation_collision=True,
+    ) -> bool:
+        """
+        Returns true if the boox covers an open space (i.e. no collisions)
+
+        Args:
+            bbox: 4-element tuple of lower left and upper right coordinates
+        """
+        x0, y0, x1, y1 = bbox
+        points = [(x0, y0), (x1, y1)]
+        bbox = (
+            x0 - padding,
+            y0 - padding,
+            x1 + padding,
+            y1 + padding,
+        )
+
+        if any([np.isnan(c) for c in (x0, y0, x1, y1)]):
+            return False
+
+        if avoid_clipped and self._is_clipped(points):
+            return False
+
+        if avoid_label_collisions and self._is_label_collision(bbox):
+            return False
+
+        if avoid_marker_collisions and (
+            self._is_star_collision(bbox) or self._is_marker_collision(bbox)
+        ):
+            return False
+
+        if avoid_constellation_collision and self._is_constellation_collision(bbox):
+            return False
+
+        return True
+
+    def _get_label_bbox(self, label):
+        extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+        return (extent.x0, extent.y0, extent.x1, extent.y1)
 
     def _maybe_remove_label(
         self,
@@ -171,11 +236,6 @@ class BasePlot(ABC):
         )
         points = [(extent.x0, extent.y0), (extent.x1, extent.y1)]
 
-        # if label.get_text() == "CANIS MAJOR":
-        #     print(bbox)
-        # if label.get_text() == "Electra":
-        #     print(bbox)
-
         if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]):
             label.remove()
             return True
@@ -185,7 +245,9 @@ class BasePlot(ABC):
             return True
 
         if remove_on_collision and (
-            self._is_label_collision(bbox) or self._is_star_collision(bbox)
+            self._is_label_collision(bbox)
+            or self._is_star_collision(bbox)
+            or self._is_marker_collision(bbox)
         ):
             label.remove()
             return True
@@ -344,32 +406,41 @@ class BasePlot(ABC):
         **kwargs,
     ) -> None:
         kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
+        kwargs["va"] = "center"
+        kwargs["ha"] = "center"
 
         avoid_constellation_lines = settings.get("avoid_constellation_lines", False)
         padding = settings.get("label_padding", 3)
-        buffer = settings.get("buffer", 0.1)
+        settings.get("buffer", 0.1)
         max_distance = settings.get("max_distance", 300)
         distance_step_size = settings.get("distance_step_size", 1)
         point_iterations = settings.get("point_generation_max_iterations", 500)
         random_seed = settings.get("seed")
 
+        attempts = 0
+        height = None
+        width = None
+        bbox = None
         areas = (
             [p for p in area.geoms] if "MultiPolygon" == str(area.geom_type) else [area]
         )
         new_areas = []
+        origin = Point(ra, dec)
 
         for a in areas:
-            unwrapped = unwrap_polygon(a)
-            buffer = unwrapped.area / 10 * -1 * buffer * self.scale
-            new_areas.append(unwrapped.buffer(buffer))
+            unwrapped = unwrap_polygon_360(a)
+            # new_buffer = unwrapped.area / 10 * -1 * buffer * self.scale
+            # new_buffer = -1 * buffer * self.scale
+            # new_poly = unwrapped.buffer(new_buffer)
+            new_areas.append(unwrapped)
 
         for d in range(0, max_distance, distance_step_size):
-            distance = d / 10
+            distance = d / 20
             poly = randrange(len(new_areas))
             point = random_point_in_polygon_at_distance(
                 new_areas[poly],
-                Point(ra, dec),
-                distance,
+                origin_point=origin,
+                distance=distance,
                 max_iterations=point_iterations,
                 seed=random_seed,
             )
@@ -378,20 +449,45 @@ class BasePlot(ABC):
                 continue
 
             x, y = self._prepare_coords(point.x, point.y)
-            label = self._text(x, y, text, **kwargs)
-            removed = self._maybe_remove_label(
-                label,
-                remove_on_collision=hide_on_collision,
-                remove_on_clipped=clip_on,
-                remove_on_constellation_collision=avoid_constellation_lines,
+
+            if height and width:
+                data_xy = self._proj.transform_point(x, y, self._crs)
+                display_x, display_y = self.ax.transData.transform(data_xy)
+                bbox = (
+                    display_x - width / 2,
+                    display_y - height / 2,
+                    display_x + width / 2,
+                    display_y + height / 2,
+                )
+                label = None
+
+            else:
+                label = self._text(x, y, text, **kwargs)
+                bbox = self._get_label_bbox(label)
+                height = bbox[3] - bbox[1]
+                width = bbox[2] - bbox[0]
+
+            is_open = self._is_open_space(
+                bbox,
                 padding=padding,
+                avoid_clipped=clip_on,
+                avoid_constellation_collision=avoid_constellation_lines,
+                avoid_marker_collisions=hide_on_collision,
+                avoid_label_collisions=hide_on_collision,
             )
 
-            # TODO : remove label if not fully inside area?
+            # # TODO : remove label if not fully inside area?
 
-            if not removed:
+            attempts += 1
+
+            if is_open and label is None:
+                label = self._text(x, y, text, **kwargs)
+
+            if is_open:
                 self._add_label_to_rtree(label)
                 return label
+            elif label is not None:
+                label.remove()
 
     @use_style(LabelStyle)
     def text(
@@ -522,6 +618,7 @@ class BasePlot(ABC):
         if self.fig:
             plt.close(self.fig)
 
+    @profile
     def export(self, filename: str, format: str = "png", padding: float = 0, **kwargs):
         """Exports the plot to an image file.
 
@@ -568,18 +665,35 @@ class BasePlot(ABC):
         if not skip_bounds_check and not self.in_bounds(ra, dec):
             return
 
+        # Plot marker
         x, y = self._prepare_coords(ra, dec)
-
+        style_kwargs = style.marker.matplot_scatter_kwargs(self.scale)
         self.ax.scatter(
             x,
             y,
-            **style.marker.matplot_scatter_kwargs(self.scale),
+            **style_kwargs,
             **self._plot_kwargs(),
             clip_on=True,
             clip_path=self._background_clip_path,
             gid=kwargs.get("gid_marker") or "marker",
         )
 
+        # Add to spatial index
+        data_xy = self._proj.transform_point(x, y, self._crs)
+        display_x, display_y = self.ax.transData.transform(data_xy)
+        if display_x > 0 and display_y > 0:
+            radius = style_kwargs.get("s", 1) ** 0.5 / 5
+            bbox = np.array(
+                (
+                    display_x - radius,
+                    display_y - radius,
+                    display_x + radius,
+                    display_y + radius,
+                )
+            )
+            self._markers_rtree.insert(0, bbox, None)
+
+        # Plot label
         if label:
             label_style = style.label
             if label_style.offset_x == "auto" or label_style.offset_y == "auto":
@@ -748,7 +862,6 @@ class BasePlot(ABC):
         raise NotImplementedError
 
     def _polygon(self, points: list, style: PolygonStyle, **kwargs):
-        points = [geod.to_radec(p) for p in points]
         points = [self._prepare_coords(*p) for p in points]
         patch = patches.Polygon(
             points,
@@ -787,8 +900,7 @@ class BasePlot(ABC):
         if geometry is not None:
             points = list(zip(*geometry.exterior.coords.xy))
 
-        _points = [(ra * 15, dec) for ra, dec in points]
-        self._polygon(_points, style, gid=kwargs.get("gid") or "polygon")
+        self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
         if legend_label is not None:
             self._add_legend_handle_marker(
@@ -1156,11 +1268,11 @@ class BasePlot(ABC):
         inbounds = []
 
         for ra, dec in ecliptic.RA_DECS:
-            x0, y0 = self._prepare_coords(ra, dec)
+            x0, y0 = self._prepare_coords(ra * 15, dec)
             x.append(x0)
             y.append(y0)
-            if self.in_bounds(ra, dec):
-                inbounds.append((ra, dec))
+            if self.in_bounds(ra * 15, dec):
+                inbounds.append((ra * 15, dec))
 
         self.ax.plot(
             x,
@@ -1195,7 +1307,7 @@ class BasePlot(ABC):
         # TODO : handle wrapping
 
         for ra in range(25):
-            x0, y0 = self._prepare_coords(ra, 0)
+            x0, y0 = self._prepare_coords(ra * 15, 0)
             x.append(x0)
             y.append(y0)
 

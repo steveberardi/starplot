@@ -1,4 +1,4 @@
-from starplot import MapPlot, Projection, DSO, Star, callables
+from starplot import MapPlot, Projection, callables, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -7,8 +7,8 @@ style = PlotStyle().extend(
 )
 p = MapPlot(
     projection=Projection.MILLER,
-    ra_min=15.6,
-    ra_max=19.8,
+    ra_min=15.6 * 15,
+    ra_max=19.8 * 15,
     dec_min=-45.2,
     dec_max=-3,
     style=style,
@@ -19,7 +19,7 @@ p.constellations()
 p.constellation_borders()
 
 p.stars(
-    where=[Star.magnitude <= 3],
+    where=[_.magnitude <= 3],
     size_fn=lambda d: callables.size_by_magnitude(d) * 2,  # make them 2x bigger
     style__marker__symbol="star_8",
     style__label__offset_x=8,
@@ -29,8 +29,8 @@ p.stars(
 )
 p.stars(
     where=[
-        Star.magnitude > 3,
-        Star.magnitude < 9,
+        _.magnitude > 3,
+        _.magnitude < 9,
     ],
     bayer_labels=True,
     flamsteed_labels=True,
@@ -39,21 +39,21 @@ p.stars(
 
 p.nebula(
     where=[
-        DSO.magnitude.is_null() | (DSO.magnitude < 12),
+        (_.magnitude.isnull()) | (_.magnitude < 12),
     ],
     true_size=True,
     label_fn=lambda d: d.ic,
 )
 p.open_clusters(
     where=[
-        DSO.magnitude.is_null() | (DSO.magnitude < 12),
+        (_.magnitude.isnull()) | (_.magnitude < 12),
     ],
     true_size=False,
     label_fn=lambda d: d.ngc,
 )
 p.globular_clusters(
     where=[
-        DSO.magnitude.is_null() | (DSO.magnitude < 12),
+        (_.magnitude.isnull()) | (_.magnitude < 12),
     ],
     true_size=False,
     label_fn=lambda d: d.ngc,

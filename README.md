@@ -1,8 +1,8 @@
 # <img src="https://raw.githubusercontent.com/steveberardi/starplot/main/docs/images/favicon.svg" width="48" style="vertical-align:middle"> Starplot
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge&color=a2c185)
-![Python](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge&color=85A2C1)
-![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=85C0C1)
-![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=A485C1)
+![Python](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge&color=6388b0)
+![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=57a8a8)
+![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=8b63b0)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge&color=88b063)
 
 **Starplot** is a Python library for creating star charts and maps of the sky.
 
@@ -13,6 +13,7 @@
 - 🪐 **Planets and Deep Sky Objects (DSOs)** - more than 14,000 objects built-in
 - 🎨 **Custom Styles** - for all objects
 - 📥 **Export** - png, svg, jpeg
+- 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
 - 🧭 **Label Collision Avoidance**
 
 ## Examples
@@ -48,7 +49,7 @@ p = sp.MapPlot(
     autoscale=True,
 )
 p.constellations()
-p.stars(mag=4.6)
+p.stars(where=[_.magnitude < 4.6])
 p.constellation_labels()
 p.export("starchart.png")
 ```
@@ -74,7 +75,6 @@ https://discord.gg/WewJJjshFu
 Contributing to Starplot is welcome and very much appreciated! Please see [here](CONTRIBUTING.md) for details.
 
 ## Coming Soon
-- 🗄️ Data optimizations
 - 🧮 Coordinate system helpers
 - 🌑 Planet moons
 - ✴️ Custom markers

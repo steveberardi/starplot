@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import HorizonPlot, Star, DSO
+from starplot import HorizonPlot, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -15,7 +15,7 @@ dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
 
 p = HorizonPlot(
     altitude=(0, 60),
-    azimuth=(175, 275),
+    azimuth=(135, 225),
     lat=36.606111,  # Lone Pine, California
     lon=-118.079444,
     dt=dt,
@@ -27,13 +27,11 @@ p = HorizonPlot(
 p.constellations()
 p.milky_way()
 
-p.stars(where=[Star.magnitude < 5])
-p.messier(where=[DSO.magnitude < 12], true_size=False, label_fn=lambda d: f"M{d.m}")
+p.stars(where=[_.magnitude < 5], where_labels=[_.magnitude < 2])
+p.messier(where=[_.magnitude < 11], true_size=False, label_fn=lambda d: f"M{d.m}")
 
 p.constellation_labels()
-p.planets()
-p.ecliptic()
-p.horizon()
+p.horizon(labels={180: "SOUTH"})
 p.gridlines()
 
 p.export("horizon_sgr.png", padding=0.2)

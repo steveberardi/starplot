@@ -9,17 +9,28 @@ hip8.dat
 CometEls.txt
 ongc.gpkg
 
-# Big Sky - Full Catalog
+duckdb-extensions
+
+# Sky Object Database
+# ignore this because it's large and created on release
+sky.db
+
+# Data Folder
+data/build/*
+!data/build/.keep
+
+# Big Sky Catalog
 # we ignore this because of its size (50+ MB)
-bigsky.stars.csv.gz
-stars.bigsky.parquet
+bigsky.*.csv.gz
+bigsky*.parquet
 
 hash_checks/data/*.png
 hash_checks/results.html
 
+temp*
 temp.py
 temp/
-raw/
+# raw/
 scripts/temp/
 
 # Documentation Generated Files

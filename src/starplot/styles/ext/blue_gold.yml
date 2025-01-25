@@ -1,0 +1,135 @@
+# blue_gold
+
+background_color: rgb(46, 61, 74)
+figure_background_color: '#fff'
+
+text_border_color: rgb(46, 61, 74)
+
+border_bg_color: hsl(212, 27%, 56%)
+border_font_color: '#f1f6ff'
+border_line_color: '#2f4358'
+
+title:
+  font_color: '#f1f6ff'
+star:
+  marker:
+    color: rgb(244, 233, 203)
+    edge_color: rgb(46, 61, 74)
+  label:
+    font_color: rgb(244, 233, 203)
+bayer_labels:
+  font_alpha: 1
+  font_color: rgb(244, 233, 203)
+flamsteed_labels:
+  font_color: rgb(244, 233, 203)
+
+# Constellations
+constellation_labels:
+  font_alpha: 0.75
+  font_color: rgb(244, 233, 203)
+constellation_lines:
+  alpha: 0.8
+  color: rgb(34, 124, 130)
+constellation_borders:
+  color: hsl(208, 23%, 2%)
+
+
+celestial_equator:
+  label:
+    font_color: '#2d5ec2'
+  line:
+    color: hsl(220, 62%, 47%)
+    alpha: 0.8
+ecliptic:
+  label:
+    font_color: hsl(4, 60%, 54%)
+  line:
+    color: hsl(4, 60%, 54%)
+    alpha: 0.9
+
+planets:
+  marker:
+    alpha: 1
+    color: hsl(37, 78%, 80%)
+    fill: full
+milky_way:
+  alpha: 0.14
+  fill_color: '#94c5e3'
+  edge_width: 0
+gridlines:
+  label:
+    font_alpha: 1
+    font_color: '#f1f6ff'
+  line:
+    alpha: 0.6
+    color: '#888'
+    style: solid
+sun:
+  marker:
+    color: '#ffd22e'
+    edge_color: 'hsl(47, 100%, 29%)'
+
+horizon:
+  line:
+    color: hsl(208, 23%, 14%)
+    edge_color: hsl(208, 23%, 14%)
+  label:
+    font_color: hsl(208, 23%, 84%)
+
+
+# DSOs
+
+dso_galaxy:
+  marker:
+    alpha: 1
+    color: hsl(328, 23%, 54%)
+    edge_color: hsl(328, 23%, 24%)
+  label:
+    font_color: hsl(328, 23%, 54%)
+
+dso_nebula: &DSO-NEB
+  marker:
+    alpha: 1
+    color: hsl(118, 23%, 54%)
+    edge_color: hsl(118, 23%, 24%)
+  label:
+    font_color: hsl(118, 23%, 54%)
+dso_planetary_nebula: *DSO-NEB
+
+
+dso_open_cluster: &DSO-OC
+  marker:
+    alpha: 1
+    color: hsl(44deg 70% 64%)
+    edge_color: rgb(46, 61, 74)
+  label:
+    font_color: hsl(44deg 70% 64%)
+dso_association_stars: *DSO-OC
+
+dso_globular_cluster:
+  marker:
+    alpha: 1
+    color: hsl(44deg 70% 64%)
+    edge_color: rgb(46, 61, 74)
+  label:
+    font_color: '#989400'
+
+
+# other DSOs
+dso_unknown: &DSO
+  marker:
+    alpha: 1
+    color: hsl(91, 62%, 82%)
+    edge_color: hsl(91, 53%, 40%)
+  label:
+    font_color: hsl(91, 53%, 40%)
+dso_dark_nebula: *DSO
+dso_hii_ionized_region: *DSO
+dso_supernova_remnant: *DSO
+dso_nova_star: *DSO
+dso_nonexistant: *DSO
+dso_unknown: *DSO
+dso_duplicate: *DSO
+
+legend:
+  background_color: '#f1f6ff'

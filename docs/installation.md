@@ -1,32 +1,33 @@
-Starplot is available on [PyPI](https://pypi.org/project/starplot/), but it's basically just a thin layer on top of Matplotlib, Skyfield, Cartopy, and others. So, before installing Starplot you'll need a few dependencies. Below are instructions for installing on macOS and Linux.
+Starplot is available on [PyPI](https://pypi.org/project/starplot/), but it's basically just a thin layer on top of [Matplotlib](https://matplotlib.org/stable/), [Skyfield](https://github.com/skyfielders/python-skyfield), [Cartopy](https://scitools.org.uk/cartopy/docs/latest/), and others. So, before installing Starplot you'll need a few dependencies. Below are instructions for installing on macOS and Linux.
 
-Supported Python versions: 3.9+
+Supported Python versions: 3.10 / 3.11 / 3.12
 
 Required Dependencies: [GEOS](https://libgeos.org/), [GDAL](https://gdal.org/)
 
-## macOS
+## macOS / Linux (debian)
 
-1. **Install required system libraries (via [Homebrew](https://brew.sh/)):**
-```
-brew install geos gdal
-```
+1. **Install required system libraries**
 
-2. **Install Starplot:**
-```
-pip install starplot
-```
+    macOS (via [Homebrew](https://brew.sh/)):
+    ```
+    brew install geos gdal
+    ```
 
-## Linux (debian)
-
-1. **Install required system libraries:**
-```
-apt-get install libgeos-dev libgdal-dev
-```
+    Linux (debian):
+    ```
+    apt-get install libgeos-dev libgdal-dev
+    ```
 
 2. **Install Starplot:**
 ```
 pip install starplot
 ```
+
+3. (optional) **Setup Starplot:**
+```
+starplot setup --install-big-sky
+```
+This will install the required [spatial extension](https://duckdb.org/docs/extensions/spatial/overview.html) for DuckDB, build the matplotlib font cache, and download the full Big Sky catalog. Starplot will do this automatically, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
 
 ## Docker
 
@@ -39,6 +40,7 @@ FROM python:3.11.11-bookworm
 RUN apt-get clean && apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
 
 RUN pip install starplot
+RUN starplot setup --install-big-sky  # Optional
 ```
 
 !!! star "What about Windows?"

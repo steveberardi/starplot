@@ -1,12 +1,15 @@
 import importlib
+import os
 
-from starplot import data
+from unittest import mock
+from starplot import data, settings
 
 
-def test_download_path(monkeypatch):
-    monkeypatch.setenv("STARPLOT_DOWNLOAD_PATH", "/testing")
-
+@mock.patch.dict(os.environ, {"STARPLOT_DOWNLOAD_PATH": "/testing"})
+def test_download_path():
+    importlib.reload(settings)  # must reload this first
     importlib.reload(data)
 
-    assert data.DataFiles._DOWNLOAD_PATH.value == "/testing"
-    assert data.DataFiles.BIG_SKY.value.startswith("/testing")
+    assert os.environ.get("STARPLOT_DOWNLOAD_PATH") == "/testing"
+    assert str(settings.DOWNLOAD_PATH) == "/testing"
+    assert str(data.DataFiles.BIG_SKY).startswith("/testing")

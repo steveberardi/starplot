@@ -11,16 +11,12 @@ def test_star_hip_names():
 
 
 def test_stars_load_default():
-    """By default, stars.load should load the Hipparcos catalog"""
-    allstars = stars.load()
-    assert len(allstars) == 118_218
-
-
-def test_stars_load_bigsky_mag11():
-    allstars = stars.load(stars.StarCatalog.BIG_SKY_MAG11)
-    assert len(allstars) == 981_852
+    """By default, stars.load should load the Big Sky MAG-11 catalog"""
+    result = stars.load()
+    df = result.to_pandas()
+    assert len(df) == 981_853
 
 
 def test_stars_load_unrecognized_catalog():
     with pytest.raises(ValueError, match=r"Unrecognized star catalog."):
-        stars.load("hello")
+        stars.load(catalog="hello")

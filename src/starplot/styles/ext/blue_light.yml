@@ -1,6 +1,7 @@
-background_color: '#fff'
+# background_color: '#fff'
+background_color: hsl(218, 88%, 99%)
 
-text_border_color: '#fff'
+text_border_color: hsl(218, 88%, 99%) #'#fff'
 
 border_bg_color: '#b5cbe3'
 border_font_color: '#2f4358'
@@ -110,8 +111,8 @@ ecliptic:
     alpha: 1
     style: [0, [0.14, 2]]
 milky_way:
-  alpha: 0.2
-  fill_color: hsl(203, 70%, 83%)
+  alpha: 0.25
+  fill_color: hsl(203, 70%, 81%)
   edge_width: 0
 planets:
   marker:

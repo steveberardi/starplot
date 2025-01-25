@@ -1,56 +1,58 @@
 import os
+from pathlib import Path
 
 import pandas as pd
 
-from starplot.data import DATA_PATH, DataFiles, utils
+from starplot import settings
+from starplot.data import DataFiles, utils
 
 
-BIG_SKY_VERSION = "0.1.0"
+BIG_SKY_VERSION = "0.4.0"
+BIG_SKY_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.csv.gz"
+BIG_SKY_PQ_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.parquet"
 
-BIG_SKY_FILENAME = "bigsky.stars.csv.gz"
-
-BIG_SKY_URL = f"https://github.com/steveberardi/bigsky/releases/download/v{BIG_SKY_VERSION}/{BIG_SKY_FILENAME}"
-
-DOWNLOADED_PATH = DATA_PATH / BIG_SKY_FILENAME
-
-DIGITS = 4
-
-BIG_SKY_ASSETS = {
-    DataFiles.BIG_SKY: "bigsky.stars.csv.gz",
-    DataFiles.BIG_SKY_MAG11: "bigsky.stars.mag11.csv.gz",
-}
+BIG_SKY_MAG11_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.mag11.csv.gz"
+BIG_SKY_MAG11_PQ_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.mag11.parquet"
 
 
-def url(filename: str, version: str):
+def get_url(version: str = BIG_SKY_VERSION, filename: str = BIG_SKY_FILENAME):
     return f"https://github.com/steveberardi/bigsky/releases/download/v{version}/{filename}"
 
 
 def download(
-    filename: str = BIG_SKY_FILENAME,
-    version: str = BIG_SKY_VERSION,
-    download_path: str = None,
-    digits: int = 4,
+    url: str = None,
+    download_path: str = settings.DOWNLOAD_PATH,
+    download_filename: str = BIG_SKY_FILENAME,
+    build_file: str = DataFiles.BIG_SKY,
 ):
-    download_path = download_path or str(DATA_PATH / filename)
+    url = url or get_url()
+    download_path = Path(download_path)
+
+    if not os.path.exists(download_path):
+        os.makedirs(download_path)
+
+    full_download_path = download_path / download_filename
     utils.download(
-        url(filename, version),
-        download_path,
+        url,
+        full_download_path,
         "Big Sky Star Catalog",
     )
     to_parquet(
-        download_path,
-        DataFiles.BIG_SKY,
-        digits,
+        full_download_path,
+        build_file,
     )
 
 
-def to_parquet(source_path: str, destination_path: str, digits: int = DIGITS):
+def to_parquet(source_path: str, destination_path: str):
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
     print("Preparing Big Sky Catalog for Starplot...")
 
     df = pd.read_csv(
         source_path,
         header=0,
-        names=[
+        usecols=[
             "tyc_id",
             "hip_id",
             "ccdm",
@@ -61,12 +63,9 @@ def to_parquet(source_path: str, destination_path: str, digits: int = DIGITS):
             "ra_mas_per_year",
             "dec_mas_per_year",
             "parallax_mas",
+            "constellation",
         ],
         compression="gzip",
-    )
-
-    df["ra_hours"] = df.apply(
-        lambda row: round(row.ra_degrees_j2000 / 15, digits), axis=1
     )
 
     df = df.assign(epoch_year=2000)
@@ -79,19 +78,38 @@ def to_parquet(source_path: str, destination_path: str, digits: int = DIGITS):
         }
     )
 
-    df.to_parquet(destination_path, compression="gzip")
+    df = df.sort_values(["magnitude"])
 
-    print(f"Done! {destination_path.value}")
+    table = pa.Table.from_pandas(df)
+    table = table.drop_columns("__index_level_0__")
 
+    pq.write_table(
+        table,
+        destination_path,
+        compression="none",
+        sorting_columns=[
+            pq.SortingColumn(df.columns.get_loc("magnitude")),
+        ],
+    )
 
-def load(path):
-    if not exists(path):
-        download(filename=BIG_SKY_ASSETS.get(path))
-
-    df = pd.read_parquet(path)
-
-    return df.set_index("tyc_id")
+    print(f"Done! {destination_path}")
 
 
 def exists(path) -> bool:
     return os.path.isfile(path)
+
+
+def download_if_not_exists(
+    filename: str = DataFiles.BIG_SKY,
+    url: str = None,
+    download_path: str = settings.DOWNLOAD_PATH,
+    download_filename: str = BIG_SKY_FILENAME,
+    build_file: str = DataFiles.BIG_SKY,
+):
+    if not exists(filename):
+        download(
+            url=url,
+            download_path=download_path,
+            download_filename=download_filename,
+            build_file=build_file,
+        )

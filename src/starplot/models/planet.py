@@ -8,8 +8,8 @@ from skyfield.api import Angle, wgs84
 from shapely import Polygon
 
 from starplot.data import load
-from starplot.models.base import SkyObject, SkyObjectManager
-from starplot.models.geometry import circle
+from starplot.models.base import SkyObject
+from starplot.geometry import circle
 from starplot.utils import dt_or_now
 
 
@@ -48,7 +48,48 @@ Retrieved on 18-APR-2024
 """
 
 
-class PlanetManager(SkyObjectManager):
+class Planet(SkyObject):
+    """Planet model."""
+
+    name: str
+    """
+    Name of the planet:
+
+    - Mercury
+    - Venus
+    - Mars
+    - Jupiter
+    - Saturn
+    - Uranus
+    - Neptune
+    - Pluto
+    
+    """
+
+    dt: datetime
+    """Date/time of planet's position"""
+
+    apparent_size: float
+    """Apparent size (degrees)"""
+
+    geometry: Polygon = None
+    """Shapely Polygon of the planet's extent. Right ascension coordinates are in degrees (0...360)."""
+
+    def __init__(
+        self,
+        ra: float,
+        dec: float,
+        name: str,
+        dt: datetime,
+        apparent_size: float,
+        geometry: Polygon = None,
+    ) -> None:
+        super().__init__(ra, dec)
+        self.name = name
+        self.dt = dt
+        self.apparent_size = apparent_size
+        self.geometry = geometry
+
     @classmethod
     def all(
         cls,
@@ -56,7 +97,16 @@ class PlanetManager(SkyObjectManager):
         lat: float = None,
         lon: float = None,
         ephemeris: str = "de421_2001.bsp",
-    ):
+    ) -> Iterator["Planet"]:
+        """
+        Iterator for getting all planets at a specific date/time and observing location.
+
+        Args:
+            dt: Datetime you want the planets for (must be timezone aware!). _Defaults to current UTC time_.
+            lat: Latitude of observing location. If you set this (and longitude), then the planet's _apparent_ RA/DEC will be calculated.
+            lon: Longitude of observing location
+            ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
+        """
         dt = dt_or_now(dt)
         ephemeris = load(ephemeris)
         timescale = load.timescale().from_datetime(dt)
@@ -81,99 +131,19 @@ class PlanetManager(SkyObjectManager):
             ).degrees
 
             yield Planet(
-                ra=ra.hours,
+                ra=ra.hours * 15,
                 dec=dec.degrees,
                 name=p,
                 dt=dt,
                 apparent_size=apparent_diameter_degrees,
-                geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees),
+                geometry=circle(
+                    (ra.hours * 15, dec.degrees), apparent_diameter_degrees
+                ),
             )
-
-    @classmethod
-    def find(cls):
-        raise NotImplementedError
 
     @classmethod
     def get(
         cls,
-        name: str,
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
-    ):
-        dt = dt_or_now(dt)
-        for p in cls.all(dt, lat, lon, ephemeris):
-            if p.name.lower() == name.lower():
-                return p
-
-        return None
-
-
-class Planet(SkyObject):
-    """Planet model."""
-
-    _manager = PlanetManager
-
-    name: str
-    """
-    Name of the planet:
-
-    - Mercury
-    - Venus
-    - Mars
-    - Jupiter
-    - Saturn
-    - Uranus
-    - Neptune
-    - Pluto
-    
-    """
-
-    dt: datetime
-    """Date/time of planet's position"""
-
-    apparent_size: float
-    """Apparent size (degrees)"""
-
-    geometry: Polygon = None
-    """Shapely Polygon of the planet's extent. Right ascension coordinates are in 24H format."""
-
-    def __init__(
-        self,
-        ra: float,
-        dec: float,
-        name: str,
-        dt: datetime,
-        apparent_size: float,
-        geometry: Polygon = None,
-    ) -> None:
-        super().__init__(ra, dec)
-        self.name = name
-        self.dt = dt
-        self.apparent_size = apparent_size
-        self.geometry = geometry
-
-    @classmethod
-    def all(
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
-    ) -> Iterator["Planet"]:
-        """
-        Iterator for getting all planets at a specific date/time and observing location.
-
-        Args:
-            dt: Datetime you want the planets for (must be timezone aware!). _Defaults to current UTC time_.
-            lat: Latitude of observing location. If you set this (and longitude), then the planet's _apparent_ RA/DEC will be calculated.
-            lon: Longitude of observing location
-            ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
-        """
-        pass
-
-    @classmethod
-    def get(
         name: str,
         dt: datetime = None,
         lat: float = None,
@@ -190,4 +160,9 @@ class Planet(SkyObject):
             lon: Longitude of observing location
             ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
-        pass
+        dt = dt_or_now(dt)
+        for p in cls.all(dt, lat, lon, ephemeris):
+            if p.name.lower() == name.lower():
+                return p
+
+        return None

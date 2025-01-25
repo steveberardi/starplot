@@ -1,53 +1,26 @@
 from typing import Callable, Mapping
-from functools import cache
 
 import rtree
-from skyfield.api import Star as SkyfieldStar
-
 import numpy as np
+from skyfield.api import Star as SkyfieldStar, wgs84
 
 from starplot import callables
-from starplot.coordinates import CoordinateSystem
-from starplot.data import bayer, stars, flamsteed
-from starplot.data.stars import StarCatalog, STAR_NAMES
+from starplot.data import stars
+from starplot.data.stars import StarCatalog
 from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, use_style
+from starplot.profile import profile
 
 
 class StarPlotterMixin:
-    @cache
-    def _load_stars(self, catalog, limiting_magnitude=None):
-        stardata = stars.load(catalog)
+    def _load_stars(self, catalog, filters=None):
+        extent = self._extent_mask()
 
-        ra_buffer = (self.ra_max - self.ra_min) / 4
-        dec_buffer = (self.dec_max - self.dec_min) / 4
-
-        if limiting_magnitude is not None:
-            stardata = stardata[(stardata["magnitude"] <= limiting_magnitude)]
-
-        stardata = stardata[
-            (stardata["dec_degrees"] < self.dec_max + dec_buffer)
-            & (stardata["dec_degrees"] > self.dec_min - dec_buffer)
-        ]
-
-        if self.ra_max <= 24 and self.ra_min >= 0:
-            stardata = stardata[
-                (stardata["ra_hours"] < self.ra_max + ra_buffer)
-                & (stardata["ra_hours"] > self.ra_min - ra_buffer)
-            ]
-        elif self.ra_max > 24:
-            # handle wrapping
-            stardata = stardata[
-                (stardata["ra_hours"] > self.ra_min - ra_buffer)
-                | (stardata["ra_hours"] < self.ra_max - 24 + ra_buffer)
-            ]
-        elif self.ra_min < 0:
-            stardata = stardata[
-                (stardata["ra_hours"] > 24 + self.ra_min - ra_buffer)
-                | (stardata["ra_hours"] < self.ra_max + ra_buffer)
-            ]
-
-        return stardata
+        return stars.load(
+            extent=extent,
+            catalog=catalog,
+            filters=filters,
+        )
 
     def _scatter_stars(self, ras, decs, sizes, alphas, colors, style=None, **kwargs):
         style = style or self.style.star
@@ -83,7 +56,7 @@ class StarPlotterMixin:
         self,
         star_objects: list[Star],
         star_sizes: list[float],
-        where_labels: list,
+        label_row_ids: list,
         style: ObjectStyle,
         labels: Mapping[str, str],
         bayer_labels: bool,
@@ -95,7 +68,7 @@ class StarPlotterMixin:
 
         # Plot all star common names first
         for i, s in enumerate(star_objects):
-            if where_labels and not all([e.evaluate(s) for e in where_labels]):
+            if s._row_id not in label_row_ids:
                 continue
 
             if (
@@ -110,9 +83,15 @@ class StarPlotterMixin:
             elif s.tyc:
                 self._labeled_stars.append(s.tyc)
 
-            label = labels.get(s.hip) if label_fn is None else label_fn(s)
-            bayer_desig = bayer.hip.get(s.hip)
-            flamsteed_num = flamsteed.hip.get(s.hip)
+            if label_fn is not None:
+                label = label_fn(s)
+            elif s.hip in labels:
+                label = labels.get(s.hip)
+            else:
+                label = s.name
+
+            bayer_desig = s.bayer
+            flamsteed_num = s.flamsteed
 
             if label:
                 self.text(
@@ -129,13 +108,13 @@ class StarPlotterMixin:
                 )
 
             if bayer_labels and bayer_desig:
-                _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i], s.hip))
+                _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i]))
 
-            if flamsteed_labels and flamsteed_num:
-                _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i], s.hip))
+            if flamsteed_labels and flamsteed_num and not bayer_desig:
+                _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i]))
 
         # Plot bayer/flamsteed
-        for bayer_desig, ra, dec, star_size, _ in _bayer:
+        for bayer_desig, ra, dec, star_size in _bayer:
             self.text(
                 bayer_desig,
                 ra,
@@ -149,9 +128,7 @@ class StarPlotterMixin:
                 gid="stars-label-bayer",
             )
 
-        for flamsteed_num, ra, dec, star_size, hip in _flamsteed:
-            if hip in bayer.hip:
-                continue
+        for flamsteed_num, ra, dec, star_size in _flamsteed:
             self.text(
                 flamsteed_num,
                 ra,
@@ -165,27 +142,26 @@ class StarPlotterMixin:
                 gid="stars-label-flamsteed",
             )
 
-    def _prepare_star_coords(self, df):
+    def _prepare_star_coords(self, df, limit_by_altaz=False):
         df["x"], df["y"] = (
             df["ra"],
             df["dec"],
         )
         return df
 
+    @profile
     @use_style(ObjectStyle, "star")
     def stars(
         self,
-        mag: float = 6.0,
-        catalog: StarCatalog = StarCatalog.HIPPARCOS,
-        style: ObjectStyle = None,
-        rasterize: bool = False,
-        size_fn: Callable[[Star], float] = callables.size_by_magnitude,
-        alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
-        color_fn: Callable[[Star], str] = None,
-        label_fn: Callable[[Star], str] = None,
         where: list = None,
         where_labels: list = None,
-        labels: Mapping[int, str] = STAR_NAMES,
+        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
+        style: ObjectStyle = None,
+        size_fn: Callable[[Star], float] = callables.size_by_magnitude,
+        alpha_fn: Callable[[Star], float] = None,
+        color_fn: Callable[[Star], str] = None,
+        label_fn: Callable[[Star], str] = None,
+        labels: Mapping[int, str] = None,
         legend_label: str = "Star",
         bayer_labels: bool = False,
         flamsteed_labels: bool = False,
@@ -195,23 +171,26 @@ class StarPlotterMixin:
         """
         Plots stars
 
+        Labels for stars are determined in this order:
+
+        1. Return value from `label_fn`
+        2. Value for star's HIP id in `labels`
+        3. IAU-designated name, as listed in the [data reference](/data/star-designations/)
+
         Args:
-            mag: Limiting magnitude of stars to plot. For more control of what stars to plot, use the `where` kwarg. **Note:** if you pass `mag` and `where` then `mag` will be ignored
-            catalog: The catalog of stars to use: "hipparcos", "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
+            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
+            catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
             style: If `None`, then the plot's style for stars will be used
-            rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
             label_fn: Callable for determining the label of each star. If `None`, then the names in the `labels` kwarg will be used.
-            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
+            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If `None`, then the star's IAU-designated name will be used.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted.
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
         """
-        self.logger.debug("Plotting stars...")
 
         # fallback to style if callables are None
         color_hex = (
@@ -222,45 +201,47 @@ class StarPlotterMixin:
         color_fn = color_fn or (lambda d: color_hex)
 
         where = where or []
+        where_labels = where_labels or []
         stars_to_index = []
+        labels = labels or {}
 
-        if where:
-            mag = None
+        star_results = self._load_stars(catalog, filters=where)
 
-        if labels is None:
-            labels = {}
+        star_results_labeled = star_results
+        for f in where_labels:
+            star_results_labeled = star_results_labeled.filter(f)
+
+        label_row_ids = star_results_labeled.to_pandas()["rowid"].tolist()
+
+        stars_df = star_results.to_pandas()
+
+        if getattr(self, "projection", None) == "zenith":
+            # filter stars for zenith plots to only include those above horizon
+            self.location = self.earth + wgs84.latlon(self.lat, self.lon)
+            stars_apparent = (
+                self.location.at(self.timescale)
+                .observe(SkyfieldStar.from_dataframe(stars_df))
+                .apparent()
+            )
+            # we only need altitude
+            stars_alt, _, _ = stars_apparent.altaz()
+            stars_df["alt"] = stars_alt.degrees
+            stars_df = stars_df[stars_df["alt"] > 0]
         else:
-            labels = {**STAR_NAMES, **labels}
+            nearby_stars = SkyfieldStar.from_dataframe(stars_df)
+            astrometric = self.earth.at(self.timescale).observe(nearby_stars)
+            stars_ra, stars_dec, _ = astrometric.radec()
+            stars_df["ra"], stars_df["dec"] = (
+                stars_ra.hours * 15,
+                stars_dec.degrees,
+            )
 
-        nearby_stars_df = self._load_stars(catalog, mag)
-        nearby_stars = SkyfieldStar.from_dataframe(nearby_stars_df)
-        astrometric = self.ephemeris["earth"].at(self.timescale).observe(nearby_stars)
-        stars_ra, stars_dec, _ = astrometric.radec()
-        nearby_stars_df["ra"], nearby_stars_df["dec"] = (
-            stars_ra.hours * 15,
-            stars_dec.degrees,
-        )
-        self._prepare_star_coords(nearby_stars_df)
-
+        stars_df = self._prepare_star_coords(stars_df)
         starz = []
-        ctr = 0
+        rtree_id = 1
 
-        for star in nearby_stars_df.itertuples():
-            obj = from_tuple(star, catalog)
-            ctr += 1
-
-            if not all([e.evaluate(obj) for e in where]):
-                continue
-
-            if self._coordinate_system == CoordinateSystem.RA_DEC:
-                data_xy = self._proj.transform_point(
-                    star.ra * -1, star.dec, self._geodetic
-                )
-            elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-                data_xy = self._proj.transform_point(star.x, star.y, self._crs)
-            else:
-                raise ValueError("Unrecognized coordinate system")
-
+        for star in stars_df.itertuples():
+            data_xy = self._proj.transform_point(star.x, star.y, self._crs)
             display_x, display_y = self.ax.transData.transform(data_xy)
 
             if (
@@ -272,14 +253,15 @@ class StarPlotterMixin:
             ):
                 continue
 
+            obj = from_tuple(star)
             size = size_fn(obj) * self.scale**2
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()
 
             if obj.magnitude < 5:
+                rtree_id += 1
                 # radius = ((size**0.5 / 2) / self.scale) #/ 3.14
                 radius = size**0.5 / 5
-
                 bbox = np.array(
                     (
                         display_x - radius,
@@ -288,11 +270,6 @@ class StarPlotterMixin:
                         display_y + radius,
                     )
                 )
-                # if obj.name == "Sirius":
-                #     print(bbox)
-                # if obj.name == "Electra":
-                #     print(bbox)
-
                 if self._stars_rtree.get_size() > 0:
                     self._stars_rtree.insert(
                         0,
@@ -301,7 +278,7 @@ class StarPlotterMixin:
                     )
                 else:
                     # if the index has no stars yet, then wait until end to load for better performance
-                    stars_to_index.append((ctr, bbox, None))
+                    stars_to_index.append((rtree_id, bbox, None))
 
             starz.append((star.x, star.y, size, alpha, color, obj))
 
@@ -329,7 +306,6 @@ class StarPlotterMixin:
             edgecolors=style.marker.edge_color.as_hex()
             if style.marker.edge_color
             else "none",
-            rasterized=rasterize,
         )
 
         self._add_legend_handle_marker(legend_label, style.marker)
@@ -337,14 +313,13 @@ class StarPlotterMixin:
         if stars_to_index:
             self._stars_rtree = rtree.index.Index(stars_to_index)
 
-        if labels:
-            self._star_labels(
-                star_objects,
-                sizes,
-                where_labels,
-                style,
-                labels,
-                bayer_labels,
-                flamsteed_labels,
-                label_fn,
-            )
+        self._star_labels(
+            star_objects,
+            sizes,
+            label_row_ids,
+            style,
+            labels,
+            bayer_labels,
+            flamsteed_labels,
+            label_fn,
+        )

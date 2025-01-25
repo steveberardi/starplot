@@ -1,4 +1,4 @@
-from starplot import MapPlot, Projection, Star
+from starplot import MapPlot, Projection, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -8,8 +8,8 @@ style = PlotStyle().extend(
 
 p = MapPlot(
     projection=Projection.STEREO_NORTH,
-    ra_min=10.75,
-    ra_max=14.2,
+    ra_min=10.75 * 15,
+    ra_max=14.2 * 15,
     dec_min=47,
     dec_max=65,
     style=style,
@@ -17,9 +17,9 @@ p = MapPlot(
 )
 p.stars(
     where=[
-        Star.magnitude < 3.6,
-        Star.dec > 45,
-        Star.dec < 64,
+        _.magnitude < 3.6,
+        _.dec > 45,
+        _.dec < 64,
     ],
     style__marker__symbol="star",
     style__marker__color="#ffff73",

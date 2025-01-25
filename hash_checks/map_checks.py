@@ -4,8 +4,7 @@ from datetime import datetime
 import numpy as np
 from pytz import timezone
 
-from starplot import styles, DSO, Moon, Star, Constellation
-from starplot.data.dsos import BASIC_DSO_TYPES
+from starplot import styles, DSO, DsoType, Moon, Constellation, _
 from starplot.map import MapPlot, Projection
 
 HERE = Path(__file__).resolve().parent
@@ -20,6 +19,25 @@ POWAY = {"lat": 32.97, "lon": -117.038611}
 
 AUTO_ADJUST_SETTINGS = {"seed": 1}
 
+BASIC_DSO_TYPES = [
+    # Star Clusters ----------
+    DsoType.OPEN_CLUSTER,
+    DsoType.GLOBULAR_CLUSTER,
+    # Galaxies ----------
+    DsoType.GALAXY,
+    DsoType.GALAXY_PAIR,
+    DsoType.GALAXY_TRIPLET,
+    DsoType.GROUP_OF_GALAXIES,
+    # Nebulas ----------
+    DsoType.NEBULA,
+    DsoType.PLANETARY_NEBULA,
+    DsoType.EMISSION_NEBULA,
+    DsoType.STAR_CLUSTER_NEBULA,
+    DsoType.REFLECTION_NEBULA,
+    # Stars ----------
+    DsoType.ASSOCIATION_OF_STARS,
+]
+
 dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 
 
@@ -27,8 +45,8 @@ def _mercator():
     # returns a mercator plot of Orion
     p = MapPlot(
         projection=Projection.MERCATOR,
-        ra_min=3.6,
-        ra_max=7.8,
+        ra_min=3.6 * 15,
+        ra_max=7.8 * 15,
         dec_min=-16,
         dec_max=23.6,
         style=STYLE,
@@ -36,14 +54,14 @@ def _mercator():
         autoscale=True,
     )
     p.constellations()
-    p.stars(mag=7.6, bayer_labels=True)
+    p.stars(where=[_.magnitude < 7.6], bayer_labels=True)
     p.dsos(
         labels=None,
         where=[
-            DSO.magnitude.is_null() | (DSO.magnitude <= 8),
-            DSO.size.is_not_null(),
-            DSO.size > 0.1,
-            DSO.type.is_in(BASIC_DSO_TYPES),
+            (_.magnitude.isnull()) | (_.magnitude <= 8),
+            _.size.notnull(),
+            _.size > 0.1,
+            _.type.isin(BASIC_DSO_TYPES),
         ],
     )
     p.milky_way()
@@ -61,21 +79,21 @@ mercator_base = _mercator()
 def _stereo_north():
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
-        ra_min=17,
-        ra_max=20,
+        ra_min=17 * 15,
+        ra_max=20 * 15,
         dec_min=30,
         dec_max=55,
         style=STYLE,
         resolution=RESOLUTION,
         autoscale=True,
     )
-    p.stars(mag=9, bayer_labels=True)
+    p.stars(where=[_.magnitude < 9], bayer_labels=True)
     p.dsos(
         labels=None,
         true_size=False,
         where=[
-            DSO.magnitude.is_null() | (DSO.magnitude <= 9),
-            DSO.type.is_in(BASIC_DSO_TYPES),
+            (_.magnitude.isnull()) | (_.magnitude <= 9),
+            _.type.isin(BASIC_DSO_TYPES),
         ],
     )
     p.milky_way()
@@ -95,7 +113,7 @@ def check_map_orion_base():
 def check_map_orion_extra():
     filename = DATA_PATH / "map-orion-extra.png"
     mercator_base.marker(
-        ra=4.5,
+        ra=4.5 * 15,
         dec=5,
         style={
             "marker": {
@@ -113,7 +131,7 @@ def check_map_orion_extra():
         legend_label="hello legend",
     )
     mercator_base.circle(
-        (7, -10),
+        (7 * 15, -10),
         5,
         style=styles.PolygonStyle(
             fill_color="blue",
@@ -130,8 +148,8 @@ def check_map_coma_berenices_dso_size():
     filename = DATA_PATH / "map-coma-berenices-dso-size.png"
     p = MapPlot(
         projection=Projection.MILLER,
-        ra_min=12,
-        ra_max=13.5,
+        ra_min=12 * 15,
+        ra_max=13.5 * 15,
         dec_min=15,
         dec_max=32,
         style=styles.PlotStyle().extend(
@@ -141,8 +159,8 @@ def check_map_coma_berenices_dso_size():
         resolution=RESOLUTION,
         scale=1.5,
     )
-    p.stars(mag=8, bayer_labels=True)
-    p.open_clusters(mag=8, true_size=True)
+    p.stars(where=[_.magnitude < 8], bayer_labels=True)
+    p.open_clusters(where=[(_.magnitude < 8) | (_.magnitude.isnull())], true_size=True)
     p.gridlines()
     p.ecliptic()
     p.celestial_equator()
@@ -167,7 +185,7 @@ def check_map_with_planets():
     p = MapPlot(
         projection=Projection.MILLER,
         ra_min=0,
-        ra_max=24,
+        ra_max=24 * 15,
         dec_min=-40,
         dec_max=40,
         dt=dt,
@@ -176,7 +194,7 @@ def check_map_with_planets():
         resolution=RESOLUTION,
         autoscale=True,
     )
-    p.stars(mag=3, labels=None)
+    p.stars(where=[_.magnitude < 3], where_labels=[False])
     p.planets()
     p.sun()
     p.ecliptic()
@@ -196,8 +214,8 @@ def check_map_scope_bino_fov():
 
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
-        ra_min=52 / 15,
-        ra_max=62 / 15,
+        ra_min=52 / 1,
+        ra_max=62 / 1,
         dec_min=20,
         dec_max=28,
         dt=dt,
@@ -206,15 +224,15 @@ def check_map_scope_bino_fov():
         star_catalog="big-sky-mag11",
         scale=1,
     )
-    p.stars(mag=12)
+    p.stars(where=[_.magnitude < 12])
     p.scope_fov(
-        ra=3.791278,
+        ra=3.791278 * 15,
         dec=24.105278,
         scope_focal_length=600,
         eyepiece_focal_length=14,
         eyepiece_fov=82,
     )
-    p.bino_fov(ra=3.791278, dec=24.105278, fov=65, magnification=10)
+    p.bino_fov(ra=3.791278 * 15, dec=24.105278, fov=65, magnification=10)
     p.title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
     return filename
@@ -232,18 +250,18 @@ def check_map_custom_stars():
 
     p = MapPlot(
         projection=Projection.MERCATOR,
-        ra_min=3.6,
-        ra_max=7.8,
+        ra_min=3.6 * 15,
+        ra_max=7.8 * 15,
         dec_min=-16,
         dec_max=24,
         style=style,
         resolution=RESOLUTION,
         autoscale=True,
     )
-    p.stars(mag=6)
+    p.stars(where=[_.magnitude < 6])
     p.text(
         "CUSTOM STARZZZ",
-        7,
+        7 * 15,
         -5,
         style={"font_size": 20, "offset_x": 40, "offset_y": 100},
     )
@@ -261,21 +279,21 @@ def check_map_wrapping():
 
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
-        ra_min=18,
-        ra_max=26,
+        ra_min=18 * 15,
+        ra_max=26 * 15,
         dec_min=30,
         dec_max=64,
         style=style,
         resolution=RESOLUTION,
         autoscale=True,
     )
-    p.stars(mag=9, style={"marker": {"size": 40}})
+    p.stars(where=[_.magnitude < 9])
     p.dsos(
         where=[
-            DSO.magnitude.is_null() | (DSO.magnitude < 9),
-            DSO.type.is_in(BASIC_DSO_TYPES),
-            DSO.size.is_not_null(),
-            DSO.size > 0.1,
+            (_.magnitude.isnull()) | (_.magnitude < 9),
+            _.type.isin(BASIC_DSO_TYPES),
+            _.size.notnull(),
+            _.size > 0.1,
         ],
     )
     p.gridlines()
@@ -300,15 +318,19 @@ def check_map_mollweide():
         resolution=RESOLUTION,
         autoscale=True,
     )
-    p.stars(mag=4.2, mag_labels=1.8, style__marker__color="blue")
+    p.stars(
+        where=[_.magnitude < 4.2],
+        where_labels=[_.magnitude < 1.8],
+        style__marker__color="blue",
+    )
     p.constellations()
     p.dsos(
         labels=None,
         where=[
-            DSO.magnitude.is_null() | (DSO.magnitude <= 4),
-            DSO.size.is_not_null(),
-            DSO.size > 0.1,
-            DSO.type.is_in(BASIC_DSO_TYPES),
+            (_.magnitude.isnull()) | (_.magnitude <= 4),
+            _.size.notnull(),
+            _.size > 0.1,
+            _.type.isin(BASIC_DSO_TYPES),
         ],
     )
     p.milky_way()
@@ -327,8 +349,8 @@ def check_map_gridlines():
 
     p = MapPlot(
         projection=Projection.MILLER,
-        ra_min=10,
-        ra_max=15,
+        ra_min=10 * 15,
+        ra_max=15 * 15,
         dec_min=31,
         dec_max=67,
         style=style,
@@ -336,12 +358,12 @@ def check_map_gridlines():
         autoscale=True,
     )
 
-    p.stars(mag=6, style__marker__size=45)
+    p.stars(where=[_.magnitude < 6], style__marker__size=45)
 
     p.gridlines(tick_marks=True)
 
     p.gridlines(
-        ra_locations=list(np.arange(0, 24, 0.25)),
+        ra_locations=list(np.arange(0, 360, 3.75)),
         ra_formatter_fn=lambda d: None,
         dec_formatter_fn=lambda d: None,
         dec_locations=list(np.arange(-90, 90, 1)),
@@ -370,7 +392,7 @@ def check_map_moon_phase_waxing_crescent():
         label=None,
     )
     p.gridlines(
-        ra_locations=list(np.arange(0, 24, 0.05)),
+        ra_locations=list(np.arange(0, 24 * 15, 0.05 * 15)),
         ra_formatter_fn=lambda d: None,
         dec_formatter_fn=lambda d: None,
         dec_locations=list(np.arange(-90, 90, 0.25)),
@@ -385,8 +407,8 @@ def check_map_moon_phase_waxing_crescent():
 def check_map_plot_limit_by_geometry():
     p = MapPlot(
         projection=Projection.STEREO_NORTH,
-        ra_min=18,
-        ra_max=20,
+        ra_min=18 * 15,
+        ra_max=20 * 15,
         dec_min=23,
         dec_max=50,
         style=STYLE.extend(
@@ -401,17 +423,19 @@ def check_map_plot_limit_by_geometry():
     )
     lyra = Constellation.get(iau_id="lyr")
 
-    p.stars(mag=9, bayer_labels=True, where=[Star.geometry.intersects(lyra.boundary)])
+    p.stars(
+        where=[_.magnitude < 9, _.geometry.intersects(lyra.boundary)], bayer_labels=True
+    )
     p.dsos(
         labels=None,
         true_size=False,
         where=[
-            DSO.magnitude.is_null() | (DSO.magnitude < 9),
-            DSO.type.is_in(BASIC_DSO_TYPES),
-            DSO.geometry.intersects(lyra.boundary),
+            (_.magnitude.isnull()) | (_.magnitude < 9),
+            _.type.isin(BASIC_DSO_TYPES),
+            _.geometry.intersects(lyra.boundary),
         ],
     )
-    p.constellations(where=[Constellation.boundary.intersects(lyra.boundary)])
+    p.constellations(where=[_.boundary.intersects(lyra.boundary)])
     p.constellation_borders()
     p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
 
@@ -425,8 +449,8 @@ def check_map_plot_custom_clip_path_virgo():
     virgo = Constellation.get(iau_id="vir")
     p = MapPlot(
         projection=Projection.MILLER,
-        ra_min=11,
-        ra_max=16,
+        ra_min=11 * 15,
+        ra_max=16 * 15,
         dec_min=-29,
         dec_max=17,
         style=STYLE.extend(
@@ -440,13 +464,13 @@ def check_map_plot_custom_clip_path_virgo():
         clip_path=virgo.boundary,
     )
 
-    p.stars(mag=9, bayer_labels=True)
+    p.stars(where=[_.magnitude < 9], bayer_labels=True)
     p.dsos(
         labels=None,
         true_size=False,
         where=[
-            DSO.magnitude.is_null() | (DSO.magnitude < 9),
-            DSO.type.is_in(BASIC_DSO_TYPES),
+            (_.magnitude.isnull()) | (_.magnitude < 9),
+            _.type.isin(BASIC_DSO_TYPES),
         ],
     )
     p.constellations()
@@ -455,8 +479,8 @@ def check_map_plot_custom_clip_path_virgo():
 
     p.line(
         coordinates=[
-            (13, 10),
-            (13.42, -11.1613),  # Spica
+            (13 * 15, 10),
+            (13.42 * 15, -11.1613),  # Spica
         ],
         style={
             "color": "red",
@@ -482,8 +506,8 @@ def check_map_label_callables():
     )
     p = MapPlot(
         projection=Projection.MILLER,
-        ra_min=3.5,
-        ra_max=4,
+        ra_min=3.5 * 15,
+        ra_max=4 * 15,
         dec_min=22,
         dec_max=26,
         style=style,
@@ -504,7 +528,7 @@ def check_map_label_callables():
     p.stars(
         catalog="big-sky-mag11",
         label_fn=lambda s: s.hip,
-        where=[Star.magnitude < 9.6, Star.geometry.intersects(m45.geometry)],
+        where=[_.magnitude < 9.6, _.geometry.intersects(m45.geometry)],
     )
 
     filename = DATA_PATH / "map-m45-label-callables.png"
@@ -516,15 +540,15 @@ def check_map_label_callables():
 def check_map_milky_way_multi_polygon():
     p = MapPlot(
         projection=Projection.MILLER,
-        ra_min=17.5,
-        ra_max=19.5,
+        ra_min=17.5 * 15,
+        ra_max=19.5 * 15,
         dec_min=-30,
         dec_max=0,
         style=STYLE,
         resolution=3000,
         autoscale=True,
     )
-    p.stars(mag=6, bayer_labels=True)
+    p.stars(where=[_.magnitude < 6], bayer_labels=True)
     p.constellations()
     p.milky_way()
 

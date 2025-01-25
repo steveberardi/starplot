@@ -1,7 +1,45 @@
 import random
 import math
+from typing import Union
 
-from shapely.geometry import Point, Polygon
+from shapely import transform
+from shapely.geometry import Point, Polygon, MultiPolygon
+
+from starplot import geod, utils
+
+GLOBAL_EXTENT = Polygon(
+    [
+        [0, -90],
+        [360, -90],
+        [360, 90],
+        [0, 90],
+        [0, -90],
+    ]
+)
+
+
+def circle(center, diameter_degrees):
+    points = geod.ellipse(
+        center,
+        diameter_degrees,
+        diameter_degrees,
+        angle=0,
+        num_pts=100,
+    )
+    points = [
+        (round(24 - utils.lon_to_ra(lon), 4), round(dec, 4)) for lon, dec in points
+    ]
+    return Polygon(points)
+
+
+def to_24h(geometry: Union[Point, Polygon, MultiPolygon]):
+    geometry_type = str(geometry.geom_type)
+
+    if geometry_type == "MultiPolygon":
+        polygons = [transform(p, lambda c: c * [1 / 15, 1]) for p in geometry.geoms]
+        return MultiPolygon(polygons)
+
+    return transform(geometry, lambda c: c * [1 / 15, 1])
 
 
 def unwrap_polygon(polygon: Polygon) -> Polygon:
@@ -18,6 +56,43 @@ def unwrap_polygon(polygon: Polygon) -> Polygon:
         prev = x
 
     return Polygon(new_points)
+
+
+def unwrap_polygon_360_old(polygon: Polygon) -> Polygon:
+    points = list(zip(*polygon.exterior.coords.xy))
+    new_points = []
+    prev = None
+
+    for x, y in points:
+        if prev is not None and prev > 300 and x < 180:
+            x -= 360
+        elif prev is not None and prev < 180 and x > 300:
+            x += 360
+        new_points.append((x, y))
+        prev = x
+
+    return Polygon(new_points)
+
+
+def unwrap_polygon_360_inverse(polygon: Polygon) -> Polygon:
+    ra, dec = [p for p in polygon.exterior.coords.xy]
+
+    if min(ra) < 180 and max(ra) > 300:
+        new_ra = [r + 360 if r < 50 else r for r in ra]
+        points = list(zip(new_ra, dec))
+        return Polygon(points)
+
+    return polygon
+
+
+def unwrap_polygon_360(polygon: Polygon) -> Polygon:
+    ra, dec = [p for p in polygon.exterior.coords.xy]
+
+    if min(ra) < 180 and max(ra) > 300:
+        new_ra = [r - 360 if r > 300 else r for r in ra]
+        return Polygon(list(zip(new_ra, dec)))
+
+    return polygon
 
 
 def random_point_in_polygon(
@@ -65,7 +140,7 @@ def random_point_in_polygon_at_distance(
     return None
 
 
-def wrapped_polygon_adjustment(polygon: Polygon) -> int:
+def wrapped_polygon_adjustment_old(polygon: Polygon) -> int:
     if "MultiPolygon" == str(polygon.geom_type):
         return 0
 
@@ -73,10 +148,34 @@ def wrapped_polygon_adjustment(polygon: Polygon) -> int:
     prev = None
 
     for ra, _ in points:
-        if prev is not None and prev > 20 and ra < 12:
-            return 24
-        elif prev is not None and prev < 12 and ra > 20:
-            return -24
+        if prev is not None and prev > 300 and ra < 180:
+            return 360
+        elif prev is not None and prev < 180 and ra > 300:
+            return -360
         prev = ra
 
     return 0
+
+
+def wrapped_polygon_adjustment(polygon: Polygon) -> int:
+    if "MultiPolygon" == str(polygon.geom_type):
+        return 0
+
+    ra, _ = [p for p in polygon.exterior.coords.xy]
+
+    if min(ra) < 180 and max(ra) > 300:
+        return 360
+
+    return 0
+
+
+def is_wrapped_polygon(polygon: Polygon) -> bool:
+    if "MultiPolygon" == str(polygon.geom_type):
+        return False
+
+    ra, _ = [p for p in polygon.exterior.coords.xy]
+
+    if min(ra) < 180 and max(ra) > 300:
+        return True
+
+    return False

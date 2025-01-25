@@ -2,8 +2,8 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot.styles import PlotStyle, extensions
 from starplot import Planet, optics
+from starplot.styles import PlotStyle, extensions
 
 tonight = datetime.now(timezone("America/Los_Angeles")).replace(hour=21)
 

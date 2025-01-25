@@ -1,4 +1,3 @@
-import geopandas as gpd
 import numpy as np
 
 import rtree
@@ -6,33 +5,61 @@ from shapely import (
     MultiPoint,
 )
 from matplotlib.collections import LineCollection
+from ibis import _
 
 from starplot.coordinates import CoordinateSystem
-from starplot.data import DataFiles, constellations as condata, stars
+from starplot.data import constellations as condata, constellation_lines as conlines
+from starplot.data.stars import load as load_stars, StarCatalog
 from starplot.data.constellations import (
     CONSTELLATIONS_FULL_NAMES,
     CONSTELLATION_HIP_IDS,
 )
+from starplot.data.constellation_stars import CONSTELLATION_HIPS
 from starplot.models.constellation import from_tuple as constellation_from_tuple
 from starplot.projections import Projection
+from starplot.profile import profile
 from starplot.styles import PathStyle, LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
-from starplot.geometry import wrapped_polygon_adjustment
+from starplot.geometry import is_wrapped_polygon
 
 DEFAULT_AUTO_ADJUST_SETTINGS = {
     "avoid_constellation_lines": False,
-    "point_generation_max_iterations": 500,
-    "distance_step_size": 1,
-    "max_distance": 300,
-    "label_padding": 9,
-    "buffer": 0.05,
+    "point_generation_max_iterations": 10,
+    "distance_step_size": 2,
+    "max_distance": 3_000,
+    "label_padding": 6,
+    "buffer": 0.3,
     "seed": None,
 }
 """Default settings for auto-adjusting constellation labels"""
 
 
 class ConstellationPlotterMixin:
+    def inbounds_temp(self, x, y):
+        data_x, data_y = self._proj.transform_point(x, y, self._geodetic)
+        display_x, display_y = self.ax.transData.transform((data_x, data_y))
+        return display_x > 0 and display_y > 0
+
+    @profile
+    def _prepare_constellation_stars(self) -> dict[int, tuple[float, float]]:
+        """
+        Returns dictionary of stars and their position:
+
+        {hip: (x,y)}
+
+        Where (x, y) is the plotted coordinate system (RA/DEC or AZ/ALT)
+        """
+        results = load_stars(
+            catalog=StarCatalog.BIG_SKY_MAG11,
+            filters=[_.hip.isin(CONSTELLATION_HIPS)],
+        )
+        df = results.to_pandas()
+        df = self._prepare_star_coords(df, limit_by_altaz=False)
+
+        return {star.hip: (star.x, star.y) for star in df.itertuples()}
+
+    @profile
     @use_style(LineStyle, "constellation_lines")
     def constellations(
         self,
@@ -52,15 +79,11 @@ class ConstellationPlotterMixin:
         where = where or []
         ctr = 0
 
-        constellations_gdf = gpd.read_file(
-            DataFiles.CONSTELLATIONS.value,
-            engine="pyogrio",
-            use_arrow=True,
-            bbox=self._extent_mask(),
-        )
-        stars_df = stars.load("hipparcos")
+        extent = self._extent_mask()
+        results = condata.load(extent=extent, filters=where)
+        constellations_df = results.to_pandas()
 
-        if constellations_gdf.empty:
+        if constellations_df.empty:
             return
 
         if getattr(self, "projection", None) in [
@@ -71,49 +94,38 @@ class ConstellationPlotterMixin:
         else:
             transform = self._geodetic
 
-        conline_hips = condata.lines()
         style_kwargs = style.matplot_kwargs(self.scale)
         constellation_points_to_index = []
         lines = []
+        constars = self._prepare_constellation_stars()
 
-        for c in constellations_gdf.itertuples():
-            obj = constellation_from_tuple(c)
-
-            if not all([e.evaluate(obj) for e in where]):
-                continue
-
-            hiplines = conline_hips[c.iau_id]
+        for c in constellations_df.itertuples():
+            hiplines = conlines.hips[c.iau_id]
             inbounds = False
 
             for s1_hip, s2_hip in hiplines:
-                s1 = stars_df.loc[s1_hip]
-                s2 = stars_df.loc[s2_hip]
-
-                s1_ra = s1.ra_hours * 15
-                s2_ra = s2.ra_hours * 15
-
-                s1_dec = s1.dec_degrees
-                s2_dec = s2.dec_degrees
+                if not constars.get(s2_hip):
+                    continue
+                s1_ra, s1_dec = constars.get(s1_hip)
+                s2_ra, s2_dec = constars.get(s2_hip)
 
                 if s1_ra - s2_ra > 60:
                     s2_ra += 360
-
                 elif s2_ra - s1_ra > 60:
                     s1_ra += 360
 
-                if not inbounds and self.in_bounds(s1.ra_hours, s1_dec):
+                x1, x2 = s1_ra, s2_ra
+                y1, y2 = s1_dec, s2_dec
+                if not inbounds and (
+                    self._in_bounds_xy(x1, y1) or self._in_bounds_xy(x2, y2)
+                ):
                     inbounds = True
+                elif not inbounds:
+                    continue
 
                 if self._coordinate_system == CoordinateSystem.RA_DEC:
-                    s1_ra *= -1
-                    s2_ra *= -1
-                    x1, x2 = s1_ra, s2_ra
-                    y1, y2 = s1_dec, s2_dec
-                elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-                    x1, y1 = self._prepare_coords(s1_ra / 15, s1_dec)
-                    x2, y2 = self._prepare_coords(s2_ra / 15, s2_dec)
-                else:
-                    raise ValueError("Unrecognized coordinate system")
+                    x1 *= -1
+                    x2 *= -1
 
                 lines.append([(x1, y1), (x2, y2)])
 
@@ -143,6 +155,7 @@ class ConstellationPlotterMixin:
                     ctr += 1
 
             if inbounds:
+                obj = constellation_from_tuple(c)
                 self._objects.constellations.append(obj)
 
         style_kwargs = style.matplot_line_collection_kwargs(self.scale)
@@ -169,8 +182,6 @@ class ConstellationPlotterMixin:
                     bbox,
                     None,
                 )
-        # self._plot_constellation_labels(style.label, labels_to_plot)
-        # self._plot_constellation_labels_experimental(style.label, labels_to_plot)
 
     def _plot_constellation_labels(
         self,
@@ -206,6 +217,7 @@ class ConstellationPlotterMixin:
             if label is not None:
                 self._constellation_labels.append(label)
 
+    @profile
     @use_style(LineStyle, "constellation_borders")
     def constellation_borders(self, style: LineStyle = None):
         """Plots the constellation borders
@@ -213,49 +225,40 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
         """
-        constellation_borders = self._read_geo_package(
-            DataFiles.CONSTELLATION_BORDERS.value
-        )
+        extent = self._extent_mask()
+        results = condata.load_borders(extent=extent)
+        borders_df = results.to_pandas()
 
-        if constellation_borders.empty:
+        if borders_df.empty:
             return
 
-        geometries = []
         border_lines = []
-        transform = self._plate_carree
-
-        for _, c in constellation_borders.iterrows():
-            for ls in c.geometry.geoms:
-                geometries.append(ls)
+        geometries = [line.geometry for line in borders_df.itertuples()]
 
         for ls in geometries:
-            x, y = ls.xy
-            x = list(x)
-            y = list(y)
+            if ls.length < 80:
+                ls = ls.segmentize(1)
+
+            xy = [c for c in ls.coords]
 
             if self._coordinate_system == CoordinateSystem.RA_DEC:
-                border_lines.append(list(zip(x, y)))
+                border_lines.append(xy)
 
             elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-                x = [24 - (x0 / 15) for x0 in x]
-                coords = [self._prepare_coords(*p) for p in list(zip(x, y))]
+                coords = [self._prepare_coords(*p) for p in xy]
                 border_lines.append(coords)
-                transform = self._crs
 
             else:
                 raise ValueError("Unrecognized coordinate system")
 
-        style_kwargs = style.matplot_line_collection_kwargs(self.scale)
-
         line_collection = LineCollection(
             border_lines,
-            **style_kwargs,
-            transform=transform,
+            **style.matplot_line_collection_kwargs(self.scale),
+            transform=self._crs,
             clip_on=True,
             clip_path=self._background_clip_path,
             gid="constellations-border",
         )
-
         self.ax.add_collection(line_collection)
 
     def _constellation_labels_auto(self, style, labels, settings):
@@ -268,23 +271,23 @@ class ConstellationPlotterMixin:
             if not constellation_line_stars:
                 continue
 
-            points_line = MultiPoint([(s.ra, s.dec) for s in constellation_line_stars])
-            centroid = points_line.centroid
+            if is_wrapped_polygon(constellation.boundary):
+                starpoints = []
+                ra, dec = zip(*[(s.ra, s.dec) for s in constellation_line_stars])
+                new_ra = [r - 360 if r > 300 else r for r in ra]
+                starpoints = list(zip(new_ra, dec))
 
-            adjustment = wrapped_polygon_adjustment(constellation.boundary)
-
-            if (adjustment > 0 and centroid.x < 12) or (
-                adjustment < 0 and centroid.x > 12
-            ):
-                x = centroid.x + adjustment
             else:
-                x = centroid.x
+                ra, dec = zip(*[(s.ra, s.dec) for s in constellation_line_stars])
+                starpoints = list(zip(ra, dec))
 
+            points_line = MultiPoint(starpoints)
+            centroid = points_line.centroid
             text = labels.get(constellation.iau_id)
 
             self.text(
                 text,
-                x,
+                centroid.x,
                 centroid.y,
                 style,
                 hide_on_collision=self.hide_colliding_labels,
@@ -306,6 +309,7 @@ class ConstellationPlotterMixin:
                 gid="constellations-label-name",
             )
 
+    @profile
     @use_style(LabelStyle, "constellation_labels")
     def constellation_labels(
         self,
@@ -329,7 +333,6 @@ class ConstellationPlotterMixin:
             make this work without plotting constellations first
 
         """
-        self.logger.debug("Plotting constellation labels...")
 
         if auto_adjust:
             settings = DEFAULT_AUTO_ADJUST_SETTINGS

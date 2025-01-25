@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, Star, HorizonPlot
+from starplot import styles, HorizonPlot, _
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -29,12 +29,12 @@ def _horizon():
         dt=dt,
         style=STYLE,
         resolution=RESOLUTION,
-        scale=1.5,
+        scale=1,
     )
     p.constellations()
     p.constellation_borders()
     p.milky_way()
-    p.stars(where=[Star.magnitude < 5])
+    p.stars(where=[_.magnitude < 5])
     p.ecliptic()
     p.horizon()
     p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
@@ -60,12 +60,12 @@ def check_horizon_north_celestial_pole():
         dt=dt,
         style=STYLE,
         resolution=RESOLUTION,
-        scale=1.5,
+        scale=1,
     )
     p.constellations()
     p.constellation_borders()
     p.milky_way()
-    p.stars(where=[Star.magnitude < 5])
+    p.stars(where=[_.magnitude < 5])
     p.ecliptic()
     p.horizon()
     p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)

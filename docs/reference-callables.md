@@ -4,7 +4,7 @@ Callables allow you to define your own functions for calculating a few of the st
 
     In Python, a "callable" is anything that can be "called" — e.g. a function or a class with `__call__` implemented.
 
-    As a simple example, here's how you can pass a callable to Python's `sorted` function to sort a list of strings by their lengths:
+    As a simple example, here's how you can pass a callable to Python's `sorted` function to sort a list of strings by their length:
     ```python
 
     >>> animals = ["elephant","cat", "dog", "tiger"]
@@ -14,6 +14,7 @@ Callables allow you to define your own functions for calculating a few of the st
     ['cat', 'dog', 'tiger', 'elephant']
     
     ```
+    
     In the example above, the value of `key` is the callable — in this case, a lambda function.
 
     Here's another way to write the code above:
@@ -36,33 +37,29 @@ Callables allow you to define your own functions for calculating a few of the st
 
 Here's a basic example of using one of the built-in callables to colorize the stars based on their BV index:
 
-```python hl_lines="21"
+```python hl_lines="18"
+from starplot import MapPlot, Projection, _
 from starplot.styles import PlotStyle, extensions
-from starplot.map import Projection
-
-import starplot as sp
 
 style = PlotStyle().extend(
     extensions.GRAYSCALE_DARK,
     extensions.MAP,
 )
-p = sp.MapPlot(
+p = MapPlot(
     projection=Projection.MERCATOR,
     ra_min=3.4,
     ra_max=8,
     dec_min=-16,
     dec_max=25.6,
     style=style,
-    resolution=2000,
 )
 p.stars(
-    mag=12,
-    color_fn=sp.callables.color_by_bv, # <-- here's where we specify the callable
+    where=[_.magnitude < 12],
+    color_fn=callables.color_by_bv, # <-- here's where we specify the callable
 )
-p.dsos(mag=12, mag_null=True)
 p.constellations()
 
-p.export("orion_colored_stars.png", padding=0.25)
+p.export("orion_colored_stars.png")
 ```
 
 ## Creating Your Own Callable
@@ -79,7 +76,7 @@ def color_by_mag(star: Star) -> str:
 # then to use your callable:
 p = MapPlot(...)
 p.stars(
-    mag=12,
+    where=[_.magnitude < 12],
     color_fn=color_by_mag,
 )
 ```

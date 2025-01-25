@@ -8,8 +8,7 @@ from matplotlib import pyplot as plt
 from matplotlib import path, patches, ticker
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import Polygon
-from skyfield.api import Star as SkyfieldStar, wgs84
-import geopandas as gpd
+from skyfield.api import wgs84
 import numpy as np
 
 from starplot.coordinates import CoordinateSystem
@@ -36,24 +35,6 @@ from starplot.utils import lon_to_ra, ra_to_lon
 DEFAULT_MAP_STYLE = PlotStyle()  # .extend(extensions.MAP)
 
 
-def points(start, end, num_points=100):
-    """Generates points along a line segment.
-
-    Args:
-        start (tuple): (x, y) coordinates of the starting point.
-        end (tuple): (x, y) coordinates of the ending point.
-        num_points (int): Number of points to generate.
-
-    Returns:
-        list: List of (x, y) coordinates of the generated points.
-    """
-
-    x_coords = np.linspace(start[0], end[0], num_points)
-    y_coords = np.linspace(start[1], end[1], num_points)
-
-    return list(zip(x_coords, y_coords))
-
-
 class MapPlot(
     BasePlot,
     ExtentMaskMixin,
@@ -69,8 +50,8 @@ class MapPlot(
 
     Args:
         projection: Projection of the map
-        ra_min: Minimum right ascension of the map's extent, in hours (0...24)
-        ra_max: Maximum right ascension of the map's extent, in hours (0...24)
+        ra_min: Minimum right ascension of the map's extent, in degrees (0...360)
+        ra_max: Maximum right ascension of the map's extent, in degrees (0...360)
         dec_min: Minimum declination of the map's extent, in degrees (-90...90)
         dec_max: Maximum declination of the map's extent, in degrees (-90...90)
         lat: Latitude for perspective projections: Orthographic, Stereographic, and Zenith
@@ -96,7 +77,7 @@ class MapPlot(
         self,
         projection: Projection,
         ra_min: float = 0,
-        ra_max: float = 24,
+        ra_max: float = 360,
         dec_min: float = -90,
         dec_max: float = 90,
         lat: float = None,
@@ -154,7 +135,7 @@ class MapPlot(
 
         if self.projection == Projection.ZENITH and not self._is_global_extent():
             raise ValueError(
-                "Zenith projection requires a global extent: ra_min=0, ra_max=24, dec_min=-90, dec_max=90"
+                "Zenith projection requires a global extent: ra_min=0, ra_max=360, dec_min=-90, dec_max=90"
             )
 
         self._geodetic = ccrs.Geodetic()
@@ -172,28 +153,25 @@ class MapPlot(
     def _plot_kwargs(self) -> dict:
         return dict(transform=self._crs)
 
-    def _prepare_coords(self, ra: float, dec: float) -> (float, float):
-        return ra * 15, dec
-
     @cache
     def in_bounds(self, ra: float, dec: float) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
 
         Args:
-            ra: Right ascension, in hours (0...24)
+            ra: Right ascension, in degrees (0...360)
             dec: Declination, in degrees (-90...90)
 
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
         # TODO : try using pyproj transformer directly
-        x, y = self._proj.transform_point(ra * 15, dec, self._crs)
+        x, y = self._proj.transform_point(ra, dec, self._crs)
         data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
         x_axes, y_axes = data_to_axes.transform((x, y))
         return 0 <= x_axes <= 1 and 0 <= y_axes <= 1
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
-        return self.in_bounds(x / 15, y)
+        return self.in_bounds(x, y)
 
     def _polygon(self, points, style, **kwargs):
         super()._polygon(points, style, transform=self._crs, **kwargs)
@@ -201,72 +179,44 @@ class MapPlot(
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
         return [
-            -1 * self.ra_min * 15,
-            -1 * self.ra_max * 15,
+            -1 * self.ra_min,
+            -1 * self.ra_max,
             self.dec_min,
             self.dec_max,
         ]
 
     def _adjust_radec_minmax(self):
-        # adjust the RA min/max if the DEC bounds is near the poles
-        if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH] and (
-            self.dec_max > 80 or self.dec_min < -80
-        ):
-            self.ra_min = 0
-            self.ra_max = 24
-
         # adjust declination to match extent
         extent = self.ax.get_extent(crs=self._plate_carree)
         self.dec_min = extent[2]
         self.dec_max = extent[3]
 
-        # adjust right ascension to match extent
-        if self.ra_max < 24:
-            ra_min = (-1 * extent[1]) / 15
-            ra_max = (-1 * extent[0]) / 15
+        # adjust the RA min/max if the DEC bounds is near the poles
+        if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH] and (
+            self.dec_max > 80 or self.dec_min < -80
+        ):
+            self.ra_min = 0
+            self.ra_max = 360
+
+        elif self.ra_max < 360:
+            # adjust right ascension to match extent
+            ra_min = extent[1] * -1
+            ra_max = extent[0] * -1
 
             if ra_min < 0 or ra_max < 0:
-                ra_min += 24
-                ra_max += 24
+                ra_min += 360
+                ra_max += 360
 
             self.ra_min = ra_min
             self.ra_max = ra_max
 
+        else:
+            self.ra_min = lon_to_ra(extent[1]) * 15
+            self.ra_max = lon_to_ra(extent[0]) * 15 + 360
+
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
-
-    def _read_geo_package(self, filename: str):
-        """Returns GeoDataFrame of a GeoPackage file"""
-        extent = self.ax.get_extent(crs=self._plate_carree)
-        bbox = (extent[0], extent[2], extent[1], extent[3])
-
-        return gpd.read_file(
-            filename,
-            engine="pyogrio",
-            use_arrow=True,
-            bbox=bbox,
-        )
-
-    def _load_stars(self, catalog, limiting_magnitude):
-        df = super()._load_stars(catalog, limiting_magnitude)
-
-        if self.projection == Projection.ZENITH:
-            # filter stars for zenith plots to only include those above horizon
-            earth = self.ephemeris["earth"]
-            self.location = earth + wgs84.latlon(self.lat, self.lon)
-
-            stars_apparent = (
-                self.location.at(self.timescale)
-                .observe(SkyfieldStar.from_dataframe(df))
-                .apparent()
-            )
-            # we only need altitude
-            stars_alt, _, _ = stars_apparent.altaz()
-            df["alt"] = stars_alt.degrees
-            df = df[df["alt"] > 0]
-
-        return df
 
     @use_style(ObjectStyle, "zenith")
     def zenith(
@@ -292,7 +242,7 @@ class MapPlot(
         ra, dec, _ = zenith.radec()
 
         self.marker(
-            ra=ra.hours,
+            ra=ra.hours * 15,
             dec=dec.degrees,
             style=style,
             label=label,
@@ -321,7 +271,7 @@ class MapPlot(
         ra, dec, _ = zenith.radec()
 
         points = geod.ellipse(
-            center=(ra.hours, dec.degrees),
+            center=(ra.hours * 15, dec.degrees),
             height_degrees=180,
             width_degrees=180,
             num_pts=100,
@@ -330,7 +280,6 @@ class MapPlot(
         y = []
 
         for ra, dec in points:
-            ra = ra / 15
             x0, y0 = self._prepare_coords(ra, dec)
             x.append(x0)
             y.append(y0)
@@ -353,6 +302,9 @@ class MapPlot(
             )
             self.ax.add_patch(patch)
             self._background_clip_path = patch
+            self._update_clip_path_polygon(
+                buffer=style.line.width / 2 + 2 * style.line.edge_width + 20
+            )
 
             if not labels:
                 return
@@ -398,21 +350,18 @@ class MapPlot(
 
         text_kwargs = dict(
             **style.label.matplot_kwargs(self.scale),
-            hide_on_collision=False,
             xytext=(
                 style.label.offset_x * self.scale,
                 style.label.offset_y * self.scale,
             ),
             textcoords="offset points",
             path_effects=[],
+            clip_on=True,
         )
-
-        if self.projection == Projection.ZENITH:
-            text_kwargs["clip_on"] = False
 
         for i, position in enumerate(cardinal_directions):
             ra, dec, _ = position.radec()
-            x, y = self._prepare_coords(ra, dec)
+            x, y = self._prepare_coords(ra.hours * 15, dec.degrees)
             self._text(x, y, labels[i], **text_kwargs)
 
     @use_style(PathStyle, "gridlines")
@@ -433,12 +382,12 @@ class MapPlot(
         Args:
             style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
             labels: If True, then labels for each gridline will be plotted on the outside of the axes.
-            ra_locations: List of Right Ascension locations for the gridlines (in hours, 0...24). Defaults to every 1 hour.
+            ra_locations: List of Right Ascension locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees.
             dec_locations: List of Declination locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
             ra_formatter_fn: Callable for creating labels of right ascension gridlines
             dec_formatter_fn: Callable for creating labels of declination gridlines
             tick_marks: If True, then tick marks will be plotted outside the axis. **Only supported for rectangular projections (e.g. Mercator, Miller)**
-            ra_tick_locations: List of Right Ascension locations for the tick marks (in hours, 0...24)
+            ra_tick_locations: List of Right Ascension locations for the tick marks (in degrees, 0...260)
             dec_tick_locations: List of Declination locations for the tick marks (in degrees, -90...90)
         """
 
@@ -455,7 +404,7 @@ class MapPlot(
         def dec_formatter(x, pos) -> str:
             return dec_formatter_fn(x)
 
-        ra_locations = ra_locations or [x for x in range(24)]
+        ra_locations = ra_locations or [x for x in range(0, 360, 15)]
         dec_locations = dec_locations or [d for d in range(-80, 90, 10)]
 
         line_style_kwargs = style.line.matplot_kwargs()
@@ -484,14 +433,14 @@ class MapPlot(
             # because cartopy does not extend lines to poles
             for ra in ra_locations:
                 self.ax.plot(
-                    (ra * 15, ra * 15),
+                    (ra, ra),
                     (-90, 90),
                     gid="gridlines",
                     **line_style_kwargs,
                     **self._plot_kwargs(),
                 )
 
-        gridlines.xlocator = FixedLocator([ra_to_lon(r) for r in ra_locations])
+        gridlines.xlocator = FixedLocator([ra_to_lon(r / 15) for r in ra_locations])
         gridlines.xformatter = FuncFormatter(ra_formatter)
         gridlines.xlabel_style = label_style_kwargs
 
@@ -506,10 +455,10 @@ class MapPlot(
         def in_axes(ra):
             return self.in_bounds(ra, (self.dec_max + self.dec_min) / 2)
 
-        xticks = ra_tick_locations or [x for x in np.arange(0, 24, 0.125)]
+        xticks = ra_tick_locations or [x for x in np.arange(0, 360, 1.875)]
         yticks = dec_tick_locations or [x for x in np.arange(-90, 90, 1)]
 
-        inbound_xticks = [ra_to_lon(ra) for ra in xticks if in_axes(ra)]
+        inbound_xticks = [ra_to_lon(ra / 15) for ra in xticks if in_axes(ra)]
         self.ax.set_xticks(inbound_xticks, crs=self._plate_carree)
         self.ax.xaxis.set_major_formatter(ticker.NullFormatter())
 
@@ -551,7 +500,7 @@ class MapPlot(
             Projection.STEREOGRAPHIC,
             Projection.ZENITH,
         ]:
-            # Calculate LST to shift RA DEC to be in line with current date and time
+            # Calculate local sidereal time (LST) to shift RA DEC to be in line with current date and time
             lst = -(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
             self._proj = Projection.crs(self.projection, lon=lst, lat=self.lat)
         elif self.projection == Projection.LAMBERT_AZ_EQ_AREA:
@@ -583,9 +532,8 @@ class MapPlot(
 
         self.logger.debug(f"Projection = {self.projection.value.upper()}")
 
-        self._plot_background_clip_path()
-
         self._fit_to_ax()
+        self._plot_background_clip_path()
 
     @use_style(LabelStyle, "info_text")
     def info(self, style: LabelStyle = None):
@@ -614,14 +562,14 @@ class MapPlot(
         trans = self.ax.transAxes + self.ax.transData.inverted()
         x_projected, y_projected = trans.transform((x, y))  # axes to data
         x_ra, y_ra = self._crs.transform_point(x_projected, y_projected, self._proj)
-        return (x_ra + 360) / 15, y_ra
+        return (x_ra + 360), y_ra
 
     def _plot_background_clip_path(self):
         def to_axes(points):
             ax_points = []
 
             for ra, dec in points:
-                x, y = self._proj.transform_point(ra * 15, dec, self._crs)
+                x, y = self._proj.transform_point(ra, dec, self._crs)
                 data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
                 x_axes, y_axes = data_to_axes.transform((x, y))
                 ax_points.append([x_axes, y_axes])
@@ -662,3 +610,4 @@ class MapPlot(
             )
 
         self.ax.add_patch(self._background_clip_path)
+        self._update_clip_path_polygon()

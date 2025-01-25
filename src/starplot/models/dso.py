@@ -1,23 +1,39 @@
-from typing import Optional, Union
+from typing import Optional, Union, Iterator
 
+from ibis import _
 from shapely.geometry import Polygon, MultiPolygon
 
-from starplot.data.dsos import DsoType, load_ongc, ONGC_TYPE_MAP
+from starplot.data.dsos import load
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
-from starplot.models.base import SkyObject, SkyObjectManager
-from starplot.models.geometry import to_24h
-from starplot import geod
+from starplot.models.base import SkyObject
 
 
-class DsoManager(SkyObjectManager):
-    @classmethod
-    def all(cls):
-        all_dsos = load_ongc()
+class DsoType:
+    """
+    Type of deep sky object (DSOs), as designated in OpenNGC
+    """
 
-        for d in all_dsos.itertuples():
-            magnitude = d.mag_v or d.mag_b or None
-            magnitude = float(magnitude) if magnitude else None
-            yield from_tuple(d)
+    STAR = "*"
+    DOUBLE_STAR = "**"
+    ASSOCIATION_OF_STARS = "*Ass"
+    OPEN_CLUSTER = "OCl"
+    GLOBULAR_CLUSTER = "GCl"
+    GALAXY = "G"
+    GALAXY_PAIR = "GPair"
+    GALAXY_TRIPLET = "GTrpl"
+    GROUP_OF_GALAXIES = "GGroup"
+    NEBULA = "Neb"
+    PLANETARY_NEBULA = "PN"
+    EMISSION_NEBULA = "EmN"
+    STAR_CLUSTER_NEBULA = "Cl+N"
+    REFLECTION_NEBULA = "RfN"
+    DARK_NEBULA = "DrkN"
+    HII_IONIZED_REGION = "HII"
+    SUPERNOVA_REMNANT = "SNR"
+    NOVA_STAR = "Nova"
+    NONEXISTENT = "NonEx"
+    UNKNOWN = "Other"
+    DUPLICATE_RECORD = "Dup"
 
 
 class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
@@ -26,12 +42,11 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     So, you can use any attributes of this model in your callables. Note that some may be null.
     """
 
-    _manager = DsoManager
-
     name: str
     """Name of the DSO (as specified in OpenNGC)"""
 
     type: DsoType
+    """Type of DSO"""
 
     magnitude: Optional[float] = None
     """Magnitude (if available)"""
@@ -64,7 +79,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     """
 
     geometry: Union[Polygon, MultiPolygon] = None
-    """Shapely Polygon of the DSO's extent. Right ascension coordinates are in 24H format."""
+    """Shapely Polygon of the DSO's extent. Right ascension coordinates are in degrees (0...360)."""
 
     def __init__(
         self,
@@ -81,8 +96,9 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         ngc: str = None,
         ic: str = None,
         geometry: Union[Polygon, MultiPolygon] = None,
+        constellation_id: str = None,
     ) -> None:
-        super().__init__(ra, dec)
+        super().__init__(ra, dec, constellation_id)
         self.name = name
         self.type = type
         self.magnitude = magnitude
@@ -99,21 +115,47 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
 
     @classmethod
-    def get(**kwargs) -> "DSO":
+    def all(cls) -> Iterator["DSO"]:
+        df = load().to_pandas()
+
+        for d in df.itertuples():
+            yield from_tuple(d)
+
+    @classmethod
+    def get(cls, **kwargs) -> "DSO":
         """
         Get a DSO, by matching its attributes.
 
-        Example: `d = DSO.get(m=13)`
+        Example:
+
+            d = DSO.get(m=13)
 
         Args:
             **kwargs: Attributes on the DSO you want to match
 
         Raises: `ValueError` if more than one DSO is matched
         """
-        pass
+        filters = []
+
+        for k, v in kwargs.items():
+            filters.append(getattr(_, k) == v)
+
+        df = load(filters=filters).to_pandas()
+
+        results = [from_tuple(d) for d in df.itertuples()]
+
+        if len(results) == 1:
+            return results[0]
+
+        if len(results) > 1:
+            raise ValueError(
+                "More than one match. Use find() instead or narrow your search."
+            )
+
+        return None
 
     @classmethod
-    def find(where: list) -> list["DSO"]:
+    def find(cls, where: list) -> list["DSO"]:
         """
         Find DSOs
 
@@ -124,60 +166,83 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
             List of DSOs that match all `where` expressions
 
         """
-        pass
-
-
-def create_ellipse(d):
-    maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
-
-    if maj_ax is None:
-        return d.geometry
-
-    if angle is None:
-        angle = 0
-
-    maj_ax_degrees = (maj_ax / 60) / 2
-
-    if not min_ax:
-        min_ax_degrees = maj_ax_degrees
-    else:
-        min_ax_degrees = (min_ax / 60) / 2
-
-    points = geod.ellipse(
-        (d.ra_degrees / 15, d.dec_degrees),
-        min_ax_degrees * 2,
-        maj_ax_degrees * 2,
-        angle,
-        num_pts=100,
-    )
-
-    # points = [geod.to_radec(p) for p in points]
-    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
-    return Polygon(points)
+        df = load(filters=where).to_pandas()
+        return [from_tuple(d) for d in df.itertuples()]
 
 
 def from_tuple(d: tuple) -> DSO:
-    magnitude = d.mag_v or d.mag_b or None
-    magnitude = float(magnitude) if magnitude else None
-    geometry = d.geometry
-
-    if str(geometry.geom_type) not in ["Polygon", "MultiPolygon"]:
-        geometry = create_ellipse(d)
-
-    geometry = to_24h(geometry)
-
-    return DSO(
+    dso = DSO(
         name=d.name,
-        ra=d.ra_degrees / 15,
-        dec=d.dec_degrees,
-        type=ONGC_TYPE_MAP[d.type],
+        ra=d.ra,
+        dec=d.dec,
+        type=d.type,
         maj_ax=d.maj_ax,
         min_ax=d.min_ax,
         angle=d.angle,
-        magnitude=magnitude,
-        size=d.size_deg2,
+        magnitude=d.magnitude,
+        size=d.size,
         m=d.m,
         ngc=d.ngc,
         ic=d.ic,
-        geometry=geometry,
+        geometry=d.geometry,
+        constellation_id=d.constellation_id,
     )
+    dso._row_id = getattr(d, "rowid", None)
+    return dso
+
+
+ONGC_TYPE = {
+    # Star Clusters ----------
+    DsoType.OPEN_CLUSTER: "OCl",
+    DsoType.GLOBULAR_CLUSTER: "GCl",
+    # Galaxies ----------
+    DsoType.GALAXY: "G",
+    DsoType.GALAXY_PAIR: "GPair",
+    DsoType.GALAXY_TRIPLET: "GTrpl",
+    DsoType.GROUP_OF_GALAXIES: "GGroup",
+    # Nebulas ----------
+    DsoType.NEBULA: "Neb",
+    DsoType.PLANETARY_NEBULA: "PN",
+    DsoType.EMISSION_NEBULA: "EmN",
+    DsoType.STAR_CLUSTER_NEBULA: "Cl+N",
+    DsoType.REFLECTION_NEBULA: "RfN",
+    # Stars ----------
+    DsoType.STAR: "*",
+    DsoType.DOUBLE_STAR: "**",
+    DsoType.ASSOCIATION_OF_STARS: "*Ass",
+    # Others
+    DsoType.HII_IONIZED_REGION: "HII",
+    DsoType.DARK_NEBULA: "DrkN",
+    DsoType.SUPERNOVA_REMNANT: "SNR",
+    DsoType.NOVA_STAR: "Nova",
+    DsoType.NONEXISTENT: "NonEx",
+    DsoType.UNKNOWN: "Other",
+    DsoType.DUPLICATE_RECORD: "Dup",
+}
+
+ONGC_TYPE_MAP = {v: k for k, v in ONGC_TYPE.items()}
+
+DSO_LEGEND_LABELS = {
+    # Galaxies ----------
+    DsoType.GALAXY: "Galaxy",
+    DsoType.GALAXY_PAIR: "Galaxy",
+    DsoType.GALAXY_TRIPLET: "Galaxy",
+    DsoType.GROUP_OF_GALAXIES: "Galaxy",
+    # Nebulas ----------
+    DsoType.NEBULA: "Nebula",
+    DsoType.PLANETARY_NEBULA: "Nebula",
+    DsoType.EMISSION_NEBULA: "Nebula",
+    DsoType.STAR_CLUSTER_NEBULA: "Nebula",
+    DsoType.REFLECTION_NEBULA: "Nebula",
+    # Star Clusters ----------
+    DsoType.OPEN_CLUSTER: "Open Cluster",
+    DsoType.GLOBULAR_CLUSTER: "Globular Cluster",
+    # Stars ----------
+    DsoType.DOUBLE_STAR: "Double Star",
+    DsoType.ASSOCIATION_OF_STARS: "Association of stars",
+    DsoType.NOVA_STAR: "Nova Star",
+    # Others
+    DsoType.HII_IONIZED_REGION: "HII Ionized Region",
+    DsoType.DARK_NEBULA: "Dark Nebula",
+    DsoType.SUPERNOVA_REMNANT: "Supernova Remnant",
+}

@@ -1,8 +1,7 @@
-import json
+import ibis
+from ibis import _
 
-from skyfield.data import stellarium
-
-from starplot.data import DataFiles, load as _load
+from starplot.data import db
 
 
 """
@@ -88,7 +87,8 @@ properties = {
     "Scl": ("Sculptor", 0.33, -32.01),
     "Sco": ("Scorpius", 16.9, -33.55),
     "Sct": ("Scutum", 18.54, -12.35),
-    "Ser": ("Serpens", 16.45, 3.59),
+    "Ser1": ("Serpens\nCaput", 16.45, 3.59),
+    "Ser2": ("Serpens\nCauda", 18.2, -7.29),
     "Sex": ("Sextans", 10.55, -4.24),
     "Sge": ("Sagitta", 19.74, 14.92),
     "Sgr": ("Sagittarius", 18.81, -26.05),
@@ -578,22 +578,17 @@ CONSTELLATION_HIP_IDS = {
         87261,
     },
     "sct": {90595, 91117, 91726, 92175},
-    "ser": {
-        79593,
+    "ser1": {
         77450,
-        89962,
         77516,
-        84012,
         77070,
-        88048,
         77233,
-        92946,
         76852,
         76276,
         77622,
-        86263,
         78072,
     },
+    "ser2": {86263, 89962, 88048, 92946},
     "sex": {51437, 49641, 51362, 48437},
     "sge": {98337, 96837, 96757, 97365},
     "sgr": {
@@ -674,25 +669,46 @@ CONSTELLATION_HIP_IDS = {
 }
 
 
-def _load_deprecated():
-    with _load.open("constellations_hip.fab") as f:
-        consdata = stellarium.parse_constellations(f)
-    return consdata
-
-
-def load(**kwargs):
-    import geopandas as gpd
-    import numpy as np
-    from starplot.data import DataFiles
-
-    cons = gpd.read_file(
-        DataFiles.CONSTELLATIONS.value,
-        engine="pyogrio",
-        use_arrow=True,
-        **kwargs,
+def load(extent=None, filters=None):
+    filters = filters or []
+    con = db.connect()
+    c = con.table("constellations")
+    c = c.mutate(
+        ra=_.center_ra,
+        dec=_.center_dec,
+        constellation_id=_.iau_id,
+        rowid=ibis.row_number(),
+        boundary=_.geometry,
     )
-    cons = cons.replace({np.nan: None})
-    return cons
+
+    if extent:
+        filters.append(_.geometry.intersects(extent))
+
+    if filters:
+        return c.filter(*filters)
+
+    return c
+
+
+def load_borders(extent=None, filters=None):
+    filters = filters or []
+    con = db.connect()
+    c = con.table("constellation_borders")
+    c = c.mutate(
+        # ra=_.center_ra,
+        # dec=_.center_dec,
+        # constellation_id=_.iau_id,
+        rowid=ibis.row_number(),
+        # boundary=_.geometry,
+    )
+
+    if extent:
+        filters.append(_.geometry.intersects(extent))
+
+    if filters:
+        return c.filter(*filters)
+
+    return c
 
 
 def get(constellation_id: str):
@@ -702,8 +718,3 @@ def get(constellation_id: str):
 def iterator():
     for c in CONSTELLATIONS.keys():
         yield c
-
-
-def lines():
-    with open(DataFiles.CONSTELLATION_LINES_HIP, "r") as conlines:
-        return json.loads(conlines.read())

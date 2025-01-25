@@ -1,4 +1,16 @@
+## v0.15.x
+- Replaces data backend with DuckDB + Ibis, making plotting 2-3x faster and object lookup up to 10x faster
+- Changes default unit of right ascension to degrees (0...360)
+- Improves performance of constellation label placement
+- Separates the constellation Serpens into two "separate" parts (Cauda and Caput)
+- Adds a new "blue gold" style extension
+- Adds a new field to the constellation model: `star_hip_ids` which is a list of hip ids for stars that make up the lines in the constellation
+- Dropped support for Python 3.9 (Ibis requires 3.10 or higher)
+- Increased minimum required version of GeoPandas to `1.0.1`
+
 ## v0.14.x
+[Documentation](https://archives.starplot.dev/0.14.0/)
+
 - Adds horizon plots, which show what the sky looks like from the horizon at a specific time and place
 - Improved auto placement of constellation labels
 - Separates styles and functions for constellation lines and labels

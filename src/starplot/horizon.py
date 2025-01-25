@@ -1,3 +1,5 @@
+import math
+
 from datetime import datetime
 from functools import cache
 
@@ -8,7 +10,7 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator
 from skyfield.api import wgs84, Star as SkyfieldStar
-
+from shapely import Point
 from starplot.coordinates import CoordinateSystem
 from starplot.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
@@ -132,25 +134,37 @@ class HorizonPlot(
             globe=ccrs.Globe(ellipse="sphere", flattening=0),
         )
 
-        self._calc_position()
         self._init_plot()
-        self._adjust_radec_minmax()
+
+        self.altaz_mask = self._extent_mask_altaz()
+        self.logger.debug(f"Extent = AZ ({self.az}) ALT ({self.alt})")
+
+        self._calc_position()
 
     @cache
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
-        point = SkyfieldStar(ra_hours=ra, dec_degrees=dec)
+        if ra > 360:
+            ra -= 360
+        if ra < 0:
+            ra += 360
+        point = SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec)
         position = self.observe(point).apparent()
         pos_alt, pos_az, _ = position.altaz()
         return pos_az.degrees, pos_alt.degrees
 
-    def _prepare_star_coords(self, df):
+    def _prepare_star_coords(self, df, limit_by_altaz=True):
         stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
         df["x"], df["y"] = (
             nearby_stars_az.degrees,
             nearby_stars_alt.degrees,
         )
+        if limit_by_altaz:
+            extent = self._extent_mask_altaz()
+            df["_geometry_az_alt"] = gpd.points_from_xy(df.x, df.y)
+            df = df[df["_geometry_az_alt"].intersects(extent)]
+
         return df
 
     def _plot_kwargs(self) -> dict:
@@ -180,108 +194,92 @@ class HorizonPlot(
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        if self.az[0] > 360 or self.az[1] > 360 and az < 90:
-            az += 360
+        return self.altaz_mask.contains(Point(az, alt))
 
-        return (
-            az < self.az[1]
-            and az > self.az[0]
-            and alt < self.alt[1]
-            and alt > self.alt[0]
-        )
+    def _in_bounds_xy(self, x: float, y: float) -> bool:
+        return self.in_bounds_altaz(y, x)  # alt = y, az = x
 
     def _polygon(self, points, style, **kwargs):
         super()._polygon(points, style, transform=self._crs, **kwargs)
 
     def _calc_position(self):
         earth = self.ephemeris["earth"]
-
         self.location = earth + wgs84.latlon(self.lat, self.lon)
         self.observe = self.location.at(self.timescale).observe
 
-        locations = [
-            self.location.at(self.timescale).from_altaz(
-                alt_degrees=self.alt[0], az_degrees=self.az[0]
-            ),  # lower left
-            self.location.at(self.timescale).from_altaz(
-                alt_degrees=self.alt[0], az_degrees=self.az[1]
-            ),  # lower right
-            self.location.at(self.timescale).from_altaz(
-                alt_degrees=self.alt[1], az_degrees=self.center_az
-            ),  # top center
-            self.location.at(self.timescale).from_altaz(
-                alt_degrees=self.center_alt, az_degrees=self.center_az
-            ),  # center
-            # self.location.at(self.timescale).from_altaz(alt_degrees=self.alt[1], az_degrees=self.az[0]), # upper left
-            # self.location.at(self.timescale).from_altaz(alt_degrees=self.alt[1], az_degrees=self.az[1]), # upper right
-        ]
+        # locations = [
+        #     self.location.at(self.timescale).from_altaz(
+        #         alt_degrees=self.alt[0], az_degrees=self.az[0]
+        #     ),  # lower left
+        #     self.location.at(self.timescale).from_altaz(
+        #         alt_degrees=self.alt[0], az_degrees=self.az[1]
+        #     ),  # lower right
+        #     self.location.at(self.timescale).from_altaz(
+        #         alt_degrees=self.alt[1], az_degrees=self.center_az
+        #     ),  # top center
+        #     self.location.at(self.timescale).from_altaz(
+        #         alt_degrees=self.center_alt, az_degrees=self.center_az
+        #     ),  # center
+        #     self.location.at(self.timescale).from_altaz(alt_degrees=self.alt[1], az_degrees=self.az[0]), # upper left
+        #     self.location.at(self.timescale).from_altaz(alt_degrees=self.alt[1], az_degrees=self.az[1]), # upper right
+        # ]
 
-        self.ra_min = None
-        self.ra_max = None
-        self.dec_max = None
-        self.dec_min = None
+        # self.ra_min = None
+        # self.ra_max = None
+        # self.dec_max = None
+        # self.dec_min = None
+        # print(self.alt)
+        # print(self.az)
+        # for location in locations:
+        #     ra, dec, _ = location.radec()
+        #     ra = ra.hours
+        #     dec = dec.degrees
+        #     print(ra, dec)
+        #     if self.ra_min is None or ra < self.ra_min:
+        #         self.ra_min = ra
 
-        for location in locations:
-            ra, dec, _ = location.radec()
-            ra = ra.hours
-            dec = dec.degrees
-            if self.ra_min is None or ra < self.ra_min:
-                self.ra_min = ra
+        #     if self.ra_max is None or ra > self.ra_max:
+        #         self.ra_max = ra
 
-            if self.ra_max is None or ra > self.ra_max:
-                self.ra_max = ra
+        #     if self.dec_min is None or dec < self.dec_min:
+        #         self.dec_min = dec
 
-            if self.dec_min is None or dec < self.dec_min:
-                self.dec_min = dec
+        #     if self.dec_max is None or dec > self.dec_max:
+        #         self.dec_max = dec
 
-            if self.dec_max is None or dec > self.dec_max:
-                self.dec_max = dec
+        # if self.dec_max > 70 or self.dec_min < -70:
+        #     # naive method of getting all the stars near the poles
+        #     self.ra_min = 0
+        #     self.ra_max = 24
+        # else:
+        #     self.ra_min = max(self.ra_min - 4, 0)
+        #     self.ra_max = min(self.ra_max + 4, 24)
 
-    def _adjust_radec_minmax(self):
-        if self.dec_max > 70 or self.dec_min < -70:
-            # naive method of getting all the stars near the poles
-            self.ra_min = 0
-            self.ra_max = 24
+        # self.dec_min -= 10
+        # self.dec_max += 10
 
-        self.dec_min -= 20
-        self.dec_max += 20
-        self.ra_min -= 4
-        self.ra_max += 4
-
-        if self.ra_min < 0:
-            self.ra_min = 0
+        self.ra_min = 0
+        self.ra_max = 360
+        self.dec_min = self.lat - 90
+        self.dec_max = self.lat + 90
 
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
 
-    def _in_bounds_xy(self, x: float, y: float) -> bool:
-        return self.in_bounds_altaz(y, x)  # alt = y, az = x
+    def _adjust_altaz_minmax(self):
+        """deprecated"""
+        extent = list(self.ax.get_extent(crs=self._plate_carree))
+        self.alt = (extent[2], extent[3])
 
-    def _read_geo_package(self, filename: str):
-        """Returns GeoDataFrame of a GeoPackage file"""
+        if extent[0] < 0:
+            extent[0] += 180
+        if extent[1] < 0:
+            extent[1] += 180
 
-        # if self.ra_min <= 0 and self.ra_max >= 24:
-        #     lon_min = -180
-        #     lon_max = 180
-        # else:
-        #     lon_min = self.ra_max * 15 - 180 # ra_to_lon(24 - self.ra_max)
-        #     lon_max = self.ra_min * 15 - 180 # ra_to_lon(24 - self.ra_min)
+        self.az = (extent[0], extent[1])
 
-        # extent = self._extent_mask()
-        # extent = (
-        #     lon_min,
-        #     self.dec_min,
-        #     lon_max,
-        #     self.dec_max,
-        # )
-
-        return gpd.read_file(
-            filename,
-            engine="pyogrio",
-            use_arrow=True,
-            # bbox=extent,
-        )
+        self.logger.debug(f"Extent = AZ ({self.az}) ALT ({self.alt})")
 
     @use_style(PathStyle, "horizon")
     def horizon(
@@ -304,12 +302,18 @@ class HorizonPlot(
             show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
             tick_step: Step size for tick marks
         """
+
+        if show_degree_labels or show_ticks:
+            patch_y = -0.11 * self.scale
+        else:
+            patch_y = -0.08 * self.scale
+
         bottom = patches.Polygon(
             [
                 (0, 0),
                 (1, 0),
-                (1, -0.1 * self.scale),
-                (0, -0.1 * self.scale),
+                (1, patch_y),
+                (0, patch_y),
                 (0, 0),
             ],
             color=style.line.color.as_hex(),
@@ -321,47 +325,53 @@ class HorizonPlot(
         def az_to_ax(d):
             return self._to_ax(d, self.alt[0])[0]
 
-        for az in range(self.az[0] + 2, self.az[1], 1):
+        for az in range(int(self.az[0]), int(self.az[1]), 1):
             az = int(az)
 
             if az >= 360:
                 az -= 360
 
+            x = az_to_ax(az)
+
+            if x <= 0.03 or x >= 0.97 or math.isnan(x):
+                continue
+
             if labels.get(az):
                 self.ax.annotate(
                     labels.get(az),
-                    (az_to_ax(az), -0.074 * self.scale),
+                    (x, patch_y + 0.027),
                     xycoords=self.ax.transAxes,
                     **style.label.matplot_kwargs(self.scale),
-                    clip_on=False,
+                    clip_on=True,
                 )
 
             if show_degree_labels and az % degree_step == 0:
                 self.ax.annotate(
                     str(az) + "\u00b0",
-                    (az_to_ax(az), -0.011 * self.scale),
+                    (x, -0.011 * self.scale),
                     xycoords=self.ax.transAxes,
                     **self.style.gridlines.label.matplot_kwargs(self.scale),
-                    clip_on=False,
+                    clip_on=True,
                 )
 
             elif show_ticks and az % tick_step == 0:
                 self.ax.annotate(
                     "|",
-                    (az_to_ax(az), -0.011 * self.scale),
+                    (x, -0.011 * self.scale),
                     xycoords=self.ax.transAxes,
                     **self.style.gridlines.label.matplot_kwargs(self.scale / 2),
-                    clip_on=False,
+                    clip_on=True,
                 )
 
-        self.ax.plot(
-            [0, 1],
-            [-0.04 * self.scale, -0.04 * self.scale],
-            lw=1,
-            color=style.label.font_color.as_hex(),
-            clip_on=False,
-            transform=self.ax.transAxes,
-        )
+        if show_degree_labels or show_ticks:
+            self.ax.plot(
+                [0, 1],
+                [-0.04 * self.scale, -0.04 * self.scale],
+                lw=1,
+                color=style.label.font_color.as_hex(),
+                clip_on=False,
+                transform=self.ax.transAxes,
+            )
 
     @use_style(PathStyle, "gridlines")
     def gridlines(
@@ -427,6 +437,7 @@ class HorizonPlot(
         )
 
         self.ax.add_patch(self._background_clip_path)
+        self._update_clip_path_polygon()
 
     def _init_plot(self):
         self._proj = ccrs.LambertAzimuthalEqualArea(
@@ -454,5 +465,5 @@ class HorizonPlot(
 
         self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
 
-        self._plot_background_clip_path()
         self._fit_to_ax()
+        self._plot_background_clip_path()

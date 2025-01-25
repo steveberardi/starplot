@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=GFS+Didot&display=swap');
+
 :root {
     --md-primary-fg-color:        hsl(209, 53%, 37%);
     --md-primary-fg-color--light: hsl(209, 53%, 70%);
@@ -379,4 +381,43 @@ code.raw {
         background-color: hsl(197, 36%, 30%);
         /* border: 1px solid hsl(207, 46%, 56%); */
     }
+}
+
+[data-column-id=bayer],[data-column-id=flamsteed] {
+    text-align: center;
+}
+td[data-column-id=bayer] {
+    font-family: "GFS Didot", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.1rem;
+}
+
+.constellations-data-grid {
+    max-width: 600px;
+}
+
+#grid {
+    background-color: var(--md-primary-fg-color);
+    padding: 4px;
+    border-radius: 8px;
+
+    th {
+        background-color: hsl(209deg 53% 85%);
+        font-weight: bold;
+        color: var(--md-code-hl-name-color);
+    }
+
+    td, th {
+        padding: 8px 12px;
+        vertical-align: middle;
+    }
+}
+.gridjs-search {
+    width: 100% !important;
+}
+.gridjs-search-input {
+    padding: 0;
+    width: 100% !important;
+    border: 1px solid var(--md-primary-fg-color) !important;
 }

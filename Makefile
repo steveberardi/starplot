@@ -4,7 +4,7 @@ DE421_URL=https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_v
 ifeq ($(CI), true)
  DR_ARGS=
 else
- DR_ARGS=-it
+ DR_ARGS=-it --env-file ./.env
 endif
 
 ifeq ($(PROFILE), true)
@@ -13,11 +13,11 @@ else
  SCRATCH_ARGS=
 endif
 
-DOCKER_RUN=docker run --rm --env-file ./.env $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
+DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 
 DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" --target dev .
-DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-$(PYTHON_VERSION)
+DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) starplot-$(PYTHON_VERSION)
 
 export PYTHONPATH=./src/
 
@@ -36,7 +36,7 @@ lint:
 	$(DOCKER_RUN) "ruff check src/ tests/ hash_checks/ $(ARGS)"
 
 format:
-	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ $(ARGS)"
+	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)"
 
 test:
 	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
@@ -70,11 +70,28 @@ profile:
 	$(DOCKER_RUN) "python -m cProfile -o temp/results.prof scripts/scratchpad.py && \
 	snakeviz -s -p 8080 -H 0.0.0.0 temp/results.prof"
 
-prep-dsos:
-	$(DOCKER_RUN) "python -m starplot.data.prep.dsos"
+# builds ALL data files and then database:
+db: 
+	@$(DOCKER_RUN) "python data/scripts/db.py"
 
-prep-constellations:
-	$(DOCKER_RUN) "python -m starplot.data.prep.constellations"
+build-data-clean:
+	mkdir -p data/build
+	rm -rf data/build/*
+
+build-stars-mag11:
+	@$(DOCKER_RUN) "python data/scripts/bigsky_mag11.py"
+
+build-dsos:
+	@$(DOCKER_RUN) "python data/scripts/dsos.py"
+
+build-star-designations:
+	@$(DOCKER_RUN) "python data/scripts/star_designations.py"
+
+build-constellations:
+	@$(DOCKER_RUN) "python data/scripts/constellations.py"
+
+build-doc-data:
+	@$(DOCKER_RUN) "python data/scripts/docdata.py"
 
 version:
 	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"
@@ -129,6 +146,9 @@ flit-publish: DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
 flit-publish:
 	$(DOCKER_RUN) "python -m flit publish"
 
+flit-install:
+	FLIT_ROOT_INSTALL=1 flit install
+
 # ------------------------------------------------------------------
 # Utils
 ephemeris:
@@ -151,4 +171,4 @@ clean:
 	rm -rf htmlcov
 	rm -f tests/data/*.png
 
-.PHONY: build test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts tutorial
+.PHONY: build test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts tutorial prep-dsos prep-constellations

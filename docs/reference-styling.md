@@ -154,6 +154,7 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
     - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
     - `BLUE_MEDIUM` - Medium brightness blue colors ([details](#extensions-blue-medium))
     - `BLUE_DARK` - Dark blue and contrasting colors ([details](#extensions-blue-dark))
+    - `BLUE_GOLD` - Dark blue / gold colors ([details](#extensions-blue-gold))
     - `ANTIQUE` - Antique map inspired colors ([details](#extensions-antique))
     - `NORD` - Nord-inspired colors ([details](#extensions-nord))
 - **Plot types**
@@ -164,14 +165,14 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
 
 ## Overriding Styles When Plotting
 
-After you create a plot instance and start plotting stuff (e.g. stars, DSOs, etc), then you may want to override the plot's style sometimes. For example, you may want to plot the brightest stars with one style and the dimmer stars with a different style (see the example [map of Sagittarius](/examples/map-sagittarius/) which uses different markers for brighter stars). Luckily, Starplot provides two easy ways to do this:
+After you create a plot instance and start plotting stuff (e.g. stars, DSOs, etc), then you may want to override the plot's style sometimes. For example, you may want to plot the brightest stars with one style and the dimmer stars with a different style (see the example [map of Sagittarius](/examples/map-sagittarius/) which uses different markers for brighter stars). Starplot provides two easy ways to do this:
 
 1. ####  Via `style` kwarg {.mt-none}
-All plotting calls have an optional `style` kwarg that lets you pass in a dictionary of any styles you want to override for that plotting call. For example, here's how you can plot bright stars with a different marker and color than the plot's style:
+All plotting functions have an optional `style` kwarg that lets you pass in a dictionary of any styles you want to override for that plotting call. For example, here's how you can plot bright stars with a different marker and color than the plot's style:
 
     ```python
     p.stars(
-        mag=3,
+        where=[_.magnitude < 3],
         style={
             "marker": {
                 "symbol": "star",
@@ -187,7 +188,7 @@ When you only want to override one or two style properties, it can be tedious to
 
     ```python
     p.stars(
-        mag=3,
+        where=[_.magnitude < 3],
         style__marker__symbol="star",
         style__marker__color="red",
     )
@@ -308,6 +309,7 @@ When you only want to override one or two style properties, it can be tedious to
     - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
     - `BLUE_MEDIUM` - Medium brightness bluish gray colors ([details](#extensions-blue-medium))
     - `BLUE_DARK` - Dark "Starplot blue" colors ([details](#extensions-blue-dark))
+    - `BLUE_GOLD` - Dark blue / gold colors ([details](#extensions-blue-gold))
     - `ANTIQUE` - Antique map inspired colors ([details](#extensions-antique))
     - `NORD` - Nord-inspired colors ([details](#extensions-nord))
 - **Plot types**
@@ -376,6 +378,19 @@ Dark bluish gray colors
 
     ```yaml 
     --8<-- "src/starplot/styles/ext/blue_dark.yml"
+    ```
+</div>
+
+<!-- BLUE GOLD -->
+<h2 class="doc doc-heading" id="extensions-blue-gold"><code>BLUE_GOLD</code></h2>
+
+<div class="indent" markdown>
+Dark bluish gold colors
+
+???- star "Source"
+
+    ```yaml 
+    --8<-- "src/starplot/styles/ext/blue_gold.yml"
     ```
 </div>
 

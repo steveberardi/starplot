@@ -10,18 +10,28 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
+
     - name: Build Docker Image
       run: make build
+    
     - name: Check Lint
       run: make lint CI=true
+    
     - name: Check Format
       run: make format CI=true ARGS=--check
+    
+    - name: Build sky.db
+      run: make db CI=true
+
     - name: Run Tests
       run: make test CI=true
+    
     - name: Check Image Hashes
       run: make check-hashes CI=true
+    
     - name: Build
       run: make flit-build
+    
     - name: Publish
       env:
         FLIT_USERNAME: __token__

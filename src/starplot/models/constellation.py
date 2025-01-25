@@ -1,16 +1,10 @@
-from shapely import Polygon
+from typing import Union, Iterator
 
-from starplot.models.base import SkyObject, SkyObjectManager
-from starplot.models.geometry import to_24h
+from ibis import _
+from shapely import Polygon, MultiPolygon
+
+from starplot.models.base import SkyObject
 from starplot.data import constellations
-
-
-class ConstellationManager(SkyObjectManager):
-    @classmethod
-    def all(cls):
-        all_constellations = constellations.load()
-        for constellation in all_constellations.itertuples():
-            yield from_tuple(constellation)
 
 
 class Constellation(SkyObject):
@@ -18,16 +12,22 @@ class Constellation(SkyObject):
     Constellation model.
     """
 
-    _manager = ConstellationManager
-
     iau_id: str = None
-    """International Astronomical Union (IAU) three-letter designation, all lowercase"""
+    """
+    International Astronomical Union (IAU) three-letter designation, all lowercase.
+    
+    **Important**: Starplot treats Serpens as two separate constellations to make them easier to work with programatically. 
+    Serpens Caput has the `iau_id` of `ser1` and Serpens Cauda is `ser2`
+    """
 
     name: str = None
     """Name"""
 
-    boundary: Polygon = None
-    """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in 24H format."""
+    star_hip_ids: list[int] = None
+    """List of HIP ids for stars that are part of the _lines_ for this constellation."""
+
+    boundary: Union[Polygon, MultiPolygon] = None
+    """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
 
     def __init__(
         self,
@@ -35,33 +35,59 @@ class Constellation(SkyObject):
         dec: float,
         iau_id: str,
         name: str = None,
+        star_hip_ids: list[int] = None,
         boundary: Polygon = None,
     ) -> None:
-        super().__init__(ra, dec)
+        super().__init__(ra, dec, constellation_id=iau_id.lower())
         self.iau_id = iau_id.lower()
-        self._constellation_id = self.iau_id  # override from super()
         self.name = name
+        self.star_hip_ids = star_hip_ids
         self.boundary = boundary
 
     def __repr__(self) -> str:
         return f"Constellation(iau_id={self.iau_id}, name={self.name}, ra={self.ra}, dec={self.dec})"
 
     @classmethod
-    def get(**kwargs) -> "Constellation":
+    def all(cls) -> Iterator["Constellation"]:
+        df = constellations.load().to_pandas()
+
+        for c in df.itertuples():
+            yield from_tuple(c)
+
+    @classmethod
+    def get(cls, **kwargs) -> "Constellation":
         """
         Get a Constellation, by matching its attributes.
 
-        Example: `hercules = Constellation.get(name="Hercules")`
+        Example:
+
+            hercules = Constellation.get(name="Hercules")
 
         Args:
             **kwargs: Attributes on the constellation you want to match
 
         Raises: `ValueError` if more than one constellation is matched
         """
-        pass
+        filters = []
+
+        for k, v in kwargs.items():
+            filters.append(getattr(_, k) == v)
+
+        df = constellations.load(filters=filters).to_pandas()
+        results = [from_tuple(c) for c in df.itertuples()]
+
+        if len(results) == 1:
+            return results[0]
+
+        if len(results) > 1:
+            raise ValueError(
+                "More than one match. Use find() instead or narrow your search."
+            )
+
+        return None
 
     @classmethod
-    def find(where: list) -> list["Constellation"]:
+    def find(cls, where: list) -> list["Constellation"]:
         """
         Find Constellations
 
@@ -72,7 +98,9 @@ class Constellation(SkyObject):
             List of Constellations that match all `where` expressions
 
         """
-        pass
+        df = constellations.load(filters=where).to_pandas()
+
+        return [from_tuple(c) for c in df.itertuples()]
 
     def constellation(self):
         """Not applicable to Constellation model, raises `NotImplementedError`"""
@@ -80,16 +108,11 @@ class Constellation(SkyObject):
 
 
 def from_tuple(c: tuple) -> Constellation:
-    geometry = c.geometry
-    if len(c.geometry.geoms) == 1:
-        geometry = c.geometry.geoms[0]
-
-    geometry = to_24h(geometry)
-
     return Constellation(
-        ra=c.center_ra / 15,
-        dec=c.center_dec,
+        ra=c.ra,
+        dec=c.dec,
         iau_id=c.iau_id,
         name=c.name,
-        boundary=geometry,
+        star_hip_ids=c.star_hip_ids,
+        boundary=c.geometry,
     )

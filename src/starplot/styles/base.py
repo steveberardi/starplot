@@ -12,7 +12,7 @@ from pydantic.functional_serializers import PlainSerializer
 from matplotlib import patheffects
 from typing_extensions import Annotated
 
-from starplot.data.dsos import DsoType
+from starplot.models.dso import DsoType
 from starplot.styles.helpers import merge_dict
 from starplot.styles.markers import (
     ellipse,
@@ -807,13 +807,7 @@ class PlotStyle(BaseStyle):
             edge_width=1.3,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(
-            # font_weight=FontWeightEnum.LIGHT,
-            # offset_x=7,
-            # offset_y=-6,
-            offset_x="auto",
-            offset_y="auto",
-        ),
+        label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
     """Styling for open star clusters"""
 
@@ -825,11 +819,7 @@ class PlotStyle(BaseStyle):
             edge_width=1.3,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(
-            font_weight=FontWeightEnum.LIGHT,
-            offset_x=7,
-            offset_y=-6,
-        ),
+        label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
     """Styling for associations of stars"""
 
@@ -842,7 +832,7 @@ class PlotStyle(BaseStyle):
             edge_width=1.2,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(offset_x=7, offset_y=-6),
+        label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
     """Styling for globular star clusters"""
 
@@ -852,7 +842,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(offset_x=1, offset_y=-1),
+        label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
     """Styling for galaxies"""
 
@@ -862,7 +852,7 @@ class PlotStyle(BaseStyle):
             fill=FillStyleEnum.FULL,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(offset_x=1, offset_y=-1),
+        label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
     """Styling for nebulas"""
 
@@ -874,7 +864,7 @@ class PlotStyle(BaseStyle):
             size=26,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
-        label=LabelStyle(offset_x=1, offset_y=-1),
+        label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
     """Styling for planetary nebulas"""
 

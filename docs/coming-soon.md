@@ -1,6 +1,4 @@
 
-- 🗄️ Data optimizations
-- 🧮 Coordinate system helpers
 - 🌑 Planet moons
 - ☄️ Comet model
 - ✴️ Custom markers

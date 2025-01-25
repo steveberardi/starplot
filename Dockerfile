@@ -7,17 +7,21 @@ WORKDIR /starplot
 RUN apt-get clean && apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
 
 # ---------------------------------------------------------------------
-FROM base as dev
+FROM base AS dev
 
 WORKDIR /starplot
 
 COPY . .
 
-RUN pip install -r requirements.txt
-RUN pip install -r requirements-dev.txt
+RUN pip install uv
+RUN uv pip install --system -r requirements.txt
+RUN uv pip install --system -r requirements-dev.txt
 
 ENV PYTHONPATH=/starplot/src/
 
 RUN git config --global --add safe.directory /starplot
+
+# Build database
+RUN python data/scripts/db.py
 
 CMD ["bash", "-c", "python -m pytest . && python hash_checks/hashio.py check"]

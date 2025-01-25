@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytz import timezone
-from starplot import OpticPlot
+from starplot import OpticPlot, DSO, _
 from starplot.callables import color_by_bv
 from starplot.optics import Refractor
 from starplot.styles import PlotStyle, extensions
@@ -12,10 +12,11 @@ style = PlotStyle().extend(
     extensions.OPTIC,
 )
 
+m45 = DSO.get(m="45")
 p = OpticPlot(
     # M45
-    ra=3.7912778,
-    dec=24.1052778,
+    ra=m45.ra,
+    dec=m45.dec,
     lat=33.363484,
     lon=-116.836394,
     # Refractor Telescope
@@ -30,7 +31,7 @@ p = OpticPlot(
     autoscale=True,
 )
 p.stars(
-    mag=12,
+    where=[_.magnitude < 12],
     color_fn=color_by_bv,
 )
 p.info()

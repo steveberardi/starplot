@@ -4,10 +4,10 @@ title: Star Charts and Maps of the Sky in Python
 
 # Welcome to Starplot
 
-![Python](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge&color=85A2C1)
-![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=85C0C1)
-![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=A485C1)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge&color=a2c185)
+![Python](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge&color=6388b0)
+![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=57a8a8)
+![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=8b63b0)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge&color=88b063)
 
 Starplot is a Python library for creating star charts and maps of the sky.
 {.text-subtitle}
@@ -26,11 +26,13 @@ Starplot is a Python library for creating star charts and maps of the sky.
 
 - 📥 **Export** - png, svg, jpeg
 
+- 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
+
 - 🧭 **Label Collision Avoidance**
 
 Join other starplotters on [Discord :fontawesome-brands-discord:{ .fg-primary }](https://discord.gg/WewJJjshFu)
 
-
+<hr>
 *Example charts and maps created with Starplot:*
 <!-- {.text-subtitle} -->
 

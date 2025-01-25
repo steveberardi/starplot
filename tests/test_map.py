@@ -30,8 +30,8 @@ def test_map_radec_invalid():
 def test_map_objects_list():
     p = MapPlot(
         projection=Projection.MERCATOR,
-        ra_min=8.3,
-        ra_max=8.8,
+        ra_min=8.3 * 15,
+        ra_max=8.8 * 15,
         dec_min=19.4,
         dec_max=19.8,
     )
@@ -51,7 +51,7 @@ def test_map_objects_list_planets():
     p = MapPlot(
         projection=Projection.MILLER,
         ra_min=0,
-        ra_max=24,
+        ra_max=24 * 15,
         dec_min=-40,
         dec_max=40,
         dt=dt,
@@ -60,10 +60,10 @@ def test_map_objects_list_planets():
     p.sun()
     p.moon()
 
-    assert p.objects.moon.ra == 19.502411822774185
+    assert p.objects.moon.ra == 292.53617734161276
     assert p.objects.moon.dt == dt
 
-    assert p.objects.sun.ra == 10.398849150787433
+    assert p.objects.sun.ra == 155.98273726181148
     assert p.objects.sun.dt == dt
 
     assert len(p.objects.planets) == 8
@@ -71,4 +71,4 @@ def test_map_objects_list_planets():
 
 def test_marker_no_label():
     p = MapPlot(projection=Projection.MERCATOR)
-    p.marker(ra=10, dec=0, style__marker__color="blue")
+    p.marker(ra=150, dec=0, style__marker__color="blue")

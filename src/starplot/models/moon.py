@@ -7,8 +7,8 @@ from skyfield import almanac
 from shapely import Polygon
 
 from starplot.data import load
-from starplot.models.base import SkyObject, SkyObjectManager
-from starplot.models.geometry import circle
+from starplot.models.base import SkyObject
+from starplot.geometry import circle
 from starplot.utils import dt_or_now
 
 
@@ -25,14 +25,50 @@ class MoonPhase(str, Enum):
     WANING_CRESCENT = "Waning Crescent"
 
 
-class MoonManager(SkyObjectManager):
-    @classmethod
-    def all(cls):
-        raise NotImplementedError
+class Moon(SkyObject):
+    """Moon model. Only used for Earth's moon right now, but will potentially represent other planets' moons in future versions."""
 
-    @classmethod
-    def find(cls):
-        raise NotImplementedError
+    name: str = "Moon"
+    """Name of the moon"""
+
+    dt: datetime
+    """Date/time of moon's position"""
+
+    apparent_size: float
+    """Apparent size (degrees)"""
+
+    phase_angle: float
+    """Angle of the moon from the Sun (degrees)"""
+
+    phase_description: str
+    """Description of the moon's phase. The Moon will be considered New/Full/Quarter if it's within 12 hours of that precise phase."""
+
+    illumination: float
+    """Percent of illumination (0...1)"""
+
+    geometry: Polygon = None
+    """Shapely Polygon of the moon's extent. Right ascension coordinates are in degrees (0...360)."""
+
+    def __init__(
+        self,
+        ra: float,
+        dec: float,
+        name: str,
+        dt: datetime,
+        apparent_size: float,
+        phase_angle: float,
+        phase_description: str,
+        illumination: str,
+        geometry: Polygon = None,
+    ) -> None:
+        super().__init__(ra, dec)
+        self.name = name
+        self.dt = dt
+        self.apparent_size = apparent_size
+        self.phase_angle = phase_angle
+        self.phase_description = phase_description
+        self.illumination = illumination
+        self.geometry = geometry
 
     @classmethod
     def get(
@@ -41,7 +77,16 @@ class MoonManager(SkyObjectManager):
         lat: float = None,
         lon: float = None,
         ephemeris: str = "de421_2001.bsp",
-    ):
+    ) -> "Moon":
+        """
+        Get the Moon for a specific date/time and observing location.
+
+        Args:
+            dt: Datetime you want the moon for (must be timezone aware!). _Defaults to current UTC time_.
+            lat: Latitude of observing location. If you set this (and longitude), then the Moon's _apparent_ RA/DEC will be calculated.
+            lon: Longitude of observing location
+            ephemeris: Ephemeris to use for calculating moon positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
+        """
         RADIUS_KM = 1_740
 
         dt = dt_or_now(dt)
@@ -106,7 +151,7 @@ class MoonManager(SkyObjectManager):
             phase = MoonPhase.WANING_CRESCENT
 
         return Moon(
-            ra=ra.hours,
+            ra=ra.hours * 15,
             dec=dec.degrees,
             name="Moon",
             dt=dt,
@@ -114,71 +159,5 @@ class MoonManager(SkyObjectManager):
             phase_angle=phase_angle,
             phase_description=phase.value,
             illumination=illumination,
-            geometry=circle((ra.hours, dec.degrees), apparent_diameter_degrees),
+            geometry=circle((ra.hours * 15, dec.degrees), apparent_diameter_degrees),
         )
-
-
-class Moon(SkyObject):
-    """Moon model. Only used for Earth's moon right now, but will potentially represent other planets' moons in future versions."""
-
-    _manager = MoonManager
-
-    name: str = "Moon"
-    """Name of the moon"""
-
-    dt: datetime
-    """Date/time of moon's position"""
-
-    apparent_size: float
-    """Apparent size (degrees)"""
-
-    phase_angle: float
-    """Angle of the moon from the Sun (degrees)"""
-
-    phase_description: str
-    """Description of the moon's phase. The Moon will be considered New/Full/Quarter if it's within 12 hours of that precise phase."""
-
-    illumination: float
-    """Percent of illumination (0...1)"""
-
-    geometry: Polygon = None
-    """Shapely Polygon of the moon's extent. Right ascension coordinates are in 24H format."""
-
-    def __init__(
-        self,
-        ra: float,
-        dec: float,
-        name: str,
-        dt: datetime,
-        apparent_size: float,
-        phase_angle: float,
-        phase_description: str,
-        illumination: str,
-        geometry: Polygon = None,
-    ) -> None:
-        super().__init__(ra, dec)
-        self.name = name
-        self.dt = dt
-        self.apparent_size = apparent_size
-        self.phase_angle = phase_angle
-        self.phase_description = phase_description
-        self.illumination = illumination
-        self.geometry = geometry
-
-    @classmethod
-    def get(
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
-    ) -> "Moon":
-        """
-        Get the Moon for a specific date/time and observing location.
-
-        Args:
-            dt: Datetime you want the moon for (must be timezone aware!). _Defaults to current UTC time_.
-            lat: Latitude of observing location. If you set this (and longitude), then the Moon's _apparent_ RA/DEC will be calculated.
-            lon: Longitude of observing location
-            ephemeris: Ephemeris to use for calculating moon positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
-        """
-        pass

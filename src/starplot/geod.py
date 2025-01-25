@@ -11,10 +11,6 @@ def distance_m(distance_degrees: float, lat: float = 0, lon: float = 0):
     return distance
 
 
-def to_radec(p) -> tuple:
-    return (p[0] / 15, p[1])
-
-
 def away_from_poles(dec):
     # for some reason cartopy does not like plotting things EXACTLY at the poles
     # so, this is a little hack to avoid the bug (or maybe a misconception?) by
@@ -34,7 +30,6 @@ def rectangle(
     angle: float = 0,
 ) -> list:
     ra, dec = center
-    ra = ra * 15
     dec = away_from_poles(dec)
     angle = 180 - angle
 
@@ -70,7 +65,6 @@ def ellipse(
     end_angle: int = 360,
 ) -> list:
     ra, dec = center
-    ra = ra * 15
     dec = away_from_poles(dec)
     angle = 180 - angle
 
