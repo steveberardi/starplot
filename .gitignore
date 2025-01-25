@@ -9,24 +9,19 @@ hip8.dat
 CometEls.txt
 ongc.gpkg
 
-
 duckdb-extensions
 
-# Temporary ignores for data management branch
+# Sky Object Database
+# ignore this because it's large and created on release
 sky.db
-stars.bigsky.0.4.0.mag10.parquet
-
 
 # Data Folder
 data/build/*
 !data/build/.keep
 
-# Big Sky - Full Catalog
+# Big Sky Catalog
 # we ignore this because of its size (50+ MB)
-bigsky.0.4.0.stars.csv.gz
 bigsky.*.csv.gz
-stars.bigsky.parquet
-bigsky.0.4.0.stars.parquet
 bigsky*.parquet
 
 hash_checks/data/*.png
