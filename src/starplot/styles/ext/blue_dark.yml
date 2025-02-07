@@ -9,7 +9,7 @@ border_line_color: hsl(209, 38%, 50%)
 
 horizon:
   line:
-    color: hsl(209, 50%, 20%)
+    color: hsl(209, 60%, 13%)
     edge_color: hsl(209, 38%, 50%)
   label:
     font_color: hsl(209, 56%, 86%)

@@ -3,9 +3,6 @@ FROM python:${PYTHON_VERSION}-bookworm AS base
 
 WORKDIR /starplot
 
-# Install required system libraries (GEOS + GDAL)
-RUN apt-get clean && apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
-
 # ---------------------------------------------------------------------
 FROM base AS dev
 

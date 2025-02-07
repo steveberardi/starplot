@@ -7,6 +7,8 @@
 - Adds a new field to the constellation model: `star_hip_ids` which is a list of hip ids for stars that make up the lines in the constellation
 - Dropped support for Python 3.9 (Ibis requires 3.10 or higher)
 - Increased minimum required version of GeoPandas to `1.0.1`
+- [**v0.15.1**] Fixes bug with build script that prevented starplot data from being included in the distribution
+- [**v0.15.2**] Fixes a few colors in the dark blue and blue gold style extensions
 
 ## v0.14.x
 [Documentation](https://archives.starplot.dev/0.14.0/)
