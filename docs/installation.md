@@ -1,29 +1,15 @@
-Starplot is available on [PyPI](https://pypi.org/project/starplot/), but it's basically just a thin layer on top of [Matplotlib](https://matplotlib.org/stable/), [Skyfield](https://github.com/skyfielders/python-skyfield), [Cartopy](https://scitools.org.uk/cartopy/docs/latest/), and others. So, before installing Starplot you'll need a few dependencies. Below are instructions for installing on macOS and Linux.
+Starplot is available on [PyPI](https://pypi.org/project/starplot/), and its dependencies have binary wheels for most operating systems, so installation should be easy via pip. See below for details.
 
 Supported Python versions: 3.10 / 3.11 / 3.12
 
-Required Dependencies: [GEOS](https://libgeos.org/), [GDAL](https://gdal.org/)
+## macOS / Linux
 
-## macOS / Linux (debian)
-
-1. **Install required system libraries**
-
-    macOS (via [Homebrew](https://brew.sh/)):
-    ```
-    brew install geos gdal
-    ```
-
-    Linux (debian):
-    ```
-    apt-get install libgeos-dev libgdal-dev
-    ```
-
-2. **Install Starplot:**
+1. **Install Starplot:**
 ```
 pip install starplot
 ```
 
-3. (optional) **Setup Starplot:**
+2. (optional) **Setup Starplot:**
 ```
 starplot setup --install-big-sky
 ```
@@ -35,9 +21,6 @@ Here's a basic Docker container definition that'll get you up and running:
 
 ```docker
 FROM python:3.11.11-bookworm
-
-# Install required system libraries (GEOS + GDAL)
-RUN apt-get clean && apt-get update -y && apt-get install -y libgeos-dev libgdal-dev
 
 RUN pip install starplot
 RUN starplot setup --install-big-sky  # Optional
@@ -51,6 +34,15 @@ RUN starplot setup --install-big-sky  # Optional
 
 ## Troubleshooting
 
+### GEOS / GDAL errors on installation
+
+If you see any errors related to GEOS and/or GDAL when trying to install Starplot, then you may need to build those dependencies from source for your environment.
+
+See their websites for details:
+
+- [GEOS](https://libgeos.org/)
+- [GDAL](https://gdal.org/)
+
 ### Segmentation Fault with map plots
 
 If you're seeing "segmentation fault" errors when creating map plots, you may have to install [shapely](https://shapely.readthedocs.io/en/stable/index.html) from source for your runtime environment:
@@ -58,3 +50,6 @@ If you're seeing "segmentation fault" errors when creating map plots, you may ha
 pip install --no-binary :all: shapely
 ```
 *Warning: this may take awhile (5+ minutes), because it builds shapely from source.*
+
+
+<br/><br/><br/>
