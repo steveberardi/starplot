@@ -48,9 +48,11 @@ ecliptic:
     alpha: 0.9
 
 planets:
+  label:
+    font_color: hsl(284, 78%, 90%)
   marker:
     alpha: 1
-    color: hsl(37, 78%, 80%)
+    color: hsl(284, 80%, 80%)
     fill: full
 milky_way:
   alpha: 0.14
