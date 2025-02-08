@@ -495,22 +495,13 @@ def check_map_plot_custom_clip_path_virgo():
 
 
 def check_map_label_callables():
-    style = STYLE.extend(
-        {
-            "dso_open_cluster": {
-                "label": {
-                    "font_weight": "bold",
-                }
-            },
-        }
-    )
     p = MapPlot(
         projection=Projection.MILLER,
         ra_min=3.5 * 15,
         ra_max=4 * 15,
         dec_min=22,
         dec_max=26,
-        style=style,
+        style=STYLE,
         resolution=2000,
         autoscale=True,
     )
@@ -519,16 +510,18 @@ def check_map_label_callables():
     p.polygon(
         geometry=m45.geometry,
         style__color=None,
-        style__fill_color=style.dso_open_cluster.marker.color,
+        style__fill_color=STYLE.dso_open_cluster.marker.color,
         style__edge_color="red",
-        style__edge_width=6,
-        style__line_style=(0, (1.2, 8)),
+        style__edge_width=16,
+        style__line_style=(0, (4, 8)),
     )
 
     p.stars(
         catalog="big-sky-mag11",
-        label_fn=lambda s: s.hip,
+        label_fn=lambda s: str(int(s.hip)) if s.hip else None,
         where=[_.magnitude < 9.6, _.geometry.intersects(m45.geometry)],
+        where_labels=[_.magnitude < 5],
+        style__label__font_size=36,
     )
 
     filename = DATA_PATH / "map-m45-label-callables.png"
