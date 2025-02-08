@@ -19,9 +19,9 @@ map_gridlines:
   filename: /starplot/hash_checks/data/map-gridlines.png
   phash: cbb44b162d3262af
 map_label_callables:
-  dhash: 80e04888984c889080988c8c9c8c88a0809a9d0d8d9e98a0
+  dhash: 80a06088c860a080d098ac2c2cac98e0809a9d0d0d9d98a0
   filename: /starplot/hash_checks/data/map-m45-label-callables.png
-  phash: b330cdc93c66669c
+  phash: b232c9c94ee6cccc
 map_milky_way_multi_polygon:
   dhash: 711f0b0c80662c2c711f0b088066242d79530b0880662c2d
   filename: /starplot/hash_checks/data/map-milky-way-multi-polygon.png
