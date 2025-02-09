@@ -463,10 +463,10 @@ def read_catalog(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="s
     con = db.connect()
 
     if catalog == StarCatalog.BIG_SKY_MAG11:
-        stars = con.read_parquet(DataFiles.BIG_SKY_MAG11, table_name)
+        stars = con.read_parquet(DataFiles.BIG_SKY_MAG11, table_name=table_name)
     elif catalog == StarCatalog.BIG_SKY:
         bigsky.download_if_not_exists()
-        stars = con.read_parquet(DataFiles.BIG_SKY, table_name)
+        stars = con.read_parquet(DataFiles.BIG_SKY, table_name=table_name)
     else:
         raise ValueError("Unrecognized star catalog.")
 
@@ -487,7 +487,7 @@ def read_catalog(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="s
         designations,
         [
             stars.hip == designations.hip,
-            (stars.ccdm == "A") | (stars.ccdm == "") | (stars.ccdm.isnull()),
+            (stars.ccdm.startswith("A")) | (stars.ccdm == "") | (stars.ccdm.isnull()),
         ],
         how="left",
     )

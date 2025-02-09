@@ -13,6 +13,9 @@
 - [**v0.15.4**]
     - Fixes constellation lines for Mensa
     - Optimizes star catalog loading
+- [**v0.15.5**]
+    - Fixes compatibility with Ibis 10.x
+    - Fixes bug with getting star names and designations
 
 ## v0.14.x
 [Documentation](https://archives.starplot.dev/0.14.0/)
