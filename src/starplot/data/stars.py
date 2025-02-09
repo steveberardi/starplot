@@ -1,3 +1,5 @@
+from functools import cache
+
 import ibis
 from ibis import _
 
@@ -456,15 +458,15 @@ class StarCatalog:
     """
 
 
-def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=None):
-    filters = filters or []
+@cache
+def read_catalog(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars"):
     con = db.connect()
 
     if catalog == StarCatalog.BIG_SKY_MAG11:
-        stars = con.read_parquet(DataFiles.BIG_SKY_MAG11, "stars")
+        stars = con.read_parquet(DataFiles.BIG_SKY_MAG11, table_name)
     elif catalog == StarCatalog.BIG_SKY:
         bigsky.download_if_not_exists()
-        stars = con.read_parquet(DataFiles.BIG_SKY, "stars")
+        stars = con.read_parquet(DataFiles.BIG_SKY, table_name)
     else:
         raise ValueError("Unrecognized star catalog.")
 
@@ -481,9 +483,6 @@ def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=
         rowid=ibis.row_number(),
     )
 
-    if extent:
-        stars = stars.filter(stars.geometry.intersects(extent))
-
     stars = stars.join(
         designations,
         [
@@ -492,6 +491,16 @@ def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=
         ],
         how="left",
     )
+
+    return stars
+
+
+def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=None):
+    filters = filters or []
+    stars = read_catalog(catalog)
+
+    if extent:
+        stars = stars.filter(stars.geometry.intersects(extent))
 
     if filters:
         return stars.filter(*filters)
