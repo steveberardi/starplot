@@ -10,6 +10,9 @@
 - [**v0.15.1**] Fixes bug with build script that prevented starplot data from being included in the distribution
 - [**v0.15.2**] Fixes a few colors in the dark blue and blue gold style extensions
 - [**v0.15.3**] Locks version of a few dependencies (DuckDB and Ibis)
+- [**v0.15.4**]
+    - Fixes constellation lines for Mensa
+    - Optimizes star catalog loading
 
 ## v0.14.x
 [Documentation](https://archives.starplot.dev/0.14.0/)
