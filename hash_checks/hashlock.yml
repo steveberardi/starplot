@@ -1,5 +1,5 @@
 horizon_base:
-  dhash: 2f83990dc60b44702e83890d461b44700383dd0d861b4460
+  dhash: 2f83990dc60b44702e83890d461b44700383cd0d861b4460
   filename: /starplot/hash_checks/data/horizon-base.png
   phash: e3b81ced14b63386
 horizon_north_celestial_pole:
@@ -7,7 +7,7 @@ horizon_north_celestial_pole:
   filename: /starplot/hash_checks/data/horizon-north-celestial-pole.png
   phash: d59a38c94ad20be7
 map_coma_berenices_dso_size:
-  dhash: aa84acecc288c0c0a2848ceca288c6c08a8a92a2aa82c282
+  dhash: aa84acecc888c0c0a2848ceca888c6c08a8a92a2a882c282
   filename: /starplot/hash_checks/data/map-coma-berenices-dso-size.png
   phash: 969669696f961269
 map_custom_stars:
@@ -35,11 +35,11 @@ map_moon_phase_waxing_crescent:
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b3cccc3333cccc31
 map_orion_base:
-  dhash: 18393b5e3e2f65681d393b5e2e2d65681c392bce2e2f6468
+  dhash: 18393b5e3e2f656819393b5e2e2d65681c392bce2e2f6468
   filename: /starplot/hash_checks/data/map-orion-base.png
-  phash: be795a649584b594
+  phash: bf795a649504b594
 map_orion_extra:
-  dhash: 193b3b7f3b656d17193b3b7f2b656d0f1c3b0b4e2b256c0f
+  dhash: 193b1b7f3b656d17193b1b7f2b656d0f1c3b0b4e2b256c0f
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: be71e01ee117e491
 map_plot_custom_clip_path_virgo:
@@ -55,7 +55,7 @@ map_scope_bino_fov:
   filename: /starplot/hash_checks/data/map-scope-bino-fov.png
   phash: e465997166649979
 map_stereo_base:
-  dhash: 77766470353b5416777664f435185412777664f0b598d416
+  dhash: 77766470353b5412777664f435185416777664f0b598d412
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
   phash: 9dce6961c291f23a
 map_with_planets:
