@@ -487,7 +487,7 @@ def read_catalog(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="s
         designations,
         [
             stars.hip == designations.hip,
-            (stars.ccdm == "A") | (stars.ccdm == "") | (stars.ccdm.isnull()),
+            (stars.ccdm.startswith("A")) | (stars.ccdm == "") | (stars.ccdm.isnull()),
         ],
         how="left",
     )
