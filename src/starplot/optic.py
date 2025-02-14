@@ -229,7 +229,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         Args:
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            catalog: The catalog of stars to use
+            catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [star catalogs](/data/star-catalogs/) for details
             style: If `None`, then the plot's style for stars will be used
             rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
