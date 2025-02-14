@@ -74,13 +74,13 @@
         </a>
     </li>
 
-    <li>
+    <!-- <li>
         <a href="/examples/map-comet-neowise/">
             <img src="/images/examples/map_comet_neowise-sm.png" alt="Map of Comet NEOWISE in 2020" class="off-glb" loading="lazy"/>
 
             <p class="example-card-title">Comet NEOWISE</p>
         </a>
-    </li>
+    </li> -->
 
     <li>
         <a href="/examples/map-sagittarius/">
