@@ -9,6 +9,7 @@ from multiprocessing import Pool
 
 
 skip = [
+    "map_comet_neowise.py",
     # "map_milky_way_stars.py",
     # "stuff.py",
 ]
