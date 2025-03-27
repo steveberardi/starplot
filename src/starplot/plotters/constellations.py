@@ -302,7 +302,7 @@ class ConstellationPlotterMixin:
             text = labels.get(con.lower())
             self.text(
                 text,
-                ra,
+                ra * 15,
                 dec,
                 style,
                 hide_on_collision=self.hide_colliding_labels,
