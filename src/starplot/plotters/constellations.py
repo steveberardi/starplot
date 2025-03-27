@@ -306,6 +306,7 @@ class ConstellationPlotterMixin:
                 dec,
                 style,
                 hide_on_collision=self.hide_colliding_labels,
+                remove_on_constellation_collision=False,
                 gid="constellations-label-name",
             )
 
