@@ -85,6 +85,9 @@ class DsoPlotterMixin:
         - Emission Nebula
         - Star Cluster Nebula
         - Reflection Nebula
+        - HII Ionized Regions
+
+        * Note that this does NOT plot dark nebulae
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
@@ -94,6 +97,7 @@ class DsoPlotterMixin:
             DsoType.EMISSION_NEBULA,
             DsoType.STAR_CLUSTER_NEBULA,
             DsoType.REFLECTION_NEBULA,
+            DsoType.HII_IONIZED_REGION,
         ]
         where = kwargs.pop("where", [])
         where.append(_.type.isin(nebula_types))

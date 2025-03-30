@@ -360,6 +360,9 @@ class BasePlot(ABC):
 
         x, y = self._prepare_coords(ra, dec)
         kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
+        remove_on_constellation_collision = kwargs.pop(
+            "remove_on_constellation_collision", True
+        )
 
         original_va = kwargs.pop("va", None)
         original_ha = kwargs.pop("ha", None)
@@ -386,7 +389,10 @@ class BasePlot(ABC):
                 x, y, text, **kwargs, va=va, ha=ha, xytext=(offset_x, offset_y)
             )
             removed = self._maybe_remove_label(
-                label, remove_on_collision=hide_on_collision, remove_on_clipped=clip_on
+                label,
+                remove_on_collision=hide_on_collision,
+                remove_on_clipped=clip_on,
+                remove_on_constellation_collision=remove_on_constellation_collision,
             )
 
             if force or not removed:
@@ -868,10 +874,13 @@ class BasePlot(ABC):
             # closed=False, # needs to be false for circles at poles?
             **style.matplot_kwargs(self.scale),
             **kwargs,
-            clip_on=True,
-            clip_path=self._background_clip_path,
+            # clip_on=True,
+            # clip_path=self._background_clip_path,
         )
         self.ax.add_patch(patch)
+        # Need to set clip path AFTER adding patch
+        patch.set_clip_on(True)
+        patch.set_clip_path(self._background_clip_path)
 
     @use_style(PolygonStyle)
     def polygon(

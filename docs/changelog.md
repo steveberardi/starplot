@@ -16,6 +16,11 @@
 - [**v0.15.5**]
     - Fixes compatibility with Ibis 10.x
     - Fixes bug with getting star names and designations
+- [**v0.15.6**]
+    - Removes dependency on plotting stars before constellation labels
+    - Fixes static constellation label plotting
+    - Fixes polygon clipping on optic plots
+    - Adds HII Regions to the `nebula()` function
 
 ## v0.14.x
 [Documentation](https://archives.starplot.dev/0.14.0/)
