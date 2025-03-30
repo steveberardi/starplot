@@ -874,10 +874,13 @@ class BasePlot(ABC):
             # closed=False, # needs to be false for circles at poles?
             **style.matplot_kwargs(self.scale),
             **kwargs,
-            clip_on=True,
-            clip_path=self._background_clip_path,
+            # clip_on=True,
+            # clip_path=self._background_clip_path,
         )
         self.ax.add_patch(patch)
+        # Need to set clip path AFTER adding patch
+        patch.set_clip_on(True)
+        patch.set_clip_path(self._background_clip_path)
 
     @use_style(PolygonStyle)
     def polygon(
