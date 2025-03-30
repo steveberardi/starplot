@@ -12,9 +12,9 @@ from starplot.data import constellations as condata, constellation_lines as conl
 from starplot.data.stars import load as load_stars, StarCatalog
 from starplot.data.constellations import (
     CONSTELLATIONS_FULL_NAMES,
-    CONSTELLATION_HIP_IDS,
 )
 from starplot.data.constellation_stars import CONSTELLATION_HIPS
+from starplot.models import Star
 from starplot.models.constellation import from_tuple as constellation_from_tuple
 from starplot.projections import Projection
 from starplot.profile import profile
@@ -262,11 +262,17 @@ class ConstellationPlotterMixin:
         self.ax.add_collection(line_collection)
 
     def _constellation_labels_auto(self, style, labels, settings):
+        hips = []
+        for c in self.objects.constellations:
+            hips.extend(c.star_hip_ids)
+
+        all_constellation_stars = Star.find(where=[_.hip.isin(hips)])
+
         for constellation in self.objects.constellations:
             constellation_line_stars = [
                 s
-                for s in self.objects.stars
-                if s.hip in CONSTELLATION_HIP_IDS[constellation.iau_id]
+                for s in all_constellation_stars
+                if s.hip in constellation.star_hip_ids
             ]
             if not constellation_line_stars:
                 continue
@@ -320,7 +326,7 @@ class ConstellationPlotterMixin:
         auto_adjust_settings: dict = DEFAULT_AUTO_ADJUST_SETTINGS,
     ):
         """
-        Plots constellation labels.
+        Plots constellation labels for all constellations that have been plotted. This means you must plot the constellations before plotting their labels.
 
         It's good to plot these last because they're area-based labels (vs point-based, like for star names), and area-based labels have more freedom to move around. If you plot area-based labels first, then it would limit the available space for point-based labels.
 
@@ -329,10 +335,6 @@ class ConstellationPlotterMixin:
             labels: A dictionary where the keys are each constellation's 3-letter IAU abbreviation, and the values are how the constellation will be labeled on the plot.
             auto_adjust: If True (the default), then labels will be automatically adjusted to avoid collisions with other labels and stars **Important: you must plot stars and constellations first for this to work**. This uses a fairly simple method: for each constellation it finds the centroid of all plotted constellation stars with lines and then generates random points in the constellation boundary starting at the centroid and then progressively increasing the distance from the centroid.
             auto_adjust_settings: Optional settings for the auto adjustment algorithm.
-
-        TODO:
-            make this work without plotting constellations first
-
         """
 
         if auto_adjust:
