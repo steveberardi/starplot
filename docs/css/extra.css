@@ -421,3 +421,55 @@ td[data-column-id=bayer] {
     width: 100% !important;
     border: 1px solid var(--md-primary-fg-color) !important;
 }
+
+.email-form {
+    padding: 4px;
+
+    h3 {
+        margin-top: 0;
+    }
+
+    .md-button {
+        padding: 10px 20px;
+        border: 1px solid hsl(209, 53%, 36%) !important;;
+        border-radius: 8px !important;
+        background-color: hsl(209, 53%, 86%);
+        font-size: 1em;
+
+        &:hover {
+            color: hsl(209, 53%, 96%) !important;
+            background-color: hsl(209, 53%, 26%) !important;
+        }
+    }
+}
+
+.email-form input {
+    font-size: 1em;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid hsl(209, 43%, 68%);
+}
+
+.mt-0 {
+    margin-top: 0 !important;
+}
+
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.divider {
+    padding: 8px 0;
+    border-top: 1px solid hsl(209, 43%, 68%);
+}
+
+.info-panel {
+    padding: 28px 36px;
+    /* margin-right: 8px; */
+    border: 1px solid hsl(209, 43%, 68%);
+    border-radius: 10px;
+    display: inline-block;
+    /* max-width: 700px; */
+    box-shadow: 4px 4px 4px rgb(159, 159, 159);
+}
+

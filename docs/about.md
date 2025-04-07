@@ -6,7 +6,7 @@
 
 However, the Starplot API becomes more stable with each new version. We anticipate that version `1.0.0` is still at least a year away. The best way to help us get there faster is to [join as a contributor](https://github.com/steveberardi/starplot/blob/main/CONTRIBUTING.md) 😃 help is wanted and very much appreciated!
 
-Join other starplotters on [Discord :fontawesome-brands-discord:{ .fg-primary }](https://discord.gg/WewJJjshFu)
+--8<-- "docs/snippets/_newsletter.html"
 
 ---
 
