@@ -458,18 +458,19 @@ td[data-column-id=bayer] {
     margin-bottom: 0 !important;
 }
 
+.mt-1 {
+    margin-top: 10px !important;
+}
+
 .divider {
     padding: 8px 0;
     border-top: 1px solid hsl(209, 43%, 68%);
 }
 
 .info-panel {
-    padding: 28px 36px;
-    /* margin-right: 8px; */
+    padding: 20px 28px;
     border: 1px solid hsl(209, 43%, 68%);
     border-radius: 10px;
-    display: inline-block;
-    /* max-width: 700px; */
+    max-width: 660px;
     box-shadow: 4px 4px 4px rgb(159, 159, 159);
 }
-
