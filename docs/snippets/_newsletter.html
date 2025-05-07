@@ -8,17 +8,14 @@
     <li>Help us plan and prioritize features by participating in surveys</li>
   </ul>
   <form
+    action="https://buttondown.com/api/emails/embed-subscribe/starplot"
     method="post"
-    action="https://listmonk-1036427073125.us-central1.run.app/subscription/form"
-    class="email-form"
+    target="popupwindow"
+    onsubmit="window.open('https://buttondown.com/starplot', 'popupwindow')"
+    class="embeddable-buttondown-form email-form"
   >
-    <input type="hidden" name="nonce" />
-    <input type="hidden" name="l" value="88d7b18d-d320-408e-b2dd-92101348e20f" />
-    <input type="email" name="email" required placeholder="Your e-mail" size="32" />
+    <input type="email" name="email" id="bd-email" required placeholder="Your e-mail" size="32" />
     <input type="submit" value="Join" class="md-button mt-1" />
-
-    <div class="h-captcha mt-1" data-sitekey="2e94ad92-6b74-4796-9a6a-e48c29be6534"></div>
-
   </form>
 
   <p class="mb-0">
