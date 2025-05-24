@@ -152,7 +152,7 @@ flit-install:
 # ------------------------------------------------------------------
 # Utils
 ephemeris:
-	$(DOCKER_RUN) "python -m jplephem excerpt 2001/1/1 2050/1/1 $(DE421_URL) de421sub.bsp"
+	$(DOCKER_RUN) "python -m jplephem excerpt 2025/1/1 2050/1/1 $(DE421_URL) de421sub.bsp"
 
 hip8:
 	$(DOCKER_RUN) "python ./scripts/hip.py ./src/starplot/data/library/hip_main.dat hip8.dat 15"

@@ -22,6 +22,7 @@ nav:
             - Constellations: data/constellations.md
         - Settings: reference-settings.md
     - Data Sources: data-sources.md
+    - Publications: publications.md
     - License: license.md
     - Changelog: changelog.md
     - Coming Soon: coming-soon.md
