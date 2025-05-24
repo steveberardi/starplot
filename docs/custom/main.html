@@ -11,3 +11,48 @@
 <!-- Plausible -->
 <script defer data-domain="starplot.dev" src="https://plausible.io/js/script.js"></script>
 {% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector("div.md-sidebar__scrollwrap");
+            const div = document.createElement("div");
+            const a = document.createElement("a");
+            const p = document.createElement("p");
+            const img = document.createElement("img");
+            
+            img.src = "/images/cover-front-sm-360.png";
+            img.style.maxWidth = '100px';
+            // img.style.marginTop = '4px';
+            img.style.opacity = '90%';
+            img.style.marginBottom = '16px';
+
+            div.style.marginTop = '60px';
+            div.style.marginLeft = '10px';
+            div.style.marginRight = '50px';
+
+            div.style.borderTop = '1px solid #c5c5c5';
+            div.style.borderBottom = '1px solid #c5c5c5';
+
+            p.innerText = "Help support Starplot by purchasing the All Sky Map, which was made with Starplot!"
+            p.style.lineHeight = "1.25em";
+            p.style.fontSize = "15px";
+            p.classList.add("md-typeset");
+
+            a.href = "https://steveberardimaps.com/products/all-sky-map";
+            a.target = "_blank";
+
+            // a.innerText = "Help support Starplot by purchasing the All Sky Map!";
+            
+            a.appendChild(img);
+            div.appendChild(p);
+            div.appendChild(a);
+            sidebar.appendChild(div);
+        });
+
+    </script>
+
+{% endblock %}

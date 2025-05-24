@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+title: Starplot
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Steve
+    family-names: Berardi
+    orcid: https://orcid.org/0009-0005-6106-1450
+repository-code: 'https://github.com/steveberardi/starplot'
+url: 'https://starplot.dev'
+abstract: >-
+  Starplot is a Python library for creating star charts and
+  maps of the sky
+keywords:
+  - astronomy
+  - maps
+  - charts
+  - graphs
+  - plotting
+license: MIT
+version: 0.15.6
+date-released: '2025-03-30'
