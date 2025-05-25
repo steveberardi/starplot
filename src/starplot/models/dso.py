@@ -10,30 +10,71 @@ from starplot.models.base import SkyObject
 
 class DsoType:
     """
-    Type of deep sky object (DSOs), as designated in OpenNGC
+    Type of deep sky object (DSO), as designated in OpenNGC
     """
 
     STAR = "*"
+    """Star"""
+
     DOUBLE_STAR = "**"
+    """Double star or multiple star system"""
+
     ASSOCIATION_OF_STARS = "*Ass"
+    """Association of stars"""
+
     OPEN_CLUSTER = "OCl"
+    """Open cluster of stars"""
+
     GLOBULAR_CLUSTER = "GCl"
+    """Globular cluster of stars"""
+
     GALAXY = "G"
+    """Galaxy"""
+
     GALAXY_PAIR = "GPair"
+    """Group of two galaxies"""
+
     GALAXY_TRIPLET = "GTrpl"
+    """Group of three galaxies"""
+
     GROUP_OF_GALAXIES = "GGroup"
+    """Group of more than three galaxies"""
+
     NEBULA = "Neb"
+    """Nebula"""
+
     PLANETARY_NEBULA = "PN"
+    """Planetary nebula"""
+
     EMISSION_NEBULA = "EmN"
+    """Emission Nebula"""
+
     STAR_CLUSTER_NEBULA = "Cl+N"
+    """Star cluster with nebulosity"""
+
     REFLECTION_NEBULA = "RfN"
+    """Reflection nebula"""
+
     DARK_NEBULA = "DrkN"
+    """Dark nebula"""
+
     HII_IONIZED_REGION = "HII"
+    """Hydrogen ionized region"""
+
     SUPERNOVA_REMNANT = "SNR"
+    """Supernova remnant"""
+
     NOVA_STAR = "Nova"
+    """Nova star"""
+
     NONEXISTENT = "NonEx"
+    """Non-existant object"""
+
     UNKNOWN = "Other"
+    """Unknown type of object"""
+
     DUPLICATE_RECORD = "Dup"
+    """Duplicate record of another object"""
 
 
 class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
