@@ -35,7 +35,7 @@ class Moon(SkyObject):
     """Date/time of moon's position"""
 
     apparent_size: float
-    """Apparent size (degrees)"""
+    """Apparent size in the sky (degrees)"""
 
     phase_angle: float
     """Angle of the moon from the Sun (degrees)"""
@@ -44,10 +44,10 @@ class Moon(SkyObject):
     """Description of the moon's phase. The Moon will be considered New/Full/Quarter if it's within 12 hours of that precise phase."""
 
     illumination: float
-    """Percent of illumination (0...1)"""
+    """Percent of illumination (0 to 1)"""
 
     geometry: Polygon = None
-    """Shapely Polygon of the moon's extent. Right ascension coordinates are in degrees (0...360)."""
+    """Shapely Polygon of the moon's extent. Right ascension coordinates are in degrees (0 to 360)."""
 
     def __init__(
         self,

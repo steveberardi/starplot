@@ -17,10 +17,10 @@ class SkyObject(CreateMapMixin, CreateOpticMixin):
     """
 
     ra: float
-    """Right Ascension, in degrees (0...360)"""
+    """Right Ascension, in degrees (0 to 360)"""
 
     dec: float
-    """Declination, in degrees (-90...90)"""
+    """Declination, in degrees (-90 to 90)"""
 
     _constellation_id = None
 

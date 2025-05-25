@@ -21,7 +21,7 @@ class Constellation(SkyObject):
     """
 
     name: str = None
-    """Name"""
+    """Name of constellation"""
 
     star_hip_ids: list[int] = None
     """List of HIP ids for stars that are part of the _lines_ for this constellation."""
