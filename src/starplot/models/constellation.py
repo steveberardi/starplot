@@ -88,7 +88,7 @@ class Constellation(SkyObject):
         return None
 
     @classmethod
-    def find(cls, where: list, sql: str = None) -> list["Constellation"]:
+    def find(cls, where: list = None, sql: str = None) -> list["Constellation"]:
         """
         Find Constellations
 

@@ -197,7 +197,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         return None
 
     @classmethod
-    def find(cls, where: list, sql: str = None) -> list["DSO"]:
+    def find(cls, where: list = None, sql: str = None) -> list["DSO"]:
         """
         Find DSOs
 

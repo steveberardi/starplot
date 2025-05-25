@@ -19,6 +19,13 @@ class TestStar:
         assert constellation.iau_id == "cma"
         assert constellation.name == "Canis Major"
 
+    def test_star_get_sql(self):
+        vega = Star.get(sql="select * from _ where name='Vega'")
+
+        assert vega.magnitude == 0.03
+        assert vega.hip == 91262
+        assert vega.constellation_id == "lyr"
+
     def test_star_get_raises_exception(self):
         with pytest.raises(ValueError):
             Star.get(name=None)
@@ -31,6 +38,10 @@ class TestStar:
         bright = Star.find(where=[_.name.isin(names)])
         assert len(bright) == 4
         assert set([s.name for s in bright]) == names
+
+    def test_star_find_sql(self):
+        bright_stars = Star.find(sql="select * from _ where magnitude < 3")
+        assert len(bright_stars) == 196
 
     def test_star_find_intersects(self):
         m45 = DSO.get(m="45")
@@ -49,11 +60,18 @@ class TestConstellation:
         assert hercules.ra == 253.2
         assert hercules.dec == 34.86
 
+        draco = Constellation.get(sql="select * from _ where iau_id='dra'")
+        assert draco.name == "Draco"
+
     def test_constellation_find(self):
         results = Constellation.find(
             where=[_.name.isin(["Canis Major", "Andromeda", "Orion"])]
         )
         assert len(results) == 3
+
+        sql_results = Constellation.find(sql="select * from _ where name = 'Lyra'")
+        assert len(sql_results) == 1
+        assert sql_results[0].iau_id == "lyr"
 
 
 class TestDSO:
@@ -66,9 +84,16 @@ class TestDSO:
         assert m13.ic is None
         assert m13.constellation_id == "her"
 
+        m44 = DSO.get(sql="select * from _ where m='44'")
+        assert m44.m == "44"
+        assert m44.constellation_id == "cnc"
+
     def test_dso_find_messier(self):
         results = DSO.find(where=[_.m.notnull()])
         assert len(results) == 110
+
+        sql_results = DSO.find(sql="select * from _ where m is not null")
+        assert len(sql_results) == 110
 
     def test_dso_find_duplicate(self):
         results = DSO.find(where=[_.ngc == "5273"])

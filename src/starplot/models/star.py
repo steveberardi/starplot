@@ -128,7 +128,7 @@ class Star(SkyObject):
     @classmethod
     def find(
         cls,
-        where: list,
+        where: list = None,
         sql: str = None,
         catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
     ) -> list["Star"]:
