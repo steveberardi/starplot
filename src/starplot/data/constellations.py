@@ -669,7 +669,7 @@ CONSTELLATION_HIP_IDS = {
 }
 
 
-def load(extent=None, filters=None):
+def load(extent=None, filters=None, sql=None):
     filters = filters or []
     con = db.connect()
     c = con.table("constellations")
@@ -685,7 +685,10 @@ def load(extent=None, filters=None):
         filters.append(_.geometry.intersects(extent))
 
     if filters:
-        return c.filter(*filters)
+        c = c.filter(*filters)
+
+    if sql:
+        c = c.alias("_").sql(sql)
 
     return c
 

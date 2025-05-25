@@ -113,6 +113,7 @@ class DsoPlotterMixin:
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
         alpha_fn: Callable[[DSO], float] = None,
         label_fn: Callable[[DSO], str] = None,
+        sql: str = None,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
@@ -143,7 +144,7 @@ class DsoPlotterMixin:
             legend_labels = {**DSO_LEGEND_LABELS, **legend_labels}
 
         extent = self._extent_mask()
-        dso_results = load(extent=extent, filters=where)
+        dso_results = load(extent=extent, filters=where, sql=sql)
 
         dso_results_labeled = dso_results
         for f in where_labels:

@@ -495,7 +495,12 @@ def read_catalog(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="s
     return stars
 
 
-def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=None):
+def load(
+    extent=None,
+    catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
+    filters=None,
+    sql=None,
+):
     filters = filters or []
     stars = read_catalog(catalog)
 
@@ -503,6 +508,9 @@ def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=
         stars = stars.filter(stars.geometry.intersects(extent))
 
     if filters:
-        return stars.filter(*filters)
+        stars = stars.filter(*filters)
+
+    if sql:
+        stars = stars.alias("_").sql(sql)
 
     return stars

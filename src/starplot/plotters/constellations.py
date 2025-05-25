@@ -65,6 +65,7 @@ class ConstellationPlotterMixin:
         self,
         style: LineStyle = None,
         where: list = None,
+        sql: str = None,
     ):
         """Plots the constellation lines **only**. To plot constellation borders and/or labels, see separate functions for them.
 
@@ -80,7 +81,7 @@ class ConstellationPlotterMixin:
         ctr = 0
 
         extent = self._extent_mask()
-        results = condata.load(extent=extent, filters=where)
+        results = condata.load(extent=extent, filters=where, sql=sql)
         constellations_df = results.to_pandas()
 
         if constellations_df.empty:

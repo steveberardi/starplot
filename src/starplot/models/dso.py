@@ -122,7 +122,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
             yield from_tuple(d)
 
     @classmethod
-    def get(cls, **kwargs) -> "DSO":
+    def get(cls, sql: str = None, **kwargs) -> "DSO":
         """
         Get a DSO, by matching its attributes.
 
@@ -131,6 +131,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
             d = DSO.get(m=13)
 
         Args:
+            sql: SQL query for selecting DSO (table name is "_")
             **kwargs: Attributes on the DSO you want to match
 
         Raises: `ValueError` if more than one DSO is matched
@@ -140,7 +141,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         for k, v in kwargs.items():
             filters.append(getattr(_, k) == v)
 
-        df = load(filters=filters).to_pandas()
+        df = load(filters=filters, sql=sql).to_pandas()
 
         results = [from_tuple(d) for d in df.itertuples()]
 
@@ -155,18 +156,19 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         return None
 
     @classmethod
-    def find(cls, where: list) -> list["DSO"]:
+    def find(cls, where: list, sql: str = None) -> list["DSO"]:
         """
         Find DSOs
 
         Args:
             where: A list of expressions that determine which DSOs to find. See [Selecting Objects](/reference-selecting-objects/) for details.
+            sql: SQL query for selecting DSOs (table name is "_")
 
         Returns:
             List of DSOs that match all `where` expressions
 
         """
-        df = load(filters=where).to_pandas()
+        df = load(filters=where, sql=sql).to_pandas()
         return [from_tuple(d) for d in df.itertuples()]
 
 

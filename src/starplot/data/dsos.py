@@ -25,7 +25,7 @@ class DsoLabelMaker(dict):
 DSO_LABELS_DEFAULT = DsoLabelMaker()
 
 
-def load(extent=None, filters=None):
+def load(extent=None, filters=None, sql=None):
     filters = filters or []
     con = db.connect()
     dsos = con.table("deep_sky_objects")
@@ -45,6 +45,9 @@ def load(extent=None, filters=None):
     filters.extend([_.ra_degrees.notnull() & _.dec_degrees.notnull()])
 
     if filters:
-        return dsos.filter(*filters)
+        dsos = dsos.filter(*filters)
+
+    if sql:
+        dsos = dsos.alias("_").sql(sql)
 
     return dsos
