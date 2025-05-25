@@ -3,17 +3,14 @@ import math
 from abc import ABC, abstractmethod
 
 import pyproj
-
 from matplotlib import patches
+from pydantic import BaseModel, computed_field
 
 from starplot.utils import in_circle
 
 
-class Optic(ABC):
+class Optic(BaseModel, ABC):
     """Abstract class for defining Optics."""
-
-    def __init__(self) -> "Optic":
-        pass
 
     def __str__(self):
         return "Optic"
@@ -70,18 +67,34 @@ class Scope(Optic):
         Scope: A new instance of a Scope optic
     """
 
-    def __init__(
-        self, focal_length: float, eyepiece_focal_length: float, eyepiece_fov: float
-    ) -> "Scope":
-        self.focal_length = focal_length
-        self.eyepiece_focal_length = eyepiece_focal_length
-        self.eyepiece_fov = eyepiece_fov
-        self.magnification = self.focal_length / self.eyepiece_focal_length
-        self.true_fov = self.eyepiece_fov / self.magnification
-        self.radius = self._compute_radius(self.true_fov / 2)
+    focal_length: float
+    """Focal length (mm) of the telescope"""
+
+    eyepiece_focal_length: float
+    """Focal length (mm) of the eyepiece"""
+
+    eyepiece_fov: float
+    """Field of view (degrees) of the eyepiece"""
+
+    @computed_field
+    @property
+    def magnification(self) -> float:
+        """Magnification calculated from the telescope's focal length and eyepiece focal length"""
+        return self.focal_length / self.eyepiece_focal_length
+
+    @computed_field
+    @property
+    def true_fov(self) -> float:
+        """True field of view of telescope"""
+        return self.eyepiece_fov / self.magnification
+
+    @computed_field
+    @property
+    def radius(self) -> float:
+        return self._compute_radius(self.true_fov / 2)
 
     def __str__(self):
-        return f"{self.focal_length}mm w/ {self.eyepiece_focal_length}mm ({self.magnification:.0f}x) @  {self.eyepiece_fov:.0f}\N{DEGREE SIGN} = {self.true_fov:.2f}\N{DEGREE SIGN} TFOV"
+        return f"{self.focal_length:.0f}mm w/ {self.eyepiece_focal_length:.0f}mm ({self.magnification:.0f}x) @  {self.eyepiece_fov:.0f}\N{DEGREE SIGN} = {self.true_fov:.2f}\N{DEGREE SIGN} TFOV"
 
     @property
     def xlim(self):
@@ -172,14 +185,25 @@ class Binoculars(Optic):
 
     """
 
-    def __init__(self, magnification: float, fov: float) -> "Binoculars":
-        self.magnification = magnification
-        self.apparent_fov = fov
-        self.true_fov = self.apparent_fov / self.magnification
-        self.radius = self._compute_radius(self.true_fov / 2)
+    magnification: float
+    """Magnification of the binoculars"""
+
+    fov: float
+    """Apparent field of view of the binoculars"""
+
+    @computed_field
+    @property
+    def true_fov(self) -> float:
+        """True field of view of binoculars"""
+        return self.fov / self.magnification
+
+    @computed_field
+    @property
+    def radius(self) -> float:
+        return self._compute_radius(self.true_fov / 2)
 
     def __str__(self):
-        return f"{self.magnification}x @ {self.apparent_fov}\N{DEGREE SIGN} = {self.true_fov}\N{DEGREE SIGN}"
+        return f"{self.magnification:.0f}x @ {self.fov:.0f}\N{DEGREE SIGN} = {self.true_fov}\N{DEGREE SIGN}"
 
     @property
     def xlim(self):
@@ -225,39 +249,56 @@ class Camera(Optic):
         sensor_height: Height of camera sensor (mm)
         sensor_width: Width of camera sensor (mm)
         lens_focal_length: Focal length of camera lens (mm)
-        rotation: Angle (degrees) to rotate camera
+        rotation: Angle (degrees) to rotate camera, defaults to 0
 
     Returns:
         Camera: A new instance of a Camera optic
 
     """
 
-    def __init__(
-        self,
-        sensor_height: float,
-        sensor_width: float,
-        lens_focal_length: float,
-        rotation: float = 0,
-    ) -> "Camera":
-        self.sensor_height = sensor_height
-        self.sensor_width = sensor_width
-        self.lens_focal_length = lens_focal_length
+    sensor_height: float
+    """Height (mm) of camera's sensor"""
 
-        self.true_fov_x = 2 * math.degrees(
+    sensor_width: float
+    """Width (mm) of camera's sensor"""
+
+    lens_focal_length: float
+    """Focal length (mm) of the camera's lens"""
+
+    rotation: float = 0
+    """Angle (degrees) to rotate the camera"""
+
+    @computed_field
+    @property
+    def true_fov_x(self) -> float:
+        return 2 * math.degrees(
             math.atan(self.sensor_width / (2 * self.lens_focal_length))
         )
-        self.true_fov_y = 2 * math.degrees(
+
+    @computed_field
+    @property
+    def true_fov_y(self) -> float:
+        return 2 * math.degrees(
             math.atan(self.sensor_height / (2 * self.lens_focal_length))
         )
-        self.true_fov = max(self.true_fov_x, self.true_fov_y)
 
-        self.radius_x = self._compute_radius(self.true_fov_x / 2)
-        self.radius_y = self._compute_radius(self.true_fov_y / 2)
+    @computed_field
+    @property
+    def true_fov(self) -> float:
+        return max(self.true_fov_x, self.true_fov_y)
 
-        self.rotation = rotation
+    @computed_field
+    @property
+    def radius_x(self) -> float:
+        return self._compute_radius(self.true_fov_x / 2)
+
+    @computed_field
+    @property
+    def radius_y(self) -> float:
+        return self._compute_radius(self.true_fov_y / 2)
 
     def __str__(self):
-        return f"{self.sensor_width}x{self.sensor_height} w/ {self.lens_focal_length}mm lens = {self.true_fov_x:.2f}\N{DEGREE SIGN} x {self.true_fov_y:.2f}\N{DEGREE SIGN}"
+        return f"{self.sensor_width}x{self.sensor_height} w/ {self.lens_focal_length:.0f}mm lens = {self.true_fov_x:.2f}\N{DEGREE SIGN} x {self.true_fov_y:.2f}\N{DEGREE SIGN}"
 
     @property
     def xlim(self):
