@@ -87,7 +87,10 @@ def _stereo_north():
         resolution=RESOLUTION,
         autoscale=True,
     )
-    p.stars(where=[_.magnitude < 9], bayer_labels=True)
+    p.stars(
+        sql="select * from _ where magnitude < 9",
+        bayer_labels=True,
+    )
     p.dsos(
         labels=None,
         true_size=False,

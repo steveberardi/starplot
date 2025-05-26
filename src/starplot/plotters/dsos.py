@@ -126,6 +126,7 @@ class DsoPlotterMixin:
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
             label_fn: Callable for determining the label of each DSO. If `None`, then the names in the `labels` kwarg will be used.
+            sql: SQL query for selecting DSOs (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
         """
 
         # TODO: add kwarg styles

@@ -677,8 +677,9 @@ def load(extent=None, filters=None, sql=None):
         ra=_.center_ra,
         dec=_.center_dec,
         constellation_id=_.iau_id,
-        rowid=ibis.row_number(),
         boundary=_.geometry,
+        rowid=ibis.row_number(),
+        sk=ibis.row_number(),
     )
 
     if extent:
@@ -688,7 +689,9 @@ def load(extent=None, filters=None, sql=None):
         c = c.filter(*filters)
 
     if sql:
-        c = c.alias("_").sql(sql)
+        result = c.alias("_").sql(sql).select("sk").execute()
+        skids = result["sk"].to_list()
+        c = c.filter(_.sk.isin(skids))
 
     return c
 

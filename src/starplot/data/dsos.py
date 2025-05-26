@@ -37,6 +37,7 @@ def load(extent=None, filters=None, sql=None):
         magnitude=ibis.coalesce(_.mag_v, _.mag_b, None),
         size=_.size_deg2,
         rowid=ibis.row_number(),
+        sk=ibis.row_number(),
     )
 
     if extent:
@@ -48,6 +49,8 @@ def load(extent=None, filters=None, sql=None):
         dsos = dsos.filter(*filters)
 
     if sql:
-        dsos = dsos.alias("_").sql(sql)
+        result = dsos.alias("_").sql(sql).select("sk").execute()
+        skids = result["sk"].to_list()
+        dsos = dsos.filter(_.sk.isin(skids))
 
     return dsos
