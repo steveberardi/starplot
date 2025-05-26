@@ -1,7 +1,8 @@
-from typing import Union, Iterator
+from typing import Union, Iterator, Annotated
 
 from ibis import _
 from shapely import Polygon, MultiPolygon
+from pydantic_shapely import GeometryField
 
 from starplot.models.base import SkyObject
 from starplot.data import constellations
@@ -26,23 +27,23 @@ class Constellation(SkyObject):
     star_hip_ids: list[int] = None
     """List of HIP ids for stars that are part of the _lines_ for this constellation."""
 
-    boundary: Union[Polygon, MultiPolygon] = None
+    boundary: Annotated[Union[Polygon, MultiPolygon], GeometryField()] = None
     """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
 
-    def __init__(
-        self,
-        ra: float,
-        dec: float,
-        iau_id: str,
-        name: str = None,
-        star_hip_ids: list[int] = None,
-        boundary: Polygon = None,
-    ) -> None:
-        super().__init__(ra, dec, constellation_id=iau_id.lower())
-        self.iau_id = iau_id.lower()
-        self.name = name
-        self.star_hip_ids = star_hip_ids
-        self.boundary = boundary
+    # def __init__(
+    #     self,
+    #     ra: float,
+    #     dec: float,
+    #     iau_id: str,
+    #     name: str = None,
+    #     star_hip_ids: list[int] = None,
+    #     boundary: Polygon = None,
+    # ) -> None:
+    #     super().__init__(ra, dec, constellation_id=iau_id.lower())
+    #     self.iau_id = iau_id.lower()
+    #     self.name = name
+    #     self.star_hip_ids = star_hip_ids
+    #     self.boundary = boundary
 
     def __repr__(self) -> str:
         return f"Constellation(iau_id={self.iau_id}, name={self.name}, ra={self.ra}, dec={self.dec})"
@@ -111,8 +112,9 @@ def from_tuple(c: tuple) -> Constellation:
     return Constellation(
         ra=c.ra,
         dec=c.dec,
-        iau_id=c.iau_id,
+        iau_id=c.iau_id.lower(),
         name=c.name,
         star_hip_ids=c.star_hip_ids,
         boundary=c.geometry,
+        _constellation_id=c.iau_id,
     )

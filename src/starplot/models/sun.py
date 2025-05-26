@@ -1,8 +1,10 @@
 from datetime import datetime
+from typing import Annotated
 
 import numpy as np
 from skyfield.api import Angle, wgs84
 from shapely import Polygon
+from pydantic_shapely import GeometryField
 
 from starplot.data import load
 from starplot.models.base import SkyObject
@@ -22,7 +24,7 @@ class Sun(SkyObject):
     apparent_size: float
     """Apparent size (degrees)"""
 
-    geometry: Polygon = None
+    geometry: Annotated[Polygon, GeometryField()] = None
     """Shapely Polygon of the Sun's extent. Right ascension coordinates are in degrees (0...360)."""
 
     def __init__(

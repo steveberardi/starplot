@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
 from enum import Enum
+from typing import Annotated
 
 import numpy as np
 from skyfield.api import Angle, wgs84
 from skyfield import almanac
 from shapely import Polygon
+from pydantic_shapely import GeometryField
 
 from starplot.data import load
 from starplot.models.base import SkyObject
@@ -46,29 +48,29 @@ class Moon(SkyObject):
     illumination: float
     """Percent of illumination (0...1)"""
 
-    geometry: Polygon = None
-    """Shapely Polygon of the moon's extent. Right ascension coordinates are in degrees (0...360)."""
+    geometry: Annotated[Polygon, GeometryField()] = None
+    """Shapely Polygon of the moon's extent. Right ascension coordinates are in degrees (0 to 360)."""
 
-    def __init__(
-        self,
-        ra: float,
-        dec: float,
-        name: str,
-        dt: datetime,
-        apparent_size: float,
-        phase_angle: float,
-        phase_description: str,
-        illumination: str,
-        geometry: Polygon = None,
-    ) -> None:
-        super().__init__(ra, dec)
-        self.name = name
-        self.dt = dt
-        self.apparent_size = apparent_size
-        self.phase_angle = phase_angle
-        self.phase_description = phase_description
-        self.illumination = illumination
-        self.geometry = geometry
+    # def __init__(
+    #     self,
+    #     ra: float,
+    #     dec: float,
+    #     name: str,
+    #     dt: datetime,
+    #     apparent_size: float,
+    #     phase_angle: float,
+    #     phase_description: str,
+    #     illumination: str,
+    #     geometry: Polygon = None,
+    # ) -> None:
+    #     super().__init__(ra, dec)
+    #     self.name = name
+    #     self.dt = dt
+    #     self.apparent_size = apparent_size
+    #     self.phase_angle = phase_angle
+    #     self.phase_description = phase_description
+    #     self.illumination = illumination
+    #     self.geometry = geometry
 
     @classmethod
     def get(

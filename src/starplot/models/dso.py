@@ -1,7 +1,9 @@
-from typing import Optional, Union, Iterator
+from typing import Optional, Union, Iterator, Annotated
+from enum import Enum
 
 from ibis import _
 from shapely.geometry import Polygon, MultiPolygon
+from pydantic_shapely import GeometryField
 
 from starplot.data.dsos import load
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
@@ -78,38 +80,38 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     Index Catalogue (IC) identifier. *Note that this field is a string, to support objects like '4974 NED01'.*
     """
 
-    geometry: Union[Polygon, MultiPolygon] = None
+    geometry:  Annotated[Union[Polygon, MultiPolygon], GeometryField()] = None
     """Shapely Polygon of the DSO's extent. Right ascension coordinates are in degrees (0...360)."""
 
-    def __init__(
-        self,
-        ra: float,
-        dec: float,
-        name: str,
-        type: DsoType,
-        magnitude: float = None,
-        maj_ax: float = None,
-        min_ax: float = None,
-        angle: float = None,
-        size: float = None,
-        m: str = None,
-        ngc: str = None,
-        ic: str = None,
-        geometry: Union[Polygon, MultiPolygon] = None,
-        constellation_id: str = None,
-    ) -> None:
-        super().__init__(ra, dec, constellation_id)
-        self.name = name
-        self.type = type
-        self.magnitude = magnitude
-        self.maj_ax = maj_ax
-        self.min_ax = min_ax
-        self.angle = angle
-        self.size = size
-        self.m = m
-        self.ngc = ngc
-        self.ic = ic
-        self.geometry = geometry
+    # def __init__(
+    #     self,
+    #     ra: float,
+    #     dec: float,
+    #     name: str,
+    #     type: DsoType,
+    #     magnitude: float = None,
+    #     maj_ax: float = None,
+    #     min_ax: float = None,
+    #     angle: float = None,
+    #     size: float = None,
+    #     m: str = None,
+    #     ngc: str = None,
+    #     ic: str = None,
+    #     geometry: Union[Polygon, MultiPolygon] = None,
+    #     constellation_id: str = None,
+    # ) -> None:
+    #     super().__init__(ra, dec, constellation_id)
+    #     self.name = name
+    #     self.type = type
+    #     self.magnitude = magnitude
+    #     self.maj_ax = maj_ax
+    #     self.min_ax = min_ax
+    #     self.angle = angle
+    #     self.size = size
+    #     self.m = m
+    #     self.ngc = ngc
+    #     self.ic = ic
+    #     self.geometry = geometry
 
     def __repr__(self) -> str:
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
@@ -185,7 +187,7 @@ def from_tuple(d: tuple) -> DSO:
         ngc=d.ngc,
         ic=d.ic,
         geometry=d.geometry,
-        constellation_id=d.constellation_id,
+        _constellation_id=d.constellation_id,
     )
     dso._row_id = getattr(d, "rowid", None)
     return dso
