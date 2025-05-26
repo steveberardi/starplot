@@ -459,7 +459,7 @@ class StarCatalog:
 
 
 @cache
-def read_catalog(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars"):
+def table(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars"):
     con = db.connect()
 
     if catalog == StarCatalog.BIG_SKY_MAG11:
@@ -503,7 +503,7 @@ def load(
     sql=None,
 ):
     filters = filters or []
-    stars = read_catalog(catalog)
+    stars = table(catalog)
 
     if extent:
         stars = stars.filter(stars.geometry.intersects(extent))
