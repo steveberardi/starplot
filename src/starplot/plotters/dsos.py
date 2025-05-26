@@ -44,7 +44,7 @@ class DsoPlotterMixin:
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         where = kwargs.pop("where", [])
-        where.append(_.type == DsoType.OPEN_CLUSTER)
+        where.append(_.type == DsoType.OPEN_CLUSTER.value)
         self.dsos(where=where, **kwargs)
 
     def globular_clusters(self, **kwargs):
@@ -54,7 +54,7 @@ class DsoPlotterMixin:
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         where = kwargs.pop("where", [])
-        where.append(_.type == DsoType.GLOBULAR_CLUSTER)
+        where.append(_.type == DsoType.GLOBULAR_CLUSTER.value)
         self.dsos(where=where, **kwargs)
 
     def galaxies(self, **kwargs):
@@ -68,9 +68,9 @@ class DsoPlotterMixin:
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         galaxy_types = [
-            DsoType.GALAXY,
-            DsoType.GALAXY_PAIR,
-            DsoType.GALAXY_TRIPLET,
+            DsoType.GALAXY.value,
+            DsoType.GALAXY_PAIR.value,
+            DsoType.GALAXY_TRIPLET.value,
         ]
         where = kwargs.pop("where", [])
         where.append(_.type.isin(galaxy_types))
@@ -92,12 +92,12 @@ class DsoPlotterMixin:
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         nebula_types = [
-            DsoType.NEBULA,
-            DsoType.PLANETARY_NEBULA,
-            DsoType.EMISSION_NEBULA,
-            DsoType.STAR_CLUSTER_NEBULA,
-            DsoType.REFLECTION_NEBULA,
-            DsoType.HII_IONIZED_REGION,
+            DsoType.NEBULA.value,
+            DsoType.PLANETARY_NEBULA.value,
+            DsoType.EMISSION_NEBULA.value,
+            DsoType.STAR_CLUSTER_NEBULA.value,
+            DsoType.REFLECTION_NEBULA.value,
+            DsoType.HII_IONIZED_REGION.value,
         ]
         where = kwargs.pop("where", [])
         where.append(_.type.isin(nebula_types))

@@ -1,4 +1,5 @@
 from typing import Optional, Union, Iterator
+from enum import Enum
 
 from ibis import _
 from shapely.geometry import Polygon, MultiPolygon
@@ -8,7 +9,7 @@ from starplot.mixins import CreateMapMixin, CreateOpticMixin
 from starplot.models.base import SkyObject
 
 
-class DsoType:
+class DsoType(str, Enum):
     """
     Type of deep sky object (DSO), as designated in OpenNGC
     """
