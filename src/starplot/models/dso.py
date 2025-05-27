@@ -186,8 +186,9 @@ def from_tuple(d: tuple) -> DSO:
         ngc=d.ngc,
         ic=d.ic,
         geometry=d.geometry,
-        _constellation_id=d.constellation_id,
+        
     )
+    dso._constellation_id = d.constellation_id
     dso._row_id = getattr(d, "rowid", None)
     return dso
 

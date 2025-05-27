@@ -92,6 +92,9 @@ class SkyObject(BaseModel, CreateMapMixin, CreateOpticMixin):
     _constellation_id: Optional[str] = None
 
 
+    # object list test is failing because DsoType is enum (need value)
+    # other test is failing because constellation id prop mismatch for RA
+
     # def __init__(self, ra: float, dec: float, constellation_id: str = None) -> None:
     #     self.ra = ra
     #     self.dec = dec
@@ -103,7 +106,7 @@ class SkyObject(BaseModel, CreateMapMixin, CreateOpticMixin):
     def constellation_id(self) -> Union[str, None]:
         """Identifier of the constellation that contains this object. The ID is the three-letter (all lowercase) abbreviation from the International Astronomical Union (IAU)."""
         if not self._constellation_id:
-            pos = position_of_radec(self.ra * 15, self.dec)
+            pos = position_of_radec(self.ra, self.dec)
             self._constellation_id = constellation_at()(pos).lower()
         return self._constellation_id
 

@@ -175,10 +175,11 @@ def from_tuple(star: tuple) -> Star:
         ccdm=getattr(star, "ccdm", None),
         name=getattr(star, "name", None),
         geometry=star.geometry,
-        _constellation_id=getattr(star, "constellation", None),
+        # _constellation_id=getattr(star, "constellation", None),
         bayer=getattr(star, "bayer", None),
         flamsteed=getattr(star, "flamsteed", None),
     )
+    s._constellation_id = getattr(star, "constellation", None)
     s._row_id = getattr(star, "rowid", None)
 
     return s
