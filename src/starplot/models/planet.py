@@ -6,10 +6,9 @@ import numpy as np
 
 from skyfield.api import Angle, wgs84
 from shapely import Polygon
-from pydantic_shapely import GeometryField
 
 from starplot.data import load
-from starplot.models.base import SkyObject
+from starplot.models.base import SkyObject, ShapelyPolygon
 from starplot.geometry import circle
 from starplot.utils import dt_or_now
 
@@ -73,7 +72,7 @@ class Planet(SkyObject):
     apparent_size: float
     """Apparent size (degrees)"""
 
-    geometry: Annotated[Polygon, GeometryField()] = None
+    geometry: ShapelyPolygon = None
     """Shapely Polygon of the planet's extent. Right ascension coordinates are in degrees (0...360)."""
 
     # def __init__(

@@ -1,11 +1,74 @@
-from functools import cache
-from typing import Any, Optional, Union
+import json
 
-from pydantic import BaseModel, field_validator, computed_field
+from functools import cache
+from typing import Any, Optional, Union, Annotated
+
+from shapely import to_geojson, from_geojson, Geometry
+from shapely.geometry import Polygon, MultiPolygon, Point
+
+from pydantic_core import core_schema
+
+from pydantic import BaseModel, field_validator, computed_field, PlainSerializer, AfterValidator, WithJsonSchema
 from skyfield.api import position_of_radec, load_constellation_map
 
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 
+
+
+# ShapelyPolygon = Annotated[
+#     Polygon | MultiPolygon,
+#     AfterValidator(lambda s: s.is_valid),
+#     PlainSerializer(lambda s: json.loads(to_geojson(s)), return_type=dict),
+#     WithJsonSchema({'type': 'string'}, mode='serialization'),
+
+# ]
+
+# ShapelyPoint = Annotated[
+#     Point,
+#     AfterValidator(lambda s: s.is_valid),
+#     PlainSerializer(lambda s: json.loads(to_geojson(s)), return_type=dict),
+#     WithJsonSchema({'type': 'string'}, mode='serialization'),
+# ]
+
+class ShapelyPydantic:
+    @classmethod
+    def validate(cls, field_value, info):
+        return field_value.is_valid
+        
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
+        def validate_from_geojson(value: dict) -> Geometry:
+            return from_geojson(json.loads(value))
+        
+
+        from_dict_schema = core_schema.chain_schema(
+            [
+                core_schema.dict_schema(),
+                core_schema.no_info_plain_validator_function(validate_from_geojson),
+            ]
+        )
+
+        return core_schema.json_or_python_schema(
+            json_schema=from_dict_schema,
+            python_schema=core_schema.union_schema(
+                [
+                    core_schema.is_instance_schema(Geometry),
+                    from_dict_schema,
+                ]
+            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda instance: json.loads(to_geojson(instance))
+            ),
+        )
+
+class ShapelyPolygon(ShapelyPydantic, Polygon):
+    pass
+
+class ShapelyMultiPolygon(ShapelyPydantic, MultiPolygon):
+    pass
+
+class ShapelyPoint(ShapelyPydantic, Point):
+    pass
 
 @cache
 def constellation_at():

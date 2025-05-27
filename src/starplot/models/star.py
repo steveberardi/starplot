@@ -4,10 +4,9 @@ from typing import Optional, Union, Iterator, Annotated, Any
 import numpy as np
 from shapely import Point
 from ibis import _
-from pydantic_shapely import GeometryField
+from pydantic import field_validator
 
-
-from starplot.models.base import SkyObject
+from starplot.models.base import SkyObject, ShapelyPoint
 from starplot.data.stars import StarCatalog, load as _load_stars
 
 
@@ -40,7 +39,7 @@ class Star(SkyObject):
     flamsteed: Optional[int] = None
     """Flamsteed number, if available"""
 
-    geometry: Annotated[Point, GeometryField()] = None
+    geometry: ShapelyPoint = None
     """Shapely Point of the star's position. Right ascension coordinates are in degrees (0...360)."""
 
     # def __init__(
@@ -73,7 +72,16 @@ class Star(SkyObject):
     #     if flamsteed and not math.isnan(flamsteed):
     #         self.flamsteed = int(flamsteed)
 
-    def model_post_init(context: Any) -> None:
+    @field_validator('flamsteed', 'hip', mode='before')
+    @classmethod
+    def nan(cls, value: int) -> int:
+        if not value or math.isnan(value):
+            return None
+        
+        return int(value)
+    
+
+    def model_post_init(self, context: Any) -> None:
         self.bayer = self.bayer or None
         self.hip = self.hip if self.hip is not None and np.isfinite(self.hip) else None
 

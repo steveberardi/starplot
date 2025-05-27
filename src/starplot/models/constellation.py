@@ -2,9 +2,8 @@ from typing import Union, Iterator, Annotated
 
 from ibis import _
 from shapely import Polygon, MultiPolygon
-from pydantic_shapely import GeometryField
 
-from starplot.models.base import SkyObject
+from starplot.models.base import SkyObject, ShapelyPolygon, ShapelyMultiPolygon
 from starplot.data import constellations
 
 
@@ -27,7 +26,7 @@ class Constellation(SkyObject):
     star_hip_ids: list[int] = None
     """List of HIP ids for stars that are part of the _lines_ for this constellation."""
 
-    boundary: Annotated[Union[Polygon, MultiPolygon], GeometryField()] = None
+    boundary: ShapelyPolygon | ShapelyMultiPolygon = None
     """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
 
     # def __init__(

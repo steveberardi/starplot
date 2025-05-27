@@ -3,14 +3,13 @@ from enum import Enum
 
 from ibis import _
 from shapely.geometry import Polygon, MultiPolygon
-from pydantic_shapely import GeometryField
 
 from starplot.data.dsos import load
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
-from starplot.models.base import SkyObject
+from starplot.models.base import SkyObject, ShapelyPolygon, ShapelyMultiPolygon
 
 
-class DsoType:
+class DsoType(str, Enum):
     """
     Type of deep sky object (DSOs), as designated in OpenNGC
     """
@@ -80,7 +79,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     Index Catalogue (IC) identifier. *Note that this field is a string, to support objects like '4974 NED01'.*
     """
 
-    geometry:  Annotated[Union[Polygon, MultiPolygon], GeometryField()] = None
+    geometry:  ShapelyPolygon | ShapelyMultiPolygon = None
     """Shapely Polygon of the DSO's extent. Right ascension coordinates are in degrees (0...360)."""
 
     # def __init__(
