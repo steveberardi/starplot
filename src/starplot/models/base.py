@@ -81,10 +81,10 @@ class SkyObject(BaseModel, CreateMapMixin, CreateOpticMixin):
     """
 
     ra: float
-    """Right Ascension, in degrees (0...360)"""
+    """Right Ascension, in degrees (0 to 360)"""
 
     dec: float
-    """Declination, in degrees (-90...90)"""
+    """Declination, in degrees (-90 to 90)"""
 
     # constellation_id: Optional[str] = None
     # """Identifier of the constellation that contains this object. The ID is the three-letter (all lowercase) abbreviation from the International Astronomical Union (IAU)."""

@@ -101,7 +101,7 @@ class Star(SkyObject):
 
     @classmethod
     def get(
-        cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, **kwargs
+        cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, sql: str = None, **kwargs
     ) -> Union["Star", None]:
         """
         Get a Star, by matching its attributes as specified in `**kwargs`
@@ -112,6 +112,7 @@ class Star(SkyObject):
 
         Args:
             catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
+            sql: SQL query for selecting star (table name is "_")
             **kwargs: Attributes on the star you want to match
 
         Raises: `ValueError` if more than one star is matched
@@ -127,6 +128,7 @@ class Star(SkyObject):
         df = _load_stars(
             catalog=catalog,
             filters=filters,
+            sql=sql,
         ).to_pandas()
 
         results = [from_tuple(s) for s in df.itertuples()]
@@ -143,13 +145,17 @@ class Star(SkyObject):
 
     @classmethod
     def find(
-        cls, where: list, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11
+        cls,
+        where: list = None,
+        sql: str = None,
+        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
     ) -> list["Star"]:
         """
         Find Stars
 
         Args:
             where: A list of expressions that determine which stars to find. See [Selecting Objects](/reference-selecting-objects/) for details.
+            sql: SQL query for selecting stars (table name is "_")
             catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
 
         Returns:
@@ -159,6 +165,7 @@ class Star(SkyObject):
         df = _load_stars(
             catalog=catalog,
             filters=where,
+            sql=sql,
         ).to_pandas()
 
         return [from_tuple(s) for s in df.itertuples()]

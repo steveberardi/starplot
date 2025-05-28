@@ -44,7 +44,7 @@ class DsoPlotterMixin:
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         where = kwargs.pop("where", [])
-        where.append(_.type == DsoType.OPEN_CLUSTER)
+        where.append(_.type == DsoType.OPEN_CLUSTER.value)
         self.dsos(where=where, **kwargs)
 
     def globular_clusters(self, **kwargs):
@@ -54,7 +54,7 @@ class DsoPlotterMixin:
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         where = kwargs.pop("where", [])
-        where.append(_.type == DsoType.GLOBULAR_CLUSTER)
+        where.append(_.type == DsoType.GLOBULAR_CLUSTER.value)
         self.dsos(where=where, **kwargs)
 
     def galaxies(self, **kwargs):
@@ -68,9 +68,9 @@ class DsoPlotterMixin:
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         galaxy_types = [
-            DsoType.GALAXY,
-            DsoType.GALAXY_PAIR,
-            DsoType.GALAXY_TRIPLET,
+            DsoType.GALAXY.value,
+            DsoType.GALAXY_PAIR.value,
+            DsoType.GALAXY_TRIPLET.value,
         ]
         where = kwargs.pop("where", [])
         where.append(_.type.isin(galaxy_types))
@@ -92,12 +92,12 @@ class DsoPlotterMixin:
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
         nebula_types = [
-            DsoType.NEBULA,
-            DsoType.PLANETARY_NEBULA,
-            DsoType.EMISSION_NEBULA,
-            DsoType.STAR_CLUSTER_NEBULA,
-            DsoType.REFLECTION_NEBULA,
-            DsoType.HII_IONIZED_REGION,
+            DsoType.NEBULA.value,
+            DsoType.PLANETARY_NEBULA.value,
+            DsoType.EMISSION_NEBULA.value,
+            DsoType.STAR_CLUSTER_NEBULA.value,
+            DsoType.REFLECTION_NEBULA.value,
+            DsoType.HII_IONIZED_REGION.value,
         ]
         where = kwargs.pop("where", [])
         where.append(_.type.isin(nebula_types))
@@ -113,6 +113,7 @@ class DsoPlotterMixin:
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
         alpha_fn: Callable[[DSO], float] = None,
         label_fn: Callable[[DSO], str] = None,
+        sql: str = None,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
@@ -125,6 +126,7 @@ class DsoPlotterMixin:
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
             label_fn: Callable for determining the label of each DSO. If `None`, then the names in the `labels` kwarg will be used.
+            sql: SQL query for selecting DSOs (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
         """
 
         # TODO: add kwarg styles
@@ -143,7 +145,7 @@ class DsoPlotterMixin:
             legend_labels = {**DSO_LEGEND_LABELS, **legend_labels}
 
         extent = self._extent_mask()
-        dso_results = load(extent=extent, filters=where)
+        dso_results = load(extent=extent, filters=where, sql=sql)
 
         dso_results_labeled = dso_results
         for f in where_labels:

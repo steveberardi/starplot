@@ -13,13 +13,14 @@ from starplot.profile import profile
 
 
 class StarPlotterMixin:
-    def _load_stars(self, catalog, filters=None):
+    def _load_stars(self, catalog, filters=None, sql=None):
         extent = self._extent_mask()
 
         return stars.load(
             extent=extent,
             catalog=catalog,
             filters=filters,
+            sql=sql,
         )
 
     def _scatter_stars(self, ras, decs, sizes, alphas, colors, style=None, **kwargs):
@@ -165,6 +166,7 @@ class StarPlotterMixin:
         legend_label: str = "Star",
         bayer_labels: bool = False,
         flamsteed_labels: bool = False,
+        sql: str = None,
         *args,
         **kwargs,
     ):
@@ -190,6 +192,7 @@ class StarPlotterMixin:
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted.
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
+            sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
         """
 
         # fallback to style if callables are None
@@ -205,7 +208,7 @@ class StarPlotterMixin:
         stars_to_index = []
         labels = labels or {}
 
-        star_results = self._load_stars(catalog, filters=where)
+        star_results = self._load_stars(catalog, filters=where, sql=sql)
 
         star_results_labeled = star_results
         for f in where_labels:

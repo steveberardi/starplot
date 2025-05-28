@@ -21,7 +21,7 @@ class Constellation(SkyObject):
     """
 
     name: str = None
-    """Name"""
+    """Name of constellation"""
 
     star_hip_ids: list[int] = None
     """List of HIP ids for stars that are part of the _lines_ for this constellation."""
@@ -55,7 +55,7 @@ class Constellation(SkyObject):
             yield from_tuple(c)
 
     @classmethod
-    def get(cls, **kwargs) -> "Constellation":
+    def get(cls, sql: str = None, **kwargs) -> "Constellation":
         """
         Get a Constellation, by matching its attributes.
 
@@ -64,6 +64,7 @@ class Constellation(SkyObject):
             hercules = Constellation.get(name="Hercules")
 
         Args:
+            sql: SQL query for selecting constellation (table name is "_")
             **kwargs: Attributes on the constellation you want to match
 
         Raises: `ValueError` if more than one constellation is matched
@@ -73,7 +74,7 @@ class Constellation(SkyObject):
         for k, v in kwargs.items():
             filters.append(getattr(_, k) == v)
 
-        df = constellations.load(filters=filters).to_pandas()
+        df = constellations.load(filters=filters, sql=sql).to_pandas()
         results = [from_tuple(c) for c in df.itertuples()]
 
         if len(results) == 1:
@@ -87,18 +88,19 @@ class Constellation(SkyObject):
         return None
 
     @classmethod
-    def find(cls, where: list) -> list["Constellation"]:
+    def find(cls, where: list = None, sql: str = None) -> list["Constellation"]:
         """
         Find Constellations
 
         Args:
             where: A list of expressions that determine which constellations to find. See [Selecting Objects](/reference-selecting-objects/) for details.
+            sql: SQL query for selecting constellations (table name is "_")
 
         Returns:
             List of Constellations that match all `where` expressions
 
         """
-        df = constellations.load(filters=where).to_pandas()
+        df = constellations.load(filters=where, sql=sql).to_pandas()
 
         return [from_tuple(c) for c in df.itertuples()]
 

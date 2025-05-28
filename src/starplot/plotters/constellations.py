@@ -65,6 +65,7 @@ class ConstellationPlotterMixin:
         self,
         style: LineStyle = None,
         where: list = None,
+        sql: str = None,
     ):
         """Plots the constellation lines **only**. To plot constellation borders and/or labels, see separate functions for them.
 
@@ -73,6 +74,7 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellations. If None, then the plot's style (specified when creating the plot) will be used
             where: A list of expressions that determine which constellations to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            sql: SQL query for selecting constellations (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
         """
         self.logger.debug("Plotting constellation lines...")
 
@@ -80,7 +82,7 @@ class ConstellationPlotterMixin:
         ctr = 0
 
         extent = self._extent_mask()
-        results = condata.load(extent=extent, filters=where)
+        results = condata.load(extent=extent, filters=where, sql=sql)
         constellations_df = results.to_pandas()
 
         if constellations_df.empty:
