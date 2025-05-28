@@ -108,12 +108,13 @@ class Constellation(SkyObject):
 
 
 def from_tuple(c: tuple) -> Constellation:
-    return Constellation(
+    c = Constellation(
         ra=c.ra,
         dec=c.dec,
         iau_id=c.iau_id.lower(),
         name=c.name,
         star_hip_ids=c.star_hip_ids,
         boundary=c.geometry,
-        _constellation_id=c.iau_id,
     )
+    c._constellation_id = c.iau_id
+    return c
