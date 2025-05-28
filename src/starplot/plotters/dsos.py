@@ -114,6 +114,7 @@ class DsoPlotterMixin:
         alpha_fn: Callable[[DSO], float] = None,
         label_fn: Callable[[DSO], str] = None,
         sql: str = None,
+        sql_labels: str = None,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
@@ -127,6 +128,7 @@ class DsoPlotterMixin:
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
             label_fn: Callable for determining the label of each DSO. If `None`, then the names in the `labels` kwarg will be used.
             sql: SQL query for selecting DSOs (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
+            sql_labels: SQL query for selecting DSOs that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
         """
 
         # TODO: add kwarg styles
@@ -150,6 +152,13 @@ class DsoPlotterMixin:
         dso_results_labeled = dso_results
         for f in where_labels:
             dso_results_labeled = dso_results_labeled.filter(f)
+
+        if sql_labels:
+            result = (
+                dso_results_labeled.alias("_").sql(sql_labels).select("sk").execute()
+            )
+            skids = result["sk"].to_list()
+            dso_results_labeled = dso_results_labeled.filter(_.sk.isin(skids))
 
         label_row_ids = dso_results_labeled.to_pandas()["rowid"].tolist()
 

@@ -2,6 +2,7 @@ from typing import Callable, Mapping
 
 import rtree
 import numpy as np
+from ibis import _ as ibis_table
 from skyfield.api import Star as SkyfieldStar, wgs84
 
 from starplot import callables
@@ -167,6 +168,7 @@ class StarPlotterMixin:
         bayer_labels: bool = False,
         flamsteed_labels: bool = False,
         sql: str = None,
+        sql_labels: str = None,
         *args,
         **kwargs,
     ):
@@ -193,6 +195,7 @@ class StarPlotterMixin:
             bayer_labels: If True, then Bayer labels for stars will be plotted.
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
             sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
+            sql_labels: SQL query for selecting stars that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
         """
 
         # fallback to style if callables are None
@@ -213,6 +216,15 @@ class StarPlotterMixin:
         star_results_labeled = star_results
         for f in where_labels:
             star_results_labeled = star_results_labeled.filter(f)
+
+        if sql_labels:
+            result = (
+                star_results_labeled.alias("_").sql(sql_labels).select("sk").execute()
+            )
+            skids = result["sk"].to_list()
+            star_results_labeled = star_results_labeled.filter(
+                ibis_table.sk.isin(skids)
+            )
 
         label_row_ids = star_results_labeled.to_pandas()["rowid"].tolist()
 
