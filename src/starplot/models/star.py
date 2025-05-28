@@ -1,8 +1,7 @@
 import math
-from typing import Optional, Union, Iterator, Annotated, Any
+from typing import Optional, Union, Iterator, Any
 
 import numpy as np
-from shapely import Point
 from ibis import _
 from pydantic import field_validator
 
@@ -42,52 +41,17 @@ class Star(SkyObject):
     geometry: ShapelyPoint = None
     """Shapely Point of the star's position. Right ascension coordinates are in degrees (0...360)."""
 
-    # def __init__(
-    #     self,
-    #     ra: float,
-    #     dec: float,
-    #     magnitude: float,
-    #     bv: float = None,
-    #     hip: int = None,
-    #     name: str = None,
-    #     tyc: str = None,
-    #     ccdm: str = None,
-    #     geometry: Point = None,
-    #     constellation_id: str = None,
-    #     bayer: str = None,
-    #     flamsteed: int = None,
-    # ) -> None:
-    #     super().__init__(ra, dec, constellation_id)
-    #     self.magnitude = magnitude
-    #     self.bv = bv
-    #     self.hip = hip if hip is not None and np.isfinite(hip) else None
-    #     self.name = name
-    #     self.tyc = tyc
-    #     self.ccdm = ccdm
-    #     self.geometry = geometry
-
-    #     if bayer:
-    #         self.bayer = bayer
-
-    #     if flamsteed and not math.isnan(flamsteed):
-    #         self.flamsteed = int(flamsteed)
-
-    @field_validator('flamsteed', 'hip', mode='before')
+    @field_validator("flamsteed", "hip", mode="before")
     @classmethod
     def nan(cls, value: int) -> int:
         if not value or math.isnan(value):
             return None
-        
+
         return int(value)
-    
 
     def model_post_init(self, context: Any) -> None:
         self.bayer = self.bayer or None
         self.hip = self.hip if self.hip is not None and np.isfinite(self.hip) else None
-
-        if self.flamsteed and not math.isnan(self.flamsteed):
-            self.flamsteed = int(self.flamsteed)
-
 
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
@@ -182,7 +146,6 @@ def from_tuple(star: tuple) -> Star:
         ccdm=getattr(star, "ccdm", None),
         name=getattr(star, "name", None),
         geometry=star.geometry,
-        # _constellation_id=getattr(star, "constellation", None),
         bayer=getattr(star, "bayer", None),
         flamsteed=getattr(star, "flamsteed", None),
     )

@@ -1,7 +1,6 @@
-from typing import Union, Iterator, Annotated
+from typing import Iterator
 
 from ibis import _
-from shapely import Polygon, MultiPolygon
 
 from starplot.models.base import SkyObject, ShapelyPolygon, ShapelyMultiPolygon
 from starplot.data import constellations
@@ -28,21 +27,6 @@ class Constellation(SkyObject):
 
     boundary: ShapelyPolygon | ShapelyMultiPolygon = None
     """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
-
-    # def __init__(
-    #     self,
-    #     ra: float,
-    #     dec: float,
-    #     iau_id: str,
-    #     name: str = None,
-    #     star_hip_ids: list[int] = None,
-    #     boundary: Polygon = None,
-    # ) -> None:
-    #     super().__init__(ra, dec, constellation_id=iau_id.lower())
-    #     self.iau_id = iau_id.lower()
-    #     self.name = name
-    #     self.star_hip_ids = star_hip_ids
-    #     self.boundary = boundary
 
     def __repr__(self) -> str:
         return f"Constellation(iau_id={self.iau_id}, name={self.name}, ra={self.ra}, dec={self.dec})"

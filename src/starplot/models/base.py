@@ -1,45 +1,31 @@
 import json
 
 from functools import cache
-from typing import Any, Optional, Union, Annotated
+from typing import Optional
 
 from shapely import to_geojson, from_geojson, Geometry
 from shapely.geometry import Polygon, MultiPolygon, Point
 
 from pydantic_core import core_schema
 
-from pydantic import BaseModel, field_validator, computed_field, PlainSerializer, AfterValidator, WithJsonSchema
+from pydantic import (
+    BaseModel,
+    computed_field,
+)
 from skyfield.api import position_of_radec, load_constellation_map
 
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 
 
-
-# ShapelyPolygon = Annotated[
-#     Polygon | MultiPolygon,
-#     AfterValidator(lambda s: s.is_valid),
-#     PlainSerializer(lambda s: json.loads(to_geojson(s)), return_type=dict),
-#     WithJsonSchema({'type': 'string'}, mode='serialization'),
-
-# ]
-
-# ShapelyPoint = Annotated[
-#     Point,
-#     AfterValidator(lambda s: s.is_valid),
-#     PlainSerializer(lambda s: json.loads(to_geojson(s)), return_type=dict),
-#     WithJsonSchema({'type': 'string'}, mode='serialization'),
-# ]
-
 class ShapelyPydantic:
     @classmethod
     def validate(cls, field_value, info):
         return field_value.is_valid
-        
+
     @classmethod
     def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
         def validate_from_geojson(value: dict) -> Geometry:
             return from_geojson(json.loads(value))
-        
 
         from_dict_schema = core_schema.chain_schema(
             [
@@ -61,14 +47,18 @@ class ShapelyPydantic:
             ),
         )
 
+
 class ShapelyPolygon(ShapelyPydantic, Polygon):
     pass
+
 
 class ShapelyMultiPolygon(ShapelyPydantic, MultiPolygon):
     pass
 
+
 class ShapelyPoint(ShapelyPydantic, Point):
     pass
+
 
 @cache
 def constellation_at():
@@ -86,37 +76,16 @@ class SkyObject(BaseModel, CreateMapMixin, CreateOpticMixin):
     dec: float
     """Declination, in degrees (-90 to 90)"""
 
-    # constellation_id: Optional[str] = None
-    # """Identifier of the constellation that contains this object. The ID is the three-letter (all lowercase) abbreviation from the International Astronomical Union (IAU)."""
-
     _constellation_id: Optional[str] = None
-
-
-    # object list test is failing because DsoType is enum (need value)
-    # other test is failing because constellation id prop mismatch for RA
-
-    # def __init__(self, ra: float, dec: float, constellation_id: str = None) -> None:
-    #     self.ra = ra
-    #     self.dec = dec
-    #     if constellation_id:
-    #         self._constellation_id = constellation_id
 
     @computed_field
     @property
-    def constellation_id(self) -> Union[str, None]:
+    def constellation_id(self) -> str | None:
         """Identifier of the constellation that contains this object. The ID is the three-letter (all lowercase) abbreviation from the International Astronomical Union (IAU)."""
         if not self._constellation_id:
             pos = position_of_radec(self.ra, self.dec)
             self._constellation_id = constellation_at()(pos).lower()
         return self._constellation_id
-
-    # @property
-    # def constellation_id(self):
-    #     """Identifier of the constellation that contains this object. The ID is the three-letter (all lowercase) abbreviation from the International Astronomical Union (IAU)."""
-    #     if not self._constellation_id:
-    #         pos = position_of_radec(self.ra, self.dec)
-    #         self._constellation_id = constellation_at()(pos).lower()
-    #     return self._constellation_id
 
     def constellation(self):
         """Returns an instance of the [`Constellation`][starplot.models.Constellation] that contains this object"""
