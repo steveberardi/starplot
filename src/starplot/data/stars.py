@@ -459,7 +459,7 @@ class StarCatalog:
 
 
 @cache
-def read_catalog(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars"):
+def table(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars"):
     con = db.connect()
 
     if catalog == StarCatalog.BIG_SKY_MAG11:
@@ -481,6 +481,7 @@ def read_catalog(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="s
         # stars parquet does not have geometry field
         geometry=_.ra_degrees.point(_.dec_degrees),
         rowid=ibis.row_number(),
+        sk=ibis.row_number(),
     )
 
     stars = stars.join(
@@ -495,14 +496,24 @@ def read_catalog(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="s
     return stars
 
 
-def load(extent=None, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, filters=None):
+def load(
+    extent=None,
+    catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
+    filters=None,
+    sql=None,
+):
     filters = filters or []
-    stars = read_catalog(catalog)
+    stars = table(catalog)
 
     if extent:
         stars = stars.filter(stars.geometry.intersects(extent))
 
     if filters:
-        return stars.filter(*filters)
+        stars = stars.filter(*filters)
+
+    if sql:
+        result = stars.alias("_").sql(sql).select("sk").execute()
+        skids = result["sk"].to_list()
+        stars = stars.filter(_.sk.isin(skids))
 
     return stars

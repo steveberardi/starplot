@@ -1,3 +1,5 @@
+from functools import cache
+
 import ibis
 from ibis import _
 
@@ -669,23 +671,35 @@ CONSTELLATION_HIP_IDS = {
 }
 
 
-def load(extent=None, filters=None):
-    filters = filters or []
+@cache
+def table():
     con = db.connect()
     c = con.table("constellations")
-    c = c.mutate(
+
+    return c.mutate(
         ra=_.center_ra,
         dec=_.center_dec,
         constellation_id=_.iau_id,
-        rowid=ibis.row_number(),
         boundary=_.geometry,
+        rowid=ibis.row_number(),
+        sk=ibis.row_number(),
     )
+
+
+def load(extent=None, filters=None, sql=None):
+    filters = filters or []
+    c = table()
 
     if extent:
         filters.append(_.geometry.intersects(extent))
 
     if filters:
-        return c.filter(*filters)
+        c = c.filter(*filters)
+
+    if sql:
+        result = c.alias("_").sql(sql).select("sk").execute()
+        skids = result["sk"].to_list()
+        c = c.filter(_.sk.isin(skids))
 
     return c
 

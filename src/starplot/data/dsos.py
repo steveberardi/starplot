@@ -1,3 +1,5 @@
+from functools import cache
+
 import ibis
 from ibis import _
 
@@ -25,19 +27,25 @@ class DsoLabelMaker(dict):
 DSO_LABELS_DEFAULT = DsoLabelMaker()
 
 
-def load(extent=None, filters=None):
-    filters = filters or []
+@cache
+def table():
     con = db.connect()
     dsos = con.table("deep_sky_objects")
 
-    dsos = dsos.mutate(
+    return dsos.mutate(
         ra=_.ra_degrees,
         dec=_.dec_degrees,
         constellation_id=_.constellation,
         magnitude=ibis.coalesce(_.mag_v, _.mag_b, None),
         size=_.size_deg2,
         rowid=ibis.row_number(),
+        sk=ibis.row_number(),
     )
+
+
+def load(extent=None, filters=None, sql=None):
+    filters = filters or []
+    dsos = table()
 
     if extent:
         dsos = dsos.filter(_.geometry.intersects(extent))
@@ -45,6 +53,11 @@ def load(extent=None, filters=None):
     filters.extend([_.ra_degrees.notnull() & _.dec_degrees.notnull()])
 
     if filters:
-        return dsos.filter(*filters)
+        dsos = dsos.filter(*filters)
+
+    if sql:
+        result = dsos.alias("_").sql(sql).select("sk").execute()
+        skids = result["sk"].to_list()
+        dsos = dsos.filter(_.sk.isin(skids))
 
     return dsos

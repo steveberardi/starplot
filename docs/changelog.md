@@ -21,6 +21,9 @@
     - Fixes static constellation label plotting
     - Fixes polygon clipping on optic plots
     - Adds HII Regions to the `nebula()` function
+- [**v0.15.7**]
+    - Various small changes to make it easier to build AI agents that use Starplot
+    - Adds a `sql` kwarg to object selection and plotting functions to allow querying by SQL
 
 ## v0.14.x
 [Documentation](https://archives.starplot.dev/0.14.0/)

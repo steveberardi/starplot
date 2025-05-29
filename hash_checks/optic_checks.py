@@ -130,7 +130,7 @@ def check_optic_clipping():
         **plot_kwargs,
     )
     optic_plot.stars(where=[_.magnitude < 12])
-    optic_plot.dsos(where=[_.magnitude < 8.1], labels=None)
+    optic_plot.dsos(sql="select * from _ where magnitude < 8.1", labels=None)
     optic_plot.nebula()
     optic_plot.title("Orion Nebula")
     filename = DATA_PATH / "optic-clipping.png"

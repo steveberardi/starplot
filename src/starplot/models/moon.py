@@ -4,10 +4,9 @@ from enum import Enum
 import numpy as np
 from skyfield.api import Angle, wgs84
 from skyfield import almanac
-from shapely import Polygon
 
 from starplot.data import load
-from starplot.models.base import SkyObject
+from starplot.models.base import SkyObject, ShapelyPolygon
 from starplot.geometry import circle
 from starplot.utils import dt_or_now
 
@@ -35,7 +34,7 @@ class Moon(SkyObject):
     """Date/time of moon's position"""
 
     apparent_size: float
-    """Apparent size (degrees)"""
+    """Apparent size in the sky (degrees)"""
 
     phase_angle: float
     """Angle of the moon from the Sun (degrees)"""
@@ -44,31 +43,10 @@ class Moon(SkyObject):
     """Description of the moon's phase. The Moon will be considered New/Full/Quarter if it's within 12 hours of that precise phase."""
 
     illumination: float
-    """Percent of illumination (0...1)"""
+    """Percent of illumination (0 to 1)"""
 
-    geometry: Polygon = None
-    """Shapely Polygon of the moon's extent. Right ascension coordinates are in degrees (0...360)."""
-
-    def __init__(
-        self,
-        ra: float,
-        dec: float,
-        name: str,
-        dt: datetime,
-        apparent_size: float,
-        phase_angle: float,
-        phase_description: str,
-        illumination: str,
-        geometry: Polygon = None,
-    ) -> None:
-        super().__init__(ra, dec)
-        self.name = name
-        self.dt = dt
-        self.apparent_size = apparent_size
-        self.phase_angle = phase_angle
-        self.phase_description = phase_description
-        self.illumination = illumination
-        self.geometry = geometry
+    geometry: ShapelyPolygon = None
+    """Shapely Polygon of the moon's extent. Right ascension coordinates are in degrees (0 to 360)."""
 
     @classmethod
     def get(

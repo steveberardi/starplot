@@ -220,6 +220,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         legend_label: str = "Star",
         bayer_labels: bool = False,
         flamsteed_labels: bool = False,
+        sql: str = None,
         *args,
         **kwargs,
     ):
@@ -239,6 +240,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted.
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
+            sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
         """
         optic_star_multiplier = self.FIELD_OF_VIEW_MAX / self.optic.true_fov
         size_fn_mx = None

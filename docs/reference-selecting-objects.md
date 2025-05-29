@@ -95,4 +95,16 @@ There are also a few operators you can use to combine expressions:
 _.magnitude > 8 | _.name == "Vega"
 ```
 
+## Using SQL
+
+All functions that accept a `where` list of filters _also_ have a `sql` keyword argument that lets you write a SQL query to select objects. You can also use a combination of `where` filters and a `sql` query, but the filters in `where` will be executed _first_. The table name is always an underscore: `_`.
+
+For example, if you want to find all stars with a magnitude less than 4, you can do:
+
+```python
+
+bright_stars = Star.find(sql="select * from _ where magnitude < 4")
+
+```
+
 <br/><br/>

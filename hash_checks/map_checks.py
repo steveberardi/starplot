@@ -21,21 +21,21 @@ AUTO_ADJUST_SETTINGS = {"seed": 1}
 
 BASIC_DSO_TYPES = [
     # Star Clusters ----------
-    DsoType.OPEN_CLUSTER,
-    DsoType.GLOBULAR_CLUSTER,
+    DsoType.OPEN_CLUSTER.value,
+    DsoType.GLOBULAR_CLUSTER.value,
     # Galaxies ----------
-    DsoType.GALAXY,
-    DsoType.GALAXY_PAIR,
-    DsoType.GALAXY_TRIPLET,
-    DsoType.GROUP_OF_GALAXIES,
+    DsoType.GALAXY.value,
+    DsoType.GALAXY_PAIR.value,
+    DsoType.GALAXY_TRIPLET.value,
+    DsoType.GROUP_OF_GALAXIES.value,
     # Nebulas ----------
-    DsoType.NEBULA,
-    DsoType.PLANETARY_NEBULA,
-    DsoType.EMISSION_NEBULA,
-    DsoType.STAR_CLUSTER_NEBULA,
-    DsoType.REFLECTION_NEBULA,
+    DsoType.NEBULA.value,
+    DsoType.PLANETARY_NEBULA.value,
+    DsoType.EMISSION_NEBULA.value,
+    DsoType.STAR_CLUSTER_NEBULA.value,
+    DsoType.REFLECTION_NEBULA.value,
     # Stars ----------
-    DsoType.ASSOCIATION_OF_STARS,
+    DsoType.ASSOCIATION_OF_STARS.value,
 ]
 
 dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
@@ -87,7 +87,10 @@ def _stereo_north():
         resolution=RESOLUTION,
         autoscale=True,
     )
-    p.stars(where=[_.magnitude < 9], bayer_labels=True)
+    p.stars(
+        sql="select * from _ where magnitude < 9",
+        bayer_labels=True,
+    )
     p.dsos(
         labels=None,
         true_size=False,
