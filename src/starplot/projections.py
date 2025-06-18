@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any
 
 from cartopy import crs as ccrs
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel
 
 
 class ProjectionBase(BaseModel, ABC):
@@ -38,17 +37,16 @@ class Zenith(ProjectionBase):
 
     The Zenith projection shows the whole sky as seen from a specific time and place. They're also sometimes called "star charts" but that name is used for many different types of star maps, so Starplot uses the more specific name "Zenith plot" (which reflects the fact that the [zenith](https://en.wikipedia.org/wiki/Zenith) is in the center of the chart).
     """
+
     name: str = "Zenith"
-    
+
     # TODO:
     # maybe just add kwargs to map plot for overriding central lat/lon
     # projection classes can get complex (especially perspecitve projections where props based on time/location)
 
-
     @property
     def crs(self):
         return ccrs.Stereographic(self.center_ra, central_latitude=self.center_dec)
-
 
 
 class Projection(str, Enum):
