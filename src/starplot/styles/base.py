@@ -169,6 +169,7 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.CIRCLE_DOTTED_RINGS: circle_dotted_rings(),
             MarkerSymbolEnum.CIRCLE_LINE: circle_line(),
             MarkerSymbolEnum.COMET: "$\u2604$",
+            MarkerSymbolEnum.STAR_4: "$\u2726$",
             MarkerSymbolEnum.STAR_8: "$\u2734$",
             MarkerSymbolEnum.ELLIPSE: ellipse(),
         }[self.value]
