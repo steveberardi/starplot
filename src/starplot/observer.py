@@ -18,6 +18,10 @@ class Observer(BaseModel):
     lon: float = Field(default=0, ge=-180, le=180)
     """Longitude of observer location"""
 
+    class Config:
+        arbitrary_types_allowed = True
+        
+        
     @computed_field
     @cached_property
     def timescale(self) -> Timescale:

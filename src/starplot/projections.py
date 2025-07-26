@@ -30,6 +30,9 @@ class ProjectionBase(BaseModel, ABC):
 
     threshold: int = 1000
 
+    class Config:
+        arbitrary_types_allowed = True
+        
     @cached_property
     @abstractmethod
     def crs(self):

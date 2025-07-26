@@ -21,7 +21,7 @@ from starplot.plotters import (
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
 )
-from starplot.projections import Projection
+from starplot.projections import Projection, ProjectionBase, Zenith
 from starplot.styles import (
     ObjectStyle,
     LabelStyle,
@@ -75,7 +75,7 @@ class MapPlot(
 
     def __init__(
         self,
-        projection: Projection,
+        projection: ProjectionBase,
         ra_min: float = 0,
         ra_max: float = 360,
         dec_min: float = -90,
@@ -124,19 +124,19 @@ class MapPlot(
         self.lon = lon
         self.clip_path = clip_path
 
-        if self.projection in [
-            Projection.ORTHOGRAPHIC,
-            Projection.STEREOGRAPHIC,
-            Projection.ZENITH,
-        ] and (lat is None or lon is None):
-            raise ValueError(
-                f"lat and lon are required for the {self.projection.value.upper()} projection"
-            )
+        # if self.projection in [
+        #     Projection.ORTHOGRAPHIC,
+        #     Projection.STEREOGRAPHIC,
+        #     Projection.ZENITH,
+        # ] and (lat is None or lon is None):
+        #     raise ValueError(
+        #         f"lat and lon are required for the {self.projection.value.upper()} projection"
+        #     )
 
-        if self.projection == Projection.ZENITH and not self._is_global_extent():
-            raise ValueError(
-                "Zenith projection requires a global extent: ra_min=0, ra_max=360, dec_min=-90, dec_max=90"
-            )
+        # if self.projection == Projection.ZENITH and not self._is_global_extent():
+        #     raise ValueError(
+        #         "Zenith projection requires a global extent: ra_min=0, ra_max=360, dec_min=-90, dec_max=90"
+        #     )
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -495,25 +495,27 @@ class MapPlot(
         self._center_lat = center_lat
         self._center_lon = center_lon
 
-        if self.projection in [
-            Projection.ORTHOGRAPHIC,
-            Projection.STEREOGRAPHIC,
-            Projection.ZENITH,
-        ]:
-            # Calculate local sidereal time (LST) to shift RA DEC to be in line with current date and time
-            lst = -(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
-            self._proj = Projection.crs(self.projection, lon=lst, lat=self.lat)
-        elif self.projection == Projection.LAMBERT_AZ_EQ_AREA:
-            self._proj = Projection.crs(
-                self.projection, center_lat=center_lat, center_lon=center_lon
-            )
-        else:
-            self._proj = Projection.crs(self.projection, center_lon)
-        self._proj.threshold = 1000
+        # if self.projection in [
+        #     Projection.ORTHOGRAPHIC,
+        #     Projection.STEREOGRAPHIC,
+        #     Projection.ZENITH,
+        # ]:
+        #     # Calculate local sidereal time (LST) to shift RA DEC to be in line with current date and time
+        #     lst = -(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
+        #     self._proj = Projection.crs(self.projection, lon=lst, lat=self.lat)
+        # elif self.projection == Projection.LAMBERT_AZ_EQ_AREA:
+        #     self._proj = Projection.crs(
+        #         self.projection, center_lat=center_lat, center_lon=center_lon
+        #     )
+        # else:
+        #     self._proj = Projection.crs(self.projection, center_lon)
+        # self._proj.threshold = 1000
+
+        self._proj = self.projection.crs
         self.ax = plt.axes(projection=self._proj)
 
         if self._is_global_extent():
-            if self.projection == Projection.ZENITH:
+            if isinstance(self.projection, Zenith):
                 theta = np.linspace(0, 2 * np.pi, 100)
                 center, radius = [0.5, 0.5], 0.45
                 verts = np.vstack([np.sin(theta), np.cos(theta)]).T
@@ -530,7 +532,7 @@ class MapPlot(
         self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
 
-        self.logger.debug(f"Projection = {self.projection.value.upper()}")
+        self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
 
         self._fit_to_ax()
         self._plot_background_clip_path()
@@ -584,7 +586,7 @@ class MapPlot(
                 zorder=-2_000,
                 transform=self.ax.transAxes,
             )
-        elif self.projection == Projection.ZENITH:
+        elif isinstance(self.projection, Zenith):
             self._background_clip_path = patches.Circle(
                 (0.50, 0.50),
                 radius=0.45,
