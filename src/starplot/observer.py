@@ -6,6 +6,7 @@ from skyfield.timelib import Timescale
 
 from starplot.data import load
 
+
 class Observer(BaseModel):
     """Represents an observer at a specific time and place."""
 
@@ -20,8 +21,7 @@ class Observer(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
-        
-        
+
     @computed_field
     @cached_property
     def timescale(self) -> Timescale:
@@ -32,3 +32,14 @@ class Observer(BaseModel):
     def lst(self) -> float:
         """Local sidereal time (in degrees)"""
         return (360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
+
+    # @computed_field
+    # @cached_property
+    # def location(self):
+    #     earth = self.ephemeris["earth"]
+    #     return earth + wgs84.latlon(self.lat, self.lon)
+
+    # def observe(self):
+    #     earth = self.ephemeris["earth"]
+    #     self.location = earth + wgs84.latlon(self.lat, self.lon)
+    #     return self.location.at(self.timescale).observe

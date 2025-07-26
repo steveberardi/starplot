@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
 from typing import Dict, Union, Optional
 from random import randrange
 import logging
@@ -9,7 +8,6 @@ import rtree
 from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.lines import Line2D
-from pytz import timezone
 from shapely import Polygon, Point
 
 from starplot.coordinates import CoordinateSystem
@@ -17,6 +15,7 @@ from starplot import geod, models, warnings
 from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
+from starplot.observer import Observer
 from starplot.styles import (
     AnchorPointEnum,
     PlotStyle,
@@ -70,7 +69,8 @@ class BasePlot(ABC):
 
     def __init__(
         self,
-        dt: datetime = None,
+        # dt: datetime = None,
+        observer: Observer = Observer(),
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_STYLE,
         resolution: int = 4096,
@@ -97,7 +97,8 @@ class BasePlot(ABC):
         if suppress_warnings:
             warnings.suppress()
 
-        self.dt = dt or timezone("UTC").localize(datetime.now())
+        self.observer = observer
+        # self.dt = dt or timezone("UTC").localize(datetime.now())
         self._ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
         self.earth = self.ephemeris["earth"]
@@ -121,7 +122,7 @@ class BasePlot(ABC):
             linewidth=self.style.text_border_width * self.scale,
             foreground=self.style.text_border_color.as_hex(),
         )
-        self.timescale = load.timescale().from_datetime(self.dt)
+        # self.timescale = load.timescale().from_datetime(self.dt)
 
         self._objects = models.ObjectList()
         self._labeled_stars = []
@@ -744,7 +745,9 @@ class BasePlot(ABC):
             legend_label: How to label the planets in the legend. If `None`, then the planets will not be added to the legend
         """
         labels = labels or {}
-        planets = models.Planet.all(self.dt, self.lat, self.lon, self._ephemeris_name)
+        planets = models.Planet.all(
+            self.observer.dt, self.observer.lat, self.observer.lon, self._ephemeris_name
+        )
 
         for p in planets:
             label = labels.get(p.name)
@@ -798,7 +801,10 @@ class BasePlot(ABC):
             legend_label: How the sun will be labeled in the legend
         """
         s = models.Sun.get(
-            dt=self.dt, lat=self.lat, lon=self.lon, ephemeris=self._ephemeris_name
+            dt=self.observer.dt,
+            lat=self.observer.lat,
+            lon=self.observer.lon,
+            ephemeris=self._ephemeris_name,
         )
         s.name = label or s.name
 
@@ -1073,7 +1079,10 @@ class BasePlot(ABC):
             label: How the Moon will be labeled on the plot and legend
         """
         m = models.Moon.get(
-            dt=self.dt, lat=self.lat, lon=self.lon, ephemeris=self._ephemeris_name
+            dt=self.observer.dt,
+            lat=self.observer.lat,
+            lon=self.observer.lon,
+            ephemeris=self._ephemeris_name,
         )
         m.name = label or m.name
 

@@ -1,4 +1,3 @@
-import datetime
 import math
 from typing import Callable
 from functools import cache
@@ -15,6 +14,7 @@ from starplot.coordinates import CoordinateSystem
 from starplot import geod
 from starplot.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
+from starplot.observer import Observer
 from starplot.plotters import (
     ConstellationPlotterMixin,
     StarPlotterMixin,
@@ -80,9 +80,10 @@ class MapPlot(
         ra_max: float = 360,
         dec_min: float = -90,
         dec_max: float = 90,
-        lat: float = None,
-        lon: float = None,
-        dt: datetime = None,
+        # lat: float = None,
+        # lon: float = None,
+        # dt: datetime = None,
+        observer: Observer = Observer(),
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_MAP_STYLE,
         resolution: int = 4096,
@@ -95,7 +96,7 @@ class MapPlot(
         **kwargs,
     ) -> "MapPlot":
         super().__init__(
-            dt,
+            observer,
             ephemeris,
             style,
             resolution,
@@ -120,10 +121,10 @@ class MapPlot(
         self.ra_max = ra_max
         self.dec_min = dec_min
         self.dec_max = dec_max
-        self.lat = lat
-        self.lon = lon
         self.clip_path = clip_path
 
+        # self.lat = lat
+        # self.lon = lon
         # if self.projection in [
         #     Projection.ORTHOGRAPHIC,
         #     Projection.STEREOGRAPHIC,
@@ -233,11 +234,13 @@ class MapPlot(
             label: Label for the zenith
             legend_label: Label in the legend
         """
-        if self.lat is None or self.lon is None or self.dt is None:
-            raise ValueError("lat, lon, and dt are required for plotting the zenith")
+        if self.observer is None:
+            raise ValueError("observer is required for plotting the zenith")
 
-        geographic = wgs84.latlon(latitude_degrees=self.lat, longitude_degrees=self.lon)
-        observer = geographic.at(self.timescale)
+        geographic = wgs84.latlon(
+            latitude_degrees=self.observer.lat, longitude_degrees=self.observer.lon
+        )
+        observer = geographic.at(self.observer.timescale)
         zenith = observer.from_altaz(alt_degrees=90, az_degrees=0)
         ra, dec, _ = zenith.radec()
 
@@ -262,11 +265,13 @@ class MapPlot(
             style: Style of the horizon path. If None, then the plot's style definition will be used.
             labels: List of labels for cardinal directions. **NOTE: labels should be in the order: North, East, South, West.**
         """
-        if self.lat is None or self.lon is None or self.dt is None:
-            raise ValueError("lat, lon, and dt are required for plotting the horizon")
+        if self.observer is None:
+            raise ValueError("observer is required for plotting the horizon")
 
-        geographic = wgs84.latlon(latitude_degrees=self.lat, longitude_degrees=self.lon)
-        observer = geographic.at(self.timescale)
+        geographic = wgs84.latlon(
+            latitude_degrees=self.observer.lat, longitude_degrees=self.observer.lon
+        )
+        observer = geographic.at(self.observer.timescale)
         zenith = observer.from_altaz(alt_degrees=90, az_degrees=0)
         ra, dec, _ = zenith.radec()
 
@@ -551,7 +556,7 @@ class MapPlot(
             raise NotImplementedError("info text only available for zenith projections")
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
+        info = f"{str(self.observer.lat)}, {str(self.observer.lon)}\n{dt_str}"
         self.ax.text(
             0.05,
             0.05,

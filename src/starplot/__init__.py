@@ -18,6 +18,6 @@ from .models import (
 )
 from .styles import *  # noqa: F401 F403
 from .observer import Observer  # noqa: F401
-from .projections import * # noqa: F401 F403
+from .projections import *  # noqa: F401 F403
 
 from ibis import _  # noqa: F401 F403

@@ -7,26 +7,27 @@ from pydantic import BaseModel
 
 from starplot.observer import Observer
 
+
 class CenterRA(BaseModel, ABC):
     center_ra: float = 0
     """Central right ascension"""
 
+
 class CenterDEC(BaseModel, ABC):
     center_dec: float = 0
     """Central declination"""
+
 
 class CenterRADEC(CenterRA, CenterDEC):
     pass
 
 
 class ObserverMixin(BaseModel, ABC):
-    
     observer: Observer
     """Observer instance"""
 
 
 class ProjectionBase(BaseModel, ABC):
-
     threshold: int = 1000
 
     class Config:
@@ -45,12 +46,14 @@ class Miller(ProjectionBase, CenterRA):
     def crs(self):
         return ccrs.Miller(central_longitude=-1 * self.center_ra)
 
+
 class Mercator(ProjectionBase, CenterRA):
     """Good for declinations between -70 and 70, but distorts objects near the poles"""
 
     @cached_property
     def crs(self):
         return ccrs.Mercator(central_longitude=-1 * self.center_ra)
+
 
 class Mollweide(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
@@ -65,7 +68,9 @@ class Equidistant(ProjectionBase, CenterRADEC):
 
     @cached_property
     def crs(self):
-        return ccrs.AzimuthalEquidistant(central_longitude=-1 * self.center_ra, central_latitude=self.center_dec)
+        return ccrs.AzimuthalEquidistant(
+            central_longitude=-1 * self.center_ra, central_latitude=self.center_dec
+        )
 
 
 class StereoNorth(ProjectionBase, CenterRA):
@@ -97,9 +102,12 @@ class LambertAzEqArea(ProjectionBase, CenterRADEC):
 
     @cached_property
     def crs(self):
-        c = ccrs.LambertAzimuthalEqualArea(central_longitude=-1 * self.center_ra, central_latitude=self.center_dec)
+        c = ccrs.LambertAzimuthalEqualArea(
+            central_longitude=-1 * self.center_ra, central_latitude=self.center_dec
+        )
         c.threshold = self.threshold
         return c
+
 
 class Zenith(ProjectionBase, ObserverMixin):
     """
@@ -110,7 +118,9 @@ class Zenith(ProjectionBase, ObserverMixin):
 
     @cached_property
     def crs(self):
-        c = ccrs.Stereographic(central_longitude=-1 * self.observer.lst, central_latitude=self.observer.lat)
+        c = ccrs.Stereographic(
+            central_longitude=-1 * self.observer.lst, central_latitude=self.observer.lat
+        )
         c.threshold = self.threshold
         return c
 
@@ -124,9 +134,12 @@ class Orthographic(ProjectionBase, ObserverMixin):
 
     @cached_property
     def crs(self):
-        c = ccrs.Orthographic(central_longitude=-1 * self.observer.lst, central_latitude=self.observer.lat)
+        c = ccrs.Orthographic(
+            central_longitude=-1 * self.observer.lst, central_latitude=self.observer.lat
+        )
         c.threshold = self.threshold
         return c
+
 
 class Stereographic(ProjectionBase, ObserverMixin):
     """
@@ -137,9 +150,12 @@ class Stereographic(ProjectionBase, ObserverMixin):
 
     @cached_property
     def crs(self):
-        c = ccrs.Stereographic(central_longitude=-1 * self.observer.lst, central_latitude=self.observer.lat)
+        c = ccrs.Stereographic(
+            central_longitude=-1 * self.observer.lst, central_latitude=self.observer.lat
+        )
         c.threshold = self.threshold
         return c
+
 
 class Projection(str, Enum):
     """Supported projections for MapPlots"""

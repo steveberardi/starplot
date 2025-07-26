@@ -1,6 +1,5 @@
 import math
 
-from datetime import datetime
 from functools import cache
 
 import pandas as pd
@@ -14,6 +13,7 @@ from shapely import Point
 from starplot.coordinates import CoordinateSystem
 from starplot.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
+from starplot.observer import Observer
 from starplot.plotters import (
     ConstellationPlotterMixin,
     StarPlotterMixin,
@@ -78,11 +78,12 @@ class HorizonPlot(
 
     def __init__(
         self,
-        lat: float,
-        lon: float,
         altitude: tuple[float, float],
         azimuth: tuple[float, float],
-        dt: datetime = None,
+        observer: Observer = Observer(),
+        # lat: float,
+        # lon: float,
+        # dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_HORIZON_STYLE,
         resolution: int = 4096,
@@ -94,7 +95,7 @@ class HorizonPlot(
         **kwargs,
     ) -> "HorizonPlot":
         super().__init__(
-            dt,
+            observer,
             ephemeris,
             style,
             resolution,
@@ -121,8 +122,8 @@ class HorizonPlot(
         self.az = azimuth
         self.center_alt = sum(altitude) / 2
         self.center_az = sum(azimuth) / 2
-        self.lat = lat
-        self.lon = lon
+        # self.lat = lat
+        # self.lon = lon
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -204,8 +205,8 @@ class HorizonPlot(
 
     def _calc_position(self):
         earth = self.ephemeris["earth"]
-        self.location = earth + wgs84.latlon(self.lat, self.lon)
-        self.observe = self.location.at(self.timescale).observe
+        self.location = earth + wgs84.latlon(self.observer.lat, self.observer.lon)
+        self.observe = self.location.at(self.observer.timescale).observe
 
         # locations = [
         #     self.location.at(self.timescale).from_altaz(
@@ -260,8 +261,8 @@ class HorizonPlot(
 
         self.ra_min = 0
         self.ra_max = 360
-        self.dec_min = self.lat - 90
-        self.dec_max = self.lat + 90
+        self.dec_min = self.observer.lat - 90
+        self.dec_max = self.observer.lat + 90
 
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
