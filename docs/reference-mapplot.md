@@ -6,7 +6,24 @@
         merge_init_into_class: true
         show_root_heading: true
 
-## Map Projections
+## Projections
+
+### ::: starplot.LambertAzEqArea
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        
+    
+### ::: starplot.Zenith
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 3
+
+
+---
 
 ### ::: starplot.Projection
     options:

@@ -285,7 +285,7 @@ class MapPlot(
             y.append(y0)
 
         style_kwargs = {}
-        if self.projection == Projection.ZENITH:
+        if isinstance(self.projection, Zenith):
             """
             For zenith projections, we plot the horizon as a patch to make a more perfect circle
             """
@@ -490,10 +490,10 @@ class MapPlot(
             dpi=DPI,
         )
         bounds = self._latlon_bounds()
-        center_lat = (bounds[2] + bounds[3]) / 2
-        center_lon = (bounds[0] + bounds[1]) / 2
-        self._center_lat = center_lat
-        self._center_lon = center_lon
+        # center_lat = (bounds[2] + bounds[3]) / 2
+        # center_lon = (bounds[0] + bounds[1]) / 2
+        # self._center_lat = center_lat
+        # self._center_lon = center_lon
 
         # if self.projection in [
         #     Projection.ORTHOGRAPHIC,
@@ -547,7 +547,7 @@ class MapPlot(
         Args:
             style: Styling of the info text. If None, then the plot's style definition will be used.
         """
-        if not self.projection == Projection.ZENITH:
+        if not isinstance(self.projection, Zenith):
             raise NotImplementedError("info text only available for zenith projections")
 
         dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
