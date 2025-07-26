@@ -130,6 +130,14 @@
         </a>
     </li>
 
+    <li>
+        <a href="/examples/horizon-gradient/">
+            <img src="/images/examples/horizon_gradient-sm.png" alt="Horizon Gradient Plot" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Horizon Gradient Plot</p>
+        </a>
+    </li>
+
 </ul>
 
 
