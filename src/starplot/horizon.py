@@ -92,7 +92,7 @@ class HorizonPlot(
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
-        color_stops: list[tuple[float, str]] = None,
+        gradient_preset: list[tuple[float, str]] = None,
         *args,
         **kwargs,
     ) -> "HorizonPlot":
@@ -126,7 +126,7 @@ class HorizonPlot(
         self.center_az = sum(azimuth) / 2
         self.lat = lat
         self.lon = lon
-        self.color_stops = color_stops
+        self.gradient_preset = gradient_preset
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -413,7 +413,7 @@ class HorizonPlot(
         gridlines.xlocator = FixedLocator(x_locations)
         gridlines.ylocator = FixedLocator(y_locations)
 
-    def _apply_gradient_background(self, color_stops):
+    def _apply_gradient_background(self, gradient_preset):
         """
         Adds a vertical color gradient background the plot.
         The gradient is applied to regular axes (x,y) as opposed to the GeoAxes
@@ -423,7 +423,7 @@ class HorizonPlot(
         result. Using either .extend or a style sheet works.
 
         Parameters:
-        - color_stops: A list of tuples (e.g. [(0.0, '#000000'), (1.0, '#000080')])
+        - gradient_preset: A list of tuples (e.g. [(0.0, '#000000'), (1.0, '#000080')])
                     where each tuple contains a position value [0-1] and a color
                     value to describe the range of colours in the gradient.
         """
@@ -435,7 +435,7 @@ class HorizonPlot(
         background_ax = fig.add_axes(bbox, zorder=0)
         background_ax.set_axis_off()
         # Unzip color proportions and colors
-        positions, colors = zip(*color_stops)
+        positions, colors = zip(*gradient_preset)
         # Create the colormap with specified proportions
         cmap = LinearSegmentedColormap.from_list("custom_gradient",
                                                  list(zip(positions, colors))
@@ -514,8 +514,8 @@ class HorizonPlot(
         self._fit_to_ax()
 
         # finalize plot layout before adding gradient
-        if self.color_stops:
+        if self.gradient_preset:
             self.fig.canvas.draw()
-            self._apply_gradient_background(self.color_stops)
+            self._apply_gradient_background(self.gradient_preset)
 
         self._plot_background_clip_path()

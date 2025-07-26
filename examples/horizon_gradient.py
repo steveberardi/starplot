@@ -23,7 +23,7 @@ p = HorizonPlot(
     style=style,
     resolution=4000,
     scale=0.9,
-    color_stops=extensions.GRADIENTS["pre_dawn"]
+    gradient_preset=extensions.GRADIENTS["pre_dawn"]
 )
 
 p.constellations()
