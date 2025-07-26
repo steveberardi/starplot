@@ -1,7 +1,10 @@
 from datetime import datetime, timezone
+from functools import cached_property
 
-from pydantic import BaseModel, AwareDatetime, Field
+from pydantic import BaseModel, AwareDatetime, Field, computed_field
+from skyfield.timelib import Timescale
 
+from starplot.data import load
 
 class Observer(BaseModel):
     """Represents an observer at a specific time and place."""
@@ -14,3 +17,14 @@ class Observer(BaseModel):
 
     lon: float = Field(default=0, ge=-180, le=180)
     """Longitude of observer location"""
+
+    @computed_field
+    @cached_property
+    def timescale(self) -> Timescale:
+        return load.timescale().from_datetime(self.dt)
+
+    @computed_field
+    @cached_property
+    def lst(self) -> float:
+        """Local sidereal time (in degrees)"""
+        return (360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
