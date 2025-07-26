@@ -5,9 +5,6 @@ from pytz import timezone
 from starplot_fork.src.starplot import HorizonPlot, _
 from starplot_fork.src.starplot.styles import PlotStyle, extensions
 
-# The background_color of the map must be set as a RGBA value with full
-# transparency (e.g. #ffffff00) for the gradient to render correctly.
-# You can use either .extend, as is done here, or a style sheet.
 style = PlotStyle().extend(
     extensions.BLUE_GOLD,
     extensions.MAP,
