@@ -3,12 +3,14 @@ import math
 from datetime import datetime
 from functools import cache
 
+import numpy as np
 import pandas as pd
 import geopandas as gpd
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator
+from matplotlib.colors import LinearSegmentedColormap
 from skyfield.api import wgs84, Star as SkyfieldStar
 from shapely import Point
 from starplot.coordinates import CoordinateSystem
@@ -90,6 +92,7 @@ class HorizonPlot(
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
+        color_stops: list[tuple[float, str]] = None,
         *args,
         **kwargs,
     ) -> "HorizonPlot":
@@ -123,6 +126,7 @@ class HorizonPlot(
         self.center_az = sum(azimuth) / 2
         self.lat = lat
         self.lon = lon
+        self.color_stops = color_stops
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -409,6 +413,48 @@ class HorizonPlot(
         gridlines.xlocator = FixedLocator(x_locations)
         gridlines.ylocator = FixedLocator(y_locations)
 
+    def _apply_gradient_background(self, color_stops):
+        """
+        Adds a vertical color gradient background the plot.
+        The gradient is applied to regular axes (x,y) as opposed to the GeoAxes
+        and is displayed below the GeoAxes.
+        The background_color of the map must be set as a RGBA value with full
+        transparency (e.g. #ffffff00) for this function to render the desired
+        result. Using either .extend or a style sheet works.
+
+        Parameters:
+        - color_stops: A list of tuples (e.g. [(0.0, '#000000'), (1.0, '#000080')])
+                    where each tuple contains a position value [0-1] and a color
+                    value to describe the range of colours in the gradient.
+        """
+        # Defining a figure based on the axes and get the position of the axes
+        # within the figure as a bounding box
+        fig = self.ax.figure
+        bbox = self.ax.get_position()
+        # Add underlay axes to draw gradient in display coordinates but hide axes
+        background_ax = fig.add_axes(bbox, zorder=0)
+        background_ax.set_axis_off()
+        # Unzip color proportions and colors
+        positions, colors = zip(*color_stops)
+        # Create the colormap with specified proportions
+        cmap = LinearSegmentedColormap.from_list("custom_gradient",
+                                                 list(zip(positions, colors))
+                                                 )
+        # Create a vertical gradient image
+        gradient = np.linspace(0, 1, self.resolution).reshape(-1, 1)
+        extent = [0, 1, 0, 1]  # covers the full axes
+        # Use imshow to plot the gradient in axes coordinates
+        background_ax.imshow(
+            gradient,
+            aspect='auto',
+            cmap=cmap,
+            interpolation='gaussian',
+            extent=extent,
+            zorder=0,
+        )
+        # set plot in self.ax's zorder to 1 so it appears above the gradient
+        self.ax.set_zorder(1)
+
     @cache
     def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
         """Converts az/alt to axes coordinates"""
@@ -466,4 +512,10 @@ class HorizonPlot(
         self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
 
         self._fit_to_ax()
+
+        # finalize plot layout before adding gradient
+        if self.color_stops:
+            self.fig.canvas.draw()
+            self._apply_gradient_background(self.color_stops)
+
         self._plot_background_clip_path()
