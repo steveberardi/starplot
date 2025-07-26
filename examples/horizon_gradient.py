@@ -8,8 +8,7 @@ from starplot_fork.src.starplot.styles import PlotStyle, extensions
 style = PlotStyle().extend(
     extensions.BLUE_GOLD,
     extensions.MAP,
-    {"figure_background_color": "#e2b900",
-     "background_color": "#ffffff00"},
+    {"figure_background_color": "#e2b900", "background_color": "#ffffff00"},
 )
 
 dt = timezone("Europe/London").localize(datetime(2025, 7, 26, 23, 0, 0, 0))
@@ -23,7 +22,7 @@ p = HorizonPlot(
     style=style,
     resolution=4000,
     scale=0.9,
-    gradient_preset=extensions.GRADIENTS["pre_dawn"]
+    gradient_preset=extensions.GRADIENTS["pre_dawn"],
 )
 
 p.constellations()
@@ -32,8 +31,8 @@ p.milky_way()
 p.stars(
     where=[_.magnitude < 5],
     where_labels=[_.magnitude < 2],
-    style__marker__symbol="star_4"
-    )
+    style__marker__symbol="star_4",
+)
 
 p.messier(where=[_.magnitude < 11], true_size=False, label_fn=lambda d: f"M{d.m}")
 
