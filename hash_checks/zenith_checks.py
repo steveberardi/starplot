@@ -3,8 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, _
-from starplot.map import MapPlot, Projection
+from starplot import MapPlot, styles, _, Zenith, Observer
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -19,11 +18,14 @@ RESOLUTION = 3800
 
 
 def _zenith():
-    p = MapPlot(
-        projection=Projection.ZENITH,
+    observer = Observer(
         lat=32.97,
         lon=-117.038611,
         dt=JUNE_2023,
+    )
+    p = MapPlot(
+        projection=Zenith(observer=observer),
+        observer=observer,
         style=STYLE,
         resolution=RESOLUTION,
         autoscale=True,
