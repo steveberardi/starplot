@@ -495,8 +495,8 @@ class MapPlot(
             dpi=DPI,
         )
         bounds = self._latlon_bounds()
-        # center_lat = (bounds[2] + bounds[3]) / 2
-        # center_lon = (bounds[0] + bounds[1]) / 2
+        center_lat = (bounds[2] + bounds[3]) / 2
+        center_lon = (bounds[0] + bounds[1]) / 2
         # self._center_lat = center_lat
         # self._center_lon = center_lon
 
@@ -516,7 +516,11 @@ class MapPlot(
         #     self._proj = Projection.crs(self.projection, center_lon)
         # self._proj.threshold = 1000
 
+        if hasattr(self.projection, "center_ra"):
+            self.projection.center_ra = -1 * center_lon
+        
         self._proj = self.projection.crs
+        self._proj.threshold = 1000
         self.ax = plt.axes(projection=self._proj)
 
         if self._is_global_extent():
