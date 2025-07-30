@@ -438,10 +438,10 @@ class HorizonPlot(
         positions, colors = zip(*gradient_preset)
         # Create the colormap with specified proportions
         cmap = LinearSegmentedColormap.from_list(
-            "custom_gradient", list(zip(positions, colors))
+            "custom_gradient", list(zip(positions, colors)), N=750
         )
         # Create a vertical gradient image
-        gradient = np.linspace(0, 1, self.resolution).reshape(-1, 1)
+        gradient = np.array([[0], [1]])
         extent = [0, 1, 0, 1]  # covers the full axes
         # Use imshow to plot the gradient in axes coordinates
         background_ax.imshow(
