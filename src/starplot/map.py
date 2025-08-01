@@ -45,18 +45,13 @@ class MapPlot(
 ):
     """Creates a new map plot.
 
-    !!! star "Note"
-        **`lat`, `lon`, and `dt` are required for perspective projections (`Orthographic`, `Stereographic`, and `Zenith`)**
-
     Args:
         projection: Projection of the map
         ra_min: Minimum right ascension of the map's extent, in degrees (0...360)
         ra_max: Maximum right ascension of the map's extent, in degrees (0...360)
         dec_min: Minimum declination of the map's extent, in degrees (-90...90)
         dec_max: Maximum declination of the map's extent, in degrees (-90...90)
-        lat: Latitude for perspective projections: Orthographic, Stereographic, and Zenith
-        lon: Longitude for perspective projections: Orthographic, Stereographic, and Zenith
-        dt: Date/time to use for star/planet positions, (*must be timezone-aware*). Default = current UTC time.
+        observer: Observer instance which specifies a time and place
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
@@ -80,9 +75,6 @@ class MapPlot(
         ra_max: float = 360,
         dec_min: float = -90,
         dec_max: float = 90,
-        # lat: float = None,
-        # lon: float = None,
-        # dt: datetime = None,
         observer: Observer = Observer(),
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_MAP_STYLE,
