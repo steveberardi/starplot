@@ -9,7 +9,7 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator
 from skyfield.api import wgs84, Star as SkyfieldStar
-from shapely import Point
+from shapely import Point, Polygon
 from starplot.coordinates import CoordinateSystem
 from starplot.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
@@ -268,19 +268,72 @@ class HorizonPlot(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
 
-    def _adjust_altaz_minmax(self):
-        """deprecated"""
+    @cache
+    def _extent_mask_altaz(self):
+        """
+        Returns shapely geometry objects of the alt/az extent
+
+        If the extent crosses North cardinal direction, then a MultiPolygon will be returned
+        """
         extent = list(self.ax.get_extent(crs=self._plate_carree))
-        self.alt = (extent[2], extent[3])
+        alt_min, alt_max = extent[2], extent[3]
+        az_min, az_max = extent[0], extent[1]
 
-        if extent[0] < 0:
-            extent[0] += 180
-        if extent[1] < 0:
-            extent[1] += 180
+        az_ul, _ = self._ax_to_azalt(0, 1)
+        az_ur, _ = self._ax_to_azalt(1, 1)
 
-        self.az = (extent[0], extent[1])
+        if az_ul < 0:
+            az_ul += 360
+        
+        if az_ur < 0:
+            az_ur += 360
 
-        self.logger.debug(f"Extent = AZ ({self.az}) ALT ({self.alt})")
+        az_min = min(self.az[0], self.az[1], az_ul, az_ur)
+        az_max = max(self.az[0], self.az[1], az_ul, az_ur)
+
+        if az_min < 0:
+            az_min += 360
+        if az_max < 0:
+            az_max += 360
+
+        if az_min >= az_max:
+            az_max += 360
+
+        self.az = (az_min, az_max)
+        self.alt = (alt_min, alt_max)
+
+        if az_max <= 360:
+            coords = [
+                [az_min, alt_min],
+                [az_max, alt_min],
+                [az_max, alt_max],
+                [az_min, alt_max],
+                [az_min, alt_min],
+            ]
+            return Polygon(coords)
+
+        else:
+            coords_1 = [
+                [az_min, alt_min],
+                [360, alt_min],
+                [360, alt_max],
+                [az_min, alt_max],
+                [az_min, alt_min],
+            ]
+            coords_2 = [
+                [0, alt_min],
+                [az_max - 360, alt_min],
+                [az_max - 360, alt_max],
+                [0, alt_max],
+                [0, alt_min],
+            ]
+
+            return MultiPolygon(
+                [
+                    Polygon(coords_1),
+                    Polygon(coords_2),
+                ]
+            )
 
     @use_style(PathStyle, "horizon")
     def horizon(
@@ -418,6 +471,14 @@ class HorizonPlot(
         x_axes, y_axes = data_to_axes.transform((x, y))
         return x_axes, y_axes
 
+    @cache
+    def _ax_to_azalt(self, x: float, y: float) -> tuple[float, float]:
+        trans = self.ax.transAxes + self.ax.transData.inverted()
+        x_projected, y_projected = trans.transform((x, y))  # axes to data
+        az, alt = self._crs.transform_point(x_projected, y_projected, self._proj)
+        return float(az), float(alt)
+    
+    
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
             self.fig.dpi_scale_trans.inverted()
