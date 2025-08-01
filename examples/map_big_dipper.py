@@ -1,4 +1,4 @@
-from starplot import MapPlot, Projection, _
+from starplot import MapPlot, StereoNorth, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -7,7 +7,7 @@ style = PlotStyle().extend(
 )
 
 p = MapPlot(
-    projection=Projection.STEREO_NORTH,
+    projection=StereoNorth(),
     ra_min=10.75 * 15,
     ra_max=14.2 * 15,
     dec_min=47,

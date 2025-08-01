@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import HorizonPlot, _
+from starplot import HorizonPlot, Observer, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -13,12 +13,16 @@ style = PlotStyle().extend(
 
 dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
 
+observer = Observer(
+    dt=dt,
+    lat=36.606111,  # Lone Pine, California
+    lon=-118.079444,
+)
+
 p = HorizonPlot(
     altitude=(0, 60),
     azimuth=(135, 225),
-    lat=36.606111,  # Lone Pine, California
-    lon=-118.079444,
-    dt=dt,
+    observer=observer,
     style=style,
     resolution=4000,
     scale=0.9,

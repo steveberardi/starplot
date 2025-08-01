@@ -1,4 +1,4 @@
-from starplot import MapPlot, Projection, Constellation, _
+from starplot import MapPlot, Miller, Constellation, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -7,7 +7,7 @@ style = PlotStyle().extend(
 )
 canis_major = Constellation.get(name="Canis Major")
 p = MapPlot(
-    projection=Projection.MILLER,
+    projection=Miller(),
     ra_min=6 * 15,
     ra_max=7.6 * 15,
     dec_min=-35,

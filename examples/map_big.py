@@ -1,4 +1,4 @@
-from starplot import MapPlot, Projection, _
+from starplot import MapPlot, Miller, _
 from starplot.styles import PlotStyle, extensions
 
 
@@ -8,7 +8,7 @@ style = PlotStyle().extend(
 )
 
 p = MapPlot(
-    projection=Projection.MILLER,
+    projection=Miller(),
     ra_min=0,
     ra_max=360,
     dec_min=-80,

@@ -9,7 +9,7 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator
 from skyfield.api import wgs84, Star as SkyfieldStar
-from shapely import Point, Polygon
+from shapely import Point, Polygon, MultiPolygon
 from starplot.coordinates import CoordinateSystem
 from starplot.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin

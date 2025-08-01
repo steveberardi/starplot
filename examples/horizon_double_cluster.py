@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import HorizonPlot, PlotStyle, style_extensions, DSO, Constellation, _
+from starplot import HorizonPlot, PlotStyle, style_extensions, DSO, Constellation, Observer, _
 
 
 style = PlotStyle().extend(
@@ -13,6 +13,12 @@ style = PlotStyle().extend(
 tz = timezone("US/Pacific")
 dt = tz.localize(datetime(2024, 11, 2, 21, 0, 0, 0))
 
+observer = Observer(
+    dt=dt,
+    lat=33.363484,
+    lon=-116.836394,
+)
+
 cas = Constellation.get(iau_id="cas")
 umi = Constellation.get(iau_id="umi")
 per = Constellation.get(iau_id="per")
@@ -20,8 +26,7 @@ per = Constellation.get(iau_id="per")
 p = HorizonPlot(
     altitude=(0, 70),
     azimuth=(320, 435),
-    lat=33.363484,
-    lon=-116.836394,
+    observer=observer,
     dt=dt,
     style=style,
     resolution=4096,
