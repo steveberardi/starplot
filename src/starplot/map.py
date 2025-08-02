@@ -479,6 +479,20 @@ class MapPlot(
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
 
+    def _set_extent(self):
+        bounds = self._latlon_bounds()
+        center_lat = (bounds[2] + bounds[3]) / 2
+        center_lon = (bounds[0] + bounds[1]) / 2
+
+        if hasattr(self.projection, "center_ra"):
+            self.projection.center_ra = -1 * center_lon
+
+        if self._is_global_extent():
+            # this cartopy function works better for setting global extents
+            self.ax.set_global()
+        else:
+            self.ax.set_extent(bounds, crs=self._plate_carree)
+
     def _init_plot(self):
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
@@ -486,50 +500,12 @@ class MapPlot(
             layout="constrained",
             dpi=DPI,
         )
-        bounds = self._latlon_bounds()
-        center_lat = (bounds[2] + bounds[3]) / 2
-        center_lon = (bounds[0] + bounds[1]) / 2
-        # self._center_lat = center_lat
-        # self._center_lon = center_lon
-
-        # if self.projection in [
-        #     Projection.ORTHOGRAPHIC,
-        #     Projection.STEREOGRAPHIC,
-        #     Projection.ZENITH,
-        # ]:
-        #     # Calculate local sidereal time (LST) to shift RA DEC to be in line with current date and time
-        #     lst = -(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
-        #     self._proj = Projection.crs(self.projection, lon=lst, lat=self.lat)
-        # elif self.projection == Projection.LAMBERT_AZ_EQ_AREA:
-        #     self._proj = Projection.crs(
-        #         self.projection, center_lat=center_lat, center_lon=center_lon
-        #     )
-        # else:
-        #     self._proj = Projection.crs(self.projection, center_lon)
-        # self._proj.threshold = 1000
-
-        if hasattr(self.projection, "center_ra"):
-            self.projection.center_ra = -1 * center_lon
         
         self._proj = self.projection.crs
         self._proj.threshold = 1000
         self.ax = plt.axes(projection=self._proj)
 
-        if self._is_global_extent():
-            if isinstance(self.projection, Zenith):
-                theta = np.linspace(0, 2 * np.pi, 100)
-                center, radius = [0.5, 0.5], 0.45
-                verts = np.vstack([np.sin(theta), np.cos(theta)]).T
-                circle = path.Path(verts * radius + center)
-                extent = self.ax.get_extent(crs=self._proj)
-                self.ax.set_extent((p / 3.548 for p in extent), crs=self._proj)
-                self.ax.set_boundary(circle, transform=self.ax.transAxes)
-            else:
-                # this cartopy function works better for setting global extents
-                self.ax.set_global()
-        else:
-            self.ax.set_extent(bounds, crs=self._plate_carree)
-
+        self._set_extent()
         self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
 

@@ -6,6 +6,7 @@ from .base import BasePlot  # noqa: F401
 from .map import MapPlot  # noqa: F401
 from .horizon import HorizonPlot  # noqa: F401
 from .optic import OpticPlot  # noqa: F401
+from .zenith import ZenithPlot  # noqa: F401
 from .models import (
     DSO,  # noqa: F401
     DsoType,  # noqa: F401
