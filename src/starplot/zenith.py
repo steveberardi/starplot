@@ -4,7 +4,7 @@ from matplotlib import path, patches
 from starplot.coordinates import CoordinateSystem
 from starplot.map import MapPlot
 from starplot.observer import Observer
-from starplot.projections import Zenith
+from starplot.projections import Stereographic
 from starplot.styles import (
     LabelStyle,
     PlotStyle,
@@ -49,8 +49,13 @@ class ZenithPlot(MapPlot):
         *args,
         **kwargs,
     ) -> "ZenithPlot":
+        projection = Stereographic(
+            center_ra=observer.lst,
+            center_dec=observer.lat,
+        )
+
         super().__init__(
-            Zenith(observer=observer),
+            projection,
             0,
             360,
             -90,

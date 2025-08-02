@@ -1,10 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from functools import cached_property
 
 from cartopy import crs as ccrs
 from pydantic import BaseModel
-
-from starplot.observer import Observer
 
 
 class CenterRA(BaseModel, ABC):
@@ -21,136 +19,84 @@ class CenterRADEC(CenterRA, CenterDEC):
     pass
 
 
-class ObserverMixin(BaseModel, ABC):
-    observer: Observer
-    """Observer instance"""
-
-
 class ProjectionBase(BaseModel, ABC):
     threshold: int = 1000
+
+    _ccrs = None
 
     class Config:
         arbitrary_types_allowed = True
 
     @cached_property
-    @abstractmethod
     def crs(self):
-        pass
+        kwargs = {}
+
+        if hasattr(self, "center_ra"):
+            kwargs["central_longitude"] = -1 * self.center_ra
+
+        if hasattr(self, "center_dec"):
+            kwargs["central_latitude"] = self.center_dec
+
+        c = self._ccrs(**kwargs)
+        c.threshold = self.threshold
+        return c
 
 
 class Miller(ProjectionBase, CenterRA):
     """Similar to Mercator: good for declinations between -70 and 70, but distorts objects near the poles"""
 
-    @cached_property
-    def crs(self):
-        return ccrs.Miller(central_longitude=-1 * self.center_ra)
+    _ccrs = ccrs.Miller
 
 
 class Mercator(ProjectionBase, CenterRA):
     """Good for declinations between -70 and 70, but distorts objects near the poles"""
 
-    @cached_property
-    def crs(self):
-        return ccrs.Mercator(central_longitude=-1 * self.center_ra)
+    _ccrs = ccrs.Mercator
 
 
 class Mollweide(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
 
-    @cached_property
-    def crs(self):
-        return ccrs.Mollweide(central_longitude=-1 * self.center_ra)
+    _ccrs = ccrs.Mollweide
 
 
 class Equidistant(ProjectionBase, CenterRADEC):
     """Shows accurate distances from the center position. Often used for planispheres."""
 
-    @cached_property
-    def crs(self):
-        return ccrs.AzimuthalEquidistant(
-            central_longitude=-1 * self.center_ra, central_latitude=self.center_dec
-        )
+    _ccrs = ccrs.AzimuthalEquidistant
 
 
 class StereoNorth(ProjectionBase, CenterRA):
     """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""
 
-    @cached_property
-    def crs(self):
-        return ccrs.NorthPolarStereo(central_longitude=-1 * self.center_ra)
+    _ccrs = ccrs.NorthPolarStereo
 
 
 class StereoSouth(ProjectionBase, CenterRA):
     """Good for objects near the south celestial pole, but distorts objects near the mid declinations"""
 
-    @cached_property
-    def crs(self):
-        return ccrs.SouthPolarStereo(central_longitude=-1 * self.center_ra)
+    _ccrs = ccrs.SouthPolarStereo
 
 
 class Robinson(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
 
-    @cached_property
-    def crs(self):
-        return ccrs.Robinson(central_longitude=-1 * self.center_ra)
+    _ccrs = ccrs.Robinson
 
 
 class LambertAzEqArea(ProjectionBase, CenterRADEC):
     """Lambert Azimuthal Equal-Area projection - accurately shows area, but distorts angles."""
 
-    @cached_property
-    def crs(self):
-        c = ccrs.LambertAzimuthalEqualArea(
-            central_longitude=-1 * self.center_ra, central_latitude=self.center_dec
-        )
-        c.threshold = self.threshold
-        return c
+    _ccrs = ccrs.LambertAzimuthalEqualArea
 
 
-class Orthographic(ProjectionBase, ObserverMixin):
-    """
-    Shows the celestial sphere as a 3D-looking globe. Objects near the edges will be distorted.
+class Orthographic(ProjectionBase, CenterRADEC):
+    """Shows the celestial sphere as a 3D-looking globe. Objects near the edges will be distorted."""
 
-    **This is a _perspective_ projection, so it requires the following `kwargs` when creating the plot: `lat`, `lon`, and `dt`**. _The perspective of the globe will be based on these values._
-    """
-
-    @cached_property
-    def crs(self):
-        c = ccrs.Orthographic(
-            central_longitude=-1 * self.observer.lst, central_latitude=self.observer.lat
-        )
-        c.threshold = self.threshold
-        return c
+    _ccrs = ccrs.Orthographic
 
 
-class Stereographic(ProjectionBase, ObserverMixin):
-    """
-    Similar to the North/South Stereographic projection, but this version is location-dependent.
+class Stereographic(ProjectionBase, CenterRADEC):
+    """Similar to the North/South Stereographic projection, but allows custom central declination"""
 
-    **This is a _perspective_ projection, so it requires an `observer`._
-    """
-
-    @cached_property
-    def crs(self):
-        c = ccrs.Stereographic(
-            central_longitude=-1 * self.observer.lst, central_latitude=self.observer.lat
-        )
-        c.threshold = self.threshold
-        return c
-
-
-class Zenith(ProjectionBase, ObserverMixin):
-    """
-    **This is a _perspective_ projection, so it requires an `observer` when creating the plot.**
-
-    The Zenith projection shows the whole sky as seen from a specific time and place. They're also sometimes called "star charts" but that name is used for many different types of star maps, so Starplot uses the more specific name "Zenith plot" (which reflects the fact that the [zenith](https://en.wikipedia.org/wiki/Zenith) is in the center of the chart).
-    """
-
-    @cached_property
-    def crs(self):
-        c = ccrs.Stereographic(
-            central_longitude=-1 * self.observer.lst, central_latitude=self.observer.lat
-        )
-        c.threshold = self.threshold
-        return c
+    _ccrs = ccrs.Stereographic
