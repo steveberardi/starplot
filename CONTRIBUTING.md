@@ -1,14 +1,12 @@
 # Contributing to Starplot
 
-_Work in progress_
-
 ## Ways to Contribute
 
 There are many ways to contribute to Starplot:
 
 - Fix typos or clarify documentation
 - Find and fix bugs
-- Implement a feature on the [roadmap](https://starplot.notion.site/aaa0dd71c17943f89850c9a8c43ade50)
+- Implement a feature on the [roadmap](https://trello.com/b/sUksygn4/starplot-roadmap)
 - Propose a new feature by [opening an issue](https://github.com/steveberardi/starplot/issues)
 
 
@@ -41,7 +39,11 @@ When you're new to a codebase it's usually good to start by just checking out th
 There are also a few other `make` commands that are useful when developing locally:
 
 - `make scratchpad` will run `scripts/scratchpad.py` inside the docker container. The `scratchpad.py` file is not checked in to the repo (so you'll have to create it on your machine), but it's a way to run code with the current state of Starplot on your machine -- very helpful when trying things out.
+- `make profile` will run `scripts/scratchpad.py` through Python's [built-in profiler](https://docs.python.org/3/library/profile.html#module-cProfile) and then start a [snakeviz](https://jiffyclub.github.io/snakeviz/) webserver locally to let you explore the call stack and see runtimes of everything. This can be very helpful when trying to find bottlenecks in code.
 - `make shell` will open a Python shell on the Docker container
+- `make format` will format the code with our standard formatter
+- `make lint` will check for lint (e.g. unused imports) and `make lint ARGS=--fix` can usually autofix things
+- `make docs-serve` will build the docs and start a local webserver for them
 
 ## Tests
 
@@ -62,7 +64,6 @@ Starplot also has a collection of "hash checks" (located in `hash_checks`). Each
 
 These hash checks help test things that are hard (or extremely tedious) to test. As a graphics library, Starplot has a LOT of possible uses and output so the hash checks help make some testing easier to manage.
 
-_Work in progress_
 
 ## Code of Conduct
 
