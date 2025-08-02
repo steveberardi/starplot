@@ -2,16 +2,16 @@ from abc import ABC
 from functools import cached_property
 
 from cartopy import crs as ccrs
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CenterRA(BaseModel, ABC):
-    center_ra: float = 0
+    center_ra: float = Field(default=0, ge=0, le=360)
     """Central right ascension"""
 
 
 class CenterDEC(BaseModel, ABC):
-    center_dec: float = 0
+    center_dec: float = Field(default=0, ge=-90, le=90)
     """Central declination"""
 
 
