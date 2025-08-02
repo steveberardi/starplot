@@ -33,7 +33,6 @@ p = HorizonPlot(
     altitude=(0, 70),
     azimuth=(320, 435),
     observer=observer,
-    dt=dt,
     style=style,
     resolution=4096,
     scale=1,

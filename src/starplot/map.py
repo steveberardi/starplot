@@ -46,7 +46,7 @@ class MapPlot(
     """Creates a new map plot.
 
     Args:
-        projection: Projection of the map
+        projection: [Projection][starplot.Projection] of the map
         ra_min: Minimum right ascension of the map's extent, in degrees (0...360)
         ra_max: Maximum right ascension of the map's extent, in degrees (0...360)
         dec_min: Minimum declination of the map's extent, in degrees (-90...90)
@@ -114,22 +114,6 @@ class MapPlot(
         self.dec_min = dec_min
         self.dec_max = dec_max
         self.clip_path = clip_path
-
-        # self.lat = lat
-        # self.lon = lon
-        # if self.projection in [
-        #     Projection.ORTHOGRAPHIC,
-        #     Projection.STEREOGRAPHIC,
-        #     Projection.ZENITH,
-        # ] and (lat is None or lon is None):
-        #     raise ValueError(
-        #         f"lat and lon are required for the {self.projection.value.upper()} projection"
-        #     )
-
-        # if self.projection == Projection.ZENITH and not self._is_global_extent():
-        #     raise ValueError(
-        #         "Zenith projection requires a global extent: ra_min=0, ra_max=360, dec_min=-90, dec_max=90"
-        #     )
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()

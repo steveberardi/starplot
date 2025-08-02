@@ -98,7 +98,6 @@ class BasePlot(ABC):
             warnings.suppress()
 
         self.observer = observer
-        # self.dt = dt or timezone("UTC").localize(datetime.now())
         self._ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
         self.earth = self.ephemeris["earth"]
@@ -122,7 +121,6 @@ class BasePlot(ABC):
             linewidth=self.style.text_border_width * self.scale,
             foreground=self.style.text_border_color.as_hex(),
         )
-        # self.timescale = load.timescale().from_datetime(self.dt)
 
         self._objects = models.ObjectList()
         self._labeled_stars = []
