@@ -4,7 +4,7 @@ from functools import cache
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
-from matplotlib import path, patches, ticker
+from matplotlib import patches, ticker
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import Polygon
 from skyfield.api import wgs84
@@ -21,10 +21,9 @@ from starplot.plotters import (
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
 )
-from starplot.projections import Projection, ProjectionBase, Zenith
+from starplot.projections import StereoNorth, StereoSouth, ProjectionBase
 from starplot.styles import (
     ObjectStyle,
-    LabelStyle,
     PlotStyle,
     PathStyle,
 )
@@ -169,9 +168,10 @@ class MapPlot(
         self.dec_max = extent[3]
 
         # adjust the RA min/max if the DEC bounds is near the poles
-        if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH] and (
-            self.dec_max > 80 or self.dec_min < -80
-        ):
+        if (
+            isinstance(self.projection, StereoNorth)
+            or isinstance(self.projection, StereoSouth)
+        ) and (self.dec_max > 80 or self.dec_min < -80):
             self.ra_min = 0
             self.ra_max = 360
 
@@ -266,58 +266,16 @@ class MapPlot(
             y.append(y0)
 
         style_kwargs = {}
-        if isinstance(self.projection, Zenith):
-            """
-            For zenith projections, we plot the horizon as a patch to make a more perfect circle
-            """
-            style_kwargs = style.line.matplot_kwargs(self.scale)
-            style_kwargs["clip_on"] = False
-            style_kwargs["edgecolor"] = style_kwargs.pop("color")
-            patch = patches.Circle(
-                (0.50, 0.50),
-                radius=0.454,
-                facecolor=None,
-                fill=False,
-                transform=self.ax.transAxes,
-                **style_kwargs,
-            )
-            self.ax.add_patch(patch)
-            self._background_clip_path = patch
-            self._update_clip_path_polygon(
-                buffer=style.line.width / 2 + 2 * style.line.edge_width + 20
-            )
-
-            if not labels:
-                return
-
-            label_ax_coords = [
-                (0.5, 0.95),  # north
-                (0.045, 0.5),  # east
-                (0.5, 0.045),  # south
-                (0.954, 0.5),  # west
-            ]
-            for label, coords in zip(labels, label_ax_coords):
-                self.ax.annotate(
-                    label,
-                    coords,
-                    xycoords=self.ax.transAxes,
-                    clip_on=False,
-                    **style.label.matplot_kwargs(self.scale),
-                )
-
-            return
-
-        else:
-            style_kwargs["clip_on"] = True
-            style_kwargs["clip_path"] = self._background_clip_path
-            self.ax.plot(
-                x,
-                y,
-                dash_capstyle=style.line.dash_capstyle,
-                **style.line.matplot_kwargs(self.scale),
-                **style_kwargs,
-                **self._plot_kwargs(),
-            )
+        style_kwargs["clip_on"] = True
+        style_kwargs["clip_path"] = self._background_clip_path
+        self.ax.plot(
+            x,
+            y,
+            dash_capstyle=style.line.dash_capstyle,
+            **style.line.matplot_kwargs(self.scale),
+            **style_kwargs,
+            **self._plot_kwargs(),
+        )
 
         if not labels:
             return
@@ -465,7 +423,7 @@ class MapPlot(
 
     def _set_extent(self):
         bounds = self._latlon_bounds()
-        center_lat = (bounds[2] + bounds[3]) / 2
+        (bounds[2] + bounds[3]) / 2
         center_lon = (bounds[0] + bounds[1]) / 2
 
         if hasattr(self.projection, "center_ra"):
@@ -498,29 +456,6 @@ class MapPlot(
         self._fit_to_ax()
         self._plot_background_clip_path()
 
-    @use_style(LabelStyle, "info_text")
-    def info(self, style: LabelStyle = None):
-        """
-        Plots info text in the lower left corner, including date/time and lat/lon.
-
-        _Only available for ZENITH projections_
-
-        Args:
-            style: Styling of the info text. If None, then the plot's style definition will be used.
-        """
-        if not isinstance(self.projection, Zenith):
-            raise NotImplementedError("info text only available for zenith projections")
-
-        dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        info = f"{str(self.observer.lat)}, {str(self.observer.lon)}\n{dt_str}"
-        self.ax.text(
-            0.05,
-            0.05,
-            info,
-            transform=self.ax.transAxes,
-            **style.matplot_kwargs(self.scale),
-        )
-
     def _ax_to_radec(self, x, y):
         trans = self.ax.transAxes + self.ax.transData.inverted()
         x_projected, y_projected = trans.transform((x, y))  # axes to data
@@ -544,17 +479,6 @@ class MapPlot(
                 to_axes(points),
                 facecolor=self.style.background_color.as_hex(),
                 fill=True,
-                zorder=-2_000,
-                transform=self.ax.transAxes,
-            )
-        elif isinstance(self.projection, Zenith):
-            self._background_clip_path = patches.Circle(
-                (0.50, 0.50),
-                radius=0.45,
-                fill=True,
-                facecolor=self.style.background_color.as_hex(),
-                # edgecolor=self.style.border_line_color.as_hex(),
-                linewidth=0,
                 zorder=-2_000,
                 transform=self.ax.transAxes,
             )

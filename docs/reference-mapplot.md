@@ -6,31 +6,78 @@
         merge_init_into_class: true
         show_root_heading: true
 
-## Projections
-
-### ::: starplot.LambertAzEqArea
-    options:
-        inherited_members: true
-        merge_init_into_class: true
-        show_root_heading: true
-        
-    
-### ::: starplot.Zenith
-    options:
-        inherited_members: true
-        merge_init_into_class: true
-        show_root_heading: true
-        heading_level: 3
-
-
 ---
 
-### ::: starplot.Projection
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
+# Projections
 
-::: starplot.base.DEFAULT_FOV_STYLE
+
+## ::: starplot.Equidistant
     options:
+        inherited_members: true
+        merge_init_into_class: true
         show_root_heading: true
-        show_docstring_attributes: true
+        heading_level: 2
+
+## ::: starplot.LambertAzEqArea
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.Mercator
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.Miller
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.Mollweide
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.Orthographic
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.Robinson
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.Stereographic
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.StereoNorth
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.StereoSouth
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+

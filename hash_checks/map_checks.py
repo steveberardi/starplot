@@ -17,7 +17,7 @@ from starplot import (
     Mollweide,
     StereoNorth,
 )
-from starplot.map import MapPlot, Projection
+from starplot.map import MapPlot
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"

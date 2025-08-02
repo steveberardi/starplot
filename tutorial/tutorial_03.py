@@ -16,7 +16,7 @@ observer = Observer(
 
 p = ZenithPlot(
     observer=observer,
-    style=PlotStyle().extend(   # add a style to the plot
+    style=PlotStyle().extend(  # add a style to the plot
         extensions.BLUE_MEDIUM,
     ),
     resolution=4000,
