@@ -10,7 +10,6 @@
 
 # Projections
 
-
 ## ::: starplot.Equidistant
     options:
         inherited_members: true

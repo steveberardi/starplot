@@ -5,8 +5,6 @@
     --md-primary-fg-color--light: hsl(209, 53%, 70%);
     --md-primary-bg-color--light: hsl(209, 78%, 90%);
     --md-primary-fg-color--dark:  hsl(209, 53%, 27%);
-
-    /* --md-accent-fg-color: hsl(209, 73%, 47%); */
 }
 
 .md-typeset h1,
@@ -20,14 +18,23 @@
 }
 
 .doc-heading {
-    padding-top: 0rem;
+    display: flex;
+    align-items: center;
+}
+
+.doc-heading span {
+    margin-left: 8px;
 }
 
 .doc-heading code {
-    padding: 0.5rem;
-    width: 100%;
-    display: inline-block;
     font-weight: 600;
+}
+
+code.doc-symbol {
+    border-radius: 8px;
+    font-size: 0.6em;
+    padding: 4px 8px;
+    margin: 6px 4px;
 }
 
 .fg-primary {
@@ -76,6 +83,8 @@
 }
 
 [data-md-color-scheme=default] {
+    --doc-symbol-class-bg-color: hsl(209, 78%, 85%);
+
     .doc-function .doc-heading {
         background-color: hsl(209, 53%, 81%);
     }

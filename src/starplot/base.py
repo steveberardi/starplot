@@ -7,6 +7,7 @@ import numpy as np
 import rtree
 from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
+from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
 from shapely import Polygon, Point
 
@@ -67,9 +68,15 @@ class BasePlot(ABC):
     _clip_path_polygon: Polygon = None  # clip path in display coordinates
     _coordinate_system = CoordinateSystem.RA_DEC
 
+    ax: Axes
+    """
+    The underlying [Matplotlib axes](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes) that everything is plotted on.
+    
+    **Important**: Most Starplot plotting functions also specify a transform based on the plots projection when plotting things on the Matplotlib Axes instance, so use this property at your own risk!
+    """
+
     def __init__(
         self,
-        # dt: datetime = None,
         observer: Observer = Observer(),
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_STYLE,
