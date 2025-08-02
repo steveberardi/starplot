@@ -1,17 +1,23 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from pytz import timezone
-
-from starplot import HorizonPlot, PlotStyle, style_extensions, DSO, Constellation, Observer, _
-
+from starplot import (
+    HorizonPlot,
+    PlotStyle,
+    style_extensions,
+    DSO,
+    Constellation,
+    Observer,
+    _,
+)
 
 style = PlotStyle().extend(
     style_extensions.BLUE_GOLD,
     style_extensions.MAP,
 )
 
-tz = timezone("US/Pacific")
-dt = tz.localize(datetime(2024, 11, 2, 21, 0, 0, 0))
+tz = ZoneInfo("US/Pacific")
+dt = datetime(2024, 11, 2, 21, 0, 0, 0, tzinfo=tz)
 
 observer = Observer(
     dt=dt,

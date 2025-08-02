@@ -1,9 +1,10 @@
 from datetime import datetime
-from pytz import timezone
-from starplot import MapPlot, Zenith, Observer, _
+from zoneinfo import ZoneInfo
+
+from starplot import ZenithPlot, Observer, _
 from starplot.styles import PlotStyle, extensions
 
-tz = timezone("America/Los_Angeles")
+tz = ZoneInfo("America/Los_Angeles")
 dt = datetime(2023, 7, 13, 22, 0, tzinfo=tz)  # July 13, 2023 at 10pm PT
 
 observer = Observer(
@@ -12,8 +13,7 @@ observer = Observer(
     lon=-116.836394,
 )
 
-p = MapPlot(
-    projection=Zenith(observer=observer),
+p = ZenithPlot(
     observer=observer,
     style=PlotStyle().extend(
         extensions.BLUE_MEDIUM,

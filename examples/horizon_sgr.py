@@ -1,6 +1,5 @@
 from datetime import datetime
-
-from pytz import timezone
+from zoneinfo import ZoneInfo
 
 from starplot import HorizonPlot, Observer, _
 from starplot.styles import PlotStyle, extensions
@@ -11,7 +10,7 @@ style = PlotStyle().extend(
     {"figure_background_color": "hsl(212, 27%, 48%)"},
 )
 
-dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
+dt = datetime(2024, 8, 30, 21, 0, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 
 observer = Observer(
     dt=dt,

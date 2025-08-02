@@ -13,7 +13,7 @@ style = PlotStyle().extend(
 tz = timezone("America/Los_Angeles")
 dt = datetime(2024, 10, 19, 21, 00, tzinfo=tz)
 
-observer= Observer(
+observer = Observer(
     dt=dt,
     lat=32.97,
     lon=-117.038611,

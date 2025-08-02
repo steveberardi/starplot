@@ -90,6 +90,9 @@
     }
 }
 [data-md-color-scheme=slate] {
+
+    --md-typeset-a-color: hsl(209, 63%, 65%);
+
     .doc-function .doc-heading {
         background-color: hsl(209, 53%, 21%);
     }
@@ -349,10 +352,10 @@ code.raw {
 }
 
 .tutorial-top-nav {
-    border-top: 1px solid #c6c6c6;
-    border-bottom: 1px solid #c6c6c6;
-    padding: 8px 10px;
-    margin-bottom: 12px;
+    border: 1px solid hsl(216, 50%, 84%);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 28px;
 
     background-color: var(--doc-symbol-class-bg-color);
     p {

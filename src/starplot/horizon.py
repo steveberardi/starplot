@@ -284,7 +284,7 @@ class HorizonPlot(
 
         if az_ul < 0:
             az_ul += 360
-        
+
         if az_ur < 0:
             az_ur += 360
 
@@ -477,8 +477,7 @@ class HorizonPlot(
         x_projected, y_projected = trans.transform((x, y))  # axes to data
         az, alt = self._crs.transform_point(x_projected, y_projected, self._proj)
         return float(az), float(alt)
-    
-    
+
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
             self.fig.dpi_scale_trans.inverted()

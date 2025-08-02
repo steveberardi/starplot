@@ -49,9 +49,6 @@ class ZenithPlot(MapPlot):
         *args,
         **kwargs,
     ) -> "ZenithPlot":
-        
-        self.logger.debug("Creating ZenithPlot...")
-        
         super().__init__(
             Zenith(observer=observer),
             0,
@@ -70,8 +67,6 @@ class ZenithPlot(MapPlot):
             *args,
             **kwargs,
         )
-        
-
 
     @use_style(PathStyle, "horizon")
     def horizon(
@@ -127,7 +122,6 @@ class ZenithPlot(MapPlot):
                 **style.label.matplot_kwargs(self.scale),
             )
 
-
     def _set_extent(self):
         theta = np.linspace(0, 2 * np.pi, 100)
         center, radius = [0.5, 0.5], 0.45
@@ -136,8 +130,6 @@ class ZenithPlot(MapPlot):
         extent = self.ax.get_extent(crs=self._proj)
         self.ax.set_extent((p / 3.548 for p in extent), crs=self._proj)
         self.ax.set_boundary(circle, transform=self.ax.transAxes)
-
-
 
     @use_style(LabelStyle, "info_text")
     def info(self, style: LabelStyle = None):
@@ -157,7 +149,6 @@ class ZenithPlot(MapPlot):
             **style.matplot_kwargs(self.scale),
         )
 
-
     def _plot_background_clip_path(self):
         self._background_clip_path = patches.Circle(
             (0.50, 0.50),
@@ -169,6 +160,6 @@ class ZenithPlot(MapPlot):
             zorder=-2_000,
             transform=self.ax.transAxes,
         )
-       
+
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon()

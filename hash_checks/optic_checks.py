@@ -32,10 +32,11 @@ plot_kwargs = dict(
 )
 
 observer_dec_16_poway = Observer(
-        dt=dt_dec_16,
-        lat=32.97,
-        lon=-117.038611,
-    )
+    dt=dt_dec_16,
+    lat=32.97,
+    lon=-117.038611,
+)
+
 
 def check_optic_polaris_binoculars():
     optic_plot = OpticPlot(

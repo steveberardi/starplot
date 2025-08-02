@@ -1,11 +1,12 @@
 from datetime import datetime
-from pytz import timezone
+from zoneinfo import ZoneInfo
+
 from starplot import OpticPlot, DSO, Observer, _
 from starplot.callables import color_by_bv
 from starplot.optics import Refractor
 from starplot.styles import PlotStyle, extensions
 
-dt = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
+dt = datetime(2023, 12, 16, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 
 style = PlotStyle().extend(
     extensions.GRAYSCALE_DARK,

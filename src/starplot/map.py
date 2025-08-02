@@ -500,7 +500,7 @@ class MapPlot(
             layout="constrained",
             dpi=DPI,
         )
-        
+
         self._proj = self.projection.crs
         self._proj.threshold = 1000
         self.ax = plt.axes(projection=self._proj)

@@ -1,15 +1,15 @@
 from datetime import datetime
-from pytz import timezone
+from zoneinfo import ZoneInfo
 
 from starplot import Moon, optics, Observer, _
 from starplot.styles import PlotStyle, extensions
 
-dt = datetime.now(timezone("US/Pacific")).replace(2024, 8, 20, 21, 0, 0)
+dt = datetime(2024, 8, 20, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 
 observer = Observer(
     dt=dt,
-    lat = 33.070833,  # Julian, CA
-    lon = -116.585556,
+    lat=33.070833,  # Julian, CA
+    lon=-116.585556,
 )
 
 m = Moon.get(dt=observer.dt, lat=observer.lat, lon=observer.lon)
