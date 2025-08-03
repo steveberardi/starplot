@@ -1,5 +1,6 @@
 Starplot has models to represent an observer and some of the objects you can plot, including stars, DSOs, planets, the Sun, and the Moon. These models are used for many things in Starplot:
 
+- Defining an observing time and location
 - Selecting objects to plot (via the `where` kwarg) ([see docs](reference-selecting-objects.md))
 - Creating callables to calculate size/color/alpha values ([see docs](reference-callables.md))
 - Keeping track of plotted objects (via [`ObjectList`][starplot.ObjectList])
@@ -9,9 +10,9 @@ Starplot has models to represent an observer and some of the objects you can plo
 ::: starplot.Observer
     options:
         inherited_members: true
-        docstring_section_style: list
         show_root_heading: true
         show_docstring_attributes: true
+
 
 ::: starplot.Star
     options:

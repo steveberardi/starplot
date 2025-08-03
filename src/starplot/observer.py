@@ -8,10 +8,27 @@ from starplot.data import load
 
 
 class Observer(BaseModel):
-    """Represents an observer at a specific time and place."""
+    """
+    Represents an observer at a specific time and place.
+
+    Example:
+
+    ```python
+    obs = Observer(
+        dt=datetime(2025, 10, 13, 21, 0, 0, tzinfo=ZoneInfo('US/Pacific')),
+        lat=33.363484,
+        lon=-116.836394,
+    )
+
+    ```
+    """
 
     dt: AwareDatetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    """Date and time of observation (must be timezone-aware). Defaults to current time in UTC."""
+    """
+    Date and time of observation (**must be timezone-aware**).
+    
+    Defaults to current time in UTC.
+    """
 
     lat: float = Field(default=0, ge=-90, le=90)
     """Latitude of observer location"""
@@ -25,13 +42,21 @@ class Observer(BaseModel):
     @computed_field
     @cached_property
     def timescale(self) -> Timescale:
-        """Timescale instance of the specified datetime (used by Skyfield)"""
+        """
+        **Read-only Property**
+
+        Timescale instance of the specified datetime (used by Skyfield)
+        """
         return load.timescale().from_datetime(self.dt)
 
     @computed_field
     @cached_property
     def lst(self) -> float:
-        """Local sidereal time (in degrees)"""
+        """
+        **Read-only Property**
+
+        Local sidereal time (in degrees)
+        """
         return (360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
 
     # @computed_field

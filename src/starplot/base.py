@@ -8,6 +8,7 @@ import rtree
 from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
 from shapely import Polygon, Point
 
@@ -72,7 +73,17 @@ class BasePlot(ABC):
     """
     The underlying [Matplotlib axes](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes) that everything is plotted on.
     
-    **Important**: Most Starplot plotting functions also specify a transform based on the plots projection when plotting things on the Matplotlib Axes instance, so use this property at your own risk!
+    **Important**: Most Starplot plotting functions also specify a transform based on the plot's projection when plotting things on the Matplotlib Axes instance, so use this property at your own risk!
+    """
+
+    fig: Figure
+    """
+    The underlying [Matplotlib figure](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure) that the axes is drawn on.
+    """
+
+    style: PlotStyle
+    """
+    The plot's style.
     """
 
     def __init__(

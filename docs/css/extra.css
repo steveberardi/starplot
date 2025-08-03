@@ -33,7 +33,7 @@
 code.doc-symbol {
     border-radius: 8px;
     font-size: 0.6em;
-    padding: 4px 8px;
+    padding: 2px 6px;
     margin: 6px 4px;
 }
 
@@ -83,7 +83,7 @@ code.doc-symbol {
 }
 
 [data-md-color-scheme=default] {
-    --doc-symbol-class-bg-color: hsl(209, 78%, 85%);
+    --doc-symbol-class-bg-color: hsl(209, 74%, 90%);
 
     .doc-function .doc-heading {
         background-color: hsl(209, 53%, 81%);
