@@ -45,7 +45,7 @@ class MapPlot(
     """Creates a new map plot.
 
     Args:
-        projection: [Projection][starplot.Projection] of the map
+        projection: [Projection](/reference-mapplot/#projections) of the map
         ra_min: Minimum right ascension of the map's extent, in degrees (0...360)
         ra_max: Maximum right ascension of the map's extent, in degrees (0...360)
         dec_min: Minimum declination of the map's extent, in degrees (-90...90)

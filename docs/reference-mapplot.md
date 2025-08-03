@@ -1,3 +1,5 @@
+<h1>MapPlot</h1>
+
 **Map plots are general-purpose maps of the sky.** They support a variety of [projections](#map-projections) (including a few perspective based projections that help show what the sky looks like at a particular time and place).
 
 ::: starplot.MapPlot
