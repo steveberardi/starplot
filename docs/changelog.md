@@ -1,4 +1,14 @@
+## v0.16.x
+[Migration Guide](migration-guides/0.16.0.md)
+
+- Refactors projections, allowing you to change central RA/DEC
+- Introduces an Observer model to encapsulate a time and place
+- Makes zenith plots a separate plot type
+
+
 ## v0.15.x
+[Documentation](https://archives.starplot.dev/0.15.8/)
+
 - Replaces data backend with DuckDB + Ibis, making plotting 2-3x faster and object lookup up to 10x faster
 - Changes default unit of right ascension to degrees (0...360)
 - Improves performance of constellation label placement
