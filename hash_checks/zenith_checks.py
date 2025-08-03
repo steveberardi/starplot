@@ -1,9 +1,8 @@
 from pathlib import Path
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from pytz import timezone
-
-from starplot import MapPlot, styles, _, Zenith, Observer
+from starplot import ZenithPlot, Observer, styles, _
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -12,7 +11,7 @@ STYLE = styles.PlotStyle().extend(
     styles.extensions.BLUE_MEDIUM,
 )
 
-JUNE_2023 = datetime.now(timezone("US/Pacific")).replace(2023, 6, 20, 21, 0, 0, 0)
+JUNE_2023 = datetime(2023, 6, 20, 21, 0, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 
 RESOLUTION = 3800
 
@@ -23,8 +22,7 @@ def _zenith():
         lon=-117.038611,
         dt=JUNE_2023,
     )
-    p = MapPlot(
-        projection=Zenith(observer=observer),
+    p = ZenithPlot(
         observer=observer,
         style=STYLE,
         resolution=RESOLUTION,

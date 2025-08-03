@@ -423,11 +423,11 @@ class MapPlot(
 
     def _set_extent(self):
         bounds = self._latlon_bounds()
-        (bounds[2] + bounds[3]) / 2
-        center_lon = (bounds[0] + bounds[1]) / 2
+        # (bounds[2] + bounds[3]) / 2
+        # center_lon = (bounds[0] + bounds[1]) / 2
 
-        if hasattr(self.projection, "center_ra"):
-            self.projection.center_ra = -1 * center_lon
+        # if hasattr(self.projection, "center_ra"):
+        #     self.projection.center_ra = -1 * center_lon
 
         if self._is_global_extent():
             # this cartopy function works better for setting global extents
@@ -444,7 +444,6 @@ class MapPlot(
         )
 
         self._proj = self.projection.crs
-        self._proj.threshold = 1000
         self.ax = plt.axes(projection=self._proj)
 
         self._set_extent()
