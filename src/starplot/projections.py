@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 
 class CenterRA(BaseModel, ABC):
-    center_ra: float = Field(default=0, ge=0, le=360)
+    center_ra: float = Field(default=180, ge=0, le=360)
     """Central right ascension"""
 
 
