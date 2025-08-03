@@ -57,7 +57,7 @@ class Observer(BaseModel):
 
         Local sidereal time (in degrees)
         """
-        return (360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
+        return float(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
 
     # @computed_field
     # @cached_property

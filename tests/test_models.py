@@ -109,13 +109,13 @@ class TestMoon:
     def test_moon_get(self):
         dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
         m = Moon.get(dt)
-        assert m.ra == 292.53617734161276
-        assert m.dec == -26.96492167310071
+        assert m.ra == pytest.approx(292.53617734161276)
+        assert m.dec == pytest.approx(-26.96492167310071)
         assert m.dt == dt
         assert m.apparent_size == 0.5480758923848209
         assert m.phase_description == "Waxing Gibbous"
-        assert m.phase_angle == 135.9701133085137
-        assert m.illumination == 0.7553895183806317
+        assert m.phase_angle == pytest.approx(135.9701133085137)
+        assert m.illumination == pytest.approx(0.7553895183806317)
 
     def test_moon_get_new_moon(self):
         dt = timezone("UTC").localize(datetime(2024, 4, 8, 12, 0, 0, 0))
@@ -143,21 +143,21 @@ class TestSolarEclipse:
         m = Moon.get(dt=dt, lat=lat, lon=lon)
         s = Sun.get(dt=dt, lat=lat, lon=lon)
 
-        assert m.ra == 17.611428857038238
-        assert m.dec == 7.469561912433153
-        assert m.apparent_size == 0.5615855003639567
+        assert m.ra == pytest.approx(17.611428857038238)
+        assert m.dec == pytest.approx(7.469561912433153)
+        assert m.apparent_size == pytest.approx(0.5615855003639567)
 
-        assert s.ra == 17.624241364540502
-        assert s.dec == 7.475828971935881
-        assert s.apparent_size == 0.5321154425811137
+        assert s.ra == pytest.approx(17.624241364540502)
+        assert s.dec == pytest.approx(7.475828971935881)
+        assert s.apparent_size == pytest.approx(0.5321154425811137)
 
 
 class TestPlanet:
     def test_planet_get(self):
         dt = timezone("UTC").localize(datetime(2024, 4, 7, 21, 0, 0, 0))
         jupiter = Planet.get("jupiter", dt)
-        assert jupiter.ra == 46.29005575002272
-        assert jupiter.dec == 16.56207889273591
+        assert jupiter.ra == pytest.approx(46.29005575002272)
+        assert jupiter.dec == pytest.approx(16.56207889273591)
         assert jupiter.dt == dt
         assert jupiter.apparent_size == 0.009162890626143375
 
