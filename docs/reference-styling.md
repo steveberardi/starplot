@@ -24,7 +24,7 @@ Using styles is usually a 3-step process:
 Example:
 <div class="tutorial" markdown>
 ```python linenums="1"
-from starplot import MapPlot
+from starplot import MapPlot, Miller
 from starplot.styles import PlotStyle, extensions
 
 # Step 1: create a style
@@ -38,6 +38,7 @@ style = style.extend(
 
 # Step 3: apply the style in a new map plot
 mp = MapPlot(
+    projection=Miller(),
     ra_min=4,
     ra_max=8,
     dec_min=0,

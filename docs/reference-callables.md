@@ -40,7 +40,7 @@ Callables allow you to define your own functions for calculating a few of the st
 Here's a basic example of using one of the built-in callables to colorize the stars based on their BV index:
 
 ```python hl_lines="18"
-from starplot import MapPlot, Projection, _
+from starplot import MapPlot, Mercator, callables, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -48,7 +48,7 @@ style = PlotStyle().extend(
     extensions.MAP,
 )
 p = MapPlot(
-    projection=Projection.MERCATOR,
+    projection=Mercator(),
     ra_min=3.4,
     ra_max=8,
     dec_min=-16,
