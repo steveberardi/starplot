@@ -527,7 +527,7 @@ class BasePlot(ABC):
 
         Args:
             text: Text to plot
-            ra: Right ascension of text (0...24)
+            ra: Right ascension of text (0...360)
             dec: Declination of text (-90...90)
             style: Styling of the text
             hide_on_collision: If True, then the text will not be plotted if it collides with another label
@@ -634,6 +634,58 @@ class BasePlot(ABC):
         ).set_zorder(
             # zorder is not a valid kwarg to legend(), so we have to set it afterwards
             style.zorder
+        )
+
+    def star_magnitude_scale(self):
+        from starplot import callables, Star
+
+        def scale(
+            size_fn,
+            style: MarkerStyle,
+            label_fn,
+            start: float,
+            stop: float,
+            step: float = 1,
+        ):
+            for mag in np.arange(start, stop, step):
+                s = style.matplot_kwargs()
+                s["markersize"] = (
+                    size_fn(Star(ra=0, dec=0, magnitude=mag)) ** 0.5
+                ) * self.scale
+                label = label_fn(mag)
+                yield Line2D(
+                    [],
+                    [],
+                    **s,
+                    linestyle="None",
+                    label=label,
+                )
+
+        handles = [
+            h
+            for h in scale(
+                size_fn=callables.size_by_magnitude,
+                style=self.style.star.marker,
+                label_fn=lambda m: str(m),
+                start=-1,
+                stop=9,
+                step=1,
+            )
+        ]
+
+        self.style.legend.location = "lower center"
+        self.style.legend.num_columns = 1
+        kwargs = self.style.legend.matplot_kwargs(self.scale)
+        kwargs["loc"] = "outside right upper"
+        self.fig.legend(
+            handles=handles,
+            **kwargs,
+            # borderaxespad=10,
+            shadow=True,
+            title="Star Magnitude",
+        ).set_zorder(
+            # zorder is not a valid kwarg to legend(), so we have to set it afterwards
+            self.style.legend.zorder
         )
 
     def close_fig(self) -> None:

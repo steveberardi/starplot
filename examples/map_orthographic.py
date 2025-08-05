@@ -19,12 +19,11 @@ observer = Observer(
     lon=-117.038611,
 )
 p = MapPlot(
-    projection=Orthographic(observer=observer),
+    projection=Orthographic(
+        center_ra=observer.lst,
+        center_dec=observer.lat,
+    ),
     observer=observer,
-    ra_min=0,
-    ra_max=360,
-    dec_min=-90,
-    dec_max=90,
     style=style,
     scale=0.9,  # lower the scale since it shows a large area
 )

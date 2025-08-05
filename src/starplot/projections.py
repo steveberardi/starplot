@@ -41,6 +41,7 @@ class ProjectionBase(BaseModel, ABC):
         c.threshold = self.threshold
         return c
 
+
 class AutoProjection:
     """
     Automatically selects a projection based on the RA/DEC extent you specify when creating the map plot.
@@ -74,7 +75,10 @@ class AutoProjection:
     )
     ```
     """
-    def _is_global(self, ra_min: float, ra_max: float, dec_min: float, dec_max: float) -> bool:
+
+    def _is_global(
+        self, ra_min: float, ra_max: float, dec_min: float, dec_max: float
+    ) -> bool:
         return ra_min == 0 and ra_max == 360 and dec_min == -90 and dec_max == 90
 
     def crs(self, ra_min: float, ra_max: float, dec_min: float, dec_max: float):
@@ -85,10 +89,10 @@ class AutoProjection:
 
         elif dec_max < 75 and dec_min > -75:
             c = ccrs.Miller(central_longitude=central_longitude)
-        
+
         elif dec_max > 75 and dec_min >= 0:
             c = ccrs.NorthPolarStereo(central_longitude=central_longitude)
-        
+
         elif dec_max <= 0 and dec_min < -75:
             c = ccrs.SouthPolarStereo(central_longitude=central_longitude)
 

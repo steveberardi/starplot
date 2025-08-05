@@ -47,13 +47,9 @@ def test_raises_exception_on_invalid_lat_lon():
 def test_valid_params(dt, lat, lon):
     Observer(dt=dt, lat=lat, lon=lon)
 
+
 def test_lst():
     tz = ZoneInfo("America/Los_Angeles")
     dt = datetime(2025, 8, 2, 7, 54, 0, 0, tzinfo=tz)
-    obs = Observer(
-        dt=dt, 
-        lat=35, 
-        lon=-117.0634
-    )
+    obs = Observer(dt=dt, lat=35, lon=-117.0634)
     assert obs.lst == 57.89127678132414
-
