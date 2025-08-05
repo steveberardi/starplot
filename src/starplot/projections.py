@@ -41,6 +41,64 @@ class ProjectionBase(BaseModel, ABC):
         c.threshold = self.threshold
         return c
 
+class AutoProjection:
+    """
+    Automatically selects a projection based on the RA/DEC extent you specify when creating the map plot.
+
+    This uses a pretty simple method:
+
+    1. If the extent is the full celestial sphere (RA is 0 to 360 and DEC is -90 to 90), then it'll use Mollweide
+
+    2. If the max declination is greater than 75 and the min is greater than or equal to 0, then it'll use a Stereographic North projection
+
+    3. If the max declination is less than or equal to 0 and the min is less than -75, then it'll use a Stereographic South projection
+
+    4. If the extent doesn't match any of the above, then it'll use a Miller projection
+
+    In all cases, it sets the central RA to the midpoint of the RA extent.
+
+    Unlike the other projection options, this class does not expose any public parameters (e.g. center RA/DEC), since everything is determined automatically.
+
+    To use this automatic projection:
+
+    ```python
+
+    from starplot import MapPlot, AutoProjection
+
+    p = MapPlot(
+        projection=AutoProjection(),
+        ra_min=4 * 15,
+        ra_max=6 * 15,
+        dec_min=0,
+        dec_max=20,
+    )
+    ```
+    """
+    def _is_global(self, ra_min: float, ra_max: float, dec_min: float, dec_max: float) -> bool:
+        return ra_min == 0 and ra_max == 360 and dec_min == -90 and dec_max == 90
+
+    def crs(self, ra_min: float, ra_max: float, dec_min: float, dec_max: float):
+        central_longitude = -1 * (ra_min + ra_max) / 2
+
+        if self._is_global(ra_min, ra_max, dec_min, dec_max):
+            c = ccrs.Mollweide(central_longitude=central_longitude)
+
+        elif dec_max < 75 and dec_min > -75:
+            c = ccrs.Miller(central_longitude=central_longitude)
+        
+        elif dec_max > 75 and dec_min >= 0:
+            c = ccrs.NorthPolarStereo(central_longitude=central_longitude)
+        
+        elif dec_max <= 0 and dec_min < -75:
+            c = ccrs.SouthPolarStereo(central_longitude=central_longitude)
+
+        else:
+            c = ccrs.Miller(central_longitude=central_longitude)
+
+        c.threshold = 1_000
+
+        return c
+
 
 class Miller(ProjectionBase, CenterRA):
     """Similar to Mercator: good for declinations between -70 and 70, but distorts objects near the poles"""
