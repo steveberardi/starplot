@@ -252,6 +252,12 @@ class AnchorPointEnum(str, Enum):
         options = {ap.value: ap for ap in AnchorPointEnum}
         return options.get(value)
 
+class AlignmentEnum(str, Enum):
+    """Alignment options for the legend's title and entries"""
+
+    LEFT = "left"
+    RIGHT = "right"
+    CENTER = "center"
 
 class ZOrderEnum(int, Enum):
     """
@@ -605,6 +611,9 @@ class PathStyle(BaseStyle):
 class LegendStyle(BaseStyle):
     """Defines the style for the map legend. *Only applies to map plots.*"""
 
+    alignment: AlignmentEnum = AlignmentEnum.CENTER
+    """Alignment for the legend's title and entries"""
+
     location: LegendLocationEnum = LegendLocationEnum.OUTSIDE_BOTTOM
     """Location of the legend, relative to the map area (inside or outside)"""
 
@@ -613,6 +622,9 @@ class LegendStyle(BaseStyle):
 
     background_alpha: float = 1.0
     """Background's alpha (transparency)"""
+
+    padding: float = 0.6
+    """Padding on the outside of the legend"""
 
     expand: bool = False
     """If True, the legend will be expanded to fit the full width of the map"""
@@ -629,14 +641,26 @@ class LegendStyle(BaseStyle):
     symbol_padding: float = 0.2
     """Padding between each symbol and its label"""
 
+    border_color: ColorStr = ColorStr("#c5c5c5")
+    """Border color of the legend box"""
+
     border_padding: float = 1.28
-    """Padding around legend border"""
+    """Padding between legend symbols and the legend border"""
 
     font_size: int = 23
     """Font size of the legend labels, in points"""
 
     font_color: ColorStr = ColorStr("#000")
     """Font color for legend labels"""
+
+    title_font_size: int = 36
+    """Font size of the legend title"""
+
+    title_font_weight: FontWeightEnum = FontWeightEnum.HEAVY
+    """Font weight of the legend title"""
+
+    title_font_name: str = "Inter"
+    """Name of the font to use for the title. Comma-separated list."""
 
     zorder: int = ZOrderEnum.LAYER_5
     """Zorder of the legend"""
@@ -653,6 +677,14 @@ class LegendStyle(BaseStyle):
             handletextpad=self.symbol_padding,
             mode="expand" if self.expand else None,
             facecolor=self.background_color.as_hex(),
+            title_fontproperties=dict(
+                weight=self.title_font_weight,
+                size=self.title_font_size,
+                family=self.title_font_name.split(','),
+            ),
+            alignment=self.alignment,
+            edgecolor=self.border_color.as_hex(),
+            borderaxespad=self.padding,
         )
 
 

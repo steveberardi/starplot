@@ -1,7 +1,7 @@
 # blue_medium
 
 background_color: hsl(218, 88%, 97%)
-figure_background_color: '#fff'
+figure_background_color: hsl(212deg 27% 40%)
 
 text_border_color: '#f1f6ff'
 
@@ -139,3 +139,4 @@ dso_duplicate: *DSO
 
 legend:
   background_color: '#f1f6ff'
+  border_color: '#c9daf8'

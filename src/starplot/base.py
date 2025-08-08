@@ -9,6 +9,7 @@ from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from matplotlib.legend import Legend
 from matplotlib.lines import Line2D
 from shapely import Polygon, Point
 
@@ -592,7 +593,7 @@ class BasePlot(ABC):
         self.ax.set_title(text, **style_kwargs)
 
     @use_style(LegendStyle, "legend")
-    def legend(self, style: LegendStyle = None):
+    def legend_deprecated(self, style: LegendStyle = None):
         """
         Plots the legend.
 
@@ -631,12 +632,69 @@ class BasePlot(ABC):
             handles=self._legend_handles.values(),
             **style.matplot_kwargs(self.scale),
             **bbox_kwargs,
-        ).set_zorder(
+        )
+        
+        self._legend.set_zorder(
+            # zorder is not a valid kwarg to legend(), so we have to set it afterwards
+            style.zorder
+        )
+        self.ax.add_artist(self._legend)
+
+    @use_style(LegendStyle, "legend")
+    def legend_all(self, title: str = "Legend", style: LegendStyle = None):
+        """
+        Plots the legend.
+
+        If the legend is already plotted, then it'll be removed first and then plotted again. So, it's safe to call this function multiple times if you need to 'refresh' the legend.
+
+        Args:
+            style: Styling of the legend. If None, then the plot's style (specified when creating the plot) will be used
+        """
+
+        kwargs = style.matplot_kwargs(self.scale)
+
+        legend = Legend(
+            self.ax,
+            handles=self._legend_handles.values(),
+            labels=self._legend_handles.keys(),
+            title=title,
+            # bbox_to_anchor=(1, -0.02),
+            # bbox_transform=self.ax.transAxes,
+            # shadow={"linewidth": 6, "alpha": 0.3},
+            **kwargs,
+        )
+
+        legend.set_zorder(
             # zorder is not a valid kwarg to legend(), so we have to set it afterwards
             style.zorder
         )
 
-    def star_magnitude_scale(self):
+        scale = self.star_magnitude_scale()
+
+        legend_base = legend.get_children()[0]
+        legend_scale = scale.get_children()[0]
+
+         # empty legend for padding
+        empty = Legend(
+            self.ax,
+            handles=[],
+            labels=[],
+            title="",
+            **kwargs,
+        )
+
+        # add empty legend for padding between legend and scale
+        legend_base.get_children().extend(empty.get_children()[0].get_children())
+
+        legend_base.get_children().extend(legend_scale.get_children())
+
+        legend_base.get_children().extend(empty.get_children()[0].get_children())
+
+        self.ax.add_artist(legend)
+
+
+    @use_style(LegendStyle, "legend")
+    def star_magnitude_scale(self, style: LegendStyle, title: str = "Star Magnitude", add_to_legend: bool = False):
         from starplot import callables, Star
 
         def scale(
@@ -672,21 +730,35 @@ class BasePlot(ABC):
                 step=1,
             )
         ]
+        labels = [str(m) for m in np.arange(-1, 9, 1)]
 
-        self.style.legend.location = "lower center"
-        self.style.legend.num_columns = 1
-        kwargs = self.style.legend.matplot_kwargs(self.scale)
-        kwargs["loc"] = "outside right upper"
-        self.fig.legend(
+        # self.style.legend.location = "lower center"
+        # self.style.legend.num_columns = 1
+        kwargs = style.matplot_kwargs(self.scale)
+        # kwargs["loc"] = "outside right upper"
+        # kwargs["ncols"] = 1
+        # kwargs["loc"] = "upper right"
+
+        magnitude_scale = Legend(
+            self.ax,
             handles=handles,
+            labels=labels,
+            title=title,
             **kwargs,
-            # borderaxespad=10,
-            shadow=True,
-            title="Star Magnitude",
-        ).set_zorder(
+        )
+        magnitude_scale.set_zorder(
             # zorder is not a valid kwarg to legend(), so we have to set it afterwards
             self.style.legend.zorder
         )
+        for text in magnitude_scale.get_texts():
+            # text.set_va('center_baseline')
+            text.set_ha("center") # horizontal alignment of text item
+            text.set_x(-85) # x-position
+            text.set_y(-90) # y-position
+            # text.set_linespacing(3)
+
+        return magnitude_scale
+        # self.ax.add_artist(magnitude_scale)
 
     def close_fig(self) -> None:
         """Closes the underlying matplotlib figure."""
