@@ -53,7 +53,6 @@ dso_unknown: &DSO
     color: '#000'
     alpha: 0.28
 dso_dark_nebula: *DSO
-dso_hii_ionized_region: *DSO
 dso_supernova_remnant: *DSO
 dso_nova_star: *DSO
 dso_nonexistant: *DSO

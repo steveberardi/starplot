@@ -929,17 +929,6 @@ class PlotStyle(BaseStyle):
     )
     """Styling for dark nebulas"""
 
-    dso_hii_ionized_region: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE,
-            fill=FillStyleEnum.TOP,
-            color="#000",
-            zorder=ZOrderEnum.LAYER_3 - 1,
-        ),
-        label=LabelStyle(),
-    )
-    """Styling for HII Ionized regions"""
-
     dso_supernova_remnant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
@@ -1134,13 +1123,13 @@ class PlotStyle(BaseStyle):
             DsoType.EMISSION_NEBULA: self.dso_nebula,
             DsoType.STAR_CLUSTER_NEBULA: self.dso_nebula,
             DsoType.REFLECTION_NEBULA: self.dso_nebula,
+            DsoType.HII_IONIZED_REGION: self.dso_nebula,
             # Stars ----------
             DsoType.STAR: self.star,
             DsoType.DOUBLE_STAR: self.dso_double_star,
             DsoType.ASSOCIATION_OF_STARS: self.dso_association_stars,
             # Others ----------
             DsoType.DARK_NEBULA: self.dso_dark_nebula,
-            DsoType.HII_IONIZED_REGION: self.dso_hii_ionized_region,
             DsoType.SUPERNOVA_REMNANT: self.dso_supernova_remnant,
             DsoType.NOVA_STAR: self.dso_nova_star,
             DsoType.NONEXISTENT: self.dso_nonexistant,

@@ -243,10 +243,11 @@ DSO_LEGEND_LABELS = {
     DsoType.GROUP_OF_GALAXIES: "Galaxy",
     # Nebulas ----------
     DsoType.NEBULA: "Nebula",
-    DsoType.PLANETARY_NEBULA: "Nebula",
+    DsoType.PLANETARY_NEBULA: "Planetary Nebula",
     DsoType.EMISSION_NEBULA: "Nebula",
     DsoType.STAR_CLUSTER_NEBULA: "Nebula",
     DsoType.REFLECTION_NEBULA: "Nebula",
+    DsoType.HII_IONIZED_REGION: "Nebula",
     # Star Clusters ----------
     DsoType.OPEN_CLUSTER: "Open Cluster",
     DsoType.GLOBULAR_CLUSTER: "Globular Cluster",
@@ -255,7 +256,6 @@ DSO_LEGEND_LABELS = {
     DsoType.ASSOCIATION_OF_STARS: "Association of stars",
     DsoType.NOVA_STAR: "Nova Star",
     # Others
-    DsoType.HII_IONIZED_REGION: "HII Ionized Region",
     DsoType.DARK_NEBULA: "Dark Nebula",
     DsoType.SUPERNOVA_REMNANT: "Supernova Remnant",
 }
