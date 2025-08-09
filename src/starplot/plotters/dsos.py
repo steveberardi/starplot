@@ -222,6 +222,8 @@ class DsoPlotterMixin:
                 if label:
                     self.text(label, ra, dec, style.label, gid=f"dso-{d.type}-label")
 
+                self._add_legend_handle_marker(legend_label, style.marker)
+
             else:
                 # if no major axis, then just plot as a marker
                 self.marker(
@@ -229,11 +231,10 @@ class DsoPlotterMixin:
                     dec=dec,
                     style=style,
                     label=label,
+                    legend_label=legend_label,
                     skip_bounds_check=True,
                     gid_marker=f"dso-{d.type}-marker",
                     gid_label=f"dso-{d.type}-label",
                 )
 
             self._objects.dsos.append(_dso)
-
-            self._add_legend_handle_marker(legend_label, style.marker)

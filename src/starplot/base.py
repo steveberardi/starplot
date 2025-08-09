@@ -815,7 +815,7 @@ class BasePlot(ABC):
         # Plot marker
         x, y = self._prepare_coords(ra, dec)
         style_kwargs = style.marker.matplot_scatter_kwargs(self.scale)
-        self.ax.scatter(
+        result = self.ax.scatter(
             x,
             y,
             **style_kwargs,
@@ -863,7 +863,7 @@ class BasePlot(ABC):
             )
 
         if legend_label is not None:
-            self._add_legend_handle_marker(legend_label, style.marker)
+            self._legend_handles[legend_label] = result
 
     @use_style(ObjectStyle, "planets")
     def planets(

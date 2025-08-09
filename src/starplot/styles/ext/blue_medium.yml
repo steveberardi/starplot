@@ -20,10 +20,10 @@ bayer_labels:
 
 # Constellations
 constellation_labels:
-  font_alpha: 0.75
-  font_color: hsl(212, 20%, 34%)
+  font_alpha: 1
+  font_color: hsl(212, 20%, 39%)
 constellation_lines:
-  alpha: 0.5
+  alpha: 0.6
   color: '#6ba832'
 
 celestial_equator:
