@@ -197,8 +197,13 @@ class LegendLocationEnum(str, Enum):
     INSIDE_BOTTOM = "lower center"
     INSIDE_BOTTOM_RIGHT = "lower right"
     INSIDE_BOTTOM_LEFT = "lower left"
+
     OUTSIDE_TOP = "outside upper center"
+    OUTSIDE_TOP_LEFT = "outside upper left"
+    OUTSIDE_TOP_RIGHT = "outside upper right"
     OUTSIDE_BOTTOM = "outside lower center"
+    OUTSIDE_BOTTOM_RIGHT = "outside lower right"
+    OUTSIDE_BOTTOM_LEFT = "outside lower left"
 
 
 class AnchorPointEnum(str, Enum):
@@ -252,12 +257,14 @@ class AnchorPointEnum(str, Enum):
         options = {ap.value: ap for ap in AnchorPointEnum}
         return options.get(value)
 
+
 class AlignmentEnum(str, Enum):
     """Alignment options for the legend's title and entries"""
 
     LEFT = "left"
     RIGHT = "right"
     CENTER = "center"
+
 
 class ZOrderEnum(int, Enum):
     """
@@ -680,7 +687,7 @@ class LegendStyle(BaseStyle):
             title_fontproperties=dict(
                 weight=self.title_font_weight,
                 size=self.title_font_size,
-                family=self.title_font_name.split(','),
+                family=self.title_font_name.split(","),
             ),
             alignment=self.alignment,
             edgecolor=self.border_color.as_hex(),

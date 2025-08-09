@@ -633,7 +633,7 @@ class BasePlot(ABC):
             **style.matplot_kwargs(self.scale),
             **bbox_kwargs,
         )
-        
+
         self._legend.set_zorder(
             # zorder is not a valid kwarg to legend(), so we have to set it afterwards
             style.zorder
@@ -651,17 +651,25 @@ class BasePlot(ABC):
             style: Styling of the legend. If None, then the plot's style (specified when creating the plot) will be used
         """
 
-        kwargs = style.matplot_kwargs(self.scale)
+        style_kwargs = style.matplot_kwargs(self.scale)
+        target = self.ax
+
+        if style.location.startswith("outside"):
+            target = self.fig
+
+        if style.location in [
+            LegendLocationEnum.OUTSIDE_BOTTOM,
+            LegendLocationEnum.OUTSIDE_TOP,
+        ]:
+            style_kwargs["borderaxespad"] = -1 * style.padding
 
         legend = Legend(
-            self.ax,
+            target,
             handles=self._legend_handles.values(),
             labels=self._legend_handles.keys(),
             title=title,
-            # bbox_to_anchor=(1, -0.02),
-            # bbox_transform=self.ax.transAxes,
             # shadow={"linewidth": 6, "alpha": 0.3},
-            **kwargs,
+            **style_kwargs,
         )
 
         legend.set_zorder(
@@ -674,13 +682,13 @@ class BasePlot(ABC):
         legend_base = legend.get_children()[0]
         legend_scale = scale.get_children()[0]
 
-         # empty legend for padding
+        # empty legend for padding
         empty = Legend(
-            self.ax,
+            target,
             handles=[],
             labels=[],
             title="",
-            **kwargs,
+            **style_kwargs,
         )
 
         # add empty legend for padding between legend and scale
@@ -690,11 +698,48 @@ class BasePlot(ABC):
 
         legend_base.get_children().extend(empty.get_children()[0].get_children())
 
-        self.ax.add_artist(legend)
+        target.add_artist(legend)
 
+        if style.location.startswith("outside"):
+            display_to_figure_transform = self.fig.transFigure.inverted()
+            extent = legend.get_window_extent(renderer=self.fig.canvas.get_renderer())
+            min_x, min_y = display_to_figure_transform.transform(extent.min)
+            max_x, max_y = display_to_figure_transform.transform(extent.max)
+
+            width = max_x - min_x
+            height = max_y - min_y
+
+            match style.location:
+                case LegendLocationEnum.OUTSIDE_TOP:
+                    bbox = (0.5, 1 + height)
+
+                case LegendLocationEnum.OUTSIDE_TOP_RIGHT:
+                    bbox = (1 + width, 1)
+
+                case LegendLocationEnum.OUTSIDE_TOP_LEFT:
+                    bbox = (-1 * width, 1)
+
+                case LegendLocationEnum.OUTSIDE_BOTTOM:
+                    bbox = (0.5, -1 * height)
+
+                case LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT:
+                    bbox = (1 + width, 0)
+
+                case LegendLocationEnum.OUTSIDE_BOTTOM_LEFT:
+                    bbox = (-1 * width, 0)
+
+            legend.set_bbox_to_anchor(
+                bbox=bbox,
+                transform=self.fig.transFigure,
+            )
 
     @use_style(LegendStyle, "legend")
-    def star_magnitude_scale(self, style: LegendStyle, title: str = "Star Magnitude", add_to_legend: bool = False):
+    def star_magnitude_scale(
+        self,
+        style: LegendStyle,
+        title: str = "Star Magnitude",
+        add_to_legend: bool = False,
+    ):
         from starplot import callables, Star
 
         def scale(
@@ -732,12 +777,7 @@ class BasePlot(ABC):
         ]
         labels = [str(m) for m in np.arange(-1, 9, 1)]
 
-        # self.style.legend.location = "lower center"
-        # self.style.legend.num_columns = 1
         kwargs = style.matplot_kwargs(self.scale)
-        # kwargs["loc"] = "outside right upper"
-        # kwargs["ncols"] = 1
-        # kwargs["loc"] = "upper right"
 
         magnitude_scale = Legend(
             self.ax,
@@ -750,12 +790,10 @@ class BasePlot(ABC):
             # zorder is not a valid kwarg to legend(), so we have to set it afterwards
             self.style.legend.zorder
         )
-        for text in magnitude_scale.get_texts():
-            # text.set_va('center_baseline')
-            text.set_ha("center") # horizontal alignment of text item
-            text.set_x(-85) # x-position
-            text.set_y(-90) # y-position
-            # text.set_linespacing(3)
+        # for text in magnitude_scale.get_texts():
+        #     text.set_ha("center") # horizontal alignment of text item
+        #     text.set_x(-85) # x-position
+        #     text.set_y(-90) # y-position
 
         return magnitude_scale
         # self.ax.add_artist(magnitude_scale)
