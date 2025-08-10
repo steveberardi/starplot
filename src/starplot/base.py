@@ -657,10 +657,20 @@ class BasePlot(ABC):
         if style.location.startswith("outside"):
             target = self.fig
 
-        if style.location in [
-            LegendLocationEnum.OUTSIDE_BOTTOM,
-            LegendLocationEnum.OUTSIDE_TOP,
-        ]:
+        # target = self.fig.add_axes((0,0, 1, 1)) #add_subplot(3,3,3)
+        # target = self.fig.add_subplot(2,3,3)
+        # target.set_xlim(0.1,0.2)
+        # target.set_ylim(0.1,0.2)
+        # target.set_size_inches(1, 1)
+        # target.axis("off")
+        # ax.add_artist(legend)
+        # style_kwargs["loc"] = "upper right"
+
+        # if style.location in [
+        #     LegendLocationEnum.OUTSIDE_BOTTOM,
+        #     LegendLocationEnum.OUTSIDE_TOP,
+        # ]:
+        if style.location.startswith("outside"):
             style_kwargs["borderaxespad"] = -1 * style.padding
 
         legend = Legend(
@@ -700,27 +710,31 @@ class BasePlot(ABC):
 
         target.add_artist(legend)
 
+        legend.get_title().set_color(style.font_color.as_hex())
+
         if style.location.startswith("outside"):
-            display_to_figure_transform = self.fig.transFigure.inverted()
+            # display_to_figure_transform = self.fig.transFigure.inverted()
+            display_to_axes_transform = self.ax.transAxes.inverted()
             extent = legend.get_window_extent(renderer=self.fig.canvas.get_renderer())
-            min_x, min_y = display_to_figure_transform.transform(extent.min)
-            max_x, max_y = display_to_figure_transform.transform(extent.max)
+            min_x, min_y = display_to_axes_transform.transform(extent.min)
+            max_x, max_y = display_to_axes_transform.transform(extent.max)
 
             width = max_x - min_x
-            height = max_y - min_y
+            # height = max_y - min_y
+            # top_x, top_y = display_to_figure_transform.transform(self.ax.transAxes.transform((1, 1)))
 
             match style.location:
-                case LegendLocationEnum.OUTSIDE_TOP:
-                    bbox = (0.5, 1 + height)
+                # case LegendLocationEnum.OUTSIDE_TOP:
+                #     bbox = (0.5, 1 + height)
+
+                # case LegendLocationEnum.OUTSIDE_BOTTOM:
+                #     bbox = (0.5, -1.12 * height)
 
                 case LegendLocationEnum.OUTSIDE_TOP_RIGHT:
                     bbox = (1 + width, 1)
 
                 case LegendLocationEnum.OUTSIDE_TOP_LEFT:
                     bbox = (-1 * width, 1)
-
-                case LegendLocationEnum.OUTSIDE_BOTTOM:
-                    bbox = (0.5, -1 * height)
 
                 case LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT:
                     bbox = (1 + width, 0)
@@ -730,7 +744,7 @@ class BasePlot(ABC):
 
             legend.set_bbox_to_anchor(
                 bbox=bbox,
-                transform=self.fig.transFigure,
+                transform=self.ax.transAxes,
             )
 
     @use_style(LegendStyle, "legend")
@@ -780,7 +794,7 @@ class BasePlot(ABC):
         kwargs = style.matplot_kwargs(self.scale)
 
         magnitude_scale = Legend(
-            self.ax,
+            self.fig,
             handles=handles,
             labels=labels,
             title=title,
@@ -790,6 +804,8 @@ class BasePlot(ABC):
             # zorder is not a valid kwarg to legend(), so we have to set it afterwards
             self.style.legend.zorder
         )
+
+        magnitude_scale.get_title().set_color(style.font_color.as_hex())
         # for text in magnitude_scale.get_texts():
         #     text.set_ha("center") # horizontal alignment of text item
         #     text.set_x(-85) # x-position

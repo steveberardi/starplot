@@ -133,4 +133,5 @@ dso_unknown: *DSO
 dso_duplicate: *DSO
 
 legend:
-  background_color: '#f1f6ff'
+  background_color: 'rgb(46, 61, 74)'
+  font_color: 'rgb(244, 233, 203)'

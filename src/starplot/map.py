@@ -444,7 +444,7 @@ class MapPlot(
         )
 
         self._proj = self.projection.crs
-        self.ax = plt.axes(projection=self._proj)
+        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
 
         self._set_extent()
         self.ax.set_facecolor(self.style.background_color.as_hex())

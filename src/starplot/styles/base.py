@@ -198,12 +198,13 @@ class LegendLocationEnum(str, Enum):
     INSIDE_BOTTOM_RIGHT = "lower right"
     INSIDE_BOTTOM_LEFT = "lower left"
 
-    OUTSIDE_TOP = "outside upper center"
-    OUTSIDE_TOP_LEFT = "outside upper left"
-    OUTSIDE_TOP_RIGHT = "outside upper right"
-    OUTSIDE_BOTTOM = "outside lower center"
-    OUTSIDE_BOTTOM_RIGHT = "outside lower right"
-    OUTSIDE_BOTTOM_LEFT = "outside lower left"
+    # OUTSIDE_TOP = "outside upper center"
+    # OUTSIDE_BOTTOM = "outside lower center"
+
+    OUTSIDE_TOP_LEFT = "outside left upper"
+    OUTSIDE_TOP_RIGHT = "outside right upper"
+    OUTSIDE_BOTTOM_RIGHT = "outside right lower"
+    OUTSIDE_BOTTOM_LEFT = "outside left lower"
 
 
 class AnchorPointEnum(str, Enum):
@@ -621,7 +622,7 @@ class LegendStyle(BaseStyle):
     alignment: AlignmentEnum = AlignmentEnum.CENTER
     """Alignment for the legend's title and entries"""
 
-    location: LegendLocationEnum = LegendLocationEnum.OUTSIDE_BOTTOM
+    location: LegendLocationEnum = LegendLocationEnum.INSIDE_BOTTOM_RIGHT
     """Location of the legend, relative to the map area (inside or outside)"""
 
     background_color: ColorStr = ColorStr("#fff")
@@ -1027,7 +1028,7 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_2,
         ),
         label=LabelStyle(
-            font_size=20,
+            font_size=24,
             font_color="#000",
             font_alpha=1,
             anchor_point=AnchorPointEnum.BOTTOM_CENTER,
