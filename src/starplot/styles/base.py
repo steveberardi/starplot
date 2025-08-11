@@ -631,8 +631,8 @@ class LegendStyle(BaseStyle):
     background_alpha: float = 1.0
     """Background's alpha (transparency)"""
 
-    padding: float = 0.6
-    """Padding on the outside of the legend"""
+    padding: float = 0
+    """Padding on the outside of the legend. Negative numbers are supported."""
 
     expand: bool = False
     """If True, the legend will be expanded to fit the full width of the map"""
@@ -653,7 +653,7 @@ class LegendStyle(BaseStyle):
     """Border color of the legend box"""
 
     border_padding: float = 1.28
-    """Padding between legend symbols and the legend border"""
+    """Padding between legend entries and the legend border"""
 
     font_size: int = 23
     """Font size of the legend labels, in points"""
@@ -732,10 +732,10 @@ class PlotStyle(BaseStyle):
 
     # Title
     title: LabelStyle = LabelStyle(
-        font_size=20,
+        font_size=70,
         font_weight=FontWeightEnum.BOLD,
         zorder=ZOrderEnum.LAYER_5,
-        line_spacing=48,
+        line_spacing=150,
         anchor_point=AnchorPointEnum.BOTTOM_CENTER,
     )
     """Styling for info text (only applies to zenith and optic plots)"""

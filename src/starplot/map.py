@@ -20,6 +20,7 @@ from starplot.plotters import (
     StarPlotterMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
+    LegendPlotterMixin,
 )
 from starplot.projections import StereoNorth, StereoSouth, ProjectionBase
 from starplot.styles import (
@@ -41,6 +42,7 @@ class MapPlot(
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
     ConstellationPlotterMixin,
+    LegendPlotterMixin,
 ):
     """Creates a new map plot.
 

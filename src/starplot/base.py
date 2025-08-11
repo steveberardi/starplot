@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Union, Optional
+from typing import Callable, Dict, Union, Optional
 from random import randrange
 import logging
 
@@ -14,10 +14,11 @@ from matplotlib.lines import Line2D
 from shapely import Polygon, Point
 
 from starplot.coordinates import CoordinateSystem
-from starplot import geod, models, warnings
+from starplot import geod, models, warnings, callables
 from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
+from starplot.models.star import Star
 from starplot.observer import Observer
 from starplot.styles import (
     AnchorPointEnum,
@@ -748,14 +749,17 @@ class BasePlot(ABC):
             )
 
     @use_style(LegendStyle, "legend")
-    def star_magnitude_scale(
+    def star_magnitude_scale2(
         self,
         style: LegendStyle,
         title: str = "Star Magnitude",
+        size_fn: Callable[[Star], float] = callables.size_by_magnitude,
+        label_fn: Callable[float, str] = lambda m: str(m),
+        start: float = -1,
+        stop: float = 9,
+        step: float = 1,
         add_to_legend: bool = False,
     ):
-        from starplot import callables, Star
-
         def scale(
             size_fn,
             style: MarkerStyle,
@@ -781,15 +785,15 @@ class BasePlot(ABC):
         handles = [
             h
             for h in scale(
-                size_fn=callables.size_by_magnitude,
+                size_fn=size_fn,
                 style=self.style.star.marker,
-                label_fn=lambda m: str(m),
-                start=-1,
-                stop=9,
-                step=1,
+                label_fn=label_fn,
+                start=start,
+                stop=stop,
+                step=step,
             )
         ]
-        labels = [str(m) for m in np.arange(-1, 9, 1)]
+        labels = [str(m) for m in np.arange(start, stop, step)]
 
         kwargs = style.matplot_kwargs(self.scale)
 
