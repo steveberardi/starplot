@@ -427,12 +427,10 @@ class HorizonPlot(
                     where each tuple contains a position value [0-1] and a color
                     value to describe the range of colours in the gradient.
         """
-        # Defining a figure based on the axes and get the position of the axes
-        # within the figure as a bounding box
-        fig = self.ax.figure
+        # Get the position of the axes for a bounding box
         bbox = self.ax.get_position()
-        # Add underlay axes to draw gradient in display coordinates but hide axes
-        background_ax = fig.add_axes(bbox, zorder=0)
+        # Add underlay axes to draw gradient but hide axes
+        background_ax = self.ax.figure.add_axes(bbox, zorder=0)
         background_ax.set_axis_off()
         # Unzip color proportions and colors
         positions, colors = zip(*gradient_preset)
@@ -441,19 +439,25 @@ class HorizonPlot(
             "custom_gradient", list(zip(positions, colors)), N=750
         )
         # Create a vertical gradient image
-        gradient = np.array([[0], [1]])
-        extent = [0, 1, 0, 1]  # covers the full axes
-        # Use imshow to plot the gradient in axes coordinates
-        background_ax.imshow(
+        gradient = np.linspace(0, 1, 25).reshape(-1, 1)
+        gradient = np.repeat(gradient, 2, axis=1)
+        # Apply gradient with pcolormesh
+        background_ax.pcolormesh(
             gradient,
-            aspect="auto",
             cmap=cmap,
-            interpolation="gaussian",
-            extent=extent,
+            shading="gouraud",
+            rasterized=True,
             zorder=0,
         )
-        # set plot in self.ax's zorder to 1 so it appears above the gradient
-        self.ax.set_zorder(1)
+        # Set plot in self.ax's zorder to 1 so it appears above the gradient
+        self.ax.zorder = 1
+
+        # Create event driven function so background axes matches main axes when
+        # figure is drawn
+        def _sync_background(event):
+            background_ax.set_position(self.ax.get_position())
+
+        self.fig.canvas.mpl_connect("draw_event", _sync_background)
 
     @cache
     def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
