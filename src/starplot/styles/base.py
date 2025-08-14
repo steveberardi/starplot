@@ -634,6 +634,12 @@ class LegendStyle(BaseStyle):
     padding: float = 0
     """Padding on the outside of the legend. Negative numbers are supported."""
 
+    padding_x: float = 0
+    """Padding (in pixels) between the _outside_ of the legend and the map in the X axis. Negative numbers are supported."""
+
+    padding_y: float = 0
+    """Padding (in pixels) between the _outside_ of the legend and the map in the Y axis. Negative numbers are supported."""
+
     expand: bool = False
     """If True, the legend will be expanded to fit the full width of the map"""
 

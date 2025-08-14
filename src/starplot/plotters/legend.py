@@ -39,45 +39,50 @@ class LegendPlotterMixin:
         )
         legend.get_title().set_color(style.font_color.as_hex())
 
-        if set_anchor and style.location.startswith("outside"):
-            # display_to_figure_transform = self.fig.transFigure.inverted()
-            display_to_axes_transform = self.ax.transAxes.inverted()
+        if not set_anchor:
+            return legend
+
+        display_to_axes_transform = self.ax.transAxes.inverted()
+        origin_x, origin_y = self.ax.transAxes.transform((0, 0))
+        padding_x, padding_y = display_to_axes_transform.transform(
+            (origin_x + style.padding_x / 2, origin_y + style.padding_y / 2)
+        )
+
+        if style.location.startswith("outside"):
             extent = legend.get_window_extent(renderer=self.fig.canvas.get_renderer())
             min_x, min_y = display_to_axes_transform.transform(extent.min)
             max_x, max_y = display_to_axes_transform.transform(extent.max)
 
-            a, b = self.ax.transAxes.transform((0, 0))
+            baseline, _ = display_to_axes_transform.transform(
+                (origin_x + 200, origin_y + style.padding_y / 2)
+            )
 
-            px = 150  # every pixel here is really 2 pixels
-            padding_x, _ = display_to_axes_transform.transform((a + px, b))
-
+            padding_x += baseline
             width = max_x - min_x + padding_x
             # height = max_y - min_y
             # top_x, top_y = display_to_figure_transform.transform(self.ax.transAxes.transform((1, 1)))
 
-            match style.location:
-                # case LegendLocationEnum.OUTSIDE_TOP:
-                #     bbox = (0.5, 1 + height)
+            bbox = {
+                LegendLocationEnum.OUTSIDE_TOP_RIGHT: (1 + width, 1 - padding_y),
+                LegendLocationEnum.OUTSIDE_TOP_LEFT: (-1 * width, 1 - padding_y),
+                LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT: (1 + width, padding_y),
+                LegendLocationEnum.OUTSIDE_BOTTOM_LEFT: (-1 * width, padding_y),
+            }.get(style.location)
 
-                # case LegendLocationEnum.OUTSIDE_BOTTOM:
-                #     bbox = (0.5, -1.12 * height)
+        else:
+            bbox = {
+                LegendLocationEnum.INSIDE_TOP_LEFT: (padding_x, 1 - padding_y),
+                LegendLocationEnum.INSIDE_TOP_RIGHT: (1 - padding_x, 1 - padding_y),
+                LegendLocationEnum.INSIDE_TOP: (0.5, 1 - padding_y),
+                LegendLocationEnum.INSIDE_BOTTOM_LEFT: (padding_x, padding_y),
+                LegendLocationEnum.INSIDE_BOTTOM_RIGHT: (1 - padding_x, padding_y),
+                LegendLocationEnum.INSIDE_BOTTOM: (0.5, padding_y),
+            }.get(style.location)
 
-                case LegendLocationEnum.OUTSIDE_TOP_RIGHT:
-                    bbox = (1 + width, 1)
-
-                case LegendLocationEnum.OUTSIDE_TOP_LEFT:
-                    bbox = (-1 * width, 1)
-
-                case LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT:
-                    bbox = (1 + width, 0)
-
-                case LegendLocationEnum.OUTSIDE_BOTTOM_LEFT:
-                    bbox = (-1 * width, 0)
-
-            legend.set_bbox_to_anchor(
-                bbox=bbox,
-                transform=self.ax.transAxes,
-            )
+        legend.set_bbox_to_anchor(
+            bbox=bbox,
+            transform=self.ax.transAxes,
+        )
 
         return legend
 

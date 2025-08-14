@@ -1,7 +1,7 @@
 # blue_gold
 
 background_color: rgb(46, 61, 74)
-figure_background_color: '#fff'
+figure_background_color: hsl(208, 23%, 13%)
 
 text_border_color: rgb(46, 61, 74)
 
