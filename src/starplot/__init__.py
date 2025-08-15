@@ -21,4 +21,7 @@ from .styles import *  # noqa: F401 F403
 from .observer import Observer  # noqa: F401
 from .projections import *  # noqa: F401 F403
 
+from .config import settings
+
 from ibis import _  # noqa: F401 F403
+

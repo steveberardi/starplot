@@ -11,5 +11,5 @@ def test_download_path():
     importlib.reload(data)
 
     assert os.environ.get("STARPLOT_DOWNLOAD_PATH") == "/testing"
-    assert str(settings.DOWNLOAD_PATH) == "/testing"
+    assert str(settings.download_path) == "/testing"
     assert str(data.DataFiles.BIG_SKY).startswith("/testing")

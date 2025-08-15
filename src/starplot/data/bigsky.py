@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from starplot import settings
+from starplot.config import settings
 from starplot.data import DataFiles, utils
 
 
@@ -21,7 +21,7 @@ def get_url(version: str = BIG_SKY_VERSION, filename: str = BIG_SKY_FILENAME):
 
 def download(
     url: str = None,
-    download_path: str = settings.DOWNLOAD_PATH,
+    download_path: str = settings.download_path,
     download_filename: str = BIG_SKY_FILENAME,
     build_file: str = DataFiles.BIG_SKY,
 ):
@@ -102,7 +102,7 @@ def exists(path) -> bool:
 def download_if_not_exists(
     filename: str = DataFiles.BIG_SKY,
     url: str = None,
-    download_path: str = settings.DOWNLOAD_PATH,
+    download_path: str = settings.download_path,
     download_filename: str = BIG_SKY_FILENAME,
     build_file: str = DataFiles.BIG_SKY,
 ):

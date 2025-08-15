@@ -15,6 +15,7 @@ from shapely import Polygon, Point
 
 from starplot.coordinates import CoordinateSystem
 from starplot import geod, models, warnings, callables
+from starplot.config import settings, SvgTextType
 from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
@@ -101,6 +102,11 @@ class BasePlot(ABC):
         *args,
         **kwargs,
     ):
+        if settings.svg_text_type == SvgTextType.PATH:
+            plt.rcParams['svg.fonttype'] = 'path'
+        else:
+            plt.rcParams['svg.fonttype'] = 'none'
+
         px = 1 / DPI  # plt.rcParams["figure.dpi"]  # pixel in inches
         self.pixels_per_point = DPI / 72
 
@@ -378,7 +384,10 @@ class BasePlot(ABC):
             return None
 
         x, y = self._prepare_coords(ra, dec)
-        kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
+
+        if settings.svg_text_type == SvgTextType.PATH:
+            kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
+        
         remove_on_constellation_collision = kwargs.pop(
             "remove_on_constellation_collision", True
         )
