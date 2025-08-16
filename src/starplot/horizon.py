@@ -1,13 +1,14 @@
 import math
 
 from functools import cache
+from typing import Callable
 
 import pandas as pd
 import geopandas as gpd
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
-from matplotlib.ticker import FixedLocator
+from matplotlib.ticker import FixedLocator, FuncFormatter
 from skyfield.api import wgs84, Star as SkyfieldStar
 from shapely import Point, Polygon, MultiPolygon
 from starplot.coordinates import CoordinateSystem
@@ -340,10 +341,6 @@ class HorizonPlot(
         self,
         style: PathStyle = None,
         labels: dict[int, str] = DEFAULT_HORIZON_LABELS,
-        show_degree_labels: bool = True,
-        degree_step: int = 15,
-        show_ticks: bool = True,
-        tick_step: int = 5,
     ):
         """
         Plots rectangle for horizon that shows cardinal directions and azimuth labels.
@@ -351,17 +348,8 @@ class HorizonPlot(
         Args:
             style: Style of the horizon path. If None, then the plot's style definition will be used.
             labels: Dictionary that maps azimuth values (0...360) to their cardinal direction labels (e.g. "N"). Default is to label each 45deg direction (e.g. "N", "NE", "E", etc)
-            show_degree_labels: If True, then azimuth degree labels will be plotted on the horizon path
-            degree_step: Step size for degree labels
-            show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
-            tick_step: Step size for tick marks
         """
-
-        if show_degree_labels or show_ticks:
-            patch_y = -0.11 * self.scale
-        else:
-            patch_y = -0.08 * self.scale
-
+        patch_y = -0.11 * self.scale
         bottom = patches.Polygon(
             [
                 (0, 0),
@@ -376,48 +364,93 @@ class HorizonPlot(
         )
         self.ax.add_patch(bottom)
 
-        def az_to_ax(d):
-            return self._to_ax(d, self.alt[0])[0]
-
-        for az in range(int(self.az[0]), int(self.az[1]), 1):
+        for az, label in labels.items():
             az = int(az)
-
-            if az >= 360:
-                az -= 360
-
-            x = az_to_ax(az)
-
+            x, _ = self._to_ax(az, self.alt[0])
             if x <= 0.03 or x >= 0.97 or math.isnan(x):
                 continue
 
-            if labels.get(az):
-                self.ax.annotate(
-                    labels.get(az),
-                    (x, patch_y + 0.027),
-                    xycoords=self.ax.transAxes,
-                    **style.label.matplot_kwargs(self.scale),
-                    clip_on=True,
-                )
+            self.ax.annotate(
+                label,
+                (x, patch_y + 0.027),
+                xycoords=self.ax.transAxes,
+                **style.label.matplot_kwargs(self.scale),
+                clip_on=False,
+            )
 
-            if show_degree_labels and az % degree_step == 0:
-                self.ax.annotate(
-                    str(az) + "\u00b0",
-                    (x, -0.011 * self.scale),
-                    xycoords=self.ax.transAxes,
-                    **self.style.gridlines.label.matplot_kwargs(self.scale),
-                    clip_on=True,
-                )
+    @use_style(PathStyle, "gridlines")
+    def gridlines(
+        self,
+        style: PathStyle = None,
+        show_labels: list = ["left", "right", "bottom"],
+        az_locations: list[float] = None,
+        alt_locations: list[float] = None,
+        az_formatter_fn: Callable[[float], str] = None,
+        alt_formatter_fn: Callable[[float], str] = None,
+        divider_line: bool = True,
+        show_ticks: bool = True,
+        tick_step: int = 5,
+    ):
+        """
+        Plots gridlines
 
-            elif show_ticks and az % tick_step == 0:
-                self.ax.annotate(
-                    "|",
-                    (x, -0.011 * self.scale),
-                    xycoords=self.ax.transAxes,
-                    **self.style.gridlines.label.matplot_kwargs(self.scale / 2),
-                    clip_on=True,
-                )
+        Args:
+            style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
+            show_labels: List of locations where labels should be shown (options: "left", "right", "top", "bottom")
+            az_locations: List of azimuth locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees
+            alt_locations: List of altitude locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
+            az_formatter_fn: Callable for creating labels of azimuth gridlines
+            alt_formatter_fn: Callable for creating labels of altitude gridlines
+            divider_line: If True, then a divider line will be plotted below the azimuth labels on the bottom of the plot (this is helpful when also plotting the horizon)
+            show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
+            tick_step: Step size for tick marks
+        """
+        az_formatter_fn_default = lambda az: f"{round(az)}\u00b0 "  # noqa: E731
+        alt_formatter_fn_default = lambda alt: f"{round(alt)}\u00b0 "  # noqa: E731
 
-        if show_degree_labels or show_ticks:
+        az_formatter_fn = az_formatter_fn or az_formatter_fn_default
+        alt_formatter_fn = alt_formatter_fn or alt_formatter_fn_default
+
+        def az_formatter(x, pos) -> str:
+            if x < 0:
+                x += 360
+            return az_formatter_fn(x)
+
+        def alt_formatter(x, pos) -> str:
+            return alt_formatter_fn(x)
+
+        x_locations = az_locations or [x for x in range(0, 360, 15)]
+        x_locations = [x - 180 for x in x_locations]
+        y_locations = alt_locations or [d for d in range(-90, 90, 10)]
+
+        line_style_kwargs = style.line.matplot_kwargs()
+        gridlines = self.ax.gridlines(
+            draw_labels=show_labels,
+            x_inline=False,
+            y_inline=False,
+            rotate_labels=False,
+            xpadding=12,
+            ypadding=12,
+            gid="gridlines",
+            **line_style_kwargs,
+        )
+
+        if show_labels:
+            self._axis_labels = True
+
+        label_style_kwargs = style.label.matplot_kwargs()
+        label_style_kwargs.pop("va")
+        label_style_kwargs.pop("ha")
+
+        gridlines.xlocator = FixedLocator(x_locations)
+        gridlines.xformatter = FuncFormatter(az_formatter)
+        gridlines.xlabel_style = label_style_kwargs
+
+        gridlines.ylocator = FixedLocator(y_locations)
+        gridlines.yformatter = FuncFormatter(alt_formatter)
+        gridlines.ylabel_style = label_style_kwargs
+
+        if divider_line:
             self.ax.plot(
                 [0, 1],
                 [-0.04 * self.scale, -0.04 * self.scale],
@@ -427,41 +460,24 @@ class HorizonPlot(
                 transform=self.ax.transAxes,
             )
 
-    @use_style(PathStyle, "gridlines")
-    def gridlines(
-        self,
-        style: PathStyle = None,
-        az_locations: list[float] = None,
-        alt_locations: list[float] = None,
-    ):
-        """
-        Plots gridlines
+        if not show_ticks:
+            return
 
-        Args:
-            style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
-            az_locations: List of azimuth locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees
-            alt_locations: List of altitude locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
+        for az in range(int(self.az[0]), int(self.az[1]), tick_step):
+            az = int(az)
+            if az >= 360:
+                az -= 360
+            x, _ = self._to_ax(az, self.alt[0])
 
-        """
-        x_locations = az_locations or [x for x in range(0, 360, 15)]
-        x_locations = [x - 180 for x in x_locations]
-        y_locations = alt_locations or [d for d in range(-90, 90, 10)]
+            if x <= 0.03 or x >= 0.97 or math.isnan(x):
+                continue
 
-        line_style_kwargs = style.line.matplot_kwargs()
-        gridlines = self.ax.gridlines(
-            draw_labels=False,
-            x_inline=False,
-            y_inline=False,
-            rotate_labels=False,
-            xpadding=12,
-            ypadding=12,
-            clip_on=True,
-            clip_path=self._background_clip_path,
-            gid="gridlines",
-            **line_style_kwargs,
-        )
-        gridlines.xlocator = FixedLocator(x_locations)
-        gridlines.ylocator = FixedLocator(y_locations)
+            self.ax.annotate(
+                "|",
+                (x, -0.011 * self.scale),
+                xycoords=self.ax.transAxes,
+                **self.style.gridlines.label.matplot_kwargs(self.scale / 2),
+            )
 
     @cache
     def _to_ax(self, az: float, alt: float) -> tuple[float, float]:

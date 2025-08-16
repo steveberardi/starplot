@@ -61,7 +61,7 @@ milky_way:
 gridlines:
   label:
     font_alpha: 1
-    font_color: '#f1f6ff'
+    font_color: hsl(208, 23%, 84%)
   line:
     alpha: 0.6
     color: '#888'
