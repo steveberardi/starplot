@@ -2,12 +2,15 @@
 [Migration Guide](migration-guides/0.16.0.md)
 
 - Refactors projections, allowing you to change central RA/DEC
+- Adds an equidistant projection
 - Introduces an Observer model to encapsulate a time and place
 - Makes zenith plots a separate plot type
 - Adds a function for plotting a star magnitude scale
 - Adds more location options for legends and allows separate X/Y padding
 - Adds a `settings` class for managing global settings
 - Adds a global setting for how text is rendered in SVG exports
+- Adds more options for plotting gridlines on horizon plots
+- Adds a `common_names` field to deep sky objects
 
 
 ## v0.15.x

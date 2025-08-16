@@ -89,6 +89,13 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     type: DsoType
     """Type of DSO"""
 
+    common_names: list[str] = None
+    """
+    List of common names for the DSO (e.g. 'Andromeda Galaxy' for M31)
+    
+    Note: this field is parsed into a list of strings _after_ querying DSOs, so if you want to query on this field, you should treat it as a comma-separated list.
+    """
+
     magnitude: Optional[float] = None
     """Magnitude (if available)"""
 
@@ -186,6 +193,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
 def from_tuple(d: tuple) -> DSO:
     dso = DSO(
         name=d.name,
+        common_names=d.common_names.split(",") if d.common_names else [],
         ra=d.ra,
         dec=d.dec,
         type=d.type,

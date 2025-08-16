@@ -1,7 +1,7 @@
 # blue_medium
 
 background_color: hsl(218, 88%, 97%)
-figure_background_color: hsl(212, 27%, 40%)
+figure_background_color: hsl(212, 27%, 48%)
 
 text_border_color: '#f1f6ff'
 
@@ -21,10 +21,10 @@ bayer_labels:
 # Constellations
 constellation_labels:
   font_alpha: 1
-  font_color: hsl(212, 20%, 39%)
+  font_color: hsl(212, 20%, 36%)
 constellation_lines:
-  alpha: 0.6
-  color: '#6ba832'
+  alpha: 0.64
+  color: hsl(91, 58%, 41%)
 
 celestial_equator:
   label:
@@ -65,7 +65,7 @@ sun:
 
 horizon:
   line:
-    color: hsl(212, 27%, 40%)
+    color: hsl(212, 27%, 48%)
     edge_color: '#2f4358'
   label:
     font_color: '#f1f6ff'
