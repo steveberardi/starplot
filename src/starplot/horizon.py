@@ -423,7 +423,12 @@ class HorizonPlot(
         x_locations = [x - 180 for x in x_locations]
         y_locations = alt_locations or [d for d in range(-90, 90, 10)]
 
+        label_style_kwargs = style.label.matplot_kwargs()
+        label_style_kwargs.pop("va")
+        label_style_kwargs.pop("ha")
+
         line_style_kwargs = style.line.matplot_kwargs()
+
         gridlines = self.ax.gridlines(
             draw_labels=show_labels,
             x_inline=False,
@@ -432,23 +437,25 @@ class HorizonPlot(
             xpadding=12,
             ypadding=12,
             gid="gridlines",
+            xlocs=FixedLocator(x_locations),
+            xformatter=FuncFormatter(az_formatter),
+            xlabel_style=label_style_kwargs,
+            ylocs=FixedLocator(y_locations),
+            ylabel_style=label_style_kwargs,
+            yformatter=FuncFormatter(alt_formatter),
             **line_style_kwargs,
         )
 
         if show_labels:
             self._axis_labels = True
 
-        label_style_kwargs = style.label.matplot_kwargs()
-        label_style_kwargs.pop("va")
-        label_style_kwargs.pop("ha")
+        # gridlines.xlocator = FixedLocator(x_locations)
+        # gridlines.xformatter = FuncFormatter(az_formatter)
+        # gridlines.xlabel_style = label_style_kwargs
 
-        gridlines.xlocator = FixedLocator(x_locations)
-        gridlines.xformatter = FuncFormatter(az_formatter)
-        gridlines.xlabel_style = label_style_kwargs
-
-        gridlines.ylocator = FixedLocator(y_locations)
-        gridlines.yformatter = FuncFormatter(alt_formatter)
-        gridlines.ylabel_style = label_style_kwargs
+        # gridlines.ylocator = FixedLocator(y_locations)
+        # gridlines.yformatter = FuncFormatter(alt_formatter)
+        # gridlines.ylabel_style = label_style_kwargs
 
         if divider_line:
             self.ax.plot(

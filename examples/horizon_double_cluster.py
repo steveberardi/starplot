@@ -56,7 +56,7 @@ p.bino_fov(
     magnification=10,
 )
 p.constellation_labels()
-p.horizon(show_degree_labels=False, show_ticks=False)
+p.horizon()
 p.gridlines()
 
 p.export("horizon_double_cluster.png")

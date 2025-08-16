@@ -1,7 +1,7 @@
 # blue_medium
 
 background_color: hsl(218, 88%, 97%)
-figure_background_color: hsl(212deg 27% 40%)
+figure_background_color: hsl(212, 27%, 40%)
 
 text_border_color: '#f1f6ff'
 
@@ -65,7 +65,7 @@ sun:
 
 horizon:
   line:
-    color: hsl(212, 27%, 56%)
+    color: hsl(212, 27%, 40%)
     edge_color: '#2f4358'
   label:
     font_color: '#f1f6ff'

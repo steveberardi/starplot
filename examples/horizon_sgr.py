@@ -7,7 +7,6 @@ from starplot.styles import PlotStyle, extensions
 style = PlotStyle().extend(
     extensions.BLUE_MEDIUM,
     extensions.MAP,
-    {"figure_background_color": "hsl(212, 27%, 48%)"},
 )
 
 dt = datetime(2024, 8, 30, 21, 0, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
@@ -37,4 +36,4 @@ p.constellation_labels()
 p.horizon(labels={180: "SOUTH"})
 p.gridlines()
 
-p.export("horizon_sgr.png", padding=0.2)
+p.export("horizon_sgr.png", padding=0.5)
