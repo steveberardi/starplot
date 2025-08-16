@@ -429,7 +429,7 @@ class HorizonPlot(
 
         line_style_kwargs = style.line.matplot_kwargs()
 
-        gridlines = self.ax.gridlines(
+        self.ax.gridlines(
             draw_labels=show_labels,
             x_inline=False,
             y_inline=False,
