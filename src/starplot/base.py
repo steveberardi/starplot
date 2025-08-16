@@ -103,9 +103,9 @@ class BasePlot(ABC):
         **kwargs,
     ):
         if settings.svg_text_type == SvgTextType.PATH:
-            plt.rcParams['svg.fonttype'] = 'path'
+            plt.rcParams["svg.fonttype"] = "path"
         else:
-            plt.rcParams['svg.fonttype'] = 'none'
+            plt.rcParams["svg.fonttype"] = "none"
 
         px = 1 / DPI  # plt.rcParams["figure.dpi"]  # pixel in inches
         self.pixels_per_point = DPI / 72
@@ -387,7 +387,7 @@ class BasePlot(ABC):
 
         if settings.svg_text_type == SvgTextType.PATH:
             kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
-        
+
         remove_on_constellation_collision = kwargs.pop(
             "remove_on_constellation_collision", True
         )

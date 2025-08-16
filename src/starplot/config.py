@@ -1,14 +1,7 @@
-
-import os
-
 from enum import Enum
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-
-def env(name, default):
-    return os.environ.get(name) or default
 
 
 STARPLOT_PATH = Path(__file__).resolve().parent
@@ -16,14 +9,6 @@ STARPLOT_PATH = Path(__file__).resolve().parent
 
 DATA_PATH = STARPLOT_PATH / "data" / "library"
 """Path of starplot data"""
-
-# DOWNLOAD_PATH = Path(env("STARPLOT_DOWNLOAD_PATH", str(DATA_PATH / "downloads")))
-# """Path for downloaded data"""
-
-# DUCKDB_EXTENSION_PATH = Path(
-#     env("STARPLOT_DUCKDB_EXTENSIONS_PATH", str(DATA_PATH / "duckdb-extensions"))
-# )
-# """Path for DuckDB extensions"""
 
 
 RAW_DATA_PATH = STARPLOT_PATH.parent.parent / "raw"
@@ -37,8 +22,7 @@ class SvgTextType(str, Enum):
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="STARPLOT_")
-
-    data_path: Path = STARPLOT_PATH / "data" / "library"
+    """Configuration for the Pydantic settings model. Do not change."""
 
     download_path: Path = DATA_PATH / "downloads"
     """
@@ -58,15 +42,15 @@ class Settings(BaseSettings):
     """
     Method for rendering text in SVG exports:
 
-    - "path" (default) will render all text as paths. This will increase the filesize, 
+    - `"path"` (default) will render all text as paths. This will increase the filesize, 
     but allow all viewers to see the font correctly (even if they don't have the font 
     installed on their system).
 
-    - "element" will render all text as an [SVG `<text>` element](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/text), 
+    - `"element"` will render all text as an [SVG `<text>` element](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/text), 
     which means the text will be editable in graphic design applications but the text may render in a system default font if the original 
     font isn't available. **Important: when using the "element" method, text borders will be turned OFF.**
     
     """
 
-settings = Settings()
 
+settings = Settings()

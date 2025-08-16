@@ -24,4 +24,3 @@ from .projections import *  # noqa: F401 F403
 from .config import settings
 
 from ibis import _  # noqa: F401 F403
-
