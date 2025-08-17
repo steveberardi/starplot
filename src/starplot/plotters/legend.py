@@ -163,14 +163,14 @@ class LegendPlotterMixin:
         """
         Plots a magnitude scale for stars.
 
-        ??? example "Experimental"
+        !!! example "Experimental"
 
             This is currently an "experimental" feature, which means it's likely to be changed and improved in upcoming versions of Starplot. 
             It also means the feature likely has limitations.
 
             **Help us improve this feature by submitting feedback on [GitHub (open an issue)](https://github.com/steveberardi/starplot/issues) or chat with us on [Discord](https://discord.gg/WewJJjshFu). Thanks!**
 
-        Current Limitations:
+        !!! note "Current Limitations"
             - Only supports size functions that determine size based on magnitude only
             - Only supports default marker for stars (point)
             - Labels can only be plotted to the right of the marker
