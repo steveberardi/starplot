@@ -1,5 +1,4 @@
-
-### Next Release - v0.17
+### ⭐ Next Release - v0.17
 
 - Custom star catalogs
 - Custom sky cultures (constellations, star names)
@@ -8,15 +7,18 @@
 
 - Support for more coordinate systems
 
-
 ### v0.18+
-- 🌑 Planet moons
-- ☄️ Comet model
-- ✴️ Custom markers
-- 😄 🔭 Clear skies
+- Planet moons
+- Comet model
+- Area-based labeling
+- Improved line labeling
 
 <br/>
-🚀 _See more details on the [Public Roadmap :arrow_upper_right:](https://trello.com/b/sUksygn4/starplot-roadmap)_{.text-subtitle}
+<span class="blue-box">
+    <em>See more details on the <a href="https://trello.com/b/sUksygn4/starplot-roadmap">Public Roadmap</a> 🚀 </em>
+</span>
+
+<br/>
 
 --8<-- "docs/snippets/_newsletter.html"
 

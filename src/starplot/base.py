@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Union, Optional
+from typing import Dict, Union, Optional
 from random import randrange
 import logging
 
@@ -9,17 +9,15 @@ from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from matplotlib.legend import Legend
 from matplotlib.lines import Line2D
 from shapely import Polygon, Point
 
 from starplot.coordinates import CoordinateSystem
-from starplot import geod, models, warnings, callables
+from starplot import geod, models, warnings
 from starplot.config import settings, SvgTextType
 from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
-from starplot.models.star import Star
 from starplot.observer import Observer
 from starplot.styles import (
     AnchorPointEnum,
@@ -27,8 +25,6 @@ from starplot.styles import (
     MarkerStyle,
     ObjectStyle,
     LabelStyle,
-    LegendLocationEnum,
-    LegendStyle,
     LineStyle,
     MarkerSymbolEnum,
     PathStyle,

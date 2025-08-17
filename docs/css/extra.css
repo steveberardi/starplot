@@ -513,3 +513,12 @@ td[data-column-id=bayer] {
         grid-template-columns: 1fr 3fr;
     }
 }
+
+.blue-box {
+    border: 1px solid hsl(216, 50%, 84%);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+    background-color: rgba(143, 181, 255, 0.2);
+    font-size: 1.25em;
+}

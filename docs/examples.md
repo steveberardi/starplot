@@ -35,6 +35,22 @@
     </li>
 
     <li>
+        <a href="/examples/horizon-double-cluster/">
+            <img src="/images/examples/horizon_double_cluster-sm.png" alt="Finding the Double Cluster in Perseus" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Finding the Double Cluster</p>
+        </a>
+    </li>
+
+    <li>
+        <a href="/examples/map-carina-nebula/">
+            <img src="/images/examples/map_carina-sm.png" alt="Map of Carina Constellation" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Carina Nebula + Clusters</p>
+        </a>
+    </li>
+
+    <li>
         <a href="/examples/optic-m45/">
             <img src="/images/examples/optic_m45-sm.png" alt="Optic Plot of the Pleiades" class="off-glb" loading="lazy"/>
 
@@ -122,21 +138,7 @@
         </a>
     </li>
 
-    <li>
-        <a href="/examples/horizon-double-cluster/">
-            <img src="/images/examples/horizon_double_cluster-sm.png" alt="Finding the Double Cluster in Perseus" class="off-glb" loading="lazy"/>
-
-            <p class="example-card-title">Finding the Double Cluster</p>
-        </a>
-    </li>
-
-    <li>
-        <a href="/examples/map-carina-nebula/">
-            <img src="/images/examples/map_carina-sm.png" alt="Map of Carina Constellation" class="off-glb" loading="lazy"/>
-
-            <p class="example-card-title">Carina Nebula + Clusters</p>
-        </a>
-    </li>
+    
 
 </ul>
 
