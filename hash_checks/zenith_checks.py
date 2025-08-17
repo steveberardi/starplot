@@ -33,7 +33,7 @@ def _zenith():
     p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 3])
     p.ecliptic(style__line__width=8)
     p.celestial_equator(style__line__width=8)
-    p.legend(style__location=styles.LegendLocationEnum.OUTSIDE_BOTTOM)
+    p.legend(style__location=styles.LegendLocationEnum.INSIDE_BOTTOM_RIGHT)
     p.constellation_labels()
     return p
 
