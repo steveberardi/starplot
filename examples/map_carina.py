@@ -7,7 +7,7 @@ style = PlotStyle().extend(
 )
 
 p = MapPlot(
-    projection=Equidistant(),
+    projection=Equidistant(center_ra=11 * 15),
     ra_min=10 * 15,
     ra_max=12 * 15,
     dec_min=-70,
@@ -16,7 +16,6 @@ p = MapPlot(
     resolution=3600,
     scale=1.4,
 )
-
 
 p.gridlines(
     ra_locations=[d for d in range(8 * 15, 14 * 15, 5)],
@@ -39,6 +38,8 @@ def dso_label(d):
     return d.name
 
 
+mag_filters = (_.magnitude < 11) | (_.magnitude.isnull())
+
 p.open_clusters(
     where=[_.size < 0.2, _.magnitude < 11],
     labels=None,
@@ -49,26 +50,24 @@ p.style.dso_open_cluster.label.font_size = 26
 p.style.dso_open_cluster.label.font_weight = "heavy"
 p.open_clusters(
     # plot larger clusters as their true apparent size
-    where=[_.size > 0.2, (_.magnitude < 11) | (_.magnitude.isnull())],
+    where=[_.size > 0.2, mag_filters],
     label_fn=dso_label,
 )
 
-
 p.nebula(
-    where=[(_.magnitude < 11) | (_.magnitude.isnull()), _.size < 0.2],
+    where=[mag_filters, _.size < 0.2],
     label_fn=dso_label,
     true_size=False,
 )
 p.style.dso_nebula.label.font_size = 26
 p.style.dso_nebula.label.font_weight = "heavy"
 p.nebula(
-    where=[(_.magnitude < 11) | (_.magnitude.isnull()), _.size > 0.2],
+    where=[mag_filters, _.size > 0.2],
     label_fn=dso_label,
 )
 
-
 p.galaxies(
-    where=[_.magnitude < 11],
+    where=[mag_filters],
     label_fn=dso_label,
     true_size=False,
 )
