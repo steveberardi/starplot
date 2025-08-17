@@ -3,14 +3,12 @@ import math
 from datetime import datetime
 from functools import cache
 
-import numpy as np
 import pandas as pd
 import geopandas as gpd
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator
-from matplotlib.colors import LinearSegmentedColormap
 from skyfield.api import wgs84, Star as SkyfieldStar
 from shapely import Point
 from starplot.coordinates import CoordinateSystem
@@ -21,6 +19,7 @@ from starplot.plotters import (
     StarPlotterMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
+    GradientBackgroundMixin,
 )
 from starplot.styles import (
     PlotStyle,
@@ -52,6 +51,7 @@ class HorizonPlot(
     StarPlotterMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
+    GradientBackgroundMixin,
 ):
     """Creates a new horizon plot.
 
@@ -413,51 +413,13 @@ class HorizonPlot(
         gridlines.xlocator = FixedLocator(x_locations)
         gridlines.ylocator = FixedLocator(y_locations)
 
-    def _apply_gradient_background(self, gradient_preset):
+    def _find_gradient_shape(self) -> str:
         """
-        Adds a vertical color gradient background the plot.
-        The gradient is applied to regular axes (x,y) as opposed to the GeoAxes
-        and is displayed below the GeoAxes.
-        The background_color of the map must be set as a RGBA value with full
-        transparency (e.g. #ffffff00) for this function to render the desired
-        result. Using either .extend or a style sheet works.
-
-        Parameters:
-        - gradient_preset: A list of tuples (e.g. [(0.0, '#000000'), (1.0, '#000080')])
-                    where each tuple contains a position value [0-1] and a color
-                    value to describe the range of colours in the gradient.
+        Overrides default method inherited from GradientBackgroundMixin.
+        Determines what gradient shape should be used.
+        Returns string of "vertical" as a HorizonPlot is always rectangular.
         """
-        # Get the position of the axes for a bounding box
-        bbox = self.ax.get_position()
-        # Add underlay axes to draw gradient but hide axes
-        background_ax = self.ax.figure.add_axes(bbox, zorder=0)
-        background_ax.set_axis_off()
-        # Unzip color proportions and colors
-        positions, colors = zip(*gradient_preset)
-        # Create the colormap with specified proportions
-        cmap = LinearSegmentedColormap.from_list(
-            "custom_gradient", list(zip(positions, colors)), N=750
-        )
-        # Create a vertical gradient image
-        gradient = np.linspace(0, 1, 25).reshape(-1, 1)
-        gradient = np.repeat(gradient, 2, axis=1)
-        # Apply gradient with pcolormesh
-        background_ax.pcolormesh(
-            gradient,
-            cmap=cmap,
-            shading="gouraud",
-            rasterized=True,
-            zorder=0,
-        )
-        # Set plot in self.ax's zorder to 1 so it appears above the gradient
-        self.ax.zorder = 1
-
-        # Create event driven function so background axes matches main axes when
-        # figure is drawn
-        def _sync_background(event):
-            background_ax.set_position(self.ax.get_position())
-
-        self.fig.canvas.mpl_connect("draw_event", _sync_background)
+        return "vertical"
 
     @cache
     def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
@@ -517,9 +479,7 @@ class HorizonPlot(
 
         self._fit_to_ax()
 
-        # finalize plot layout before adding gradient
         if self.gradient_preset:
-            self.fig.canvas.draw()
-            self._apply_gradient_background(self.gradient_preset)
+            self.apply_gradient_background(self.gradient_preset)
 
         self._plot_background_clip_path()
