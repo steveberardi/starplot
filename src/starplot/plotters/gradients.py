@@ -1,8 +1,11 @@
 import numpy as np
+
 # from matplotlib import patches, path
 from matplotlib.colors import LinearSegmentedColormap
+
 # from matplotlib.transforms import Affine2D
 from starplot.profile import profile
+
 # from starplot.optics import Optic
 
 
