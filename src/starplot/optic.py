@@ -14,7 +14,7 @@ from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
 from starplot.optics import Optic
-from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
+from starplot.plotters import StarPlotterMixin, DsoPlotterMixin, GradientBackgroundMixin
 from starplot.styles import (
     PlotStyle,
     ObjectStyle,
@@ -30,7 +30,13 @@ pd.options.mode.chained_assignment = None  # default='warn'
 DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
 
 
-class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
+class OpticPlot(
+    BasePlot,
+    ExtentMaskMixin,
+    StarPlotterMixin,
+    DsoPlotterMixin,
+    GradientBackgroundMixin,
+):
     """Creates a new optic plot.
 
     Args:
@@ -74,6 +80,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
+        gradient_preset: list[tuple[float, str]] = None,
         *args,
         **kwargs,
     ) -> "OpticPlot":
@@ -94,6 +101,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.dec = dec
         self.lat = lat
         self.lon = lon
+        self.gradient_preset = gradient_preset
         self.raise_on_below_horizon = raise_on_below_horizon
 
         self.optic = optic
@@ -326,6 +334,24 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         for col in range(len(values)):
             table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.2)
 
+    def _find_gradient_shape(self) -> str:
+        """
+        Overrides default method inherited from GradientBackgroundMixin.
+        Determines what gradient shape should be used. Currently radial or vertical.
+        Returns a string listing the gradient shape. At present this is "radial"
+        or vertical. Defaults to "radial" for OpticPlot.
+        """
+        if self.optic.label in [
+            "Scope",
+            "Refractor",
+            "Reflector",
+            "Binoculars",
+        ]:
+            return "radial"
+        elif self.optic.label in ["Camera"]:
+            return "camera"
+        return "radial"
+
     def _plot_border(self):
         # since we're using AzimuthalEquidistant projection, the center will always be (0, 0)
         x = 0
@@ -395,3 +421,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
         self.optic.transform(self.ax)
         self._plot_border()
+
+        if self.gradient_preset:
+            self.apply_gradient_background(self.gradient_preset)
