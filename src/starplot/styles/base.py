@@ -619,7 +619,7 @@ class PathStyle(BaseStyle):
 class LegendStyle(BaseStyle):
     """Defines the style for the map legend. *Only applies to map plots.*"""
 
-    alignment: AlignmentEnum = AlignmentEnum.CENTER
+    alignment: AlignmentEnum = AlignmentEnum.LEFT
     """Alignment for the legend's title and entries"""
 
     location: LegendLocationEnum = LegendLocationEnum.INSIDE_BOTTOM_RIGHT
