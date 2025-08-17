@@ -165,7 +165,7 @@ class LegendPlotterMixin:
 
         !!! example "Experimental"
 
-            This is currently an "experimental" feature, which means it's likely to be changed and improved in upcoming versions of Starplot. 
+            This is currently an "experimental" feature, which means it's likely to be changed and improved in upcoming versions of Starplot.
             It also means the feature likely has limitations.
 
             **Help us improve this feature by submitting feedback on [GitHub (open an issue)](https://github.com/steveberardi/starplot/issues) or chat with us on [Discord](https://discord.gg/WewJJjshFu). Thanks!**

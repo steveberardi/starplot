@@ -130,6 +130,14 @@
         </a>
     </li>
 
+    <li>
+        <a href="/examples/map-carina-nebula/">
+            <img src="/images/examples/map_carina-sm.png" alt="Map of Carina Constellation" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Carina Nebula + Clusters</p>
+        </a>
+    </li>
+
 </ul>
 
 

@@ -26,6 +26,9 @@ def get_example_names():
     filenames = []
 
     for filename in glob.iglob("*.py"):
+        # if filename != "map_carina.py":
+        #     continue
+
         if filename.endswith("examples.py"):
             continue
 
