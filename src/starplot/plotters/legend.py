@@ -94,6 +94,7 @@ class LegendPlotterMixin:
         If the legend is already plotted, then it'll be removed first and then plotted again. So, it's safe to call this function multiple times if you need to 'refresh' the legend.
 
         Args:
+            title: Title of the legend, which will be plotted at the top
             style: Styling of the legend. If None, then the plot's style (specified when creating the plot) will be used
         """
         if not self._legend_handles:
@@ -150,8 +151,8 @@ class LegendPlotterMixin:
     @use_style(LegendStyle, "legend")
     def star_magnitude_scale(
         self,
-        style: LegendStyle,
         title: str = "Star Magnitude",
+        style: LegendStyle = None,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         label_fn: Callable[float, str] = lambda m: str(m),
         start: float = -1,
@@ -159,6 +160,32 @@ class LegendPlotterMixin:
         step: float = 1,
         add_to_legend: bool = False,
     ):
+        """
+        Plots a magnitude scale for stars.
+
+        ??? example "Experimental"
+
+            This is currently an "experimental" feature, which means it's likely to be changed and improved in upcoming versions of Starplot. 
+            It also means the feature likely has limitations.
+
+            **Help us improve this feature by submitting feedback on [GitHub (open an issue)](https://github.com/steveberardi/starplot/issues) or chat with us on [Discord](https://discord.gg/WewJJjshFu). Thanks!**
+
+        Current Limitations:
+            - Only supports size functions that determine size based on magnitude only
+            - Only supports default marker for stars (point)
+            - Labels can only be plotted to the right of the marker
+            - Does not automatically determine the magnitude range of the stars you already plotted
+
+        Args:
+            title: Title of the legend, which will be plotted at the top
+            style: Styling of the magnitude scale. If None, then the plot's `legend` style will be used
+            size_fn: Size function for the star markers
+            label_fn: Function to determine the label for each magnitude
+            start: Starting magnitude
+            stop: Stop point (exclusive)
+            step: Step-size of each scale entry (i.e. how much to increment each step)
+            add_to_legend: If True, the scale will be added to the bottom of the legend (and if the legend isn't already plotted, then it'll plot the legend)
+        """
         target = self.ax
 
         if style.location.startswith("outside"):
