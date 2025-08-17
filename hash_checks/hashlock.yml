@@ -3,9 +3,9 @@ horizon_base:
   filename: /starplot/hash_checks/data/horizon-base.png
   phash: e3ba1ce506e23387
 horizon_gradient_background:
-  dhash: d06862303219c4d2d1686232b219c4d0c0686c2dc41bc4f2
+  dhash: d1606230321344d2d1686a3230194450d1686c2544894652
   filename: /starplot/hash_checks/data/horizon-gradient-background.png
-  phash: 851743e348ec7de4
+  phash: 871743e328ec79e4
 horizon_north_celestial_pole:
   dhash: 30aa48d0e232a45430aa48d08232a44431aa49c8e232ac54
   filename: /starplot/hash_checks/data/horizon-north-celestial-pole.png
