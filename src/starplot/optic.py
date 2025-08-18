@@ -64,9 +64,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         dec: float,
         optic: Optic,
         observer: Observer = Observer(),
-        # lat: float,
-        # lon: float,
-        # dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_OPTIC_STYLE,
         resolution: int = 4096,
@@ -93,8 +90,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.logger.debug("Creating OpticPlot...")
         self.ra = ra
         self.dec = dec
-        # self.lat = lat
-        # self.lon = lon
         self.raise_on_below_horizon = raise_on_below_horizon
 
         self.optic = optic

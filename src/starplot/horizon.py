@@ -82,9 +82,6 @@ class HorizonPlot(
         altitude: tuple[float, float],
         azimuth: tuple[float, float],
         observer: Observer = Observer(),
-        # lat: float,
-        # lon: float,
-        # dt: datetime = None,
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_HORIZON_STYLE,
         resolution: int = 4096,
@@ -123,8 +120,6 @@ class HorizonPlot(
         self.az = azimuth
         self.center_alt = sum(altitude) / 2
         self.center_az = sum(azimuth) / 2
-        # self.lat = lat
-        # self.lon = lon
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
