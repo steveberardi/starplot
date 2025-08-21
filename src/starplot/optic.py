@@ -108,6 +108,16 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self._adjust_radec_minmax()
         self._init_plot()
 
+    @property
+    def alt(self):
+        """Altitude of target (degrees)"""
+        return self.pos_alt.degrees
+
+    @property
+    def az(self):
+        """Azimuth of target (degrees)"""
+        return self.pos_az.degrees
+
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
         point = SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec)

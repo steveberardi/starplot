@@ -519,6 +519,14 @@ class BasePlot(ABC):
             elif label is not None:
                 label.remove()
 
+    @property
+    def magnitude_range(self) -> tuple[float, float]:
+        """
+        Range of magnitude for all plotted stars, as a tuple (min, max)
+        """
+        mags = [s.magnitude for s in self.objects.stars]
+        return (min(mags), max(mags))
+
     @use_style(LabelStyle)
     def text(
         self,
