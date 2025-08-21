@@ -5,6 +5,7 @@ Starplot has a styling framework that lets you fully customize the appearance of
 - [Basic Usage](#basic-usage)
 - [Creating a Style](#creating-a-style)
 - [Extending a Style](#extending-a-style)
+- [Overriding a Style at plot time](#overriding-styles-when-plotting)
 - [Built-in Style Extensions](#built-in-style-extensions)
 - [Code Reference](#code-reference)
 
@@ -168,7 +169,7 @@ Starplot has a bunch of built-in style extensions (all imported from `starplot.s
 
 After you create a plot instance and start plotting stuff (e.g. stars, DSOs, etc), then you may want to override the plot's style sometimes. For example, you may want to plot the brightest stars with one style and the dimmer stars with a different style (see the example [map of Sagittarius](/examples/map-sagittarius/) which uses different markers for brighter stars). Starplot provides two easy ways to do this:
 
-1. ####  Via `style` kwarg {.mt-none}
+### Via `style` kwarg {.mt-none}
 All plotting functions have an optional `style` kwarg that lets you pass in a dictionary of any styles you want to override for that plotting call. For example, here's how you can plot bright stars with a different marker and color than the plot's style:
 
     ```python
@@ -184,7 +185,7 @@ All plotting functions have an optional `style` kwarg that lets you pass in a di
     ```
 
 
-2. #### Via `style__*` kwargs
+### Via `style__*` kwargs
 When you only want to override one or two style properties, it can be tedious to create a dictionary, so Starplot also lets you specify overrides through keyword arguments that start with `style__` and separate each level by `__`. For example, we could re-write the previous example like this:
 
     ```python
@@ -196,7 +197,31 @@ When you only want to override one or two style properties, it can be tedious to
     ```
 
 **When overriding styles like this, you only have to define style properties you want to override.** Other properties will be inherited from the plot's style.
-    
+
+### Via style context manager
+
+!!! example "Experimental"
+
+    This is currently an "experimental" feature, which means it's likely to be changed and improved in upcoming versions of Starplot.
+    It also means the feature likely has limitations.
+
+    **Help us improve this feature by submitting feedback on [GitHub (open an issue)](https://github.com/steveberardi/starplot/issues) or chat with us on [Discord](https://discord.gg/WewJJjshFu). Thanks!**
+
+You can also use a context manager to temporarily override styles:
+
+```python
+
+with p.style.dso_open_cluster as oc:
+    # make open cluster labels bigger and bolder
+    oc.label.font_size *= 1.5
+    oc.label.font_weight = 'heavy'
+    p.open_clusters(where=[_.magnitude < 9])
+
+# when exiting the context manager, the style will be reverted to its original value
+# so, the following line will use the original style (BEFORE the context manager)
+p.open_clusters(where=[_.magnitude >= 9])
+```
+
     
 ---
 
