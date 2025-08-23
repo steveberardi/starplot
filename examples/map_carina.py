@@ -46,25 +46,28 @@ p.open_clusters(
     label_fn=dso_label,
     true_size=False,
 )
-p.style.dso_open_cluster.label.font_size = 26
-p.style.dso_open_cluster.label.font_weight = "heavy"
-p.open_clusters(
-    # plot larger clusters as their true apparent size
-    where=[_.size > 0.2, mag_filters],
-    label_fn=dso_label,
-)
+
+with p.style.dso_open_cluster as oc:
+    oc.label.font_size = 26
+    oc.label.font_weight = "heavy"
+    p.open_clusters(
+        # plot larger clusters as their true apparent size
+        where=[_.size > 0.2, mag_filters],
+        label_fn=dso_label,
+    )
 
 p.nebula(
     where=[mag_filters, _.size < 0.2],
     label_fn=dso_label,
     true_size=False,
 )
-p.style.dso_nebula.label.font_size = 26
-p.style.dso_nebula.label.font_weight = "heavy"
-p.nebula(
-    where=[mag_filters, _.size > 0.2],
-    label_fn=dso_label,
-)
+with p.style.dso_nebula as neb:
+    neb.label.font_size = 26
+    neb.label.font_weight = "heavy"
+    p.nebula(
+        where=[mag_filters, _.size > 0.2],
+        label_fn=dso_label,
+    )
 
 p.galaxies(
     where=[mag_filters],

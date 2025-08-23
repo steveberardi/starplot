@@ -4,7 +4,7 @@ Starplot uses a [Pydantic settings class](https://docs.pydantic.dev/latest/conce
 - DuckDB extension path
 - SVG text rendering method
 
-You can override these values in one of two ways: through code or through environment variables.
+You can override these values in two ways: through code or through environment variables.
 
 <h3>Code</h3>
 To set values through code, just import the settings object:

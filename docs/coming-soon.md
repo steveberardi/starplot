@@ -1,22 +1,61 @@
-### ⭐ Next Release - v0.17
+<table class="table-coming-soon">
 
-- Custom star catalogs
-- Custom sky cultures (constellations, star names)
+    
+ 
+    <tr>
+        <td>v0.17</td>
 
-### v0.18
+        <td>
+            <h4>⭐ Next Release ⭐</h4>
+            <ul>
+                <li>Custom star catalogs</li>
+                <li>Custom sky cultures (constellations, star names)</li>
+            </ul>
 
-- Support for more coordinate systems
+        </td>
+        <td></td>
+    </tr>
 
-### v0.18+
-- Planet moons
-- Comet model
-- Area-based labeling
-- Improved line labeling
 
-<br/>
-<span class="blue-box">
-    <em>See more details on the <a href="https://trello.com/b/sUksygn4/starplot-roadmap">Public Roadmap</a> 🚀 </em>
-</span>
+    <tr>
+        <td>v0.18</td>
+
+        <td>
+            <ul>
+                <li>Support for more coordinate systems</li>
+            </ul>
+
+        </td>
+
+        <td></td>
+
+    </tr>
+
+    <tr>
+        <td>v0.18+</td>
+
+        <td>
+            <ul>
+                <li>Planet moons</li>
+                <li>Comet model</li>
+                <li>Area-based labeling</li>
+                <li>Improved line labeling</li>
+            </ul>
+
+        </td>
+
+        <td></td>
+
+    </tr>
+
+    <tr class="blue-box">
+        <td colspan="3">
+        <em>See more details on the <a href="https://trello.com/b/sUksygn4/starplot-roadmap">Public Roadmap</a> 🚀 </em>
+        </td>
+    </tr>
+</table>
+
+**Help us launch these features sooner by [becoming a contributor](https://github.com/steveberardi/starplot/blob/main/CONTRIBUTING.md)!**
 
 <br/>
 
