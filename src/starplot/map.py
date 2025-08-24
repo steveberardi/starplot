@@ -28,6 +28,7 @@ from starplot.styles import (
     ObjectStyle,
     PlotStyle,
     PathStyle,
+    GradientDirection,
 )
 from starplot.styles.helpers import use_style
 from starplot.utils import lon_to_ra, ra_to_lon
@@ -70,6 +71,7 @@ class MapPlot(
     """
 
     _coordinate_system = CoordinateSystem.RA_DEC
+    _gradient_direction = GradientDirection.LINEAR
 
     def __init__(
         self,
@@ -87,7 +89,6 @@ class MapPlot(
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
-        gradient_preset: list[tuple[float, str]] = None,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -117,7 +118,6 @@ class MapPlot(
         self.ra_max = ra_max
         self.dec_min = dec_min
         self.dec_max = dec_max
-        self.gradient_preset = gradient_preset
         self.clip_path = clip_path
 
         self._geodetic = ccrs.Geodetic()
@@ -420,25 +420,6 @@ class MapPlot(
             right=True,
         )
 
-    def _find_gradient_shape(self) -> str:
-        """
-        Overrides default method inherited from GradientBackgroundMixin.
-        Determines what gradient shape should be used. Currently radial or vertical.
-        Returns a string listing the gradient shape. At present this is "radial"
-        or vertical. Defaults to "vertical" for MapPlot.
-        """
-        # if self.projection in [
-        #     Projection.ORTHOGRAPHIC,
-        #     Projection.STEREOGRAPHIC,
-        #     Projection.ZENITH,
-        # ]:
-        #     return "radial"
-        # elif self.projection in [
-        #     Projection.MOLLWEIDE,
-        # ]:
-        #     return "mollweide"
-        return "vertical"
-
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
             self.fig.dpi_scale_trans.inverted()
@@ -472,15 +453,14 @@ class MapPlot(
         self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
 
         self._set_extent()
-        self.ax.set_facecolor(self.style.background_color.as_hex())
         self._adjust_radec_minmax()
 
         self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
 
         self._fit_to_ax()
 
-        if self.gradient_preset:
-            self.apply_gradient_background(self.gradient_preset)
+        # if self.gradient_preset:
+        #     self.apply_gradient_background(self.gradient_preset)
 
         self._plot_background_clip_path()
 
@@ -491,6 +471,12 @@ class MapPlot(
         return (x_ra + 360), y_ra
 
     def _plot_background_clip_path(self):
+        if self.style.has_gradient_background():
+            background_color = "#ffffff00"
+            self.apply_gradient_background(self.style.background_color)
+        else:
+            background_color = self.style.background_color.as_hex()
+
         def to_axes(points):
             ax_points = []
 
@@ -505,7 +491,7 @@ class MapPlot(
             points = list(zip(*self.clip_path.exterior.coords.xy))
             self._background_clip_path = patches.Polygon(
                 to_axes(points),
-                facecolor=self.style.background_color.as_hex(),
+                facecolor=background_color,
                 fill=True,
                 zorder=-2_000,
                 transform=self.ax.transAxes,
@@ -517,12 +503,13 @@ class MapPlot(
                 (0, 0),
                 width=1,
                 height=1,
-                facecolor=self.style.background_color.as_hex(),
+                facecolor=background_color,
                 linewidth=0,
                 fill=True,
                 zorder=-2_000,
                 transform=self.ax.transAxes,
             )
 
+        self.ax.set_facecolor(background_color)
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon()

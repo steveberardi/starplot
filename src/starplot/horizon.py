@@ -27,6 +27,7 @@ from starplot.styles import (
     extensions,
     use_style,
     PathStyle,
+    GradientDirection,
 )
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -76,6 +77,7 @@ class HorizonPlot(
     """
 
     _coordinate_system = CoordinateSystem.AZ_ALT
+    _gradient_direction = GradientDirection.LINEAR
 
     FIELD_OF_VIEW_MAX = 9.0
 
@@ -91,7 +93,6 @@ class HorizonPlot(
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
-        gradient_preset: list[tuple[float, str]] = None,
         *args,
         **kwargs,
     ) -> "HorizonPlot":
@@ -123,7 +124,6 @@ class HorizonPlot(
         self.az = azimuth
         self.center_alt = sum(altitude) / 2
         self.center_az = sum(azimuth) / 2
-        self.gradient_preset = gradient_preset
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -485,14 +485,6 @@ class HorizonPlot(
                 **self.style.gridlines.label.matplot_kwargs(self.scale / 2),
             )
 
-    def _find_gradient_shape(self) -> str:
-        """
-        Overrides default method inherited from GradientBackgroundMixin.
-        Determines what gradient shape should be used.
-        Returns string of "vertical" as a HorizonPlot is always rectangular.
-        """
-        return "vertical"
-
     @cache
     def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
         """Converts az/alt to axes coordinates"""
@@ -516,16 +508,23 @@ class HorizonPlot(
         self.fig.set_size_inches(width, height)
 
     def _plot_background_clip_path(self):
+        if self.style.has_gradient_background():
+            background_color = "#ffffff00"
+            self.apply_gradient_background(self.style.background_color)
+        else:
+            background_color = self.style.background_color.as_hex()
+
         self._background_clip_path = patches.Rectangle(
             (0, 0),
             width=1,
             height=1,
-            facecolor=self.style.background_color.as_hex(),
+            facecolor=background_color,
             linewidth=0,
             fill=True,
             zorder=-3_000,
             transform=self.ax.transAxes,
         )
+        self.ax.set_facecolor(background_color)
 
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon()
@@ -558,7 +557,7 @@ class HorizonPlot(
 
         self._fit_to_ax()
 
-        if self.gradient_preset:
-            self.apply_gradient_background(self.gradient_preset)
+        # if self.gradient_preset:
+        #     self.apply_gradient_background(self.gradient_preset)
 
         self._plot_background_clip_path()

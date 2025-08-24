@@ -5,11 +5,7 @@ from starplot.coordinates import CoordinateSystem
 from starplot.map import MapPlot
 from starplot.observer import Observer
 from starplot.projections import Stereographic
-from starplot.styles import (
-    LabelStyle,
-    PlotStyle,
-    PathStyle,
-)
+from starplot.styles import LabelStyle, PlotStyle, PathStyle, GradientDirection
 from starplot.styles.helpers import use_style
 
 
@@ -35,6 +31,7 @@ class ZenithPlot(MapPlot):
     """
 
     _coordinate_system = CoordinateSystem.RA_DEC
+    _gradient_direction = GradientDirection.RADIAL
 
     def __init__(
         self,
@@ -46,7 +43,6 @@ class ZenithPlot(MapPlot):
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
-        gradient_preset: list[tuple[float, str]] = None,
         *args,
         **kwargs,
     ) -> "ZenithPlot":
@@ -70,7 +66,6 @@ class ZenithPlot(MapPlot):
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
-            gradient_preset=gradient_preset,
             *args,
             **kwargs,
         )
@@ -155,28 +150,25 @@ class ZenithPlot(MapPlot):
             transform=self.ax.transAxes,
             **style.matplot_kwargs(self.scale),
         )
-    
-    def _find_gradient_shape(self) -> str:
-        """
-        Overrides default method inherited from GradientBackgroundMixin.
-        Determines what gradient shape should be used. Currently radial or vertical.
-        Returns a string listing the gradient shape. At present this is "radial"
-        or vertical. Defaults to "vertical" for MapPlot.
-        """
-
-        return "radial"
 
     def _plot_background_clip_path(self):
+        if self.style.has_gradient_background():
+            background_color = "#ffffff00"
+            self.apply_gradient_background(self.style.background_color)
+        else:
+            background_color = self.style.background_color.as_hex()
+
         self._background_clip_path = patches.Circle(
             (0.50, 0.50),
             radius=0.45,
             fill=True,
-            facecolor=self.style.background_color.as_hex(),
+            facecolor=background_color,
             # edgecolor=self.style.border_line_color.as_hex(),
             linewidth=0,
             zorder=-2_000,
             transform=self.ax.transAxes,
         )
+        self.ax.set_facecolor(background_color)
 
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon()

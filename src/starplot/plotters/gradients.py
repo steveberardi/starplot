@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 from starplot.profile import profile
+from starplot.styles import GradientDirection
 
 
 class GradientBackgroundMixin:
@@ -27,22 +28,21 @@ class GradientBackgroundMixin:
                     where each tuple contains a position value [0-1] and a color
                     value to describe the range of colors in the gradient.
         """
-        gradient_shape = self._find_gradient_shape()
-        is_radial = gradient_shape == "radial"
-
-        cmap = self._create_colormap(gradient_preset, reverse=is_radial)
-        background_ax = self._create_background_ax(gradient_shape)
+        direction = self._gradient_direction
+        reverse = True if direction == GradientDirection.RADIAL else False
+        cmap = self._create_colormap(gradient_preset, reverse=reverse)
+        background_ax = self._create_background_ax()
         background_ax.set_axis_off()
 
-        X, Y, gradient = self._create_gradient_arrays(gradient_shape)
+        X, Y, gradient = self._create_gradient_arrays()
 
         # Radial specific axes adjustments
-        if gradient_shape == "radial":
+        if self._gradient_direction == GradientDirection.RADIAL:
             background_ax.set_ylim(Y.min(), Y.max() * 1.11)
 
         # Camera specific axes adjustments
-        if gradient_shape == "camera":
-            self._camera_optic_transform(background_ax)
+        # if gradient_shape == "camera":
+        #     self._camera_optic_transform(background_ax)
 
         # Render gradient
         background_ax.pcolormesh(
@@ -64,35 +64,40 @@ class GradientBackgroundMixin:
             lambda event: background_ax.set_position(self.ax.get_position()),
         )
 
-    def _find_gradient_shape(self) -> str:
-        """
-        Default method to be overridden by plot classes.
-        Returns a string of the gradient shape, defaulting to "vertical".
-        """
-        return "vertical"
-
     def _create_colormap(
         self, gradient_preset: list[tuple[float, str]], reverse: bool = False
     ) -> LinearSegmentedColormap:
         """Creates a matplotlib colormap from a gradient preset."""
         positions, colors = zip(*gradient_preset)
+
+        if self._gradient_direction == GradientDirection.RADIAL:
+            positions = [p / 2 for p in positions]
+            positions[-1] = 1
+
+        colors = [c.as_hex() for c in colors]
+        
         cmap = LinearSegmentedColormap.from_list(
             "custom_gradient", list(zip(positions, colors)), N=750
         )
         return cmap.reversed() if reverse else cmap
 
-    def _create_background_ax(self, gradient_shape: str):
+    def _create_background_ax(self):
         """Adds a set of axes to take the gradient image."""
         bbox = self.ax.get_position()
-        projection_arg = None
-        if gradient_shape in ("radial", "mollweide"):
-            projection_arg = "polar" if gradient_shape == "radial" else "mollweide"
-        return self.ax.figure.add_axes(bbox, zorder=0, projection=projection_arg)
 
-    def _create_gradient_arrays(self, gradient_shape: str):
+        projection = None
+
+        if self._gradient_direction == GradientDirection.RADIAL:
+            projection = "polar"
+        elif self._gradient_direction == GradientDirection.MOLLWEIDE:
+            projection = "mollweide"
+
+        return self.ax.figure.add_axes(bbox, zorder=0, projection=projection)
+
+    def _create_gradient_arrays(self):
         """Creates arrays for the gradient placement and the gradient meshgrid."""
         # Radial gradient
-        if gradient_shape == "radial":
+        if self._gradient_direction == GradientDirection.RADIAL:
             rad = np.linspace(0, 1, 50)
             azm = np.linspace(0, 2 * np.pi, 100)
             Y, X = np.meshgrid(rad, azm)
@@ -100,7 +105,7 @@ class GradientBackgroundMixin:
             return X, Y, gradient
 
         # Mollweide gradient
-        if gradient_shape == "mollweide":
+        if self._gradient_direction == GradientDirection.MOLLWEIDE:
             return self._create_mollweide_gradient()
 
         # Default Vertical Gradient

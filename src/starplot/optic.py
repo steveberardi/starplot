@@ -22,6 +22,7 @@ from starplot.styles import (
     extensions,
     use_style,
     ZOrderEnum,
+    GradientDirection,
 )
 from starplot.utils import azimuth_to_string
 
@@ -61,6 +62,7 @@ class OpticPlot(
     """
 
     _coordinate_system = CoordinateSystem.AZ_ALT
+    _gradient_direction = GradientDirection.RADIAL
 
     FIELD_OF_VIEW_MAX = 9.0
 
@@ -78,7 +80,6 @@ class OpticPlot(
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
-        gradient_preset: list[tuple[float, str]] = None,
         *args,
         **kwargs,
     ) -> "OpticPlot":
@@ -97,7 +98,6 @@ class OpticPlot(
         self.logger.debug("Creating OpticPlot...")
         self.ra = ra
         self.dec = dec
-        self.gradient_preset = gradient_preset
         self.raise_on_below_horizon = raise_on_below_horizon
 
         self.optic = optic
@@ -344,38 +344,28 @@ class OpticPlot(
         for col in range(len(values)):
             table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.2)
 
-    def _find_gradient_shape(self) -> str:
-        """
-        Overrides default method inherited from GradientBackgroundMixin.
-        Determines what gradient shape should be used. Currently radial or vertical.
-        Returns a string listing the gradient shape. At present this is "radial"
-        or vertical. Defaults to "radial" for OpticPlot.
-        """
-        if self.optic.label in [
-            "Scope",
-            "Refractor",
-            "Reflector",
-            "Binoculars",
-        ]:
-            return "radial"
-        elif self.optic.label in ["Camera"]:
-            return "camera"
-        return "radial"
-
     def _plot_border(self):
         # since we're using AzimuthalEquidistant projection, the center will always be (0, 0)
         x = 0
         y = 0
 
+        if self.style.has_gradient_background():
+            background_color = "#ffffff00"
+
+            self.apply_gradient_background(self.style.background_color)
+        else:
+            background_color = self.style.background_color.as_hex()
+
         # Background of Viewable Area
         self._background_clip_path = self.optic.patch(
             x,
             y,
-            facecolor=self.style.background_color.as_hex(),
+            facecolor=background_color,
             linewidth=0,
             fill=True,
             zorder=ZOrderEnum.LAYER_1,
         )
+        self.ax.set_facecolor(background_color)
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon()
 
@@ -432,5 +422,5 @@ class OpticPlot(
         self.optic.transform(self.ax)
         self._plot_border()
 
-        if self.gradient_preset:
-            self.apply_gradient_background(self.gradient_preset)
+        # if self.gradient_preset:
+        #     self.apply_gradient_background(self.gradient_preset)

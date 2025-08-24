@@ -57,6 +57,12 @@ class BaseStyle(BaseModel):
             setattr(self, field_name, original_value)
 
 
+class GradientDirection(str, Enum):
+    LINEAR = "linear"
+    RADIAL = "radial"
+    MOLLWEIDE = "mollweide"
+
+
 class FillStyleEnum(str, Enum):
     """Constants that represent the possible fill styles for markers."""
 
@@ -716,7 +722,7 @@ class PlotStyle(BaseStyle):
     Defines the styling for a plot
     """
 
-    background_color: ColorStr = ColorStr("#fff")
+    background_color: Union[ColorStr, list[tuple[float, ColorStr]]] = ColorStr("#fff")
     """Background color of the map region"""
 
     figure_background_color: ColorStr = ColorStr("#fff")
@@ -1220,3 +1226,6 @@ class PlotStyle(BaseStyle):
                 raise TypeError("Style overrides must be dictionary types.")
             merge_dict(style_dict, a)
         return PlotStyle.parse_obj(style_dict)
+
+    def has_gradient_background(self):
+        return isinstance(self.background_color, list)

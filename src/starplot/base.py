@@ -29,6 +29,7 @@ from starplot.styles import (
     MarkerSymbolEnum,
     PathStyle,
     PolygonStyle,
+    GradientDirection,
     fonts,
 )
 from starplot.styles.helpers import use_style
@@ -67,6 +68,7 @@ class BasePlot(ABC):
     _background_clip_path = None
     _clip_path_polygon: Polygon = None  # clip path in display coordinates
     _coordinate_system = CoordinateSystem.RA_DEC
+    _gradient_direction: GradientDirection = GradientDirection.LINEAR
 
     ax: Axes
     """
