@@ -20,6 +20,7 @@ from starplot.plotters import (
     StarPlotterMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
+    GradientBackgroundMixin,
 )
 from starplot.projections import Projection
 from starplot.styles import (
@@ -42,6 +43,7 @@ class MapPlot(
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
     ConstellationPlotterMixin,
+    GradientBackgroundMixin,
 ):
     """Creates a new map plot.
 
@@ -91,6 +93,7 @@ class MapPlot(
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
+        gradient_preset: list[tuple[float, str]] = None,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -122,6 +125,7 @@ class MapPlot(
         self.dec_max = dec_max
         self.lat = lat
         self.lon = lon
+        self.gradient_preset = gradient_preset
         self.clip_path = clip_path
 
         if self.projection in [
@@ -475,6 +479,25 @@ class MapPlot(
             right=True,
         )
 
+    def _find_gradient_shape(self) -> str:
+        """
+        Overrides default method inherited from GradientBackgroundMixin.
+        Determines what gradient shape should be used. Currently radial or vertical.
+        Returns a string listing the gradient shape. At present this is "radial"
+        or vertical. Defaults to "vertical" for MapPlot.
+        """
+        if self.projection in [
+            Projection.ORTHOGRAPHIC,
+            Projection.STEREOGRAPHIC,
+            Projection.ZENITH,
+        ]:
+            return "radial"
+        elif self.projection in [
+            Projection.MOLLWEIDE,
+        ]:
+            return "mollweide"
+        return "vertical"
+
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
             self.fig.dpi_scale_trans.inverted()
@@ -533,6 +556,10 @@ class MapPlot(
         self.logger.debug(f"Projection = {self.projection.value.upper()}")
 
         self._fit_to_ax()
+
+        if self.gradient_preset:
+            self.apply_gradient_background(self.gradient_preset)
+
         self._plot_background_clip_path()
 
     @use_style(LabelStyle, "info_text")

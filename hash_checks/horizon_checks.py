@@ -74,3 +74,37 @@ def check_horizon_north_celestial_pole():
     filename = DATA_PATH / "horizon-north-celestial-pole.png"
     p.export(filename)
     return filename
+
+
+def check_horizon_gradient_background():
+    dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
+    style_gradient = STYLE.extend({"background_color": "#ffffff00"})
+    p = HorizonPlot(
+        altitude=(0, 50),
+        azimuth=(150, 210),
+        lat=36.606111,  # Lone Pine, California
+        lon=-118.079444,
+        dt=dt,
+        style=style_gradient,
+        resolution=RESOLUTION,
+        scale=1,
+        gradient_preset=[
+            [0.0, "#F0F8FF"],
+            [0.2, "#87CEEB"],
+            [0.4, "#4169E1"],
+            [0.7, "#191970"],
+            [1.0, "#0B0C40"],
+        ],
+    )
+    p.constellations()
+    p.constellation_borders()
+    p.milky_way()
+    p.stars(where=[_.magnitude < 5])
+    p.ecliptic()
+    p.horizon()
+    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.gridlines()
+
+    filename = DATA_PATH / "horizon-gradient-background.png"
+    p.export(filename)
+    return filename

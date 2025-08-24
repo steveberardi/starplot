@@ -19,6 +19,7 @@ from starplot.plotters import (
     StarPlotterMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
+    GradientBackgroundMixin,
 )
 from starplot.styles import (
     PlotStyle,
@@ -50,6 +51,7 @@ class HorizonPlot(
     StarPlotterMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
+    GradientBackgroundMixin,
 ):
     """Creates a new horizon plot.
 
@@ -90,6 +92,7 @@ class HorizonPlot(
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
+        gradient_preset: list[tuple[float, str]] = None,
         *args,
         **kwargs,
     ) -> "HorizonPlot":
@@ -123,6 +126,7 @@ class HorizonPlot(
         self.center_az = sum(azimuth) / 2
         self.lat = lat
         self.lon = lon
+        self.gradient_preset = gradient_preset
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -409,6 +413,14 @@ class HorizonPlot(
         gridlines.xlocator = FixedLocator(x_locations)
         gridlines.ylocator = FixedLocator(y_locations)
 
+    def _find_gradient_shape(self) -> str:
+        """
+        Overrides default method inherited from GradientBackgroundMixin.
+        Determines what gradient shape should be used.
+        Returns string of "vertical" as a HorizonPlot is always rectangular.
+        """
+        return "vertical"
+
     @cache
     def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
         """Converts az/alt to axes coordinates"""
@@ -466,4 +478,8 @@ class HorizonPlot(
         self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
 
         self._fit_to_ax()
+
+        if self.gradient_preset:
+            self.apply_gradient_background(self.gradient_preset)
+
         self._plot_background_clip_path()
