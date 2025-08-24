@@ -493,13 +493,6 @@ class MapPlot(
         ]:
             return "radial"
         elif self.projection in [
-            Projection.MERCATOR,
-            Projection.MILLER,
-            Projection.STEREO_NORTH,
-            Projection.STEREO_SOUTH,
-        ]:
-            return "vertical"
-        elif self.projection in [
             Projection.MOLLWEIDE,
         ]:
             return "mollweide"
@@ -563,6 +556,10 @@ class MapPlot(
         self.logger.debug(f"Projection = {self.projection.value.upper()}")
 
         self._fit_to_ax()
+
+        if self.gradient_preset:
+            self.apply_gradient_background(self.gradient_preset)
+
         self._plot_background_clip_path()
 
     @use_style(LabelStyle, "info_text")
@@ -638,9 +635,6 @@ class MapPlot(
                 zorder=-2_000,
                 transform=self.ax.transAxes,
             )
-
-        if self.gradient_preset:
-            self.apply_gradient_background(self.gradient_preset)
 
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon()
