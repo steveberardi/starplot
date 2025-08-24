@@ -1,26 +1,21 @@
 import numpy as np
-
-# from matplotlib import patches, path
 from matplotlib.colors import LinearSegmentedColormap
-
-# from matplotlib.transforms import Affine2D
 from starplot.profile import profile
-
-# from starplot.optics import Optic
 
 
 class GradientBackgroundMixin:
     """
     Mixin class to handle adding gradients to plots.
 
-    Capable of handling a variety of projections and thus able to be used by
-    HorizonPlot, OpticPlot, and MapPlot for vertical and radial gradients. However,
-    some of the more obscure projections may throw errors if one attempts
-    to plot a gradient with them.
+    Handles a variety of projections and can be inherited by HorizonPlot, OpticPlot,
+    and MapPlot for vertical, radial, and mollweide gradients. However, some more
+    obscure projections may throw errors if attempting to plot a gradient with them.
     """
 
     @profile
-    def apply_gradient_background(self, gradient_preset) -> None:
+    def apply_gradient_background(
+        self, gradient_preset: list[tuple[float, str]]
+    ) -> None:
         """
         Adds a gradient background to the plot, beneath the GeoAxes.
         The background_color of the map must be set as a RGBA value with full
@@ -33,19 +28,19 @@ class GradientBackgroundMixin:
                     value to describe the range of colors in the gradient.
         """
         gradient_shape = self._find_gradient_shape()
-        is_radial = (gradient_shape == "radial") or (gradient_shape == "mollweide")
+        is_radial = gradient_shape == "radial"
 
-        cmap = self._create_colormap(gradient_preset, reverse=(is_radial))
+        cmap = self._create_colormap(gradient_preset, reverse=is_radial)
         background_ax = self._create_background_ax(gradient_shape)
         background_ax.set_axis_off()
 
-        # Create arrays for gradient
         X, Y, gradient = self._create_gradient_arrays(gradient_shape)
 
-        # Radial specific axes adjustment
+        # Radial specific axes adjustments
         if gradient_shape == "radial":
             background_ax.set_ylim(Y.min(), Y.max() * 1.11)
 
+        # Camera specific axes adjustments
         if gradient_shape == "camera":
             self._camera_optic_transform(background_ax)
 
@@ -72,127 +67,77 @@ class GradientBackgroundMixin:
     def _find_gradient_shape(self) -> str:
         """
         Default method to be overridden by plot classes.
-        Determines what gradient shape should be used.
-        Returns a string listing the gradient shape. At present this is "radial"
-        or vertical. Defaults to "vertical".
+        Returns a string of the gradient shape, defaulting to "vertical".
         """
         return "vertical"
 
-    def _create_colormap(self, gradient_preset, reverse=False):
-        """
-        Unzips color proportions and create colormap.
-
-        Args:
-            gradient_preset: A list of tuples containing the colors and their positions.
-            reverse: bool for if the colormap should be in reverse order (for radial)
-
-        Returns colormap or reversed colormap for radial plots
-        """
+    def _create_colormap(
+        self, gradient_preset: list[tuple[float, str]], reverse: bool = False
+    ) -> LinearSegmentedColormap:
+        """Creates a matplotlib colormap from a gradient preset."""
         positions, colors = zip(*gradient_preset)
         cmap = LinearSegmentedColormap.from_list(
             "custom_gradient", list(zip(positions, colors)), N=750
         )
         return cmap.reversed() if reverse else cmap
 
-    def _create_background_ax(self, gradient_shape):
-        """
-        Adds a set of axes to the plot to take the gradient image.
-
-        Args:
-            gradient_shape: string describing the gradient shape
-
-        Returns an axes that is either polar or rectilinear depending on if the
-        gradient is to be radial or vertical.
-        """
-        if gradient_shape == "radial":
-            bbox = self.ax.get_position()
-            projection_arg = "polar"
-        else:
-            bbox = self.ax.get_position()
-            projection_arg = None
-
+    def _create_background_ax(self, gradient_shape: str):
+        """Adds a set of axes to take the gradient image."""
+        bbox = self.ax.get_position()
+        projection_arg = None
+        if gradient_shape in ("radial", "mollweide"):
+            projection_arg = "polar" if gradient_shape == "radial" else "mollweide"
         return self.ax.figure.add_axes(bbox, zorder=0, projection=projection_arg)
 
-    def _create_gradient_arrays(self, gradient_shape):
-        """
-        Creates arrays for the gradient placement and the gradient meshgrid.
-
-        Args:
-           gradient_shape: string describing the gradient shape
-
-        Returns X, Y (array) for the coordinates of the corners of quadrilaterals
-        of the pcolormesh, and gradient (array) for the gradient mesh data.
-        """
+    def _create_gradient_arrays(self, gradient_shape: str):
+        """Creates arrays for the gradient placement and the gradient meshgrid."""
         # Radial gradient
         if gradient_shape == "radial":
             rad = np.linspace(0, 1, 50)
             azm = np.linspace(0, 2 * np.pi, 100)
-            # Y is the radius, X is theta
             Y, X = np.meshgrid(rad, azm)
             gradient = Y**2.0
             return X, Y, gradient
 
-        # Elliptical gradient
+        # Mollweide gradient
         if gradient_shape == "mollweide":
-            x = np.linspace(-2, 2, 1500)
-            y = np.linspace(-1, 1, 1500)
-            X, Y = np.meshgrid(x, y)
-            mask = (X**2) / 4 + Y**2 <= 1
-            R = np.sqrt((X / 2) ** 2 + Y**2)
-            gradient = np.where(mask, R, np.nan)
+            return self._create_mollweide_gradient()
 
-        # Vertical Gradient
-        else:
-            x_array = np.linspace(0, 1, 2)
-            y_array = np.linspace(0, 1, 750)
-            X, Y = np.meshgrid(x_array, y_array)
-            gradient = np.linspace(0, 1, 750).reshape(-1, 1)
-            gradient = np.repeat(gradient, 2, axis=1)
+        # Default Vertical Gradient
+        x_array = np.linspace(0, 1, 2)
+        y_array = np.linspace(0, 1, 750)
+        X, Y = np.meshgrid(x_array, y_array)
+        gradient = np.linspace(0, 1, 750).reshape(-1, 1)
+        gradient = np.repeat(gradient, 2, axis=1)
+        return X, Y, gradient
 
+    def _create_mollweide_gradient(self):
+        """Generate meshgrid and gradient for a mollweide projection."""
+        x = np.linspace(-np.pi, np.pi, 250)
+        y = np.linspace(-np.pi / 2, np.pi / 2, 250)
+        X, Y = np.meshgrid(x, y)
+        # Rotation matrix (ICRS → Galactic)
+        R = np.array(
+            [
+                [-0.0548755604162154, -0.8734370902348850, -0.4838350155487132],
+                [0.4941094278755837, -0.4448296299600112, 0.7469822444972189],
+                [-0.8676661490190047, -0.1980763734312015, 0.4559837761750669],
+            ]
+        )
+        # Equatorial unit vectors
+        cos_y = np.cos(Y)
+        eq = np.stack(
+            [cos_y * np.cos(X), cos_y * np.sin(X) * -1, np.sin(Y) * -1], axis=-1
+        )
+        # Rotate into Galactic coords
+        gal = eq @ R.T
+        # Gradient follows galactic latitude
+        gradient = np.arcsin(gal[..., 2])
         return X, Y, gradient
 
     def _camera_optic_transform(self, background_ax) -> None:
-        """
-        Transforms the background axes and adds patches to try and create a gradient
-        affect for the camera optic.
-
-        Args:
-            background_ax: the axes where the gradient sits.
-
-        Returns None
-        """
-        min_x, max_x = -0.11, 1.11
-        min_y, max_y = -0.07, 1.07
-        background_ax.set_xlim(min_x, max_x)
-        background_ax.set_ylim(min_y, max_y)
+        """Apply camera-specific axes transformations for the gradient."""
+        background_ax.set_xlim(-0.11, 1.11)
+        background_ax.set_ylim(-0.07, 1.07)
         if self.optic.rotation == 0:
             return
-        # TODO find better patch method/solution for rotated cameras.
-        # outer_bound = path.Path([
-        #                     (min_x, min_y),
-        #                     (max_x, min_y),
-        #                     (max_x, max_y),
-        #                     (min_x, max_y),
-        #                     (min_x, min_y)
-        #                 ])
-        # center_x, center_y = 0.5, 0.5
-        # half_w, half_h   = 0.45, 0.3
-
-        # rect_verts = np.array([
-        #     [center_x-half_w, center_y-half_h],
-        #     [center_x+half_w, center_y-half_h],
-        #     [center_x+half_w, center_y+half_h],
-        #     [center_x-half_w, center_y+half_h],
-        #     [center_x-half_w, center_y-half_h]
-        # ])
-        # rotate_rect = Affine2D().rotate_deg_around(center_x, center_y, self.optic.rotation)
-        # rect_path = rotate_rect.transform(rect_verts)
-        # hole = rect_path[::-1]
-        # vertices = np.vstack([outer_bound.vertices, hole])
-        # codes = (
-        #     [path.Path.MOVETO] + [path.Path.LINETO]*4 +
-        #     [path.Path.MOVETO] + [path.Path.LINETO]*4
-        # )
-        # compound_path = path.Path(vertices, codes)
-        # patch = patches.PathPatch(compound_path, facecolor='white')
-        # background_ax.add_patch(patch)
