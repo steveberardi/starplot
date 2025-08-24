@@ -45,3 +45,32 @@ def check_zenith_base():
     filename = DATA_PATH / "zenith-base.png"
     zenith_base.export(filename)
     return filename
+
+
+def check_zenith_gradient():
+    style_gradient = STYLE.extend({"background_color": "#ffffff00"})
+    p = MapPlot(
+        projection=Projection.ZENITH,
+        lat=32.97,
+        lon=-117.038611,
+        dt=JUNE_2023,
+        style=style_gradient,
+        resolution=RESOLUTION,
+        autoscale=True,
+        gradient_preset=[
+            [0.0, "#F0F8FF"],
+            [0.05, "#87CEEB"],
+            [0.1, "#4169E1"],
+            [0.3, "#191970"],
+            [1.0, "#0B0C40"],
+        ],
+    )
+    p.horizon()
+    p.constellations()
+    p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 3])
+    p.ecliptic(style__line__width=8)
+    p.celestial_equator(style__line__width=8)
+    p.constellation_labels()
+    filename = DATA_PATH / "zenith-gradient.png"
+    p.export(filename)
+    return filename

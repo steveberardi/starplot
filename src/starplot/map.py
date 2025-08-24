@@ -21,6 +21,7 @@ from starplot.plotters import (
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
     LegendPlotterMixin,
+    GradientBackgroundMixin,
 )
 from starplot.projections import StereoNorth, StereoSouth, ProjectionBase
 from starplot.styles import (
@@ -43,6 +44,7 @@ class MapPlot(
     MilkyWayPlotterMixin,
     ConstellationPlotterMixin,
     LegendPlotterMixin,
+    GradientBackgroundMixin,
 ):
     """Creates a new map plot.
 
@@ -85,6 +87,7 @@ class MapPlot(
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
+        gradient_preset: list[tuple[float, str]] = None,
         *args,
         **kwargs,
     ) -> "MapPlot":
@@ -114,6 +117,7 @@ class MapPlot(
         self.ra_max = ra_max
         self.dec_min = dec_min
         self.dec_max = dec_max
+        self.gradient_preset = gradient_preset
         self.clip_path = clip_path
 
         self._geodetic = ccrs.Geodetic()
@@ -416,6 +420,25 @@ class MapPlot(
             right=True,
         )
 
+    def _find_gradient_shape(self) -> str:
+        """
+        Overrides default method inherited from GradientBackgroundMixin.
+        Determines what gradient shape should be used. Currently radial or vertical.
+        Returns a string listing the gradient shape. At present this is "radial"
+        or vertical. Defaults to "vertical" for MapPlot.
+        """
+        if self.projection in [
+            Projection.ORTHOGRAPHIC,
+            Projection.STEREOGRAPHIC,
+            Projection.ZENITH,
+        ]:
+            return "radial"
+        elif self.projection in [
+            Projection.MOLLWEIDE,
+        ]:
+            return "mollweide"
+        return "vertical"
+
     def _fit_to_ax(self) -> None:
         bbox = self.ax.get_window_extent().transformed(
             self.fig.dpi_scale_trans.inverted()
@@ -455,6 +478,10 @@ class MapPlot(
         self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
 
         self._fit_to_ax()
+
+        if self.gradient_preset:
+            self.apply_gradient_background(self.gradient_preset)
+
         self._plot_background_clip_path()
 
     def _ax_to_radec(self, x, y):

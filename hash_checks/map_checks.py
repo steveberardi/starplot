@@ -220,6 +220,38 @@ def check_map_with_planets():
     return filename
 
 
+def check_map_with_planets_gradient():
+    filename = DATA_PATH / "map-mercator-planets-gradient.png"
+    style_gradient = STYLE.extend({"background_color": "#ffffff00"})
+    dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+
+    p = MapPlot(
+        projection=Projection.MILLER,
+        ra_min=0,
+        ra_max=24 * 15,
+        dec_min=-40,
+        dec_max=40,
+        dt=dt,
+        hide_colliding_labels=False,
+        style=style_gradient,
+        resolution=RESOLUTION,
+        autoscale=True,
+        gradient_preset=[
+            [0.0, "#F8DEC6"],
+            [0.2, "#99A8EB"],
+            [0.6, "#070D35"],
+            [1.0, "#000000"],
+        ],
+    )
+    p.stars(where=[_.magnitude < 3], where_labels=[False])
+    p.planets()
+    p.sun()
+    p.ecliptic()
+    p.export(filename)
+
+    return filename
+
+
 def check_map_scope_bino_fov():
     filename = DATA_PATH / "map-scope-bino-fov.png"
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
@@ -352,6 +384,33 @@ def check_map_mollweide():
     )
     p.milky_way()
     p.gridlines(labels=False)
+    p.export(filename, padding=0.1)
+    return filename
+
+
+def check_map_mollweide_gradient():
+    filename = DATA_PATH / "map-mollweide-gradient.png"
+    style_gradient = STYLE.extend({"background_color": "#ffffff00"})
+    p = MapPlot(
+        projection=Projection.MOLLWEIDE,
+        style=style_gradient,
+        resolution=RESOLUTION,
+        autoscale=True,
+        gradient_preset=[
+            [0.0, "#000000"],
+            [0.4, "#151e47"],
+            [0.45, "#2c3675"],
+            [0.55, "#232c6d"],
+            [0.6, "#182250"],
+            [1.0, "#000000"],
+        ],
+    )
+    p.stars(
+        where=[_.magnitude < 4],
+        where_labels=[_.magnitude < 1.8],
+    )
+    p.constellations()
+    p.milky_way(style={"alpha": 0.2, "color": "#9C9C9C"})
     p.export(filename, padding=0.1)
     return filename
 
