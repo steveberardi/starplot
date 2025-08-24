@@ -78,16 +78,14 @@ def check_horizon_north_celestial_pole():
 
 def check_horizon_gradient_background():
     dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
-
-    style = STYLE.extend({"background_color": "#ffffff00"})
-
+    style_gradient = STYLE.extend({"background_color": "#ffffff00"})
     p = HorizonPlot(
         altitude=(0, 50),
         azimuth=(150, 210),
         lat=36.606111,  # Lone Pine, California
         lon=-118.079444,
         dt=dt,
-        style=style,
+        style=style_gradient,
         resolution=RESOLUTION,
         scale=1,
         gradient_preset=[
