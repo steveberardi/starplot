@@ -46,6 +46,7 @@ class ZenithPlot(MapPlot):
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
+        gradient_preset: list[tuple[float, str]] = None,
         *args,
         **kwargs,
     ) -> "ZenithPlot":
@@ -69,6 +70,7 @@ class ZenithPlot(MapPlot):
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
+            gradient_preset=gradient_preset,
             *args,
             **kwargs,
         )
@@ -153,6 +155,16 @@ class ZenithPlot(MapPlot):
             transform=self.ax.transAxes,
             **style.matplot_kwargs(self.scale),
         )
+    
+    def _find_gradient_shape(self) -> str:
+        """
+        Overrides default method inherited from GradientBackgroundMixin.
+        Determines what gradient shape should be used. Currently radial or vertical.
+        Returns a string listing the gradient shape. At present this is "radial"
+        or vertical. Defaults to "vertical" for MapPlot.
+        """
+
+        return "radial"
 
     def _plot_background_clip_path(self):
         self._background_clip_path = patches.Circle(

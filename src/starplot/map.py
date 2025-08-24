@@ -427,16 +427,16 @@ class MapPlot(
         Returns a string listing the gradient shape. At present this is "radial"
         or vertical. Defaults to "vertical" for MapPlot.
         """
-        if self.projection in [
-            Projection.ORTHOGRAPHIC,
-            Projection.STEREOGRAPHIC,
-            Projection.ZENITH,
-        ]:
-            return "radial"
-        elif self.projection in [
-            Projection.MOLLWEIDE,
-        ]:
-            return "mollweide"
+        # if self.projection in [
+        #     Projection.ORTHOGRAPHIC,
+        #     Projection.STEREOGRAPHIC,
+        #     Projection.ZENITH,
+        # ]:
+        #     return "radial"
+        # elif self.projection in [
+        #     Projection.MOLLWEIDE,
+        # ]:
+        #     return "mollweide"
         return "vertical"
 
     def _fit_to_ax(self) -> None:
