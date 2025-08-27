@@ -351,7 +351,6 @@ class OpticPlot(
 
         if self.style.has_gradient_background():
             background_color = "#ffffff00"
-
             self.apply_gradient_background(self.style.background_color)
         else:
             background_color = self.style.background_color.as_hex()
@@ -370,22 +369,22 @@ class OpticPlot(
         self._update_clip_path_polygon()
 
         # Inner Border
-        inner_border = self.optic.patch(
-            x,
-            y,
-            linewidth=2 * self.scale,
-            edgecolor=self.style.border_line_color.as_hex(),
-            fill=False,
-            zorder=ZOrderEnum.LAYER_5 + 100,
-        )
-        self.ax.add_patch(inner_border)
+        # inner_border = self.optic.patch(
+        #     x,
+        #     y,
+        #     linewidth=2 * self.scale,
+        #     edgecolor=self.style.border_line_color.as_hex(),
+        #     fill=False,
+        #     zorder=ZOrderEnum.LAYER_5 + 100,
+        # )
+        # self.ax.add_patch(inner_border)
 
         # Outer border
         outer_border = self.optic.patch(
             x,
             y,
             padding=0.05,
-            linewidth=20 * self.scale,
+            linewidth=40 * self.scale,
             edgecolor=self.style.border_bg_color.as_hex(),
             fill=False,
             zorder=ZOrderEnum.LAYER_5,

@@ -33,13 +33,17 @@ class GradientBackgroundMixin:
         cmap = self._create_colormap(gradient_preset, reverse=reverse)
         background_ax = self._create_background_ax()
         background_ax.set_axis_off()
+        self._background_ax = background_ax
 
         X, Y, gradient = self._create_gradient_arrays()
 
         # Radial specific axes adjustments
         if self._gradient_direction == GradientDirection.RADIAL:
-            background_ax.set_ylim(Y.min(), Y.max() * 1.11)
+            background_ax.set_ylim(Y.min(), Y.max() * 1.06)
+            
 
+        # if getattr(self, "optic", None):
+        #     self._camera_optic_transform(background_ax)
         # Camera specific axes adjustments
         # if gradient_shape == "camera":
         #     self._camera_optic_transform(background_ax)
@@ -75,7 +79,7 @@ class GradientBackgroundMixin:
             positions[-1] = 1
 
         colors = [c.as_hex() for c in colors]
-        
+
         cmap = LinearSegmentedColormap.from_list(
             "custom_gradient", list(zip(positions, colors)), N=750
         )

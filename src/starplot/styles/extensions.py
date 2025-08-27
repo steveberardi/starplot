@@ -96,7 +96,7 @@ GRADIENT_PRE_DAWN = {
     ]
 }
 
-GRADIENT_OPTIC_FALLOFF= {
+GRADIENT_OPTIC_FALLOFF = {
     "background_color": [
         [0.0, "hsl(0, 0%, 0%)"],
         [0.1, "hsl(0, 0%, 5%)"],
@@ -104,5 +104,17 @@ GRADIENT_OPTIC_FALLOFF= {
         [0.45, "hsl(0, 0%, 9%)"],
         [0.7, "hsl(0, 0%, 12%)"],
         [1.0, "hsl(0, 0%, 14%)"],
+    ]
+}
+
+# needs work
+GRADIENT_OPTIC_FALL_IN = {
+    "background_color": [
+        [0.0, "hsl(0, 0%, 20%)"],
+        [0.1, "hsl(0, 0%, 16%)"],
+        [0.3, "hsl(0, 0%, 13%)"],
+        [0.45, "hsl(0, 0%, 10%)"],
+        [0.7, "hsl(0, 0%, 6%)"],
+        [1.0, "hsl(0, 0%, 0%)"],  
     ]
 }
