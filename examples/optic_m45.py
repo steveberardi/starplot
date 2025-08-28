@@ -11,6 +11,7 @@ dt = datetime(2023, 12, 16, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 style = PlotStyle().extend(
     extensions.GRAYSCALE_DARK,
     extensions.OPTIC,
+    extensions.GRADIENT_OPTIC_FALL_IN,
 )
 
 observer = Observer(

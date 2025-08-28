@@ -16,7 +16,7 @@ p = ZenithPlot(
     observer=observer,
     style=PlotStyle().extend(
         extensions.BLUE_GOLD,
-        extensions.GRADIENT_ASTRONOMICAL_TWILIGHT,
+        extensions.GRADIENT_PRE_DAWN,
     ),
     resolution=3600,
     autoscale=True,

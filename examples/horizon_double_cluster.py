@@ -12,8 +12,9 @@ from starplot import (
 )
 
 style = PlotStyle().extend(
-    style_extensions.BLUE_GOLD,
+    style_extensions.BLUE_NIGHT,
     style_extensions.MAP,
+    style_extensions.GRADIENT_ASTRONOMICAL_TWILIGHT,
 )
 
 tz = ZoneInfo("US/Pacific")
@@ -35,7 +36,7 @@ p = HorizonPlot(
     observer=observer,
     style=style,
     resolution=4096,
-    scale=1,
+    scale=1.1,
 )
 p.constellations(where=[_.iau_id.isin(["cas", "umi", "per"])])
 p.stars(
@@ -59,4 +60,4 @@ p.constellation_labels()
 p.horizon()
 p.gridlines()
 
-p.export("horizon_double_cluster.png")
+p.export("horizon_double_cluster.png", padding=0.25)

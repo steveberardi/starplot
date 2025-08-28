@@ -466,24 +466,30 @@ class HorizonPlot(
                 transform=self.ax.transAxes,
             )
 
-        if not show_ticks:
+        if not show_ticks or len(x_locations) < 2:
             return
 
-        for az in range(int(self.az[0]), int(self.az[1]), tick_step):
-            az = int(az)
-            if az >= 360:
-                az -= 360
-            x, _ = self._to_ax(az, self.alt[0])
+        # sort x locations so we iterate in order
+        x_locations_sorted = sorted(x_locations)
+        for i, az in enumerate(x_locations_sorted[1:], start=1):
+            prev_az = x_locations_sorted[i-1]
 
-            if x <= 0.03 or x >= 0.97 or math.isnan(x):
-                continue
+            # start at az label location + tick step cause we only want ticks between labels
+            for az_tick in range(prev_az + tick_step, az, tick_step):
+                a = int(az_tick)
+                if a >= 360:
+                    a -= 360
+                x, _ = self._to_ax(a, self.alt[0])
 
-            self.ax.annotate(
-                "|",
-                (x, -0.011 * self.scale),
-                xycoords=self.ax.transAxes,
-                **self.style.gridlines.label.matplot_kwargs(self.scale / 2),
-            )
+                if x <= 0.03 or x >= 0.97 or math.isnan(x):
+                    continue
+
+                self.ax.annotate(
+                    "|",
+                    (x, -0.011 * self.scale),
+                    xycoords=self.ax.transAxes,
+                    **self.style.gridlines.label.matplot_kwargs(self.scale / 2),
+                )
 
     @cache
     def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
