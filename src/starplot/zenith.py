@@ -154,7 +154,7 @@ class ZenithPlot(MapPlot):
     def _plot_background_clip_path(self):
         if self.style.has_gradient_background():
             background_color = "#ffffff00"
-            self.apply_gradient_background(self.style.background_color)
+            self._plot_gradient_background(self.style.background_color)
         else:
             background_color = self.style.background_color.as_hex()
 

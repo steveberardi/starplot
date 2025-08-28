@@ -351,7 +351,7 @@ class OpticPlot(
 
         if self.style.has_gradient_background():
             background_color = "#ffffff00"
-            self.apply_gradient_background(self.style.background_color)
+            # self._plot_gradient_background(self.style.background_color)
         else:
             background_color = self.style.background_color.as_hex()
 
@@ -379,6 +379,9 @@ class OpticPlot(
         # )
         # self.ax.add_patch(inner_border)
 
+        if self.style.has_gradient_background():
+            self._plot_gradient_background(self.style.background_color)
+        
         # Outer border
         outer_border = self.optic.patch(
             x,

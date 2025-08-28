@@ -14,7 +14,7 @@ class GradientBackgroundMixin:
     """
 
     @profile
-    def apply_gradient_background(
+    def _plot_gradient_background(
         self, gradient_preset: list[tuple[float, str]]
     ) -> None:
         """
@@ -57,6 +57,7 @@ class GradientBackgroundMixin:
             shading="gouraud",
             rasterized=True,
             zorder=0,
+            clip_path=self._background_clip_path,
         )
 
         # Set plot in self.ax's zorder to 1 so it appears above the gradient
@@ -88,7 +89,6 @@ class GradientBackgroundMixin:
     def _create_background_ax(self):
         """Adds a set of axes to take the gradient image."""
         bbox = self.ax.get_position()
-
         projection = None
 
         if self._gradient_direction == GradientDirection.RADIAL:
