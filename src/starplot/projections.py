@@ -115,6 +115,10 @@ class Mercator(ProjectionBase, CenterRA):
 
     _ccrs = ccrs.Mercator
 
+class ObliqueMercator(ProjectionBase, CenterRADEC):
+    """Oblique Mercator projection"""
+
+    _ccrs = ccrs.ObliqueMercator
 
 class Mollweide(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
