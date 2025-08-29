@@ -5,7 +5,7 @@ figure_background_color: hsl(208, 23%, 13%)
 
 text_border_color: rgb(46, 61, 74)
 
-border_bg_color: hsl(212, 27%, 56%)
+border_bg_color: hsl(212, 27%, 8%)
 border_font_color: '#f1f6ff'
 border_line_color: '#2f4358'
 

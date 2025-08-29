@@ -124,16 +124,6 @@
         </a>
     </li>
 
-    
-
-    <li>
-        <a href="/examples/optic-moon-saturn/">
-            <img src="/images/examples/optic_moon_saturn-sm.png" alt="Moon and Saturn Conjunction" class="off-glb" loading="lazy"/>
-
-            <p class="example-card-title">Moon and Saturn Conjunction</p>
-        </a>
-    </li>
-
     <li>
         <a href="/examples/map-canis-major/">
             <img src="/images/examples/map_canis_major-sm.png" alt="Map of the Constellation Canis Major" class="off-glb" loading="lazy"/>
@@ -142,13 +132,7 @@
         </a>
     </li>
 
-    <li>
-        <a href="/examples/horizon-sgr/">
-            <img src="/images/examples/horizon_sgr-sm.png" alt="Horizon Plot of Sagittarius" class="off-glb" loading="lazy"/>
 
-            <p class="example-card-title">Horizon Plot</p>
-        </a>
-    </li>
 
     
 

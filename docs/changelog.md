@@ -1,8 +1,9 @@
 ## v0.16.x
 [Migration Guide](migration-guides/0.16.0.md)
 
+- Adds support for gradient backgrounds
 - Refactors projections, allowing you to change central RA/DEC
-- Adds an equidistant projection
+- Adds equidistant and oblique Mercator projections
 - Introduces an Observer model to encapsulate a time and place
 - Makes zenith plots a separate plot type
 - Adds a function for plotting a star magnitude scale (experimental, feedback wanted!)

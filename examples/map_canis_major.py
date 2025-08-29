@@ -2,7 +2,7 @@ from starplot import MapPlot, Miller, Constellation, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.BLUE_LIGHT,
+    extensions.BLUE_NIGHT,
     extensions.MAP,
 )
 canis_major = Constellation.get(name="Canis Major")

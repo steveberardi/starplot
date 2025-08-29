@@ -336,11 +336,21 @@ p.open_clusters(where=[_.magnitude >= 9])
     - `BLUE_MEDIUM` - Medium brightness bluish gray colors ([details](#extensions-blue-medium))
     - `BLUE_DARK` - Dark "Starplot blue" colors ([details](#extensions-blue-dark))
     - `BLUE_GOLD` - Dark blue / gold colors ([details](#extensions-blue-gold))
+    - `BLUE_NIGHT` - Very dark blue background with colored markers ([details](#extensions-blue-night))
     - `ANTIQUE` - Antique map inspired colors ([details](#extensions-antique))
     - `NORD` - Nord-inspired colors ([details](#extensions-nord))
 - **Plot types**
     - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
+- **Gradients**
+    - `GRADIENT_BOLD_SUNSET`
+    - `GRADIENT_CIVIL_TWILIGHT`
+    - `GRADIENT_NAUTICAL_TWILIGHT`
+    - `GRADIENT_ASTRONOMICAL_TWILIGHT`
+    - `GRADIENT_TRUE_NIGHT`
+    - `GRADIENT_PRE_DAWN`
+    - `GRADIENT_OPTIC_FALLOFF`
+    - `GRADIENT_OPTIC_FALL_IN`
 
 <!-- GRAYSCALE -->
 <h2 class="doc doc-heading" id="extensions-grayscale"><code>GRAYSCALE</code></h2>
@@ -417,6 +427,19 @@ Dark bluish gold colors
 
     ```yaml 
     --8<-- "src/starplot/styles/ext/blue_gold.yml"
+    ```
+</div>
+
+<!-- BLUE NIGHT -->
+<h2 class="doc doc-heading" id="extensions-blue-night"><code>BLUE_NIGHT</code></h2>
+
+<div class="indent" markdown>
+Very dark blue background with colored markers
+
+???- star "Source"
+
+    ```yaml 
+    --8<-- "src/starplot/styles/ext/blue_night.yml"
     ```
 </div>
 

@@ -15,7 +15,7 @@ observer = Observer(
 )
 
 style = PlotStyle().extend(
-    extensions.GRAYSCALE_DARK,
+    extensions.BLUE_GOLD,
     extensions.OPTIC,
 )
 
@@ -32,7 +32,7 @@ p = OpticPlot(
         eyepiece_fov=100,
     ),
     style=style,
-    resolution=4096,
+    resolution=2600,
     autoscale=True,
 )
 p.stars(where=[_.magnitude < 14], color_fn=color_by_bv, bayer_labels=True)

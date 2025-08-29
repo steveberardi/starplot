@@ -1,9 +1,9 @@
 ---
-title: Map of the Big Dipper with Custom Markers
+title: The Big Dipper with Custom Markers
 ---
 [:octicons-arrow-left-24: Back to Examples](/examples)
 
-# Map of the Big Dipper with Custom Markers {.example-header}
+# The Big Dipper with Custom Markers {.example-header}
 
 ![map-big-dipper](/images/examples/map_big_dipper.png)
 

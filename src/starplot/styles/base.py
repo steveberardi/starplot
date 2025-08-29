@@ -723,7 +723,24 @@ class PlotStyle(BaseStyle):
     """
 
     background_color: list[tuple[float, str]] | ColorStr = ColorStr("#fff")
-    """Background color of the map region"""
+    """
+    Background color of the map region.
+
+    This can either be a single color (e.g. `#fff`) or a list that defines a gradient.
+
+    For gradients, the list items should be tuples with two elements: a float that defines 
+    the stop and a string that defines the color for that stop. For example:
+
+    ```
+    "background_color": [
+        (0.0, "#7abfff"),
+        (0.1, "#7abfff"),
+        (0.9, "#568feb"),
+        (0.9, "#3f7ee3"),
+    ]
+
+    ```
+    """
 
     figure_background_color: ColorStr = ColorStr("#fff")
 
