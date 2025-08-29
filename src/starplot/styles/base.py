@@ -2,7 +2,7 @@ import json
 
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Union, List, Tuple
+from typing import Optional, Union, List
 
 import yaml
 

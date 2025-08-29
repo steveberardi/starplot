@@ -156,6 +156,7 @@ def check_optic_m45_binoculars():
     optic_plot.export(filename)
     return filename
 
+
 def check_optic_m45_scope():
     optic_plot = OpticPlot(
         # M45

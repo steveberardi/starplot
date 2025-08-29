@@ -2,11 +2,7 @@ from starplot import MapPlot, StereoNorth, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.BLUE_DARK,
-    extensions.MAP,
-    {
-        "background_color": "#2C3F62"
-    }
+    extensions.BLUE_DARK, extensions.MAP, {"background_color": "#2C3F62"}
 )
 
 p = MapPlot(

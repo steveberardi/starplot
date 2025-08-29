@@ -13,6 +13,7 @@
 - Adds more options for plotting gridlines on horizon plots
 - Adds a `common_names` field to deep sky objects
 - Added more public properties to plots (including `magnitude_range` and `alt`/`az` for optic plots)
+- Adds the `BLUE_NIGHT` plot style
 
 
 ## v0.15.x

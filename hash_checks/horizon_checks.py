@@ -87,7 +87,7 @@ def check_horizon_gradient_background():
     p = HorizonPlot(
         altitude=(0, 50),
         azimuth=(150, 210),
-        observer = Observer(
+        observer=Observer(
             lat=36.606111,  # Lone Pine, California
             lon=-118.079444,
             dt=dt,
