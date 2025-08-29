@@ -1027,7 +1027,7 @@ class PlotStyle(BaseStyle):
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
     constellation_lines: LineStyle = LineStyle(
-        color="#c8c8c8", zorder=ZOrderEnum.LAYER_3 + 1
+        color="#c8c8c8", zorder=ZOrderEnum.LAYER_3
     )
     """Styling for constellation lines"""
 
