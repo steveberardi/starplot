@@ -472,7 +472,7 @@ class HorizonPlot(
         # sort x locations so we iterate in order
         x_locations_sorted = sorted(x_locations)
         for i, az in enumerate(x_locations_sorted[1:], start=1):
-            prev_az = x_locations_sorted[i-1]
+            prev_az = x_locations_sorted[i - 1]
 
             # start at az label location + tick step cause we only want ticks between labels
             for az_tick in range(prev_az + tick_step, az, tick_step):

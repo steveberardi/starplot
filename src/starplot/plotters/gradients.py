@@ -40,7 +40,6 @@ class GradientBackgroundMixin:
         # Radial specific axes adjustments
         if self._gradient_direction == GradientDirection.RADIAL:
             background_ax.set_ylim(Y.min(), Y.max() * 1.06)
-            
 
         # if getattr(self, "optic", None):
         #     self._camera_optic_transform(background_ax)
@@ -79,7 +78,9 @@ class GradientBackgroundMixin:
             positions = [p / 2 for p in positions]
             positions[-1] = 1
 
-        colors = [c.as_hex() for c in colors]
+        from pydantic.color import Color
+
+        colors = [Color(c).as_hex() for c in colors]
 
         cmap = LinearSegmentedColormap.from_list(
             "custom_gradient", list(zip(positions, colors)), N=750

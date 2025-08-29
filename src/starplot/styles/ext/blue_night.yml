@@ -9,7 +9,7 @@ border_line_color: hsl(209, 38%, 50%)
 
 horizon:
   line:
-    color: hsl(209, 60%, 13%)
+    color: hsl(209, 43%, 15%)
     edge_color: hsl(209, 38%, 50%)
   label:
     font_color: hsl(209, 56%, 86%)
@@ -79,7 +79,7 @@ dso_planetary_nebula: *DSO-NEB
 
 dso_open_cluster: &DSO-OC
   marker:
-    alpha: 0.67
+    alpha: 0.8
     color: rgba(245, 242, 142, 0.5)
     edge_color: rgba(245, 242, 142, 1)
   label:
@@ -120,7 +120,7 @@ gridlines:
     font_color: hsl(209, 53%, 94%)
   line:
     alpha: 0.8
-    color: hsl(209, 53%, 48%)
+    color: hsl(209, 53%, 54%)
     style: solid
     width: 1
 milky_way:

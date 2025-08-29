@@ -23,8 +23,8 @@ constellation_labels:
   font_alpha: 1
   font_color: hsl(212, 20%, 36%)
 constellation_lines:
-  alpha: 0.64
-  color: hsl(91, 58%, 41%)
+  alpha: 0.45
+  color: hsl(91, 60%, 43%)
 
 celestial_equator:
   label:

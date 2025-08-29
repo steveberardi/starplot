@@ -381,13 +381,13 @@ class OpticPlot(
 
         if self.style.has_gradient_background():
             self._plot_gradient_background(self.style.background_color)
-        
+
         # Outer border
         outer_border = self.optic.patch(
             x,
             y,
             padding=0.05,
-            linewidth=40 * self.scale,
+            linewidth=25 * self.scale,
             edgecolor=self.style.border_bg_color.as_hex(),
             fill=False,
             zorder=ZOrderEnum.LAYER_5,

@@ -36,7 +36,7 @@ p = HorizonPlot(
     observer=observer,
     style=style,
     resolution=4096,
-    scale=1.1,
+    scale=1.25,
 )
 p.constellations(where=[_.iau_id.isin(["cas", "umi", "per"])])
 p.stars(
@@ -58,6 +58,7 @@ p.bino_fov(
 )
 p.constellation_labels()
 p.horizon()
+p.style.gridlines.line.width = 2
 p.gridlines()
 
 p.export("horizon_double_cluster.png", padding=0.25)

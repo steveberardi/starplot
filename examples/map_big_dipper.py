@@ -4,6 +4,9 @@ from starplot.styles import PlotStyle, extensions
 style = PlotStyle().extend(
     extensions.BLUE_DARK,
     extensions.MAP,
+    {
+        "background_color": "#253B64"
+    }
 )
 
 p = MapPlot(
@@ -22,7 +25,7 @@ p.stars(
         _.dec < 64,
     ],
     style__marker__symbol="star",
-    style__marker__color="#ffff73",
+    style__marker__color="#ffff6c",
     style__label__font_size=20,
     style__label__font_weight="normal",
 )

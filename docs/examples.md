@@ -51,6 +51,22 @@
     </li>
 
     <li>
+        <a href="/examples/horizon-gradient/">
+            <img src="/images/examples/horizon_gradient-sm.png" alt="Horizon Gradient Plot" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Horizon Gradient</p>
+        </a>
+    </li>
+
+    <li>
+        <a href="/examples/optic-solar-eclipse/">
+            <img src="/images/examples/optic_solar_eclipse-sm.png" alt="Total Solar Eclipse 2024" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Total Solar Eclipse 2024</p>
+        </a>
+    </li>
+
+    <li>
         <a href="/examples/optic-m45/">
             <img src="/images/examples/optic_m45-sm.png" alt="Optic Plot of the Pleiades" class="off-glb" loading="lazy"/>
 
@@ -68,25 +84,27 @@
 
     <li>
         <a href="/examples/map-milky-way-stars/">
-            <img src="/images/examples/map_milky_way_stars-sm.png" alt="Stars of the Milky Way class="off-glb"/>
+            <img src="/images/examples/map_milky_way_stars-sm.png" alt="Stars of the Milky Way" class="off-glb"/>
 
-            <p class="example-card-title">Milky Way Stars</p>
+            <p class="example-card-title">The Milky Way</p>
         </a>
     </li>
-    
+
     <li>
-        <a href="/examples/horizon-sgr/">
-            <img src="/images/examples/horizon_sgr-sm.png" alt="Horizon Plot of Sagittarius" class="off-glb" loading="lazy"/>
+        <a href="/examples/map-orthographic/">
+            <img src="/images/examples/map_orthographic-sm.png" alt="Orthographic Map" class="off-glb" loading="lazy"/>
 
-            <p class="example-card-title">Horizon Plot</p>
+            <p class="example-card-title">Orthographic Map</p>
         </a>
     </li>
+
+    
 
     <li>
         <a href="/examples/map-big-dipper/">
             <img src="/images/examples/map_big_dipper-sm.png" alt="Map of the Big Dipper" class="off-glb" loading="lazy"/>
 
-            <p class="example-card-title">Map of the Big Dipper</p>
+            <p class="example-card-title">The Big Dipper</p>
         </a>
     </li>
 
@@ -106,21 +124,7 @@
         </a>
     </li>
 
-    <li>
-        <a href="/examples/map-orthographic/">
-            <img src="/images/examples/map_orthographic-sm.png" alt="Orthographic Map" class="off-glb" loading="lazy"/>
-
-            <p class="example-card-title">Orthographic Map</p>
-        </a>
-    </li>
-
-    <li>
-        <a href="/examples/optic-solar-eclipse/">
-            <img src="/images/examples/optic_solar_eclipse-sm.png" alt="Total Solar Eclipse 2024" class="off-glb" loading="lazy"/>
-
-            <p class="example-card-title">Total Solar Eclipse 2024</p>
-        </a>
-    </li>
+    
 
     <li>
         <a href="/examples/optic-moon-saturn/">
@@ -138,15 +142,15 @@
         </a>
     </li>
 
-    
-
     <li>
-        <a href="/examples/horizon-gradient/">
-            <img src="/images/examples/horizon_gradient-sm.png" alt="Horizon Gradient Plot" class="off-glb" loading="lazy"/>
+        <a href="/examples/horizon-sgr/">
+            <img src="/images/examples/horizon_sgr-sm.png" alt="Horizon Plot of Sagittarius" class="off-glb" loading="lazy"/>
 
-            <p class="example-card-title">Horizon Gradient Plot</p>
+            <p class="example-card-title">Horizon Plot</p>
         </a>
     </li>
+
+    
 
 </ul>
 

@@ -16,6 +16,7 @@ p = ZenithPlot(
     observer=observer,
     style=PlotStyle().extend(
         extensions.BLUE_GOLD,
+        # extensions.BLUE_NIGHT,
         extensions.GRADIENT_PRE_DAWN,
     ),
     resolution=3600,
@@ -28,7 +29,6 @@ p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 2.1])
 p.galaxies(where=[_.magnitude < 9], true_size=False, labels=None)
 p.open_clusters(where=[_.magnitude < 9], true_size=False, labels=None)
 
-p.constellation_borders()
 p.ecliptic()
 p.celestial_equator()
 p.milky_way()

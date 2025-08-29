@@ -2,7 +2,7 @@ import json
 
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Tuple
 
 import yaml
 
@@ -722,7 +722,7 @@ class PlotStyle(BaseStyle):
     Defines the styling for a plot
     """
 
-    background_color: Union[ColorStr, list[tuple[float, ColorStr]]] = ColorStr("#fff")
+    background_color: list[tuple[float, str]] | ColorStr = ColorStr("#fff")
     """Background color of the map region"""
 
     figure_background_color: ColorStr = ColorStr("#fff")

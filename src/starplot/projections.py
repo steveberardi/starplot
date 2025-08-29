@@ -19,6 +19,11 @@ class CenterRADEC(CenterRA, CenterDEC):
     pass
 
 
+class Azimuth(BaseModel, ABC):
+    azimuth: float = Field(default=0, ge=0, le=360)
+    """Direction of central line of the projection"""
+
+
 class ProjectionBase(BaseModel, ABC):
     threshold: int = 1000
 
@@ -36,6 +41,9 @@ class ProjectionBase(BaseModel, ABC):
 
         if hasattr(self, "center_dec"):
             kwargs["central_latitude"] = self.center_dec
+
+        if hasattr(self, "azimuth"):
+            kwargs["azimuth"] = self.azimuth
 
         c = self._ccrs(**kwargs)
         c.threshold = self.threshold
@@ -115,10 +123,12 @@ class Mercator(ProjectionBase, CenterRA):
 
     _ccrs = ccrs.Mercator
 
-class ObliqueMercator(ProjectionBase, CenterRADEC):
+
+class ObliqueMercator(ProjectionBase, CenterRADEC, Azimuth):
     """Oblique Mercator projection"""
 
     _ccrs = ccrs.ObliqueMercator
+
 
 class Mollweide(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
