@@ -222,26 +222,23 @@ def check_map_with_planets():
 
 def check_map_with_planets_gradient():
     filename = DATA_PATH / "map-mercator-planets-gradient.png"
-    style_gradient = STYLE.extend({"background_color": "#ffffff00"})
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+    observer = Observer(dt=dt)
 
     p = MapPlot(
-        projection=Projection.MILLER,
+        projection=Miller(),
         ra_min=0,
         ra_max=24 * 15,
         dec_min=-40,
         dec_max=40,
-        dt=dt,
+        observer=observer,
         hide_colliding_labels=False,
-        style=style_gradient,
+        style=styles.PlotStyle().extend(
+            styles.extensions.BLUE_GOLD,
+            styles.extensions.GRADIENT_PRE_DAWN,
+        ),
         resolution=RESOLUTION,
         autoscale=True,
-        gradient_preset=[
-            [0.0, "#F8DEC6"],
-            [0.2, "#99A8EB"],
-            [0.6, "#070D35"],
-            [1.0, "#000000"],
-        ],
     )
     p.stars(where=[_.magnitude < 3], where_labels=[False])
     p.planets()
@@ -388,31 +385,32 @@ def check_map_mollweide():
     return filename
 
 
-def check_map_mollweide_gradient():
-    filename = DATA_PATH / "map-mollweide-gradient.png"
-    style_gradient = STYLE.extend({"background_color": "#ffffff00"})
-    p = MapPlot(
-        projection=Projection.MOLLWEIDE,
-        style=style_gradient,
-        resolution=RESOLUTION,
-        autoscale=True,
-        gradient_preset=[
-            [0.0, "#000000"],
-            [0.4, "#151e47"],
-            [0.45, "#2c3675"],
-            [0.55, "#232c6d"],
-            [0.6, "#182250"],
-            [1.0, "#000000"],
-        ],
-    )
-    p.stars(
-        where=[_.magnitude < 4],
-        where_labels=[_.magnitude < 1.8],
-    )
-    p.constellations()
-    p.milky_way(style={"alpha": 0.2, "color": "#9C9C9C"})
-    p.export(filename, padding=0.1)
-    return filename
+# TODO : re-enable this when we solidify the mollweide gradient option
+# def check_map_mollweide_gradient():
+#     filename = DATA_PATH / "map-mollweide-gradient.png"
+#     style_gradient = STYLE.extend({"background_color": "#ffffff00"})
+#     p = MapPlot(
+#         projection=Projection.MOLLWEIDE,
+#         style=style_gradient,
+#         resolution=RESOLUTION,
+#         autoscale=True,
+#         gradient_preset=[
+#             [0.0, "#000000"],
+#             [0.4, "#151e47"],
+#             [0.45, "#2c3675"],
+#             [0.55, "#232c6d"],
+#             [0.6, "#182250"],
+#             [1.0, "#000000"],
+#         ],
+#     )
+#     p.stars(
+#         where=[_.magnitude < 4],
+#         where_labels=[_.magnitude < 1.8],
+#     )
+#     p.constellations()
+#     p.milky_way(style={"alpha": 0.2, "color": "#9C9C9C"})
+#     p.export(filename, padding=0.1)
+#     return filename
 
 
 def check_map_gridlines():

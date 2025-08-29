@@ -48,22 +48,18 @@ def check_zenith_base():
 
 
 def check_zenith_gradient():
-    style_gradient = STYLE.extend({"background_color": "#ffffff00"})
-    p = MapPlot(
-        projection=Projection.ZENITH,
-        lat=32.97,
-        lon=-117.038611,
-        dt=JUNE_2023,
-        style=style_gradient,
+    p = ZenithPlot(
+        observer=Observer(
+            lat=32.97,
+            lon=-117.038611,
+            dt=JUNE_2023,
+        ),
+        style=styles.PlotStyle().extend(
+            styles.extensions.BLUE_GOLD,
+            styles.extensions.GRADIENT_PRE_DAWN,
+        ),
         resolution=RESOLUTION,
         autoscale=True,
-        gradient_preset=[
-            [0.0, "#F0F8FF"],
-            [0.05, "#87CEEB"],
-            [0.1, "#4169E1"],
-            [0.3, "#191970"],
-            [1.0, "#0B0C40"],
-        ],
     )
     p.horizon()
     p.constellations()

@@ -156,38 +156,6 @@ def check_optic_m45_binoculars():
     optic_plot.export(filename)
     return filename
 
-
-def check_optic_m45_binoculars_gradient():
-    style_gradient = style_dark.extend({"background_color": "#ffffff00"})
-    optic_plot = OpticPlot(
-        # M45
-        ra=3.7836111111 * 15,
-        dec=24.1166666667,
-        lat=32.97,
-        lon=-117.038611,
-        # 10x binoculars
-        optic=optics.Binoculars(
-            magnification=10,
-            fov=65,
-        ),
-        dt=dt_dec_16,
-        style=style_gradient,
-        gradient_preset=[
-            [0.0, "#F0F8FF"],
-            [0.05, "#87CEEB"],
-            [0.1, "#4169E1"],
-            [0.3, "#191970"],
-            [1.0, "#0B0C40"],
-        ],
-        **plot_kwargs,
-    )
-    optic_plot.stars(where=[_.magnitude < 12])
-    optic_plot.info()
-    filename = DATA_PATH / "optic-m45-binoculars-gradient.png"
-    optic_plot.export(filename)
-    return filename
-
-
 def check_optic_m45_scope():
     optic_plot = OpticPlot(
         # M45
@@ -214,27 +182,18 @@ def check_optic_m45_scope():
 
 
 def check_optic_m45_scope_gradient():
-    style_gradient = style_dark.extend({"background_color": "#ffffff00"})
+    style_gradient = style_dark.extend(styles.extensions.GRADIENT_PRE_DAWN)
     optic_plot = OpticPlot(
         # M45
         ra=3.7836111111 * 15,
         dec=24.1166666667,
-        lat=32.97,
-        lon=-117.038611,
+        observer=observer_dec_16_poway,
         optic=optics.Scope(
             focal_length=600,
             eyepiece_focal_length=14,
             eyepiece_fov=82,
         ),
-        dt=dt_dec_16,
         style=style_gradient,
-        gradient_preset=[
-            [0.0, "#F0F8FF"],
-            [0.1, "#87CEEB"],
-            [0.2, "#4169E1"],
-            [0.3, "#191970"],
-            [1.0, "#0B0C40"],
-        ],
         **plot_kwargs,
     )
     optic_plot.stars(
