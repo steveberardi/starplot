@@ -26,6 +26,6 @@ p.nebula(where=[_.magnitude < 9], true_size=False, label_fn=lambda d: f"{d.ngc}"
 p.stars(where=[_.magnitude < 9], where_labels=[_.magnitude < 4], bayer_labels=True)
 p.constellation_labels()
 
-p.ax.set_axis_off() # hide the axis background that's outside the clip path
+p.ax.set_axis_off()  # hide the axis background that's outside the clip path
 
 p.export("map_canis_major.png", padding=1)
