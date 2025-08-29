@@ -40,15 +40,15 @@ p.stars(
 
 p.nebula(
     # select DSOs which have no defined magnitude or less than 8
-    where=[_.magnitude.isnull() | (_.magnitude < 8)],
+    where=[_.magnitude.isnull() | (_.magnitude < 7)],
     true_size=True,  # plot nebula as their true size
 )
 p.open_clusters(
-    where=[_.magnitude.isnull() | (_.magnitude < 8)],
+    where=[_.magnitude.isnull() | (_.magnitude < 7)],
     true_size=False,
 )
 p.globular_clusters(
-    where=[_.magnitude.isnull() | (_.magnitude < 8)],
+    where=[_.magnitude.isnull() | (_.magnitude < 7)],
     true_size=False,
 )
 

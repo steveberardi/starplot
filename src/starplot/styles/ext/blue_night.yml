@@ -7,12 +7,26 @@ border_bg_color: hsl(210, 29%, 5%)
 border_font_color: hsl(209, 56%, 86%)
 border_line_color: hsl(209, 38%, 50%)
 
-horizon:
-  line:
-    color: hsl(210, 29%, 15%)
-    edge_color: hsl(209, 38%, 50%)
+title:
+  font_color: hsl(210, 29%, 94%)
+
+legend:
+  background_color: hsl(210, 29%, 20%)
+  background_alpha: 1.0
+  font_color: hsl(210, 29%, 94%)
+
+info_text:
+  font_color: hsl(210, 29%, 8%)
+
+gridlines:
   label:
-    font_color: hsl(210, 29%, 94%)
+    font_alpha: 1
+    font_color: hsl(209, 53%, 94%)
+  line:
+    alpha: 0.8
+    color: hsl(209, 53%, 54%)
+    style: solid
+    width: 1
 
 zenith:
   marker:
@@ -20,16 +34,12 @@ zenith:
   label:
     font_color: hsl(209, 20%, 75%)
 
-title:
-  font_color: hsl(210, 29%, 94%)
-bayer_labels:
-  font_alpha: 0.9
-  font_color: hsl(210, 29%, 94%)
-  font_size: 24
-
-flamsteed_labels:
-  font_alpha: 0.9
-  font_color: hsl(210, 29%, 94%)
+horizon:
+  line:
+    color: hsl(210, 29%, 15%)
+    edge_color: hsl(209, 38%, 50%)
+  label:
+    font_color: hsl(210, 29%, 94%)
 
 celestial_equator:
   label:
@@ -44,18 +54,44 @@ ecliptic:
     color: hsl(1, 80%, 40%)
     alpha: 1
 
+# Stars
+star:
+  label:
+    font_color: hsl(210, 29%, 94%)
+    font_weight: bold
+  marker:
+    color: hsl(210, 29%, 98%)
+    edge_color: hsl(210, 29%, 15%)
+
+bayer_labels:
+  font_alpha: 0.9
+  font_color: hsl(210, 29%, 94%)
+  font_size: 24
+
+flamsteed_labels:
+  font_alpha: 0.9
+  font_color: hsl(210, 29%, 94%)
+
+
 # Constellations
 constellation_lines:
   alpha: 0.64
   color: hsl(91, 60%, 70%)
-  width: 20
 constellation_labels:
-  font_alpha: 0.5
-  font_color: hsl(209, 23%, 86%)
+  font_alpha: 1
+  font_color: hsl(210, 10%, 56%)
+  border_color: hsl(210, 29%, 15%)
 constellation_borders:
   width: 2
   color: hsl(209, 50%, 74%)
 
+# Milky Way
+milky_way:
+  alpha: 0.4
+  fill_color: hsl(210, 29%, 25%)
+  edge_width: 0
+
+# DSOs
 dso_double_star:
   label:
     font_color: hsl(209, 23%, 72%)
@@ -64,14 +100,14 @@ dso_double_star:
     color: '#88c0d0'
     edge_color: '#88c0d0'
 
-
 dso_galaxy:
   marker:
     alpha: 1
-    color: hsl(323, 23%, 44%)
-    edge_color: hsl(321, 100%, 86%)
+    color: hsl(323, 34%, 54%)
+    edge_color: hsl(321, 97%, 83%)
+    edge_width: 2
   label:
-    font_color: hsl(321, 100%, 86%)
+    font_color: hsl(321, 95%, 80%)
 
 dso_nebula: &DSO-NEB
   marker:
@@ -85,23 +121,21 @@ dso_planetary_nebula: *DSO-NEB
 dso_open_cluster: &DSO-OC
   marker:
     alpha: 1
-    color: hsl(62, 46%, 30%)
+    color: hsl(62, 48%, 33%)
     edge_color: hsl(58, 98%, 74%)
     edge_width: 1
   label:
-    font_color: hsl(58, 98%, 52%)
+    font_color: hsl(58, 98%, 58%)
 dso_association_stars: *DSO-OC
 
 dso_globular_cluster:
   marker:
     alpha: 1
     color: hsl(62, 29%, 14%)
-    edge_color: hsl(58deg 98% 72%)
+    edge_color: hsl(58, 98%, 72%)
   label:
-    font_color: hsl(58, 98%, 52%)
+    font_color: hsl(58, 98%, 58%)
 
-
-# other DSOs
 dso_unknown: &DSO
   label:
     font_color: hsl(209, 23%, 72%)
@@ -117,52 +151,27 @@ dso_nonexistant: *DSO
 dso_unknown: *DSO
 dso_duplicate: *DSO
 
-info_text:
-  font_color: hsl(210, 29%, 8%)
-
-gridlines:
+# Solar System
+sun:
   label:
-    font_alpha: 1
-    font_color: hsl(209, 53%, 94%)
-  line:
-    alpha: 0.8
-    color: hsl(209, 53%, 54%)
-    style: solid
-    width: 1
-milky_way:
-  alpha: 0.4
-  fill_color: hsl(210, 29%, 25%)
-  edge_width: 0
-planets:
-  label:
-    font_color: hsl(209, 20%, 80%)
+    font_color: hsl(60, 92%, 71%)
+    font_size: 9
+    font_weight: bold
   marker:
-    alpha: 0.8
-    color: hsl(209, 20%, 78%)
-    fill: full
+    color: hsl(209, 50%, 90%)
+    edge_color: hsl(209, 50%, 94%)
+
 moon:
   label:
     font_color: '#f2f2f2'
     font_alpha: 0.8
   marker:
     color: '#e9e9e9'
-star:
-  label:
-    font_color: hsl(210, 29%, 94%)
-    font_weight: bold
-  marker:
-    color: hsl(210, 29%, 98%)
-    edge_color: hsl(210, 29%, 15%)
-sun:
-  label:
-    font_color: hsl(209, 23%, 80%)
-    font_size: 9
-    font_weight: bold
-  marker:
-    color: hsl(209, 50%, 94%)
-    edge_color: hsl(209, 50%, 94%)
 
-legend:
-  background_color: hsl(210, 29%, 20%)
-  background_alpha: 1.0
-  font_color: hsl(210, 29%, 94%)
+planets:
+  label:
+    font_color: hsl(37, 80%, 76%)
+  marker:
+    alpha: 1
+    color: hsl(37, 80%, 56%)
+    fill: full

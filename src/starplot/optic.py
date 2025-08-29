@@ -13,7 +13,7 @@ from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
 from starplot.observer import Observer
-from starplot.optics import Optic
+from starplot.optics import Optic, Camera
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin, GradientBackgroundMixin
 from starplot.styles import (
     PlotStyle,
@@ -96,6 +96,10 @@ class OpticPlot(
             **kwargs,
         )
         self.logger.debug("Creating OpticPlot...")
+
+        if isinstance(optic, Camera) and style.has_gradient_background():
+            raise ValueError("Gradient backgrounds are not yet supported for cameras.")
+
         self.ra = ra
         self.dec = dec
         self.raise_on_below_horizon = raise_on_below_horizon

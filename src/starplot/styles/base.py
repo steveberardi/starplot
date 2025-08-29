@@ -726,7 +726,7 @@ class PlotStyle(BaseStyle):
     """
     Background color of the map region.
 
-    This can either be a single color (e.g. `#fff`) or a list that defines a gradient.
+    This can either be a single color (e.g. `#7abfff`) or a list that defines a gradient.
 
     For gradients, the list items should be tuples with two elements: a float that defines 
     the stop and a string that defines the color for that stop. For example:
@@ -734,12 +734,15 @@ class PlotStyle(BaseStyle):
     ```
     "background_color": [
         (0.0, "#7abfff"),
-        (0.1, "#7abfff"),
+        (0.2, "#7abfff"),
         (0.9, "#568feb"),
-        (0.9, "#3f7ee3"),
+        (1.0, "#3f7ee3"),  # the last stop should always be at 1.0
     ]
-
     ```
+
+    There are a few predefined gradients available as [style extensions](/reference-styling/#style-extensions).
+
+    **Gradient backgrounds are not yet supported for optic plots that use a camera.**
     """
 
     figure_background_color: ColorStr = ColorStr("#fff")
@@ -1023,7 +1026,7 @@ class PlotStyle(BaseStyle):
     )
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
-    constellation_lines: LineStyle = LineStyle(color="#c8c8c8")
+    constellation_lines: LineStyle = LineStyle(color="#c8c8c8", zorder=ZOrderEnum.LAYER_3 + 1)
     """Styling for constellation lines"""
 
     constellation_borders: LineStyle = LineStyle(
