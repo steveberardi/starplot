@@ -74,7 +74,7 @@ This works well when you only want to change a couple properties, but for more c
 
 Once you have an instance of a PlotStyle, then you can customize it with the PlotStyle's [`extend`](#starplot.PlotStyle.extend) method. This method takes in one or more args of dictionaries and applies them to the original style in sequential order. In other words, when extending a PlotStyle, **you only have to define style properties that you want to override from the current style** — similar to how Cascading Style Sheets (CSS) work.
 
-Starplot has a few [built-in extensions](#built-in-style-extensions) for applying color schemes and optimizing different plot types. But, you can also easily create your own extensions.
+Starplot has a few [built-in extensions](#style-extensions) for applying color schemes and optimizing different plot types. But, you can also easily create your own extensions.
 
 ### Basic Example
 Here's a simple example of extending a style to use a different font for Bayer labels of stars:
@@ -146,23 +146,6 @@ p = MapPlot(
 
 ```
 
-### Built-in Style Extensions
-
-Starplot has a bunch of built-in style extensions (all imported from `starplot.styles.extensions`):
-
-- **Color Schemes**
-    - `GRAYSCALE` - Optimized for printing in grayscale ([details](#extensions-grayscale))
-    - `GRAYSCALE_DARK` - Like `GRAYSCALE`, but inverted (white stars, black background) ([details](#extensions-grayscale-dark))
-    - `BLUE_LIGHT` - Light and bright colors ([details](#extensions-blue-light))
-    - `BLUE_MEDIUM` - Medium brightness blue colors ([details](#extensions-blue-medium))
-    - `BLUE_DARK` - Dark blue and contrasting colors ([details](#extensions-blue-dark))
-    - `BLUE_GOLD` - Dark blue / gold colors ([details](#extensions-blue-gold))
-    - `ANTIQUE` - Antique map inspired colors ([details](#extensions-antique))
-    - `NORD` - Nord-inspired colors ([details](#extensions-nord))
-- **Plot types**
-    - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
-    - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
-
 ---
 
 ## Overriding Styles When Plotting
@@ -222,112 +205,22 @@ with p.style.dso_open_cluster as oc:
 p.open_clusters(where=[_.magnitude >= 9])
 ```
 
-    
----
-
-## Code Reference
-
-::: starplot.PlotStyle
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        separate_signature: true
-        show_signature_annotations: true
-        signature_crossrefs: true
-        members: true
-
-
----
-::: starplot.styles.MarkerStyle
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-
-::: starplot.styles.LineStyle
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-
-::: starplot.styles.PolygonStyle
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-
-
-::: starplot.styles.LabelStyle
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-
----
-
-::: starplot.styles.ObjectStyle
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-
-::: starplot.styles.PathStyle
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-
-::: starplot.styles.LegendStyle
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-
----
-::: starplot.styles.FillStyleEnum
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        members: true
-
-::: starplot.styles.FontStyleEnum
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        members: true
-
-::: starplot.styles.FontWeightEnum
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        members: true
-
-::: starplot.styles.LineStyleEnum
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        members: true
-
-::: starplot.styles.MarkerSymbolEnum
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        members: true
-
-::: starplot.styles.LegendLocationEnum
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        members: true
-
-::: starplot.styles.AnchorPointEnum
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        members: true
-
-::: starplot.styles.ZOrderEnum
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        members: true
-
 ---
 
 ## Style Extensions
+
+Starplot has many built-in style extensions for different color schemes, plot types, and gradient backgrounds.
+
+Using them is pretty simple:
+
+```python
+from starplot import styles
+
+style = styles.PlotStyle().extend(
+    styles.extensions.BLUE_GOLD,
+    styles.extensions.GRADIENT_PRE_DAWN,
+)
+```
 
 - **Color Schemes**
     - `GRAYSCALE` - Optimized for printing in grayscale ([details](#extensions-grayscale))
@@ -494,3 +387,111 @@ Basic styling tailored for map plots
     --8<-- "src/starplot/styles/ext/map.yml"
     ```
 </div>
+
+    
+---
+
+## Code Reference
+
+::: starplot.PlotStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        separate_signature: true
+        show_signature_annotations: true
+        signature_crossrefs: true
+        members: true
+
+
+---
+::: starplot.styles.MarkerStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
+::: starplot.styles.LineStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
+::: starplot.styles.PolygonStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
+
+::: starplot.styles.LabelStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
+---
+
+::: starplot.styles.ObjectStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
+::: starplot.styles.PathStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
+::: starplot.styles.LegendStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
+---
+::: starplot.styles.FillStyleEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.FontStyleEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.FontWeightEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.LineStyleEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.MarkerSymbolEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.LegendLocationEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.AnchorPointEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.ZOrderEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+---
+
+<br/>
+<br/>
