@@ -90,10 +90,10 @@ sun:
 dso_galaxy:
   marker:
     alpha: 1
-    color: hsl(328, 23%, 54%)
-    edge_color: hsl(328, 23%, 24%)
+    color: hsl(328, 30%, 56%)
+    edge_color: hsl(328, 63%, 24%)
   label:
-    font_color: hsl(328, 23%, 54%)
+    font_color: hsl(328, 30%, 56%)
 
 dso_nebula: &DSO-NEB
   marker:
