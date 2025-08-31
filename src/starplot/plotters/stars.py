@@ -232,9 +232,11 @@ class StarPlotterMixin:
 
         if getattr(self, "projection", None) == "zenith":
             # filter stars for zenith plots to only include those above horizon
-            self.location = self.earth + wgs84.latlon(self.lat, self.lon)
+            self.location = self.earth + wgs84.latlon(
+                self.observer.lat, self.observer.lon
+            )
             stars_apparent = (
-                self.location.at(self.timescale)
+                self.location.at(self.observer.timescale)
                 .observe(SkyfieldStar.from_dataframe(stars_df))
                 .apparent()
             )
@@ -244,7 +246,7 @@ class StarPlotterMixin:
             stars_df = stars_df[stars_df["alt"] > 0]
         else:
             nearby_stars = SkyfieldStar.from_dataframe(stars_df)
-            astrometric = self.earth.at(self.timescale).observe(nearby_stars)
+            astrometric = self.earth.at(self.observer.timescale).observe(nearby_stars)
             stars_ra, stars_dec, _ = astrometric.radec()
             stars_df["ra"], stars_df["dec"] = (
                 stars_ra.hours * 15,

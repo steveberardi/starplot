@@ -4,8 +4,20 @@ from datetime import datetime
 import numpy as np
 from pytz import timezone
 
-from starplot import styles, DSO, DsoType, Moon, Constellation, _
-from starplot.map import MapPlot, Projection
+from starplot import (
+    styles,
+    DSO,
+    DsoType,
+    Moon,
+    Constellation,
+    _,
+    Observer,
+    Miller,
+    Mercator,
+    Mollweide,
+    StereoNorth,
+)
+from starplot.map import MapPlot
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -44,7 +56,7 @@ dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
 def _mercator():
     # returns a mercator plot of Orion
     p = MapPlot(
-        projection=Projection.MERCATOR,
+        projection=Mercator(),
         ra_min=3.6 * 15,
         ra_max=7.8 * 15,
         dec_min=-16,
@@ -78,7 +90,7 @@ mercator_base = _mercator()
 
 def _stereo_north():
     p = MapPlot(
-        projection=Projection.STEREO_NORTH,
+        projection=StereoNorth(),
         ra_min=17 * 15,
         ra_max=20 * 15,
         dec_min=30,
@@ -150,7 +162,7 @@ def check_map_orion_extra():
 def check_map_coma_berenices_dso_size():
     filename = DATA_PATH / "map-coma-berenices-dso-size.png"
     p = MapPlot(
-        projection=Projection.MILLER,
+        projection=Miller(),
         ra_min=12 * 15,
         ra_max=13.5 * 15,
         dec_min=15,
@@ -185,15 +197,46 @@ def check_map_with_planets():
     filename = DATA_PATH / "map-mercator-planets.png"
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
 
+    observer = Observer(dt=dt)
+
     p = MapPlot(
-        projection=Projection.MILLER,
+        projection=Miller(),
         ra_min=0,
         ra_max=24 * 15,
         dec_min=-40,
         dec_max=40,
-        dt=dt,
+        observer=observer,
         hide_colliding_labels=False,
         style=STYLE,
+        resolution=RESOLUTION,
+        autoscale=True,
+    )
+    p.stars(where=[_.magnitude < 3], where_labels=[False])
+    p.planets()
+    p.sun()
+    p.ecliptic()
+    p.export(filename)
+
+    return filename
+
+
+def check_map_with_planets_gradient():
+    filename = DATA_PATH / "map-mercator-planets-gradient.png"
+    dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+    observer = Observer(dt=dt)
+
+    p = MapPlot(
+        projection=Miller(),
+        ra_min=0,
+        ra_max=24 * 15,
+        dec_min=-40,
+        dec_max=40,
+        observer=observer,
+        hide_colliding_labels=False,
+        style=styles.PlotStyle().extend(
+            styles.extensions.BLUE_GOLD,
+            styles.extensions.GRADIENT_PRE_DAWN,
+        ),
         resolution=RESOLUTION,
         autoscale=True,
     )
@@ -216,7 +259,7 @@ def check_map_scope_bino_fov():
     )
 
     p = MapPlot(
-        projection=Projection.STEREO_NORTH,
+        projection=StereoNorth(),
         ra_min=52 / 1,
         ra_max=62 / 1,
         dec_min=20,
@@ -252,7 +295,7 @@ def check_map_custom_stars():
     style.star.marker.size = 60
 
     p = MapPlot(
-        projection=Projection.MERCATOR,
+        projection=Mercator(),
         ra_min=3.6 * 15,
         ra_max=7.8 * 15,
         dec_min=-16,
@@ -281,7 +324,7 @@ def check_map_wrapping():
     )
 
     p = MapPlot(
-        projection=Projection.STEREO_NORTH,
+        projection=StereoNorth(),
         ra_min=18 * 15,
         ra_max=26 * 15,
         dec_min=30,
@@ -316,7 +359,7 @@ def check_map_mollweide():
     )
 
     p = MapPlot(
-        projection=Projection.MOLLWEIDE,
+        projection=Mollweide(),
         style=style,
         resolution=RESOLUTION,
         autoscale=True,
@@ -342,6 +385,34 @@ def check_map_mollweide():
     return filename
 
 
+# TODO : re-enable this when we solidify the mollweide gradient option
+# def check_map_mollweide_gradient():
+#     filename = DATA_PATH / "map-mollweide-gradient.png"
+#     style_gradient = STYLE.extend({"background_color": "#ffffff00"})
+#     p = MapPlot(
+#         projection=Projection.MOLLWEIDE,
+#         style=style_gradient,
+#         resolution=RESOLUTION,
+#         autoscale=True,
+#         gradient_preset=[
+#             [0.0, "#000000"],
+#             [0.4, "#151e47"],
+#             [0.45, "#2c3675"],
+#             [0.55, "#232c6d"],
+#             [0.6, "#182250"],
+#             [1.0, "#000000"],
+#         ],
+#     )
+#     p.stars(
+#         where=[_.magnitude < 4],
+#         where_labels=[_.magnitude < 1.8],
+#     )
+#     p.constellations()
+#     p.milky_way(style={"alpha": 0.2, "color": "#9C9C9C"})
+#     p.export(filename, padding=0.1)
+#     return filename
+
+
 def check_map_gridlines():
     filename = DATA_PATH / "map-gridlines.png"
 
@@ -351,7 +422,7 @@ def check_map_gridlines():
     )
 
     p = MapPlot(
-        projection=Projection.MILLER,
+        projection=Miller(),
         ra_min=10 * 15,
         ra_max=15 * 15,
         dec_min=31,
@@ -379,13 +450,16 @@ def check_map_gridlines():
 
 
 def check_map_moon_phase_waxing_crescent():
+    observer = Observer(
+        **POWAY,
+        dt=dt_dec_16,
+    )
     m = Moon.get(dt=dt_dec_16, **POWAY)
     p = m.create_map(
         height_degrees=4,
         width_degrees=4,
-        projection=Projection.MILLER,
-        **POWAY,
-        dt=dt_dec_16,
+        projection=Miller(),
+        observer=observer,
         style=STYLE,
         autoscale=True,
     )
@@ -409,7 +483,7 @@ def check_map_moon_phase_waxing_crescent():
 
 def check_map_plot_limit_by_geometry():
     p = MapPlot(
-        projection=Projection.STEREO_NORTH,
+        projection=StereoNorth(),
         ra_min=18 * 15,
         ra_max=20 * 15,
         dec_min=23,
@@ -451,7 +525,7 @@ def check_map_plot_limit_by_geometry():
 def check_map_plot_custom_clip_path_virgo():
     virgo = Constellation.get(iau_id="vir")
     p = MapPlot(
-        projection=Projection.MILLER,
+        projection=Miller(),
         ra_min=11 * 15,
         ra_max=16 * 15,
         dec_min=-29,
@@ -499,7 +573,7 @@ def check_map_plot_custom_clip_path_virgo():
 
 def check_map_label_callables():
     p = MapPlot(
-        projection=Projection.MILLER,
+        projection=Miller(),
         ra_min=3.5 * 15,
         ra_max=4 * 15,
         dec_min=22,
@@ -535,7 +609,7 @@ def check_map_label_callables():
 
 def check_map_milky_way_multi_polygon():
     p = MapPlot(
-        projection=Projection.MILLER,
+        projection=Miller(),
         ra_min=17.5 * 15,
         ra_max=19.5 * 15,
         dec_min=-30,

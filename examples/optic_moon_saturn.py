@@ -1,21 +1,21 @@
 from datetime import datetime
-from pytz import timezone
+from zoneinfo import ZoneInfo
 
-from starplot import Moon, optics, _
+from starplot import Moon, optics, Observer, _
 from starplot.styles import PlotStyle, extensions
 
-dt = datetime.now(timezone("US/Pacific")).replace(2024, 8, 20, 21, 0, 0)
+dt = datetime(2024, 8, 20, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 
-# Julian, CA
-lat = 33.070833
-lon = -116.585556
+observer = Observer(
+    dt=dt,
+    lat=33.070833,  # Julian, CA
+    lon=-116.585556,
+)
 
-m = Moon.get(dt=dt, lat=lat, lon=lon)
+m = Moon.get(dt=observer.dt, lat=observer.lat, lon=observer.lon)
 
 op = m.create_optic(
-    lat=lat,
-    lon=lon,
-    dt=dt,
+    observer=observer,
     optic=optics.Binoculars(magnification=15, fov=65),
     style=PlotStyle().extend(extensions.GRAYSCALE_DARK, extensions.OPTIC),
     resolution=2000,

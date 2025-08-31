@@ -44,61 +44,6 @@ class ExtentMaskMixin:
                 ]
             )
 
-    @cache
-    def _extent_mask_altaz(self):
-        """
-        Returns shapely geometry objects of the alt/az extent
-
-        If the extent crosses North cardinal direction, then a MultiPolygon will be returned
-        """
-        extent = list(self.ax.get_extent(crs=self._plate_carree))
-        alt_min, alt_max = extent[2], extent[3]
-        az_min, az_max = extent[0], extent[1]
-
-        if az_min < 0:
-            az_min += 360
-        if az_max < 0:
-            az_max += 360
-
-        if az_min >= az_max:
-            az_max += 360
-
-        self.az = (az_min, az_max)
-        self.alt = (alt_min, alt_max)
-
-        if az_max <= 360:
-            coords = [
-                [az_min, alt_min],
-                [az_max, alt_min],
-                [az_max, alt_max],
-                [az_min, alt_max],
-                [az_min, alt_min],
-            ]
-            return Polygon(coords)
-
-        else:
-            coords_1 = [
-                [az_min, alt_min],
-                [360, alt_min],
-                [360, alt_max],
-                [az_min, alt_max],
-                [az_min, alt_min],
-            ]
-            coords_2 = [
-                [0, alt_min],
-                [az_max - 360, alt_min],
-                [az_max - 360, alt_max],
-                [0, alt_max],
-                [0, alt_min],
-            ]
-
-            return MultiPolygon(
-                [
-                    Polygon(coords_1),
-                    Polygon(coords_2),
-                ]
-            )
-
     def _is_global_extent(self):
         """Returns True if the plot's RA/DEC range is the entire celestial sphere"""
         return all(

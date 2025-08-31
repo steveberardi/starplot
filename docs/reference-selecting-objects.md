@@ -7,11 +7,11 @@ Let's check out a simple example:
 
 <div class="tutorial">
 ```python linenums="1" hl_lines="15-20"
-from starplot import MapPlot, Projection, _
+from starplot import MapPlot, Mercator, _
 
 # Create a simple map around Orion
 p = MapPlot(
-    projection=Projection.MERCATOR,
+    projection=Mercator(),
     ra_min=3 * 15,
     ra_max=8 * 15,
     dec_min=-16,

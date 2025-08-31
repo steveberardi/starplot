@@ -10,6 +10,8 @@ from multiprocessing import Pool
 
 skip = [
     "map_comet_neowise.py",
+    "horizon_sgr.py",
+    "optic_moon_saturn.py",
     # "map_milky_way_stars.py",
     # "stuff.py",
 ]
@@ -26,6 +28,9 @@ def get_example_names():
     filenames = []
 
     for filename in glob.iglob("*.py"):
+        # if filename != "optic_solar_eclipse.py":
+        #     continue
+
         if filename.endswith("examples.py"):
             continue
 

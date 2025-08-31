@@ -32,18 +32,23 @@ To create a star chart for tonight's sky as seen from [Palomar Mountain](https:/
 
 ```python
 from datetime import datetime
-from pytz import timezone
-import starplot as sp
+from zoneinfo import ZoneInfo
 
-tz = timezone("America/Los_Angeles")
+from starplot import ZenithPlot, Observer, styles, _
 
-p = sp.MapPlot(
-    projection=sp.Projection.ZENITH,
+tz = ZoneInfo("America/Los_Angeles")
+dt = datetime.now(tz).replace(hour=22)
+
+observer = Observer(
+    dt=dt,
     lat=33.363484,
     lon=-116.836394,
-    dt=datetime.now(tz).replace(hour=22),
-    style=sp.styles.PlotStyle().extend(
-        sp.styles.extensions.BLUE_MEDIUM,
+)
+
+p = ZenithPlot(
+    observer=observer,
+    style=styles.PlotStyle().extend(
+        styles.extensions.BLUE_MEDIUM,
     ),
     resolution=4096,
     autoscale=True,
@@ -51,6 +56,7 @@ p = sp.MapPlot(
 p.constellations()
 p.stars(where=[_.magnitude < 4.6])
 p.constellation_labels()
+p.horizon()
 p.export("starchart.png")
 ```
 

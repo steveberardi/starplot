@@ -1,11 +1,10 @@
-import datetime
 import math
 from typing import Callable
 from functools import cache
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt
-from matplotlib import path, patches, ticker
+from matplotlib import patches, ticker
 from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import Polygon
 from skyfield.api import wgs84
@@ -15,18 +14,21 @@ from starplot.coordinates import CoordinateSystem
 from starplot import geod
 from starplot.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
+from starplot.observer import Observer
 from starplot.plotters import (
     ConstellationPlotterMixin,
     StarPlotterMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
+    LegendPlotterMixin,
+    GradientBackgroundMixin,
 )
-from starplot.projections import Projection
+from starplot.projections import StereoNorth, StereoSouth, ProjectionBase
 from starplot.styles import (
     ObjectStyle,
-    LabelStyle,
     PlotStyle,
     PathStyle,
+    GradientDirection,
 )
 from starplot.styles.helpers import use_style
 from starplot.utils import lon_to_ra, ra_to_lon
@@ -42,21 +44,18 @@ class MapPlot(
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
     ConstellationPlotterMixin,
+    LegendPlotterMixin,
+    GradientBackgroundMixin,
 ):
     """Creates a new map plot.
 
-    !!! star "Note"
-        **`lat`, `lon`, and `dt` are required for perspective projections (`Orthographic`, `Stereographic`, and `Zenith`)**
-
     Args:
-        projection: Projection of the map
+        projection: [Projection](/reference-mapplot/#projections) of the map
         ra_min: Minimum right ascension of the map's extent, in degrees (0...360)
         ra_max: Maximum right ascension of the map's extent, in degrees (0...360)
         dec_min: Minimum declination of the map's extent, in degrees (-90...90)
         dec_max: Maximum declination of the map's extent, in degrees (-90...90)
-        lat: Latitude for perspective projections: Orthographic, Stereographic, and Zenith
-        lon: Longitude for perspective projections: Orthographic, Stereographic, and Zenith
-        dt: Date/time to use for star/planet positions, (*must be timezone-aware*). Default = current UTC time.
+        observer: Observer instance which specifies a time and place
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
@@ -72,17 +71,16 @@ class MapPlot(
     """
 
     _coordinate_system = CoordinateSystem.RA_DEC
+    _gradient_direction = GradientDirection.LINEAR
 
     def __init__(
         self,
-        projection: Projection,
+        projection: ProjectionBase,
         ra_min: float = 0,
         ra_max: float = 360,
         dec_min: float = -90,
         dec_max: float = 90,
-        lat: float = None,
-        lon: float = None,
-        dt: datetime = None,
+        observer: Observer = Observer(),
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_MAP_STYLE,
         resolution: int = 4096,
@@ -95,7 +93,7 @@ class MapPlot(
         **kwargs,
     ) -> "MapPlot":
         super().__init__(
-            dt,
+            observer,
             ephemeris,
             style,
             resolution,
@@ -120,23 +118,7 @@ class MapPlot(
         self.ra_max = ra_max
         self.dec_min = dec_min
         self.dec_max = dec_max
-        self.lat = lat
-        self.lon = lon
         self.clip_path = clip_path
-
-        if self.projection in [
-            Projection.ORTHOGRAPHIC,
-            Projection.STEREOGRAPHIC,
-            Projection.ZENITH,
-        ] and (lat is None or lon is None):
-            raise ValueError(
-                f"lat and lon are required for the {self.projection.value.upper()} projection"
-            )
-
-        if self.projection == Projection.ZENITH and not self._is_global_extent():
-            raise ValueError(
-                "Zenith projection requires a global extent: ra_min=0, ra_max=360, dec_min=-90, dec_max=90"
-            )
 
         self._geodetic = ccrs.Geodetic()
         self._plate_carree = ccrs.PlateCarree()
@@ -192,9 +174,10 @@ class MapPlot(
         self.dec_max = extent[3]
 
         # adjust the RA min/max if the DEC bounds is near the poles
-        if self.projection in [Projection.STEREO_NORTH, Projection.STEREO_SOUTH] and (
-            self.dec_max > 80 or self.dec_min < -80
-        ):
+        if (
+            isinstance(self.projection, StereoNorth)
+            or isinstance(self.projection, StereoSouth)
+        ) and (self.dec_max > 80 or self.dec_min < -80):
             self.ra_min = 0
             self.ra_max = 360
 
@@ -233,11 +216,13 @@ class MapPlot(
             label: Label for the zenith
             legend_label: Label in the legend
         """
-        if self.lat is None or self.lon is None or self.dt is None:
-            raise ValueError("lat, lon, and dt are required for plotting the zenith")
+        if self.observer is None:
+            raise ValueError("observer is required for plotting the zenith")
 
-        geographic = wgs84.latlon(latitude_degrees=self.lat, longitude_degrees=self.lon)
-        observer = geographic.at(self.timescale)
+        geographic = wgs84.latlon(
+            latitude_degrees=self.observer.lat, longitude_degrees=self.observer.lon
+        )
+        observer = geographic.at(self.observer.timescale)
         zenith = observer.from_altaz(alt_degrees=90, az_degrees=0)
         ra, dec, _ = zenith.radec()
 
@@ -262,11 +247,13 @@ class MapPlot(
             style: Style of the horizon path. If None, then the plot's style definition will be used.
             labels: List of labels for cardinal directions. **NOTE: labels should be in the order: North, East, South, West.**
         """
-        if self.lat is None or self.lon is None or self.dt is None:
-            raise ValueError("lat, lon, and dt are required for plotting the horizon")
+        if self.observer is None:
+            raise ValueError("observer is required for plotting the horizon")
 
-        geographic = wgs84.latlon(latitude_degrees=self.lat, longitude_degrees=self.lon)
-        observer = geographic.at(self.timescale)
+        geographic = wgs84.latlon(
+            latitude_degrees=self.observer.lat, longitude_degrees=self.observer.lon
+        )
+        observer = geographic.at(self.observer.timescale)
         zenith = observer.from_altaz(alt_degrees=90, az_degrees=0)
         ra, dec, _ = zenith.radec()
 
@@ -285,58 +272,16 @@ class MapPlot(
             y.append(y0)
 
         style_kwargs = {}
-        if self.projection == Projection.ZENITH:
-            """
-            For zenith projections, we plot the horizon as a patch to make a more perfect circle
-            """
-            style_kwargs = style.line.matplot_kwargs(self.scale)
-            style_kwargs["clip_on"] = False
-            style_kwargs["edgecolor"] = style_kwargs.pop("color")
-            patch = patches.Circle(
-                (0.50, 0.50),
-                radius=0.454,
-                facecolor=None,
-                fill=False,
-                transform=self.ax.transAxes,
-                **style_kwargs,
-            )
-            self.ax.add_patch(patch)
-            self._background_clip_path = patch
-            self._update_clip_path_polygon(
-                buffer=style.line.width / 2 + 2 * style.line.edge_width + 20
-            )
-
-            if not labels:
-                return
-
-            label_ax_coords = [
-                (0.5, 0.95),  # north
-                (0.045, 0.5),  # east
-                (0.5, 0.045),  # south
-                (0.954, 0.5),  # west
-            ]
-            for label, coords in zip(labels, label_ax_coords):
-                self.ax.annotate(
-                    label,
-                    coords,
-                    xycoords=self.ax.transAxes,
-                    clip_on=False,
-                    **style.label.matplot_kwargs(self.scale),
-                )
-
-            return
-
-        else:
-            style_kwargs["clip_on"] = True
-            style_kwargs["clip_path"] = self._background_clip_path
-            self.ax.plot(
-                x,
-                y,
-                dash_capstyle=style.line.dash_capstyle,
-                **style.line.matplot_kwargs(self.scale),
-                **style_kwargs,
-                **self._plot_kwargs(),
-            )
+        style_kwargs["clip_on"] = True
+        style_kwargs["clip_path"] = self._background_clip_path
+        self.ax.plot(
+            x,
+            y,
+            dash_capstyle=style.line.dash_capstyle,
+            **style.line.matplot_kwargs(self.scale),
+            **style_kwargs,
+            **self._plot_kwargs(),
+        )
 
         if not labels:
             return
@@ -420,6 +365,7 @@ class MapPlot(
             gid="gridlines",
             **line_style_kwargs,
         )
+        gridlines.set_zorder(style.line.zorder)
 
         if labels:
             self._axis_labels = True
@@ -482,6 +428,20 @@ class MapPlot(
         width, height = bbox.width, bbox.height
         self.fig.set_size_inches(width, height)
 
+    def _set_extent(self):
+        bounds = self._latlon_bounds()
+        # (bounds[2] + bounds[3]) / 2
+        # center_lon = (bounds[0] + bounds[1]) / 2
+
+        # if hasattr(self.projection, "center_ra"):
+        #     self.projection.center_ra = -1 * center_lon
+
+        if self._is_global_extent():
+            # this cartopy function works better for setting global extents
+            self.ax.set_global()
+        else:
+            self.ax.set_extent(bounds, crs=self._plate_carree)
+
     def _init_plot(self):
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
@@ -489,74 +449,21 @@ class MapPlot(
             layout="constrained",
             dpi=DPI,
         )
-        bounds = self._latlon_bounds()
-        center_lat = (bounds[2] + bounds[3]) / 2
-        center_lon = (bounds[0] + bounds[1]) / 2
-        self._center_lat = center_lat
-        self._center_lon = center_lon
 
-        if self.projection in [
-            Projection.ORTHOGRAPHIC,
-            Projection.STEREOGRAPHIC,
-            Projection.ZENITH,
-        ]:
-            # Calculate local sidereal time (LST) to shift RA DEC to be in line with current date and time
-            lst = -(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
-            self._proj = Projection.crs(self.projection, lon=lst, lat=self.lat)
-        elif self.projection == Projection.LAMBERT_AZ_EQ_AREA:
-            self._proj = Projection.crs(
-                self.projection, center_lat=center_lat, center_lon=center_lon
-            )
-        else:
-            self._proj = Projection.crs(self.projection, center_lon)
-        self._proj.threshold = 1000
-        self.ax = plt.axes(projection=self._proj)
+        self._proj = self.projection.crs
+        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
 
-        if self._is_global_extent():
-            if self.projection == Projection.ZENITH:
-                theta = np.linspace(0, 2 * np.pi, 100)
-                center, radius = [0.5, 0.5], 0.45
-                verts = np.vstack([np.sin(theta), np.cos(theta)]).T
-                circle = path.Path(verts * radius + center)
-                extent = self.ax.get_extent(crs=self._proj)
-                self.ax.set_extent((p / 3.548 for p in extent), crs=self._proj)
-                self.ax.set_boundary(circle, transform=self.ax.transAxes)
-            else:
-                # this cartopy function works better for setting global extents
-                self.ax.set_global()
-        else:
-            self.ax.set_extent(bounds, crs=self._plate_carree)
-
-        self.ax.set_facecolor(self.style.background_color.as_hex())
+        self._set_extent()
         self._adjust_radec_minmax()
 
-        self.logger.debug(f"Projection = {self.projection.value.upper()}")
+        self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
 
         self._fit_to_ax()
+
+        # if self.gradient_preset:
+        #     self.apply_gradient_background(self.gradient_preset)
+
         self._plot_background_clip_path()
-
-    @use_style(LabelStyle, "info_text")
-    def info(self, style: LabelStyle = None):
-        """
-        Plots info text in the lower left corner, including date/time and lat/lon.
-
-        _Only available for ZENITH projections_
-
-        Args:
-            style: Styling of the info text. If None, then the plot's style definition will be used.
-        """
-        if not self.projection == Projection.ZENITH:
-            raise NotImplementedError("info text only available for zenith projections")
-
-        dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        info = f"{str(self.lat)}, {str(self.lon)}\n{dt_str}"
-        self.ax.text(
-            0.05,
-            0.05,
-            info,
-            transform=self.ax.transAxes,
-            **style.matplot_kwargs(self.scale),
-        )
 
     def _ax_to_radec(self, x, y):
         trans = self.ax.transAxes + self.ax.transData.inverted()
@@ -565,6 +472,12 @@ class MapPlot(
         return (x_ra + 360), y_ra
 
     def _plot_background_clip_path(self):
+        if self.style.has_gradient_background():
+            background_color = "#ffffff00"
+            self._plot_gradient_background(self.style.background_color)
+        else:
+            background_color = self.style.background_color.as_hex()
+
         def to_axes(points):
             ax_points = []
 
@@ -579,19 +492,8 @@ class MapPlot(
             points = list(zip(*self.clip_path.exterior.coords.xy))
             self._background_clip_path = patches.Polygon(
                 to_axes(points),
-                facecolor=self.style.background_color.as_hex(),
+                facecolor=background_color,
                 fill=True,
-                zorder=-2_000,
-                transform=self.ax.transAxes,
-            )
-        elif self.projection == Projection.ZENITH:
-            self._background_clip_path = patches.Circle(
-                (0.50, 0.50),
-                radius=0.45,
-                fill=True,
-                facecolor=self.style.background_color.as_hex(),
-                # edgecolor=self.style.border_line_color.as_hex(),
-                linewidth=0,
                 zorder=-2_000,
                 transform=self.ax.transAxes,
             )
@@ -602,12 +504,13 @@ class MapPlot(
                 (0, 0),
                 width=1,
                 height=1,
-                facecolor=self.style.background_color.as_hex(),
+                facecolor=background_color,
                 linewidth=0,
                 fill=True,
                 zorder=-2_000,
                 transform=self.ax.transAxes,
             )
 
+        self.ax.set_facecolor(background_color)
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon()

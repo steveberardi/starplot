@@ -1,19 +1,19 @@
-from starplot import MapPlot, Projection, callables, _
+from starplot import MapPlot, Miller, callables, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.ANTIQUE,
+    extensions.BLUE_NIGHT,
     extensions.MAP,
 )
 p = MapPlot(
-    projection=Projection.MILLER,
-    ra_min=15.6 * 15,
-    ra_max=19.8 * 15,
+    projection=Miller(),
+    ra_min=15 * 15,
+    ra_max=20 * 15,
     dec_min=-45.2,
     dec_max=-3,
     style=style,
-    resolution=4000,
-    autoscale=True,
+    resolution=3600,
+    scale=0.8,
 )
 p.constellations()
 p.constellation_borders()
@@ -29,35 +29,26 @@ p.stars(
     style__label__offset_x=8,
     style__label__offset_y=-8,
     style__label__border_width=2,
-    style__label__border_color="#fefaed",
 )
 p.stars(
     where=[
         _.magnitude > 3,  # select the dimmer stars
-        _.magnitude < 9,
+        _.magnitude < 8,
     ],
     bayer_labels=True,
-    catalog="big-sky-mag11",
 )
 
 p.nebula(
-    where=[
-        # select DSOs which have no defined magnitude or less than 10
-        _.magnitude.isnull()
-        | (_.magnitude < 10),
-    ],
+    # select DSOs which have no defined magnitude or less than 7
+    where=[_.magnitude.isnull() | (_.magnitude < 7)],
     true_size=True,  # plot nebula as their true size
 )
 p.open_clusters(
-    where=[
-        _.magnitude.isnull() | (_.magnitude < 10),
-    ],
+    where=[_.magnitude.isnull() | (_.magnitude < 7)],
     true_size=False,
 )
 p.globular_clusters(
-    where=[
-        _.magnitude.isnull() | (_.magnitude < 10),
-    ],
+    where=[_.magnitude.isnull() | (_.magnitude < 7)],
     true_size=False,
 )
 

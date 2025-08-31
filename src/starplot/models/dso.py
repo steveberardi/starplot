@@ -89,6 +89,13 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     type: DsoType
     """Type of DSO"""
 
+    common_names: list[str] = None
+    """
+    List of common names for the DSO (e.g. 'Andromeda Galaxy' for M31)
+    
+    Note: this field is parsed into a list of strings _after_ querying DSOs, so if you want to query on this field, you should treat it as a comma-separated list.
+    """
+
     magnitude: Optional[float] = None
     """Magnitude (if available)"""
 
@@ -186,6 +193,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
 def from_tuple(d: tuple) -> DSO:
     dso = DSO(
         name=d.name,
+        common_names=d.common_names.split(",") if d.common_names else [],
         ra=d.ra,
         dec=d.dec,
         type=d.type,
@@ -243,10 +251,11 @@ DSO_LEGEND_LABELS = {
     DsoType.GROUP_OF_GALAXIES: "Galaxy",
     # Nebulas ----------
     DsoType.NEBULA: "Nebula",
-    DsoType.PLANETARY_NEBULA: "Nebula",
+    DsoType.PLANETARY_NEBULA: "Planetary Nebula",
     DsoType.EMISSION_NEBULA: "Nebula",
     DsoType.STAR_CLUSTER_NEBULA: "Nebula",
     DsoType.REFLECTION_NEBULA: "Nebula",
+    DsoType.HII_IONIZED_REGION: "Nebula",
     # Star Clusters ----------
     DsoType.OPEN_CLUSTER: "Open Cluster",
     DsoType.GLOBULAR_CLUSTER: "Globular Cluster",
@@ -255,7 +264,6 @@ DSO_LEGEND_LABELS = {
     DsoType.ASSOCIATION_OF_STARS: "Association of stars",
     DsoType.NOVA_STAR: "Nova Star",
     # Others
-    DsoType.HII_IONIZED_REGION: "HII Ionized Region",
     DsoType.DARK_NEBULA: "Dark Nebula",
     DsoType.SUPERNOVA_REMNANT: "Supernova Remnant",
 }

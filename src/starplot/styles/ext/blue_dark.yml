@@ -105,7 +105,6 @@ dso_unknown: &DSO
     edge_color: hsl(209, 50%, 20%)
     zorder: -500
 dso_dark_nebula: *DSO
-dso_hii_ionized_region: *DSO
 dso_supernova_remnant: *DSO
 dso_nova_star: *DSO
 dso_nonexistant: *DSO

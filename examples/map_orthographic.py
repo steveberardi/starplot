@@ -1,7 +1,7 @@
 from datetime import datetime
 from pytz import timezone
 
-from starplot import MapPlot, Projection, _
+from starplot import MapPlot, Orthographic, Observer, _
 from starplot.styles import PlotStyle, extensions
 
 
@@ -13,15 +13,17 @@ style = PlotStyle().extend(
 tz = timezone("America/Los_Angeles")
 dt = datetime(2024, 10, 19, 21, 00, tzinfo=tz)
 
-p = MapPlot(
-    projection=Projection.ORTHOGRAPHIC,
+observer = Observer(
+    dt=dt,
     lat=32.97,
     lon=-117.038611,
-    dt=dt,
-    ra_min=0,
-    ra_max=360,
-    dec_min=-90,
-    dec_max=90,
+)
+p = MapPlot(
+    projection=Orthographic(
+        center_ra=observer.lst,
+        center_dec=observer.lat,
+    ),
+    observer=observer,
     style=style,
     scale=0.9,  # lower the scale since it shows a large area
 )

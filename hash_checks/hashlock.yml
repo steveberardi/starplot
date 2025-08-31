@@ -1,13 +1,17 @@
 horizon_base:
-  dhash: 0687590d4409c4700683490d4419c4d006a34d0d441b4460
+  dhash: 8686ca8ec68a86f086a2ca8ec69a86f086a2ca8ec69a86f0
   filename: /starplot/hash_checks/data/horizon-base.png
-  phash: e3ba1ce506e23387
+  phash: c1b53ec42ee03b87
+horizon_gradient_background:
+  dhash: d968a4f2b2b2a296f168a672b2b2ba96f168a6b2b29aae92
+  filename: /starplot/hash_checks/data/horizon-gradient-background.png
+  phash: 954f43916bc56ce4
 horizon_north_celestial_pole:
-  dhash: 30aa48d0e232a45430aa48d08232a44431aa49c8e232ac54
+  dhash: b0aaaab2a2b2a696b0aaaab282b2a696b2aaaaeaa2b2aec4
   filename: /starplot/hash_checks/data/horizon-north-celestial-pole.png
-  phash: d59a3ad94ad24bc2
+  phash: d5907ad16ad16bc4
 map_coma_berenices_dso_size:
-  dhash: aa84acecc888c0c0a2848ceca888c6c08a8a92a2a882c282
+  dhash: ea84acecc888c0c0aa828ceca888c682aa8a92a2a882c282
   filename: /starplot/hash_checks/data/map-coma-berenices-dso-size.png
   phash: 969669696f961269
 map_custom_stars:
@@ -15,9 +19,9 @@ map_custom_stars:
   filename: /starplot/hash_checks/data/map-custom-stars.png
   phash: e61a5bb425a53dd0
 map_gridlines:
-  dhash: 0c219595224949130c219595224949130c21959522494913
+  dhash: 0da29196224949930da29196224949930da2919622494993
   filename: /starplot/hash_checks/data/map-gridlines.png
-  phash: cbb44b162d3262af
+  phash: ebb46b162d32628d
 map_label_callables:
   dhash: 80a06088c860a080d098ac2c2cac98e0809a9d0d0d9d98a0
   filename: /starplot/hash_checks/data/map-m45-label-callables.png
@@ -27,98 +31,110 @@ map_milky_way_multi_polygon:
   filename: /starplot/hash_checks/data/map-milky-way-multi-polygon.png
   phash: be89be98d6584a68
 map_mollweide:
-  dhash: 0f2b33632b33170f0f2b33632b33170f0f63736b2b32170f
+  dhash: 0f2b336b2b33170f0f2b336b2b33170f176373632b32170f
   filename: /starplot/hash_checks/data/map-mollweide.png
-  phash: ebcbb69ce3249460
+  phash: ebcbb69ce3209461
 map_moon_phase_waxing_crescent:
-  dhash: 0814284d4d6814080814284d4d6814080804084d4d480408
+  dhash: 0814284d4d2814488894a84d4da894888884884d4d888488
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b3cccc3333cccc31
 map_orion_base:
-  dhash: 18193b5e3a2f646919393bde2a2d646958192bce2a2f6469
+  dhash: 18193b5e3a2f64691b393b5e2a2d646958192bce2a2f6469
   filename: /starplot/hash_checks/data/map-orion-base.png
-  phash: bf795a241784359c
+  phash: bf794a241784b59c
 map_orion_extra:
-  dhash: 191b3b7f3b65690f1b191b7f2b25690d1c1b0b4e2b25690d
+  dhash: 181b3b7f3b2d656d1d1b3b5f2b25656d1c1b3b4e2b2f6567
   filename: /starplot/hash_checks/data/map-orion-extra.png
-  phash: be71e01ee117a499
+  phash: bef1c616c116c19e
 map_plot_custom_clip_path_virgo:
   dhash: 060521339d1c04040625252f0d1c0404062525270d1c0404
   filename: /starplot/hash_checks/data/map-custom-clip-path-virgo.png
   phash: e66e8591b10d4bda
 map_plot_limit_by_geometry:
-  dhash: 12e8c086440c124422cac286040c124432e8c086450c5242
+  dhash: 282189a4564c2c11282191a4560c2c11282199b4164c2c11
   filename: /starplot/hash_checks/data/map-limit-by-geometry.png
-  phash: a4509bbe2ee9328e
+  phash: f29cca37498473d1
 map_scope_bino_fov:
-  dhash: 86c092848ca28400868633454d21920c868633454d21920c
+  dhash: 8c0022120a0a12028c000a160e0e0e028c000a160e0e0e02
   filename: /starplot/hash_checks/data/map-scope-bino-fov.png
-  phash: e465997166649979
+  phash: f3504c72735c5633
 map_stereo_base:
-  dhash: 7372647231385412737264f431185416737664f2b498d412
+  dhash: 25c57b3194a9a1d145c55b319281a1d345c75b3192a929f2
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
-  phash: 9dce6979e81162b2
+  phash: 8a2e62d4949e0ff6
 map_with_planets:
   dhash: 639344668ddb323b629304668ddb323b2a9304668ddb323b
   filename: /starplot/hash_checks/data/map-mercator-planets.png
   phash: e8c29d89a67f5312
+map_with_planets_gradient:
+  dhash: 156cfa997224c440146cea9952248540046caa9d522c3222
+  filename: /starplot/hash_checks/data/map-mercator-planets-gradient.png
+  phash: 9d25e67ed900a46d
 map_wrapping:
-  dhash: 0f352ccd655231150f352ccd655231150f352ccd65523115
+  dhash: 96e9514d2b2d4d4596e9514d2b2d4d4596e9514d2b2d4d45
   filename: /starplot/hash_checks/data/map-wrapping.png
-  phash: ba36d8c583c2b536
+  phash: ea71b03431376979
 optic_camera_rotated:
-  dhash: 25468b13261c1a6525468b13261c1a6525468b13261c1a65
+  dhash: 25468b13271c1a6525468b13271c1a6525468b13271c1a65
   filename: /starplot/hash_checks/data/optic-camera-rotated-m45.png
-  phash: ac6cc6941edb7285
+  phash: ac6cc6941ed9f08d
 optic_clipping:
-  dhash: 7099b874e2f4fc4d70d9b8f4eaf4fc5971e898f2d2f4fc71
+  dhash: b26498b866f4fc5db26598b8eef4fc59b271d8b8e6f0fc70
   filename: /starplot/hash_checks/data/optic-clipping.png
-  phash: 95696a87279c7871
+  phash: 95696a87ad986963
 optic_m45_binoculars:
   dhash: 8e17237133330e4d8e17237133330e4d8e17237133330e4d
   filename: /starplot/hash_checks/data/optic-m45-binoculars.png
-  phash: ae7b80f182d18ed3
+  phash: ae7b807186d18ed3
 optic_m45_camera:
-  dhash: 4d717151716549754d717151716549754d71715171654975
+  dhash: 4d717151717559754d717151717559754d71715171755975
   filename: /starplot/hash_checks/data/optic-m45-camera.png
-  phash: ae7b846e907b84c5
+  phash: ee7b846e907b84c4
 optic_m45_reflector:
-  dhash: 8e173b712b330e4d8e173b712b330e4d8e173b712b330e4d
+  dhash: 8e173b752b330e4d8e173b752b330e4d8e173b752b330e4d
   filename: /starplot/hash_checks/data/optic-m45-reflector.png
   phash: ba7b84e086e59a93
 optic_m45_scope:
-  dhash: 8e172b5133230e4d8e172b5133230e4d8e172b5133230e4d
+  dhash: 8e172b5133230e4d8e17235133230e4d8e172b5133230e4d
   filename: /starplot/hash_checks/data/optic-m45-scope.png
   phash: ae7b84e492b1ce83
+optic_m45_scope_gradient:
+  dhash: 8e07231333030e4d8e07331b33230e4d8e0f2b1f17070e4d
+  filename: /starplot/hash_checks/data/optic-m45-scope-gradient.png
+  phash: ae7b84e49293ce83
 optic_moon_phase_full:
   dhash: 0e2b553333552b0e0e2b553333552b0e0e2b553333552b0e
   filename: /starplot/hash_checks/data/optic-moon-phase-full.png
-  phash: fb6fa02395658721
+  phash: ff7aa02395308735
 optic_moon_phase_new:
-  dhash: 13498e96968e491313498e96968e491313498e96968e4913
+  dhash: 16088e96968e081616088e96968e081616088e96968e0816
   filename: /starplot/hash_checks/data/optic-moon-phase-new.png
-  phash: e5259ec6694c6761
+  phash: e5719e96690c6663
 optic_moon_phase_waxing_crescent:
-  dhash: 0e33454d59712b0e0e33454d59712b0e0e33454d59712b0e
+  dhash: 0e33454959712b0e0e33454959712b0e0e33454959712b0e
   filename: /starplot/hash_checks/data/optic-moon-phase-waxing-crescent.png
   phash: bb26e4999166c699
 optic_orion_nebula_refractor:
-  dhash: 8e17257163238e4d8e17257163238e4d8e17257163238e4d
+  dhash: 8e17257163230e4d8e17257163230e4d8e17257163230e4d
   filename: /starplot/hash_checks/data/optic-orion-nebula-refractor.png
-  phash: ae3ab061c3939e96
+  phash: ae3ab065c3919e96
 optic_polaris_binoculars:
-  dhash: 8e172b5523338e4d8e172b5523338e4d8e172b5523338e4d
+  dhash: 8e172b5523330e4d8e172b5523330e4d8e172b5523330e4d
   filename: /starplot/hash_checks/data/optic-binoculars-polaris.png
-  phash: aa7b84e186d18ed3
+  phash: aa6b84e186f18ed3
 optic_solar_eclipse_binoculars:
-  dhash: 0769f0cccccc710f0769f0cccccc710f0369c0cccccc610b
+  dhash: 71ccb28ecc8ed47171ccb28ecc8ed47171c8a28ccc8ac071
   filename: /starplot/hash_checks/data/optic-binoculars-eclipse.png
-  phash: b38ccc3333cccc33
+  phash: 91cc4c333bcc6c73
 optic_wrapping:
-  dhash: 71f0ecd2dad8650a71e0d4aca4c4782a71e8d4aca4c4793a
+  dhash: 70f0ecd2dad8650a71e0d4aca4c4792a71e8d4aca4c4793a
   filename: /starplot/hash_checks/data/optic-wrapping.png
   phash: d1846e1a792ef139
 zenith_base:
-  dhash: 1771cc8ad67d338e1771cc86d47d338e1771c486947d3b0e
+  dhash: 71f0d4aea2d4f87171f0d4ae86d4e87171f0d48e86d4e871
   filename: /starplot/hash_checks/data/zenith-base.png
-  phash: be40fb3ee5289660
+  phash: 90d52b552957645f
+zenith_gradient:
+  dhash: 548e0333292b8674448e03312b2b864471cc8e0f0f8ecc71
+  filename: /starplot/hash_checks/data/zenith-gradient.png
+  phash: e934c4da9acd99a4

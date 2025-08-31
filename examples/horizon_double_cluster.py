@@ -1,17 +1,30 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from pytz import timezone
-
-from starplot import HorizonPlot, PlotStyle, style_extensions, DSO, Constellation, _
-
-
-style = PlotStyle().extend(
-    style_extensions.BLUE_GOLD,
-    style_extensions.MAP,
+from starplot import (
+    HorizonPlot,
+    PlotStyle,
+    style_extensions,
+    DSO,
+    Constellation,
+    Observer,
+    _,
 )
 
-tz = timezone("US/Pacific")
-dt = tz.localize(datetime(2024, 11, 2, 21, 0, 0, 0))
+style = PlotStyle().extend(
+    style_extensions.BLUE_NIGHT,
+    style_extensions.MAP,
+    style_extensions.GRADIENT_ASTRONOMICAL_TWILIGHT,
+)
+
+tz = ZoneInfo("US/Pacific")
+dt = datetime(2024, 11, 2, 21, 0, 0, 0, tzinfo=tz)
+
+observer = Observer(
+    dt=dt,
+    lat=33.363484,
+    lon=-116.836394,
+)
 
 cas = Constellation.get(iau_id="cas")
 umi = Constellation.get(iau_id="umi")
@@ -19,13 +32,11 @@ per = Constellation.get(iau_id="per")
 
 p = HorizonPlot(
     altitude=(0, 70),
-    azimuth=(320, 435),
-    lat=33.363484,
-    lon=-116.836394,
-    dt=dt,
+    azimuth=(325, 440),
+    observer=observer,
     style=style,
     resolution=4096,
-    scale=1,
+    scale=1.25,
 )
 p.constellations(where=[_.iau_id.isin(["cas", "umi", "per"])])
 p.stars(
@@ -46,7 +57,8 @@ p.bino_fov(
     magnification=10,
 )
 p.constellation_labels()
-p.horizon(show_degree_labels=False, show_ticks=False)
+p.horizon()
+p.style.gridlines.line.width = 2
 p.gridlines()
 
-p.export("horizon_double_cluster.png")
+p.export("horizon_double_cluster.png", padding=0.25)

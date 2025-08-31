@@ -47,6 +47,21 @@ class BaseStyle(BaseModel):
         use_enum_values = True
         validate_assignment = True
 
+    def __enter__(self):
+        self._original = self.model_copy(deep=True)
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        for field_name in self.__pydantic_fields__.keys():
+            original_value = getattr(self._original, field_name)
+            setattr(self, field_name, original_value)
+
+
+class GradientDirection(str, Enum):
+    LINEAR = "linear"
+    RADIAL = "radial"
+    MOLLWEIDE = "mollweide"
+
 
 class FillStyleEnum(str, Enum):
     """Constants that represent the possible fill styles for markers."""
@@ -197,8 +212,14 @@ class LegendLocationEnum(str, Enum):
     INSIDE_BOTTOM = "lower center"
     INSIDE_BOTTOM_RIGHT = "lower right"
     INSIDE_BOTTOM_LEFT = "lower left"
-    OUTSIDE_TOP = "outside upper center"
-    OUTSIDE_BOTTOM = "outside lower center"
+
+    # OUTSIDE_TOP = "outside upper center"
+    # OUTSIDE_BOTTOM = "outside lower center"
+
+    OUTSIDE_TOP_LEFT = "outside left upper"
+    OUTSIDE_TOP_RIGHT = "outside right upper"
+    OUTSIDE_BOTTOM_RIGHT = "outside right lower"
+    OUTSIDE_BOTTOM_LEFT = "outside left lower"
 
 
 class AnchorPointEnum(str, Enum):
@@ -251,6 +272,14 @@ class AnchorPointEnum(str, Enum):
     def from_str(value: str) -> "AnchorPointEnum":
         options = {ap.value: ap for ap in AnchorPointEnum}
         return options.get(value)
+
+
+class AlignmentEnum(str, Enum):
+    """Alignment options for the legend's title and entries"""
+
+    LEFT = "left"
+    RIGHT = "right"
+    CENTER = "center"
 
 
 class ZOrderEnum(int, Enum):
@@ -605,7 +634,10 @@ class PathStyle(BaseStyle):
 class LegendStyle(BaseStyle):
     """Defines the style for the map legend. *Only applies to map plots.*"""
 
-    location: LegendLocationEnum = LegendLocationEnum.OUTSIDE_BOTTOM
+    alignment: AlignmentEnum = AlignmentEnum.LEFT
+    """Alignment for the legend's title and entries"""
+
+    location: LegendLocationEnum = LegendLocationEnum.INSIDE_BOTTOM_RIGHT
     """Location of the legend, relative to the map area (inside or outside)"""
 
     background_color: ColorStr = ColorStr("#fff")
@@ -613,6 +645,15 @@ class LegendStyle(BaseStyle):
 
     background_alpha: float = 1.0
     """Background's alpha (transparency)"""
+
+    padding: float = 0
+    """Padding on the outside of the legend. Negative numbers are supported."""
+
+    padding_x: float = 0
+    """Padding (in pixels) between the _outside_ of the legend and the map in the X axis. Negative numbers are supported."""
+
+    padding_y: float = 0
+    """Padding (in pixels) between the _outside_ of the legend and the map in the Y axis. Negative numbers are supported."""
 
     expand: bool = False
     """If True, the legend will be expanded to fit the full width of the map"""
@@ -629,14 +670,26 @@ class LegendStyle(BaseStyle):
     symbol_padding: float = 0.2
     """Padding between each symbol and its label"""
 
+    border_color: ColorStr = ColorStr("#c5c5c5")
+    """Border color of the legend box"""
+
     border_padding: float = 1.28
-    """Padding around legend border"""
+    """Padding between legend entries and the legend border"""
 
     font_size: int = 23
     """Font size of the legend labels, in points"""
 
     font_color: ColorStr = ColorStr("#000")
     """Font color for legend labels"""
+
+    title_font_size: int = 36
+    """Font size of the legend title"""
+
+    title_font_weight: FontWeightEnum = FontWeightEnum.HEAVY
+    """Font weight of the legend title"""
+
+    title_font_name: str = "Inter"
+    """Name of the font to use for the title. Comma-separated list."""
 
     zorder: int = ZOrderEnum.LAYER_5
     """Zorder of the legend"""
@@ -653,6 +706,14 @@ class LegendStyle(BaseStyle):
             handletextpad=self.symbol_padding,
             mode="expand" if self.expand else None,
             facecolor=self.background_color.as_hex(),
+            title_fontproperties=dict(
+                weight=self.title_font_weight,
+                size=self.title_font_size,
+                family=self.title_font_name.split(","),
+            ),
+            alignment=self.alignment,
+            edgecolor=self.border_color.as_hex(),
+            borderaxespad=self.padding,
         )
 
 
@@ -661,8 +722,28 @@ class PlotStyle(BaseStyle):
     Defines the styling for a plot
     """
 
-    background_color: ColorStr = ColorStr("#fff")
-    """Background color of the map region"""
+    background_color: list[tuple[float, str]] | ColorStr = ColorStr("#fff")
+    """
+    Background color of the map region.
+
+    This can either be a single color (e.g. `#7abfff`) or a list that defines a gradient.
+
+    For gradients, the list items should be tuples with two elements: a float that defines 
+    the stop and a string that defines the color for that stop. For example:
+
+    ```
+    "background_color": [
+        (0.0, "#7abfff"),
+        (0.2, "#7abfff"),
+        (0.9, "#568feb"),
+        (1.0, "#3f7ee3"),  # the last stop should always be at 1.0
+    ]
+    ```
+
+    There are a few predefined gradients available as [style extensions](/reference-styling/#style-extensions).
+
+    **Gradient backgrounds are not yet supported for optic plots that use a camera.**
+    """
 
     figure_background_color: ColorStr = ColorStr("#fff")
 
@@ -692,10 +773,10 @@ class PlotStyle(BaseStyle):
 
     # Title
     title: LabelStyle = LabelStyle(
-        font_size=20,
+        font_size=70,
         font_weight=FontWeightEnum.BOLD,
         zorder=ZOrderEnum.LAYER_5,
-        line_spacing=48,
+        line_spacing=150,
         anchor_point=AnchorPointEnum.BOTTOM_CENTER,
     )
     """Styling for info text (only applies to zenith and optic plots)"""
@@ -890,17 +971,6 @@ class PlotStyle(BaseStyle):
     )
     """Styling for dark nebulas"""
 
-    dso_hii_ionized_region: ObjectStyle = ObjectStyle(
-        marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE,
-            fill=FillStyleEnum.TOP,
-            color="#000",
-            zorder=ZOrderEnum.LAYER_3 - 1,
-        ),
-        label=LabelStyle(),
-    )
-    """Styling for HII Ionized regions"""
-
     dso_supernova_remnant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
@@ -956,7 +1026,9 @@ class PlotStyle(BaseStyle):
     )
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
-    constellation_lines: LineStyle = LineStyle(color="#c8c8c8")
+    constellation_lines: LineStyle = LineStyle(
+        color="#c8c8c8", zorder=ZOrderEnum.LAYER_3
+    )
     """Styling for constellation lines"""
 
     constellation_borders: LineStyle = LineStyle(
@@ -999,10 +1071,11 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_2,
         ),
         label=LabelStyle(
-            font_size=20,
+            font_size=24,
             font_color="#000",
             font_alpha=1,
             anchor_point=AnchorPointEnum.BOTTOM_CENTER,
+            zorder=ZOrderEnum.LAYER_5 + 1000,
         ),
     )
     """Styling for gridlines (including Right Ascension / Declination labels). *Only applies to map plots*."""
@@ -1095,13 +1168,13 @@ class PlotStyle(BaseStyle):
             DsoType.EMISSION_NEBULA: self.dso_nebula,
             DsoType.STAR_CLUSTER_NEBULA: self.dso_nebula,
             DsoType.REFLECTION_NEBULA: self.dso_nebula,
+            DsoType.HII_IONIZED_REGION: self.dso_nebula,
             # Stars ----------
             DsoType.STAR: self.star,
             DsoType.DOUBLE_STAR: self.dso_double_star,
             DsoType.ASSOCIATION_OF_STARS: self.dso_association_stars,
             # Others ----------
             DsoType.DARK_NEBULA: self.dso_dark_nebula,
-            DsoType.HII_IONIZED_REGION: self.dso_hii_ionized_region,
             DsoType.SUPERNOVA_REMNANT: self.dso_supernova_remnant,
             DsoType.NOVA_STAR: self.dso_nova_star,
             DsoType.NONEXISTENT: self.dso_nonexistant,
@@ -1176,3 +1249,6 @@ class PlotStyle(BaseStyle):
                 raise TypeError("Style overrides must be dictionary types.")
             merge_dict(style_dict, a)
         return PlotStyle.parse_obj(style_dict)
+
+    def has_gradient_background(self):
+        return isinstance(self.background_color, list)

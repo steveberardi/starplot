@@ -1,4 +1,24 @@
+## v0.16.x
+[Migration Guide](migration-guides/0.16.0.md)
+
+- Adds support for gradient backgrounds
+- Refactors projections, allowing you to change central RA/DEC
+- Adds equidistant and oblique Mercator projections
+- Introduces an Observer model to encapsulate a time and place
+- Makes zenith plots a separate plot type
+- Adds a function for plotting a star magnitude scale (experimental, feedback wanted!)
+- Adds more location options for legends and allows separate X/Y padding
+- Adds a `settings` class for managing global settings
+- Adds a global setting for how text is rendered in SVG exports
+- Adds more options for plotting gridlines on horizon plots
+- Adds a `common_names` field to deep sky objects
+- Added more public properties to plots (including `magnitude_range` and `alt`/`az` for optic plots)
+- Adds the `BLUE_NIGHT` plot style
+
+
 ## v0.15.x
+[Documentation](https://archives.starplot.dev/0.15.8/)
+
 - Replaces data backend with DuckDB + Ibis, making plotting 2-3x faster and object lookup up to 10x faster
 - Changes default unit of right ascension to degrees (0...360)
 - Improves performance of constellation label placement

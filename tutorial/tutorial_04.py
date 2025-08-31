@@ -1,4 +1,4 @@
-from starplot import MapPlot, Projection, _
+from starplot import MapPlot, Mercator, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -14,7 +14,7 @@ style = PlotStyle().extend(
 )
 
 p = MapPlot(
-    projection=Projection.MERCATOR,  # specify a non-perspective projection
+    projection=Mercator(),  # specify a non-perspective projection
     ra_min=3.6 * 15,  # limit the map to a specific area
     ra_max=7.8 * 15,
     dec_min=-15,

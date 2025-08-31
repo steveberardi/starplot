@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Callable, Mapping
 
 import pandas as pd
@@ -13,8 +12,9 @@ from starplot.base import BasePlot, DPI
 from starplot.data.stars import StarCatalog, STAR_NAMES
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
-from starplot.optics import Optic
-from starplot.plotters import StarPlotterMixin, DsoPlotterMixin
+from starplot.observer import Observer
+from starplot.optics import Optic, Camera
+from starplot.plotters import StarPlotterMixin, DsoPlotterMixin, GradientBackgroundMixin
 from starplot.styles import (
     PlotStyle,
     ObjectStyle,
@@ -22,6 +22,7 @@ from starplot.styles import (
     extensions,
     use_style,
     ZOrderEnum,
+    GradientDirection,
 )
 from starplot.utils import azimuth_to_string
 
@@ -30,7 +31,13 @@ pd.options.mode.chained_assignment = None  # default='warn'
 DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
 
 
-class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
+class OpticPlot(
+    BasePlot,
+    ExtentMaskMixin,
+    StarPlotterMixin,
+    DsoPlotterMixin,
+    GradientBackgroundMixin,
+):
     """Creates a new optic plot.
 
     Args:
@@ -55,17 +62,16 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     """
 
     _coordinate_system = CoordinateSystem.AZ_ALT
+    _gradient_direction = GradientDirection.RADIAL
 
     FIELD_OF_VIEW_MAX = 9.0
 
     def __init__(
         self,
-        optic: Optic,
         ra: float,
         dec: float,
-        lat: float,
-        lon: float,
-        dt: datetime = None,
+        optic: Optic,
+        observer: Observer = Observer(),
         ephemeris: str = "de421_2001.bsp",
         style: PlotStyle = DEFAULT_OPTIC_STYLE,
         resolution: int = 4096,
@@ -78,7 +84,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         **kwargs,
     ) -> "OpticPlot":
         super().__init__(
-            dt,
+            observer,
             ephemeris,
             style,
             resolution,
@@ -90,10 +96,12 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             **kwargs,
         )
         self.logger.debug("Creating OpticPlot...")
+
+        if isinstance(optic, Camera) and style.has_gradient_background():
+            raise ValueError("Gradient backgrounds are not yet supported for cameras.")
+
         self.ra = ra
         self.dec = dec
-        self.lat = lat
-        self.lon = lon
         self.raise_on_below_horizon = raise_on_below_horizon
 
         self.optic = optic
@@ -111,6 +119,16 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self._calc_position()
         self._adjust_radec_minmax()
         self._init_plot()
+
+    @property
+    def alt(self):
+        """Altitude of target (degrees)"""
+        return self.pos_alt.degrees
+
+    @property
+    def az(self):
+        """Azimuth of target (degrees)"""
+        return self.pos_az.degrees
 
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
@@ -155,9 +173,9 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
     def _calc_position(self):
         earth = self.ephemeris["earth"]
 
-        self.location = earth + wgs84.latlon(self.lat, self.lon)
+        self.location = earth + wgs84.latlon(self.observer.lat, self.observer.lon)
         self.star = SkyfieldStar(ra_hours=self.ra / 15, dec_degrees=self.dec)
-        self.observe = self.location.at(self.timescale).observe
+        self.observe = self.location.at(self.observer.timescale).observe
         self.position = self.observe(self.star)
 
         self.pos_apparent = self.position.apparent()
@@ -285,7 +303,11 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
             self.ax
         )  # apply transform again because new xy limits will undo the transform
 
-        dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
+        dt_str = (
+            self.observer.dt.strftime("%m/%d/%Y @ %H:%M:%S")
+            + " "
+            + self.observer.dt.tzname()
+        )
         font_size = style.font_size * self.scale
 
         column_labels = [
@@ -298,7 +320,7 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         values = [
             f"{self.pos_alt.degrees:.0f}\N{DEGREE SIGN} / {self.pos_az.degrees:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az.degrees)})",
             f"{(self.ra / 15):.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
-            f"{self.lat:.2f}\N{DEGREE SIGN}, {self.lon:.2f}\N{DEGREE SIGN}",
+            f"{self.observer.lat:.2f}\N{DEGREE SIGN}, {self.observer.lon:.2f}\N{DEGREE SIGN}",
             dt_str,
             str(self.optic),
         ]
@@ -331,35 +353,45 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         x = 0
         y = 0
 
+        if self.style.has_gradient_background():
+            background_color = "#ffffff00"
+            # self._plot_gradient_background(self.style.background_color)
+        else:
+            background_color = self.style.background_color.as_hex()
+
         # Background of Viewable Area
         self._background_clip_path = self.optic.patch(
             x,
             y,
-            facecolor=self.style.background_color.as_hex(),
+            facecolor=background_color,
             linewidth=0,
             fill=True,
             zorder=ZOrderEnum.LAYER_1,
         )
+        self.ax.set_facecolor(background_color)
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon()
 
         # Inner Border
-        inner_border = self.optic.patch(
-            x,
-            y,
-            linewidth=2 * self.scale,
-            edgecolor=self.style.border_line_color.as_hex(),
-            fill=False,
-            zorder=ZOrderEnum.LAYER_5 + 100,
-        )
-        self.ax.add_patch(inner_border)
+        # inner_border = self.optic.patch(
+        #     x,
+        #     y,
+        #     linewidth=2 * self.scale,
+        #     edgecolor=self.style.border_line_color.as_hex(),
+        #     fill=False,
+        #     zorder=ZOrderEnum.LAYER_5 + 100,
+        # )
+        # self.ax.add_patch(inner_border)
+
+        if self.style.has_gradient_background():
+            self._plot_gradient_background(self.style.background_color)
 
         # Outer border
         outer_border = self.optic.patch(
             x,
             y,
             padding=0.05,
-            linewidth=20 * self.scale,
+            linewidth=25 * self.scale,
             edgecolor=self.style.border_bg_color.as_hex(),
             fill=False,
             zorder=ZOrderEnum.LAYER_5,
@@ -395,3 +427,6 @@ class OpticPlot(BasePlot, ExtentMaskMixin, StarPlotterMixin, DsoPlotterMixin):
         self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
         self.optic.transform(self.ax)
         self._plot_border()
+
+        # if self.gradient_preset:
+        #     self.apply_gradient_background(self.gradient_preset)

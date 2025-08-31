@@ -1,20 +1,41 @@
-Below are a few environment variables you can set to change settings for Starplot. 
+Starplot uses a [Pydantic settings class](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) to maintain a few global settings:
 
-<hr/>
+- Data download path
+- DuckDB extension path
+- SVG text rendering method
 
-## `STARPLOT_DOWNLOAD_PATH`
+You can override these values in two ways: through code or through environment variables.
 
-Path for downloaded data, including the Big Sky catalog, ephemeris files, etc.
+<h3>Code</h3>
+To set values through code, just import the settings object:
 
-Default = `<starplot_source_path>/data/library/downloads/`
+```python
+from starplot import settings
 
-<hr/>
+settings.svg_text_type = "element"
 
-## `STARPLOT_DUCKDB_EXTENSIONS_PATH`
+# Create your plot and enjoy your editable text :)
 
-Path for the DuckDB spatial extension, which is required for the data backend.
+```
 
-Default = `<starplot_source_path>/data/library/duckdb-extensions/`
+<h3>Environment Variables</h3>
+
+To set values through environment variables, just add the `STARPLOT_` prefix to the setting name (and uppercase the entire name):
+
+```shell
+
+STARPLOT_DOWNLOAD_PATH=/home/myuser/downloads
+
+```
+
+::: starplot.config.Settings
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        separate_signature: true
+        show_signature_annotations: true
+        signature_crossrefs: true
+        members: true
 
 <hr/>
 

@@ -33,9 +33,8 @@ Starplot is a Python library for creating star charts and maps of the sky.
 
 --8<-- "docs/snippets/_newsletter.html"
 
-
+<br/>
 *Example charts and maps created with Starplot:*
-<!-- {.text-subtitle} -->
 
 <figure markdown>
   <img src="images/examples/star_chart_basic.png" height="900" width="900">
@@ -47,6 +46,10 @@ Starplot is a Python library for creating star charts and maps of the sky.
   <figcaption>Map around the constellation Orion (<a href="/examples/map-orion/">source code</a>)</figcaption>
 </figure>
 
+<figure markdown>
+  <img src="images/examples/horizon_gradient.png" width="900">
+  <figcaption>Horizon plot that shows the sky looking South from Stonehaugh, England at 11:30pm (<a href="/examples/horizon-gradient/">source code</a>)</figcaption>
+</figure>
 
 <figure markdown>
   <img src="images/examples/optic_m45.png" width="900">

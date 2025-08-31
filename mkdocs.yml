@@ -9,6 +9,7 @@ nav:
     - Tutorial: tutorial.md
     - Reference:
         - MapPlot: reference-mapplot.md
+        - ZenithPlot: reference-zenithplot.md
         - HorizonPlot: reference-horizonplot.md
         - OpticPlot: reference-opticplot.md
         - Models: reference-models.md
@@ -73,6 +74,8 @@ plugins:
             annotations_path: brief
             separate_signature: true
             show_signature_annotations: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
             signature_crossrefs: true
             line_length: 80
   - macros:

@@ -1,7 +1,7 @@
 # blue_medium
 
 background_color: hsl(218, 88%, 97%)
-figure_background_color: '#fff'
+figure_background_color: hsl(212, 27%, 48%)
 
 text_border_color: '#f1f6ff'
 
@@ -20,11 +20,11 @@ bayer_labels:
 
 # Constellations
 constellation_labels:
-  font_alpha: 0.75
-  font_color: hsl(212, 20%, 34%)
+  font_alpha: 1
+  font_color: hsl(212, 20%, 36%)
 constellation_lines:
-  alpha: 0.5
-  color: '#6ba832'
+  alpha: 0.45
+  color: hsl(91, 60%, 43%)
 
 celestial_equator:
   label:
@@ -65,7 +65,7 @@ sun:
 
 horizon:
   line:
-    color: hsl(212, 27%, 56%)
+    color: hsl(212, 27%, 48%)
     edge_color: '#2f4358'
   label:
     font_color: '#f1f6ff'
@@ -130,7 +130,6 @@ dso_unknown: &DSO
   label:
     font_color: hsl(91, 53%, 40%)
 dso_dark_nebula: *DSO
-dso_hii_ionized_region: *DSO
 dso_supernova_remnant: *DSO
 dso_nova_star: *DSO
 dso_nonexistant: *DSO
@@ -139,3 +138,4 @@ dso_duplicate: *DSO
 
 legend:
   background_color: '#f1f6ff'
+  border_color: '#c9daf8'

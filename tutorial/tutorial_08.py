@@ -1,10 +1,16 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from pytz import timezone
+from starplot import Observer, Star, optics, styles, callables, _
 
-from starplot import Star, optics, styles, callables, _
+tz = ZoneInfo("America/Los_Angeles")
+tonight = datetime.now(tz).replace(hour=21)
 
-tonight = datetime.now(timezone("America/Los_Angeles")).replace(hour=21)
+observer = Observer(
+    dt=tonight,
+    lat=32.97,
+    lon=-117.038611,
+)
 
 style = styles.PlotStyle().extend(
     styles.extensions.GRAYSCALE_DARK,
@@ -14,9 +20,7 @@ style = styles.PlotStyle().extend(
 antares = Star.get(name="Antares")
 
 p = antares.create_optic(
-    lat=32.97,
-    lon=-117.038611,
-    dt=tonight,
+    observer=observer,
     optic=optics.Binoculars(
         magnification=10,
         fov=65,

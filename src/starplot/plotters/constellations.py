@@ -16,7 +16,7 @@ from starplot.data.constellations import (
 from starplot.data.constellation_stars import CONSTELLATION_HIPS
 from starplot.models import Star
 from starplot.models.constellation import from_tuple as constellation_from_tuple
-from starplot.projections import Projection
+from starplot.projections import Mercator, Miller
 from starplot.profile import profile
 from starplot.styles import PathStyle, LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
@@ -88,10 +88,8 @@ class ConstellationPlotterMixin:
         if constellations_df.empty:
             return
 
-        if getattr(self, "projection", None) in [
-            Projection.MERCATOR,
-            Projection.MILLER,
-        ]:
+        projection = getattr(self, "projection", None)
+        if isinstance(projection, Mercator) or isinstance(projection, Miller):
             transform = self._plate_carree
         else:
             transform = self._geodetic

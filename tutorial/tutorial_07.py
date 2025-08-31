@@ -1,20 +1,24 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from pytz import timezone
-
-from starplot import Planet, optics
+from starplot import Planet, Observer, optics
 from starplot.styles import PlotStyle, extensions
 
-tonight = datetime.now(timezone("America/Los_Angeles")).replace(hour=21)
+tz = ZoneInfo("America/Los_Angeles")
+tonight = datetime.now(tz).replace(hour=21)
+
+observer = Observer(
+    dt=tonight,
+    lat=32.97,
+    lon=-117.038611,
+)
 
 # get Jupiter for tonight
 jupiter = Planet.get("jupiter", tonight)
 
 # create an optic plot directly from Jupiter instance
 p = jupiter.create_optic(
-    lat=32.97,
-    lon=-117.038611,
-    dt=tonight,
+    observer=observer,
     optic=optics.Refractor(
         focal_length=600,
         eyepiece_focal_length=4,

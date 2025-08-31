@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, optics, OpticPlot, callables, Moon, _
+from starplot import styles, optics, OpticPlot, callables, Moon, _, Observer
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -31,20 +31,24 @@ plot_kwargs = dict(
     autoscale=True,
 )
 
+observer_dec_16_poway = Observer(
+    dt=dt_dec_16,
+    lat=32.97,
+    lon=-117.038611,
+)
+
 
 def check_optic_polaris_binoculars():
     optic_plot = OpticPlot(
         # Polaris
         ra=2.51667 * 15,
         dec=89.26,
-        lat=32.97,
-        lon=-117.038611,
         # 10x binoculars
         optic=optics.Binoculars(
             magnification=10,
             fov=65,
         ),
-        dt=dt_dec_16,
+        observer=observer_dec_16_poway,
         style=style_dark,
         **plot_kwargs,
     )
@@ -60,15 +64,13 @@ def check_optic_orion_nebula_refractor():
         # Orion Nebula
         ra=5.583 * 15,
         dec=-5.383,
-        lat=32.97,
-        lon=-117.038611,
         # TV-85 with ES 14mm 82deg
         optic=optics.Refractor(
             focal_length=600,
             eyepiece_focal_length=14,
             eyepiece_fov=82,
         ),
-        dt=dt_dec_16,
+        observer=observer_dec_16_poway,
         style=style_dark,
         **plot_kwargs,
     )
@@ -84,14 +86,12 @@ def check_optic_wrapping():
     optic_plot = OpticPlot(
         ra=23.99 * 15,
         dec=17.573889,
-        lat=32.97,
-        lon=-117.038611,
         # use binoculars for a wide TFOV
         optic=optics.Binoculars(
             magnification=8,
             fov=65,
         ),
-        dt=dt_dec_16,
+        observer=observer_dec_16_poway,
         style=style_blue,
         **plot_kwargs,
     )
@@ -117,15 +117,13 @@ def check_optic_clipping():
         # Orion Nebula
         ra=5.583 * 15,
         dec=-5.383,
-        lat=32.97,
-        lon=-117.038611,
         # TV-85
         optic=optics.Scope(
             focal_length=600,
             eyepiece_focal_length=8,
             eyepiece_fov=82,
         ),
-        dt=dt_dec_16,
+        observer=observer_dec_16_poway,
         style=style_blue,
         **plot_kwargs,
     )
@@ -143,14 +141,12 @@ def check_optic_m45_binoculars():
         # M45
         ra=3.7836111111 * 15,
         dec=24.1166666667,
-        lat=32.97,
-        lon=-117.038611,
         # 10x binoculars
         optic=optics.Binoculars(
             magnification=10,
             fov=65,
         ),
-        dt=dt_dec_16,
+        observer=observer_dec_16_poway,
         style=style_dark,
         **plot_kwargs,
     )
@@ -166,14 +162,12 @@ def check_optic_m45_scope():
         # M45
         ra=3.7836111111 * 15,
         dec=24.1166666667,
-        lat=32.97,
-        lon=-117.038611,
         optic=optics.Scope(
             focal_length=600,
             eyepiece_focal_length=14,
             eyepiece_fov=82,
         ),
-        dt=dt_dec_16,
+        observer=observer_dec_16_poway,
         style=style_dark,
         **plot_kwargs,
     )
@@ -188,19 +182,43 @@ def check_optic_m45_scope():
     return filename
 
 
+def check_optic_m45_scope_gradient():
+    style_gradient = style_dark.extend(styles.extensions.GRADIENT_PRE_DAWN)
+    optic_plot = OpticPlot(
+        # M45
+        ra=3.7836111111 * 15,
+        dec=24.1166666667,
+        observer=observer_dec_16_poway,
+        optic=optics.Scope(
+            focal_length=600,
+            eyepiece_focal_length=14,
+            eyepiece_fov=82,
+        ),
+        style=style_gradient,
+        **plot_kwargs,
+    )
+    optic_plot.stars(
+        where=[_.magnitude < 12],
+        color_fn=callables.color_by_bv,
+        style={"label": {"font_color": "#7df597"}},
+    )
+    optic_plot.info()
+    filename = DATA_PATH / "optic-m45-scope-gradient.png"
+    optic_plot.export(filename)
+    return filename
+
+
 def check_optic_m45_reflector():
     optic_plot = OpticPlot(
         # M45
         ra=3.7836111111 * 15,
         dec=24.1166666667,
-        lat=32.97,
-        lon=-117.038611,
         optic=optics.Reflector(
             focal_length=600,
             eyepiece_focal_length=14,
             eyepiece_fov=82,
         ),
-        dt=dt_dec_16,
+        observer=observer_dec_16_poway,
         style=style_dark,
         **plot_kwargs,
     )
@@ -216,15 +234,13 @@ def check_optic_m45_camera():
         # M45
         ra=3.7836111111 * 15,
         dec=24.1166666667,
-        lat=32.97,
-        lon=-117.038611,
         # Fuji X-T2
         optic=optics.Camera(
             sensor_height=15.6,
             sensor_width=23.6,
             lens_focal_length=430,
         ),
-        dt=dt_dec_16,
+        observer=observer_dec_16_poway,
         style=style_dark,
         **plot_kwargs,
     )
@@ -243,8 +259,6 @@ def check_optic_camera_rotated():
         # M45
         ra=3.7836111111 * 15,
         dec=24.1166666667,
-        lat=32.97,
-        lon=-117.038611,
         # Fuji X-T2
         optic=optics.Camera(
             sensor_height=15.6,
@@ -252,7 +266,7 @@ def check_optic_camera_rotated():
             lens_focal_length=430,
             rotation=40,
         ),
-        dt=dt_dec_16,
+        observer=observer_dec_16_poway,
         style=style_dark,
         **plot_kwargs,
     )
@@ -265,13 +279,16 @@ def check_optic_camera_rotated():
 
 
 def check_optic_solar_eclipse_binoculars():
-    optic_plot = OpticPlot(
+    observer = Observer(
+        dt=dt_april_8,
         lat=33.363484,
         lon=-116.836394,
+    )
+    optic_plot = OpticPlot(
         ra=1.16667 * 15,
         dec=7.45,
         optic=optics.Binoculars(magnification=12, fov=65),
-        dt=dt_april_8,
+        observer=observer,
         style=styles.PlotStyle().extend(
             styles.extensions.BLUE_MEDIUM,
         ),
@@ -289,12 +306,11 @@ def check_optic_solar_eclipse_binoculars():
 def check_optic_moon_phase_waxing_crescent():
     m = Moon.get(dt=dt_dec_16, **POWAY)
     optic_plot = m.create_optic(
-        **POWAY,
         optic=optics.Binoculars(
             magnification=20,
             fov=65,
         ),
-        dt=dt_dec_16,
+        observer=observer_dec_16_poway,
         style=style_dark,
         raise_on_below_horizon=False,
         **plot_kwargs,
@@ -311,14 +327,17 @@ def check_optic_moon_phase_waxing_crescent():
 
 
 def check_optic_moon_phase_new():
+    observer = Observer(
+        dt=dt_april_8,
+        **POWAY,
+    )
     m = Moon.get(dt=dt_april_8, **POWAY)
     optic_plot = m.create_optic(
-        **POWAY,
         optic=optics.Binoculars(
             magnification=30,
             fov=65,
         ),
-        dt=dt_april_8,
+        observer=observer,
         style=style_light,
         raise_on_below_horizon=False,
         **plot_kwargs,
@@ -336,14 +355,17 @@ def check_optic_moon_phase_new():
 
 def check_optic_moon_phase_full():
     dt_full_moon = datetime.now(timezone("US/Pacific")).replace(2024, 4, 23, 11, 7, 0)
+    observer = Observer(
+        dt=dt_full_moon,
+        **POWAY,
+    )
     m = Moon.get(dt=dt_full_moon, **POWAY)
     optic_plot = m.create_optic(
-        **POWAY,
         optic=optics.Binoculars(
             magnification=20,
             fov=65,
         ),
-        dt=dt_full_moon,
+        observer=observer,
         style=style_dark,
         raise_on_below_horizon=False,
         **plot_kwargs,

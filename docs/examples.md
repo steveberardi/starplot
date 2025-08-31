@@ -35,6 +35,38 @@
     </li>
 
     <li>
+        <a href="/examples/horizon-double-cluster/">
+            <img src="/images/examples/horizon_double_cluster-sm.png" alt="Finding the Double Cluster in Perseus" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Finding the Double Cluster</p>
+        </a>
+    </li>
+
+    <li>
+        <a href="/examples/map-carina-nebula/">
+            <img src="/images/examples/map_carina-sm.png" alt="Map of Carina Constellation" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Carina Nebula + Clusters</p>
+        </a>
+    </li>
+
+    <li>
+        <a href="/examples/horizon-gradient/">
+            <img src="/images/examples/horizon_gradient-sm.png" alt="Horizon Gradient Plot" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Horizon Gradient</p>
+        </a>
+    </li>
+
+    <li>
+        <a href="/examples/optic-solar-eclipse/">
+            <img src="/images/examples/optic_solar_eclipse-sm.png" alt="Total Solar Eclipse 2024" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Total Solar Eclipse 2024</p>
+        </a>
+    </li>
+
+    <li>
         <a href="/examples/optic-m45/">
             <img src="/images/examples/optic_m45-sm.png" alt="Optic Plot of the Pleiades" class="off-glb" loading="lazy"/>
 
@@ -52,25 +84,27 @@
 
     <li>
         <a href="/examples/map-milky-way-stars/">
-            <img src="/images/examples/map_milky_way_stars-sm.png" alt="Stars of the Milky Way class="off-glb"/>
+            <img src="/images/examples/map_milky_way_stars-sm.png" alt="Stars of the Milky Way" class="off-glb"/>
 
-            <p class="example-card-title">Milky Way Stars</p>
+            <p class="example-card-title">The Milky Way</p>
         </a>
     </li>
-    
+
     <li>
-        <a href="/examples/horizon-sgr/">
-            <img src="/images/examples/horizon_sgr-sm.png" alt="Horizon Plot of Sagittarius" class="off-glb" loading="lazy"/>
+        <a href="/examples/map-orthographic/">
+            <img src="/images/examples/map_orthographic-sm.png" alt="Orthographic Map" class="off-glb" loading="lazy"/>
 
-            <p class="example-card-title">Horizon Plot</p>
+            <p class="example-card-title">Orthographic Map</p>
         </a>
     </li>
+
+    
 
     <li>
         <a href="/examples/map-big-dipper/">
             <img src="/images/examples/map_big_dipper-sm.png" alt="Map of the Big Dipper" class="off-glb" loading="lazy"/>
 
-            <p class="example-card-title">Map of the Big Dipper</p>
+            <p class="example-card-title">The Big Dipper</p>
         </a>
     </li>
 
@@ -91,30 +125,6 @@
     </li>
 
     <li>
-        <a href="/examples/map-orthographic/">
-            <img src="/images/examples/map_orthographic-sm.png" alt="Orthographic Map" class="off-glb" loading="lazy"/>
-
-            <p class="example-card-title">Orthographic Map</p>
-        </a>
-    </li>
-
-    <li>
-        <a href="/examples/optic-solar-eclipse/">
-            <img src="/images/examples/optic_solar_eclipse-sm.png" alt="Total Solar Eclipse 2024" class="off-glb" loading="lazy"/>
-
-            <p class="example-card-title">Total Solar Eclipse 2024</p>
-        </a>
-    </li>
-
-    <li>
-        <a href="/examples/optic-moon-saturn/">
-            <img src="/images/examples/optic_moon_saturn-sm.png" alt="Moon and Saturn Conjunction" class="off-glb" loading="lazy"/>
-
-            <p class="example-card-title">Moon and Saturn Conjunction</p>
-        </a>
-    </li>
-
-    <li>
         <a href="/examples/map-canis-major/">
             <img src="/images/examples/map_canis_major-sm.png" alt="Map of the Constellation Canis Major" class="off-glb" loading="lazy"/>
 
@@ -123,12 +133,14 @@
     </li>
 
     <li>
-        <a href="/examples/horizon-double-cluster/">
-            <img src="/images/examples/horizon_double_cluster-sm.png" alt="Finding the Double Cluster in Perseus" class="off-glb" loading="lazy"/>
+        <a href="/examples/map-cassiopeia/">
+            <img src="/images/examples/map_cas-sm.png" alt="Map of the Constellation Cassiopeia" class="off-glb" loading="lazy"/>
 
-            <p class="example-card-title">Finding the Double Cluster</p>
+            <p class="example-card-title">Map of Cassiopeia</p>
         </a>
     </li>
+
+    
 
 </ul>
 

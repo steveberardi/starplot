@@ -4,13 +4,13 @@ import pytest
 
 from pytz import timezone
 
-from starplot.map import MapPlot, Projection
+from starplot import MapPlot, Mercator, Miller, Observer
 
 
 def test_map_radec_invalid():
     with pytest.raises(ValueError, match="ra_min must be less than ra_max"):
         MapPlot(
-            projection=Projection.MERCATOR,
+            projection=Mercator(),
             ra_min=24,
             ra_max=8,
             dec_min=-16,
@@ -19,7 +19,7 @@ def test_map_radec_invalid():
 
     with pytest.raises(ValueError, match="dec_min must be less than dec_max"):
         MapPlot(
-            projection=Projection.MERCATOR,
+            projection=Mercator(),
             ra_min=8,
             ra_max=24,
             dec_min=50,
@@ -29,7 +29,7 @@ def test_map_radec_invalid():
 
 def test_map_objects_list():
     p = MapPlot(
-        projection=Projection.MERCATOR,
+        projection=Mercator(),
         ra_min=8.3 * 15,
         ra_max=8.8 * 15,
         dec_min=19.4,
@@ -49,26 +49,26 @@ def test_map_objects_list_planets():
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
 
     p = MapPlot(
-        projection=Projection.MILLER,
+        projection=Miller(),
         ra_min=0,
         ra_max=24 * 15,
         dec_min=-40,
         dec_max=40,
-        dt=dt,
+        observer=Observer(dt=dt),
     )
     p.planets()
     p.sun()
     p.moon()
 
-    assert p.objects.moon.ra == 292.53617734161276
+    assert p.objects.moon.ra == pytest.approx(292.0009374668436)
     assert p.objects.moon.dt == dt
 
-    assert p.objects.sun.ra == 155.98273726181148
+    assert p.objects.sun.ra == pytest.approx(155.97667374473494)
     assert p.objects.sun.dt == dt
 
     assert len(p.objects.planets) == 8
 
 
 def test_marker_no_label():
-    p = MapPlot(projection=Projection.MERCATOR)
+    p = MapPlot(projection=Mercator())
     p.marker(ra=150, dec=0, style__marker__color="blue")
