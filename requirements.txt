@@ -1,5 +1,5 @@
 matplotlib==3.10.3
-numpy==2.3.2
+numpy==2.2.6
 pandas==2.2.3
 pydantic==2.11.7
 pydantic-settings==2.10.1
