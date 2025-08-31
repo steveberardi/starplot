@@ -351,11 +351,11 @@ class HorizonPlot(
         patch_y = -0.11 * self.scale
         bottom = patches.Polygon(
             [
-                (0, 0),
-                (1, 0),
+                (0, -0.04 * self.scale),
+                (1, -0.04 * self.scale),
                 (1, patch_y),
                 (0, patch_y),
-                (0, 0),
+                (0, -0.04 * self.scale),
             ],
             color=style.line.color.as_hex(),
             transform=self.ax.transAxes,
@@ -428,7 +428,7 @@ class HorizonPlot(
 
         line_style_kwargs = style.line.matplot_kwargs()
 
-        self.ax.gridlines(
+        gridlines = self.ax.gridlines(
             draw_labels=show_labels,
             x_inline=False,
             y_inline=False,
@@ -444,6 +444,7 @@ class HorizonPlot(
             yformatter=FuncFormatter(alt_formatter),
             **line_style_kwargs,
         )
+        gridlines.set_zorder(style.line.zorder)
 
         if show_labels:
             self._axis_labels = True
@@ -455,6 +456,9 @@ class HorizonPlot(
         # gridlines.ylocator = FixedLocator(y_locations)
         # gridlines.yformatter = FuncFormatter(alt_formatter)
         # gridlines.ylabel_style = label_style_kwargs
+        # print(gridlines.label_artists)
+        # for label in gridlines.label_artists:
+        #     label.set_zorder(style.label.zorder)
 
         if divider_line:
             self.ax.plot(

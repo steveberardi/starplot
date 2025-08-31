@@ -10,7 +10,7 @@ style = PlotStyle().extend(
     extensions.GRADIENT_PRE_DAWN,
 )
 
-dt = datetime(2025, 7, 26, 23, 0, 0, 0, tzinfo=ZoneInfo("Europe/London"))
+dt = datetime(2025, 7, 26, 23, 30, 0, 0, tzinfo=ZoneInfo("Europe/London"))
 
 observer = Observer(
     lat=55.079112,  # Stonehaugh, England
@@ -23,7 +23,7 @@ p = HorizonPlot(
     azimuth=(135, 225),
     observer=observer,
     style=style,
-    resolution=4000,
+    resolution=3200,
     scale=0.9,
 )
 

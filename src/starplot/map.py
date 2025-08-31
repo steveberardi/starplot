@@ -365,6 +365,7 @@ class MapPlot(
             gid="gridlines",
             **line_style_kwargs,
         )
+        gridlines.set_zorder(style.line.zorder)
 
         if labels:
             self._axis_labels = True

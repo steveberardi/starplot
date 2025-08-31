@@ -95,6 +95,7 @@ def check_horizon_gradient_background():
         style=styles.PlotStyle().extend(
             styles.extensions.BLUE_GOLD,
             styles.extensions.GRADIENT_PRE_DAWN,
+            styles.extensions.MAP,
         ),
         resolution=RESOLUTION,
         scale=1,

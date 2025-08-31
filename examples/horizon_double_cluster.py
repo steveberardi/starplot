@@ -32,7 +32,7 @@ per = Constellation.get(iau_id="per")
 
 p = HorizonPlot(
     altitude=(0, 70),
-    azimuth=(320, 435),
+    azimuth=(325, 440),
     observer=observer,
     style=style,
     resolution=4096,

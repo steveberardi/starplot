@@ -24,7 +24,8 @@ gridlines:
     font_color: hsl(209, 53%, 94%)
   line:
     alpha: 0.8
-    color: hsl(209, 53%, 54%)
+    # color: hsl(209, 53%, 54%)
+    color: hsl(210, 19%, 45%)
     style: solid
     width: 1
 

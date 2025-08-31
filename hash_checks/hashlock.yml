@@ -1,13 +1,13 @@
 horizon_base:
   dhash: 8686ca8ec68a86f086a2ca8ec69a86f086a2ca8ec69a86f0
   filename: /starplot/hash_checks/data/horizon-base.png
-  phash: c1b53ec02ee43b87
+  phash: c1b53ec42ee03b87
 horizon_gradient_background:
-  dhash: e1682072b6bea292f1682272babeba94e168e2b2b29a8a96
+  dhash: d968a4f2b2b2a296f168a672b2b2ba96f168a6b2b29aae92
   filename: /starplot/hash_checks/data/horizon-gradient-background.png
-  phash: 954f42c16bc56ee4
+  phash: 954f43916bc56ce4
 horizon_north_celestial_pole:
-  dhash: b0aaaab2a2b2a694b0aaaab282b2a684b2aaaaeaa2b2aec6
+  dhash: b0aaaab2a2b2a696b0aaaab282b2a696b2aaaaeaa2b2aec4
   filename: /starplot/hash_checks/data/horizon-north-celestial-pole.png
   phash: d5907ad16ad16bc4
 map_coma_berenices_dso_size:
@@ -31,15 +31,15 @@ map_milky_way_multi_polygon:
   filename: /starplot/hash_checks/data/map-milky-way-multi-polygon.png
   phash: be89be98d6584a68
 map_mollweide:
-  dhash: 0f2b33632b33170f0f2b33632b33170f0f6b736b2b32170f
+  dhash: 0f2b336b2b33170f0f2b336b2b33170f176373632b32170f
   filename: /starplot/hash_checks/data/map-mollweide.png
-  phash: ebcbb69ce3249460
+  phash: ebcbb69ce3209461
 map_moon_phase_waxing_crescent:
   dhash: 0814284d4d2814488894a84d4da894888884884d4d888488
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b3cccc3333cccc31
 map_orion_base:
-  dhash: 18193b5e3e2f64691b393b5e2a2d646918192bce2a2f6469
+  dhash: 18193b5e3a2f64691b393b5e2a2d646958192bce2a2f6469
   filename: /starplot/hash_checks/data/map-orion-base.png
   phash: bf794a241784b59c
 map_orion_extra:

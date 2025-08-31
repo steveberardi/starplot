@@ -39,7 +39,7 @@ p.stars(
 )
 
 p.nebula(
-    # select DSOs which have no defined magnitude or less than 8
+    # select DSOs which have no defined magnitude or less than 7
     where=[_.magnitude.isnull() | (_.magnitude < 7)],
     true_size=True,  # plot nebula as their true size
 )

@@ -1075,6 +1075,7 @@ class PlotStyle(BaseStyle):
             font_color="#000",
             font_alpha=1,
             anchor_point=AnchorPointEnum.BOTTOM_CENTER,
+            zorder=ZOrderEnum.LAYER_5 + 1000,
         ),
     )
     """Styling for gridlines (including Right Ascension / Declination labels). *Only applies to map plots*."""

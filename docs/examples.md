@@ -132,7 +132,13 @@
         </a>
     </li>
 
+    <li>
+        <a href="/examples/map-cassiopeia/">
+            <img src="/images/examples/map_cas-sm.png" alt="Map of the Constellation Cassiopeia" class="off-glb" loading="lazy"/>
 
+            <p class="example-card-title">Map of Cassiopeia</p>
+        </a>
+    </li>
 
     
 
