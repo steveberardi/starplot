@@ -36,8 +36,8 @@ pip install --no-binary :all: shapely
 ```
 *Warning: this may take awhile (5+ minutes), because it builds shapely from source.*
 
-### Other issues
+### Other Issues
 
-If you experience another problem, then please [open an issue on our GitHub page](https://github.com/steveberardi/starplot/issues).
+If you experience another problem, then please [open an issue on our GitHub page](https://github.com/steveberardi/starplot/issues) and include the following information: operating system (and version), Python version, Starplot version, and Matplotlib version.
 
 <br/><br/><br/>
