@@ -236,7 +236,7 @@ class ConstellationPlotterMixin:
         geometries = [line.geometry for line in borders_df.itertuples()]
 
         for ls in geometries:
-            if ls.length < 80:
+            if ls.length < 360:
                 ls = ls.segmentize(1)
 
             xy = [c for c in ls.coords]
