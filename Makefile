@@ -16,7 +16,7 @@ endif
 DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 
-DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" --target dev .
+DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" .
 DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) starplot-$(PYTHON_VERSION)
 
 export PYTHONPATH=./src/
@@ -27,10 +27,6 @@ build: DOCKER_BUILD_ARGS=-t starplot-dev
 build:
 	touch -a .env
 	$(DOCKER_BUILD_PYTHON)
-
-docker-multi-arch:
-	docker buildx inspect $(DOCKER_BUILDER) && echo "Builder already exists!" || docker buildx create --name $(DOCKER_BUILDER) --bootstrap --use
-	docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag sberardi/starplot-base:latest --target base .
 
 lint:
 	$(DOCKER_RUN) "ruff check src/ tests/ hash_checks/ $(ARGS)"

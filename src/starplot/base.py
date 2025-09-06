@@ -903,7 +903,7 @@ class BasePlot(ABC):
         if geometry is not None:
             points = list(zip(*geometry.exterior.coords.xy))
 
-        self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
+        self._polygon(points, style, gid=kwargs.get("gid") or "polygon", **kwargs)
 
         if legend_label is not None:
             self._add_legend_handle_marker(

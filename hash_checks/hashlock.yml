@@ -5,7 +5,7 @@ horizon_base:
 horizon_gradient_background:
   dhash: d968a4f2b2b2a296f168a672b2b2ba96f168a6b2b29aae92
   filename: /starplot/hash_checks/data/horizon-gradient-background.png
-  phash: 954f43916bc56ce4
+  phash: 954f43916bc46ee4
 horizon_north_celestial_pole:
   dhash: b0aaaab2a2b2a696b0aaaab282b2a696b2aaaaeaa2b2aec4
   filename: /starplot/hash_checks/data/horizon-north-celestial-pole.png
