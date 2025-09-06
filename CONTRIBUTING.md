@@ -38,6 +38,7 @@ When you're new to a codebase it's usually good to start by just checking out th
 
 There are also a few other `make` commands that are useful when developing locally:
 
+- `make marimo` will run a marimo edit session with `scripts/marimo.py` so you can quickly test out code and see its results in a [marimo notebook](https://marimo.io/)
 - `make scratchpad` will run `scripts/scratchpad.py` inside the docker container. The `scratchpad.py` file is not checked in to the repo (so you'll have to create it on your machine), but it's a way to run code with the current state of Starplot on your machine -- very helpful when trying things out.
 - `make profile` will run `scripts/scratchpad.py` through Python's [built-in profiler](https://docs.python.org/3/library/profile.html#module-cProfile) and then start a [snakeviz](https://jiffyclub.github.io/snakeviz/) webserver locally to let you explore the call stack and see runtimes of everything. This can be very helpful when trying to find bottlenecks in code.
 - `make shell` will open a Python shell on the Docker container
