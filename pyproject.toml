@@ -56,3 +56,6 @@ filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.ruff]
 ignore = ["E501"]
+
+[tool.marimo.display]
+theme = "dark"

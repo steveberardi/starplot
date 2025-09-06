@@ -55,6 +55,10 @@ shell:
 scratchpad:
 	$(DOCKER_RUN) "python $(SCRATCH_ARGS) scripts/scratchpad.py"
 
+marimo: DR_ARGS=-it -p 9009:9009
+marimo:
+	$(DOCKER_RUN) "marimo edit scripts/marimo.py --no-token  --host 0.0.0.0 --port 9009"
+
 examples:
 	$(DOCKER_RUN) "cd examples && rm -f *.png && rm -f *.jpg && python examples.py"
 
