@@ -1,10 +1,5 @@
 ARG PYTHON_VERSION=3.11.11
-FROM python:${PYTHON_VERSION}-bookworm AS base
-
-WORKDIR /starplot
-
-# ---------------------------------------------------------------------
-FROM base AS dev
+FROM python:${PYTHON_VERSION}-bookworm
 
 WORKDIR /starplot
 
