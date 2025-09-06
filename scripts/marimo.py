@@ -5,7 +5,7 @@ app = marimo.App(width="columns")
 
 
 @app.cell
-def _():
+def scratchpad():
     import time
     from datetime import datetime
     from zoneinfo import ZoneInfo
@@ -69,11 +69,6 @@ def _():
 
     p.fig.gca()
 
-    return
-
-
-@app.cell
-def _():
     return
 
 
