@@ -28,7 +28,7 @@ def get_example_names():
     filenames = []
 
     for filename in glob.iglob("*.py"):
-        # if filename != "optic_solar_eclipse.py":
+        # if filename != "map_big.py":
         #     continue
 
         if filename.endswith("examples.py"):

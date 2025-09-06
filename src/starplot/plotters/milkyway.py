@@ -3,7 +3,7 @@ from shapely.ops import unary_union
 from starplot.data import db
 from starplot.styles import PolygonStyle
 from starplot.styles.helpers import use_style
-from starplot.geometry import unwrap_polygon_360
+from starplot.geometry import split_polygon_at_zero
 from starplot.profile import profile
 
 
@@ -23,9 +23,12 @@ class MilkyWayPlotterMixin:
         extent = self._extent_mask()
         result = mw.filter(mw.geometry.intersects(extent)).to_pandas()
 
-        mw_union = unary_union(
-            [unwrap_polygon_360(row.geometry) for row in result.itertuples()]
-        )
+        polygons = []
+
+        for row in result.itertuples():
+            polygons.extend(split_polygon_at_zero(row.geometry))
+
+        mw_union = unary_union(polygons)
 
         if mw_union.geom_type == "MultiPolygon":
             polygons = mw_union.geoms
@@ -34,6 +37,6 @@ class MilkyWayPlotterMixin:
 
         for p in polygons:
             self.polygon(
-                geometry=p,
+                geometry=p.buffer(0.001),
                 style=style,
             )
