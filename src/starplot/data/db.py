@@ -1,6 +1,6 @@
 from functools import cache
 
-import ibis
+from ibis import duckdb
 
 from starplot.config import settings
 from starplot.data import DataFiles
@@ -8,7 +8,7 @@ from starplot.data import DataFiles
 
 @cache
 def connect():
-    connection = ibis.duckdb.connect(
+    connection = duckdb.connect(
         DataFiles.DATABASE, read_only=True
     )  # , threads=2, memory_limit="1GB"
     connection.raw_sql(

@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-import pandas as pd
 
 from starplot.config import settings
 from starplot.data import DataFiles, utils
@@ -46,6 +45,7 @@ def download(
 def to_parquet(source_path: str, destination_path: str):
     import pyarrow as pa
     import pyarrow.parquet as pq
+    import pandas as pd
 
     print("Preparing Big Sky Catalog for Starplot...")
 

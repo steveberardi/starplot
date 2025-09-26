@@ -3,7 +3,7 @@ import math
 from functools import cache
 from typing import Callable
 
-import pandas as pd
+# import pandas as pd
 import geopandas as gpd
 
 from cartopy import crs as ccrs
@@ -30,7 +30,7 @@ from starplot.styles import (
     GradientDirection,
 )
 
-pd.options.mode.chained_assignment = None  # default='warn'
+# pd.options.mode.chained_assignment = None  # default='warn'
 
 DEFAULT_HORIZON_STYLE = PlotStyle().extend(extensions.MAP)
 

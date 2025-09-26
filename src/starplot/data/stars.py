@@ -1,7 +1,6 @@
 from functools import cache
 
-import ibis
-from ibis import _
+from ibis import _, row_number
 
 from starplot.data import bigsky, DataFiles, db
 
@@ -480,8 +479,8 @@ def table(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars"):
         ra_hours=_.ra_degrees / 15,
         # stars parquet does not have geometry field
         geometry=_.ra_degrees.point(_.dec_degrees),
-        rowid=ibis.row_number(),
-        sk=ibis.row_number(),
+        rowid=row_number(),
+        sk=row_number(),
     )
 
     stars = stars.join(

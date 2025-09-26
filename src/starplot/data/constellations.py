@@ -1,7 +1,6 @@
 from functools import cache
 
-import ibis
-from ibis import _
+from ibis import _, row_number
 
 from starplot.data import db
 
@@ -681,8 +680,8 @@ def table():
         dec=_.center_dec,
         constellation_id=_.iau_id,
         boundary=_.geometry,
-        rowid=ibis.row_number(),
-        sk=ibis.row_number(),
+        rowid=row_number(),
+        sk=row_number(),
     )
 
 
@@ -712,7 +711,7 @@ def load_borders(extent=None, filters=None):
         # ra=_.center_ra,
         # dec=_.center_dec,
         # constellation_id=_.iau_id,
-        rowid=ibis.row_number(),
+        rowid=row_number(),
         # boundary=_.geometry,
     )
 
