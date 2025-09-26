@@ -1,7 +1,7 @@
+import os
 from enum import Enum
 from pathlib import Path
-
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from dataclasses import dataclass, field
 
 
 STARPLOT_PATH = Path(__file__).resolve().parent
@@ -15,30 +15,46 @@ RAW_DATA_PATH = STARPLOT_PATH.parent.parent / "raw"
 BUILD_PATH = STARPLOT_PATH.parent.parent / "build"
 
 
+def _get_path(var_name, default) -> Path:
+    def _get():
+        value = os.environ.get(var_name, default)
+        return Path(value)
+
+    return _get
+
+
 class SvgTextType(str, Enum):
     PATH = "path"
     ELEMENT = "element"
 
 
-class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="STARPLOT_")
-    """Configuration for the Pydantic settings model. Do not change."""
-
-    download_path: Path = DATA_PATH / "downloads"
+@dataclass
+class Settings:
+    download_path: Path = field(
+        default_factory=_get_path("STARPLOT_DOWNLOAD_PATH", DATA_PATH / "downloads")
+    )
     """
     Path for downloaded data, including the Big Sky catalog, ephemeris files, etc.
     
     Default = `<starplot_source_path>/data/library/downloads/`
     """
 
-    duckdb_extension_path: Path = DATA_PATH / "duckdb-extensions"
+    duckdb_extension_path: Path = field(
+        default_factory=_get_path(
+            "STARPLOT_DUCKDB_EXTENSION_PATH", DATA_PATH / "duckdb-extensions"
+        )
+    )
     """
     Path for the DuckDB spatial extension, which is required for the data backend.
 
     Default = `<starplot_source_path>/data/library/duckdb-extensions/`
     """
 
-    svg_text_type: SvgTextType = SvgTextType.PATH
+    svg_text_type: SvgTextType = field(
+        default_factory=lambda: os.environ.get(
+            "STARPLOT_SVG_TEXT_TYPE", SvgTextType.PATH
+        )
+    )
     """
     Method for rendering text in SVG exports:
 
