@@ -136,7 +136,7 @@ class ConstellationPlotterMixin:
                 if any([np.isnan(n) for n in start + end]):
                     continue
 
-                for x, y in points_on_line(start, end, 25):
+                for x, y in points_on_line(start, end, num_points=25):
                     display_x, display_y = self.ax.transData.transform((x, y))
                     if display_x < 0 or display_y < 0:
                         continue

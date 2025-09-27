@@ -13,7 +13,7 @@ from skyfield.api import wgs84, Star as SkyfieldStar
 from shapely import Point, Polygon, MultiPolygon
 from starplot.coordinates import CoordinateSystem
 from starplot.base import BasePlot, DPI
-from starplot.mixins import ExtentMaskMixin
+from starplot.mixins import ExtentMaskMixin, HorizonExtentMaskMixin
 from starplot.observer import Observer
 from starplot.plotters import (
     ConstellationPlotterMixin,
@@ -49,6 +49,7 @@ DEFAULT_HORIZON_LABELS = {
 class HorizonPlot(
     BasePlot,
     ExtentMaskMixin,
+    # HorizonExtentMaskMixin,
     ConstellationPlotterMixin,
     StarPlotterMixin,
     DsoPlotterMixin,
@@ -122,6 +123,8 @@ class HorizonPlot(
         self.logger.debug("Creating HorizonPlot...")
         self.alt = altitude
         self.az = azimuth
+        self._alt = altitude
+        self._az = azimuth
         self.center_alt = sum(altitude) / 2
         self.center_az = sum(azimuth) / 2
 
@@ -155,7 +158,7 @@ class HorizonPlot(
         return pos_az.degrees, pos_alt.degrees
 
     def _prepare_star_coords(self, df, limit_by_altaz=True):
-        import geopandas as gpd
+        # import geopandas as gpd
 
         stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
@@ -163,10 +166,10 @@ class HorizonPlot(
             nearby_stars_az.degrees,
             nearby_stars_alt.degrees,
         )
-        if limit_by_altaz:
-            extent = self._extent_mask_altaz()
-            df["_geometry_az_alt"] = gpd.points_from_xy(df.x, df.y)
-            df = df[df["_geometry_az_alt"].intersects(extent)]
+        # if limit_by_altaz:
+        #     extent = self._extent_mask_altaz()
+        #     df["_geometry_az_alt"] = gpd.points_from_xy(df.x, df.y)
+        #     df = df[df["_geometry_az_alt"].intersects(extent)]
 
         return df
 
