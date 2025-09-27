@@ -7,9 +7,9 @@ horizon_gradient_background:
   filename: /starplot/hash_checks/data/horizon-gradient-background.png
   phash: 954f43916bc46ee4
 horizon_north_celestial_pole:
-  dhash: b0aaaab2a2b2a696b0aaaab282b2a696b2aaaaeaa2b2aec4
+  dhash: b0aaaab2a2b2a696b0aaaab282b2a696b0aaaaeaa2b2aec4
   filename: /starplot/hash_checks/data/horizon-north-celestial-pole.png
-  phash: d5907ad16ad16bc4
+  phash: d5907ad16ad06bc3
 map_coma_berenices_dso_size:
   dhash: ea84acecc888c0c0aa828ceca888c682aa8a92a2a882c282
   filename: /starplot/hash_checks/data/map-coma-berenices-dso-size.png
