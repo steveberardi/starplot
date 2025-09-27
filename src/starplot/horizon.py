@@ -4,7 +4,7 @@ from functools import cache
 from typing import Callable
 
 # import pandas as pd
-import geopandas as gpd
+# import geopandas as gpd
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
@@ -155,6 +155,8 @@ class HorizonPlot(
         return pos_az.degrees, pos_alt.degrees
 
     def _prepare_star_coords(self, df, limit_by_altaz=True):
+        import geopandas as gpd
+
         stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
         df["x"], df["y"] = (

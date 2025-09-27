@@ -9,7 +9,7 @@ from skyfield.api import wgs84, Star as SkyfieldStar
 from starplot.coordinates import CoordinateSystem
 from starplot import callables
 from starplot.base import BasePlot, DPI
-from starplot.data.stars import StarCatalog, STAR_NAMES
+from starplot.data.stars import StarCatalog
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star
 from starplot.observer import Observer
@@ -234,7 +234,8 @@ class OpticPlot(
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
-        labels: Mapping[int, str] = STAR_NAMES,
+        label_fn: Callable[[Star], str] = None,
+        labels: Mapping[int, str] = None,
         legend_label: str = "Star",
         bayer_labels: bool = False,
         flamsteed_labels: bool = False,
@@ -245,6 +246,12 @@ class OpticPlot(
         """
         Plots stars
 
+        Labels for stars are determined in this order:
+
+        1. Return value from `label_fn`
+        2. Value for star's HIP id in `labels`
+        3. IAU-designated name, as listed in the [data reference](/data/star-designations/)
+
         Args:
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
@@ -254,7 +261,8 @@ class OpticPlot(
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
-            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If you want to hide name labels, then set this arg to `None`.
+            label_fn: Callable for determining the label of each star. If `None`, then the names in the `labels` kwarg will be used.
+            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If `None`, then the star's IAU-designated name will be used.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted.
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
@@ -269,18 +277,20 @@ class OpticPlot(
                 return size_fn(s) * optic_star_multiplier * 0.68
 
         super().stars(
+            where=where,
+            where_labels=where_labels,
             catalog=catalog,
             style=style,
             rasterize=rasterize,
             size_fn=size_fn_mx,
             alpha_fn=alpha_fn,
             color_fn=color_fn,
-            where=where,
-            where_labels=where_labels,
+            label_fn=label_fn,
             labels=labels,
             legend_label=legend_label,
             bayer_labels=bayer_labels,
             flamsteed_labels=flamsteed_labels,
+            sql=sql,
             *args,
             **kwargs,
         )

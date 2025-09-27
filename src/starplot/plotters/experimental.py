@@ -1,5 +1,3 @@
-import geopandas as gpd
-
 from shapely import MultiPolygon
 from shapely import (
     MultiPoint,
@@ -20,6 +18,7 @@ class ExperimentalPlotterMixin:
     def _constellation_borders(self):
         from shapely import LineString, MultiLineString
         from shapely.ops import unary_union
+        import geopandas as gpd
 
         constellation_borders = gpd.read_file(
             DataFiles.CONSTELLATIONS,
