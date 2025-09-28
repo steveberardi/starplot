@@ -3,6 +3,7 @@ from functools import cache
 from shapely import Polygon, MultiPolygon, Point
 from starplot.profile import profile
 
+
 class ExtentMaskMixin:
     @cache
     def _extent_mask(self):
@@ -55,8 +56,10 @@ class ExtentMaskMixin:
             ]
         )
 
+
 class HorizonExtentMaskMixin:
     """Experimental"""
+
     @cache
     def _extent_mask_original(self):
         """
@@ -96,6 +99,7 @@ class HorizonExtentMaskMixin:
                     Polygon(coords_2),
                 ]
             )
+
     @cache
     def _extent_mask2(self):
         locations = [
@@ -107,7 +111,7 @@ class HorizonExtentMaskMixin:
             ),  # lower right
             self.location.at(self.observer.timescale).from_altaz(
                 alt_degrees=self.alt[1], az_degrees=self._az[1]
-            ), # upper right
+            ),  # upper right
             self.location.at(self.observer.timescale).from_altaz(
                 alt_degrees=self.alt[1], az_degrees=self.center_az
             ),  # top center
@@ -116,7 +120,7 @@ class HorizonExtentMaskMixin:
             # ),  # center
             self.location.at(self.observer.timescale).from_altaz(
                 alt_degrees=self.alt[1], az_degrees=self._az[0]
-            ), # upper left
+            ),  # upper left
             self.location.at(self.observer.timescale).from_altaz(
                 alt_degrees=self.alt[0], az_degrees=self._az[0]
             ),  # lower left
@@ -150,17 +154,10 @@ class HorizonExtentMaskMixin:
 
         extent = segmentize(extent, max_segment_length=2)
 
-
-
-        self.polygon(
-            style__fill_color="red", 
-            style__alpha=0.3,
-            geometry=extent
-        )
+        self.polygon(style__fill_color="red", style__alpha=0.3, geometry=extent)
         # print(extent)
 
         return extent
-
 
     @profile
     @cache
@@ -173,31 +170,27 @@ class HorizonExtentMaskMixin:
 
         for alt in range(0, 90, 5):
             for az in range(az0 - 30, az1 + 30, 5):
-                ra, dec, _ = self.location.at(self.observer.timescale).from_altaz(
-                    alt_degrees=alt, az_degrees=az
-                ).radec()
+                ra, dec, _ = (
+                    self.location.at(self.observer.timescale)
+                    .from_altaz(alt_degrees=alt, az_degrees=az)
+                    .radec()
+                )
                 ra = ra.hours * 15
                 if ra < 180:
                     ra += 360
                 dec = dec.degrees
                 coords.append([float(ra), float(dec)])
 
-      
         extent = Polygon(coords)
         from shapely import segmentize
+
         extent = segmentize(extent, max_segment_length=1)
 
-
-
-        self.polygon(
-            style__fill_color="red", 
-            style__alpha=0.3,
-            geometry=extent
-        )
+        self.polygon(style__fill_color="red", style__alpha=0.3, geometry=extent)
         # print(extent)
 
         return extent
-    
+
     @profile
     @cache
     def _extent_mask1(self):
@@ -208,49 +201,47 @@ class HorizonExtentMaskMixin:
         altaz_polygons = []
 
         if str(mask_altaz.geom_type) == "MultiPolygon":
-            altaz_polygons = [segmentize(p, max_segment_length=5) for p in mask_altaz.geoms]
+            altaz_polygons = [
+                segmentize(p, max_segment_length=5) for p in mask_altaz.geoms
+            ]
         else:
             altaz_polygons = [segmentize(mask_altaz, max_segment_length=5)]
-
 
         radec_polygons = []
 
         for p in altaz_polygons:
-
             coords = []
 
             for az, alt in list(zip(*p.exterior.coords.xy)):
-                ra, dec, _ = self.location.at(self.observer.timescale).from_altaz(
-                    alt_degrees=alt, az_degrees=az
-                ).radec()
+                ra, dec, _ = (
+                    self.location.at(self.observer.timescale)
+                    .from_altaz(alt_degrees=alt, az_degrees=az)
+                    .radec()
+                )
                 ra = ra.hours * 15
                 if ra < 180:
                     ra += 360
                 dec = dec.degrees
                 coords.append([float(ra), float(dec)])
 
-            radec_polygons.append(
-                Polygon(coords)
-            )
+            radec_polygons.append(Polygon(coords))
 
-        
         mp = MultiPolygon(radec_polygons)
         extent = mp.convex_hull
-        
-        
+
         # extent = segmentize(extent, max_segment_length=1)
 
         print(extent.area)
 
         # self.polygon(
-        #     style__fill_color="red", 
+        #     style__fill_color="red",
         #     style__alpha=0.3,
         #     geometry=extent
         # )
         # print(extent)
 
         return extent
-    
+
     def _axes_to_azalt(self, x: float, y: float) -> tuple[float, float]:
         trans = self.ax.transAxes + self.ax.transData.inverted()
         x_projected, y_projected = self.ax.transAxes.inverted().transform((x, y))
@@ -272,10 +263,8 @@ class HorizonExtentMaskMixin:
         az0, az1 = int(self.az[0]), int(self.az[1])
         alt0, alt1 = int(self.alt[0]), int(self.alt[1])
 
-
         for az in range(az0, az1, 5):
             for alt in range(alt0, alt1, 5):
-
                 # ax = x / 100
                 # ay = y / 100
 
@@ -285,9 +274,11 @@ class HorizonExtentMaskMixin:
                     az -= 360
 
                 azalt.append([az, alt])
-                ra, dec, _ = self.location.at(self.observer.timescale).from_altaz(
-                    alt_degrees=alt, az_degrees=az
-                ).radec()
+                ra, dec, _ = (
+                    self.location.at(self.observer.timescale)
+                    .from_altaz(alt_degrees=alt, az_degrees=az)
+                    .radec()
+                )
                 ra = float(ra.hours * 15)
                 dec = float(dec.degrees)
 
@@ -306,23 +297,22 @@ class HorizonExtentMaskMixin:
                 #     current_polygon_coords = [[ra, dec]]
                 # else:
                 #     current_polygon_coords.append([ra, dec])
-                
+
                 # prev_ra = ra
 
-
-        
         # if current_polygon_coords:
         #     current_polygon_coords += [current_polygon_coords[0]]
         #     polygon_coords.append(current_polygon_coords)
         #     print(current_polygon_coords)
-      
+
         # print(len(polygon_coords))
         from starplot.geometry import split_polygon_at_zero, split_polygon_at_360
-        # polygons = split_polygon_at_zero(extent)
 
+        # polygons = split_polygon_at_zero(extent)
 
         from shapely import convex_hull, MultiPoint, segmentize
         from pprint import pprint
+
         # extent = MultiPolygon([Polygon(c) for c in polygon_coords])
         # extent = Polygon(coords)
         extent = convex_hull(MultiPoint(coords))
@@ -334,18 +324,13 @@ class HorizonExtentMaskMixin:
         # from shapely import segmentize
         # polygons = [segmentize(p, max_segment_length=1) for p in polygons]
         mpoly = MultiPolygon(polygons)
-        
+
         for p in mpoly.geoms:
-            self.polygon(
-                style__fill_color="red", 
-                style__alpha=0.3,
-                geometry=p
-            )
+            self.polygon(style__fill_color="red", style__alpha=0.3, geometry=p)
 
         # print(extent)
 
         return mpoly
-    
 
     def _is_global_extent(self):
         """Returns True if the plot's RA/DEC range is the entire celestial sphere"""
@@ -357,6 +342,7 @@ class HorizonExtentMaskMixin:
                 self.dec_max == 90,
             ]
         )
+
 
 class CreateMapMixin:
     def create_map(self, height_degrees: float, width_degrees: float, *args, **kwargs):

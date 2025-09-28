@@ -459,10 +459,6 @@ class MapPlot(
         self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
 
         self._fit_to_ax()
-
-        # if self.gradient_preset:
-        #     self.apply_gradient_background(self.gradient_preset)
-
         self._plot_background_clip_path()
 
     def _ax_to_radec(self, x, y):

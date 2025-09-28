@@ -16,7 +16,13 @@ from starplot.data.constellations import (
 from starplot.data.constellation_stars import CONSTELLATION_HIPS
 from starplot.models import Star
 from starplot.models.constellation import from_tuple as constellation_from_tuple
-from starplot.projections import Mercator, Miller
+from starplot.projections import (
+    StereoNorth,
+    StereoSouth,
+    Stereographic,
+    Equidistant,
+    LambertAzEqArea,
+)
 from starplot.profile import profile
 from starplot.styles import PathStyle, LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
@@ -33,6 +39,14 @@ DEFAULT_AUTO_ADJUST_SETTINGS = {
     "seed": None,
 }
 """Default settings for auto-adjusting constellation labels"""
+
+GEODETIC_PROJECTIONS = (
+    Equidistant,
+    LambertAzEqArea,
+    Stereographic,
+    StereoNorth,
+    StereoSouth,
+)
 
 
 class ConstellationPlotterMixin:
@@ -89,10 +103,10 @@ class ConstellationPlotterMixin:
             return
 
         projection = getattr(self, "projection", None)
-        if isinstance(projection, Mercator) or isinstance(projection, Miller):
-            transform = self._plate_carree
-        else:
+        if isinstance(projection, GEODETIC_PROJECTIONS):
             transform = self._geodetic
+        else:
+            transform = self._plate_carree
 
         style_kwargs = style.matplot_kwargs(self.scale)
         constellation_points_to_index = []
