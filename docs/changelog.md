@@ -17,6 +17,10 @@
 - [**v0.16.1**] Fixes constellation borders and Milky Way outline when they cross the first point of Aries (RA=0)
 - [**v0.16.2**] Fixes bug with rendering constellation labels as text elements for SVG exports
 - [**v0.16.3**] Locks version of DuckDB to < 1.4 (which seems to have an incompatibility issue)
+- [**v0.16.4**] 
+    - Removes `pydantic-settings` dependency
+    - Fixes constellation line plotting on a few projections to make them straight
+    - Cleans up a few imports to improve performance
 
 ## v0.15.x
 [Documentation](https://archives.starplot.dev/0.15.8/)
