@@ -13,7 +13,7 @@ from skyfield.api import wgs84, Star as SkyfieldStar
 from shapely import Point, Polygon, MultiPolygon
 from starplot.coordinates import CoordinateSystem
 from starplot.base import BasePlot, DPI
-from starplot.mixins import ExtentMaskMixin, HorizonExtentMaskMixin
+from starplot.mixins import ExtentMaskMixin
 from starplot.observer import Observer
 from starplot.plotters import (
     ConstellationPlotterMixin,

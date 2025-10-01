@@ -1,6 +1,6 @@
 from functools import cache
 
-from shapely import Polygon, MultiPolygon, Point
+from shapely import Polygon, MultiPolygon
 from starplot.profile import profile
 
 
@@ -133,7 +133,7 @@ class HorizonExtentMaskMixin:
         from pprint import pprint
         from shapely import segmentize
 
-        center = self.location.at(self.observer.timescale).from_altaz(
+        self.location.at(self.observer.timescale).from_altaz(
             alt_degrees=self.center_alt, az_degrees=self.center_az
         )  # center
         print(self.alt)
@@ -254,11 +254,7 @@ class HorizonExtentMaskMixin:
     def _extent_mask(self):
         coords = []
         azalt = []
-        azimuths = []
 
-        polygon_coords = []
-        current_polygon_coords = []
-        prev_ra = None
 
         az0, az1 = int(self.az[0]), int(self.az[1])
         alt0, alt1 = int(self.alt[0]), int(self.alt[1])
@@ -306,11 +302,11 @@ class HorizonExtentMaskMixin:
         #     print(current_polygon_coords)
 
         # print(len(polygon_coords))
-        from starplot.geometry import split_polygon_at_zero, split_polygon_at_360
+        from starplot.geometry import split_polygon_at_360
 
         # polygons = split_polygon_at_zero(extent)
 
-        from shapely import convex_hull, MultiPoint, segmentize
+        from shapely import convex_hull, MultiPoint
         from pprint import pprint
 
         # extent = MultiPolygon([Polygon(c) for c in polygon_coords])
