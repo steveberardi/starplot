@@ -7,6 +7,8 @@ on:
     branches:
       - main
       - develop
+  schedule:
+        - cron: '0 12 * * *' # 1200 UTC = 0500 PT
 
 jobs:
   test-lint-build:
