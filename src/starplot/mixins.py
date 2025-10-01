@@ -255,7 +255,6 @@ class HorizonExtentMaskMixin:
         coords = []
         azalt = []
 
-
         az0, az1 = int(self.az[0]), int(self.az[1])
         alt0, alt1 = int(self.alt[0]), int(self.alt[1])
 
