@@ -2,7 +2,6 @@ matplotlib==3.10.3
 numpy==2.2.6
 pandas==2.2.3
 pydantic==2.11.7
-pydantic-settings==2.10.1
 shapely==2.1.1
 skyfield==1.53
 cartopy==0.25.0

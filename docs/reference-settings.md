@@ -1,4 +1,4 @@
-Starplot uses a [Pydantic settings class](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) to maintain a few global settings:
+Starplot uses an instance of a `dataclass` to maintain a few global settings:
 
 - Data download path
 - DuckDB extension path

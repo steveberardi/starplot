@@ -143,6 +143,51 @@ def split_polygon_at_zero(polygon: Polygon) -> list[Polygon]:
     return [polygon]
 
 
+def split_polygon_at_360(polygon: Polygon) -> list[Polygon]:
+    """
+    Splits a polygon at 360 degrees
+
+    Args:
+        polygon: Polygon that possibly needs splitting
+
+    Returns:
+        List of polygons
+    """
+    ra, _ = [p for p in polygon.exterior.coords.xy]
+
+    if max(ra) > 360:
+        polygon_1 = polygon.intersection(
+            Polygon(
+                [
+                    [0, -90],
+                    [360, -90],
+                    [360, 90],
+                    [0, 90],
+                    [0, -90],
+                ]
+            )
+        )
+
+        polygon_2 = polygon.intersection(
+            Polygon(
+                [
+                    [360, -90],
+                    [720, -90],
+                    [720, 90],
+                    [360, 90],
+                    [360, -90],
+                ]
+            )
+        )
+
+        p2_ra, p2_dec = [p for p in polygon_2.exterior.coords.xy]
+        p2_new_ra = [ra - 360 for ra in p2_ra]
+
+        return [polygon_1, Polygon(list(zip(p2_new_ra, p2_dec)))]
+
+    return [polygon]
+
+
 def random_point_in_polygon(
     polygon: Polygon, max_iterations: int = 100, seed: int = None
 ) -> Point:

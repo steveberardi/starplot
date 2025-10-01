@@ -3,8 +3,8 @@ import math
 from functools import cache
 from typing import Callable
 
-import pandas as pd
-import geopandas as gpd
+# import pandas as pd
+# import geopandas as gpd
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
@@ -30,7 +30,7 @@ from starplot.styles import (
     GradientDirection,
 )
 
-pd.options.mode.chained_assignment = None  # default='warn'
+# pd.options.mode.chained_assignment = None  # default='warn'
 
 DEFAULT_HORIZON_STYLE = PlotStyle().extend(extensions.MAP)
 
@@ -49,6 +49,7 @@ DEFAULT_HORIZON_LABELS = {
 class HorizonPlot(
     BasePlot,
     ExtentMaskMixin,
+    # HorizonExtentMaskMixin,
     ConstellationPlotterMixin,
     StarPlotterMixin,
     DsoPlotterMixin,
@@ -122,6 +123,8 @@ class HorizonPlot(
         self.logger.debug("Creating HorizonPlot...")
         self.alt = altitude
         self.az = azimuth
+        self._alt = altitude
+        self._az = azimuth
         self.center_alt = sum(altitude) / 2
         self.center_az = sum(azimuth) / 2
 
@@ -155,16 +158,18 @@ class HorizonPlot(
         return pos_az.degrees, pos_alt.degrees
 
     def _prepare_star_coords(self, df, limit_by_altaz=True):
+        # import geopandas as gpd
+
         stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
         df["x"], df["y"] = (
             nearby_stars_az.degrees,
             nearby_stars_alt.degrees,
         )
-        if limit_by_altaz:
-            extent = self._extent_mask_altaz()
-            df["_geometry_az_alt"] = gpd.points_from_xy(df.x, df.y)
-            df = df[df["_geometry_az_alt"].intersects(extent)]
+        # if limit_by_altaz:
+        #     extent = self._extent_mask_altaz()
+        #     df["_geometry_az_alt"] = gpd.points_from_xy(df.x, df.y)
+        #     df = df[df["_geometry_az_alt"].intersects(extent)]
 
         return df
 

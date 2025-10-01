@@ -21,7 +21,6 @@ dependencies = [
     "numpy >= 1.26.2",
     "pandas >= 1.4.0",
     "pydantic >= 2.10.6",
-    "pydantic-settings >= 2.10.1",
     "shapely >= 2.0.1",
     "skyfield >= 1.41",
     "cartopy >= 0.21.1",

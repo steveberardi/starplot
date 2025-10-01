@@ -1,7 +1,6 @@
 from functools import cache
 
-import ibis
-from ibis import _
+from ibis import _, row_number, coalesce
 
 from starplot.data import db
 
@@ -36,10 +35,10 @@ def table():
         ra=_.ra_degrees,
         dec=_.dec_degrees,
         constellation_id=_.constellation,
-        magnitude=ibis.coalesce(_.mag_v, _.mag_b, None),
+        magnitude=coalesce(_.mag_v, _.mag_b, None),
         size=_.size_deg2,
-        rowid=ibis.row_number(),
-        sk=ibis.row_number(),
+        rowid=row_number(),
+        sk=row_number(),
     )
 
 
