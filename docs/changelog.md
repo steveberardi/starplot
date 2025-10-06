@@ -1,4 +1,10 @@
+
+## v0.17.x
+- Consolidates the scope/binoculars field of view function into a general optic fov function (which means it also supports cameras now)
+
+
 ## v0.16.x
+[Documentation](https://archives.starplot.dev/0.16.4/)
 [Migration Guide](migration-guides/0.16.0.md)
 
 - Adds support for gradient backgrounds

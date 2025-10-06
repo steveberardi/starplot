@@ -18,7 +18,7 @@ from starplot import (
     StereoNorth,
 )
 from starplot.map import MapPlot
-from starplot.optics import Binoculars, Scope
+from starplot.models import Binoculars, Scope
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"

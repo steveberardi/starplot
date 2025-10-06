@@ -3,7 +3,8 @@ from datetime import datetime
 
 from pytz import timezone
 
-from starplot import styles, optics, OpticPlot, callables, Moon, _, Observer
+from starplot import styles, OpticPlot, callables, Moon, _, Observer
+from starplot.models import optics
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"

@@ -9,7 +9,7 @@ from starplot import (
     Constellation,
     Observer,
     _,
-    optics,
+    Binoculars,
 )
 
 style = PlotStyle().extend(
@@ -54,7 +54,7 @@ double_cluster = DSO.get(name="NGC0884")
 p.optic_fov(
     ra=double_cluster.ra,
     dec=double_cluster.dec,
-    optic=optics.Binoculars(
+    optic=Binoculars(
         fov=65,
         magnification=10,
     ),

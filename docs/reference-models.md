@@ -13,6 +13,7 @@ Starplot has models to represent an observer and some of the objects you can plo
         show_root_heading: true
         show_docstring_attributes: true
 
+# Sky Objects
 
 ::: starplot.Star
     options:
@@ -76,3 +77,46 @@ Starplot has models to represent an observer and some of the objects you can plo
         show_root_heading: true
         show_docstring_attributes: true
         members_order: source
+
+
+# Optics
+
+## ::: starplot.models.Optic
+    options:
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.models.Binoculars
+    options:
+        show_docstring_attributes: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.models.Scope
+    options:
+        show_docstring_attributes: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.models.Refractor
+    options:
+        show_docstring_attributes: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.models.Reflector
+    options:
+        show_docstring_attributes: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+## ::: starplot.models.Camera
+    options:
+        show_docstring_attributes: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2

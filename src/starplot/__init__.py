@@ -1,6 +1,6 @@
 """Star charts and maps of the sky"""
 
-__version__ = "0.16.4"
+__version__ = "0.17.0"
 
 from .base import BasePlot  # noqa: F401
 from .map import MapPlot  # noqa: F401
@@ -16,6 +16,11 @@ from .models import (
     Moon,  # noqa: F401
     Sun,  # noqa: F401
     ObjectList,  # noqa: F401
+    Scope,  # noqa: F401
+    Binoculars,  # noqa: F401
+    Reflector,  # noqa: F401
+    Refractor,  # noqa: F401
+    Camera,  # noqa: F401
 )
 from .styles import *  # noqa: F401 F403
 from .observer import Observer  # noqa: F401

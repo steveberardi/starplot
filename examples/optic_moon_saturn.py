@@ -1,7 +1,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from starplot import Moon, optics, Observer, _
+from starplot import Moon, Binoculars, Observer, _
 from starplot.styles import PlotStyle, extensions
 
 dt = datetime(2024, 8, 20, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
@@ -16,7 +16,7 @@ m = Moon.get(dt=observer.dt, lat=observer.lat, lon=observer.lon)
 
 op = m.create_optic(
     observer=observer,
-    optic=optics.Binoculars(magnification=15, fov=65),
+    optic=Binoculars(magnification=15, fov=65),
     style=PlotStyle().extend(extensions.GRAYSCALE_DARK, extensions.OPTIC),
     resolution=2000,
     autoscale=True,

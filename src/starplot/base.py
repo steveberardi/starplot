@@ -18,8 +18,8 @@ from starplot.config import settings as StarplotSettings, SvgTextType
 from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
+from starplot.models.optics import Optic, Camera
 from starplot.observer import Observer
-from starplot.optics import Optic, Camera
 from starplot.styles import (
     AnchorPointEnum,
     PlotStyle,
@@ -1211,7 +1211,7 @@ class BasePlot(ABC):
         Args:
             ra: Right ascension of the center of view
             dec: Declination of the center of view
-            optic: Instance of an [Optic][starplot.optics.Optic]
+            optic: Instance of an [Optic][starplot.models.Optic]
             style: style of the polygon
         """
         if isinstance(optic, Camera):

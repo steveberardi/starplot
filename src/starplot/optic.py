@@ -11,9 +11,8 @@ from starplot import callables
 from starplot.base import BasePlot, DPI
 from starplot.data.stars import StarCatalog
 from starplot.mixins import ExtentMaskMixin
-from starplot.models import Star
+from starplot.models import Star, Optic, Camera
 from starplot.observer import Observer
-from starplot.optics import Optic, Camera
 from starplot.plotters import StarPlotterMixin, DsoPlotterMixin, GradientBackgroundMixin
 from starplot.styles import (
     PlotStyle,
