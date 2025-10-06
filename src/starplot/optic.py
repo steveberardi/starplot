@@ -1,7 +1,5 @@
 from typing import Callable, Mapping
 
-# import pandas as pd
-
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
@@ -24,8 +22,6 @@ from starplot.styles import (
     GradientDirection,
 )
 from starplot.utils import azimuth_to_string
-
-# pd.options.mode.chained_assignment = None  # default='warn'
 
 DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
 

@@ -3,9 +3,6 @@ import math
 from functools import cache
 from typing import Callable
 
-# import pandas as pd
-# import geopandas as gpd
-
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator, FuncFormatter
@@ -29,8 +26,6 @@ from starplot.styles import (
     PathStyle,
     GradientDirection,
 )
-
-# pd.options.mode.chained_assignment = None  # default='warn'
 
 DEFAULT_HORIZON_STYLE = PlotStyle().extend(extensions.MAP)
 
