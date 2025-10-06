@@ -9,6 +9,7 @@ from starplot import (
     Constellation,
     Observer,
     _,
+    optics,
 )
 
 style = PlotStyle().extend(
@@ -50,11 +51,13 @@ p.open_clusters(
     label_fn=lambda d: f"{d.ngc}",
 )
 double_cluster = DSO.get(name="NGC0884")
-p.bino_fov(
+p.optic_fov(
     ra=double_cluster.ra,
     dec=double_cluster.dec,
-    fov=65,
-    magnification=10,
+    optic=optics.Binoculars(
+        fov=65,
+        magnification=10,
+    )
 )
 p.constellation_labels()
 p.horizon()

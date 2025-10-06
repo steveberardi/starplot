@@ -18,6 +18,7 @@ from starplot import (
     StereoNorth,
 )
 from starplot.map import MapPlot
+from starplot.optics import Binoculars, Scope
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -253,6 +254,16 @@ def check_map_scope_bino_fov():
     filename = DATA_PATH / "map-scope-bino-fov.png"
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
 
+    scope = Scope(
+        focal_length=600,
+        eyepiece_focal_length=14,
+        eyepiece_fov=82,
+    )
+    binoculars = Binoculars(
+        magnification=10,
+        fov=65,
+    )
+
     style = styles.PlotStyle().extend(
         styles.extensions.GRAYSCALE,
         styles.extensions.MAP,
@@ -271,14 +282,16 @@ def check_map_scope_bino_fov():
         scale=1,
     )
     p.stars(where=[_.magnitude < 12])
-    p.scope_fov(
+    p.optic_fov(
         ra=3.791278 * 15,
         dec=24.105278,
-        scope_focal_length=600,
-        eyepiece_focal_length=14,
-        eyepiece_fov=82,
+        optic=scope,
     )
-    p.bino_fov(ra=3.791278 * 15, dec=24.105278, fov=65, magnification=10)
+    p.optic_fov(
+        ra=3.791278 * 15,
+        dec=24.105278,
+        optic=binoculars,
+    )
     p.title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
     return filename

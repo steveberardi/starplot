@@ -1151,6 +1151,15 @@ class PlotStyle(BaseStyle):
     )
     """Styling for the zenith marker"""
 
+    optic_fov: PolygonStyle = PolygonStyle(
+        fill_color=None,
+        edge_color="red",
+        line_style=[1, [2, 3]],
+        edge_width=3,
+        zorder=-1000,
+    )
+    """Styling for optic fields of view"""
+
     def get_dso_style(self, dso_type: DsoType):
         """Returns the style for a DSO type"""
         styles_by_type = {

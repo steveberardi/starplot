@@ -19,6 +19,7 @@ from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
 from starplot.observer import Observer
+from starplot.optics import Optic, Camera
 from starplot.styles import (
     AnchorPointEnum,
     PlotStyle,
@@ -46,16 +47,6 @@ LOG_FORMATTER = logging.Formatter(
 )
 LOG_HANDLER.setFormatter(LOG_FORMATTER)
 LOGGER.addHandler(LOG_HANDLER)
-
-
-DEFAULT_FOV_STYLE = PolygonStyle(
-    fill_color=None,
-    edge_color="red",
-    line_style=[1, [2, 3]],
-    edge_width=3,
-    zorder=-1000,
-)
-"""Default style for plotting scope and bino field of view circles"""
 
 DEFAULT_STYLE = PlotStyle()
 
@@ -1207,61 +1198,36 @@ class BasePlot(ABC):
             gid="moon-marker",
         )
 
-    def _fov_circle(
-        self, ra, dec, fov, magnification, style: PolygonStyle = DEFAULT_FOV_STYLE
-    ):
-        # FOV (degrees) = FOV eyepiece / magnification
-        fov_degrees = fov / magnification
-        fov_radius = fov_degrees / 2
-        self.circle(
-            (ra, dec),
-            fov_radius,
-            style=style,
-        )
-
-    @use_style(PolygonStyle)
-    def scope_fov(
+    @use_style(PolygonStyle, "optic_fov")
+    def optic_fov(
         self,
         ra: float,
         dec: float,
-        scope_focal_length: float,
-        eyepiece_focal_length: float,
-        eyepiece_fov: float,
-        style: PolygonStyle = DEFAULT_FOV_STYLE,
+        optic: Optic,
+        style: PolygonStyle = None,
     ):
-        """Draws a circle representing the field of view for a telescope and eyepiece.
+        """Draws a polygon representing the field of view for an optic, centered at a specific point.
 
         Args:
             ra: Right ascension of the center of view
             dec: Declination of the center of view
-            scope_focal_length: focal length (mm) of the scope
-            eyepiece_focal_length: focal length (mm) of the eyepiece
-            eyepiece_fov: field of view (degrees) of the eyepiece
+            optic: Instance of an [Optic][starplot.optics.Optic]
             style: style of the polygon
         """
-        # FOV (degrees) = FOV eyepiece / magnification
-        magnification = scope_focal_length / eyepiece_focal_length
-        self._fov_circle(ra, dec, eyepiece_fov, magnification, style)
-
-    @use_style(PolygonStyle)
-    def bino_fov(
-        self,
-        ra: float,
-        dec: float,
-        fov: float,
-        magnification: float,
-        style: PolygonStyle = DEFAULT_FOV_STYLE,
-    ):
-        """Draws a circle representing the field of view for binoculars.
-
-        Args:
-            ra: Right ascension of the center of view
-            dec: Declination of the center of view
-            fov: field of view (degrees) of the binoculars
-            magnification: magnification of the binoculars
-            style: style of the polygon
-        """
-        self._fov_circle(ra, dec, fov, magnification, style)
+        if isinstance(optic, Camera):
+            self.rectangle(
+                center=(ra, dec),
+                height_degrees=optic.true_fov_y,
+                width_degrees=optic.true_fov_x,
+                angle=optic.rotation,
+                style=style,
+            )
+        else:
+            self.circle(
+                center=(ra, dec),
+                radius_degrees=optic.true_fov / 2,
+                style=style,
+            )
 
     @use_style(PathStyle, "ecliptic")
     def ecliptic(self, style: PathStyle = None, label: str = "ECLIPTIC"):
