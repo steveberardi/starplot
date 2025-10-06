@@ -57,7 +57,7 @@ p.optic_fov(
     optic=optics.Binoculars(
         fov=65,
         magnification=10,
-    )
+    ),
 )
 p.constellation_labels()
 p.horizon()
