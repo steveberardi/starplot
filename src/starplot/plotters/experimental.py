@@ -9,7 +9,6 @@ from shapely import (
 from starplot.data import DataFiles
 from starplot.data.constellations import (
     CONSTELLATIONS_FULL_NAMES,
-    CONSTELLATION_HIP_IDS,
 )
 from starplot.styles import PathStyle
 
@@ -118,7 +117,7 @@ class ExperimentalPlotterMixin:
                 s
                 for s in self.objects.stars
                 if s.constellation_id == constellation.iau_id
-                and s.hip in CONSTELLATION_HIP_IDS[constellation.iau_id]
+                # and s.hip in CONSTELLATION_HIP_IDS[constellation.iau_id]
             ]
             points = MultiPoint([(s.ra, s.dec) for s in constellation_stars])
             points_line = MultiPoint([(s.ra, s.dec) for s in constellation_line_stars])

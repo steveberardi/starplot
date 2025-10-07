@@ -24,7 +24,7 @@ from starplot.projections import (
     LambertAzEqArea,
 )
 from starplot.profile import profile
-from starplot.styles import PathStyle, LineStyle, LabelStyle
+from starplot.styles import LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
 from starplot.geometry import is_wrapped_polygon
@@ -197,40 +197,6 @@ class ConstellationPlotterMixin:
                     None,
                 )
 
-    def _plot_constellation_labels(
-        self,
-        style: PathStyle = None,
-        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
-    ):
-        """
-        TODO:
-        1. plot label, if removed then get size in display coords
-        2. generate random points in polygon, convert to display coords, test for intersections
-        3. plot best score
-
-        problem = constellations usually plotted first, so wont have star data (or could use stars from constellations only?)
-
-        constellation names CAN cross lines but not stars
-
-        """
-        style = style or self.style.constellation.label
-        self._constellation_labels = []
-
-        for con in condata.iterator():
-            _, ra, dec = condata.get(con)
-            text = labels.get(con.lower())
-            label = self.text(
-                text,
-                ra,
-                dec,
-                style,
-                hide_on_collision=False,
-                # hide_on_collision=self.hide_colliding_labels,
-                gid="constellations-label-name",
-            )
-            if label is not None:
-                self._constellation_labels.append(label)
-
     @profile
     @use_style(LineStyle, "constellation_borders")
     def constellation_borders(self, style: LineStyle = None):
@@ -317,13 +283,12 @@ class ConstellationPlotterMixin:
             )
 
     def _constellation_labels_static(self, style, labels):
-        for con in condata.iterator():
-            _, ra, dec = condata.get(con)
-            text = labels.get(con.lower())
+        for c in self.objects.constellations:
+            text = labels.get(c.iau_id)
             self.text(
                 text,
-                ra * 15,
-                dec,
+                c.ra,
+                c.dec,
                 style,
                 hide_on_collision=self.hide_colliding_labels,
                 remove_on_constellation_collision=False,
