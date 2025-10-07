@@ -54,9 +54,9 @@ class Scope(Optic):
 
     See subclasses of this optic for more specific use cases:
 
-    - [`Refractor`][starplot.optics.Refractor] - automatically inverts the view (i.e. assumes a star diagonal is used)
+    - [`Refractor`][starplot.models.Refractor] - automatically inverts the view (i.e. assumes a star diagonal is used)
 
-    - [`Reflector`][starplot.optics.Reflector] - automatically rotates the view so it's upside-down
+    - [`Reflector`][starplot.models.Reflector] - automatically rotates the view so it's upside-down
 
     Args:
         focal_length: Focal length (mm) of the telescope
@@ -126,7 +126,7 @@ class Refractor(Scope):
     Warning:
         This optic assumes a star diagonal is used, so it applies a transform that inverts the image.
 
-        If you don't want this transform applied, then use the generic [`Scope`][starplot.optics.Scope] optic instead.
+        If you don't want this transform applied, then use the generic [`Scope`][starplot.models.Scope] optic instead.
 
     Args:
         focal_length: Focal length (mm) of the telescope
@@ -152,7 +152,7 @@ class Reflector(Scope):
     Warning:
         This optic applies a transform that produces an "upside-down" image.
 
-        If you don't want this transform applied, then use the generic [`Scope`][starplot.optics.Scope] optic instead.
+        If you don't want this transform applied, then use the generic [`Scope`][starplot.models.Scope] optic instead.
 
     Args:
         focal_length: Focal length (mm) of the telescope

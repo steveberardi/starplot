@@ -88,6 +88,7 @@ Starplot has models to represent an observer and some of the objects you can plo
 
 ## ::: starplot.models.Binoculars
     options:
+        inherited_members: true
         show_docstring_attributes: true
         merge_init_into_class: true
         show_root_heading: true
@@ -95,6 +96,7 @@ Starplot has models to represent an observer and some of the objects you can plo
 
 ## ::: starplot.models.Scope
     options:
+        inherited_members: true
         show_docstring_attributes: true
         merge_init_into_class: true
         show_root_heading: true
@@ -102,6 +104,7 @@ Starplot has models to represent an observer and some of the objects you can plo
 
 ## ::: starplot.models.Refractor
     options:
+        inherited_members: true
         show_docstring_attributes: true
         merge_init_into_class: true
         show_root_heading: true
@@ -109,6 +112,7 @@ Starplot has models to represent an observer and some of the objects you can plo
 
 ## ::: starplot.models.Reflector
     options:
+        inherited_members: true
         show_docstring_attributes: true
         merge_init_into_class: true
         show_root_heading: true
@@ -116,6 +120,7 @@ Starplot has models to represent an observer and some of the objects you can plo
 
 ## ::: starplot.models.Camera
     options:
+        inherited_members: true
         show_docstring_attributes: true
         merge_init_into_class: true
         show_root_heading: true
