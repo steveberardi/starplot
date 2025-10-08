@@ -25,6 +25,9 @@ class Constellation(SkyObject):
     star_hip_ids: list[int] = None
     """List of HIP ids for stars that are part of the _lines_ for this constellation."""
 
+    star_hip_lines: list[list[int, int]] = None
+    """Nested list of star HIP ids that represent the lines of this constellation. Each pair of HIP ids represents a line between those stars."""
+
     boundary: ShapelyPolygon | ShapelyMultiPolygon = None
     """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
 
@@ -100,6 +103,7 @@ def from_tuple(c: tuple) -> Constellation:
         iau_id=c.iau_id.lower(),
         name=c.name,
         star_hip_ids=c.star_hip_ids,
+        star_hip_lines=c.star_hip_lines,
         boundary=c.geometry,
     )
     c._constellation_id = c.iau_id

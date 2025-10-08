@@ -1,3 +1,5 @@
+import json
+
 import geopandas as gpd
 import pandas as pd
 
@@ -33,10 +35,24 @@ def parse_borders(lines):
         coords.append((ra, dec))
     return coords
 
+def read_hiplines():
+    with open(RAW_PATH / "constellation_hiplines.json", "r") as hipline_file:
+        content = hipline_file.read()
+        hiplines = json.loads(content)
+        hip_ids = {}
+
+        for iau_id, lines in hiplines.items():
+            constellation_hips = set()
+            for hip_pair in lines:
+                constellation_hips.update(hip_pair)
+            hip_ids[iau_id] = constellation_hips
+    
+    return hiplines, hip_ids
+
 
 def build_constellations():
     constellation_records = []
-    constellation_star_hips = constellations.CONSTELLATION_HIP_IDS
+    hiplines, hip_ids = read_hiplines()
 
     for cid, props in constellations.properties.items():
         constellation_dict = {
@@ -44,7 +60,8 @@ def build_constellations():
             "name": props[0].replace("\n", " "),
             "center_ra": props[1] * 15,
             "center_dec": props[2],
-            "star_hip_ids": list(constellation_star_hips[cid.lower()]),
+            "star_hip_ids": list(hip_ids[cid.lower()]),
+            "star_hip_lines": hiplines[cid.lower()],
         }
 
         if cid == "Ser":
