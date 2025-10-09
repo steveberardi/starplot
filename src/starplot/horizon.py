@@ -21,6 +21,7 @@ from starplot.plotters import (
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
     GradientBackgroundMixin,
+    LegendPlotterMixin,
 )
 from starplot.styles import (
     PlotStyle,
@@ -55,6 +56,7 @@ class HorizonPlot(
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
     GradientBackgroundMixin,
+    LegendPlotterMixin,
 ):
     """Creates a new horizon plot.
 

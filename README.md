@@ -70,11 +70,11 @@ For a demo of Starplot's zenith plots, check out:
 
 [Sky Atlas - Star Chart Creator](https://skyatlas.app/star-charts/)
 
-## Discord
+## Getting Help + Updates
 
-Chat with other starplotters on our Discord server:
-
-https://discord.gg/WewJJjshFu
+- Chat with other starplotters on our [Discord server](https://discord.gg/WewJJjshFu)
+- [Follow us on Bluesky](https://bsky.app/profile/starplot.dev)
+- [Join our newsletter](https://buttondown.com/starplot)
 
 ## Contributing
 
