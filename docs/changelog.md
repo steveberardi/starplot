@@ -27,6 +27,8 @@
     - Removes `pydantic-settings` dependency
     - Fixes constellation line plotting on a few projections to make them straight
     - Cleans up a few imports to improve performance
+- [**v0.16.5**] Adds missing legend function to horizon and optic plots
+
 
 ## v0.15.x
 [Documentation](https://archives.starplot.dev/0.15.8/)
@@ -57,6 +59,7 @@
     - Various small changes to make it easier to build AI agents that use Starplot
     - Adds a `sql` kwarg to object selection and plotting functions to allow querying by SQL
 - [**v0.15.8**] Fixes four point star marker
+
 
 ## v0.14.x
 [Documentation](https://archives.starplot.dev/0.14.0/)

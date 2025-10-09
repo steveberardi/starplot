@@ -11,7 +11,12 @@ from starplot.data.stars import StarCatalog
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star, Optic, Camera
 from starplot.observer import Observer
-from starplot.plotters import StarPlotterMixin, DsoPlotterMixin, GradientBackgroundMixin
+from starplot.plotters import (
+    StarPlotterMixin,
+    DsoPlotterMixin,
+    GradientBackgroundMixin,
+    LegendPlotterMixin,
+)
 from starplot.styles import (
     PlotStyle,
     ObjectStyle,
@@ -32,6 +37,7 @@ class OpticPlot(
     StarPlotterMixin,
     DsoPlotterMixin,
     GradientBackgroundMixin,
+    LegendPlotterMixin,
 ):
     """Creates a new optic plot.
 
