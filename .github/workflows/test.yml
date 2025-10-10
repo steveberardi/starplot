@@ -51,10 +51,9 @@ jobs:
     - name: Run Tests - Python 3.12
       run: make test-3.12 CI=true
   
-  # Python 3.13 not supported yet, needs investigation!
-  # test-python-3-13:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - name: Run Tests - Python 3.13
-  #     run: make test-3.13 CI=true
+  test-python-3-13:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run Tests - Python 3.13
+      run: make test-3.13 CI=true

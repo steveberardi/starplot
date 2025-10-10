@@ -1,11 +1,11 @@
 horizon_base:
-  dhash: 8686ca8ec68a86f086a2ca8ec69a86f086a2ca8ec69a86f0
+  dhash: 8e92ca8ec68a86f08eb2ca8ec69a86f08ea2cc8ec69a86f0
   filename: /starplot/hash_checks/data/horizon-base.png
-  phash: c1b53ec42ee03b87
+  phash: c1913ed13eb03b87
 horizon_gradient_background:
-  dhash: d968a4f2b2b2a296f168a672b2b2ba96f168a6b2b29aae92
+  dhash: d16ca0f2b2b2a296f16ca272b2b2ba96f16ca6b2b29aae92
   filename: /starplot/hash_checks/data/horizon-gradient-background.png
-  phash: 954f43916bc46ee4
+  phash: 954e43c16bc56de4
 horizon_north_celestial_pole:
   dhash: b0aaaab2a2b2a696b0aaaab282b2a696b0aaaaeaa2b2aec4
   filename: /starplot/hash_checks/data/horizon-north-celestial-pole.png
@@ -131,10 +131,10 @@ optic_wrapping:
   filename: /starplot/hash_checks/data/optic-wrapping.png
   phash: d1846e1a792ef139
 zenith_base:
-  dhash: 71f0d4aea2d4f87171f0d4ae86d4e87171f0d48e86d4e871
+  dhash: 71f0d4aea2d4f87171f0d4aea6d4e87171f0d48e86d4e871
   filename: /starplot/hash_checks/data/zenith-base.png
   phash: 90d52b552957645f
 zenith_gradient:
-  dhash: 548e0333292b8674448e03312b2b864471cc8e0f0f8ecc71
+  dhash: 548e0333293b8674448e03312b2b864471cc8e0f0f8ecc71
   filename: /starplot/hash_checks/data/zenith-gradient.png
-  phash: e934c4da9acd99a4
+  phash: e934c4d29acd99a5
