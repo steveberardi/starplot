@@ -22,6 +22,7 @@
     - Fixes constellation line plotting on a few projections to make them straight
     - Cleans up a few imports to improve performance
 - [**v0.16.5**] Adds missing legend function to horizon and optic plots
+- [**v0.16.6**] Support for Python 3.13
 
 
 ## v0.15.x
