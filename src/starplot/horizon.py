@@ -375,6 +375,11 @@ class HorizonPlot(
                 label,
                 (x, patch_y + 0.027),
                 xycoords=self.ax.transAxes,
+                xytext=(
+                    style.label.offset_x * self.scale,
+                    style.label.offset_y * self.scale,
+                ),
+                textcoords="offset points",
                 **style.label.matplot_kwargs(self.scale),
                 clip_on=False,
             )
@@ -429,7 +434,6 @@ class HorizonPlot(
         label_style_kwargs.pop("ha")
 
         line_style_kwargs = style.line.matplot_kwargs()
-
         gridlines = self.ax.gridlines(
             draw_labels=show_labels,
             x_inline=False,
@@ -494,7 +498,7 @@ class HorizonPlot(
                     "|",
                     (x, -0.011 * self.scale),
                     xycoords=self.ax.transAxes,
-                    **self.style.gridlines.label.matplot_kwargs(self.scale / 2),
+                    **style.label.matplot_kwargs(self.scale / 2),
                 )
 
     @cache
