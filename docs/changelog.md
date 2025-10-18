@@ -23,6 +23,7 @@
     - Cleans up a few imports to improve performance
 - [**v0.16.5**] Adds missing legend function to horizon and optic plots
 - [**v0.16.6**] Support for Python 3.13
+- [**v0.16.7**] Fixes bug with plotting horizon labels on horizon plots that prevented the use of offsets
 
 
 ## v0.15.x

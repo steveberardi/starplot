@@ -75,6 +75,7 @@ For a demo of Starplot's zenith plots, check out:
 - Chat with other starplotters on our [Discord server](https://discord.gg/WewJJjshFu)
 - [Follow us on Bluesky](https://bsky.app/profile/starplot.dev)
 - [Join our newsletter](https://buttondown.com/starplot)
+- [See more example plots at Starplotting.com](https://starplotting.com/)
 
 ## Contributing
 
