@@ -148,13 +148,7 @@ def load_borders(extent=None, filters=None):
     filters = filters or []
     con = db.connect()
     c = con.table("constellation_borders")
-    c = c.mutate(
-        # ra=_.center_ra,
-        # dec=_.center_dec,
-        # constellation_id=_.iau_id,
-        rowid=row_number(),
-        # boundary=_.geometry,
-    )
+    c = c.mutate(rowid=row_number())
 
     if extent:
         filters.append(_.geometry.intersects(extent))

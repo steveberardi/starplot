@@ -35,6 +35,7 @@ def parse_borders(lines):
         coords.append((ra, dec))
     return coords
 
+
 def read_hiplines():
     with open(RAW_PATH / "constellation_hiplines.json", "r") as hipline_file:
         content = hipline_file.read()
@@ -46,7 +47,7 @@ def read_hiplines():
             for hip_pair in lines:
                 constellation_hips.update(hip_pair)
             hip_ids[iau_id] = constellation_hips
-    
+
     return hiplines, hip_ids
 
 
