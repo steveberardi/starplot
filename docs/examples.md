@@ -141,11 +141,20 @@
     </li>
 
     
-
 </ul>
 
-
 </div>
+
+<div class="info-panel bg-info " style="padding: 24px; width: 100%;">
+
+    <h2 class="mt-0">See more examples @ <a href="https://starplotting.com/">Starplotting.com</a></h2>
+    <p><em>Like this one that shows the path of Comet C/2025 A6 (Lemmon) in October 2025:</em></p>
+    <a href="https://starplotting.com/blog/comet-c2025-a6-lemmon---october-2025/">
+        <img src="https://starplotting.com/blog/2025-10-15/final.png" class="off-glb"/>
+    </a>
+</div>
+
+<br/>
 
 <div class="info-panel bg-info columns-2" style="padding: 40px;">
     <a href="https://steveberardimaps.com/products/all-sky-map" target="_blank">

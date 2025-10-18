@@ -16,3 +16,6 @@ pygments==2.19.1
 rich==13.9.4
 snakeviz==2.2.2
 marimo==0.15.2
+
+# to fix hot reloading mkdocs
+click==8.2.1
