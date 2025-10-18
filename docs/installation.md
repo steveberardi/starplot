@@ -1,6 +1,6 @@
 Starplot is available on [PyPI](https://pypi.org/project/starplot/), and its dependencies have binary wheels for most operating systems, so installation should be easy via pip. See below for details.
 
-Supported Python versions: 3.10 / 3.11 / 3.12
+Supported Python versions: 3.10 / 3.11 / 3.12 / 3.13
 
 
 <h3>1. Install Starplot</h3>
