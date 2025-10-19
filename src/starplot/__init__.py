@@ -12,6 +12,7 @@ from .models import (
     DsoType,  # noqa: F401
     Star,  # noqa: F401
     Constellation,  # noqa: F401
+    Comet,  # noqa: F401
     Planet,  # noqa: F401
     Moon,  # noqa: F401
     Sun,  # noqa: F401

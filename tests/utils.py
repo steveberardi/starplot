@@ -1,6 +1,12 @@
 import hashlib
 import imagehash
+
+from pathlib import Path
+
 from PIL import Image
+
+
+TEST_DATA_PATH = Path(__file__).resolve().parent / "data"
 
 
 def assert_hashes_equal(filename_1, filename_2):

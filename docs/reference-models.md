@@ -70,6 +70,14 @@ Starplot has models to represent an observer and some of the objects you can plo
         show_docstring_attributes: true
         members_order: source
 
+::: starplot.Comet
+    options:
+        inherited_members: true
+        docstring_section_style: list
+        show_root_heading: true
+        show_docstring_attributes: true
+        members_order: source
+
 ::: starplot.ObjectList
     options:
         inherited_members: true
