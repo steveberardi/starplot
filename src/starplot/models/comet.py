@@ -1,11 +1,9 @@
 from datetime import datetime, timedelta
-from enum import Enum
 from typing import Iterator
 from functools import cache
 
-import numpy as np
 
-from skyfield.api import Angle, wgs84
+from skyfield.api import wgs84
 from skyfield.data import mpc
 from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
 
