@@ -1,90 +1,90 @@
-iau_id,English,French,Farsi,zh-CN
-and,Andromeda,,,仙女
-ant,Antlia,,,唧筒
-aps,Apus,,,天燕
-aql,Aquila,,,天鹰
-aqr,Aquarius,,,宝瓶
-ara,Ara,,,天坛
-ari,Aries,,,白羊
-aur,Auriga,,,御夫
-boo,Bootes,,,牧夫
-cma,Canis Major,,,大犬
-cmi,Canis Minor,,,小犬
-cvn,Canes Venatici,,,猎犬
-cae,Caelum,,,雕具
-cam,Camelopardalis,,,鹿豹
-cap,Capricornus,,,摩羯
-car,Carina,,,船底
-cas,Cassiopeia,,,仙后
-cen,Centaurus,,,半人马
-cep,Cepheus,,,仙王
-cet,Cetus,,,鲸鱼
-cha,Chamaeleon,,,蝘蜓
-cir,Circinus,,,圆规
-cnc,Cancer,,,巨蟹
-col,Columba,,,天鸽
-com,Coma Berenices,,,后发
-cra,Corona Australis,,,南冕
-crb,Corona Borealis,,,北冕
-crt,Crater,,,巨爵
-cru,Crux,,,南十字
-crv,Corvus,,,乌鸦
-cyg,Cygnus,,,天鹅
-del,Delphinus,,,海豚
-dor,Dorado,,,剑鱼
-dra,Draco,,,天龙
-equ,Equuleus,,,小马
-eri,Eridanus,,,波江
-for,Fornax,,,天炉
-gem,Gemini,,,双子
-gru,Grus,,,天鹤
-her,Hercules,,,武仙
-hor,Horologium,,,时钟
-hya,Hydra,,,长蛇
-hyi,Hydrus,,,水蛇
-ind,Indus,,,印第安
-lmi,Leo Minor,,,小狮
-lac,Lacerta,,,蝎虎
-leo,Leo,,,狮子
-lep,Lepus,,,天兔
-lib,Libra,,,天秤
-lup,Lupus,,,豺狼
-lyn,Lynx,,,天猫
-lyr,Lyra,,,天琴
-men,Mensa,,,山案
-mic,Microscopium,,,显微镜
-mon,Monoceros,,,麒麟
-mus,Musca,,,苍蝇
-nor,Norma,,,矩尺
-oct,Octans,,,南极
-oph,Ophiuchus,,,蛇夫
-ori,Orion,,,猎户
-pav,Pavo,,,孔雀
-peg,Pegasus,,,飞马
-per,Perseus,,,英仙
-phe,Phoenix,,,凤凰
-pic,Pictor,,,绘架
-psa,Piscis Austrinus,,,南鱼
-psc,Pisces,,,双鱼
-pup,Puppis,,,船尾
-pyx,Pyxis,,,罗盘
-ret,Reticulum,,,网罟
-scl,Sculptor,,,玉夫
-sco,Scorpius,,,天蝎
-sct,Scutum,,,盾牌
-ser1,Serpens Caput,,,巨蛇头
-ser2,Serpens Cauda,,,巨蛇尾
-sex,Sextans,,,六分仪
-sge,Sagitta,,,天箭
-sgr,Sagittarius,,,人马
-tau,Taurus,,,金牛
-tel,Telescopium,,,望远镜
-tra,Triangulum Australe,,,南三角
-tri,Triangulum,,,三角
-tuc,Tucana,,,杜鹃
-uma,Ursa Major,,,大熊
-umi,Ursa Minor,,,小熊
-vel,Vela,,,船帆
-vir,Virgo,,,室女
-vol,Volans,,,飞鱼
-vul,Vulpecula,,,狐狸
+iau_id,English,French,Farsi
+and,Andromeda,Androm�de,
+ant,Antlia,Machine pneumatique,
+aps,Apus,Oiseau de paradis,
+aql,Aquila,Aigle,
+aqr,Aquarius,Verseau,
+ara,Ara,Autel,
+ari,Aries,B�lier,
+aur,Auriga,Cocher,
+boo,Bootes,Bouvier,
+cae,Caelum,Burin,
+cam,Camelopardalis,Girafe,
+cap,Capricornus,Capricorne,
+car,Carina,Car�ne,
+cas,Cassiopeia,Cassiop�e,
+cen,Centaurus,Centaure,
+cep,Cepheus,C�ph�e,
+cet,Cetus,Baleine,
+cha,Chamaeleon,Cam�l�on,
+cir,Circinus,Compas,
+cma,Canis Major,Grand chien,
+cmi,Canis Minor,Petit chien,
+cnc,Cancer,Cancer,
+col,Columba,Colombe,
+com,Coma Berenices,Chevelure de B�r�nice,
+cra,Corona Australis,Couronne australe,
+crb,Corona Borealis,Couronne bor�ale,
+crt,Crater,Coupe,
+cru,Crux,Croix du Sud,
+crv,Corvus,Corbeau,
+cvn,Canes Venatici,Chiens de chasse,
+cyg,Cygnus,Cygne,
+del,Delphinus,Dauphin,
+dor,Dorado,Dorade,
+dra,Draco,Dragon,
+equ,Equuleus,Petit cheval,
+eri,Eridanus,�ridan,
+for,Fornax,Fourneau,
+gem,Gemini,G�meaux,
+gru,Grus,Grue,
+her,Hercules,Hercule,
+hor,Horologium,Horloge,
+hya,Hydra,Hydre femelle,
+hyi,Hydrus,Hydre m�le,
+ind,Indus,Indien (Oiseau),
+lac,Lacerta,L�zard,
+leo,Leo,Lion,
+lep,Lepus,Li�vre,
+lib,Libra,Balance,
+lmi,Leo Minor,Petit Lion,
+lup,Lupus,Loup,
+lyn,Lynx,Lynx,
+lyr,Lyra,Lyre,
+men,Mensa,Table,
+mic,Microscopium,Microscope,
+mon,Monoceros,Licorne,
+mus,Musca,Mouche,
+nor,Norma,R�gle,
+oct,Octans,Octant,
+oph,Ophiuchus,Serpentaire,
+ori,Orion,Orion,
+pav,Pavo,Paon,
+peg,Pegasus,P�gase,
+per,Perseus,Pers�e,
+phe,Phoenix,Ph�nix,
+pic,Pictor,Peintre (Chevalet du),
+psa,Piscis Austrinus,Poisson austral,
+psc,Pisces,Poissons,
+pup,Puppis,Poupe,
+pyx,Pyxis,Boussole,
+ret,Reticulum,R�ticule,
+scl,Sculptor,Sculpteur (Atelier du),
+sco,Scorpius,Scorpion,
+sct,Scutum,�cu (de Sobieski),
+ser1,Serpens Caput,Serpent (la t�te),
+ser2,Serpens Cauda,Serpent (la queue),
+sex,Sextans,Sextant,
+sge,Sagitta,Fl�che,
+sgr,Sagittarius,Sagitaire,
+tau,Taurus,Taureau,
+tel,Telescopium,T�lescope,
+tra,Triangulum Australe,Triangle austral,
+tri,Triangulum,Triangle,
+tuc,Tucana,Toucan,
+uma,Ursa Major,Grande Ourse,
+umi,Ursa Minor,Petite Ourse,
+vel,Vela,Voiles,
+vir,Virgo,Vierge,
+vol,Volans,Poisson volant,
+vul,Vulpecula,Petit Renard,

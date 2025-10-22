@@ -1,43 +1,43 @@
-English,French,Farsi,zh-CN
-star,étoile,,恒星
-deep sky object,objet du ciel profond,,深空天体
-open cluster,amas ouvert,,疏散星团
-globular cluster,amas globulaire,,球状星团
-nebula,nébuleuse,,星云
-galaxy,galaxie,,星系
-dark nebula,,,暗星云
-association of stars,amas d'étoiles,,星协
-double star,étoile double,,双星
-emission nebula,,,发射星云
-galaxy pair,paire de galaxies,,星系对
-galaxy triplet,triplet de galaxies,,三重星系
-galaxy cluster,amas de galaxies,,星系团
-group of galaxies,groupes de galaxies,,星系群
-hii ionized region,,,HII 电离氢区
-nova star,nova,,新星
-planetary nebula,nébuleuse planétaire,,行星状星云
-reflection nebula,,,反射星云
-star cluster nebula,,,星团星云
-supernova remnant,,,超新星遗迹
-unknown,inconnu,,未知天体
-Mercury,Mercure,,水星
-Venus,Venus,,金星
-Mars,Mars,,火星
-Jupiter,Jupiter,,木星
-Saturn,Saturne,,土星
-Uranus,Uranus,,天王星
-Neptune,Neptune,,海王星
-Pluto,Pluton,,冥王星
-Sun,Soleil,,太阳
-Moon,Lune,,月球
-North,Nord,,北
-East,Est,,东
-South,Sud,,南
-West,Ouest,,西
-Ecliptic,Écliptique,,黄道
-Celestial Equator,Équateur céleste,,天赤道
-N (abbreviation for north),N,,北
-E (abbreviation for east),E,,东
-S (abbreviation for south),S,,南
-W (abbreviation for west),O,,西
-Milky Way,Voie lactée,,银河
+English,French,Farsi
+star,étoile,
+deep sky object,objet du ciel profond,
+open cluster,amas ouvert,
+globular cluster,amas globulaire,
+nebula,nébuleuse,
+galaxy,galaxie,
+dark nebula,nébuleuse obscure,
+association of stars,amas d'étoiles,
+double star,étoile double,
+emission nebula,nébuleuse en émission,
+galaxy pair,paire de galaxies,
+galaxy triplet,triplet de galaxies,
+galaxy cluster,amas de galaxies,
+group of galaxies,groupes de galaxies,
+hii ionized region,région d'hydrogène ionisé,
+nova star,nova,
+planetary nebula,nébuleuse planétaire,
+reflection nebula,nébuleuse par réflexion,
+star cluster nebula,nébuleuse d’amas d’étoiles,
+supernova remnant,rémanent de supernova,
+unknown,inconnu,
+Mercury,Mercure,
+Venus,Venus,
+Mars,Mars,
+Jupiter,Jupiter,
+Saturn,Saturne,
+Uranus,Uranus,
+Neptune,Neptune,
+Pluto,Pluton,
+Sun,Soleil,
+Moon,Lune,
+North,Nord,
+East,Est,
+South,Sud,
+West,Ouest,
+Ecliptic,Écliptique,
+Celestial Equator,Équateur céleste,
+N (abbreviation for north),N,
+E (abbreviation for east),E,
+S (abbreviation for south),S,
+W (abbreviation for west),O,
+Milky Way,Voie lactée,
