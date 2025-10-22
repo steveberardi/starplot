@@ -15,3 +15,4 @@ from .optics import (
     Camera,
 )
 from .objects import ObjectList
+from .satellite import Satellite

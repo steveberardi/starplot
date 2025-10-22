@@ -85,8 +85,8 @@ class Comet(SkyObject):
 
         Args:
             name: Name of the comet you want to get (as designated by IAU Minor Planet Center)
-            dt: Datetime you want the planet for (must be timezone aware!). _Defaults to current UTC time_.
-            lat: Latitude of observing location. If you set this (and longitude), then the planet's _apparent_ RA/DEC will be calculated.
+            dt: Datetime you want the comet for (must be timezone aware!). _Defaults to current UTC time_.
+            lat: Latitude of observing location. If you set this (and longitude), then the comet's _apparent_ RA/DEC will be calculated.
             lon: Longitude of observing location
             ephemeris: Ephemeris to use for calculating comet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
             reload: If True, then the comet data file will be re-downloaded. Otherwise, it'll use the existing file if available.

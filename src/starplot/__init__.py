@@ -22,6 +22,7 @@ from .models import (
     Reflector,  # noqa: F401
     Refractor,  # noqa: F401
     Camera,  # noqa: F401
+    Satellite,  # noqa: F401
 )
 from .styles import *  # noqa: F401 F403
 from .observer import Observer  # noqa: F401
