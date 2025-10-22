@@ -5,6 +5,26 @@ from starplot import Satellite
 
 TZ_PT = ZoneInfo("America/Los_Angeles")
 
+ISS_JSON_22_OCT_2025 = {
+    "OBJECT_NAME": "ISS (ZARYA)",
+    "OBJECT_ID": "1998-067A",
+    "EPOCH": "2025-10-22T00:11:31.403904",
+    "MEAN_MOTION": 15.49333878,
+    "ECCENTRICITY": 0.0004414,
+    "INCLINATION": 51.6346,
+    "RA_OF_ASC_NODE": 38.5904,
+    "ARG_OF_PERICENTER": 322.0877,
+    "MEAN_ANOMALY": 37.98,
+    "EPHEMERIS_TYPE": 0,
+    "CLASSIFICATION_TYPE": "U",
+    "NORAD_CAT_ID": 25544,
+    "ELEMENT_SET_NO": 999,
+    "REV_AT_EPOCH": 53483,
+    "BSTAR": 0.00027406,
+    "MEAN_MOTION_DOT": 0.00014857,
+    "MEAN_MOTION_DDOT": 0,
+}
+
 
 class TestSatellite:
     def test_satellite_from_tle(self):
@@ -21,22 +41,34 @@ class TestSatellite:
         assert dsp.ra == 18.22796127417007
         assert dsp.dec == -14.166679872233521
 
-    # def test_comet_get_trajectory(self):
-    #     dt = datetime(2025, 10, 21, 19, 0, tzinfo=TZ_PT)
-    #     lat = 33.363484
-    #     lon = -116.836394
+    def test_satellite_from_json(self):
+        iss = Satellite.from_json(
+            data=ISS_JSON_22_OCT_2025,
+            dt=datetime(2025, 10, 21, 19, 0, 0, 0, tzinfo=TZ_PT),
+            lat=33.363484,
+            lon=-116.836394,
+        )
+        assert iss.name == "ISS (ZARYA)"
+        assert iss.ra == 105.27042780805024
+        assert iss.dec == 6.7511296688128315
 
-    #     c2025_a6_lemmon = Comet.get(name="C/2025 A6 (Lemmon)", dt=dt, lat=lat, lon=lon)
+    def test_satellite_get_trajectory(self):
+        iss = Satellite.from_json(
+            data=ISS_JSON_22_OCT_2025,
+            dt=datetime(2025, 10, 21, 19, 0, 0, 0, tzinfo=TZ_PT),
+            lat=33.363484,
+            lon=-116.836394,
+        )
 
-    #     dt_start = datetime(2025, 10, 19, 19, 0, tzinfo=TZ_PT)
-    #     dt_end = datetime(2025, 11, 4, 19, 0, tzinfo=TZ_PT)
+        dt_start = datetime(2025, 10, 19, 19, 0, tzinfo=TZ_PT)
+        dt_end = datetime(2025, 10, 21, 19, 0, tzinfo=TZ_PT)
 
-    #     comets = [
-    #         c for c in c2025_a6_lemmon.trajectory(date_start=dt_start, date_end=dt_end)
-    #     ]
+        satellites = [s for s in iss.trajectory(date_start=dt_start, date_end=dt_end)]
 
-    #     assert len(comets) == 16
-    #     assert comets[0].dt == dt_start
+        # default time step for satellite trajectory is 1 hour
+        assert len(satellites) == 48
 
-    #     # last comet should be one day before end date because end is not inclusive
-    #     assert comets[-1].dt == dt_end - timedelta(days=1)
+        assert satellites[0].dt == dt_start
+
+        # last satellite should be one day before end date because end is not inclusive
+        assert satellites[-1].dt == dt_end - timedelta(days=1)

@@ -59,7 +59,6 @@ class Comet(SkyObject):
         """
         dt = dt_or_now(dt)
         comets = get_comets()
-        print(comets)
         for name in comets.index.values:
             yield get_comet_at_date_location(
                 name=name,

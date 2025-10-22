@@ -1,11 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Iterator
-from functools import cache
-
 
 from skyfield.api import wgs84, EarthSatellite
-from skyfield.data import mpc
-from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
 from skyfield.timelib import Timescale
 
 from starplot.data import load
@@ -153,35 +149,3 @@ def get_satellite_at_date_location(
     )
     setattr(result, "_satellite", satellite)
     return result
-
-
-# def get_comet_at_date_location(
-#     name: str, dt: datetime, lat: float, lon: float, ephemeris: str, reload: bool
-# ) -> Comet:
-#     comets = get_comets(reload)
-#     row = comets.loc[name]
-#     ts = load.timescale()
-#     eph = load(ephemeris)
-#     sun, earth = eph["sun"], eph["earth"]
-#     comet = sun + mpc.comet_orbit(row, ts, GM_SUN)
-#     t = ts.from_datetime(dt)
-
-#     if lat is not None and lon is not None:
-#         position = earth + wgs84.latlon(lat, lon)
-#         astrometric = position.at(t).observe(comet)
-#         apparent = astrometric.apparent()
-#         ra, dec, distance = apparent.radec()
-#     else:
-#         ra, dec, distance = earth.at(t).observe(comet).radec()
-
-#     return Comet(
-#         name=name,
-#         ra=ra.hours * 15,
-#         dec=dec.degrees,
-#         dt=dt,
-#         lat=lat,
-#         lon=lon,
-#         distance=distance.au,
-#         ephemeris=ephemeris,
-#         geometry=ShapelyPoint(ra.hours * 15, dec.degrees),
-#     )
