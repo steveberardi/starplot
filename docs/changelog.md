@@ -1,6 +1,7 @@
 
 ## v0.17.x
 - Consolidates the scope/binoculars field of view function into a general optic fov function (which means it also supports cameras now)
+- Adds models for comets and satellites and supports data formats from MPC and CelesTrak
 
 
 ## v0.16.x

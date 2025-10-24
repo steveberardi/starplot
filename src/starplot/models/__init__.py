@@ -16,3 +16,4 @@ from .optics import (
 )
 from .objects import ObjectList
 from .satellite import Satellite
+from .observer import Observer

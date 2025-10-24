@@ -10,7 +10,7 @@ from starplot.base import BasePlot, DPI
 from starplot.data.stars import StarCatalog
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star, Optic, Camera
-from starplot.observer import Observer
+from starplot.models.observer import Observer
 from starplot.plotters import (
     StarPlotterMixin,
     DsoPlotterMixin,

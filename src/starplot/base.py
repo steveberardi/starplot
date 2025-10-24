@@ -19,7 +19,7 @@ from starplot.data import load, ecliptic
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
 from starplot.models.optics import Optic, Camera
-from starplot.observer import Observer
+from starplot.models.observer import Observer
 from starplot.styles import (
     AnchorPointEnum,
     PlotStyle,
