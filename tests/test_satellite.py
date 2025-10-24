@@ -70,5 +70,5 @@ class TestSatellite:
 
         assert satellites[0].dt == dt_start
 
-        # last satellite should be one day before end date because end is not inclusive
-        assert satellites[-1].dt == dt_end - timedelta(days=1)
+        # last satellite should be one hour before end time because end is not inclusive
+        assert satellites[-1].dt == dt_end - timedelta(hours=1)
