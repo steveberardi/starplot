@@ -23,7 +23,7 @@ from .models import (
     Refractor,  # noqa: F401
     Camera,  # noqa: F401
     Satellite,  # noqa: F401
-    Observer, # noqa: F401
+    Observer,  # noqa: F401
 )
 from .styles import *  # noqa: F401 F403
 from .projections import *  # noqa: F401 F403
