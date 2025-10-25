@@ -2,8 +2,9 @@ from functools import cache
 
 from ibis import _, row_number
 
+from starplot.config import settings
 from starplot.data import bigsky, DataFiles, db
-
+from starplot.data.translations import language_name_column
 
 class StarCatalog:
     """Built-in star catalogs"""
@@ -54,6 +55,10 @@ def table(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars"):
         geometry=_.ra_degrees.point(_.dec_degrees),
         rowid=row_number(),
         sk=row_number(),
+    )
+
+    designations = designations.mutate(
+        name=getattr(designations, language_name_column(settings.language))
     )
 
     stars = stars.join(
