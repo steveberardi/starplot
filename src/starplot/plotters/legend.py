@@ -106,8 +106,7 @@ class LegendPlotterMixin:
 
         target = self.ax
 
-        if title:
-            title = translate(title, self.language) or title
+        title = translate(title, self.language)
         
         if style.location.startswith("outside"):
             target = self.fig
@@ -195,8 +194,7 @@ class LegendPlotterMixin:
         if style.location.startswith("outside"):
             target = self.fig
 
-        if title:
-            title = translate(title, self.language) or title
+        title = translate(title, self.language)
         
         def scale(
             size_fn,
