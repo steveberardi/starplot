@@ -1,3 +1,5 @@
+# Models
+
 Starplot has models to represent an observer and some of the objects you can plot, including stars, DSOs, planets, the Sun, and the Moon. These models are used for many things in Starplot:
 
 - Defining an observing time and location

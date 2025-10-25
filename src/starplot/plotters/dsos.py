@@ -8,6 +8,7 @@ from starplot.data.dsos import (
     DsoLabelMaker,
     load,
 )
+from starplot.data.translations import translate
 from starplot.models.dso import (
     DSO,
     DsoType,
@@ -172,6 +173,8 @@ class DsoPlotterMixin:
             style = self.style.get_dso_style(dso_type)
             maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
             legend_label = legend_labels.get(dso_type)
+            if legend_label:
+                legend_label = translate(legend_label, self.language) or legend_label
             _dso = from_tuple(d)
             label = labels.get(d.name) if label_fn is None else label_fn(_dso)
 

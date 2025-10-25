@@ -68,7 +68,9 @@ class Settings:
     
     """
 
-    language: str = "en-US"
+    language: str = field(
+        default_factory=lambda: os.environ.get("STARPLOT_LANGUAGE", "en-US")
+    )
     """
     Default language for plotted labels. Case insensitive.
 

@@ -8,6 +8,7 @@ from skyfield.api import Star as SkyfieldStar, wgs84
 from starplot import callables
 from starplot.data import stars
 from starplot.data.stars import StarCatalog
+from starplot.data.translations import translate
 from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, use_style
 from starplot.profile import profile
@@ -325,7 +326,8 @@ class StarPlotterMixin:
             else "none",
         )
 
-        self._add_legend_handle_marker(legend_label, style.marker)
+        _legend_label = translate(legend_label, self.language) or legend_label
+        self._add_legend_handle_marker(_legend_label, style.marker)
 
         if stars_to_index:
             self._stars_rtree = rtree.index.Index(stars_to_index)

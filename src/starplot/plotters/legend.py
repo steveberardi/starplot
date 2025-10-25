@@ -5,6 +5,7 @@ from matplotlib.legend import Legend
 from matplotlib.lines import Line2D
 
 from starplot import callables
+from starplot.data.translations import translate
 from starplot.models.star import Star
 from starplot.styles import (
     MarkerStyle,
@@ -105,6 +106,9 @@ class LegendPlotterMixin:
 
         target = self.ax
 
+        if title:
+            title = translate(title, self.language) or title
+        
         if style.location.startswith("outside"):
             target = self.fig
 
@@ -191,6 +195,9 @@ class LegendPlotterMixin:
         if style.location.startswith("outside"):
             target = self.fig
 
+        if title:
+            title = translate(title, self.language) or title
+        
         def scale(
             size_fn,
             style: MarkerStyle,
