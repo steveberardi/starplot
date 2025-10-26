@@ -94,7 +94,7 @@ LABELS = {
         "milky way": "voie lactée",
     },
     "zh-cn": {
-        "legend": "传奇",
+        "legend": "图例",
         "star magnitude": "星等",
         "star": "恒星",
         "deep sky object": "深空天体",
