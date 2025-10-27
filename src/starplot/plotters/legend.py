@@ -107,7 +107,7 @@ class LegendPlotterMixin:
         target = self.ax
 
         title = translate(title, self.language)
-        
+
         if style.location.startswith("outside"):
             target = self.fig
 
@@ -195,7 +195,7 @@ class LegendPlotterMixin:
             target = self.fig
 
         title = translate(title, self.language)
-        
+
         def scale(
             size_fn,
             style: MarkerStyle,

@@ -6,6 +6,7 @@ from starplot.config import settings
 from starplot.data import db
 from starplot.data.translations import language_name_column
 
+
 class DsoLabelMaker(dict):
     """
     This is pretty hacky, but it helps keep a consistent interface for plotting labels and any overrides.
@@ -38,7 +39,9 @@ def table():
         constellation_id=_.constellation,
         magnitude=coalesce(_.mag_v, _.mag_b, None),
         size=_.size_deg2,
-        common_names=getattr(dsos, language_name_column(settings.language, column_prefix="common_names")),
+        common_names=getattr(
+            dsos, language_name_column(settings.language, column_prefix="common_names")
+        ),
         rowid=row_number(),
         sk=row_number(),
     )

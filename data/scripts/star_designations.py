@@ -8,13 +8,13 @@ from starplot.data.translations import language_name_column
 from data_settings import RAW_PATH, BUILD_PATH
 from translations import get_translations
 
+
 def build():
     star_records = []
 
     translated = get_translations("star_names.csv")
     language_columns = [
-        (language, language_name_column(language))
-        for language in translated.keys()
+        (language, language_name_column(language)) for language in translated.keys()
     ]
 
     with open(RAW_PATH / "star_designations.csv", "r") as csvfile:
@@ -39,9 +39,8 @@ def build():
             ("name", pa.string()),
             ("bayer", pa.string()),
             ("flamsteed", pa.int64()),
-        ] + [
-            (column_name, pa.string()) for _, column_name in language_columns
         ]
+        + [(column_name, pa.string()) for _, column_name in language_columns]
     )
 
     df.to_parquet(

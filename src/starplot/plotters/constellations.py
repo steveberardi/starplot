@@ -12,9 +12,6 @@ from ibis import _
 from starplot.coordinates import CoordinateSystem
 from starplot.data import constellations as condata, constellation_lines as conlines
 from starplot.data.stars import load as load_stars, StarCatalog
-from starplot.data.constellations import (
-    CONSTELLATIONS_FULL_NAMES,
-)
 from starplot.data.constellation_stars import CONSTELLATION_HIPS
 from starplot.models import Star, Constellation
 from starplot.models.constellation import from_tuple as constellation_from_tuple
@@ -198,40 +195,6 @@ class ConstellationPlotterMixin:
                     bbox,
                     None,
                 )
-
-    def _plot_constellation_labels(
-        self,
-        style: PathStyle = None,
-        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
-    ):
-        """
-        TODO:
-        1. plot label, if removed then get size in display coords
-        2. generate random points in polygon, convert to display coords, test for intersections
-        3. plot best score
-
-        problem = constellations usually plotted first, so wont have star data (or could use stars from constellations only?)
-
-        constellation names CAN cross lines but not stars
-
-        """
-        style = style or self.style.constellation.label
-        self._constellation_labels = []
-
-        for con in condata.iterator():
-            _, ra, dec = condata.get(con)
-            text = labels.get(con.lower())
-            label = self.text(
-                text,
-                ra,
-                dec,
-                style,
-                hide_on_collision=False,
-                # hide_on_collision=self.hide_colliding_labels,
-                gid="constellations-label-name",
-            )
-            if label is not None:
-                self._constellation_labels.append(label)
 
     @profile
     @use_style(LineStyle, "constellation_borders")

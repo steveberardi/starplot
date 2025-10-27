@@ -14,9 +14,9 @@ CRS = "+ellps=sphere +f=0 +proj=latlong +axis=wnu +a=6378137 +no_defs"
 
 translated = get_translations("constellation_names.csv")
 language_columns = [
-    (language, language_name_column(language))
-    for language in translated.keys()
+    (language, language_name_column(language)) for language in translated.keys()
 ]
+
 
 def parse_ra(ra_str):
     """Parses RA from border file HH MM SS to 0...360 degree float"""

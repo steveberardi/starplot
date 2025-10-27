@@ -96,7 +96,7 @@ class Constellation(SkyObject):
     def get_label(cls, constellation):
         """
         Default function for determining the plotted label for a constellation
-        
+
         Returns the uppercase name of the constellation.
 
         """

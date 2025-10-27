@@ -46,6 +46,7 @@ language_columns = [
     for language in translated.keys()
 ]
 
+
 def _size(d):
     """Returns size (in sq degrees) of minimum bounding rectangle of a DSO"""
     size = None

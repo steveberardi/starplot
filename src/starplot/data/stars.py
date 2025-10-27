@@ -6,6 +6,7 @@ from starplot.config import settings
 from starplot.data import bigsky, DataFiles, db
 from starplot.data.translations import language_name_column
 
+
 class StarCatalog:
     """Built-in star catalogs"""
 
