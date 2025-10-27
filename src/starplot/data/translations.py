@@ -142,8 +142,8 @@ LABELS = {
     },
 }
 
-def language_name_column(language: str) -> str:
-    return f"name_{language.replace("-", "_").lower()}"
+def language_name_column(language: str, column_prefix: str = "name") -> str:
+    return f"{column_prefix}_{language.replace("-", "_").lower()}"
 
 def translate(text: str, language: str) -> str:
     if not text:

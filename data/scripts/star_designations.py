@@ -23,7 +23,6 @@ def build():
         for row in reader:
             star = row.copy()
             star["hip"] = int(star["hip"])
-            star["name_en_us"] = star["name"]
             star["flamsteed"] = (
                 int(star["flamsteed"]) if star.get("flamsteed") else None
             )
@@ -38,15 +37,12 @@ def build():
         [
             ("hip", pa.int64()),
             ("name", pa.string()),
-            ("name_en_us", pa.string()),
             ("bayer", pa.string()),
             ("flamsteed", pa.int64()),
         ] + [
             (column_name, pa.string()) for _, column_name in language_columns
         ]
     )
-    
-    # print(df)
 
     df.to_parquet(
         BUILD_PATH / "star_designations.parquet",

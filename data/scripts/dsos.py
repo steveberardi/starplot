@@ -8,8 +8,10 @@ import numpy as np
 from shapely.geometry import Polygon, MultiPolygon, Point
 
 from starplot import geod, warnings
+from starplot.data.translations import language_name_column
 
 from data_settings import BUILD_PATH, RAW_PATH
+from translations import get_translations
 
 warnings.suppress()
 
@@ -38,6 +40,11 @@ COLUMN_MAP = {
 }
 """Input name -> output name"""
 
+translated = get_translations("dso_names.csv")
+language_columns = [
+    (language, language_name_column(language, column_prefix="common_names"))
+    for language in translated.keys()
+]
 
 def _size(d):
     """Returns size (in sq degrees) of minimum bounding rectangle of a DSO"""
@@ -81,6 +88,9 @@ def read_csv():
     df["IC"] = df.apply(parse_ic, axis=1)
     df["NGC"] = df.apply(parse_ngc, axis=1)
     df["Const"] = df.apply(lambda d: str(d.Const).lower(), axis=1)
+
+    for language, column_name in language_columns:
+        df[column_name] = df.apply(lambda d: translated[language].get(d.Name), axis=1)
 
     df.drop("RA", axis=1, inplace=True)
     df.drop("Dec", axis=1, inplace=True)
@@ -275,7 +285,7 @@ def build():
 
     # print(gdf.loc["NGC2168"])  # M35
 
-    # print(gdf.loc["NGC6705"])  # M11
+    print(gdf.loc["NGC6705"])  # M11
     # gdf.set_crs(CRS, inplace=True)
 
     gdf.to_file(BUILD_PATH / "ongc.json", driver="GeoJSON", engine="pyogrio")
