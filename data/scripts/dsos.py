@@ -285,7 +285,7 @@ def build():
 
     # print(gdf.loc["NGC2168"])  # M35
 
-    print(gdf.loc["NGC6705"])  # M11
+    # print(gdf.loc["NGC6705"])  # M11
     # gdf.set_crs(CRS, inplace=True)
 
     gdf.to_file(BUILD_PATH / "ongc.json", driver="GeoJSON", engine="pyogrio")

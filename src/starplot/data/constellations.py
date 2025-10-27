@@ -2,7 +2,9 @@ from functools import cache
 
 from ibis import _, row_number
 
+from starplot.config import settings
 from starplot.data import db
+from starplot.data.translations import language_name_column
 
 
 """
@@ -680,6 +682,7 @@ def table():
         dec=_.center_dec,
         constellation_id=_.iau_id,
         boundary=_.geometry,
+        name=getattr(c, language_name_column(settings.language)),
         rowid=row_number(),
         sk=row_number(),
     )

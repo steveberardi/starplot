@@ -3,6 +3,7 @@
 - Consolidates the scope/binoculars field of view function into a general optic fov function (which means it also supports cameras now)
 - Adds models for comets and satellites and supports data formats from MPC and CelesTrak
 - Adds font name and weight style properties to legend labels
+- Adds callable for constellation labels
 
 
 ## v0.16.x
