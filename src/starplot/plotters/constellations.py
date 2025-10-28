@@ -23,7 +23,7 @@ from starplot.projections import (
     LambertAzEqArea,
 )
 from starplot.profile import profile
-from starplot.styles import PathStyle, LineStyle, LabelStyle
+from starplot.styles import LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
 from starplot.geometry import is_wrapped_polygon
@@ -282,13 +282,12 @@ class ConstellationPlotterMixin:
             )
 
     def _constellation_labels_static(self, style, label_fn):
-        for con in condata.iterator():
-            _, ra, dec = condata.get(con)
+        for constellation in self.objects.constellations:
             text = label_fn(constellation)
             self.text(
                 text,
-                ra * 15,
-                dec,
+                constellation.ra,
+                constellation.dec,
                 style,
                 hide_on_collision=self.hide_colliding_labels,
                 remove_on_constellation_collision=False,
