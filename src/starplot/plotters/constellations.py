@@ -268,9 +268,7 @@ class ConstellationPlotterMixin:
 
             points_line = MultiPoint(starpoints)
             centroid = points_line.centroid
-            # text = labels.get(constellation.iau_id)
             text = label_fn(constellation)
-            # text = constellation.name
 
             self.text(
                 text,
@@ -286,7 +284,6 @@ class ConstellationPlotterMixin:
     def _constellation_labels_static(self, style, label_fn):
         for con in condata.iterator():
             _, ra, dec = condata.get(con)
-            # text = labels.get(con.lower())
             text = label_fn(constellation)
             self.text(
                 text,
