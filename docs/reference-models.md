@@ -15,7 +15,7 @@ Starplot has models to represent an observer and some of the objects you can plo
         show_root_heading: true
         show_docstring_attributes: true
 
-# Sky Objects
+## Sky Objects
 
 ::: starplot.Star
     options:
