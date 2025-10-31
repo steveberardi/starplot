@@ -8,7 +8,7 @@ from starplot.data.translations import language_name_column
 
 
 @cache
-def table():
+def table(language):
     con = db.connect()
     dsos = con.table("deep_sky_objects")
 
@@ -19,7 +19,7 @@ def table():
         magnitude=coalesce(_.mag_v, _.mag_b, None),
         size=_.size_deg2,
         common_names=getattr(
-            dsos, language_name_column(settings.language, column_prefix="common_names")
+            dsos, language_name_column(language, column_prefix="common_names")
         ),
         rowid=row_number(),
         sk=row_number(),
@@ -28,7 +28,7 @@ def table():
 
 def load(extent=None, filters=None, sql=None):
     filters = filters or []
-    dsos = table()
+    dsos = table(language=settings.language)
 
     if extent:
         dsos = dsos.filter(_.geometry.intersects(extent))

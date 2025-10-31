@@ -8,7 +8,7 @@ from starplot.data.translations import language_name_column
 
 
 @cache
-def table():
+def table(language):
     con = db.connect()
     c = con.table("constellations")
 
@@ -17,7 +17,7 @@ def table():
         dec=_.center_dec,
         constellation_id=_.iau_id,
         boundary=_.geometry,
-        name=getattr(c, language_name_column(settings.language)),
+        name=getattr(c, language_name_column(language)),
         rowid=row_number(),
         sk=row_number(),
     )
@@ -25,7 +25,7 @@ def table():
 
 def load(extent=None, filters=None, sql=None):
     filters = filters or []
-    c = table()
+    c = table(language=settings.language)
 
     if extent:
         filters.append(_.geometry.intersects(extent))

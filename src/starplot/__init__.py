@@ -30,3 +30,21 @@ from .projections import *  # noqa: F401 F403
 from .config import settings  # noqa: F401
 
 from ibis import _  # noqa: F401 F403
+
+
+import contextlib
+
+@contextlib.contextmanager
+def override_settings(**kwargs):
+    original = {}
+    
+    for key, value in kwargs.items():
+        original[key] = getattr(settings, key, None)
+        setattr(settings, key, value)
+    
+    try:
+        yield
+
+    finally:
+        for key, value in original.items():
+            setattr(settings, key, value)

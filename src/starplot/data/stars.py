@@ -33,7 +33,7 @@ class StarCatalog:
 
 
 @cache
-def table(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars"):
+def table(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars", language: str = "en-us"):
     con = db.connect()
 
     if catalog == StarCatalog.BIG_SKY_MAG11:
@@ -59,7 +59,7 @@ def table(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars"):
     )
 
     designations = designations.mutate(
-        name=getattr(designations, language_name_column(settings.language))
+        name=getattr(designations, language_name_column(language))
     )
 
     stars = stars.join(
@@ -81,7 +81,7 @@ def load(
     sql=None,
 ):
     filters = filters or []
-    stars = table(catalog)
+    stars = table(catalog, language=settings.language)
 
     if extent:
         stars = stars.filter(stars.geometry.intersects(extent))
