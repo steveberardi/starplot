@@ -6,18 +6,19 @@
 
 **Starplot** is a Python library for creating star charts and maps of the sky.
 
-- ⭐ **Zenith Plots** - shows the entire sky at a specific time and place
-- 🗺️ **Map Plots** - including many map projections
-- 🌃 **Horizon Plots** - shows the horizon at a specific time and place
-- 🔭 **Optic Plots** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
+- 🗺️ **Maps** - including 10+ customizable projections
+- ⭐ **Zenith Charts** - shows the entire sky at a specific time and place
+- 🌃 **Horizon Charts** - shows the horizon at a specific time and place
+- 🔭 **Optic Simulations** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
 - 🪐 **Planets and Deep Sky Objects (DSOs)** - more than 14,000 objects built-in
-- 🎨 **Custom Styles** - for all objects
+- 🎨 **Custom Styles** - for all objects and with 8+ built-in themes
 - 📥 **Export** - png, svg, jpeg
 - 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
-- 🧭 **Label Collision Avoidance**
+- 🧭 **Label Collision Avoidance** - ensuring all labels are readable
+
 
 ## Examples
-*Zenith plot of the stars from a specific time/location:*
+*Zenith chart of the stars from a specific time/location:*
 ![starchart-blue](https://starplot.dev/images/examples/star_chart_basic.png)
 
 *Map around the constellation Orion:*
@@ -66,7 +67,7 @@ p.export("starchart.png")
 
 
 ## Demo
-For a demo of Starplot's zenith plots, check out: 
+For a demo of Starplot's zenith charts, check out: 
 
 [Sky Atlas - Star Chart Creator](https://skyatlas.app/star-charts/)
 
@@ -75,7 +76,7 @@ For a demo of Starplot's zenith plots, check out:
 - Chat with other starplotters on our [Discord server](https://discord.gg/WewJJjshFu)
 - [Follow us on Bluesky](https://bsky.app/profile/starplot.dev)
 - [Join our newsletter](https://buttondown.com/starplot)
-- [See more example plots at Starplotting.com](https://starplotting.com/)
+- [See more examples at Starplotting.com](https://starplotting.com/)
 
 ## Contributing
 
