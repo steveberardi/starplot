@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/steveberardi/starplot/main/docs/images/favicon.svg" width="48" style="vertical-align:middle"> Starplot
+# <img src="https://raw.githubusercontent.com/steveberardi/starplot/main/docs/images/logo.svg" width="48" style="vertical-align:middle"> Starplot
 ![Python](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge&color=6388b0)
 ![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=57a8a8)
 ![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=8b63b0)
