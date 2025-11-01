@@ -15,7 +15,7 @@
 - 📥 **Export** - png, svg, jpeg
 - 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
 - 🧭 **Label Collision Avoidance** - ensuring all labels are readable
-
+- 🌐 **Localization** - label translations for French and Chinese
 
 ## Examples
 *Zenith chart of the stars from a specific time/location:*

@@ -21,6 +21,7 @@ nav:
             - Star Designations: data/star-designations.md
             - Deep Sky Objects: data/dsos.md
             - Constellations: data/constellations.md
+        - Localization: reference-localization.md
         - Settings: reference-settings.md
     - Data Sources: data-sources.md
     - Publications: publications.md

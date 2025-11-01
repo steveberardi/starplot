@@ -30,6 +30,8 @@ Starplot is a Python library for creating star charts and maps of the sky.
 
 - 🧭 **Label Collision Avoidance** - ensuring all labels are readable
 
+- 🌐 **Localization** - label translations for French and Chinese
+
 
 --8<-- "docs/snippets/_newsletter.html"
 

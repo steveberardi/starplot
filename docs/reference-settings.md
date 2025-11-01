@@ -18,6 +18,19 @@ settings.svg_text_type = "element"
 
 ```
 
+There's also a context manager that lets you temporarily override settings:
+
+```python
+from starplot import override_settings
+
+with override_settings(language="zh-cn"):
+    ...
+    # all default labels plotted in here will be in Chinese
+
+# after exiting the context manager, language will revert to the default (en-us)
+
+```
+
 <h3>Environment Variables</h3>
 
 To set values through environment variables, just add the `STARPLOT_` prefix to the setting name (and uppercase the entire name):
