@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
+
+<meta name="theme-color" content="#2d5f91">
+
 <!-- OG -->
 <meta property="og:title" content="Starplot" />
 <meta property="og:type" content="website" />
@@ -8,8 +11,13 @@
 <meta property="og:url" content="https://starplot.dev" />
 <meta property="og:image" content="https://archives.starplot.dev/static/og.png" />
 
-<!-- Plausible -->
-<script defer data-domain="starplot.dev" src="https://plausible.io/js/script.js"></script>
+<!-- Privacy-friendly analytics by Plausible -->
+<script async src="https://plausible.io/js/pa-93KnVpJS2-0lVZJyd60A5.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+
 {% endblock %}
 
 
