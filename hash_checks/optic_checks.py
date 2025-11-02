@@ -1,7 +1,6 @@
 from pathlib import Path
 from datetime import datetime
-
-from pytz import timezone
+from zoneinfo import ZoneInfo
 
 from starplot import styles, OpticPlot, callables, Moon, _, Observer
 from starplot.models import optics
@@ -9,8 +8,10 @@ from starplot.models import optics
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
 
-dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0, 0)
-dt_april_8 = datetime.now(timezone("US/Pacific")).replace(2024, 4, 8, 11, 7, 0, 0)
+tz = ZoneInfo("America/Los_Angeles")
+
+dt_dec_16 = datetime(2023, 12, 16, 21, 0, 0, 0, tzinfo=tz)
+dt_april_8 = datetime(2024, 4, 8, 11, 7, 0, 0, tzinfo=tz)
 
 style_light = styles.PlotStyle().extend(
     styles.extensions.GRAYSCALE,
@@ -355,7 +356,7 @@ def check_optic_moon_phase_new():
 
 
 def check_optic_moon_phase_full():
-    dt_full_moon = datetime.now(timezone("US/Pacific")).replace(2024, 4, 23, 11, 7, 0)
+    dt_full_moon = datetime(2024, 4, 23, 11, 7, 0, 0, tzinfo=tz)
     observer = Observer(
         dt=dt_full_moon,
         **POWAY,

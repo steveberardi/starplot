@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import numpy as np
 from pytz import timezone
@@ -51,7 +52,9 @@ BASIC_DSO_TYPES = [
     DsoType.ASSOCIATION_OF_STARS.value,
 ]
 
-dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
+
+tz = ZoneInfo("America/Los_Angeles")
+dt_dec_16 = datetime(2023, 12, 16, 21, 0, 0, 0, tzinfo=tz)
 
 
 def _mercator():
