@@ -33,7 +33,11 @@ class StarCatalog:
 
 
 @cache
-def table(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars", language: str = "en-us"):
+def table(
+    catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
+    table_name="stars",
+    language: str = "en-us",
+):
     con = db.connect()
 
     if catalog == StarCatalog.BIG_SKY_MAG11:

@@ -1318,3 +1318,26 @@ class BasePlot(ABC):
                     style.label,
                     gid="celestial-equator-label",
                 )
+
+    # def arrow(self, to):
+    #     ra, dec = to
+    #     x, y = self._prepare_coords(ra, dec)
+
+    #     # self._text(x, y, labels[i], **text_kwargs)
+    #     # self.ax.annotate("", xytext=(0, 0), xy=(0.5, 0.5),
+    #     #     )
+
+    #     self.ax.annotate(
+    #         "",
+    #         xy=(x, y),
+    #         xytext=(0, 0),
+    #         arrowprops=dict(
+    #             # headlength=10,
+    #             # headwidth=16,
+    #             color="red",
+    #             # shrink=0.9,
+    #             mutation_scale=5,
+    #             arrowstyle="-|>, head_length=10, head_width=5",
+    #         ),
+    #         **self._plot_kwargs(),
+    #     )

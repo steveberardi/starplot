@@ -9,6 +9,7 @@ def test_settings_language_valid():
 
     settings.language = "en-us"
 
+
 def test_override_settings():
     assert settings.svg_text_type == "path"
     assert settings.language == "en-us"
@@ -16,6 +17,6 @@ def test_override_settings():
     with override_settings(svg_text_type="element", language="zh-cn"):
         assert settings.svg_text_type == "element"
         assert settings.language == "zh-cn"
-    
+
     assert settings.svg_text_type == "path"
     assert settings.language == "en-us"
