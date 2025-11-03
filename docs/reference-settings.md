@@ -1,5 +1,6 @@
-Starplot uses an instance of a `dataclass` to maintain a few global settings:
+Starplot has a few global settings:
 
+- Language
 - Data download path
 - DuckDB extension path
 - SVG text rendering method
