@@ -1,17 +1,15 @@
 
 ## Language
 
-Starplot's labels have been translated for the following languages:
+Starplot's labels are available in the following languages:
 
-1. French
-2. Chinese
-
-By default, labels are plotted in English (`en-US`).
+1. English (US) - default
+2. French
+3. Chinese
 
 *For Chinese, make sure you have a good Chinese font installed (such as [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC)) and you'll also need to set that as the font in your plot's style.
 
-!!! star "Want to see another language available?"
-    Please help us add it! [Details here](https://github.com/steveberardi/starplot/tree/main/data/raw/translations)
+**Want to see another language available?** Please help us add it! [Details here](https://github.com/steveberardi/starplot/tree/main/data/raw/translations)
 
 
 !!! tip "How to Use a Different Language"
