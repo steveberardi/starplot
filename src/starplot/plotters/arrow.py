@@ -1,4 +1,3 @@
-
 import numpy as np
 
 from starplot.geometry import circle
@@ -99,8 +98,6 @@ class ArrowPlotterMixin:
                 transform=self.ax.transAxes,
             )
         elif target:
-            
-
             polygon = circle(
                 center=target,
                 diameter_degrees=length,
