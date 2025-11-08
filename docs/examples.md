@@ -99,6 +99,21 @@
     </li>
 
     
+    <li>
+        <a href="/examples/optic-iss-transit/">
+            <img src="/images/examples/optic_iss_transit-sm.png" alt="ISS Moon Transit" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">ISS Moon Transit</p>
+        </a>
+    </li>
+
+    <li>
+        <a href="/examples/star-chart-french/">
+            <img src="/images/examples/star_chart_french-sm.png" alt="Star Chart in French" class="off-glb" loading="lazy"/>
+
+            <p class="example-card-title">Star Chart in French</p>
+        </a>
+    </li>
 
     <li>
         <a href="/examples/map-big-dipper/">

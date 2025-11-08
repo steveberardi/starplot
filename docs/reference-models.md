@@ -97,7 +97,7 @@ Starplot has models to represent an observer and some of the objects you can plo
         members_order: source
 
 
-# Optics
+## Optics
 
 ## ::: starplot.models.Optic
     options:
