@@ -17,6 +17,7 @@ language_columns = [
     (language, language_name_column(language)) for language in translated.keys()
 ]
 
+
 def parse_ra(ra_str):
     """Parses RA from border file HH MM SS to 0...360 degree float"""
     h, m, s = ra_str.strip().split(" ")

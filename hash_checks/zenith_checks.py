@@ -71,6 +71,7 @@ def check_zenith_gradient():
     p.export(filename)
     return filename
 
+
 @override_settings(language="zh-cn")
 def check_zenith_chinese():
     p = ZenithPlot(
@@ -95,8 +96,8 @@ def check_zenith_chinese():
                 },
                 "constellation_labels": {
                     "font_name": "Noto Sans SC",
-                }
-            }
+                },
+            },
         ),
         resolution=RESOLUTION,
         autoscale=True,
