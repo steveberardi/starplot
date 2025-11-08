@@ -25,8 +25,8 @@ p.horizon()
 p.constellations()
 p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 2.1])
 
-p.galaxies(where=[_.magnitude < 9], true_size=False, labels=None)
-p.open_clusters(where=[_.magnitude < 9], true_size=False, labels=None)
+p.galaxies(where=[_.magnitude < 9], true_size=False, where_labels=[False])
+p.open_clusters(where=[_.magnitude < 9], true_size=False, where_labels=[False])
 
 p.ecliptic()
 p.celestial_equator()

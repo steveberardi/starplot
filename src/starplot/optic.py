@@ -235,7 +235,7 @@ class OpticPlot(
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
-        label_fn: Callable[[Star], str] = None,
+        label_fn: Callable[[Star], str] = Star.get_label,
         labels: Mapping[int, str] = None,
         legend_label: str = "Star",
         bayer_labels: bool = False,
