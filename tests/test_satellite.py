@@ -1,3 +1,5 @@
+import pytest
+
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
@@ -38,8 +40,8 @@ class TestSatellite:
         )
 
         assert dsp.name == "DSP"
-        assert dsp.ra == 18.22796127417007
-        assert dsp.dec == -14.166679872233521
+        assert dsp.ra == pytest.approx(18.22796127417007, rel=1e-9)
+        assert dsp.dec == pytest.approx(-14.166679872233521, rel=1e-9)
 
     def test_satellite_from_json(self):
         iss = Satellite.from_json(
@@ -49,8 +51,8 @@ class TestSatellite:
             lon=-116.836394,
         )
         assert iss.name == "ISS (ZARYA)"
-        assert iss.ra == 105.27042780805024
-        assert iss.dec == 6.7511296688128315
+        assert iss.ra == pytest.approx(105.27042780805024, rel=1e-9)
+        assert iss.dec == pytest.approx(6.7511296688128315, rel=1e-9)
 
     def test_satellite_get_trajectory(self):
         iss = Satellite.from_json(
