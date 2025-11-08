@@ -1,9 +1,8 @@
-from datetime import datetime
 
 import pytest
 
 
-from starplot import _, DSO, Star, Constellation, Sun, Moon, Planet, override_settings
+from starplot import DSO, Star, Constellation, override_settings
 
 
 class TestLanguages:
