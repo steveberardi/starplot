@@ -3,9 +3,9 @@ import pandas as pd
 
 from shapely.geometry import Polygon
 
-from starplot.data import constellations
 from starplot.data.translations import language_name_column
 
+from constellation_hips import CONSTELLATION_HIP_IDS, properties
 from data_settings import BUILD_PATH, RAW_PATH
 from translations import get_translations
 
@@ -16,7 +16,6 @@ translated = get_translations("constellation_names.csv")
 language_columns = [
     (language, language_name_column(language)) for language in translated.keys()
 ]
-
 
 def parse_ra(ra_str):
     """Parses RA from border file HH MM SS to 0...360 degree float"""
@@ -43,15 +42,14 @@ def parse_borders(lines):
 
 def build_constellations():
     constellation_records = []
-    constellation_star_hips = constellations.CONSTELLATION_HIP_IDS
 
-    for cid, props in constellations.properties.items():
+    for cid, props in properties.items():
         constellation_dict = {
             "iau_id": cid.lower(),
             "name": props[0].replace("\n", " "),
             "center_ra": props[1] * 15,
             "center_dec": props[2],
-            "star_hip_ids": list(constellation_star_hips[cid.lower()]),
+            "star_hip_ids": list(CONSTELLATION_HIP_IDS[cid.lower()]),
         }
 
         if cid == "Ser":
