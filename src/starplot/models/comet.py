@@ -129,9 +129,12 @@ class SkyfieldComet:
 
 class Comet(SkyObject):
     """
-    Comet model.
+    Comets can be created in three ways:
 
-    Instances can be created from a [designation][starplot.Comet.get] or a [IAU MPC JSON][starplot.Comet.from_json]
+    1. [`get`][starplot.Comet.get] (designation/name)
+    2. [`all`][starplot.Comet.all] (iterate through all comets available from MPC)
+    3. [`from_json`][starplot.Comet.from_json] (IAU MPC JSON)
+
     """
 
     name: str
