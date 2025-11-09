@@ -46,27 +46,38 @@ iss = Satellite.from_tle(
     name="ISS (ZARYA)",
     line1="1 25544U 98067A   25312.42041502  .00013418  00000+0  24734-3 0  9990",
     line2="2 25544  51.6332 312.3676 0004093  47.8963 312.2373 15.49452868537539",
-    lat=32.7678,
-    lon=-117.023,
+    lat=observer.lat,
+    lon=observer.lon,
 )
 
-dt_start = datetime(2025, 12, 8, 8, 0, 16, tzinfo=tz)
-dt_end = datetime(2025, 12, 8, 8, 20, 16, tzinfo=tz)
+dt_start = observer.dt - timedelta(minutes=1)
+dt_end = observer.dt + timedelta(minutes=1)
 
 for sat in iss.trajectory(dt_start, dt_end, step=timedelta(seconds=1)):
+    if sat.geometry.intersects(moon.geometry):
+        marker_color = "red"
+        label_color = "#ffcccc"
+    else:
+        marker_color = "gold"
+        label_color = "#c7e5ff"
+        
     p.marker(
         sat.ra,
         sat.dec,
         style={
             "marker": {
-                "size": 42,
+                "size": 60,
+                "edge_width": 2,
                 "symbol": "plus",
-                "color": "gold",
+                "color": marker_color,
                 "zorder": 5_000,
             },
             "label": {
-                "font_color": "black",
-                "font_size": 32,
+                "font_color": label_color,
+                "border_color": "#000",
+                "border_width": 6,
+                "font_size": 38,
+                "font_weight": "heavy",
                 "offset_x": "auto",
                 "offset_y": "auto",
                 "zorder": 5_000,

@@ -417,12 +417,12 @@ def check_optic_iss_moon_transit():
         name="ISS (ZARYA)",
         line1="1 25544U 98067A   25312.42041502  .00013418  00000+0  24734-3 0  9990",
         line2="2 25544  51.6332 312.3676 0004093  47.8963 312.2373 15.49452868537539",
-        lat=32.7678,
-        lon=-117.023,
+        lat=observer.lat,
+        lon=observer.lon,
     )
 
-    dt_start = datetime(2025, 12, 8, 8, 0, 16, tzinfo=tz)
-    dt_end = datetime(2025, 12, 8, 8, 20, 16, tzinfo=tz)
+    dt_start = observer.dt - timedelta(minutes=5)
+    dt_end = observer.dt + timedelta(minutes=5)
 
     for sat in iss.trajectory(dt_start, dt_end, step=timedelta(seconds=1)):
         p.marker(
@@ -430,7 +430,7 @@ def check_optic_iss_moon_transit():
             sat.dec,
             style={
                 "marker": {
-                    "size": 56,
+                    "size": 60,
                     "symbol": "plus",
                     "color": "gold",
                     "zorder": 5_000,

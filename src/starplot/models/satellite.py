@@ -146,6 +146,7 @@ def get_satellite_at_date_location(
         lon=lon,
         distance=distance.au,
         ephemeris="na",
+        geometry=ShapelyPoint(ra.hours * 15, dec.degrees),
     )
     setattr(result, "_satellite", satellite)
     return result

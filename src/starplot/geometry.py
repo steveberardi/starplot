@@ -26,8 +26,11 @@ def circle(center, diameter_degrees, num_pts=100):
         angle=0,
         num_pts=num_pts,
     )
+    # points = [
+    #     (round(24 - utils.lon_to_ra(lon), 4), round(dec, 4)) for lon, dec in points
+    # ]
     points = [
-        (round(24 - utils.lon_to_ra(lon), 4), round(dec, 4)) for lon, dec in points
+        (round(lon, 4), round(dec, 4)) for lon, dec in points
     ]
     return Polygon(points)
 
