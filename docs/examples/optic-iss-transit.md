@@ -11,6 +11,8 @@ This plot shows the [International Space Station (ISS)](https://en.wikipedia.org
 
 The TLE was obtained from [CelesTrak](https://celestrak.org/) on November 8, 2025.
 
+The transit time and observing location was found via [transit-finder.com](https://transit-finder.com/).
+
 ```python
 --8<-- "examples/optic_iss_transit.py"
 ```
