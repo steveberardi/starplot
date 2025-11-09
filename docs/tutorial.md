@@ -18,6 +18,6 @@ Here's an overview of what the tutorial covers:
 Estimated time to complete: 30 minutes
 
 
-[Let's Begin! :octicons-arrow-right-24:](tutorial/01.md){ .md-button .text-right }
+[Let's Begin! :octicons-arrow-right-24:](tutorial/01.md){ .md-button .md-button--primary .text-right }
 
 <br/><br/><br/>
