@@ -5,7 +5,7 @@ from typing import Union
 from shapely import transform
 from shapely.geometry import Point, Polygon, MultiPolygon
 
-from starplot import geod, utils
+from starplot import geod
 
 GLOBAL_EXTENT = Polygon(
     [
@@ -18,17 +18,18 @@ GLOBAL_EXTENT = Polygon(
 )
 
 
-def circle(center, diameter_degrees):
+def circle(center, diameter_degrees, num_pts=100):
     points = geod.ellipse(
         center,
         diameter_degrees,
         diameter_degrees,
         angle=0,
-        num_pts=100,
+        num_pts=num_pts,
     )
-    points = [
-        (round(24 - utils.lon_to_ra(lon), 4), round(dec, 4)) for lon, dec in points
-    ]
+    # points = [
+    #     (round(24 - utils.lon_to_ra(lon), 4), round(dec, 4)) for lon, dec in points
+    # ]
+    points = [(round(lon, 4), round(dec, 4)) for lon, dec in points]
     return Polygon(points)
 
 

@@ -2,8 +2,9 @@ import numpy as np
 from matplotlib import path, patches
 
 from starplot.coordinates import CoordinateSystem
+from starplot.data.translations import translate
 from starplot.map import MapPlot
-from starplot.observer import Observer
+from starplot.models.observer import Observer
 from starplot.projections import Stereographic
 from starplot.styles import LabelStyle, PlotStyle, PathStyle, GradientDirection
 from starplot.styles.helpers import use_style
@@ -108,6 +109,8 @@ class ZenithPlot(MapPlot):
 
         if not labels:
             return
+
+        labels = [translate(label, self.language) for label in labels]
 
         label_ax_coords = [
             (0.5, 0.95),  # north

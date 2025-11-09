@@ -30,7 +30,7 @@ p.constellations()
 p.milky_way()
 
 p.stars(where=[_.magnitude < 5], where_labels=[_.magnitude < 2])
-p.messier(where=[_.magnitude < 11], true_size=False, label_fn=lambda d: f"M{d.m}")
+p.messier(where=[_.magnitude < 11], true_size=False)
 
 p.constellation_labels()
 p.horizon(labels={180: "SOUTH"})

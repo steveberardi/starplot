@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 
 from starplot import OpticPlot, DSO, Observer, _
 from starplot.callables import color_by_bv
-from starplot.optics import Refractor
+from starplot.models import Refractor
 from starplot.styles import PlotStyle, extensions
 
 dt = datetime(2023, 12, 16, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
@@ -36,6 +36,6 @@ p = OpticPlot(
     autoscale=True,
 )
 p.stars(where=[_.magnitude < 14], color_fn=color_by_bv, bayer_labels=True)
-p.dsos(where=[_.magnitude < 4.1], labels=None)
+p.dsos(where=[_.magnitude < 4.1], where_labels=[False])
 p.info()
 p.export("optic_orion_nebula.png", padding=0.1, transparent=True)

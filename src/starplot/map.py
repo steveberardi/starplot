@@ -14,7 +14,7 @@ from starplot.coordinates import CoordinateSystem
 from starplot import geod
 from starplot.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
-from starplot.observer import Observer
+from starplot.models.observer import Observer
 from starplot.plotters import (
     ConstellationPlotterMixin,
     StarPlotterMixin,

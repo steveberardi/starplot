@@ -3,11 +3,8 @@ from typing import Callable, Mapping
 from ibis import _
 import numpy as np
 
-from starplot.data.dsos import (
-    DSO_LABELS_DEFAULT,
-    DsoLabelMaker,
-    load,
-)
+from starplot.data.dsos import load
+from starplot.data.translations import translate
 from starplot.models.dso import (
     DSO,
     DsoType,
@@ -109,10 +106,9 @@ class DsoPlotterMixin:
         where: list = None,
         where_labels: list = None,
         true_size: bool = True,
-        labels: Mapping[str, str] = DSO_LABELS_DEFAULT,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
         alpha_fn: Callable[[DSO], float] = None,
-        label_fn: Callable[[DSO], str] = None,
+        label_fn: Callable[[DSO], str] = DSO.get_label,
         sql: str = None,
         sql_labels: str = None,
     ):
@@ -126,7 +122,7 @@ class DsoPlotterMixin:
             labels: A dictionary that maps DSO names (as specified in OpenNGC) to the label that'll be plotted for that object. By default, the DSO's name in OpenNGC will be used as the label. If you want to hide all labels, then set this arg to `None`.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
-            label_fn: Callable for determining the label of each DSO. If `None`, then the names in the `labels` kwarg will be used.
+            label_fn: Callable for determining the label of each DSO.
             sql: SQL query for selecting DSOs (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             sql_labels: SQL query for selecting DSOs that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
         """
@@ -135,11 +131,6 @@ class DsoPlotterMixin:
 
         where = where or []
         where_labels = where_labels or []
-
-        if labels is None:
-            labels = {}
-        elif type(labels) != DsoLabelMaker:
-            labels = DsoLabelMaker(overrides=labels)
 
         if legend_labels is None:
             legend_labels = {}
@@ -172,8 +163,11 @@ class DsoPlotterMixin:
             style = self.style.get_dso_style(dso_type)
             maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
             legend_label = legend_labels.get(dso_type)
+            if legend_label:
+                legend_label = translate(legend_label, self.language) or legend_label
             _dso = from_tuple(d)
-            label = labels.get(d.name) if label_fn is None else label_fn(_dso)
+
+            label = label_fn(_dso)
 
             if style is None:
                 continue

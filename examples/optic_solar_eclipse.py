@@ -1,7 +1,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from starplot import Moon, optics, Observer
+from starplot import Moon, Binoculars, Observer
 from starplot.styles import PlotStyle, extensions
 
 # time of partial eclipse. total eclipse started at 15:13:46
@@ -18,18 +18,11 @@ m = Moon.get(dt=observer.dt, lat=observer.lat, lon=observer.lon)
 
 op = m.create_optic(
     observer=observer,
-    optic=optics.Binoculars(magnification=20, fov=65),
+    optic=Binoculars(magnification=20, fov=65),
     style=PlotStyle().extend(
         extensions.GRAYSCALE_DARK,
         extensions.OPTIC,
-        {
-            "background_color": [
-                (0.0, "#7abfff"),
-                (0.1, "#7abfff"),
-                (0.9, "#568feb"),
-                (0.9, "#3f7ee3"),
-            ]
-        },
+        extensions.GRADIENT_DAYLIGHT,
     ),
     resolution=2000,
 )

@@ -1,7 +1,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from starplot import Observer, Star, optics, styles, callables, _
+from starplot import Observer, Star, Binoculars, styles, callables, _
 
 tz = ZoneInfo("America/Los_Angeles")
 tonight = datetime.now(tz).replace(hour=21)
@@ -21,7 +21,7 @@ antares = Star.get(name="Antares")
 
 p = antares.create_optic(
     observer=observer,
-    optic=optics.Binoculars(
+    optic=Binoculars(
         magnification=10,
         fov=65,
     ),

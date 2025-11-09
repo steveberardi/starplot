@@ -42,7 +42,7 @@ mag_filters = (_.magnitude < 11) | (_.magnitude.isnull())
 
 p.open_clusters(
     where=[_.size < 0.2, _.magnitude < 11],
-    labels=None,
+    where_labels=[False],
     label_fn=dso_label,
     true_size=False,
 )

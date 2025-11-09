@@ -11,11 +11,12 @@
 - 🌃 **Horizon Charts** - shows the horizon at a specific time and place
 - 🔭 **Optic Simulations** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
 - 🪐 **Planets and Deep Sky Objects (DSOs)** - more than 14,000 objects built-in
+- ☄️ **Comets and Satellites** - easy trajectory plotting
 - 🎨 **Custom Styles** - for all objects and with 8+ built-in themes
 - 📥 **Export** - png, svg, jpeg
 - 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
 - 🧭 **Label Collision Avoidance** - ensuring all labels are readable
-
+- 🌐 **Localization** - label translations for French and Chinese
 
 ## Examples
 *Zenith chart of the stars from a specific time/location:*
@@ -83,10 +84,10 @@ For a demo of Starplot's zenith charts, check out:
 Contributing to Starplot is welcome and very much appreciated! Please see [here](CONTRIBUTING.md) for details.
 
 ## Coming Soon
+- 📡 Custom data catalogs
 - 🧮 Coordinate system helpers
 - 🌑 Planet moons
 - ✴️ Custom markers
-- ☄️ Comet model
 - 😄 🔭 Clear skies
 
 See more details on the [Public Roadmap](https://trello.com/b/sUksygn4/starplot-roadmap)

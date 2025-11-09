@@ -26,28 +26,17 @@ p.stars(
     flamsteed_labels=True,
 )
 
-
-def dso_label(d):
-    if d.ngc:
-        return d.ngc
-    if d.ic:
-        return f"IC{d.ic}"
-    return d.name
-
-
 p.nebula(
     where=[
         (_.magnitude.isnull()) | (_.magnitude < 8),
     ],
     true_size=True,
-    label_fn=dso_label,
 )
 p.open_clusters(
     where=[
         (_.magnitude.isnull()) | (_.magnitude < 8),
     ],
     true_size=False,
-    label_fn=lambda d: d.ngc,
 )
 
 p.constellation_labels()

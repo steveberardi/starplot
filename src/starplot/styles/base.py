@@ -676,8 +676,14 @@ class LegendStyle(BaseStyle):
     border_padding: float = 1.28
     """Padding between legend entries and the legend border"""
 
+    font_name: str = "Inter"
+    """Font name for legend labels"""
+
     font_size: int = 23
     """Font size of the legend labels, in points"""
+
+    font_weight: FontWeightEnum = FontWeightEnum.NORMAL
+    """Font weight of the legend labels"""
 
     font_color: ColorStr = ColorStr("#000")
     """Font color for legend labels"""
@@ -699,7 +705,11 @@ class LegendStyle(BaseStyle):
             loc=self.location,
             ncols=self.num_columns,
             framealpha=self.background_alpha,
-            fontsize=self.font_size * scale,
+            prop={
+                "family": self.font_name,
+                "weight": self.font_weight,
+                "size": self.font_size * scale,
+            },
             labelcolor=self.font_color.as_hex(),
             borderpad=self.border_padding,
             labelspacing=self.label_padding,
@@ -1150,6 +1160,15 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(font_size=14, font_weight=FontWeightEnum.BOLD),
     )
     """Styling for the zenith marker"""
+
+    optic_fov: PolygonStyle = PolygonStyle(
+        fill_color=None,
+        edge_color="red",
+        line_style=[1, [2, 3]],
+        edge_width=3,
+        zorder=-1000,
+    )
+    """Styling for optic fields of view"""
 
     def get_dso_style(self, dso_type: DsoType):
         """Returns the style for a DSO type"""
