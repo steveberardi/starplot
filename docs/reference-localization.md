@@ -7,8 +7,6 @@ Starplot's labels are available in the following languages:
 2. French
 3. Chinese
 
-*For Chinese, make sure you have a good Chinese font installed (such as [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC)) and you'll also need to set that as the font in your plot's style.
-
 **Want to see another language available?** Please help us add it! [Details here](https://github.com/steveberardi/starplot/tree/main/data/raw/translations)
 
 

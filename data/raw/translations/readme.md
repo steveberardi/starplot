@@ -1,4 +1,4 @@
-# Translations
+# 🌐 Translations
 
 This directory contains the raw data that will be used in translating text in Starplot to other languages, including:
 
@@ -16,6 +16,8 @@ The format of each file should be pretty self-explanatory, but here's a referenc
 - `hip_id` = Hipparcos ID of a star
 - `open_ngc_name` = Name of a DSO (as designated in OpenNGC)
 - `iau_id` = Three letter IAU abbreviation of a constellation
+
+## 🙋‍♂️ Help Wanted
 
 If you're interested in helping with these translations (either finding and correcting errors or adding a new language), please open a PR with updates to these files.
 

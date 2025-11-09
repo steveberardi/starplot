@@ -1,8 +1,8 @@
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from starplot import styles, OpticPlot, callables, Moon, _, Observer
+from starplot import styles, OpticPlot, callables, Moon, _, Satellite, Observer
 from starplot.models import optics
 
 HERE = Path(__file__).resolve().parent
@@ -380,4 +380,65 @@ def check_optic_moon_phase_full():
     filename = DATA_PATH / "optic-moon-phase-full.png"
     optic_plot.export(filename)
     optic_plot.close_fig()
+    return filename
+
+
+def check_optic_iss_moon_transit():
+    tz = ZoneInfo("US/Pacific")
+    dt = datetime(2025, 12, 8, 8, 3, 16, tzinfo=tz)
+    style = styles.PlotStyle().extend(
+        styles.extensions.BLUE_DARK,
+        styles.extensions.OPTIC,
+    )
+
+    observer = Observer(
+        dt=dt,
+        lat=33.0225027778,
+        lon=-116.507025,
+    )
+
+    moon = Moon.get(dt=observer.dt, lat=observer.lat, lon=observer.lon)
+
+    p = OpticPlot(
+        ra=moon.ra,
+        dec=moon.dec,
+        observer=observer,
+        optic=optics.Binoculars(
+            magnification=15,
+            fov=65,
+        ),
+        style=style,
+        resolution=2400,
+        autoscale=True,
+    )
+    p.moon(true_size=True, show_phase=True, label=None)
+
+    iss = Satellite.from_tle(
+        name="ISS (ZARYA)",
+        line1="1 25544U 98067A   25312.42041502  .00013418  00000+0  24734-3 0  9990",
+        line2="2 25544  51.6332 312.3676 0004093  47.8963 312.2373 15.49452868537539",
+        lat=32.7678,
+        lon=-117.023,
+    )
+
+    dt_start = datetime(2025, 12, 8, 8, 0, 16, tzinfo=tz)
+    dt_end = datetime(2025, 12, 8, 8, 20, 16, tzinfo=tz)
+
+    for sat in iss.trajectory(dt_start, dt_end, step=timedelta(seconds=1)):
+        p.marker(
+            sat.ra,
+            sat.dec,
+            style={
+                "marker": {
+                    "size": 56,
+                    "symbol": "plus",
+                    "color": "gold",
+                    "zorder": 5_000,
+                },
+            },
+        )
+
+    filename = DATA_PATH / "optic-iss-moon-transit.png"
+    p.export(filename)
+    p.close_fig()
     return filename
