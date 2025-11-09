@@ -10,7 +10,12 @@ from starplot.utils import dt_or_now
 
 
 class Satellite(SkyObject):
-    """Satellite model."""
+    """
+    Satellite model.
+
+    Instances can be created from a [two-line element set (TLE)][starplot.Satellite.from_tle] or a [CelesTrak JSON][starplot.Satellite.from_json]
+
+    """
 
     name: str
     """

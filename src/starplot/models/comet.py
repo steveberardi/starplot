@@ -128,7 +128,11 @@ class SkyfieldComet:
 
 
 class Comet(SkyObject):
-    """Comet model."""
+    """
+    Comet model.
+
+    Instances can be created from a [designation][starplot.Comet.get] or a [IAU MPC JSON][starplot.Comet.from_json]
+    """
 
     name: str
     """
