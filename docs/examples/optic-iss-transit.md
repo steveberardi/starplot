@@ -7,7 +7,7 @@ title: ISS Moon Transit
 
 ![optic-iss-moon-transit](/images/examples/optic_iss_transit.png)
 
-This plot shows the [International Space Station (ISS)](https://en.wikipedia.org/wiki/International_Space_Station) when it transits the Moon on December 8, 2025 at 8:03 PT as seen from lat/lon `33.0225028`, `-116.507025`.
+This plot shows the [International Space Station (ISS)](https://en.wikipedia.org/wiki/International_Space_Station) when it transits the Moon on December 8, 2025 at 8:03am PT as seen from lat/lon `33.0225028`, `-116.507025` (near Lake Cuyamaca in California, USA).
 
 The TLE was obtained from [CelesTrak](https://celestrak.org/) on November 8, 2025.
 
