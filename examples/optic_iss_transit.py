@@ -10,14 +10,7 @@ dt = datetime(2025, 12, 8, 8, 3, 16, tzinfo=tz)
 style = PlotStyle().extend(
     extensions.BLUE_NIGHT,
     extensions.OPTIC,
-    {
-        "background_color": [
-            (0.0, "#7abfff"),
-            (0.1, "#7abfff"),
-            (0.9, "#568feb"),
-            (0.9, "#3f7ee3"),
-        ]
-    },
+    extensions.GRADIENT_DAYLIGHT,
 )
 
 observer = Observer(

@@ -30,7 +30,16 @@ CB_WONG = load("cb_wong.yml")
 COLOR_PRINT = load("color_print.yml")
 
 # Horizon Background Gradient Presets
-GRADIENTS = load("gradient_presets.yml")
+# GRADIENTS = load("gradient_presets.yml")
+
+GRADIENT_DAYLIGHT = {
+    "background_color": [
+        (0.0, "#7abfff"),
+        (0.1, "#7abfff"),
+        (0.9, "#568feb"),
+        (0.9, "#3f7ee3"),
+    ]
+}
 
 GRADIENT_BOLD_SUNSET = {
     "background_color": [
