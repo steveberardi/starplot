@@ -83,7 +83,7 @@ optic_clipping:
   filename: /starplot/hash_checks/data/optic-clipping.png
   phash: 95696a87add861a3
 optic_iss_moon_transit:
-  dhash: 70e8d6b2b28cf07071e896b2b68ef07171cc92b2a48ed071
+  dhash: 70e8d6b2b28cf07071e896b2b68ef07171cc90b2a48ed071
   filename: /starplot/hash_checks/data/optic-iss-moon-transit.png
   phash: cc993366cc993366
 optic_m45_binoculars:

@@ -421,18 +421,24 @@ def check_optic_iss_moon_transit():
         lon=observer.lon,
     )
 
-    dt_start = observer.dt - timedelta(minutes=5)
-    dt_end = observer.dt + timedelta(minutes=5)
+    dt_start = observer.dt - timedelta(minutes=1)
+    dt_end = observer.dt + timedelta(minutes=1)
 
     for sat in iss.trajectory(dt_start, dt_end, step=timedelta(seconds=1)):
+        if sat.geometry.intersects(moon.geometry):
+            marker_color = "red"
+            symbol = "circle"
+        else:
+            marker_color = "gold"
+            symbol = "plus"
         p.marker(
             sat.ra,
             sat.dec,
             style={
                 "marker": {
-                    "size": 60,
-                    "symbol": "plus",
-                    "color": "gold",
+                    "size": 70,
+                    "symbol": symbol,
+                    "color": marker_color,
                     "zorder": 5_000,
                 },
             },
