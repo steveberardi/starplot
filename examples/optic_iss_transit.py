@@ -60,7 +60,7 @@ for sat in iss.trajectory(dt_start, dt_end, step=timedelta(seconds=1)):
     else:
         marker_color = "gold"
         label_color = "#c7e5ff"
-        
+
     p.marker(
         sat.ra,
         sat.dec,
