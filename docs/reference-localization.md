@@ -4,8 +4,9 @@
 Starplot's labels are available in the following languages:
 
 1. English (US) - default
-2. French
-3. Chinese
+2. Chinese
+3. French
+4. Lithuanian
 
 **Want to see another language available?** Please help us add it! [Details here](https://github.com/steveberardi/starplot/tree/main/data/raw/translations)
 
