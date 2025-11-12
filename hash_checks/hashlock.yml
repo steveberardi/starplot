@@ -141,7 +141,7 @@ zenith_base:
 zenith_chinese:
   dhash: 4c863333212b86544c862331212b865471cc8e0f0f8ecc71
   filename: /starplot/hash_checks/data/zenith-chinese.png
-  phash: ef3185669ac91bc4
+  phash: ef3184769ac91bc4
 zenith_gradient:
   dhash: 548e0333292b8674448e03312b2b864471cc8e0f0f8ecc71
   filename: /starplot/hash_checks/data/zenith-gradient.png
