@@ -7,6 +7,9 @@
 - Deprecates the `labels` parameter on star/DSO/constellation plotting functions
 - Defines a default `label_fn` for stars/DSOs/constellations
 - Introduces localization with two language translations for labels: French and Chinese
+- [**v0.17.1**] 
+    - Adds Lithuanian translation
+    - Fixes a few small errors in the Chinese translation
 
 
 ## v0.16.x
