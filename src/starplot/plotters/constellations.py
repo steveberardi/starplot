@@ -1,3 +1,5 @@
+from typing import Callable
+
 import numpy as np
 
 import rtree
@@ -10,11 +12,8 @@ from ibis import _
 from starplot.coordinates import CoordinateSystem
 from starplot.data import constellations as condata, constellation_lines as conlines
 from starplot.data.stars import load as load_stars, StarCatalog
-from starplot.data.constellations import (
-    CONSTELLATIONS_FULL_NAMES,
-)
 from starplot.data.constellation_stars import CONSTELLATION_HIPS
-from starplot.models import Star
+from starplot.models import Star, Constellation
 from starplot.models.constellation import from_tuple as constellation_from_tuple
 from starplot.projections import (
     StereoNorth,
@@ -24,7 +23,7 @@ from starplot.projections import (
     LambertAzEqArea,
 )
 from starplot.profile import profile
-from starplot.styles import PathStyle, LineStyle, LabelStyle
+from starplot.styles import LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
 from starplot.geometry import is_wrapped_polygon
@@ -197,40 +196,6 @@ class ConstellationPlotterMixin:
                     None,
                 )
 
-    def _plot_constellation_labels(
-        self,
-        style: PathStyle = None,
-        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
-    ):
-        """
-        TODO:
-        1. plot label, if removed then get size in display coords
-        2. generate random points in polygon, convert to display coords, test for intersections
-        3. plot best score
-
-        problem = constellations usually plotted first, so wont have star data (or could use stars from constellations only?)
-
-        constellation names CAN cross lines but not stars
-
-        """
-        style = style or self.style.constellation.label
-        self._constellation_labels = []
-
-        for con in condata.iterator():
-            _, ra, dec = condata.get(con)
-            text = labels.get(con.lower())
-            label = self.text(
-                text,
-                ra,
-                dec,
-                style,
-                hide_on_collision=False,
-                # hide_on_collision=self.hide_colliding_labels,
-                gid="constellations-label-name",
-            )
-            if label is not None:
-                self._constellation_labels.append(label)
-
     @profile
     @use_style(LineStyle, "constellation_borders")
     def constellation_borders(self, style: LineStyle = None):
@@ -275,7 +240,7 @@ class ConstellationPlotterMixin:
         )
         self.ax.add_collection(line_collection)
 
-    def _constellation_labels_auto(self, style, labels, settings):
+    def _constellation_labels_auto(self, style, label_fn, settings):
         hips = []
         for c in self.objects.constellations:
             hips.extend(c.star_hip_ids)
@@ -303,7 +268,7 @@ class ConstellationPlotterMixin:
 
             points_line = MultiPoint(starpoints)
             centroid = points_line.centroid
-            text = labels.get(constellation.iau_id)
+            text = label_fn(constellation)
 
             self.text(
                 text,
@@ -316,14 +281,13 @@ class ConstellationPlotterMixin:
                 gid="constellations-label-name",
             )
 
-    def _constellation_labels_static(self, style, labels):
-        for con in condata.iterator():
-            _, ra, dec = condata.get(con)
-            text = labels.get(con.lower())
+    def _constellation_labels_static(self, style, label_fn):
+        for constellation in self.objects.constellations:
+            text = label_fn(constellation)
             self.text(
                 text,
-                ra * 15,
-                dec,
+                constellation.ra,
+                constellation.dec,
                 style,
                 hide_on_collision=self.hide_colliding_labels,
                 remove_on_constellation_collision=False,
@@ -335,7 +299,7 @@ class ConstellationPlotterMixin:
     def constellation_labels(
         self,
         style: LabelStyle = None,
-        labels: dict[str, str] = CONSTELLATIONS_FULL_NAMES,
+        label_fn: Callable[[Constellation], str] = Constellation.get_label,
         auto_adjust: bool = True,
         auto_adjust_settings: dict = DEFAULT_AUTO_ADJUST_SETTINGS,
     ):
@@ -346,7 +310,7 @@ class ConstellationPlotterMixin:
 
         Args:
             style: Styling of the constellation labels. If None, then the plot's style (specified when creating the plot) will be used
-            labels: A dictionary where the keys are each constellation's 3-letter IAU abbreviation, and the values are how the constellation will be labeled on the plot.
+            label_fn: Callable for determining the label for each constellation. The default function returns the constellation's name in uppercase.
             auto_adjust: If True (the default), then labels will be automatically adjusted to avoid collisions with other labels and stars **Important: you must plot stars and constellations first for this to work**. This uses a fairly simple method: for each constellation it finds the centroid of all plotted constellation stars with lines and then generates random points in the constellation boundary starting at the centroid and then progressively increasing the distance from the centroid.
             auto_adjust_settings: Optional settings for the auto adjustment algorithm.
         """
@@ -354,6 +318,6 @@ class ConstellationPlotterMixin:
         if auto_adjust:
             settings = DEFAULT_AUTO_ADJUST_SETTINGS
             settings.update(auto_adjust_settings)
-            self._constellation_labels_auto(style, labels, settings=settings)
+            self._constellation_labels_auto(style, label_fn, settings=settings)
         else:
-            self._constellation_labels_static(style, labels)
+            self._constellation_labels_static(style, label_fn)

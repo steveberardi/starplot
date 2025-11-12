@@ -2,7 +2,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from starplot import OpticPlot, Observer, DSO, _
-from starplot.optics import Binoculars
+from starplot.models import Binoculars
 from starplot.styles import PlotStyle, extensions
 
 tz = ZoneInfo("US/Pacific")

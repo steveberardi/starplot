@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/steveberardi/starplot/main/docs/images/favicon.svg" width="48" style="vertical-align:middle"> Starplot
+# <img src="https://raw.githubusercontent.com/steveberardi/starplot/main/docs/images/logo.svg" width="48" style="vertical-align:middle"> Starplot
 ![Python](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge&color=6388b0)
 ![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=57a8a8)
 ![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=8b63b0)
@@ -6,18 +6,20 @@
 
 **Starplot** is a Python library for creating star charts and maps of the sky.
 
-- ⭐ **Zenith Plots** - shows the entire sky at a specific time and place
-- 🗺️ **Map Plots** - including many map projections
-- 🌃 **Horizon Plots** - shows the horizon at a specific time and place
-- 🔭 **Optic Plots** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
+- 🗺️ **Maps** - including 10+ customizable projections
+- ⭐ **Zenith Charts** - shows the entire sky at a specific time and place
+- 🌃 **Horizon Charts** - shows the horizon at a specific time and place
+- 🔭 **Optic Simulations** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
 - 🪐 **Planets and Deep Sky Objects (DSOs)** - more than 14,000 objects built-in
-- 🎨 **Custom Styles** - for all objects
+- ☄️ **Comets and Satellites** - easy trajectory plotting
+- 🎨 **Custom Styles** - for all objects and with 8+ built-in themes
 - 📥 **Export** - png, svg, jpeg
 - 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
-- 🧭 **Label Collision Avoidance**
+- 🧭 **Label Collision Avoidance** - ensuring all labels are readable
+- 🌐 **Localization** - label translations for French and Chinese
 
 ## Examples
-*Zenith plot of the stars from a specific time/location:*
+*Zenith chart of the stars from a specific time/location:*
 ![starchart-blue](https://starplot.dev/images/examples/star_chart_basic.png)
 
 *Map around the constellation Orion:*
@@ -66,7 +68,7 @@ p.export("starchart.png")
 
 
 ## Demo
-For a demo of Starplot's zenith plots, check out: 
+For a demo of Starplot's zenith charts, check out: 
 
 [Sky Atlas - Star Chart Creator](https://skyatlas.app/star-charts/)
 
@@ -75,17 +77,17 @@ For a demo of Starplot's zenith plots, check out:
 - Chat with other starplotters on our [Discord server](https://discord.gg/WewJJjshFu)
 - [Follow us on Bluesky](https://bsky.app/profile/starplot.dev)
 - [Join our newsletter](https://buttondown.com/starplot)
-- [See more example plots at Starplotting.com](https://starplotting.com/)
+- [See more examples at Starplotting.com](https://starplotting.com/)
 
 ## Contributing
 
 Contributing to Starplot is welcome and very much appreciated! Please see [here](CONTRIBUTING.md) for details.
 
 ## Coming Soon
+- 📡 Custom data catalogs
 - 🧮 Coordinate system helpers
 - 🌑 Planet moons
 - ✴️ Custom markers
-- ☄️ Comet model
 - 😄 🔭 Clear skies
 
 See more details on the [Public Roadmap](https://trello.com/b/sUksygn4/starplot-roadmap)

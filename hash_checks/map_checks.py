@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import numpy as np
 from pytz import timezone
@@ -18,6 +19,7 @@ from starplot import (
     StereoNorth,
 )
 from starplot.map import MapPlot
+from starplot.models import Binoculars, Scope
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -50,7 +52,9 @@ BASIC_DSO_TYPES = [
     DsoType.ASSOCIATION_OF_STARS.value,
 ]
 
-dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
+
+tz = ZoneInfo("America/Los_Angeles")
+dt_dec_16 = datetime(2023, 12, 16, 21, 0, 0, 0, tzinfo=tz)
 
 
 def _mercator():
@@ -68,13 +72,13 @@ def _mercator():
     p.constellations()
     p.stars(where=[_.magnitude < 7.6], bayer_labels=True)
     p.dsos(
-        labels=None,
         where=[
             (_.magnitude.isnull()) | (_.magnitude <= 8),
             _.size.notnull(),
             _.size > 0.1,
             _.type.isin(BASIC_DSO_TYPES),
         ],
+        where_labels=[False],
     )
     p.milky_way()
     p.gridlines()
@@ -104,12 +108,12 @@ def _stereo_north():
         bayer_labels=True,
     )
     p.dsos(
-        labels=None,
         true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude <= 9),
             _.type.isin(BASIC_DSO_TYPES),
         ],
+        where_labels=[False],
     )
     p.milky_way()
     p.gridlines()
@@ -253,6 +257,16 @@ def check_map_scope_bino_fov():
     filename = DATA_PATH / "map-scope-bino-fov.png"
     dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
 
+    scope = Scope(
+        focal_length=600,
+        eyepiece_focal_length=14,
+        eyepiece_fov=82,
+    )
+    binoculars = Binoculars(
+        magnification=10,
+        fov=65,
+    )
+
     style = styles.PlotStyle().extend(
         styles.extensions.GRAYSCALE,
         styles.extensions.MAP,
@@ -271,14 +285,16 @@ def check_map_scope_bino_fov():
         scale=1,
     )
     p.stars(where=[_.magnitude < 12])
-    p.scope_fov(
+    p.optic_fov(
         ra=3.791278 * 15,
         dec=24.105278,
-        scope_focal_length=600,
-        eyepiece_focal_length=14,
-        eyepiece_fov=82,
+        optic=scope,
     )
-    p.bino_fov(ra=3.791278 * 15, dec=24.105278, fov=65, magnification=10)
+    p.optic_fov(
+        ra=3.791278 * 15,
+        dec=24.105278,
+        optic=binoculars,
+    )
     p.title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
     p.export(filename, padding=0.3)
     return filename
@@ -371,13 +387,13 @@ def check_map_mollweide():
     )
     p.constellations()
     p.dsos(
-        labels=None,
         where=[
             (_.magnitude.isnull()) | (_.magnitude <= 4),
             _.size.notnull(),
             _.size > 0.1,
             _.type.isin(BASIC_DSO_TYPES),
         ],
+        where_labels=[False],
     )
     p.milky_way()
     p.gridlines(labels=False)
@@ -504,13 +520,13 @@ def check_map_plot_limit_by_geometry():
         where=[_.magnitude < 9, _.geometry.intersects(lyra.boundary)], bayer_labels=True
     )
     p.dsos(
-        labels=None,
         true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude < 9),
             _.type.isin(BASIC_DSO_TYPES),
             _.geometry.intersects(lyra.boundary),
         ],
+        where_labels=[False],
     )
     p.constellations(where=[_.boundary.intersects(lyra.boundary)])
     p.constellation_borders()
@@ -543,12 +559,12 @@ def check_map_plot_custom_clip_path_virgo():
 
     p.stars(where=[_.magnitude < 9], bayer_labels=True)
     p.dsos(
-        labels=None,
         true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude < 9),
             _.type.isin(BASIC_DSO_TYPES),
         ],
+        where_labels=[False],
     )
     p.constellations()
     p.constellation_borders()

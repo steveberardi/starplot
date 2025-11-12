@@ -1,15 +1,17 @@
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
-from pytz import timezone
-
-from starplot import styles, optics, OpticPlot, callables, Moon, _, Observer
+from starplot import styles, OpticPlot, callables, Moon, _, Satellite, Observer
+from starplot.models import optics
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
 
-dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0, 0)
-dt_april_8 = datetime.now(timezone("US/Pacific")).replace(2024, 4, 8, 11, 7, 0, 0)
+tz = ZoneInfo("America/Los_Angeles")
+
+dt_dec_16 = datetime(2023, 12, 16, 21, 0, 0, 0, tzinfo=tz)
+dt_april_8 = datetime(2024, 4, 8, 11, 7, 0, 0, tzinfo=tz)
 
 style_light = styles.PlotStyle().extend(
     styles.extensions.GRAYSCALE,
@@ -128,7 +130,7 @@ def check_optic_clipping():
         **plot_kwargs,
     )
     optic_plot.stars(where=[_.magnitude < 12])
-    optic_plot.dsos(sql="select * from _ where magnitude < 8.1", labels=None)
+    optic_plot.dsos(sql="select * from _ where magnitude < 8.1", where_labels=[False])
     optic_plot.nebula()
     optic_plot.title("Orion Nebula")
     filename = DATA_PATH / "optic-clipping.png"
@@ -354,7 +356,7 @@ def check_optic_moon_phase_new():
 
 
 def check_optic_moon_phase_full():
-    dt_full_moon = datetime.now(timezone("US/Pacific")).replace(2024, 4, 23, 11, 7, 0)
+    dt_full_moon = datetime(2024, 4, 23, 11, 7, 0, 0, tzinfo=tz)
     observer = Observer(
         dt=dt_full_moon,
         **POWAY,
@@ -378,4 +380,71 @@ def check_optic_moon_phase_full():
     filename = DATA_PATH / "optic-moon-phase-full.png"
     optic_plot.export(filename)
     optic_plot.close_fig()
+    return filename
+
+
+def check_optic_iss_moon_transit():
+    tz = ZoneInfo("US/Pacific")
+    dt = datetime(2025, 12, 8, 8, 3, 16, tzinfo=tz)
+    style = styles.PlotStyle().extend(
+        styles.extensions.BLUE_DARK,
+        styles.extensions.OPTIC,
+    )
+
+    observer = Observer(
+        dt=dt,
+        lat=33.0225027778,
+        lon=-116.507025,
+    )
+
+    moon = Moon.get(dt=observer.dt, lat=observer.lat, lon=observer.lon)
+
+    p = OpticPlot(
+        ra=moon.ra,
+        dec=moon.dec,
+        observer=observer,
+        optic=optics.Binoculars(
+            magnification=15,
+            fov=65,
+        ),
+        style=style,
+        resolution=2400,
+        autoscale=True,
+    )
+    p.moon(true_size=True, show_phase=True, label=None)
+
+    iss = Satellite.from_tle(
+        name="ISS (ZARYA)",
+        line1="1 25544U 98067A   25312.42041502  .00013418  00000+0  24734-3 0  9990",
+        line2="2 25544  51.6332 312.3676 0004093  47.8963 312.2373 15.49452868537539",
+        lat=observer.lat,
+        lon=observer.lon,
+    )
+
+    dt_start = observer.dt - timedelta(minutes=1)
+    dt_end = observer.dt + timedelta(minutes=1)
+
+    for sat in iss.trajectory(dt_start, dt_end, step=timedelta(seconds=1)):
+        if sat.geometry.intersects(moon.geometry):
+            marker_color = "red"
+            symbol = "circle"
+        else:
+            marker_color = "gold"
+            symbol = "plus"
+        p.marker(
+            sat.ra,
+            sat.dec,
+            style={
+                "marker": {
+                    "size": 70,
+                    "symbol": symbol,
+                    "color": marker_color,
+                    "zorder": 5_000,
+                },
+            },
+        )
+
+    filename = DATA_PATH / "optic-iss-moon-transit.png"
+    p.export(filename)
+    p.close_fig()
     return filename

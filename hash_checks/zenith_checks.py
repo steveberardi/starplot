@@ -2,7 +2,7 @@ from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from starplot import ZenithPlot, Observer, styles, _
+from starplot import ZenithPlot, Observer, styles, override_settings, _
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -68,5 +68,44 @@ def check_zenith_gradient():
     p.celestial_equator(style__line__width=8)
     p.constellation_labels()
     filename = DATA_PATH / "zenith-gradient.png"
+    p.export(filename)
+    return filename
+
+
+@override_settings(language="zh-cn")
+def check_zenith_chinese():
+    p = ZenithPlot(
+        observer=Observer(
+            lat=32.97,
+            lon=-117.038611,
+            dt=JUNE_2023,
+        ),
+        style=styles.PlotStyle().extend(
+            styles.extensions.BLUE_GOLD,
+            styles.extensions.GRADIENT_PRE_DAWN,
+            {
+                "star": {
+                    "label": {
+                        "font_name": "Noto Sans SC",
+                    }
+                },
+                "horizon": {
+                    "label": {
+                        "font_name": "Noto Sans SC",
+                    }
+                },
+                "constellation_labels": {
+                    "font_name": "Noto Sans SC",
+                },
+            },
+        ),
+        resolution=RESOLUTION,
+        autoscale=True,
+    )
+    p.horizon()
+    p.constellations()
+    p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 4])
+    p.constellation_labels()
+    filename = DATA_PATH / "zenith-chinese.png"
     p.export(filename)
     return filename

@@ -236,6 +236,7 @@ style = styles.PlotStyle().extend(
     - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
 - **Gradients**
+    - `GRADIENT_DAYLIGHT`
     - `GRADIENT_BOLD_SUNSET`
     - `GRADIENT_CIVIL_TWILIGHT`
     - `GRADIENT_NAUTICAL_TWILIGHT`

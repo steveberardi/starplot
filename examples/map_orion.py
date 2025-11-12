@@ -24,20 +24,17 @@ p.stars(where=[_.magnitude < 8], bayer_labels=True, where_labels=[_.magnitude < 
 
 p.open_clusters(
     where=[_.size < 1, _.magnitude < 9],
-    labels=None,
-    label_fn=lambda d: d.ngc,
+    where_labels=[False],
     true_size=False,
 )
 p.open_clusters(
     # plot larger clusters as their true apparent size
     where=[_.size > 1, (_.magnitude < 9) | (_.magnitude.isnull())],
-    labels=None,
+    where_labels=[False],
 )
 
 p.nebula(
     where=[(_.magnitude < 9) | (_.magnitude.isnull())],
-    labels=None,
-    label_fn=lambda d: d.ngc,
 )
 
 p.constellation_labels()

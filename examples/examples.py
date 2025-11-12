@@ -28,7 +28,7 @@ def get_example_names():
     filenames = []
 
     for filename in glob.iglob("*.py"):
-        # if filename != "map_big.py":
+        # if filename not in ["optic_iss_transit.py", "star_chart_french.py"]:
         #     continue
 
         if filename.endswith("examples.py"):

@@ -1,5 +1,6 @@
-Starplot uses an instance of a `dataclass` to maintain a few global settings:
+Starplot has a few global settings:
 
+- Language
 - Data download path
 - DuckDB extension path
 - SVG text rendering method
@@ -15,6 +16,19 @@ from starplot import settings
 settings.svg_text_type = "element"
 
 # Create your plot and enjoy your editable text :)
+
+```
+
+There's also a context manager that lets you temporarily override settings:
+
+```python
+from starplot import override_settings
+
+with override_settings(language="zh-cn"):
+    ...
+    # all default labels plotted in here will be in Chinese
+
+# after exiting the context manager, language will revert to the default (en-us)
 
 ```
 

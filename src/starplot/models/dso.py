@@ -189,6 +189,30 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         df = load(filters=where, sql=sql).to_pandas()
         return [from_tuple(d) for d in df.itertuples()]
 
+    @classmethod
+    def get_label(cls, dso) -> str:
+        """
+        Default function for determining the plotted label for a DSO.
+
+        Returns:
+
+        1. `"M13"` if DSO is a Messier object
+        2. `"6456"` if DSO is an NGC object
+        3. `"IC1920"` if DSO is an IC object
+        4. Empty string otherwise
+
+        """
+        if dso.m:
+            return f"M{dso.m}"
+
+        if dso.ngc:
+            return f"{dso.ngc}"
+
+        if dso.ic:
+            return f"IC{dso.ic}"
+
+        return ""
+
 
 def from_tuple(d: tuple) -> DSO:
     dso = DSO(

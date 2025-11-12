@@ -3,9 +3,6 @@ import math
 from functools import cache
 from typing import Callable
 
-# import pandas as pd
-# import geopandas as gpd
-
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator, FuncFormatter
@@ -14,7 +11,7 @@ from shapely import Point, Polygon, MultiPolygon
 from starplot.coordinates import CoordinateSystem
 from starplot.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
-from starplot.observer import Observer
+from starplot.models.observer import Observer
 from starplot.plotters import (
     ConstellationPlotterMixin,
     StarPlotterMixin,
@@ -30,8 +27,6 @@ from starplot.styles import (
     PathStyle,
     GradientDirection,
 )
-
-# pd.options.mode.chained_assignment = None  # default='warn'
 
 DEFAULT_HORIZON_STYLE = PlotStyle().extend(extensions.MAP)
 

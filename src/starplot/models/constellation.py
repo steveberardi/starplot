@@ -92,6 +92,16 @@ class Constellation(SkyObject):
         """Not applicable to Constellation model, raises `NotImplementedError`"""
         raise NotImplementedError()
 
+    @classmethod
+    def get_label(cls, constellation):
+        """
+        Default function for determining the plotted label for a constellation
+
+        Returns the uppercase name of the constellation.
+
+        """
+        return constellation.name.upper()
+
 
 def from_tuple(c: tuple) -> Constellation:
     c = Constellation(

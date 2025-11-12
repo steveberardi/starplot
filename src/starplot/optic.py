@@ -1,7 +1,5 @@
 from typing import Callable, Mapping
 
-# import pandas as pd
-
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
@@ -11,9 +9,8 @@ from starplot import callables
 from starplot.base import BasePlot, DPI
 from starplot.data.stars import StarCatalog
 from starplot.mixins import ExtentMaskMixin
-from starplot.models import Star
-from starplot.observer import Observer
-from starplot.optics import Optic, Camera
+from starplot.models import Star, Optic, Camera
+from starplot.models.observer import Observer
 from starplot.plotters import (
     StarPlotterMixin,
     DsoPlotterMixin,
@@ -30,8 +27,6 @@ from starplot.styles import (
     GradientDirection,
 )
 from starplot.utils import azimuth_to_string
-
-# pd.options.mode.chained_assignment = None  # default='warn'
 
 DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
 
@@ -240,7 +235,7 @@ class OpticPlot(
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
-        label_fn: Callable[[Star], str] = None,
+        label_fn: Callable[[Star], str] = Star.get_label,
         labels: Mapping[int, str] = None,
         legend_label: str = "Star",
         bayer_labels: bool = False,

@@ -17,6 +17,10 @@
     max-width: 900px;
 }
 
+.md-button {
+    border-radius: 12px !important;
+}
+
 .doc-heading {
     display: flex;
     align-items: center;
@@ -505,6 +509,10 @@ td[data-column-id=bayer] {
 
 .filter-blue {
     filter: invert(35%) sepia(10%) saturate(3166%) hue-rotate(168deg) brightness(93%) contrast(91%);
+}
+
+.filter-blue-light {
+    filter: brightness(0) saturate(100%) invert(90%) sepia(14%) saturate(50%) hue-rotate(163deg) brightness(103%) contrast(105%);
 }
 
 @media screen and (min-width: 768px) {

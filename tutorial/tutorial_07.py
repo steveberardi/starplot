@@ -1,7 +1,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from starplot import Planet, Observer, optics
+from starplot import Planet, Observer, Refractor
 from starplot.styles import PlotStyle, extensions
 
 tz = ZoneInfo("America/Los_Angeles")
@@ -19,7 +19,7 @@ jupiter = Planet.get("jupiter", tonight)
 # create an optic plot directly from Jupiter instance
 p = jupiter.create_optic(
     observer=observer,
-    optic=optics.Refractor(
+    optic=Refractor(
         focal_length=600,
         eyepiece_focal_length=4,
         eyepiece_fov=52,
