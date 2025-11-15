@@ -429,6 +429,7 @@ Basic styling tailored for map plots
     options:
         show_root_heading: true
         show_docstring_attributes: true
+        inherited_members: true
 
 ---
 
