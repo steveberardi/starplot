@@ -420,8 +420,12 @@ Basic styling tailored for map plots
         show_root_heading: true
         show_docstring_attributes: true
 
-
 ::: starplot.styles.LabelStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
+::: starplot.styles.ArrowStyle
     options:
         show_root_heading: true
         show_docstring_attributes: true
@@ -481,6 +485,18 @@ Basic styling tailored for map plots
         members: true
 
 ::: starplot.styles.AnchorPointEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.CapStyleEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.JoinStyleEnum
     options:
         show_root_heading: true
         show_docstring_attributes: true
