@@ -111,7 +111,6 @@ class ArrowPlotterMixin:
             arrow_body = result.geoms[0].buffer(body_width, **style.shapely_kwargs())
             return arrow_body.union(arrow_head.buffer(0.0001, **style.shapely_kwargs()))
 
-
         if origin and target:
             origin = self._prepare_coords(*origin)
             target = self._prepare_coords(*target)
@@ -123,7 +122,7 @@ class ArrowPlotterMixin:
             target = self._prepare_coords(*target)
             arrow_polygon = None
             attempts = 0
-            padding = 4
+            padding = 8
             polygon = circle(
                 center=target,
                 diameter_degrees=length * 2,
@@ -140,7 +139,7 @@ class ArrowPlotterMixin:
                 if len(display_points) < 2:
                     continue
 
-                points_arrow = points_on_line(display_points[0], display_points[1], 10)
+                points_arrow = points_on_line(display_points[0], display_points[1], 25)
 
                 # check if arrow body collides with any labels
                 collides_with_label = False
