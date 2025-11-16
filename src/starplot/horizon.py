@@ -19,6 +19,7 @@ from starplot.plotters import (
     MilkyWayPlotterMixin,
     GradientBackgroundMixin,
     LegendPlotterMixin,
+    ArrowPlotterMixin,
 )
 from starplot.styles import (
     PlotStyle,
@@ -52,6 +53,7 @@ class HorizonPlot(
     MilkyWayPlotterMixin,
     GradientBackgroundMixin,
     LegendPlotterMixin,
+    ArrowPlotterMixin,
 ):
     """Creates a new horizon plot.
 

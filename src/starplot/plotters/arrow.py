@@ -49,6 +49,7 @@ class ArrowPlotterMixin:
         style: ArrowStyle = None,
         scale: float = 0.99,
         length: float = 5,
+        max_attempts: int = 100,
     ):
         """
         Plots an arrow from one point to another.
@@ -59,6 +60,8 @@ class ArrowPlotterMixin:
             style: Style of the arrow
             scale: Scaling factor for the arrow, to make it offset from the origin/target
             length: If you only specify a target, then this will be the length of the arrow (in degrees). This value is ignored if you're plotting an arrow from one point to another.
+            max_attempts: If you only specify a target, then this will be the max number of attempts for plotting the arrow without colliding with labels. Arrow will be plotted on the final attempt.
+
         """
 
         def create_arrow(p0, p1):
@@ -108,15 +111,19 @@ class ArrowPlotterMixin:
             arrow_body = result.geoms[0].buffer(body_width, **style.shapely_kwargs())
             return arrow_body.union(arrow_head.buffer(0.0001, **style.shapely_kwargs()))
 
-        # TODO : prepare coords
 
         if origin and target:
+            origin = self._prepare_coords(*origin)
+            target = self._prepare_coords(*target)
             arrow_polygon = create_arrow(origin, target)
 
         elif target:
+            # we only need to prepare the target coords because the origin will be
+            # based on the circle around the prepared target coords (so the origin will be automatically in the expected coord system)
+            target = self._prepare_coords(*target)
             arrow_polygon = None
             attempts = 0
-            padding = 8
+            padding = 4
             polygon = circle(
                 center=target,
                 diameter_degrees=length * 2,
@@ -125,10 +132,9 @@ class ArrowPlotterMixin:
 
             origins = list(zip(*polygon.exterior.coords.xy))
 
-            while arrow_polygon is None and attempts < 100:
+            while arrow_polygon is None and attempts < max_attempts:
                 attempts += 1
                 origin = random.choice(origins)
-
                 display_points = self._to_display([origin, target])
 
                 if len(display_points) < 2:
@@ -150,7 +156,7 @@ class ArrowPlotterMixin:
                         break
 
                 # if arrow body does not collide with labels, we can create polygon and exit loop
-                if not collides_with_label:
+                if not collides_with_label or attempts == max_attempts:
                     arrow_polygon = create_arrow(origin, target)
 
         else:
