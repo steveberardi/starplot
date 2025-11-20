@@ -7,9 +7,9 @@ horizon_gradient_background:
   filename: /starplot/hash_checks/data/horizon-gradient-background.png
   phash: 954f43813bc56ee4
 horizon_north_celestial_pole:
-  dhash: b0aaaab2a2b2a696b0aaaab282b2a696b0aaaaeaa2b2aec4
+  dhash: b0aaaab2a2b2a696b0aeaab282b2a696b0aaaaf2a2b2aec4
   filename: /starplot/hash_checks/data/horizon-north-celestial-pole.png
-  phash: d5907ad16ad06bc3
+  phash: d4907ad16bd16bc2
 map_coma_berenices_dso_size:
   dhash: ea82acecc888c0c0aa86acec8888c682aa8a92e28882c282
   filename: /starplot/hash_checks/data/map-coma-berenices-dso-size.png
@@ -43,9 +43,9 @@ map_orion_base:
   filename: /starplot/hash_checks/data/map-orion-base.png
   phash: bf794a2417a4b594
 map_orion_extra:
-  dhash: 181b3b7f3d2d656d1d1b3b5f2b25656d1c1b3b4e2b2f6567
+  dhash: 181b397f3b2d656d1b1b194b2b25656d540b1b4b2b2d6567
   filename: /starplot/hash_checks/data/map-orion-extra.png
-  phash: bef1c606c116e19e
+  phash: bf616486c39e909e
 map_plot_custom_clip_path_virgo:
   dhash: 060521339d1c04040625252f0d1c0404062525270d1c0404
   filename: /starplot/hash_checks/data/map-custom-clip-path-virgo.png

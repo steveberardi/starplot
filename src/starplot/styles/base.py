@@ -502,7 +502,7 @@ class PolygonStyle(BaseStyle):
 
 
 class ArrowStyle(PolygonStyle):
-    body_width: float = 16
+    body_width: float = 24
     """Width of the arrow's body, in pixels"""
 
     head_width: float = 60

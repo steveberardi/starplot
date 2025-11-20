@@ -1,9 +1,8 @@
 from pathlib import Path
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-from pytz import timezone
-
-from starplot import styles, HorizonPlot, _, Observer
+from starplot import styles, HorizonPlot, _, Observer, Star
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -17,9 +16,11 @@ RESOLUTION = 4096
 
 AUTO_ADJUST_SETTINGS = {"seed": 1}
 
+TZ_PT = ZoneInfo("US/Pacific")
+
 
 def _horizon():
-    dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
+    dt = datetime(2024, 8, 30, 21, 0, 0, 0, tzinfo=TZ_PT)
     observer = Observer(
         lat=36.606111,  # Lone Pine, California
         lon=-118.079444,
@@ -53,7 +54,7 @@ def check_horizon_base():
 
 
 def check_horizon_north_celestial_pole():
-    dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
+    dt = datetime(2024, 8, 30, 21, 0, 0, 0, tzinfo=TZ_PT)
     observer = Observer(
         lat=36.606111,  # Lone Pine, California
         lon=-118.079444,
@@ -77,13 +78,16 @@ def check_horizon_north_celestial_pole():
     p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
     p.gridlines()
 
+    polaris = Star.get(name="Polaris")
+    p.arrow(target=(polaris.ra, polaris.dec))
+
     filename = DATA_PATH / "horizon-north-celestial-pole.png"
     p.export(filename)
     return filename
 
 
 def check_horizon_gradient_background():
-    dt = timezone("US/Pacific").localize(datetime(2024, 8, 30, 21, 0, 0, 0))
+    dt = datetime(2024, 8, 30, 21, 0, 0, 0, tzinfo=TZ_PT)
     p = HorizonPlot(
         altitude=(0, 50),
         azimuth=(150, 210),
