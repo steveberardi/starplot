@@ -1,5 +1,6 @@
 import json
 
+from dataclasses import dataclass
 from functools import cache
 from typing import Optional
 
@@ -65,7 +66,12 @@ def constellation_at():
     return load_constellation_map()
 
 
-class SkyObject(BaseModel, CreateMapMixin, CreateOpticMixin):
+@dataclass(slots=True)
+class SkyObject(
+    # BaseModel,
+    CreateMapMixin,
+    CreateOpticMixin,
+):
     """
     Basic sky object model.
     """

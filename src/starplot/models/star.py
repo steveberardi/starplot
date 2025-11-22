@@ -1,20 +1,23 @@
 import math
+from dataclasses import dataclass
 from typing import Optional, Union, Iterator, Any
 
 import numpy as np
 from ibis import _
 from pydantic import field_validator
+from shapely.geometry import Polygon, MultiPolygon, Point
 
 from starplot.models.base import SkyObject, ShapelyPoint
 from starplot.data.stars import StarCatalog, load as _load_stars
 
 
+@dataclass(slots=True)
 class Star(SkyObject):
     """
     Star model.
     """
 
-    magnitude: float
+    magnitude: float = None
     """Magnitude"""
 
     bv: Optional[float] = None
@@ -38,7 +41,7 @@ class Star(SkyObject):
     flamsteed: Optional[int] = None
     """Flamsteed number, if available"""
 
-    geometry: ShapelyPoint = None
+    geometry: Point = None
     """Shapely Point of the star's position. Right ascension coordinates are in degrees (0...360)."""
 
     @field_validator("flamsteed", "hip", mode="before")
@@ -56,6 +59,9 @@ class Star(SkyObject):
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
 
+    def is_primary(self) -> bool:
+        return bool(self.ccdm) or self.ccdm.startswith("A")
+    
     @classmethod
     def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11) -> Iterator["Star"]:
         df = _load_stars(catalog=catalog).to_pandas()
@@ -126,6 +132,31 @@ class Star(SkyObject):
             List of Stars that match all `where` expressions
 
         """
+        # from ibis import to_sql
+
+        # from starplot.data import db, DataFiles
+        # con = db.connect()
+
+        # sq = _load_stars(
+        #     catalog=catalog,
+        #     filters=where,
+        #     sql=sql,
+        # )
+
+        # con.con.execute("INSTALL spatial; LOAD spatial;")
+        # result = con.con.execute(to_sql(sq))
+        # # result = con.con.execute(f"SELECT * FROM read_parquet('{DataFiles.BIG_SKY_MAG11}') where magnitude < 8")
+        
+        # rows =[]
+        # while True:
+        #     batch = result.fetchmany(1000)
+        #     if not batch:
+        #         break  # No more rows to fetch
+        #     for row in batch:
+        #         rows.append(row)
+
+        # return rows
+    
         df = _load_stars(
             catalog=catalog,
             filters=where,

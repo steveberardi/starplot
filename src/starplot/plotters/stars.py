@@ -103,10 +103,10 @@ class StarPlotterMixin:
                     gid="stars-label-name",
                 )
 
-            if bayer_labels and bayer_desig:
+            if bayer_labels and bayer_desig and s.is_primary:
                 _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i]))
 
-            if flamsteed_labels and flamsteed_num and not bayer_desig:
+            if flamsteed_labels and flamsteed_num and not bayer_desig and s.is_primary:
                 _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i]))
 
         # Plot bayer/flamsteed
