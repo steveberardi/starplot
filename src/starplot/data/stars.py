@@ -1,6 +1,6 @@
 from functools import cache
 
-from ibis import _, row_number, to_sql
+from ibis import _, row_number
 
 from starplot.config import settings
 from starplot.data import bigsky, DataFiles, db
@@ -71,7 +71,7 @@ def table(
         [
             stars.hip == designations.hip,
             # this ccdm part is bottleneck, multiple join conditions in general seem to cause performance issues
-            # (stars.ccdm.startswith("A")) | (stars.ccdm == "") | (stars.ccdm.isnull()),
+            (stars.ccdm.startswith("A")) | (stars.ccdm == "") | (stars.ccdm.isnull()),
         ],
         how="left",
     )

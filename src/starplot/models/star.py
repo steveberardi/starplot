@@ -1,17 +1,15 @@
-import math
 from dataclasses import dataclass
-from typing import Optional, Union, Iterator, Any
+from typing import Optional, Union, Iterator
 
 import numpy as np
 from ibis import _
-from pydantic import field_validator
-from shapely.geometry import Polygon, MultiPolygon, Point
+from shapely.geometry import Point
 
-from starplot.models.base import SkyObject, ShapelyPoint
+from starplot.models.base import SkyObject
 from starplot.data.stars import StarCatalog, load as _load_stars
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, kw_only=True)
 class Star(SkyObject):
     """
     Star model.
@@ -44,24 +42,23 @@ class Star(SkyObject):
     geometry: Point = None
     """Shapely Point of the star's position. Right ascension coordinates are in degrees (0...360)."""
 
-    @field_validator("flamsteed", "hip", mode="before")
-    @classmethod
-    def nan(cls, value: int) -> int:
-        if not value or math.isnan(value):
-            return None
-
-        return int(value)
-
-    def model_post_init(self, context: Any) -> None:
+    def __post_init__(self):
         self.bayer = self.bayer or None
-        self.hip = self.hip if self.hip is not None and np.isfinite(self.hip) else None
+        self.hip = (
+            int(self.hip) if self.hip is not None and np.isfinite(self.hip) else None
+        )
+        self.flamsteed = (
+            int(self.flamsteed)
+            if self.flamsteed is not None and np.isfinite(self.flamsteed)
+            else None
+        )
 
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
 
     def is_primary(self) -> bool:
         return bool(self.ccdm) or self.ccdm.startswith("A")
-    
+
     @classmethod
     def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11) -> Iterator["Star"]:
         df = _load_stars(catalog=catalog).to_pandas()
@@ -146,7 +143,7 @@ class Star(SkyObject):
         # con.con.execute("INSTALL spatial; LOAD spatial;")
         # result = con.con.execute(to_sql(sq))
         # # result = con.con.execute(f"SELECT * FROM read_parquet('{DataFiles.BIG_SKY_MAG11}') where magnitude < 8")
-        
+
         # rows =[]
         # while True:
         #     batch = result.fetchmany(1000)
@@ -156,7 +153,7 @@ class Star(SkyObject):
         #         rows.append(row)
 
         # return rows
-    
+
         df = _load_stars(
             catalog=catalog,
             filters=where,

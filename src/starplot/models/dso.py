@@ -1,11 +1,12 @@
+from dataclasses import dataclass
 from typing import Optional, Iterator
 from enum import Enum
 
 from ibis import _
+from shapely import Polygon, MultiPolygon
 
 from starplot.data.dsos import load
-from starplot.mixins import CreateMapMixin, CreateOpticMixin
-from starplot.models.base import SkyObject, ShapelyPolygon, ShapelyMultiPolygon
+from starplot.models.base import SkyObject
 
 
 class DsoType(str, Enum):
@@ -77,16 +78,17 @@ class DsoType(str, Enum):
     """Duplicate record of another object"""
 
 
-class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
+@dataclass(slots=True, kw_only=True)
+class DSO(SkyObject):
     """
     Deep Sky Object (DSO) model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting DSOs.
     So, you can use any attributes of this model in your callables. Note that some may be null.
     """
 
-    name: str
+    name: str = None
     """Name of the DSO (as specified in OpenNGC)"""
 
-    type: DsoType
+    type: DsoType = DsoType.UNKNOWN
     """Type of DSO"""
 
     common_names: list[str] = None
@@ -126,7 +128,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     Index Catalogue (IC) identifier. *Note that this field is a string, to support objects like '4974 NED01'.*
     """
 
-    geometry: ShapelyPolygon | ShapelyMultiPolygon = None
+    geometry: Polygon | MultiPolygon = None
     """Shapely Polygon of the DSO's extent. Right ascension coordinates are in degrees (0...360)."""
 
     def __repr__(self) -> str:

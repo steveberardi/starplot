@@ -22,7 +22,8 @@ class TestStar:
     def test_star_get_sql(self):
         vega = Star.get(sql="select * from _ where name='Vega'")
         assert vega.magnitude == 0.03
-        assert vega.hip == 91262
+        assert str(vega.hip) == "91262"
+        assert str(vega.flamsteed) == "3"
         assert vega.constellation_id == "lyr"
 
     def test_star_get_raises_exception_on_multiple_results(self):
@@ -32,6 +33,7 @@ class TestStar:
     def test_star_find(self):
         names = {"Sirius", "Bellatrix", "Castor", "Vega"}
         bright = Star.find(where=[_.name.isin(names)])
+        # breakpoint()
         assert len(bright) == 4
         assert set([s.name for s in bright]) == names
 

@@ -1,11 +1,14 @@
 from typing import Iterator
+from dataclasses import dataclass
 
 from ibis import _
+from shapely import Polygon, MultiPolygon
 
-from starplot.models.base import SkyObject, ShapelyPolygon, ShapelyMultiPolygon
+from starplot.models.base import SkyObject
 from starplot.data import constellations
 
 
+@dataclass(slots=True)
 class Constellation(SkyObject):
     """
     Constellation model.
@@ -25,7 +28,7 @@ class Constellation(SkyObject):
     star_hip_ids: list[int] = None
     """List of HIP ids for stars that are part of the _lines_ for this constellation."""
 
-    boundary: ShapelyPolygon | ShapelyMultiPolygon = None
+    boundary: Polygon | MultiPolygon = None
     """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
 
     def __repr__(self) -> str:

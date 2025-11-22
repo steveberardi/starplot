@@ -1,27 +1,30 @@
+from dataclasses import dataclass
 from datetime import datetime
 
 import numpy as np
+from shapely import Polygon
 from skyfield.api import Angle, wgs84
 
 from starplot.data import load
-from starplot.models.base import SkyObject, ShapelyPolygon
+from starplot.models.base import SkyObject
 from starplot.geometry import circle
 from starplot.utils import dt_or_now
 
 
+@dataclass(slots=True)
 class Sun(SkyObject):
     """Sun model."""
 
     name: str = "Sun"
     """Name of the Sun"""
 
-    dt: datetime
+    dt: datetime = None
     """Date/time of Sun's position"""
 
-    apparent_size: float
+    apparent_size: float = 0
     """Apparent size (degrees)"""
 
-    geometry: ShapelyPolygon = None
+    geometry: Polygon = None
     """Shapely Polygon of the Sun's extent. Right ascension coordinates are in degrees (0...360)."""
 
     @classmethod
