@@ -105,7 +105,7 @@ class Star(SkyObject):
 
         if results:
             return results[0]
-        
+
         return None
 
     @classmethod

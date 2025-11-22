@@ -32,7 +32,7 @@ class TestStar:
     def test_star_find(self):
         names = {"Sirius", "Bellatrix", "Castor", "Vega"}
         bright = Star.find(where=[_.name.isin(names)])
-        assert len(bright) == 5 # Castor has two component stars in Big Sky catalog
+        assert len(bright) == 5  # Castor has two component stars in Big Sky catalog
         assert set([s.name for s in bright]) == names
 
     def test_star_find_sql(self):
