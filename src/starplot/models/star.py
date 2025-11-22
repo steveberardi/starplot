@@ -134,19 +134,20 @@ class Star(SkyObject):
         # from starplot.data import db, DataFiles
         # con = db.connect()
 
-        # sq = _load_stars(
+        # exp = _load_stars(
         #     catalog=catalog,
         #     filters=where,
         #     sql=sql,
         # )
 
         # con.con.execute("INSTALL spatial; LOAD spatial;")
-        # result = con.con.execute(to_sql(sq))
+        # result = con.raw_sql(to_sql(exp))
+        # # result = con.con.execute(to_sql(exp))
         # # result = con.con.execute(f"SELECT * FROM read_parquet('{DataFiles.BIG_SKY_MAG11}') where magnitude < 8")
 
         # rows =[]
         # while True:
-        #     batch = result.fetchmany(1000)
+        #     batch = result.fetchmany(5000)
         #     if not batch:
         #         break  # No more rows to fetch
         #     for row in batch:
