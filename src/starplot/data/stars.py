@@ -68,12 +68,12 @@ def table(
 
     stars = stars.join(
         designations,
-        [
-            stars.hip == designations.hip,
-            # this ccdm part is bottleneck, multiple join conditions in general seem to cause performance issues
-            (stars.ccdm.startswith("A")) | (stars.ccdm == "") | (stars.ccdm.isnull()),
-        ],
+        stars.hip == designations.hip,
         how="left",
+        # [
+        #     # this ccdm part is bottleneck, multiple join conditions in general seem to cause performance issues
+        #     # (stars.ccdm.startswith("A")) | (stars.ccdm == "") | (stars.ccdm.isnull()),
+        # ],
     )
 
     return stars

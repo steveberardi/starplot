@@ -73,6 +73,8 @@ class Star(SkyObject):
         """
         Get a Star, by matching its attributes as specified in `**kwargs`
 
+        If there are multiple matches, then the first match (sorted by CCDM) will be returned.
+
         Example:
 
             sirius = Star.get(name="Sirius")
@@ -82,32 +84,28 @@ class Star(SkyObject):
             sql: SQL query for selecting star (table name is "_")
             **kwargs: Attributes on the star you want to match
 
-        Raises: `ValueError` if more than one star is matched
-
         Returns:
-            Star instance if there's exactly one match or `None` if there are zero matches
+            First star that matches specified attributes, when sorted by CCDM -- or `None` if no star matches
         """
         filters = []
 
         for k, v in kwargs.items():
             filters.append(getattr(_, k) == v)
 
-        df = _load_stars(
+        table = _load_stars(
             catalog=catalog,
             filters=filters,
             sql=sql,
-        ).to_pandas()
+        )
+
+        table = table.order_by(table.ccdm)
+        df = table.to_pandas()
 
         results = [from_tuple(s) for s in df.itertuples()]
 
-        if len(results) == 1:
+        if results:
             return results[0]
-
-        if len(results) > 1:
-            raise ValueError(
-                "More than one match. Use find() instead or narrow your search."
-            )
-
+        
         return None
 
     @classmethod
