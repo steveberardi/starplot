@@ -30,6 +30,15 @@ class Star(SkyObject):
     ccdm: Optional[str] = None
     """CCDM Component Identifier (if applicable)"""
 
+    parallax_mas: float = None
+    """Trigonometric parallax in milliarcseconds"""
+
+    ra_mas_per_year: float = None
+    """Right ascension proper motion in milliarcseconds per Julian year"""
+
+    dec_mas_per_year: float = None
+    """Declination proper motion in milliarcseconds per Julian year"""
+
     name: Optional[str] = None
     """Name, if available"""
 
@@ -56,8 +65,9 @@ class Star(SkyObject):
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
 
+    @property
     def is_primary(self) -> bool:
-        return bool(self.ccdm) or self.ccdm.startswith("A")
+        return not bool(self.ccdm) or self.ccdm.startswith("A")
 
     @classmethod
     def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11) -> Iterator["Star"]:
@@ -181,6 +191,9 @@ def from_tuple(star: tuple) -> Star:
         bv=getattr(star, "bv", None),
         tyc=getattr(star, "tyc_id", None),
         ccdm=getattr(star, "ccdm", None),
+        parallax_mas=getattr(star, "parallax_mas", None),
+        ra_mas_per_year=getattr(star, "ra_mas_per_year", None),
+        dec_mas_per_year=getattr(star, "dec_mas_per_year", None),
         name=getattr(star, "name", None),
         geometry=star.geometry,
         bayer=getattr(star, "bayer", None),
@@ -188,5 +201,19 @@ def from_tuple(star: tuple) -> Star:
     )
     s._constellation_id = getattr(star, "constellation", None)
     s._row_id = getattr(star, "rowid", None)
+
+    # populate extra fields
+    # fields = Star._dir() + [
+    #     'rowid',
+    #     'sk',
+    #     'Index',
+    #     'constellation',
+    #     'constellation_id',
+    #     'ra_hours',
+    #     'dec_degrees',
+    # ]
+    # extra_fields = set(star._fields) - set(fields)
+    # for f in extra_fields:
+    #     setattr(s, f, getattr(star, f))
 
     return s

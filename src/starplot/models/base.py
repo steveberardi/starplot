@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from functools import cache
 from typing import Optional
 
@@ -42,3 +42,8 @@ class SkyObject(
         from starplot.models import Constellation
 
         return Constellation.get(iau_id=self.constellation_id)
+
+    @classmethod
+    @cache
+    def _dir(cls):
+        return dir(cls)

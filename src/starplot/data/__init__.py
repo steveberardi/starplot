@@ -2,6 +2,8 @@ from skyfield.api import Loader
 
 from starplot.config import settings, DATA_PATH
 
+from .catalog_builder import create_star_catalog
+
 load = Loader(DATA_PATH)
 
 

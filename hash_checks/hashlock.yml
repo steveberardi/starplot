@@ -39,15 +39,15 @@ map_moon_phase_waxing_crescent:
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b38ccc3333cccc33
 map_orion_base:
-  dhash: 18193b7e3e2f64691b393b5e2e2d646918192b4e2a2f6469
+  dhash: 18193b7e3e2f64691b393b5e2e2d646918193b4e2a2f6469
   filename: /starplot/hash_checks/data/map-orion-base.png
-  phash: bf794a2417a4b594
+  phash: bf79422417a4b59c
 map_orion_extra:
-  dhash: 181b397f3b2d656d1b1b194b2b25656d540b1b4b2b2d6567
+  dhash: 181b397f3b2d656d1b1b194b2b25656d440b1b4b2b2d6567
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: bf616486c39e909e
 map_plot_custom_clip_path_virgo:
-  dhash: 060521339d1c04040625252f0d1c0404062525270d1c0404
+  dhash: 060521339d1c04040625252f8d1c0404062525270d1c0404
   filename: /starplot/hash_checks/data/map-custom-clip-path-virgo.png
   phash: e66e8591b10d4bda
 map_plot_limit_by_geometry:
