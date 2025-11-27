@@ -1,13 +1,11 @@
+import yaml
+
 from pathlib import Path
 from collections.abc import Iterable
 
-import yaml
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-
-# from starplot.models import Star
-
 
 """
 Ideas:
@@ -20,49 +18,6 @@ Ideas:
         p.stars(where=[], catalog=gaia)
 
 """
-
-def create_star_catalog(
-    data: Iterable["Star"],
-    path: str | Path,
-    chunk_size: int = 100_000,
-    columns: list[str] = None,
-    partition_columns: list[str] = None,
-    sorting_columns: list[str] = None,
-    compression: str = "snappy",
-    row_group_size: int = 100_000,
-) -> None:
-    
-    columns = columns or []
-    partition_columns = partition_columns or []
-    sorting_columns = sorting_columns or []
-
-    rows = []
-
-    for star in data:
-        rows.append({column: getattr(star, column) for column in columns})
-
-        if len(rows) == chunk_size:
-            to_parquet(
-                data=rows,
-                path=path,
-                partition_columns=partition_columns,
-                sorting_columns=sorting_columns,
-                compression=compression,
-                row_group_size=row_group_size,
-            )
-            rows = []
-
-    if rows:
-        to_parquet(
-            data=rows,
-            path=path,
-            partition_columns=partition_columns,
-            sorting_columns=sorting_columns,
-            compression=compression,
-            row_group_size=row_group_size,
-        )
-
-
 def to_parquet(
     data: list[dict], 
     path: str | Path,
@@ -72,7 +27,6 @@ def to_parquet(
     compression: str = "snappy",
     row_group_size: int = 100_000,
 ) -> None:
-
 
     df = pd.DataFrame.from_records(data)
     df = df.sort_values(sorting_columns)
@@ -107,7 +61,7 @@ def write_catalog_file(
     name: str,
     healpix_nside: int,
     extra_fields: list[str],
-  ):
+):
     data = dict(
         name=name,
         healpix_nside=healpix_nside,
@@ -117,3 +71,51 @@ def write_catalog_file(
     with open(path, "w") as outfile:
         data_yaml = yaml.dump(data)
         outfile.write(data_yaml)
+
+
+class CatalogBase:
+
+    @classmethod
+    def build(
+        cls,
+        data: Iterable["SkyObject"],
+        path: str | Path,
+        chunk_size: int = 100_000,
+        columns: list[str] = None,
+        partition_columns: list[str] = None,
+        sorting_columns: list[str] = None,
+        compression: str = "snappy",
+        row_group_size: int = 100_000,
+    ) -> None:
+        
+        columns = columns or []
+        partition_columns = partition_columns or []
+        sorting_columns = sorting_columns or []
+
+        rows = []
+
+        for row in data:
+            rows.append({column: getattr(row, column) for column in columns})
+
+            if len(rows) == chunk_size:
+                to_parquet(
+                    data=rows,
+                    path=path,
+                    partition_columns=partition_columns,
+                    sorting_columns=sorting_columns,
+                    compression=compression,
+                    row_group_size=row_group_size,
+                )
+                rows = []
+
+        if rows:
+            to_parquet(
+                data=rows,
+                path=path,
+                partition_columns=partition_columns,
+                sorting_columns=sorting_columns,
+                compression=compression,
+                row_group_size=row_group_size,
+            )
+
+

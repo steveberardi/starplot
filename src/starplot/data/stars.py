@@ -55,7 +55,7 @@ def table(
         ra=_.ra_degrees,
         dec=_.dec_degrees,
         constellation_id=_.constellation,
-        ra_hours=_.ra_degrees / 15,
+        ra_hours=_.ra_degrees / 15,  # skyfield needs this column
         # stars parquet does not have geometry field
         geometry=_.ra_degrees.point(_.dec_degrees),
         rowid=row_number(),
