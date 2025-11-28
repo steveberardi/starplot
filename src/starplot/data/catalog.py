@@ -3,7 +3,10 @@ import yaml
 from pathlib import Path
 from collections.abc import Iterable
 
+from shapely import wkb
+
 import pandas as pd
+import geopandas as gpd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
@@ -28,8 +31,13 @@ def to_parquet(
     row_group_size: int = 100_000,
 ) -> None:
 
-    df = pd.DataFrame.from_records(data)
+    # df = pd.DataFrame.from_records(data)
+    
+    df = gpd.GeoDataFrame(data, crs="EPSG:4326")
     df = df.sort_values(sorting_columns)
+    df = df[df.geometry.notna()]
+
+    df['geometry'] = df['geometry'].apply(lambda x: x.wkb)
     
     table = pa.Table.from_pandas(df)
 
@@ -56,6 +64,60 @@ def to_parquet(
         sorting_columns=sort_columns,
     )
 
+    df = pd.read_parquet(path / "out.parquet")
+    df['geometry'] = df['geometry'].apply(wkb.loads)
+    gdf = gpd.GeoDataFrame(df, geometry='geometry')
+
+    # gdf = gpd.read_parquet(path / "out.parquet")
+
+    print(gdf)
+    
+
+def build(
+    data: Iterable["SkyObject"],
+    path: str | Path,
+    chunk_size: int = 100_000,
+    columns: list[str] = None,
+    partition_columns: list[str] = None,
+    sorting_columns: list[str] = None,
+    compression: str = "snappy",
+    row_group_size: int = 100_000,
+) -> None:
+    
+    columns = columns or []
+    partition_columns = partition_columns or []
+    sorting_columns = sorting_columns or []
+
+    rows = []
+
+    for row in data:
+        rows.append({column: getattr(row, column) for column in columns})
+
+        if len(rows) == chunk_size:
+            to_parquet(
+                data=rows,
+                path=path,
+                columns=columns,
+                partition_columns=partition_columns,
+                sorting_columns=sorting_columns,
+                compression=compression,
+                row_group_size=row_group_size,
+            )
+            rows = []
+
+    if rows:
+        to_parquet(
+            data=rows,
+            path=path,
+            columns=columns,
+            partition_columns=partition_columns,
+            sorting_columns=sorting_columns,
+            compression=compression,
+            row_group_size=row_group_size,
+        )
+
+
+
 def write_catalog_file(
     path: str | Path,
     name: str,
@@ -71,51 +133,5 @@ def write_catalog_file(
     with open(path, "w") as outfile:
         data_yaml = yaml.dump(data)
         outfile.write(data_yaml)
-
-
-class CatalogBase:
-
-    @classmethod
-    def build(
-        cls,
-        data: Iterable["SkyObject"],
-        path: str | Path,
-        chunk_size: int = 100_000,
-        columns: list[str] = None,
-        partition_columns: list[str] = None,
-        sorting_columns: list[str] = None,
-        compression: str = "snappy",
-        row_group_size: int = 100_000,
-    ) -> None:
-        
-        columns = columns or []
-        partition_columns = partition_columns or []
-        sorting_columns = sorting_columns or []
-
-        rows = []
-
-        for row in data:
-            rows.append({column: getattr(row, column) for column in columns})
-
-            if len(rows) == chunk_size:
-                to_parquet(
-                    data=rows,
-                    path=path,
-                    partition_columns=partition_columns,
-                    sorting_columns=sorting_columns,
-                    compression=compression,
-                    row_group_size=row_group_size,
-                )
-                rows = []
-
-        if rows:
-            to_parquet(
-                data=rows,
-                path=path,
-                partition_columns=partition_columns,
-                sorting_columns=sorting_columns,
-                compression=compression,
-                row_group_size=row_group_size,
-            )
 
 
