@@ -1,11 +1,19 @@
 
 ## v0.17.x
 - Consolidates the scope/binoculars field of view function into a general optic fov function (which means it also supports cameras now)
+- Adds models for comets and satellites and supports data formats from MPC and CelesTrak
+- Adds font name and weight style properties to legend labels
+- Adds callable for constellation labels
+- Deprecates the `labels` parameter on star/DSO/constellation plotting functions
+- Defines a default `label_fn` for stars/DSOs/constellations
+- Introduces localization with two language translations for labels: French and Chinese
+- [**v0.17.1**] 
+    - Adds Lithuanian translation
+    - Fixes a few small errors in the Chinese translation
 
 
 ## v0.16.x
-[Documentation](https://archives.starplot.dev/0.16.4/)
-[Migration Guide](migration-guides/0.16.0.md)
+[Documentation](https://archives.starplot.dev/0.16.7/) | [Migration Guide](migration-guides/0.16.0.md)
 
 - Adds support for gradient backgrounds
 - Refactors projections, allowing you to change central RA/DEC

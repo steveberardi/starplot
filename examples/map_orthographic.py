@@ -32,9 +32,9 @@ p.constellations()
 p.constellation_borders()
 
 p.stars(where=[_.magnitude < 8], where_labels=[_.magnitude < 5])
-p.open_clusters(where=[_.magnitude < 12], true_size=False, labels=None)
-p.galaxies(where=[_.magnitude < 12], true_size=False, labels=None)
-p.nebula(where=[_.magnitude < 12], true_size=False, labels=None)
+p.open_clusters(where=[_.magnitude < 12], true_size=False, where_labels=[False])
+p.galaxies(where=[_.magnitude < 12], true_size=False, where_labels=[False])
+p.nebula(where=[_.magnitude < 12], true_size=False, where_labels=[False])
 
 p.constellation_labels(style__font_alpha=0.4)
 p.ecliptic()

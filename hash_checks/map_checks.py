@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import numpy as np
 from pytz import timezone
@@ -51,7 +52,9 @@ BASIC_DSO_TYPES = [
     DsoType.ASSOCIATION_OF_STARS.value,
 ]
 
-dt_dec_16 = datetime.now(timezone("US/Pacific")).replace(2023, 12, 16, 21, 0, 0)
+
+tz = ZoneInfo("America/Los_Angeles")
+dt_dec_16 = datetime(2023, 12, 16, 21, 0, 0, 0, tzinfo=tz)
 
 
 def _mercator():
@@ -69,13 +72,13 @@ def _mercator():
     p.constellations()
     p.stars(where=[_.magnitude < 7.6], bayer_labels=True)
     p.dsos(
-        labels=None,
         where=[
             (_.magnitude.isnull()) | (_.magnitude <= 8),
             _.size.notnull(),
             _.size > 0.1,
             _.type.isin(BASIC_DSO_TYPES),
         ],
+        where_labels=[False],
     )
     p.milky_way()
     p.gridlines()
@@ -105,12 +108,12 @@ def _stereo_north():
         bayer_labels=True,
     )
     p.dsos(
-        labels=None,
         true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude <= 9),
             _.type.isin(BASIC_DSO_TYPES),
         ],
+        where_labels=[False],
     )
     p.milky_way()
     p.gridlines()
@@ -384,13 +387,13 @@ def check_map_mollweide():
     )
     p.constellations()
     p.dsos(
-        labels=None,
         where=[
             (_.magnitude.isnull()) | (_.magnitude <= 4),
             _.size.notnull(),
             _.size > 0.1,
             _.type.isin(BASIC_DSO_TYPES),
         ],
+        where_labels=[False],
     )
     p.milky_way()
     p.gridlines(labels=False)
@@ -517,13 +520,13 @@ def check_map_plot_limit_by_geometry():
         where=[_.magnitude < 9, _.geometry.intersects(lyra.boundary)], bayer_labels=True
     )
     p.dsos(
-        labels=None,
         true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude < 9),
             _.type.isin(BASIC_DSO_TYPES),
             _.geometry.intersects(lyra.boundary),
         ],
+        where_labels=[False],
     )
     p.constellations(where=[_.boundary.intersects(lyra.boundary)])
     p.constellation_borders()
@@ -556,12 +559,12 @@ def check_map_plot_custom_clip_path_virgo():
 
     p.stars(where=[_.magnitude < 9], bayer_labels=True)
     p.dsos(
-        labels=None,
         true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude < 9),
             _.type.isin(BASIC_DSO_TYPES),
         ],
+        where_labels=[False],
     )
     p.constellations()
     p.constellation_borders()

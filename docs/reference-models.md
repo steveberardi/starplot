@@ -1,3 +1,5 @@
+# Models
+
 Starplot has models to represent an observer and some of the objects you can plot, including stars, DSOs, planets, the Sun, and the Moon. These models are used for many things in Starplot:
 
 - Defining an observing time and location
@@ -13,7 +15,7 @@ Starplot has models to represent an observer and some of the objects you can plo
         show_root_heading: true
         show_docstring_attributes: true
 
-# Sky Objects
+## Sky Objects
 
 ::: starplot.Star
     options:
@@ -70,6 +72,22 @@ Starplot has models to represent an observer and some of the objects you can plo
         show_docstring_attributes: true
         members_order: source
 
+::: starplot.Comet
+    options:
+        inherited_members: true
+        docstring_section_style: list
+        show_root_heading: true
+        show_docstring_attributes: true
+        members_order: source
+
+::: starplot.Satellite
+    options:
+        inherited_members: true
+        docstring_section_style: list
+        show_root_heading: true
+        show_docstring_attributes: true
+        members_order: source
+
 ::: starplot.ObjectList
     options:
         inherited_members: true
@@ -79,7 +97,11 @@ Starplot has models to represent an observer and some of the objects you can plo
         members_order: source
 
 
+<<<<<<< HEAD
 # Optics
+=======
+## Optics
+>>>>>>> main
 
 ## ::: starplot.models.Optic
     options:

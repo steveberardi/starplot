@@ -22,29 +22,29 @@ p.gridlines()
 p.constellations()
 p.stars(where=[_.magnitude < 6], where_labels=[_.magnitude < 2.1])
 p.open_clusters(
-    labels=None,
     where=[
         _.magnitude <= 8,
     ],
+    where_labels=[False],
     true_size=False,
 )
 p.globular_clusters(
-    labels=None,
     where=[
         _.magnitude <= 9,
     ],
+    where_labels=[False],
     true_size=False,
 )
 p.galaxies(
-    labels=None,
     where=[
         _.magnitude <= 10,
     ],
+    where_labels=[False],
     true_size=False,
 )
 p.nebula(
-    labels=None,
     where=[(_.magnitude <= 10) | (_.magnitude.isnull()), _.size > 0.05],
+    where_labels=[False],
 )
 
 p.constellation_labels(style__font_size=28)

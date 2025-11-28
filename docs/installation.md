@@ -28,9 +28,9 @@ See their websites for details:
 - [GEOS](https://libgeos.org/)
 - [GDAL](https://gdal.org/)
 
-### Segmentation Fault with map plots
+### Segmentation Faults
 
-If you're seeing "segmentation fault" errors when creating map plots, you may have to install [shapely](https://shapely.readthedocs.io/en/stable/index.html) from source for your runtime environment:
+If you're seeing "segmentation fault" errors when creating maps, you may have to install [shapely](https://shapely.readthedocs.io/en/stable/index.html) from source for your runtime environment:
 ```
 pip install --no-binary :all: shapely
 ```

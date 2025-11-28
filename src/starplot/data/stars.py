@@ -2,7 +2,9 @@ from functools import cache
 
 from ibis import _, row_number
 
+from starplot.config import settings
 from starplot.data import bigsky, DataFiles, db
+from starplot.data.translations import language_name_column
 
 
 class StarCatalog:
@@ -31,7 +33,11 @@ class StarCatalog:
 
 
 @cache
-def table(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars"):
+def table(
+    catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
+    table_name="stars",
+    language: str = "en-us",
+):
     con = db.connect()
 
     if catalog == StarCatalog.BIG_SKY_MAG11:
@@ -56,6 +62,10 @@ def table(catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, table_name="stars"):
         sk=row_number(),
     )
 
+    designations = designations.mutate(
+        name=getattr(designations, language_name_column(language))
+    )
+
     stars = stars.join(
         designations,
         [
@@ -75,7 +85,7 @@ def load(
     sql=None,
 ):
     filters = filters or []
-    stars = table(catalog)
+    stars = table(catalog, language=settings.language)
 
     if extent:
         stars = stars.filter(stars.geometry.intersects(extent))

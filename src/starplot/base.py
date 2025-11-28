@@ -16,10 +16,11 @@ from starplot.coordinates import CoordinateSystem
 from starplot import geod, models, warnings
 from starplot.config import settings as StarplotSettings, SvgTextType
 from starplot.data import load, ecliptic
+from starplot.data.translations import translate
 from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
 from starplot.models.optics import Optic, Camera
-from starplot.observer import Observer
+from starplot.models.observer import Observer
 from starplot.styles import (
     AnchorPointEnum,
     PlotStyle,
@@ -98,6 +99,8 @@ class BasePlot(ABC):
 
         px = 1 / DPI  # plt.rcParams["figure.dpi"]  # pixel in inches
         self.pixels_per_point = DPI / 72
+
+        self.language = StarplotSettings.language
 
         self.style = style
         self.figure_size = resolution * px
@@ -730,8 +733,11 @@ class BasePlot(ABC):
             self.observer.dt, self.observer.lat, self.observer.lon, self._ephemeris_name
         )
 
+        legend_label = translate(legend_label, self.language)
+
         for p in planets:
             label = labels.get(p.name)
+            label = translate(label, self.language)
 
             if self.in_bounds(p.ra, p.dec):
                 self._objects.planets.append(p)
@@ -787,6 +793,8 @@ class BasePlot(ABC):
             lon=self.observer.lon,
             ephemeris=self._ephemeris_name,
         )
+        label = translate(label, self.language)
+        legend_label = translate(legend_label, self.language)
         s.name = label or s.name
 
         if not self.in_bounds(s.ra, s.dec):
@@ -1065,6 +1073,8 @@ class BasePlot(ABC):
             lon=self.observer.lon,
             ephemeris=self._ephemeris_name,
         )
+        label = translate(label, self.language)
+        legend_label = translate(legend_label, self.language)
         m.name = label or m.name
 
         if not self.in_bounds(m.ra, m.dec):
@@ -1241,6 +1251,8 @@ class BasePlot(ABC):
         y = []
         inbounds = []
 
+        label = translate(label, self.language)
+
         for ra, dec in ecliptic.RA_DECS:
             x0, y0 = self._prepare_coords(ra * 15, dec)
             x.append(x0)
@@ -1279,6 +1291,8 @@ class BasePlot(ABC):
         y = []
 
         # TODO : handle wrapping
+
+        label = translate(label, self.language)
 
         for ra in range(25):
             x0, y0 = self._prepare_coords(ra * 15, 0)

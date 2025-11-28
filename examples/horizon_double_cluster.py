@@ -48,7 +48,6 @@ p.style.dso_open_cluster.label.font_size = 27
 p.open_clusters(
     where=[_.name.isin(["NGC0884", "NGC0869"])],
     true_size=False,
-    label_fn=lambda d: f"{d.ngc}",
 )
 double_cluster = DSO.get(name="NGC0884")
 p.optic_fov(

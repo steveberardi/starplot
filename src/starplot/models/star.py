@@ -134,6 +134,16 @@ class Star(SkyObject):
 
         return [from_tuple(s) for s in df.itertuples()]
 
+    @classmethod
+    def get_label(cls, star) -> str:
+        """
+        Default function for determining the plotted label for a Star.
+
+        Returns:
+            The star's name
+        """
+        return star.name
+
 
 def from_tuple(star: tuple) -> Star:
     s = Star(

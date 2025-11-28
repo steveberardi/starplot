@@ -42,21 +42,18 @@ p.nebula(
         (_.magnitude.isnull()) | (_.magnitude < 12),
     ],
     true_size=True,
-    label_fn=lambda d: d.ic,
 )
 p.open_clusters(
     where=[
         (_.magnitude.isnull()) | (_.magnitude < 12),
     ],
     true_size=False,
-    label_fn=lambda d: d.ngc,
 )
 p.globular_clusters(
     where=[
         (_.magnitude.isnull()) | (_.magnitude < 12),
     ],
     true_size=False,
-    label_fn=lambda d: d.ngc,
 )
 p.ecliptic()
 p.celestial_equator()

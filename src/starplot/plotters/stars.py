@@ -1,4 +1,4 @@
-from typing import Callable, Mapping
+from typing import Callable
 
 import rtree
 import numpy as np
@@ -8,6 +8,7 @@ from skyfield.api import Star as SkyfieldStar, wgs84
 from starplot import callables
 from starplot.data import stars
 from starplot.data.stars import StarCatalog
+from starplot.data.translations import translate
 from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, use_style
 from starplot.profile import profile
@@ -60,7 +61,6 @@ class StarPlotterMixin:
         star_sizes: list[float],
         label_row_ids: list,
         style: ObjectStyle,
-        labels: Mapping[str, str],
         bayer_labels: bool,
         flamsteed_labels: bool,
         label_fn: Callable[[Star], str],
@@ -85,13 +85,7 @@ class StarPlotterMixin:
             elif s.tyc:
                 self._labeled_stars.append(s.tyc)
 
-            if label_fn is not None:
-                label = label_fn(s)
-            elif s.hip in labels:
-                label = labels.get(s.hip)
-            else:
-                label = s.name
-
+            label = label_fn(s)
             bayer_desig = s.bayer
             flamsteed_num = s.flamsteed
 
@@ -162,8 +156,7 @@ class StarPlotterMixin:
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = None,
         color_fn: Callable[[Star], str] = None,
-        label_fn: Callable[[Star], str] = None,
-        labels: Mapping[int, str] = None,
+        label_fn: Callable[[Star], str] = Star.get_label,
         legend_label: str = "Star",
         bayer_labels: bool = False,
         flamsteed_labels: bool = False,
@@ -189,8 +182,7 @@ class StarPlotterMixin:
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
-            label_fn: Callable for determining the label of each star. If `None`, then the names in the `labels` kwarg will be used.
-            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If `None`, then the star's IAU-designated name will be used.
+            label_fn: Callable for determining the label of each star.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted.
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
@@ -209,7 +201,6 @@ class StarPlotterMixin:
         where = where or []
         where_labels = where_labels or []
         stars_to_index = []
-        labels = labels or {}
 
         star_results = self._load_stars(catalog, filters=where, sql=sql)
 
@@ -325,7 +316,8 @@ class StarPlotterMixin:
             else "none",
         )
 
-        self._add_legend_handle_marker(legend_label, style.marker)
+        _legend_label = translate(legend_label, self.language) or legend_label
+        self._add_legend_handle_marker(_legend_label, style.marker)
 
         if stars_to_index:
             self._stars_rtree = rtree.index.Index(stars_to_index)
@@ -335,7 +327,6 @@ class StarPlotterMixin:
             sizes,
             label_row_ids,
             style,
-            labels,
             bayer_labels,
             flamsteed_labels,
             label_fn,

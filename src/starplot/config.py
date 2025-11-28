@@ -1,4 +1,5 @@
 import os
+
 from enum import Enum
 from pathlib import Path
 from dataclasses import dataclass, field
@@ -66,6 +67,22 @@ class Settings:
     which means the text will be editable in graphic design applications but the text may render in a system default font if the original 
     font isn't available. **Important: when using the "element" method, text borders will be turned OFF.**
     
+    """
+
+    language: str = field(
+        default_factory=lambda: os.environ.get("STARPLOT_LANGUAGE", "en-US")
+    )
+    """
+    Default language for plotted labels, as an ISO-639 code. Case insensitive.
+
+    Supported values:
+
+    - `en-US` = English
+    - `fr` = French
+    - `zh-CN` = Chinese. Make sure you have a good Chinese font installed (such as [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC)) and you'll also need to set that as the font in your plot's style.
+    - `lt` = Lithuanian
+
+    **🌐 Want to see another language available? Please help us add it! [Details here](https://github.com/steveberardi/starplot/tree/main/data/raw/translations).**
     """
 
 
