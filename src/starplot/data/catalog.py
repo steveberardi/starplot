@@ -3,25 +3,6 @@ import yaml
 from pathlib import Path
 from collections.abc import Iterable
 
-from shapely import wkb
-
-import pandas as pd
-import geopandas as gpd
-import pyarrow as pa
-import pyarrow.parquet as pq
-
-"""
-Ideas:
-
-    StarCatalog.build(data, filename="stars.parquet", chunk_size=100_000)
-
-    - also create some "index" file? with metadata: healpix nside, name, fields, etc
-
-        gaia = StarCatalog.load(PATH / "catalog.yml")
-        p.stars(where=[], catalog=gaia)
-
-"""
-
 
 def to_parquet(
     data: list[dict],
@@ -32,6 +13,12 @@ def to_parquet(
     compression: str = "snappy",
     row_group_size: int = 100_000,
 ) -> None:
+    from shapely import wkb
+
+    import pandas as pd
+    import geopandas as gpd
+    import pyarrow as pa
+    import pyarrow.parquet as pq
 
     df = gpd.GeoDataFrame(data, crs="EPSG:4326")
     df = df.sort_values(sorting_columns)
@@ -44,6 +31,7 @@ def to_parquet(
     sort_columns = [pq.SortingColumn(columns.index(c)) for c in sorting_columns]
 
     if partition_columns:
+
         pq.write_to_dataset(
             table,
             root_path=path,
@@ -62,13 +50,10 @@ def to_parquet(
         sorting_columns=sort_columns,
     )
 
-    df = pd.read_parquet(path)
-    df["geometry"] = df["geometry"].apply(wkb.loads)
-    gdf = gpd.GeoDataFrame(df, geometry="geometry")
-
-    # gdf = gpd.read_parquet(path / "out.parquet")
-
-    print(gdf)
+    # df = pd.read_parquet(path)
+    # df["geometry"] = df["geometry"].apply(wkb.loads)
+    # gdf = gpd.GeoDataFrame(df, geometry="geometry")
+    # print(gdf)
 
 
 def build(
@@ -81,6 +66,27 @@ def build(
     compression: str = "snappy",
     row_group_size: int = 100_000,
 ) -> None:
+    """
+    Creates a custom catalog of sky objects. Output is one or more Parquet files.
+
+    Args:
+        data: Iterable that contains the sky objects for the catalog
+        path: Output path of the catalog
+        chunk_size: Max number of objects to write per file
+        columns: List of columns to include in the catalog
+        partition_columns: List of columns to create Hive partitions for
+        sorting_columns: List of columns to sort by
+        compression: Type of compression to use
+        row_group_size: Row group size for the catalog parquet file
+    """
+
+
+    if not isinstance(path, Path):
+        path = Path(path)
+    
+    if partition_columns and not path.is_dir():
+        raise ValueError("Path must be a directory when using partition columns.")
+
     columns = columns or []
     partition_columns = partition_columns or []
     sorting_columns = sorting_columns or []
