@@ -78,6 +78,14 @@ def build(
         sorting_columns: List of columns to sort by
         compression: Type of compression to use
         row_group_size: Row group size for the catalog parquet file
+
+    
+    TODO :
+
+        - Add healpix
+        - Only allow paths? Use UUID as filename? That works better with chunking
+        - Figure out how to handle constellation id field
+
     """
 
 
@@ -126,6 +134,7 @@ def write_catalog_file(
     healpix_nside: int,
     extra_fields: list[str],
 ):
+    # deprecate?
     data = dict(
         name=name,
         healpix_nside=healpix_nside,

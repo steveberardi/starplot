@@ -41,7 +41,7 @@ def table(
     con = db.connect()
 
     if catalog == StarCatalog.BIG_SKY_MAG9:
-        # stars = con.read_parquet("temp/out.parquet", table_name=table_name)
+        # stars = con.read_parquet("temp/hyg.parquet", table_name=table_name)
         stars = con.read_parquet(DataFiles.BIG_SKY_MAG9, table_name=table_name)
     elif catalog == StarCatalog.BIG_SKY:
         bigsky.download_if_not_exists()
