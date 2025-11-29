@@ -48,6 +48,9 @@ class Star(SkyObject):
     flamsteed: Optional[int] = None
     """Flamsteed number, if available"""
 
+    epoch_year: float = None
+    """Epoch of position"""
+
     geometry: Point = None
     """Shapely Point of the star's position. Right ascension coordinates are in degrees (0...360)."""
 
@@ -70,7 +73,7 @@ class Star(SkyObject):
         return not bool(self.ccdm) or self.ccdm.startswith("A")
 
     @classmethod
-    def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11) -> Iterator["Star"]:
+    def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9) -> Iterator["Star"]:
         df = _load_stars(catalog=catalog).to_pandas()
 
         for s in df.itertuples():
@@ -78,7 +81,7 @@ class Star(SkyObject):
 
     @classmethod
     def get(
-        cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, sql: str = None, **kwargs
+        cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9, sql: str = None, **kwargs
     ) -> Union["Star", None]:
         """
         Get a Star, by matching its attributes as specified in `**kwargs`
@@ -123,7 +126,7 @@ class Star(SkyObject):
         cls,
         where: list = None,
         sql: str = None,
-        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
+        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9,
     ) -> list["Star"]:
         """
         Find Stars
@@ -151,7 +154,7 @@ class Star(SkyObject):
         # con.con.execute("INSTALL spatial; LOAD spatial;")
         # result = con.raw_sql(to_sql(exp))
         # # result = con.con.execute(to_sql(exp))
-        # # result = con.con.execute(f"SELECT * FROM read_parquet('{DataFiles.BIG_SKY_MAG11}') where magnitude < 8")
+        # # result = con.con.execute(f"SELECT * FROM read_parquet('{DataFiles.BIG_SKY_MAG9}') where magnitude < 8")
 
         # rows =[]
         # while True:

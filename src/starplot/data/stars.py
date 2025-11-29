@@ -1,7 +1,6 @@
 from functools import cache
 
 from ibis import _, row_number
-from shapely import from_wkb
 from starplot.config import settings
 from starplot.data import bigsky, DataFiles, db
 from starplot.data.translations import language_name_column
@@ -10,11 +9,12 @@ from starplot.data.translations import language_name_column
 class StarCatalog:
     """Built-in star catalogs"""
 
-    BIG_SKY_MAG11 = "big-sky-mag11"
+    BIG_SKY_MAG9 = "big-sky-mag9"
+
     """
-    [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 370k stars up to magnitude 10
+    [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 136,125 stars with limiting magnitude 9
     
-    This is an _abridged_ version of the Big Sky Catalog, including stars up to a limiting magnitude of 10 (total = 368,330 981,852).
+    This is an _abridged_ version of the Big Sky Catalog.
 
     This catalog is included with Starplot, so does not require downloading any files.
     """
@@ -33,62 +33,16 @@ class StarCatalog:
 
 
 @cache
-def table1(
-    catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
-    table_name="stars",
-    language: str = "en-us",
-):
-    con = db.connect()
-
-    if catalog == StarCatalog.BIG_SKY_MAG11:
-        stars = con.read_parquet(DataFiles.BIG_SKY_MAG11, table_name=table_name)
-    elif catalog == StarCatalog.BIG_SKY:
-        bigsky.download_if_not_exists()
-        stars = con.read_parquet(DataFiles.BIG_SKY, table_name=table_name)
-    else:
-        raise ValueError("Unrecognized star catalog.")
-
-    designations = con.table("star_designations")
-
-    stars = stars.mutate(
-        epoch_year=2000,
-        ra=_.ra_degrees,
-        dec=_.dec_degrees,
-        constellation_id=_.constellation,
-        ra_hours=_.ra_degrees / 15,  # skyfield needs this column
-        # stars parquet does not have geometry field
-        geometry=_.ra_degrees.point(_.dec_degrees),
-        rowid=row_number(),
-        sk=row_number(),
-    )
-
-    designations = designations.mutate(
-        name=getattr(designations, language_name_column(language))
-    )
-
-    stars = stars.join(
-        designations,
-        stars.hip == designations.hip,
-        how="left",
-        # [
-        #     # this ccdm part is bottleneck, multiple join conditions in general seem to cause performance issues
-        #     # (stars.ccdm.startswith("A")) | (stars.ccdm == "") | (stars.ccdm.isnull()),
-        # ],
-    )
-
-    return stars
-
-@cache
 def table(
-    catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
+    catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9,
     table_name="stars",
     language: str = "en-us",
 ):
     con = db.connect()
 
-    if catalog == StarCatalog.BIG_SKY_MAG11:
-        stars = con.read_parquet("temp/out.parquet", table_name=table_name)
-        # stars = con.read_parquet(DataFiles.BIG_SKY_MAG11, table_name=table_name)
+    if catalog == StarCatalog.BIG_SKY_MAG9:
+        # stars = con.read_parquet("temp/out.parquet", table_name=table_name)
+        stars = con.read_parquet(DataFiles.BIG_SKY_MAG9, table_name=table_name)
     elif catalog == StarCatalog.BIG_SKY:
         bigsky.download_if_not_exists()
         stars = con.read_parquet(DataFiles.BIG_SKY, table_name=table_name)
@@ -97,21 +51,16 @@ def table(
 
     designations = con.table("star_designations")
 
-
     stars = stars.mutate(
-        epoch_year=2000,
         ra=_.ra,
         dec=_.dec,
         constellation_id=_._constellation_id,
         ra_hours=_.ra / 15,  # skyfield needs this column
         dec_degrees=_.dec,
-        # stars parquet does not have geometry field
-        # geometry=_.geometry.cast("geometry"),
-        geometry=_.ra.point(_.dec),
+        geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
         rowid=row_number(),
         sk=row_number(),
     )
-    
 
     designations = designations.mutate(
         name=getattr(designations, language_name_column(language))
@@ -121,17 +70,14 @@ def table(
         designations,
         stars.hip == designations.hip,
         how="left",
-        # [
-        #     # this ccdm part is bottleneck, multiple join conditions in general seem to cause performance issues
-        #     # (stars.ccdm.startswith("A")) | (stars.ccdm == "") | (stars.ccdm.isnull()),
-        # ],
     )
 
     return stars
 
+
 def load(
     extent=None,
-    catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
+    catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9,
     filters=None,
     sql=None,
 ):
@@ -149,8 +95,4 @@ def load(
         skids = result["sk"].to_list()
         stars = stars.filter(_.sk.isin(skids))
 
-    # print(stars.execute())
-
-    # result = to_sql(stars)
-    # print(result)
     return stars

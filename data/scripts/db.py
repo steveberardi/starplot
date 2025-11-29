@@ -6,7 +6,7 @@ import duckdb
 from starplot import Star, DSO, Constellation
 from starplot.data import DataFiles
 
-import bigsky_mag11, constellations, dsos, star_designations
+import bigsky_mag9, constellations, dsos, star_designations
 from data_settings import BUILD_PATH, RAW_PATH
 
 db_path = BUILD_PATH / "sky.db"
@@ -18,7 +18,7 @@ def build_all():
         shutil.rmtree(BUILD_PATH)
     os.makedirs(BUILD_PATH, exist_ok=True)
 
-    bigsky_mag11.build()
+    bigsky_mag9.build()
     constellations.build()
     dsos.build()
     star_designations.build()
@@ -100,7 +100,7 @@ def assert_counts():
     # Assert correct number of objects were imported
     all_stars = Star.find(where=[])
     print("Stars = " + str(len(all_stars)))
-    assert len(all_stars) == 981_853
+    assert len(all_stars) == 136_125
 
     all_dsos = DSO.find(where=[])
     print("DSOs = " + str(len(all_dsos)))

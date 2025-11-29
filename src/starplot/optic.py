@@ -229,7 +229,7 @@ class OpticPlot(
         self,
         where: list = None,
         where_labels: list = None,
-        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
+        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9,
         style: ObjectStyle = None,
         rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,

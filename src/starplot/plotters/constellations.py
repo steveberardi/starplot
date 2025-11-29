@@ -64,7 +64,7 @@ class ConstellationPlotterMixin:
         Where (x, y) is the plotted coordinate system (RA/DEC or AZ/ALT)
         """
         results = load_stars(
-            catalog=StarCatalog.BIG_SKY_MAG11,
+            catalog=StarCatalog.BIG_SKY_MAG9,
             filters=[_.hip.isin(CONSTELLATION_HIPS)],
         )
         df = results.to_pandas()

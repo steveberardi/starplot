@@ -151,7 +151,7 @@ class StarPlotterMixin:
         self,
         where: list = None,
         where_labels: list = None,
-        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
+        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9,
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = None,

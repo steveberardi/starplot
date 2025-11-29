@@ -3,15 +3,15 @@ from pathlib import Path
 
 
 from starplot.config import settings
-from starplot.data import DataFiles, utils
+from starplot.data import DataFiles, utils, catalog
 
 
 BIG_SKY_VERSION = "0.4.0"
 BIG_SKY_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.csv.gz"
 BIG_SKY_PQ_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.parquet"
 
-BIG_SKY_MAG11_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.mag11.csv.gz"
-BIG_SKY_MAG11_PQ_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.mag11.parquet"
+BIG_SKY_MAG9_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.mag9.csv.gz"
+BIG_SKY_MAG9_PQ_FILENAME = f"bigsky.{BIG_SKY_VERSION}.stars.mag9.parquet"
 
 
 def get_url(version: str = BIG_SKY_VERSION, filename: str = BIG_SKY_FILENAME):
@@ -36,16 +36,19 @@ def download(
         full_download_path,
         "Big Sky Star Catalog",
     )
-    to_parquet(
-        full_download_path,
-        build_file,
+    build(
+        source_path=full_download_path,
+        destination_path=build_file,
+        limiting_magnitude=20,
     )
 
 
-def to_parquet(source_path: str, destination_path: str):
-    import pyarrow as pa
-    import pyarrow.parquet as pq
+def build(source_path: str, destination_path: str, limiting_magnitude: float = 16):
     import pandas as pd
+
+    from shapely import Point
+
+    from starplot.models import Star
 
     print("Preparing Big Sky Catalog for Starplot...")
 
@@ -67,29 +70,65 @@ def to_parquet(source_path: str, destination_path: str):
         ],
         compression="gzip",
     )
-
     df = df.assign(epoch_year=2000)
-
     df = df.rename(
         columns={
             "hip_id": "hip",
-            "ra_degrees_j2000": "ra_degrees",
-            "dec_degrees_j2000": "dec_degrees",
+            "tyc_id": "tyc",
+            "ra_degrees_j2000": "ra",
+            "dec_degrees_j2000": "dec",
+            "constellation": "constellation_id",
         }
     )
 
-    df = df.sort_values(["magnitude"])
+    def stars(d):
+        for star in d.itertuples():
+            geometry = Point(star.ra, star.dec)
 
-    table = pa.Table.from_pandas(df)
-    table = table.drop_columns("__index_level_0__")
+            if (
+                not geometry.is_valid
+                or geometry.is_empty
+                or star.magnitude > limiting_magnitude
+            ):
+                continue
 
-    pq.write_table(
-        table,
-        destination_path,
-        compression="none",
-        sorting_columns=[
-            pq.SortingColumn(df.columns.get_loc("magnitude")),
+            yield Star(
+                hip=star.hip,
+                tyc=star.tyc,
+                ra=star.ra,
+                dec=star.dec,
+                ccdm=star.ccdm,
+                magnitude=star.magnitude,
+                parallax_mas=star.parallax_mas,
+                ra_mas_per_year=star.ra_mas_per_year or 0,
+                dec_mas_per_year=star.dec_mas_per_year or 0,
+                _constellation_id=star.constellation_id,
+                bv=star.bv,
+                geometry=geometry,
+                epoch_year=2000,
+            )
+
+    catalog.build(
+        data=stars(df),
+        path=destination_path,
+        chunk_size=5_000_000,
+        columns=[
+            "hip",
+            "ra",
+            "dec",
+            "magnitude",
+            "bv",
+            "ra_mas_per_year",
+            "dec_mas_per_year",
+            "_constellation_id",
+            "geometry",
+            "ccdm",
+            "epoch_year",
         ],
+        partition_columns=[],
+        sorting_columns=["magnitude"],
+        compression="snappy",
+        row_group_size=100_000,
     )
 
     print(f"Done! {destination_path}")

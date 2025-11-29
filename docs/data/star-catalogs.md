@@ -1,10 +1,10 @@
 Starplot has two available star catalogs:
 
-## `big-sky-mag11`
+## `big-sky-mag9`
 
-_981,852 stars from Hipparcos, Tycho-1, and Tycho-2_
+_136,125 stars from Hipparcos, Tycho-1, and Tycho-2_
 
-This is an abridged version of the full [Big Sky Catalog](https://github.com/steveberardi/bigsky) and is bundled with Starplot. It's the default catalog used when plotting stars. It contains all stars from Big Sky with a limiting magnitude of 11.
+This is an abridged version of the full [Big Sky Catalog](https://github.com/steveberardi/bigsky) and is bundled with Starplot. It's the default catalog used when plotting stars. It contains all stars from Big Sky with a limiting magnitude of 9.
 
 
 ## `big-sky`
@@ -16,11 +16,6 @@ This is the full Big Sky catalog and will be downloaded when you first reference
 This catalog is very large (approx 100 MB), so it's not built-in to Starplot. When you plot stars and specify this catalog, the catalog 
 will be downloaded from the [Big Sky GitHub repository](https://github.com/steveberardi/bigsky) and saved to Starplot's data library 
 directory. You can override this download path with the environment variable `STARPLOT_DOWNLOAD_PATH`
-
-
-!!! star "Coming Soon"
-
-    Support for custom star catalogs, including the full Gaia catalog!
 
 
 ## Using Star Catalogs
