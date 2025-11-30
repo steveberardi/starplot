@@ -1,7 +1,26 @@
 import yaml
+import uuid
 
 from pathlib import Path
 from collections.abc import Iterable
+
+
+def write_catalog_file(
+    path: str | Path,
+    name: str,
+    healpix_nside: int,
+    extra_fields: list[str],
+):
+    # deprecate?
+    data = dict(
+        name=name,
+        healpix_nside=healpix_nside,
+        extra_fields=extra_fields,
+    )
+
+    with open(path, "w") as outfile:
+        data_yaml = yaml.dump(data)
+        outfile.write(data_yaml)
 
 
 def to_parquet(
@@ -31,7 +50,6 @@ def to_parquet(
     sort_columns = [pq.SortingColumn(columns.index(c)) for c in sorting_columns]
 
     if partition_columns:
-
         pq.write_to_dataset(
             table,
             root_path=path,
@@ -59,12 +77,12 @@ def to_parquet(
 def build(
     data: Iterable[object],
     path: str | Path,
-    chunk_size: int = 100_000,
+    chunk_size: int = 1_000_000,
     columns: list[str] = None,
     partition_columns: list[str] = None,
     sorting_columns: list[str] = None,
     compression: str = "snappy",
-    row_group_size: int = 100_000,
+    row_group_size: int = 200_000,
 ) -> None:
     """
     Creates a custom catalog of sky objects. Output is one or more Parquet files.
@@ -79,19 +97,19 @@ def build(
         compression: Type of compression to use
         row_group_size: Row group size for the catalog parquet file
 
-    
+
     TODO :
 
         - Add healpix
         - Only allow paths? Use UUID as filename? That works better with chunking
         - Figure out how to handle constellation id field
+        - Handle multiple files if no partitions
 
     """
 
-
     if not isinstance(path, Path):
         path = Path(path)
-    
+
     if partition_columns and not path.is_dir():
         raise ValueError("Path must be a directory when using partition columns.")
 
@@ -126,21 +144,3 @@ def build(
             compression=compression,
             row_group_size=row_group_size,
         )
-
-
-def write_catalog_file(
-    path: str | Path,
-    name: str,
-    healpix_nside: int,
-    extra_fields: list[str],
-):
-    # deprecate?
-    data = dict(
-        name=name,
-        healpix_nside=healpix_nside,
-        extra_fields=extra_fields,
-    )
-
-    with open(path, "w") as outfile:
-        data_yaml = yaml.dump(data)
-        outfile.write(data_yaml)

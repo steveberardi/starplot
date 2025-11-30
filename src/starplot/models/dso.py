@@ -218,10 +218,11 @@ class DSO(SkyObject):
 
 def from_tuple(d: tuple) -> DSO:
     dso = DSO(
-        name=d.name,
-        common_names=d.common_names.split(",") if d.common_names else [],
         ra=d.ra,
         dec=d.dec,
+        constellation_id=d.constellation_id,
+        name=d.name,
+        common_names=d.common_names.split(",") if d.common_names else [],
         type=d.type,
         maj_ax=d.maj_ax,
         min_ax=d.min_ax,
@@ -233,7 +234,6 @@ def from_tuple(d: tuple) -> DSO:
         ic=d.ic,
         geometry=d.geometry,
     )
-    dso._constellation_id = d.constellation_id
     dso._row_id = getattr(d, "rowid", None)
     return dso
 

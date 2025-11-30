@@ -189,8 +189,9 @@ def from_tuple(star: tuple) -> Star:
     s = Star(
         ra=star.ra,
         dec=star.dec,
-        hip=getattr(star, "hip", None),
+        constellation_id=getattr(star, "constellation_id", None),
         magnitude=star.magnitude,
+        hip=getattr(star, "hip", None),
         bv=getattr(star, "bv", None),
         tyc=getattr(star, "tyc_id", None),
         ccdm=getattr(star, "ccdm", None),
@@ -198,11 +199,10 @@ def from_tuple(star: tuple) -> Star:
         ra_mas_per_year=getattr(star, "ra_mas_per_year", None),
         dec_mas_per_year=getattr(star, "dec_mas_per_year", None),
         name=getattr(star, "name", None),
-        geometry=star.geometry,
         bayer=getattr(star, "bayer", None),
         flamsteed=getattr(star, "flamsteed", None),
+        geometry=star.geometry,
     )
-    s._constellation_id = getattr(star, "constellation", None)
     s._row_id = getattr(star, "rowid", None)
 
     # populate extra fields

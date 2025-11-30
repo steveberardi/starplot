@@ -54,7 +54,6 @@ def table(
     stars = stars.mutate(
         ra=_.ra,
         dec=_.dec,
-        constellation_id=_._constellation_id,
         ra_hours=_.ra / 15,  # skyfield needs this column
         dec_degrees=_.dec,
         geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type

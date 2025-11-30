@@ -27,21 +27,19 @@ class SkyObject(
     dec: float
     """Declination, in degrees (-90 to 90)"""
 
-    _constellation_id: Optional[str] = None
-
-    @property
-    def constellation_id(self) -> str | None:
-        """Identifier of the constellation that contains this object. The ID is the three-letter (all lowercase) abbreviation from the International Astronomical Union (IAU)."""
-        if not self._constellation_id:
-            pos = position_of_radec(self.ra / 15, self.dec)
-            self._constellation_id = constellation_at()(pos).lower()
-        return self._constellation_id
+    constellation_id: Optional[str] = None
+    """Three-letter IAU id of the constellation that contains this object"""
 
     def constellation(self):
-        """Returns an instance of the [`Constellation`][starplot.models.Constellation] that contains this object"""
+        """Returns an instance of the [`Constellation`][starplot.models.Constellation] that contains this object, or `None` if no constellation is found."""
         from starplot.models import Constellation
 
         return Constellation.get(iau_id=self.constellation_id)
+
+    def populate_constellation_id(self):
+        """Populates the constellation_id field based on the location of this object"""
+        pos = position_of_radec(self.ra / 15, self.dec)
+        self.constellation_id = constellation_at()(pos).lower()
 
     @classmethod
     @cache

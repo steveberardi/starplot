@@ -35,6 +35,7 @@ class TestComet:
         dt = datetime(2025, 10, 21, 19, 0, tzinfo=TZ_PT)
 
         c2025_a6_lemmon = Comet.get(name="C/2025 A6 (Lemmon)", dt=dt)
+        c2025_a6_lemmon.populate_constellation_id()
 
         assert c2025_a6_lemmon.name == "C/2025 A6 (Lemmon)"
         assert c2025_a6_lemmon.ra == 218.8720302905781
@@ -48,6 +49,7 @@ class TestComet:
         lon = -116.836394
 
         c2025_a6_lemmon = Comet.get(name="C/2025 A6 (Lemmon)", dt=dt, lat=lat, lon=lon)
+        c2025_a6_lemmon.populate_constellation_id()
 
         assert c2025_a6_lemmon.name == "C/2025 A6 (Lemmon)"
         assert c2025_a6_lemmon.constellation_id == "boo"
