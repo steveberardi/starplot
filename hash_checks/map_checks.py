@@ -300,7 +300,6 @@ def check_map_scope_bino_fov():
         dt=dt,
         style=style,
         resolution=2000,
-        star_catalog="big-sky-mag11",
         scale=1,
     )
     p.stars(where=[_.magnitude < 12])
@@ -629,7 +628,6 @@ def check_map_label_callables():
     )
 
     p.stars(
-        catalog="big-sky-mag11",
         label_fn=lambda s: str(int(s.hip)) if s.hip else None,
         where=[_.magnitude < 9.6, _.geometry.intersects(m45.geometry)],
         where_labels=[_.magnitude < 5],

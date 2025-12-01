@@ -220,6 +220,9 @@ class StarPlotterMixin:
         label_row_ids = star_results_labeled.to_pandas()["rowid"].tolist()
 
         stars_df = star_results.to_pandas()
+        stars_df["ra_hours"], stars_df["dec_degrees"] = (
+            stars_df.ra / 15, stars_df.dec
+        )
 
         if getattr(self, "projection", None) == "zenith":
             # filter stars for zenith plots to only include those above horizon

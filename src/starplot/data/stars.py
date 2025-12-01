@@ -49,16 +49,13 @@ def table(
     else:
         raise ValueError("Unrecognized star catalog.")
 
-    designations = con.table("star_designations")
-
     stars = stars.mutate(
-        ra_hours=_.ra / 15,  # skyfield needs this column
-        dec_degrees=_.dec,
         geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
         rowid=row_number(),
         sk=row_number(),
     )
 
+    designations = con.table("star_designations")
     designations = designations.mutate(
         name=getattr(designations, language_name_column(language))
     )

@@ -132,13 +132,13 @@ def size_by_magnitude_for_optic(star: Star) -> float:
     m = star.magnitude
 
     if m < 4.6:
-        return (9 - m) ** 3.72 * 9
+        return (9 - m) ** 3.6 * 9
     elif m < 5.85:
-        return (9 - m) ** 3.72 * 9
+        return (9 - m) ** 3.6 * 9
     elif m < 9:
-        return (13 - m) ** 1.91 * 9
+        return (13 - m) ** 1.8 * 9
 
-    return 4.93 * 9
+    return 4.8 * 6
 
 
 def alpha_by_magnitude(star: Star) -> float:
