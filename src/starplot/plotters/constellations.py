@@ -10,7 +10,7 @@ from matplotlib.collections import LineCollection
 from ibis import _
 
 from starplot.coordinates import CoordinateSystem
-from starplot.data import constellations as condata, constellation_lines as conlines
+from starplot.data import constellations as condata
 from starplot.data.stars import load as load_stars, StarCatalog
 from starplot.data.constellation_stars import CONSTELLATION_HIPS
 from starplot.models import Star, Constellation
@@ -113,7 +113,7 @@ class ConstellationPlotterMixin:
         constars = self._prepare_constellation_stars()
 
         for c in constellations_df.itertuples():
-            hiplines = conlines.hips[c.iau_id]
+            hiplines = c.star_hip_lines
             inbounds = False
 
             for s1_hip, s2_hip in hiplines:

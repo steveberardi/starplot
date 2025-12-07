@@ -49,7 +49,11 @@ def build_db():
     con.sql(
         (
             "DROP TABLE IF EXISTS constellations;"
-            f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_src}'));"
+            f"CREATE TABLE constellations AS (SELECT * EXCLUDE (geom, star_hip_lines), geom AS geometry, CAST(star_hip_lines AS INTEGER[][]) as star_hip_lines from ST_Read('{constellation_src}'));"
+            # TODO : separate out constellation data (similar to stars), to make it easier to import constellations data
+            # constellations table should be geometry-free (can join later)
+            # original
+            # f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_src}'));"
             "CREATE INDEX constellations_boundary_idx ON constellations USING RTREE (geometry);"
         )
     )
