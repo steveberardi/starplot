@@ -1,8 +1,10 @@
 from functools import cache
+from pathlib import Path
 
 from ibis import _, row_number
 from starplot.config import settings
 from starplot.data import bigsky, DataFiles, db
+from starplot.data.catalog import Catalog
 from starplot.data.translations import language_name_column
 
 
@@ -34,20 +36,21 @@ class StarCatalog:
 
 @cache
 def table(
-    catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9,
+    catalog: StarCatalog | Catalog | Path | str = StarCatalog.BIG_SKY_MAG9,
     table_name="stars",
     language: str = "en-us",
 ):
     con = db.connect()
 
     if catalog == StarCatalog.BIG_SKY_MAG9:
-        # stars = con.read_parquet("temp/hyg.parquet", table_name=table_name)
         stars = con.read_parquet(DataFiles.BIG_SKY_MAG9, table_name=table_name)
     elif catalog == StarCatalog.BIG_SKY:
         bigsky.download_if_not_exists()
         stars = con.read_parquet(DataFiles.BIG_SKY, table_name=table_name)
+    elif isinstance(catalog, Catalog):
+        stars = con.read_parquet(str(catalog.path), table_name=table_name)
     else:
-        raise ValueError("Unrecognized star catalog.")
+        stars = con.read_parquet(str(catalog), table_name=table_name)
 
     stars = stars.mutate(
         geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
@@ -55,23 +58,28 @@ def table(
         sk=row_number(),
     )
 
-    designations = con.table("star_designations")
-    designations = designations.mutate(
-        name=getattr(designations, language_name_column(language))
-    )
+    designation_columns_missing = {
+        col for col in ["name", "bayer", "flamsteed"] if col not in stars.columns
+    }
 
-    stars = stars.join(
-        designations,
-        stars.hip == designations.hip,
-        how="left",
-    )
+    if designation_columns_missing:
+        designations = con.table("star_designations")
+        designations = designations.mutate(
+            name=getattr(designations, language_name_column(language))
+        )
+        stars_joined = stars.join(
+            designations,
+            stars.hip == designations.hip,
+            how="left",
+        )
+        stars = stars_joined.select(*stars.columns, *designation_columns_missing)
 
     return stars
 
 
 def load(
     extent=None,
-    catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9,
+    catalog: StarCatalog | Catalog | Path | str = StarCatalog.BIG_SKY_MAG9,
     filters=None,
     sql=None,
 ):

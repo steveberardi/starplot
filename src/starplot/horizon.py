@@ -160,9 +160,7 @@ class HorizonPlot(
         # import geopandas as gpd
 
         # Skyfield needs these columns
-        df["ra_hours"], df["dec_degrees"] = (
-            df.ra / 15, df.dec
-        )
+        df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
 
         stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()

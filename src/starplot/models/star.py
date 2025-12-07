@@ -15,8 +15,14 @@ class Star(SkyObject):
     Star model.
     """
 
-    magnitude: float = None
+    magnitude: float
     """Magnitude"""
+
+    geometry: Point
+    """Shapely Point of the star's position. Right ascension coordinates are in degrees (0...360)."""
+
+    epoch_year: float = None
+    """Epoch of position"""
 
     bv: Optional[float] = None
     """B-V Color Index, if available"""
@@ -47,12 +53,6 @@ class Star(SkyObject):
 
     flamsteed: Optional[int] = None
     """Flamsteed number, if available"""
-
-    epoch_year: float = None
-    """Epoch of position"""
-
-    geometry: Point = None
-    """Shapely Point of the star's position. Right ascension coordinates are in degrees (0...360)."""
 
     def __post_init__(self):
         self.bayer = self.bayer or None
@@ -205,18 +205,21 @@ def from_tuple(star: tuple) -> Star:
     )
     s._row_id = getattr(star, "rowid", None)
 
+    # print(set(star._fields) )
     # populate extra fields
     # fields = Star._dir() + [
     #     'rowid',
-    #     'sk',
+    #     # 'sk',
     #     'Index',
     #     'constellation',
     #     'constellation_id',
-    #     'ra_hours',
-    #     'dec_degrees',
     # ]
     # extra_fields = set(star._fields) - set(fields)
+    # extra = {}
     # for f in extra_fields:
-    #     setattr(s, f, getattr(star, f))
+    #     # setattr(s, f, getattr(star, f))
+    #     extra[f] = getattr(star, f)
+
+    # s.extra = extra
 
     return s

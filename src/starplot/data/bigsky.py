@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 from starplot.config import settings
-from starplot.data import DataFiles, utils, catalog
+from starplot.data import DataFiles, utils, Catalog
 
 
 BIG_SKY_VERSION = "0.4.0"
@@ -108,16 +108,18 @@ def build(source_path: str, destination_path: str, limiting_magnitude: float = 1
                 epoch_year=2000,
             )
 
-    catalog.build(
-        data=stars(df),
+    Catalog.build(
+        objects=stars(df),
         path=destination_path,
         chunk_size=5_000_000,
         columns=[
             "hip",
+            "tyc",
             "ra",
             "dec",
             "magnitude",
             "bv",
+            "parallax_mas",
             "ra_mas_per_year",
             "dec_mas_per_year",
             "constellation_id",

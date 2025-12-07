@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Callable
 
 import rtree
@@ -7,6 +8,7 @@ from skyfield.api import Star as SkyfieldStar, wgs84
 
 from starplot import callables
 from starplot.data import stars
+from starplot.data.catalog import Catalog
 from starplot.data.stars import StarCatalog
 from starplot.data.translations import translate
 from starplot.models.star import Star, from_tuple
@@ -151,7 +153,7 @@ class StarPlotterMixin:
         self,
         where: list = None,
         where_labels: list = None,
-        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9,
+        catalog: StarCatalog | Catalog | Path | str = StarCatalog.BIG_SKY_MAG9,
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = None,
@@ -220,9 +222,7 @@ class StarPlotterMixin:
         label_row_ids = star_results_labeled.to_pandas()["rowid"].tolist()
 
         stars_df = star_results.to_pandas()
-        stars_df["ra_hours"], stars_df["dec_degrees"] = (
-            stars_df.ra / 15, stars_df.dec
-        )
+        stars_df["ra_hours"], stars_df["dec_degrees"] = (stars_df.ra / 15, stars_df.dec)
 
         if getattr(self, "projection", None) == "zenith":
             # filter stars for zenith plots to only include those above horizon

@@ -1,30 +1,13 @@
-import yaml
-import uuid
+from dataclasses import dataclass
 
 from pathlib import Path
 from collections.abc import Iterable
 
-
-def write_catalog_file(
-    path: str | Path,
-    name: str,
-    healpix_nside: int,
-    extra_fields: list[str],
-):
-    # deprecate?
-    data = dict(
-        name=name,
-        healpix_nside=healpix_nside,
-        extra_fields=extra_fields,
-    )
-
-    with open(path, "w") as outfile:
-        data_yaml = yaml.dump(data)
-        outfile.write(data_yaml)
+from starplot.models.base import SkyObject
 
 
 def to_parquet(
-    data: list[dict],
+    rows: list[dict],
     path: str | Path,
     columns: list[str] = None,
     partition_columns: list[str] = None,
@@ -32,14 +15,14 @@ def to_parquet(
     compression: str = "snappy",
     row_group_size: int = 100_000,
 ) -> None:
-    from shapely import wkb
+    # from shapely import wkb
+    # import pandas as pd
 
-    import pandas as pd
     import geopandas as gpd
     import pyarrow as pa
     import pyarrow.parquet as pq
 
-    df = gpd.GeoDataFrame(data, crs="EPSG:4326")
+    df = gpd.GeoDataFrame(rows, crs="EPSG:4326")
     df = df.sort_values(sorting_columns)
     df = df[df.geometry.notna()]
 
@@ -74,57 +57,83 @@ def to_parquet(
     # print(gdf)
 
 
-def build(
-    data: Iterable[object],
-    path: str | Path,
-    chunk_size: int = 1_000_000,
-    columns: list[str] = None,
-    partition_columns: list[str] = None,
-    sorting_columns: list[str] = None,
-    compression: str = "snappy",
-    row_group_size: int = 200_000,
-) -> None:
-    """
-    Creates a custom catalog of sky objects. Output is one or more Parquet files.
+@dataclass(frozen=True)
+class Catalog:
+    """Catalog of objects"""
 
-    Args:
-        data: Iterable that contains the sky objects for the catalog
-        path: Output path of the catalog
-        chunk_size: Max number of objects to write per file
-        columns: List of columns to include in the catalog
-        partition_columns: List of columns to create Hive partitions for
-        sorting_columns: List of columns to sort by
-        compression: Type of compression to use
-        row_group_size: Row group size for the catalog parquet file
+    path: Path
+    """Path of the catalog"""
+
+    hive_partitioning: bool = False
+    """If the catalog uses hive partitioning, then set this to True"""
+
+    healpix_nside: int = None
+    """HEALPix resolution (NSIDE)"""
+
+    @classmethod
+    def build(
+        cls,
+        objects: Iterable[SkyObject],
+        path: str | Path,
+        chunk_size: int = 1_000_000,
+        columns: list[str] = None,
+        partition_columns: list[str] = None,
+        sorting_columns: list[str] = None,
+        compression: str = "snappy",
+        row_group_size: int = 200_000,
+    ) -> None:
+        """
+        Creates a custom catalog of sky objects. Output is one or more Parquet files.
+
+        Args:
+            objects: Iterable that contains the sky objects for the catalog
+            path: Output path of the catalog
+            chunk_size: Max number of objects to write per file
+            columns: List of columns to include in the catalog
+            partition_columns: List of columns to create Hive partitions for
+            sorting_columns: List of columns to sort by
+            compression: Type of compression to use
+            row_group_size: Row group size for the catalog parquet file
 
 
-    TODO :
+        TODO :
 
-        - Add healpix
-        - Only allow paths? Use UUID as filename? That works better with chunking
-        - Figure out how to handle constellation id field
-        - Handle multiple files if no partitions
+            - Add healpix
+            - Only allow paths? Use UUID as filename? That works better with chunking
+            - Handle multiple files if no partitions
 
-    """
+        """
 
-    if not isinstance(path, Path):
-        path = Path(path)
+        if not isinstance(path, Path):
+            path = Path(path)
 
-    if partition_columns and not path.is_dir():
-        raise ValueError("Path must be a directory when using partition columns.")
+        if partition_columns and not path.is_dir():
+            raise ValueError("Path must be a directory when using partition columns.")
 
-    columns = columns or []
-    partition_columns = partition_columns or []
-    sorting_columns = sorting_columns or []
+        columns = columns or []
+        partition_columns = partition_columns or []
+        sorting_columns = sorting_columns or []
 
-    rows = []
+        rows = []
 
-    for row in data:
-        rows.append({column: getattr(row, column) for column in columns})
+        for row in objects:
+            rows.append({column: getattr(row, column) for column in columns})
 
-        if len(rows) == chunk_size:
+            if len(rows) == chunk_size:
+                to_parquet(
+                    rows=rows,
+                    path=path,
+                    columns=columns,
+                    partition_columns=partition_columns,
+                    sorting_columns=sorting_columns,
+                    compression=compression,
+                    row_group_size=row_group_size,
+                )
+                rows = []
+
+        if rows:
             to_parquet(
-                data=rows,
+                rows=rows,
                 path=path,
                 columns=columns,
                 partition_columns=partition_columns,
@@ -132,15 +141,3 @@ def build(
                 compression=compression,
                 row_group_size=row_group_size,
             )
-            rows = []
-
-    if rows:
-        to_parquet(
-            data=rows,
-            path=path,
-            columns=columns,
-            partition_columns=partition_columns,
-            sorting_columns=sorting_columns,
-            compression=compression,
-            row_group_size=row_group_size,
-        )
