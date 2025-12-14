@@ -74,6 +74,9 @@ profile:
 db: 
 	@$(DOCKER_RUN) "python data/scripts/db.py"
 
+constellations: 
+	@$(DOCKER_RUN) "python data/scripts/constellations_new.py"
+
 build-data-clean:
 	mkdir -p data/build
 	rm -rf data/build/*

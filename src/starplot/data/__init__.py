@@ -11,4 +11,6 @@ class DataFiles:
 
     BIG_SKY_MAG9 = DATA_PATH / "bigsky.0.4.0.stars.mag9.parquet"
 
+    CONSTELLATIONS = DATA_PATH / "constellations.parquet"
+
     DATABASE = DATA_PATH / "sky.db"

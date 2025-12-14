@@ -142,8 +142,17 @@ LABELS = {
     },
 }
 
+LANGUAGES = [
+    "en-us",
+    "fr",
+    "zh-cn",
+]
+
 
 def language_name_column(language: str, column_prefix: str = "name") -> str:
+    # if language.lower() not in LANGUAGES:
+    #     raise ValueError("Unsupported language")
+
     language_name = language.replace("-", "_").lower()
 
     return f"{column_prefix}_{language_name}"
@@ -159,3 +168,6 @@ def translate(text: str, language: str) -> str:
         return text
 
     return translation.title()
+
+
+LANGUAGE_NAME_COLUMNS = [language_name_column(lang) for lang in LANGUAGES]

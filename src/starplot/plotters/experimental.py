@@ -7,9 +7,6 @@ from shapely import (
 )
 
 from starplot.data import DataFiles
-from starplot.data.constellations import (
-    CONSTELLATIONS_FULL_NAMES,
-)
 from starplot.styles import PathStyle
 
 

@@ -20,11 +20,16 @@ def build_all():
 
     bigsky_mag9.build()
     constellations.build()
-    dsos.build()
     star_designations.build()
 
+    dsos.build()
+
     build_db()
-    copy_to_library()
+
+    # Copy database to starplot data library
+    shutil.copy(db_path, DataFiles.DATABASE)
+    shutil.copy(BUILD_PATH / "constellations_0.parquet", DataFiles.CONSTELLATIONS)
+
     assert_counts()
 
 
@@ -44,19 +49,19 @@ def build_db():
         ),
     )
 
-    # Constellations
-    constellation_src = BUILD_PATH / "constellations.json"
-    con.sql(
-        (
-            "DROP TABLE IF EXISTS constellations;"
-            f"CREATE TABLE constellations AS (SELECT * EXCLUDE (geom, star_hip_lines), geom AS geometry, CAST(star_hip_lines AS INTEGER[][]) as star_hip_lines from ST_Read('{constellation_src}'));"
-            # TODO : separate out constellation data (similar to stars), to make it easier to import constellations data
-            # constellations table should be geometry-free (can join later)
-            # original
-            # f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_src}'));"
-            "CREATE INDEX constellations_boundary_idx ON constellations USING RTREE (geometry);"
-        )
-    )
+    # Constellations - deprecated
+    # constellation_src = BUILD_PATH / "constellations.json"
+    # con.sql(
+    #     (
+    #         "DROP TABLE IF EXISTS constellations;"
+    #         f"CREATE TABLE constellations AS (SELECT * EXCLUDE (geom, star_hip_lines), geom AS geometry, CAST(star_hip_lines AS INTEGER[][]) as star_hip_lines from ST_Read('{constellation_src}'));"
+    #         # TODO : separate out constellation data (similar to stars), to make it easier to import constellations data
+    #         # constellations table should be geometry-free (can join later)
+    #         # original
+    #         # f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_src}'));"
+    #         "CREATE INDEX constellations_boundary_idx ON constellations USING RTREE (geometry);"
+    #     )
+    # )
 
     constellation_borders_src = RAW_PATH / "constellation_borders.json"
     con.sql(
@@ -93,11 +98,6 @@ def build_db():
 
     print("Sky.db created!")
     con.close()
-
-
-def copy_to_library():
-    # Copy database to starplot data library
-    shutil.copy(db_path, DataFiles.DATABASE)
 
 
 def assert_counts():

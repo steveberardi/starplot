@@ -1,11 +1,10 @@
-from functools import cache
 from pathlib import Path
 
 from ibis import _, row_number
 from starplot.config import settings
 from starplot.data import bigsky, DataFiles, db
 from starplot.data.catalog import Catalog
-from starplot.data.translations import language_name_column
+from starplot.data.translations import language_name_column, LANGUAGE_NAME_COLUMNS
 
 
 class StarCatalog:
@@ -34,7 +33,6 @@ class StarCatalog:
     """
 
 
-@cache
 def table(
     catalog: StarCatalog | Catalog | Path | str = StarCatalog.BIG_SKY_MAG9,
     table_name="stars",
@@ -58,8 +56,9 @@ def table(
         sk=row_number(),
     )
 
+    designation_columns = ["name", "bayer", "flamsteed"] + LANGUAGE_NAME_COLUMNS
     designation_columns_missing = {
-        col for col in ["name", "bayer", "flamsteed"] if col not in stars.columns
+        col for col in designation_columns if col not in stars.columns
     }
 
     if designation_columns_missing:

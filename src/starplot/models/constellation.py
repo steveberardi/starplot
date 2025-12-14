@@ -8,11 +8,17 @@ from starplot.models.base import SkyObject
 from starplot.data import constellations
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, kw_only=True)
 class Constellation(SkyObject):
     """
     Constellation model.
     """
+
+    boundary: Polygon | MultiPolygon
+    """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
+
+    name: str = None
+    """Name of constellation"""
 
     iau_id: str = None
     """
@@ -22,17 +28,11 @@ class Constellation(SkyObject):
     Serpens Caput has the `iau_id` of `ser1` and Serpens Cauda is `ser2`
     """
 
-    name: str = None
-    """Name of constellation"""
-
     star_hip_ids: list[int] = None
     """List of HIP ids for stars that are part of the _lines_ for this constellation."""
 
     star_hip_lines: list[list[int, int]] = None
     """Nested list of star HIP ids that represent the lines of this constellation. Each pair of HIP ids represents a line between those stars."""
-
-    boundary: Polygon | MultiPolygon = None
-    """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
 
     def __repr__(self) -> str:
         return f"Constellation(iau_id={self.iau_id}, name={self.name}, ra={self.ra}, dec={self.dec})"
@@ -114,10 +114,10 @@ def from_tuple(c: tuple) -> Constellation:
         ra=c.ra,
         dec=c.dec,
         iau_id=c.iau_id.lower(),
+        constellation_id=c.constellation_id,
         name=c.name,
         star_hip_ids=c.star_hip_ids,
         star_hip_lines=c.star_hip_lines,
-        boundary=c.geometry,
+        boundary=c.boundary,
     )
-    c._constellation_id = c.iau_id
     return c

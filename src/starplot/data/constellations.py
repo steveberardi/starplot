@@ -1,23 +1,32 @@
-from functools import cache
+from pathlib import Path
 
 from ibis import _, row_number
 
 from starplot.config import settings
-from starplot.data import db
+from starplot.data import db, DataFiles
+from starplot.data.catalog import Catalog
 from starplot.data.translations import language_name_column
 
 
-@cache
-def table(language):
+def table(
+    language: str,
+    catalog: Catalog | Path | str = DataFiles.CONSTELLATIONS,
+):
     con = db.connect()
-    c = con.table("constellations")
+    table_name = "constellations"
+
+    if isinstance(catalog, Catalog):
+        c = con.read_parquet(str(catalog.path), table_name=table_name)
+    else:
+        c = con.read_parquet(str(catalog), table_name=table_name)
+
+    name_column = language_name_column(language)
+    if name_column not in c.columns:
+        name_column = "name"
 
     return c.mutate(
-        ra=_.center_ra,
-        dec=_.center_dec,
-        constellation_id=_.iau_id,
-        boundary=_.geometry,
-        name=getattr(c, language_name_column(language)),
+        boundary=_.boundary.cast("geometry"),  # cast WKB to geometry type
+        name=getattr(c, name_column),
         rowid=row_number(),
         sk=row_number(),
     )
@@ -28,7 +37,7 @@ def load(extent=None, filters=None, sql=None):
     c = table(language=settings.language)
 
     if extent:
-        filters.append(_.geometry.intersects(extent))
+        filters.append(_.boundary.intersects(extent))
 
     if filters:
         c = c.filter(*filters)

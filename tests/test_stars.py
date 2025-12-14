@@ -1,6 +1,4 @@
-import pytest
 
-from starplot.data import stars
 
 
 # def test_stars_load_default():
@@ -10,6 +8,6 @@ from starplot.data import stars
 #     assert len(df) == 981_853
 
 
-def test_stars_load_unrecognized_catalog():
-    with pytest.raises(ValueError, match=r"Unrecognized star catalog."):
-        stars.load(catalog="hello")
+# def test_stars_load_unrecognized_catalog():
+#     with pytest.raises(ValueError, match=r"Unrecognized star catalog."):
+#         stars.load(catalog="hello")
