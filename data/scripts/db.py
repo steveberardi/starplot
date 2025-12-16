@@ -6,7 +6,7 @@ import duckdb
 from starplot import Star, DSO, Constellation
 from starplot.data import DataFiles
 
-import bigsky_mag9, constellations, dsos, star_designations
+import bigsky_mag9, constellations, ongc, star_designations
 from data_settings import BUILD_PATH, RAW_PATH
 
 db_path = BUILD_PATH / "sky.db"
@@ -22,13 +22,14 @@ def build_all():
     constellations.build()
     star_designations.build()
 
-    dsos.build()
+    ongc.build()
 
     build_db()
 
     # Copy database to starplot data library
     shutil.copy(db_path, DataFiles.DATABASE)
-    shutil.copy(BUILD_PATH / "constellations_0.parquet", DataFiles.CONSTELLATIONS)
+    shutil.copy(BUILD_PATH / "constellations.parquet", DataFiles.CONSTELLATIONS)
+    shutil.copy(BUILD_PATH / "ongc.parquet", DataFiles.ONGC)
 
     assert_counts()
 
@@ -63,6 +64,20 @@ def build_db():
     #     )
     # )
 
+    # Deep Sky Objects - deprecated
+    # dso_src = BUILD_PATH / "ongc.json"
+    # con.sql(
+    #     (
+    #         "DROP TABLE IF EXISTS deep_sky_objects;"
+    #         f"CREATE TABLE deep_sky_objects AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{dso_src}'));"
+    #         "CREATE INDEX dso_idx ON deep_sky_objects USING RTREE (geometry);"
+    #         "CREATE INDEX dso_name_idx ON deep_sky_objects (name);"
+    #         "CREATE INDEX dso_messier_idx ON deep_sky_objects (m);"
+    #         "CREATE INDEX dso_ngc_idx ON deep_sky_objects (ngc);"
+    #         "CREATE INDEX dso_ic_idx ON deep_sky_objects (ic);"
+    #     )
+    # )
+
     constellation_borders_src = RAW_PATH / "constellation_borders.json"
     con.sql(
         (
@@ -72,19 +87,7 @@ def build_db():
         )
     )
 
-    # Deep Sky Objects
-    dso_src = BUILD_PATH / "ongc.json"
-    con.sql(
-        (
-            "DROP TABLE IF EXISTS deep_sky_objects;"
-            f"CREATE TABLE deep_sky_objects AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{dso_src}'));"
-            "CREATE INDEX dso_idx ON deep_sky_objects USING RTREE (geometry);"
-            "CREATE INDEX dso_name_idx ON deep_sky_objects (name);"
-            "CREATE INDEX dso_messier_idx ON deep_sky_objects (m);"
-            "CREATE INDEX dso_ngc_idx ON deep_sky_objects (ngc);"
-            "CREATE INDEX dso_ic_idx ON deep_sky_objects (ic);"
-        )
-    )
+    
 
     star_designations_src = BUILD_PATH / "star_designations.parquet"
     con.sql(

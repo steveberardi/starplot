@@ -74,8 +74,8 @@ profile:
 db: 
 	@$(DOCKER_RUN) "python data/scripts/db.py"
 
-constellations: 
-	@$(DOCKER_RUN) "python data/scripts/constellations_new.py"
+ongc: 
+	@$(DOCKER_RUN) "python data/scripts/dso2.py"
 
 build-data-clean:
 	mkdir -p data/build

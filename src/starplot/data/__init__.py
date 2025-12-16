@@ -13,4 +13,6 @@ class DataFiles:
 
     CONSTELLATIONS = DATA_PATH / "constellations.parquet"
 
+    ONGC = DATA_PATH / "ongc.parquet"
+
     DATABASE = DATA_PATH / "sky.db"

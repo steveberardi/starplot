@@ -47,7 +47,7 @@ def build():
         BUILD_PATH / "star_designations.parquet",
         engine="pyarrow",
         schema=schema,
-        compression="none",
+        compression="snappy",
     )
 
     print("Star Designations: " + str(len(star_records)))

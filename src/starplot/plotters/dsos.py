@@ -157,8 +157,8 @@ class DsoPlotterMixin:
         results_df = results_df.replace({np.nan: None})
 
         for d in results_df.itertuples():
-            ra = d.ra_degrees
-            dec = d.dec_degrees
+            ra = d.ra
+            dec = d.dec
             dso_type = ONGC_TYPE_MAP[d.type]
             style = self.style.get_dso_style(dso_type)
             maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
@@ -178,7 +178,7 @@ class DsoPlotterMixin:
             if _dso._row_id not in label_row_ids:
                 label = None
 
-            if true_size and d.size_deg2 is not None:
+            if true_size and d.size is not None:
                 if "Polygon" == str(d.geometry.geom_type):
                     self._plot_dso_polygon(d.geometry, style)
 

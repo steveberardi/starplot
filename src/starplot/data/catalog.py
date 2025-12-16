@@ -47,11 +47,22 @@ def to_parquet(
 
     pq.write_table(
         table,
-        path.with_stem(f"{path.stem}_{chunk_id}"),
+        path if chunk_id is None else path.with_stem(f"{path.stem}_{chunk_id}"),
         compression=compression,
         row_group_size=row_group_size,
         sorting_columns=sort_columns,
     )
+    # schema = pq.read_schema(filename)
+    # print("\nColumn names:", schema.names)
+    # print("Column types:", schema.types)
+    # print(schema.to_string())
+
+    # parquet_file = pq.ParquetFile(filename)
+    # print(f"Parquet file: {filename} Schema")
+    # print(parquet_file.schema) 
+    
+    # print("\nFull Metadata:")
+    # print(parquet_file.metadata) 
 
     # df = pd.read_parquet(path)
     # df["geometry"] = df["geometry"].apply(wkb.loads)
@@ -89,7 +100,7 @@ class Catalog:
 
         Args:
             objects: Iterable that contains the sky objects for the catalog
-            path: Output path of the catalog
+            path: Output path of the catalog. If using Hive partitions, this should be a glob (e.g. `/data/**/**/*.parquet`).
             chunk_size: Max number of objects to write per file
             columns: List of columns to include in the catalog
             partition_columns: List of columns to create Hive partitions for
@@ -101,7 +112,7 @@ class Catalog:
         TODO :
 
             - Add healpix
-            - Only allow paths? Use UUID as filename? That works better with chunking
+
 
         """
 
@@ -148,5 +159,5 @@ class Catalog:
                 sorting_columns=sorting_columns,
                 compression=compression,
                 row_group_size=row_group_size,
-                chunk_id=chunk_ctr,
+                chunk_id=chunk_ctr if chunk_ctr else None,
             )
