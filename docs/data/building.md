@@ -1,4 +1,4 @@
-# Custom Catalogs
+# Building Custom Catalogs
 
 ::: starplot.data.Catalog
     options:

@@ -16,12 +16,12 @@ nav:
         - Selecting Objects: reference-selecting-objects.md
         - Styling: reference-styling.md
         - Callables: reference-callables.md
-        - Data:
+        - Data Catalogs:
             - Star Catalogs: data/star-catalogs.md
             - Star Designations: data/star-designations.md
             - Deep Sky Objects: data/dsos.md
             - Constellations: data/constellations.md
-            - Custom Catalogs: data/custom-catalogs.md
+            - Building: data/building.md
         - Localization: reference-localization.md
         - Settings: reference-settings.md
     - Data Sources: data-sources.md

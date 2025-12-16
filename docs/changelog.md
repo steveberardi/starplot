@@ -1,5 +1,12 @@
+## v0.18.x
+- Adds function for plotting an arrow, from one point to another or as a pointer to a target
+- Adds support for custom data catalogs for stars, DSOs, and constellations
+- Converts sky object models to data classes, improving performance when many objects are plotted
+
 
 ## v0.17.x
+[Documentation](https://archives.starplot.dev/0.17.1/)
+
 - Consolidates the scope/binoculars field of view function into a general optic fov function (which means it also supports cameras now)
 - Adds models for comets and satellites and supports data formats from MPC and CelesTrak
 - Adds font name and weight style properties to legend labels
