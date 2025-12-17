@@ -3,7 +3,7 @@ from skyfield.api import Loader
 from starplot.config import settings, DATA_PATH
 from .catalog import Catalog  # noqa: F401
 
-load = Loader(DATA_PATH)
+load = Loader(settings.data_path) # used for loading ephemeris
 
 
 class DataFiles:

@@ -31,6 +31,15 @@ class SvgTextType(str, Enum):
 
 @dataclass
 class Settings:
+    data_path: Path = field(
+        default_factory=_get_path("STARPLOT_DATA_PATH", Path.cwd())
+    )
+    """
+    Path that Starplot will use for data
+    
+    Default = current working directory
+    """
+
     download_path: Path = field(
         default_factory=_get_path("STARPLOT_DOWNLOAD_PATH", DATA_PATH / "downloads")
     )
