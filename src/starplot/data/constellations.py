@@ -3,19 +3,21 @@ from pathlib import Path
 from ibis import _, row_number
 
 from starplot.config import settings
-from starplot.data import db, DataFiles
+from starplot.data import db
 from starplot.data.catalog import Catalog
 from starplot.data.translations import language_name_column
 
 
 def table(
     language: str,
-    catalog: Catalog | Path | str = DataFiles.CONSTELLATIONS,
+    catalog: Catalog | Path | str,
 ):
     con = db.connect()
     table_name = "constellations"
 
     if isinstance(catalog, Catalog):
+        if not catalog.exists():
+            catalog.download()
         c = con.read_parquet(str(catalog.path), table_name=table_name)
     else:
         c = con.read_parquet(str(catalog), table_name=table_name)
@@ -32,9 +34,14 @@ def table(
     )
 
 
-def load(extent=None, filters=None, sql=None):
+def load(
+    extent=None, 
+    filters=None, 
+    sql=None,
+    catalog=None,
+):
     filters = filters or []
-    c = table(language=settings.language)
+    c = table(language=settings.language, catalog=catalog)
 
     if extent:
         filters.append(_.boundary.intersects(extent))

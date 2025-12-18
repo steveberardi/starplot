@@ -53,7 +53,7 @@ class Satellite(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> "Satellite":
         """
         Get a satellite for a specific date/time/location from a CelesTrak JSON.
@@ -80,7 +80,7 @@ class Satellite(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> "Satellite":
         """
         Get a satellite for a specific date/time/location from a two-line element set (TLE).

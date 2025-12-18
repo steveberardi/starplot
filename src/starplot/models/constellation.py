@@ -5,7 +5,7 @@ from ibis import _
 from shapely import Polygon, MultiPolygon
 
 from starplot.models.base import SkyObject
-from starplot.data import constellations
+from starplot.data import constellations, catalogs, Catalog
 
 
 @dataclass(slots=True, kw_only=True)
@@ -45,7 +45,7 @@ class Constellation(SkyObject):
             yield from_tuple(c)
 
     @classmethod
-    def get(cls, sql: str = None, **kwargs) -> "Constellation":
+    def get(cls, sql: str = None, catalog: Catalog = catalogs.CONSTELLATIONS_IAU, **kwargs) -> "Constellation":
         """
         Get a Constellation, by matching its attributes.
 
@@ -64,7 +64,7 @@ class Constellation(SkyObject):
         for k, v in kwargs.items():
             filters.append(getattr(_, k) == v)
 
-        df = constellations.load(filters=filters, sql=sql).to_pandas()
+        df = constellations.load(filters=filters, sql=sql, catalog=catalog).to_pandas()
         results = [from_tuple(c) for c in df.itertuples()]
 
         if len(results) == 1:
@@ -78,7 +78,7 @@ class Constellation(SkyObject):
         return None
 
     @classmethod
-    def find(cls, where: list = None, sql: str = None) -> list["Constellation"]:
+    def find(cls, where: list = None, sql: str = None, catalog: Catalog = catalogs.CONSTELLATIONS_IAU) -> list["Constellation"]:
         """
         Find Constellations
 
@@ -90,7 +90,7 @@ class Constellation(SkyObject):
             List of Constellations that match all `where` expressions
 
         """
-        df = constellations.load(filters=where, sql=sql).to_pandas()
+        df = constellations.load(filters=where, sql=sql, catalog=catalog).to_pandas()
 
         return [from_tuple(c) for c in df.itertuples()]
 

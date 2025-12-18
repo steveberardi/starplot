@@ -10,7 +10,7 @@ from matplotlib.collections import LineCollection
 from ibis import _
 
 from starplot.coordinates import CoordinateSystem
-from starplot.data import constellations as condata
+from starplot.data import constellations as condata, Catalog, catalogs
 from starplot.data.stars import load as load_stars, StarCatalog
 from starplot.data.constellation_stars import CONSTELLATION_HIPS
 from starplot.models import Star, Constellation
@@ -79,6 +79,7 @@ class ConstellationPlotterMixin:
         style: LineStyle = None,
         where: list = None,
         sql: str = None,
+        catalog: Catalog = catalogs.CONSTELLATIONS_IAU
     ):
         """Plots the constellation lines **only**. To plot constellation borders and/or labels, see separate functions for them.
 
@@ -95,7 +96,7 @@ class ConstellationPlotterMixin:
         ctr = 0
 
         extent = self._extent_mask()
-        results = condata.load(extent=extent, filters=where, sql=sql)
+        results = condata.load(extent=extent, filters=where, sql=sql, catalog=catalog)
         constellations_df = results.to_pandas()
 
         if constellations_df.empty:

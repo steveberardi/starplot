@@ -57,7 +57,7 @@ class Moon(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> "Moon":
         """
         Get the Moon for a specific date/time and observing location.

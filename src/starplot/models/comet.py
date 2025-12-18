@@ -171,7 +171,7 @@ class Comet(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> "Comet":
         """
         Get a comet for a specific date/time/location from an IAU MPC JSON.
@@ -194,7 +194,7 @@ class Comet(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
         reload: bool = False,
     ) -> Iterator["Comet"]:
         """
@@ -227,7 +227,7 @@ class Comet(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
         reload: bool = False,
     ) -> "Comet":
         """

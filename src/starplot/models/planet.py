@@ -83,7 +83,7 @@ class Planet(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> Iterator["Planet"]:
         """
         Iterator for getting all planets at a specific date/time and observing location.
@@ -135,7 +135,7 @@ class Planet(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> "Planet":
         """
         Get a planet for a specific date/time.

@@ -86,7 +86,7 @@ class HorizonPlot(
         altitude: tuple[float, float],
         azimuth: tuple[float, float],
         observer: Observer = Observer(),
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_HORIZON_STYLE,
         resolution: int = 4096,
         hide_colliding_labels: bool = True,
