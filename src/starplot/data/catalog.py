@@ -5,7 +5,7 @@ from pathlib import Path
 from shapely import Geometry
 
 from starplot.models.base import SkyObject
-
+from starplot.data.utils import download
 
 def to_parquet(
     rows: list[dict],
@@ -18,15 +18,8 @@ def to_parquet(
     chunk_id: int = 0,
 ) -> None:
     import pandas as pd
-
-    # import geopandas as gpd
     import pyarrow as pa
     import pyarrow.parquet as pq
-
-    # GeoDataFrame not needed cause we convert to WKB?
-    # df = gpd.GeoDataFrame(rows, crs="EPSG:4326")
-    # df = df[df.geometry.notna()]
-    # df["geometry"] = df["geometry"].apply(lambda x: x.wkb)
 
     df = pd.DataFrame(rows)
     df = df.sort_values(sorting_columns)
@@ -77,11 +70,31 @@ class Catalog:
     path: Path
     """Path of the catalog"""
 
+    url: str = None
+    """Remote URL of the catalog. If the catalog doesn't exist at the `path` then it'll be downloaded from this URL."""
+
     hive_partitioning: bool = False
     """If the catalog uses hive partitioning, then set this to True"""
 
     healpix_nside: int = None
     """HEALPix resolution (NSIDE)"""
+
+    # TODO: object_type: Star | Constellation | DSO ?
+
+    # TODO : implement healpix
+
+    def exists(self) -> bool:
+        """Returns true if the catalog path exists, else False."""
+        return self.path.exists()
+
+    
+    def download(self):
+        """Downloads the catalog from its URL to its path"""
+        download(
+            self.url,
+            self.path,
+            f"Catalog: {self.url}",
+        )
 
     @classmethod
     def build(
@@ -107,12 +120,6 @@ class Catalog:
             sorting_columns: List of columns to sort by
             compression: Type of compression to use
             row_group_size: Row group size for the catalog parquet file
-
-
-        TODO :
-
-            - Add healpix
-
 
         """
 
