@@ -12,6 +12,7 @@ class TestLanguages:
             (11767, "fr", "Étoile Polaire"),
             (11767, "zh-cn", "北极星"),
             (11767, "lt", "Šiaurinė žvaigždė (Polaris)"),
+            (11767, "fa", "ستاره قطبی"),
         ],
     )
     def test_star_name(self, star_hip_id, language, expected_value):
@@ -26,6 +27,7 @@ class TestLanguages:
             ("cma", "fr", "Grand chien"),
             ("cma", "zh-cn", "大犬"),
             ("cma", "lt", "Didysis Šuo"),
+            ("cma", "fa", "سگ بزرگ"),
         ],
     )
     def test_constellation_name(self, constellation_id, language, expected_value):
@@ -40,6 +42,7 @@ class TestLanguages:
             ("11", "fr", "Amas du Canard sauvage"),
             ("11", "zh-cn", "野鸭星团"),
             ("11", "lt", "Laukinės anties spiečius (M11)"),
+            ("11", "fa", "خوشه اردک وحشی"),
         ],
     )
     def test_dso_name(self, messier, language, expected_value):
