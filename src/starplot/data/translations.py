@@ -189,6 +189,7 @@ LABELS = {
     },
 }
 
+
 def language_name_column(language: str, column_prefix: str = "name") -> str:
     language_name = language.replace("-", "_").lower()
 
