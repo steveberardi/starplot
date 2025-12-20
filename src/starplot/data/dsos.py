@@ -4,7 +4,7 @@ from ibis import _, row_number
 
 from starplot.config import settings
 from starplot.data import db
-from starplot.data.catalogs import Catalog, OPEN_NGC
+from starplot.data.catalogs import Catalog
 from starplot.data.translations import language_name_column
 
 

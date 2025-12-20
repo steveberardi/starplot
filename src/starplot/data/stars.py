@@ -2,7 +2,7 @@ from pathlib import Path
 
 from ibis import _, row_number
 from starplot.config import settings
-from starplot.data import bigsky, DataFiles, db
+from starplot.data import db
 from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.data.translations import language_name_column, LANGUAGE_NAME_COLUMNS
 
