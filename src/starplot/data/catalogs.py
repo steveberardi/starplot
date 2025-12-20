@@ -170,15 +170,18 @@ class Catalog:
                 chunk_id=chunk_ctr if chunk_ctr else None,
             )
 
+# --------------------------------------------------------
+#  Catalog definitions
+# --------------------------------------------------------
 
 BIG_SKY = Catalog(
     path=settings.data_path / "constellations-iau.parquet",
     url="https://github.com/steveberardi/starplot-bigsky/releases/download/beta/bigsky.stars.mag11.parquet",
 )
 """
-    [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 2.5M stars
+[Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 2.5M stars
 
-    This is the full version of the Big Sky Catalog, which includes 2,557,500 stars from Hipparcos, Tycho-1, and Tycho-2.
+This is the full version of the Big Sky Catalog, which includes 2,557,500 stars from Hipparcos, Tycho-1, and Tycho-2.
 """
 
 BIG_SKY_MAG11 = Catalog(
@@ -186,17 +189,23 @@ BIG_SKY_MAG11 = Catalog(
     url="https://github.com/steveberardi/starplot-bigsky/releases/download/beta/bigsky.stars.mag11.parquet",
 )
 """
-    [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 136,125 stars with limiting magnitude 11
-    
-    This is an _abridged_ version of the Big Sky Catalog.
+[Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 136,125 stars with limiting magnitude 11
+
+This is an _abridged_ version of the Big Sky Catalog.
 """
 
 OPEN_NGC = Catalog(
     path=settings.data_path / "ongc.parquet",
     url="https://github.com/steveberardi/starplot-ongc/releases/download/beta/ongc.parquet",
 )
+"""
+[OpenNGC](https://github.com/mattiaverga/OpenNGC) catalog, including nebulae outlines.
+"""
 
 CONSTELLATIONS_IAU = Catalog(
     path=settings.data_path / "constellations-iau.parquet",
     url="https://github.com/steveberardi/starplot-constellations/releases/download/beta/constellations.parquet",
 )
+"""
+Constellations recognized by IAU, with lines by Sky & Telescope.
+"""

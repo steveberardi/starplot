@@ -1,3 +1,12 @@
+
+::: starplot.data.catalogs.CONSTELLATIONS_IAU
+    options:
+        inherited_members: true
+        show_docstring_attributes: true
+        show_root_heading: true
+
+---
+
 <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
 
