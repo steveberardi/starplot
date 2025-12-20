@@ -81,17 +81,8 @@ build-data-clean:
 	mkdir -p data/build
 	rm -rf data/build/*
 
-build-stars-mag11:
-	@$(DOCKER_RUN) "python data/scripts/bigsky_mag11.py"
-
-build-dsos:
-	@$(DOCKER_RUN) "python data/scripts/dsos.py"
-
 build-star-designations:
 	@$(DOCKER_RUN) "python data/scripts/star_designations.py"
-
-build-constellations:
-	@$(DOCKER_RUN) "python data/scripts/constellations.py"
 
 build-doc-data:
 	@$(DOCKER_RUN) "python data/scripts/docdata.py"
@@ -102,11 +93,6 @@ version:
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------
-test-3.9: PYTHON_VERSION=3.9.21
-test-3.9:
-	$(DOCKER_BUILD_PYTHON)
-	$(DOCKER_RUN_PYTHON_TEST)
-
 test-3.10: PYTHON_VERSION=3.10.19
 test-3.10:
 	$(DOCKER_BUILD_PYTHON)
@@ -156,14 +142,8 @@ flit-install:
 ephemeris:
 	$(DOCKER_RUN) "python -m jplephem excerpt 2025/1/1 2050/1/1 $(DE421_URL) de421sub.bsp"
 
-hip8:
-	$(DOCKER_RUN) "python ./scripts/hip.py ./src/starplot/data/library/hip_main.dat hip8.dat 15"
-
 scripts:
 	$(DOCKER_RUN) "python ./scripts/$(SCRIPT).py"
-
-allsky:
-	$(DOCKER_RUN) "python ./scripts/temp/allsky.py"
 
 clean:
 	rm -rf __pycache__
@@ -173,4 +153,4 @@ clean:
 	rm -rf htmlcov
 	rm -f tests/data/*.png
 
-.PHONY: build test shell flit-build flit-publish clean ephemeris hip8 scratchpad examples scripts tutorial prep-dsos prep-constellations
+.PHONY: build test shell flit-build flit-publish clean ephemeris scratchpad examples scripts tutorial
