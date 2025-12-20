@@ -4,7 +4,7 @@ from ibis import _, row_number
 
 from starplot.config import settings
 from starplot.data import db
-from starplot.data.catalog import Catalog
+from starplot.data.catalogs import Catalog
 from starplot.data.translations import language_name_column
 
 
@@ -35,10 +35,10 @@ def table(
 
 
 def load(
-    extent=None, 
-    filters=None, 
+    catalog: Catalog | Path | str,
+    extent=None,
+    filters=None,
     sql=None,
-    catalog=None,
 ):
     filters = filters or []
     c = table(language=settings.language, catalog=catalog)

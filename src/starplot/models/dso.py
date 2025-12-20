@@ -5,6 +5,7 @@ from enum import Enum
 from ibis import _
 from shapely import Polygon, MultiPolygon
 
+from starplot.data.catalogs import Catalog, OPEN_NGC
 from starplot.data.dsos import load
 from starplot.models.base import SkyObject
 
@@ -135,14 +136,23 @@ class DSO(SkyObject):
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
 
     @classmethod
-    def all(cls) -> Iterator["DSO"]:
-        df = load().to_pandas()
+    def all(cls, catalog: Catalog = OPEN_NGC) -> Iterator["DSO"]:
+        """
+        Get all DSOs from a catalog
+
+        Args:
+            catalog: Catalog you want to get DSO objects from
+
+        Returns:
+            Iterator of DSO instances
+        """
+        df = load(catalog=catalog).to_pandas()
 
         for d in df.itertuples():
             yield from_tuple(d)
 
     @classmethod
-    def get(cls, sql: str = None, **kwargs) -> "DSO":
+    def get(cls, catalog: Catalog = OPEN_NGC, sql: str = None, **kwargs) -> "DSO":
         """
         Get a DSO, by matching its attributes.
 
@@ -151,6 +161,7 @@ class DSO(SkyObject):
             d = DSO.get(m=13)
 
         Args:
+            catalog: Catalog you want to search
             sql: SQL query for selecting DSO (table name is "_")
             **kwargs: Attributes on the DSO you want to match
 
@@ -161,7 +172,7 @@ class DSO(SkyObject):
         for k, v in kwargs.items():
             filters.append(getattr(_, k) == v)
 
-        df = load(filters=filters, sql=sql).to_pandas()
+        df = load(catalog=catalog, filters=filters, sql=sql).to_pandas()
 
         results = [from_tuple(d) for d in df.itertuples()]
 
@@ -176,11 +187,14 @@ class DSO(SkyObject):
         return None
 
     @classmethod
-    def find(cls, where: list = None, sql: str = None) -> list["DSO"]:
+    def find(
+        cls, catalog: Catalog = OPEN_NGC, where: list = None, sql: str = None
+    ) -> list["DSO"]:
         """
         Find DSOs
 
         Args:
+            catalog: Catalog you want to search
             where: A list of expressions that determine which DSOs to find. See [Selecting Objects](/reference-selecting-objects/) for details.
             sql: SQL query for selecting DSOs (table name is "_")
 
@@ -188,7 +202,7 @@ class DSO(SkyObject):
             List of DSOs that match all `where` expressions
 
         """
-        df = load(filters=where, sql=sql).to_pandas()
+        df = load(catalog=catalog, filters=where, sql=sql).to_pandas()
         return [from_tuple(d) for d in df.itertuples()]
 
     @classmethod

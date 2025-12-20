@@ -17,11 +17,12 @@ nav:
         - Styling: reference-styling.md
         - Callables: reference-callables.md
         - Data Catalogs:
-            - Star Catalogs: data/star-catalogs.md
-            - Star Designations: data/star-designations.md
-            - Deep Sky Objects: data/dsos.md
+            - Overview: data/overview.md
+            - Stars: data/stars.md
             - Constellations: data/constellations.md
+            - Deep Sky Objects: data/dsos.md
             - Building: data/building.md
+            - Star Designations: data/star-designations.md
         - Localization: reference-localization.md
         - Settings: reference-settings.md
     - Data Sources: data-sources.md

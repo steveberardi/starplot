@@ -3,49 +3,20 @@ from pathlib import Path
 from ibis import _, row_number
 from starplot.config import settings
 from starplot.data import bigsky, DataFiles, db
-from starplot.data.catalog import Catalog
+from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.data.translations import language_name_column, LANGUAGE_NAME_COLUMNS
 
 
-class StarCatalog:
-    """Built-in star catalogs"""
-
-    BIG_SKY_MAG9 = "big-sky-mag9"
-
-    """
-    [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 136,125 stars with limiting magnitude 9
-    
-    This is an _abridged_ version of the Big Sky Catalog.
-
-    This catalog is included with Starplot, so does not require downloading any files.
-    """
-
-    BIG_SKY = "big-sky"
-    """
-    [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 2.5M stars
-
-    This is the full version of the Big Sky Catalog, which includes 2,557,500 stars from Hipparcos, Tycho-1, and Tycho-2.
-
-    This catalog is very large (approx 100 MB), so it's not built-in to Starplot. When you plot stars and specify this catalog, the catalog 
-    will be downloaded from the [Big Sky GitHub repository](https://github.com/steveberardi/bigsky) and saved to Starplot's data library 
-    directory. You can override this download path with the environment variable `STARPLOT_DOWNLOAD_PATH`
-    
-    """
-
-
 def table(
-    catalog: StarCatalog | Catalog | Path | str = StarCatalog.BIG_SKY_MAG9,
+    catalog: Catalog | Path | str = BIG_SKY_MAG11,
     table_name="stars",
     language: str = "en-us",
 ):
     con = db.connect()
 
-    if catalog == StarCatalog.BIG_SKY_MAG9:
-        stars = con.read_parquet(DataFiles.BIG_SKY_MAG9, table_name=table_name)
-    elif catalog == StarCatalog.BIG_SKY:
-        bigsky.download_if_not_exists()
-        stars = con.read_parquet(DataFiles.BIG_SKY, table_name=table_name)
-    elif isinstance(catalog, Catalog):
+    if isinstance(catalog, Catalog):
+        if not catalog.exists():
+            catalog.download()
         stars = con.read_parquet(str(catalog.path), table_name=table_name)
     else:
         stars = con.read_parquet(str(catalog), table_name=table_name)
@@ -77,8 +48,8 @@ def table(
 
 
 def load(
+    catalog: Catalog | Path | str,
     extent=None,
-    catalog: StarCatalog | Catalog | Path | str = StarCatalog.BIG_SKY_MAG9,
     filters=None,
     sql=None,
 ):

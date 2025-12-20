@@ -111,7 +111,7 @@ def read_csv():
     df.drop("Dec", axis=1, inplace=True)
 
     df = df.rename(columns=COLUMN_MAP)
-    df = df.rename(columns={'ra_degrees': 'ra', 'dec_degrees': 'dec'})
+    df = df.rename(columns={"ra_degrees": "ra", "dec_degrees": "dec"})
 
     gdf = gpd.GeoDataFrame(
         df,
@@ -291,11 +291,10 @@ def dsos_all():
             elif dso_geom.area > MIN_SIZE:
                 gdf.loc[name, "geometry"] = dso_geom
 
-
     gdf["size"] = gdf.apply(_size, axis=1)
     gdf["geometry"] = gdf.apply(create_ellipse, axis=1)
     gdf["magnitude"] = gdf.apply(lambda d: d.mag_v or d.mag_b or None, axis=1)
-    
+
     # gdf.to_file(BUILD_PATH / "ongc2.json", driver="GeoJSON", engine="pyogrio")
 
     for d in gdf.itertuples():
@@ -350,5 +349,3 @@ def build():
         compression="snappy",
         row_group_size=100_000,
     )
-
-

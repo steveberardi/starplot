@@ -6,7 +6,8 @@ from ibis import _
 from shapely.geometry import Point
 
 from starplot.models.base import SkyObject
-from starplot.data.stars import StarCatalog, load as _load_stars
+from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
+from starplot.data.stars import load as _load_stars
 
 
 @dataclass(slots=True, kw_only=True)
@@ -73,7 +74,16 @@ class Star(SkyObject):
         return not bool(self.ccdm) or self.ccdm.startswith("A")
 
     @classmethod
-    def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9) -> Iterator["Star"]:
+    def all(cls, catalog: Catalog = BIG_SKY_MAG11) -> Iterator["Star"]:
+        """
+        Get all stars from a catalog
+
+        Args:
+            catalog: Catalog you want to get star objects from
+
+        Returns:
+            Iterator of Star instances
+        """
         df = _load_stars(catalog=catalog).to_pandas()
 
         for s in df.itertuples():
@@ -81,7 +91,7 @@ class Star(SkyObject):
 
     @classmethod
     def get(
-        cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9, sql: str = None, **kwargs
+        cls, catalog: Catalog = BIG_SKY_MAG11, sql: str = None, **kwargs
     ) -> Union["Star", None]:
         """
         Get a Star, by matching its attributes as specified in `**kwargs`
@@ -93,7 +103,7 @@ class Star(SkyObject):
             sirius = Star.get(name="Sirius")
 
         Args:
-            catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
+            catalog: The catalog of stars to use
             sql: SQL query for selecting star (table name is "_")
             **kwargs: Attributes on the star you want to match
 
@@ -124,17 +134,17 @@ class Star(SkyObject):
     @classmethod
     def find(
         cls,
+        catalog: Catalog = BIG_SKY_MAG11,
         where: list = None,
         sql: str = None,
-        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9,
     ) -> list["Star"]:
         """
         Find Stars
 
         Args:
+            catalog: The catalog of stars to use
             where: A list of expressions that determine which stars to find. See [Selecting Objects](/reference-selecting-objects/) for details.
             sql: SQL query for selecting stars (table name is "_")
-            catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
 
         Returns:
             List of Stars that match all `where` expressions

@@ -5,7 +5,8 @@ from ibis import _
 from shapely import Polygon, MultiPolygon
 
 from starplot.models.base import SkyObject
-from starplot.data import constellations, catalogs, Catalog
+from starplot.data.catalogs import Catalog, CONSTELLATIONS_IAU
+from starplot.data.constellations import load
 
 
 @dataclass(slots=True, kw_only=True)
@@ -38,14 +39,25 @@ class Constellation(SkyObject):
         return f"Constellation(iau_id={self.iau_id}, name={self.name}, ra={self.ra}, dec={self.dec})"
 
     @classmethod
-    def all(cls) -> Iterator["Constellation"]:
-        df = constellations.load().to_pandas()
+    def all(cls, catalog: Catalog = CONSTELLATIONS_IAU) -> Iterator["Constellation"]:
+        """
+        Get all constellations from a catalog
+
+        Args:
+            catalog: Catalog you want to get constellation objects from
+
+        Returns:
+            Iterator of Constellation instances
+        """
+        df = load(catalog=catalog).to_pandas()
 
         for c in df.itertuples():
             yield from_tuple(c)
 
     @classmethod
-    def get(cls, sql: str = None, catalog: Catalog = catalogs.CONSTELLATIONS_IAU, **kwargs) -> "Constellation":
+    def get(
+        cls, catalog: Catalog = CONSTELLATIONS_IAU, sql: str = None, **kwargs
+    ) -> "Constellation":
         """
         Get a Constellation, by matching its attributes.
 
@@ -54,6 +66,7 @@ class Constellation(SkyObject):
             hercules = Constellation.get(name="Hercules")
 
         Args:
+            catalog: The catalog of constellations to use
             sql: SQL query for selecting constellation (table name is "_")
             **kwargs: Attributes on the constellation you want to match
 
@@ -64,7 +77,7 @@ class Constellation(SkyObject):
         for k, v in kwargs.items():
             filters.append(getattr(_, k) == v)
 
-        df = constellations.load(filters=filters, sql=sql, catalog=catalog).to_pandas()
+        df = load(catalog=catalog, filters=filters, sql=sql).to_pandas()
         results = [from_tuple(c) for c in df.itertuples()]
 
         if len(results) == 1:
@@ -78,11 +91,17 @@ class Constellation(SkyObject):
         return None
 
     @classmethod
-    def find(cls, where: list = None, sql: str = None, catalog: Catalog = catalogs.CONSTELLATIONS_IAU) -> list["Constellation"]:
+    def find(
+        cls,
+        catalog: Catalog = CONSTELLATIONS_IAU,
+        where: list = None,
+        sql: str = None,
+    ) -> list["Constellation"]:
         """
         Find Constellations
 
         Args:
+            catalog: The catalog of constellations to use
             where: A list of expressions that determine which constellations to find. See [Selecting Objects](/reference-selecting-objects/) for details.
             sql: SQL query for selecting constellations (table name is "_")
 
@@ -90,7 +109,7 @@ class Constellation(SkyObject):
             List of Constellations that match all `where` expressions
 
         """
-        df = constellations.load(filters=where, sql=sql, catalog=catalog).to_pandas()
+        df = load(catalog=catalog, filters=where, sql=sql).to_pandas()
 
         return [from_tuple(c) for c in df.itertuples()]
 

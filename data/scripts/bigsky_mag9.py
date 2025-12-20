@@ -16,8 +16,8 @@ def build():
 
     bigsky.build(
         source_path=full_download_path,
-        destination_path=DataFiles.BIG_SKY_MAG9,
-        limiting_magnitude=9,
+        destination_path="data/build/bigsky-11.parquet",
+        limiting_magnitude=11,
     )
 
 

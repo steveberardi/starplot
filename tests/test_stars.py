@@ -1,6 +1,3 @@
-
-
-
 # def test_stars_load_default():
 #     """By default, stars.load should load the Big Sky MAG-11 catalog"""
 #     result = stars.load()

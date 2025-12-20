@@ -7,7 +7,7 @@ from skyfield.api import wgs84, Star as SkyfieldStar
 from starplot.coordinates import CoordinateSystem
 from starplot import callables
 from starplot.base import BasePlot, DPI
-from starplot.data.stars import StarCatalog
+from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star, Optic, Camera
 from starplot.models.observer import Observer
@@ -229,7 +229,7 @@ class OpticPlot(
         self,
         where: list = None,
         where_labels: list = None,
-        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG9,
+        catalog: Catalog = BIG_SKY_MAG11,
         style: ObjectStyle = None,
         rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,

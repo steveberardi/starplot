@@ -1,4 +1,13 @@
 
+
+::: starplot.data.catalogs.OPEN_NGC
+    options:
+        inherited_members: true
+        show_docstring_attributes: true
+        show_root_heading: true
+
+---
+
 <style>
 
     .md-content {

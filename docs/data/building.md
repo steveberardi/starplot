@@ -1,5 +1,8 @@
 # Building Custom Catalogs
 
+
+
+
 ::: starplot.data.Catalog
     options:
         inherited_members: true
@@ -25,7 +28,7 @@ from pathlib import Path
 from shapely import Point
 
 from starplot import Star
-from starplot.data.catalog import Catalog
+from starplot.data.catalogs import Catalog
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE.parent / "temp"

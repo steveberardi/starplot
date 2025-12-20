@@ -8,8 +8,7 @@ from skyfield.api import Star as SkyfieldStar, wgs84
 
 from starplot import callables
 from starplot.data import stars
-from starplot.data.catalog import Catalog
-from starplot.data.stars import StarCatalog
+from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.data.translations import translate
 from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, use_style
@@ -153,7 +152,7 @@ class StarPlotterMixin:
         self,
         where: list = None,
         where_labels: list = None,
-        catalog: StarCatalog | Catalog | Path | str = StarCatalog.BIG_SKY_MAG9,
+        catalog: Catalog | Path | str = BIG_SKY_MAG11,
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude,
         alpha_fn: Callable[[Star], float] = None,

@@ -4,6 +4,7 @@ from ibis import _
 import numpy as np
 
 from starplot.data.dsos import load
+from starplot.data.catalogs import Catalog, OPEN_NGC
 from starplot.data.translations import translate
 from starplot.models.dso import (
     DSO,
@@ -111,6 +112,7 @@ class DsoPlotterMixin:
         label_fn: Callable[[DSO], str] = DSO.get_label,
         sql: str = None,
         sql_labels: str = None,
+        catalog: Catalog = OPEN_NGC,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
@@ -138,7 +140,7 @@ class DsoPlotterMixin:
             legend_labels = {**DSO_LEGEND_LABELS, **legend_labels}
 
         extent = self._extent_mask()
-        dso_results = load(extent=extent, filters=where, sql=sql)
+        dso_results = load(extent=extent, filters=where, sql=sql, catalog=catalog)
 
         dso_results_labeled = dso_results
         for f in where_labels:

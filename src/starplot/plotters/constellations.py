@@ -10,8 +10,9 @@ from matplotlib.collections import LineCollection
 from ibis import _
 
 from starplot.coordinates import CoordinateSystem
-from starplot.data import constellations as condata, Catalog, catalogs
-from starplot.data.stars import load as load_stars, StarCatalog
+from starplot.data import constellations as condata
+from starplot.data.catalogs import Catalog, CONSTELLATIONS_IAU, BIG_SKY_MAG11
+from starplot.data.stars import load as load_stars
 from starplot.data.constellation_stars import CONSTELLATION_HIPS
 from starplot.models import Star, Constellation
 from starplot.models.constellation import from_tuple as constellation_from_tuple
@@ -64,7 +65,7 @@ class ConstellationPlotterMixin:
         Where (x, y) is the plotted coordinate system (RA/DEC or AZ/ALT)
         """
         results = load_stars(
-            catalog=StarCatalog.BIG_SKY_MAG9,
+            catalog=BIG_SKY_MAG11,
             filters=[_.hip.isin(CONSTELLATION_HIPS)],
         )
         df = results.to_pandas()
@@ -79,7 +80,7 @@ class ConstellationPlotterMixin:
         style: LineStyle = None,
         where: list = None,
         sql: str = None,
-        catalog: Catalog = catalogs.CONSTELLATIONS_IAU
+        catalog: Catalog = CONSTELLATIONS_IAU,
     ):
         """Plots the constellation lines **only**. To plot constellation borders and/or labels, see separate functions for them.
 

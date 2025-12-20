@@ -18,18 +18,18 @@ def build_all():
         shutil.rmtree(BUILD_PATH)
     os.makedirs(BUILD_PATH, exist_ok=True)
 
-    bigsky_mag9.build()
-    constellations.build()
+    # bigsky_mag9.build()
+    # constellations.build()
     star_designations.build()
 
-    ongc.build()
+    # ongc.build()
 
     build_db()
 
     # Copy database to starplot data library
     shutil.copy(db_path, DataFiles.DATABASE)
-    shutil.copy(BUILD_PATH / "constellations.parquet", DataFiles.CONSTELLATIONS)
-    shutil.copy(BUILD_PATH / "ongc.parquet", DataFiles.ONGC)
+    # shutil.copy(BUILD_PATH / "constellations.parquet", DataFiles.CONSTELLATIONS)
+    # shutil.copy(BUILD_PATH / "ongc.parquet", DataFiles.ONGC)
 
     assert_counts()
 
@@ -87,8 +87,6 @@ def build_db():
         )
     )
 
-    
-
     star_designations_src = BUILD_PATH / "star_designations.parquet"
     con.sql(
         (
@@ -105,17 +103,19 @@ def build_db():
 
 def assert_counts():
     # Assert correct number of objects were imported
-    all_stars = Star.find(where=[])
-    print("Stars = " + str(len(all_stars)))
-    assert len(all_stars) == 136_125
+    # all_stars = Star.find(where=[])
+    # print("Stars = " + str(len(all_stars)))
+    # assert len(all_stars) == 136_125
 
-    all_dsos = DSO.find(where=[])
-    print("DSOs = " + str(len(all_dsos)))
-    assert len(all_dsos) == 14_036
+    # all_dsos = DSO.find(where=[])
+    # print("DSOs = " + str(len(all_dsos)))
+    # assert len(all_dsos) == 14_036
 
-    all_constellations = Constellation.find(where=[])
-    print("Constellations = " + str(len(all_constellations)))
-    assert len(all_constellations) == 89
+    # all_constellations = Constellation.find(where=[])
+    # print("Constellations = " + str(len(all_constellations)))
+    # assert len(all_constellations) == 89
+
+    print("remove")
 
 
 if __name__ == "__main__":

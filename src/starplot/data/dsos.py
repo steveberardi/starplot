@@ -3,19 +3,21 @@ from pathlib import Path
 from ibis import _, row_number
 
 from starplot.config import settings
-from starplot.data import db, DataFiles
-from starplot.data.catalog import Catalog
+from starplot.data import db
+from starplot.data.catalogs import Catalog, OPEN_NGC
 from starplot.data.translations import language_name_column
 
 
 def table(
     language: str,
-    catalog: Catalog | Path | str = DataFiles.ONGC,
+    catalog: Catalog | Path | str,
 ):
     con = db.connect()
     table_name = "deep_sky_objects"
 
     if isinstance(catalog, Catalog):
+        if not catalog.exists():
+            catalog.download()
         dsos = con.read_parquet(str(catalog.path), table_name=table_name)
     else:
         dsos = con.read_parquet(str(catalog), table_name=table_name)
@@ -32,9 +34,14 @@ def table(
     )
 
 
-def load(extent=None, filters=None, sql=None):
+def load(
+    catalog: Catalog | Path | str,
+    extent=None,
+    filters=None,
+    sql=None,
+):
     filters = filters or []
-    dsos = table(language=settings.language)
+    dsos = table(language=settings.language, catalog=catalog)
 
     if extent:
         dsos = dsos.filter(_.geometry.intersects(extent))
