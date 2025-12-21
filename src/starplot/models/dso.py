@@ -136,10 +136,10 @@ class DSO(SkyObject):
     def __repr__(self) -> str:
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
 
-    def __post_init__(self):
-        self.magnitude = (
-            self.magnitude if self.magnitude and np.isfinite(self.magnitude) else None
-        )
+    # def __post_init__(self):
+    #     self.magnitude = (
+    #         self.magnitude if self.magnitude and np.isfinite(self.magnitude) else None
+    #     )
 
     @classmethod
     def all(cls, catalog: Catalog = OPEN_NGC) -> Iterator["DSO"]:
@@ -209,6 +209,7 @@ class DSO(SkyObject):
 
         """
         df = load(catalog=catalog, filters=where, sql=sql).to_pandas()
+        df = df.replace({np.nan: None})
         return [from_tuple(d) for d in df.itertuples()]
 
     @classmethod
