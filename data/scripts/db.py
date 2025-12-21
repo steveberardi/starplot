@@ -6,7 +6,8 @@ import duckdb
 from starplot import Star, DSO, Constellation
 from starplot.data import DataFiles
 
-import  star_designations, constellation_names, dso_names
+import star_designations, constellation_names, dso_names
+
 # bigsky_mag9, constellations, ongc,
 from data_settings import BUILD_PATH, RAW_PATH
 
@@ -32,7 +33,9 @@ def build_all():
     # Copy database to starplot data library
     shutil.copy(db_path, DataFiles.DATABASE)
     shutil.copy(BUILD_PATH / "star_designations.parquet", DataFiles.STAR_DESIGNATIONS)
-    shutil.copy(BUILD_PATH / "constellation_names.parquet", DataFiles.CONSTELLATION_NAMES)
+    shutil.copy(
+        BUILD_PATH / "constellation_names.parquet", DataFiles.CONSTELLATION_NAMES
+    )
     shutil.copy(BUILD_PATH / "dso_names.parquet", DataFiles.DSO_NAMES)
     # shutil.copy(BUILD_PATH / "ongc.parquet", DataFiles.ONGC)
 

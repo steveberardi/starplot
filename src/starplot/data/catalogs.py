@@ -88,7 +88,15 @@ class Catalog:
     def __post_init__(self):
         if not isinstance(self.path, Path):
             self.path = Path(self.path)
-        
+
+    def __eq__(self, other):
+        if isinstance(other, Catalog):
+            return self.path == other.path
+        return NotImplemented
+
+    def __hash__(self):
+        return hash(str(self.path))
+
     def exists(self) -> bool:
         """Returns true if the catalog path exists, else False."""
         return self.path.exists()

@@ -15,11 +15,11 @@ def walk_sub_directories(root_path):
 def get_translations(filename):
     """
     Returns dictionary in the following format:
-    
+
     {
         "language_code": {
             "id_column": "translation"
-        }    
+        }
     }
 
     Where "id_column" is the column to join on (e.g. "iau_id" for constellations)

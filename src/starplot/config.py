@@ -5,9 +5,6 @@ from pathlib import Path
 from dataclasses import dataclass, field
 
 
-
-
-
 def _get_path(var_name, default) -> Path:
     def _get():
         value = os.environ.get(var_name, default)

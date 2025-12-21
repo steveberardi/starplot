@@ -14,7 +14,8 @@ def build():
 
     translated = get_translations("dso_names.csv")
     language_columns = [
-        (language, language_name_column(language)) for language in translated.keys()
+        (language, language_name_column(language, column_prefix="common_names"))
+        for language in translated.keys()
     ]
 
     for ongc_name, name in translated["en-us"].items():

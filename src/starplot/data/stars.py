@@ -1,3 +1,4 @@
+from functools import cache
 from pathlib import Path
 
 from ibis import _, row_number
@@ -7,6 +8,7 @@ from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.data.translations import language_name_column, LANGUAGE_NAME_COLUMNS
 
 
+@cache
 def table(
     catalog: Catalog | Path | str = BIG_SKY_MAG11,
     table_name="stars",
@@ -54,7 +56,7 @@ def load(
     sql=None,
 ):
     filters = filters or []
-    stars = table(catalog, language=settings.language)
+    stars = table(catalog=catalog, language=settings.language)
 
     if extent:
         stars = stars.filter(stars.geometry.intersects(extent))

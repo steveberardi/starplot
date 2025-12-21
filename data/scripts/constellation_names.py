@@ -8,10 +8,12 @@ from starplot.data.translations import language_name_column
 from data_settings import RAW_PATH, BUILD_PATH
 from translations import get_translations
 
+
 def read_properties():
     with open(RAW_PATH / "constellations.json", "r") as constellation_props_file:
         content = constellation_props_file.read()
         return json.loads(content)
+
 
 def build():
     constellation_records = []

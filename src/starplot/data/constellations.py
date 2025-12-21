@@ -1,3 +1,4 @@
+from functools import cache
 from pathlib import Path
 
 from ibis import _, row_number
@@ -8,9 +9,10 @@ from starplot.data.catalogs import Catalog
 from starplot.data.translations import language_name_column, LANGUAGE_NAME_COLUMNS
 
 
+@cache
 def table(
-    language: str,
     catalog: Catalog | Path | str,
+    language: str,
 ):
     con = db.connect()
     table_name = "constellations"
@@ -24,9 +26,7 @@ def table(
 
     name_column = language_name_column(language)
     name_columns = ["name"] + LANGUAGE_NAME_COLUMNS
-    name_columns_missing = {
-        col for col in name_columns if col not in c.columns
-    }
+    name_columns_missing = {col for col in name_columns if col not in c.columns}
 
     if name_columns_missing and "iau_id" in c.columns:
         constellation_names = con.table("constellation_names")
@@ -58,7 +58,7 @@ def load(
     sql=None,
 ):
     filters = filters or []
-    c = table(language=settings.language, catalog=catalog)
+    c = table(catalog=catalog, language=settings.language)
 
     if extent:
         filters.append(_.boundary.intersects(extent))
