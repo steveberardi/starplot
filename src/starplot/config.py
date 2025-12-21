@@ -88,6 +88,7 @@ class Settings:
     - `fr` = French
     - `zh-CN` = Chinese. Make sure you have a good Chinese font installed (such as [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC)) and you'll also need to set that as the font in your plot's style.
     - `lt` = Lithuanian
+    - `fa` = Persian (Farsi). Make sure you have a Persian font installed that supports RTL (such as [Vazir](https://github.com/rastikerdar/vazir-font) or [Noto Sans Arabic](https://fonts.google.com/noto/specimen/Noto+Sans+Arabic)) and set it as the font in your plot's style.
 
     **🌐 Want to see another language available? Please help us add it! [Details here](https://github.com/steveberardi/starplot/tree/main/data/raw/translations).**
     """
