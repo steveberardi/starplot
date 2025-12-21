@@ -47,7 +47,7 @@ starplot = "starplot.cli:main"
 [tool.flit.sdist]
 include = [
     "src/starplot/data/library/sky.db", 
-    "src/starplot/data/library/bigsky*.parquet",
+    "src/starplot/data/library/*.parquet",
 ]
 
 [tool.pytest.ini_options]
