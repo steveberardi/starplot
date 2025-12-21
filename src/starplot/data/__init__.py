@@ -7,7 +7,7 @@ load = Loader(settings.data_path)  # used for loading ephemeris
 
 
 class DataFiles:
-    BIG_SKY = settings.download_path / "bigsky.0.4.0.stars.parquet"
+    BIG_SKY = settings.data_path / "bigsky.0.4.0.stars.parquet"
 
     BIG_SKY_MAG9 = DATA_PATH / "bigsky.0.4.0.stars.mag9.parquet"
 

@@ -16,7 +16,7 @@ def setup(options):
 
     fonts.load()
 
-    print(f"Installed to: {settings.duckdb_extension_path}")
+    print(f"Installed to: {settings.data_path}")
 
     if "--install-big-sky" in options:
         bigsky.download_if_not_exists()

@@ -65,7 +65,7 @@ def to_parquet(
     # print(gdf)
 
 
-@dataclass(frozen=True)
+@dataclass
 class Catalog:
     """Catalog of objects"""
 
@@ -85,6 +85,10 @@ class Catalog:
 
     # TODO : implement healpix
 
+    def __post_init__(self):
+        if not isinstance(self.path, Path):
+            self.path = Path(self.path)
+        
     def exists(self) -> bool:
         """Returns true if the catalog path exists, else False."""
         return self.path.exists()

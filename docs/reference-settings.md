@@ -1,8 +1,7 @@
 Starplot has a few global settings:
 
+- Data path
 - Language
-- Data download path
-- DuckDB extension path
 - SVG text rendering method
 
 You can override these values in two ways: through code or through environment variables.
@@ -38,7 +37,7 @@ To set values through environment variables, just add the `STARPLOT_` prefix to 
 
 ```shell
 
-STARPLOT_DOWNLOAD_PATH=/home/myuser/downloads
+STARPLOT_DATA_PATH=/home/myuser/data
 
 ```
 

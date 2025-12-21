@@ -20,7 +20,7 @@ def get_url(version: str = BIG_SKY_VERSION, filename: str = BIG_SKY_FILENAME):
 
 def download(
     url: str = None,
-    download_path: str = settings.download_path,
+    download_path: str = settings.data_path,
     download_filename: str = BIG_SKY_FILENAME,
     build_file: str = DataFiles.BIG_SKY,
 ):
