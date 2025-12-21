@@ -238,8 +238,11 @@ LABELS = {
 
 LANGUAGES = [
     "en-us",
+    "fa",
     "fr",
+    "lt",
     "zh-cn",
+    "zh-tw",
 ]
 
 
