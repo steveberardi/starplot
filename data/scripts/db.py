@@ -32,7 +32,6 @@ def build_all():
     shutil.copy(BUILD_PATH / "dso_names.parquet", DataFiles.DSO_NAMES)
 
 
-
 def build_db():
     con = duckdb.connect(db_path)
     con.install_extension("spatial")
@@ -115,6 +114,7 @@ def build_db():
 
     print("Sky.db created!")
     con.close()
+
 
 if __name__ == "__main__":
     build_all()
