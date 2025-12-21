@@ -5,11 +5,6 @@ from pathlib import Path
 from dataclasses import dataclass, field
 
 
-STARPLOT_PATH = Path(__file__).resolve().parent
-"""Path of starplot source"""
-
-DATA_PATH = STARPLOT_PATH / "data" / "library"
-"""Path of starplot data"""
 
 
 

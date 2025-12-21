@@ -16,4 +16,8 @@ def connect():
     connection.raw_sql(
         f"SET extension_directory = '{str(path)}';"
     )
+
+    connection.read_parquet(DataFiles.STAR_DESIGNATIONS, table_name="star_designations")
+    connection.read_parquet(DataFiles.CONSTELLATION_NAMES, table_name="constellation_names")
+    connection.read_parquet(DataFiles.DSO_NAMES, table_name="dso_names")
     return connection

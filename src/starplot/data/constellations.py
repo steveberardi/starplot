@@ -5,7 +5,7 @@ from ibis import _, row_number
 from starplot.config import settings
 from starplot.data import db
 from starplot.data.catalogs import Catalog
-from starplot.data.translations import language_name_column
+from starplot.data.translations import language_name_column, LANGUAGE_NAME_COLUMNS
 
 
 def table(
@@ -23,6 +23,23 @@ def table(
         c = con.read_parquet(str(catalog), table_name=table_name)
 
     name_column = language_name_column(language)
+    name_columns = ["name"] + LANGUAGE_NAME_COLUMNS
+    name_columns_missing = {
+        col for col in name_columns if col not in c.columns
+    }
+
+    if name_columns_missing and "iau_id" in c.columns:
+        constellation_names = con.table("constellation_names")
+        constellation_names = constellation_names.mutate(
+            name=getattr(constellation_names, language_name_column(language))
+        )
+        constellations_joined = c.join(
+            constellation_names,
+            c.iau_id == constellation_names.iau_id,
+            how="left",
+        )
+        c = constellations_joined.select(*c.columns, *name_columns_missing)
+
     if name_column not in c.columns:
         name_column = "name"
 

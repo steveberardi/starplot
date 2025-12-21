@@ -6,7 +6,8 @@ import duckdb
 from starplot import Star, DSO, Constellation
 from starplot.data import DataFiles
 
-import bigsky_mag9, constellations, ongc, star_designations
+import  star_designations, constellation_names, dso_names
+# bigsky_mag9, constellations, ongc,
 from data_settings import BUILD_PATH, RAW_PATH
 
 db_path = BUILD_PATH / "sky.db"
@@ -21,6 +22,8 @@ def build_all():
     # bigsky_mag9.build()
     # constellations.build()
     star_designations.build()
+    constellation_names.build()
+    dso_names.build()
 
     # ongc.build()
 
@@ -28,7 +31,9 @@ def build_all():
 
     # Copy database to starplot data library
     shutil.copy(db_path, DataFiles.DATABASE)
-    # shutil.copy(BUILD_PATH / "constellations.parquet", DataFiles.CONSTELLATIONS)
+    shutil.copy(BUILD_PATH / "star_designations.parquet", DataFiles.STAR_DESIGNATIONS)
+    shutil.copy(BUILD_PATH / "constellation_names.parquet", DataFiles.CONSTELLATION_NAMES)
+    shutil.copy(BUILD_PATH / "dso_names.parquet", DataFiles.DSO_NAMES)
     # shutil.copy(BUILD_PATH / "ongc.parquet", DataFiles.ONGC)
 
     assert_counts()
@@ -87,15 +92,33 @@ def build_db():
         )
     )
 
-    star_designations_src = BUILD_PATH / "star_designations.parquet"
-    con.sql(
-        (
-            "DROP TABLE IF EXISTS star_designations;"
-            f"CREATE TABLE star_designations AS (SELECT * FROM read_parquet('{star_designations_src}') );"
-            "CREATE INDEX star_designations_hip_idx ON star_designations (hip);"
-            "CREATE INDEX star_designations_name_idx ON star_designations (name);"
-        )
-    )
+    # star_designations_src = BUILD_PATH / "star_designations.parquet"
+    # con.sql(
+    #     (
+    #         "DROP TABLE IF EXISTS star_designations;"
+    #         f"CREATE TABLE star_designations AS (SELECT * FROM read_parquet('{star_designations_src}') );"
+    #         "CREATE INDEX star_designations_hip_idx ON star_designations (hip);"
+    #         "CREATE INDEX star_designations_name_idx ON star_designations (name);"
+    #     )
+    # )
+
+    # constellation_names_src = BUILD_PATH / "constellation_names.parquet"
+    # con.sql(
+    #     (
+    #         "DROP TABLE IF EXISTS constellation_names;"
+    #         f"CREATE TABLE constellation_names AS (SELECT * FROM read_parquet('{constellation_names_src}') );"
+    #         "CREATE INDEX constellation_names_iau_id_idx ON constellation_names (iau_id);"
+    #     )
+    # )
+
+    # dso_names_src = BUILD_PATH / "dso_names.parquet"
+    # con.sql(
+    #     (
+    #         "DROP TABLE IF EXISTS dso_names;"
+    #         f"CREATE TABLE dso_names AS (SELECT * FROM read_parquet('{dso_names_src}') );"
+    #         "CREATE INDEX dso_names_open_ngc_name_idx ON dso_names (open_ngc_name);"
+    #     )
+    # )
 
     print("Sky.db created!")
     con.close()
