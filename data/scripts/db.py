@@ -17,15 +17,9 @@ def build_all():
         shutil.rmtree(BUILD_PATH)
     os.makedirs(BUILD_PATH, exist_ok=True)
 
-    # bigsky_mag9.build()
-    # constellations.build()
     star_designations.build()
     constellation_names.build()
     dso_names.build()
-
-    import ongc
-
-    ongc.build()
 
     build_db()
 
@@ -36,9 +30,7 @@ def build_all():
         BUILD_PATH / "constellation_names.parquet", DataFiles.CONSTELLATION_NAMES
     )
     shutil.copy(BUILD_PATH / "dso_names.parquet", DataFiles.DSO_NAMES)
-    # shutil.copy(BUILD_PATH / "ongc.parquet", DataFiles.ONGC)
 
-    assert_counts()
 
 
 def build_db():
@@ -123,22 +115,6 @@ def build_db():
 
     print("Sky.db created!")
     con.close()
-
-
-def assert_counts():
-    # Assert correct number of objects were imported
-    # all_stars = Star.find(where=[])
-    # print("Stars = " + str(len(all_stars)))
-    # assert len(all_stars) == 136_125
-
-    # all_dsos = DSO.find(where=[])
-    # print("DSOs = " + str(len(all_dsos)))
-    # assert len(all_dsos) == 14_036
-
-    # all_constellations = Constellation.find(where=[])
-    # print("Constellations = " + str(len(all_constellations)))
-    # assert len(all_constellations) == 89
-
 
 if __name__ == "__main__":
     build_all()
