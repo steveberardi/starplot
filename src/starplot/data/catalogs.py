@@ -170,6 +170,7 @@ class Catalog:
                 chunk_id=chunk_ctr if chunk_ctr else None,
             )
 
+
 # --------------------------------------------------------
 #  Catalog definitions
 # --------------------------------------------------------
