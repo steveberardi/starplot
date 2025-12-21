@@ -3,12 +3,9 @@ import shutil
 
 import duckdb
 
-from starplot import Star, DSO, Constellation
 from starplot.data import DataFiles
 
 import star_designations, constellation_names, dso_names
-
-# bigsky_mag9, constellations, ongc,
 from data_settings import BUILD_PATH, RAW_PATH
 
 db_path = BUILD_PATH / "sky.db"
@@ -26,7 +23,9 @@ def build_all():
     constellation_names.build()
     dso_names.build()
 
-    # ongc.build()
+    import ongc
+
+    ongc.build()
 
     build_db()
 
@@ -44,7 +43,6 @@ def build_all():
 
 def build_db():
     con = duckdb.connect(db_path)
-
     con.install_extension("spatial")
     con.load_extension("spatial")
 
@@ -140,8 +138,6 @@ def assert_counts():
     # all_constellations = Constellation.find(where=[])
     # print("Constellations = " + str(len(all_constellations)))
     # assert len(all_constellations) == 89
-
-    print("remove")
 
 
 if __name__ == "__main__":
