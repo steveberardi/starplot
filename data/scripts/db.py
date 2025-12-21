@@ -47,34 +47,6 @@ def build_db():
         ),
     )
 
-    # Constellations - deprecated
-    # constellation_src = BUILD_PATH / "constellations.json"
-    # con.sql(
-    #     (
-    #         "DROP TABLE IF EXISTS constellations;"
-    #         f"CREATE TABLE constellations AS (SELECT * EXCLUDE (geom, star_hip_lines), geom AS geometry, CAST(star_hip_lines AS INTEGER[][]) as star_hip_lines from ST_Read('{constellation_src}'));"
-    #         # TODO : separate out constellation data (similar to stars), to make it easier to import constellations data
-    #         # constellations table should be geometry-free (can join later)
-    #         # original
-    #         # f"CREATE TABLE constellations AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{constellation_src}'));"
-    #         "CREATE INDEX constellations_boundary_idx ON constellations USING RTREE (geometry);"
-    #     )
-    # )
-
-    # Deep Sky Objects - deprecated
-    # dso_src = BUILD_PATH / "ongc.json"
-    # con.sql(
-    #     (
-    #         "DROP TABLE IF EXISTS deep_sky_objects;"
-    #         f"CREATE TABLE deep_sky_objects AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{dso_src}'));"
-    #         "CREATE INDEX dso_idx ON deep_sky_objects USING RTREE (geometry);"
-    #         "CREATE INDEX dso_name_idx ON deep_sky_objects (name);"
-    #         "CREATE INDEX dso_messier_idx ON deep_sky_objects (m);"
-    #         "CREATE INDEX dso_ngc_idx ON deep_sky_objects (ngc);"
-    #         "CREATE INDEX dso_ic_idx ON deep_sky_objects (ic);"
-    #     )
-    # )
-
     constellation_borders_src = RAW_PATH / "constellation_borders.json"
     con.sql(
         (

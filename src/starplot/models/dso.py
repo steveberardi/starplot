@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional, Iterator
 from enum import Enum
 
+import numpy as np
 from ibis import _
 from shapely import Polygon, MultiPolygon
 
@@ -134,6 +135,11 @@ class DSO(SkyObject):
 
     def __repr__(self) -> str:
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
+
+    def __post_init__(self):
+        self.magnitude = (
+            self.magnitude if self.magnitude and np.isfinite(self.magnitude) else None
+        )
 
     @classmethod
     def all(cls, catalog: Catalog = OPEN_NGC) -> Iterator["DSO"]:
