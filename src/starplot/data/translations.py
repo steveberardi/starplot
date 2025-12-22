@@ -252,4 +252,3 @@ def translate(text: str, language: str) -> str:
         return text
 
     return translation.title()
-
