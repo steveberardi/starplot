@@ -5,7 +5,7 @@ import pyarrow as pa
 
 from starplot.data.translations import language_name_column
 
-from data_settings import RAW_PATH, BUILD_PATH
+from data_settings import BUILD_PATH
 from translations import get_translations
 
 
