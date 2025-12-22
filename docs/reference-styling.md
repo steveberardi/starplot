@@ -155,29 +155,29 @@ After you create a plot instance and start plotting stuff (e.g. stars, DSOs, etc
 ### Via `style` kwarg {.mt-none}
 All plotting functions have an optional `style` kwarg that lets you pass in a dictionary of any styles you want to override for that plotting call. For example, here's how you can plot bright stars with a different marker and color than the plot's style:
 
-    ```python
-    p.stars(
-        where=[_.magnitude < 3],
-        style={
-            "marker": {
-                "symbol": "star",
-                "color": "red",
-            }
+```python
+p.stars(
+    where=[_.magnitude < 3],
+    style={
+        "marker": {
+            "symbol": "star",
+            "color": "red",
         }
-    )
-    ```
+    }
+)
+```
 
 
 ### Via `style__*` kwargs
 When you only want to override one or two style properties, it can be tedious to create a dictionary, so Starplot also lets you specify overrides through keyword arguments that start with `style__` and separate each level by `__`. For example, we could re-write the previous example like this:
 
-    ```python
-    p.stars(
-        where=[_.magnitude < 3],
-        style__marker__symbol="star",
-        style__marker__color="red",
-    )
-    ```
+```python
+p.stars(
+    where=[_.magnitude < 3],
+    style__marker__symbol="star",
+    style__marker__color="red",
+)
+```
 
 **When overriding styles like this, you only have to define style properties you want to override.** Other properties will be inherited from the plot's style.
 

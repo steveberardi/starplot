@@ -11,6 +11,7 @@ duckdb-extensions
 # Sky Object Database
 # ignore this because it's large and created on release
 sky.db
+*.parquet
 
 # Catalogs
 *.parquet
