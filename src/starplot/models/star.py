@@ -199,6 +199,7 @@ def from_tuple(star: tuple) -> Star:
     s = Star(
         ra=star.ra,
         dec=star.dec,
+        healpix_index=getattr(star, "healpix_index", None),
         constellation_id=getattr(star, "constellation_id", None),
         magnitude=star.magnitude,
         hip=getattr(star, "hip", None),

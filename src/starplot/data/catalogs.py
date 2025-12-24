@@ -1,8 +1,12 @@
+import glob
+
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 
-from shapely import Geometry
+from astropy import units as u
+from astropy_healpix import HEALPix
+from shapely import Geometry, Polygon, MultiPolygon
 
 from starplot.config import settings
 from starplot.models.base import SkyObject
@@ -81,17 +85,17 @@ class Catalog:
     healpix_nside: int = None
     """HEALPix resolution (NSIDE)"""
 
-    # TODO: object_type: Star | Constellation | DSO ?
-
-    # TODO : implement healpix
+    _healpix: HEALPix = None
 
     def __post_init__(self):
         if not isinstance(self.path, Path):
             self.path = Path(self.path)
+        if self.healpix_nside is not None:
+            self._healpix = HEALPix(nside=self.healpix_nside, order="nested")
 
     def __eq__(self, other):
         if isinstance(other, Catalog):
-            return self.path == other.path
+            return str(self.path) == str(other.path)
         return NotImplemented
 
     def __hash__(self):
@@ -99,7 +103,7 @@ class Catalog:
 
     def exists(self) -> bool:
         """Returns true if the catalog path exists, else False."""
-        return self.path.exists()
+        return any(glob.iglob(str(self.path)))
 
     def download(self):
         """Downloads the catalog from its URL to its path"""
@@ -108,6 +112,31 @@ class Catalog:
             self.path,
             f"Catalog: {self.url}",
         )
+
+    def healpix_ids_from_extent(self, extent: Polygon | MultiPolygon) -> list[int]:
+        """
+        Returns HEALPix ids from a given polygon or multipolygon
+
+        Args:
+            extent: Polygon or multipolygon to get the HEALPix ids for
+
+        Returns:
+            List of integer HEALPix ids that are in the geometry (inclusive)
+        """
+        healpix_ids = set()
+        polygons = extent.geoms if isinstance(extent, MultiPolygon) else [extent]
+
+        for p in polygons:
+            minx, miny, maxx, maxy = p.bounds
+            radius = max(abs(maxx - minx), abs(maxy - miny))
+            healpix_ids.update(
+                self._healpix.cone_search_lonlat(
+                    lon=p.centroid.x * u.deg,
+                    lat=p.centroid.y * u.deg,
+                    radius=radius * u.deg,
+                )
+            )
+        return healpix_ids
 
     @classmethod
     def build(
@@ -120,6 +149,7 @@ class Catalog:
         sorting_columns: list[str] = None,
         compression: str = "snappy",
         row_group_size: int = 200_000,
+        healpix_nside: int = None,
     ) -> None:
         """
         Creates a custom catalog of sky objects. Output is one or more Parquet files.
@@ -133,27 +163,35 @@ class Catalog:
             sorting_columns: List of columns to sort by
             compression: Type of compression to use
             row_group_size: Row group size for the catalog parquet file
-
+            healpix_nside: HEALPix NSIDE value
         """
 
         if not isinstance(path, Path):
             path = Path(path)
 
-        if partition_columns and not path.is_dir():
-            raise ValueError("Path must be a directory when using partition columns.")
+        if partition_columns:
+            path.mkdir(parents=True, exist_ok=True)
 
         chunk_ctr = 0
         columns = columns or []
         partition_columns = partition_columns or []
         sorting_columns = sorting_columns or []
-
         rows = []
+
+        hpix = None
+        if healpix_nside is not None:
+            hpix = HEALPix(nside=healpix_nside, order="nested")
+            columns.append("healpix_index")
 
         def serialize(obj):
             """Converts geometry types to WKB"""
             return obj.wkb if isinstance(obj, Geometry) else obj
 
         for row in objects:
+            if hpix:
+                idx = hpix.lonlat_to_healpix([row.ra] * u.deg, [row.dec] * u.deg)
+                row.healpix_index = idx[0]
+
             rows.append({column: serialize(getattr(row, column)) for column in columns})
 
             if len(rows) == chunk_size:

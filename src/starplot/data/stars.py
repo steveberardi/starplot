@@ -2,6 +2,8 @@ from functools import cache
 from pathlib import Path
 
 from ibis import _, row_number
+from shapely import Polygon, MultiPolygon
+
 from starplot.config import settings
 from starplot.data import db
 from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
@@ -17,9 +19,13 @@ def table(
     con = db.connect()
 
     if isinstance(catalog, Catalog):
-        if not catalog.exists():
+        if not catalog.exists() and catalog.url:
             catalog.download()
-        stars = con.read_parquet(str(catalog.path), table_name=table_name)
+        stars = con.read_parquet(
+            str(catalog.path),
+            table_name=table_name,
+            hive_partitioning=catalog.hive_partitioning,
+        )
     else:
         stars = con.read_parquet(str(catalog), table_name=table_name)
 
@@ -51,14 +57,17 @@ def table(
 
 def load(
     catalog: Catalog | Path | str,
-    extent=None,
+    extent: Polygon | MultiPolygon = None,
     filters=None,
     sql=None,
 ):
     filters = filters or []
     stars = table(catalog=catalog, language=settings.language)
 
-    if extent:
+    if catalog.healpix_nside and extent is not None:
+        healpix_indices = catalog.healpix_ids_from_extent(extent)
+        stars = stars.filter(stars.healpix_index.isin(healpix_indices))
+    elif extent:
         stars = stars.filter(stars.geometry.intersects(extent))
 
     if filters:

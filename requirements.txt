@@ -14,3 +14,4 @@ rtree==1.4.1
 requests==2.31.0
 duckdb==1.3.2
 ibis-framework[duckdb,geospatial]==10.8.0
+astropy-healpix==1.1.2

@@ -4,8 +4,10 @@ Starplot has a [Catalog][starplot.data.Catalog] class that represents a catalog 
 
 ::: starplot.data.Catalog
     options:
+        members_order: source
         inherited_members: true
         show_docstring_attributes: true
         show_root_heading: true
 
 
+<br/><br/>

@@ -30,6 +30,9 @@ class SkyObject(
     constellation_id: Optional[str] = None
     """Three-letter IAU id of the constellation that contains this object"""
 
+    healpix_index: int = None
+    """[HEALPix](https://en.wikipedia.org/wiki/HEALPix) pixel index of this object's RA/DEC"""
+
     def constellation(self):
         """Returns an instance of the [`Constellation`][starplot.models.Constellation] that contains this object, or `None` if no constellation is found."""
         from starplot.models import Constellation
