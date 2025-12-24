@@ -1,18 +1,5 @@
 # Building Custom Catalogs
 
-
-
-
-::: starplot.data.Catalog
-    options:
-        inherited_members: true
-        show_docstring_attributes: true
-        show_root_heading: true
-
-
-
-## Building Catalogs
-
 Building a new catalog is a two-step process:
 
 1. Creating a reader that reads some source data and yields sky objects

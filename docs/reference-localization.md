@@ -4,7 +4,7 @@
 Starplot's labels are available in the following languages:
 
 1. English (US) - default
-2. Chinese
+2. Chinese (Simplified and Traditional)
 3. French
 4. Lithuanian
 5. Persian (Farsi)
