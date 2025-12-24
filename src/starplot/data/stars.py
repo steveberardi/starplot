@@ -19,13 +19,7 @@ def table(
     con = db.connect()
 
     if isinstance(catalog, Catalog):
-        if not catalog.exists() and catalog.url:
-            catalog.download()
-        stars = con.read_parquet(
-            str(catalog.path),
-            table_name=table_name,
-            hive_partitioning=catalog.hive_partitioning,
-        )
+        stars = catalog._load(connection=con, table_name=table_name)
     else:
         stars = con.read_parquet(str(catalog), table_name=table_name)
 

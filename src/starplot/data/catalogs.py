@@ -6,6 +6,7 @@ from pathlib import Path
 
 from astropy import units as u
 from astropy_healpix import HEALPix
+from ibis import Table
 from shapely import Geometry, Polygon, MultiPolygon
 
 from starplot.config import settings
@@ -137,6 +138,15 @@ class Catalog:
                 )
             )
         return healpix_ids
+
+    def _load(self, connection, table_name) -> Table:
+        if not self.exists() and self.url:
+            self.download()
+        return connection.read_parquet(
+            str(self.path),
+            table_name=table_name,
+            hive_partitioning=self.hive_partitioning,
+        )
 
     @classmethod
     def build(
