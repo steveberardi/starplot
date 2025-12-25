@@ -121,9 +121,10 @@ class Star(SkyObject):
             sql=sql,
         )
 
-        table = table.order_by(table.ccdm)
-        df = table.to_pandas()
+        if "ccdm" in table.columns:
+            table = table.order_by(table.ccdm)
 
+        df = table.to_pandas()
         results = [from_tuple(s) for s in df.itertuples()]
 
         if results:

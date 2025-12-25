@@ -34,7 +34,7 @@ def table(
         col for col in designation_columns if col not in stars.columns
     }
 
-    if designation_columns_missing:
+    if designation_columns_missing and "hip" in stars.columns:
         designations = con.table("star_designations")
         designations = designations.mutate(
             name=getattr(designations, language_name_column(language))
