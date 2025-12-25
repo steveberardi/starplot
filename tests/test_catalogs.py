@@ -60,3 +60,4 @@ def test_build_catalog():
     assert star1.ra == 120
     assert star1.dec == 10
     assert star1.name == "star1"
+    assert len(list(Star.all(catalog=cat))) == 3
