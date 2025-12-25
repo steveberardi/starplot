@@ -55,7 +55,7 @@ include = [
 testpaths = ["./tests"]
 filterwarnings = ["ignore::DeprecationWarning"]
 
-[tool.ruff]
+[tool.ruff.lint]
 ignore = ["E501"]
 
 [tool.marimo.display]

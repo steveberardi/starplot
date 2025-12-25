@@ -1,4 +1,3 @@
-from functools import cache
 
 from ibis import duckdb
 
