@@ -1,4 +1,3 @@
-
 from ibis import duckdb
 
 from starplot.config import settings
