@@ -21,9 +21,7 @@ def table(
     table_name = "deep_sky_objects"
 
     if isinstance(catalog, Catalog):
-        if not catalog.exists():
-            catalog.download()
-        dsos = con.read_parquet(str(catalog.path), table_name=table_name)
+        dsos = catalog._load(connection=con, table_name=table_name)
     else:
         dsos = con.read_parquet(str(catalog), table_name=table_name)
 

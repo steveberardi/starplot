@@ -18,9 +18,7 @@ def table(
     table_name = "constellations"
 
     if isinstance(catalog, Catalog):
-        if not catalog.exists():
-            catalog.download()
-        c = con.read_parquet(str(catalog.path), table_name=table_name)
+        c = catalog._load(connection=con, table_name=table_name)
     else:
         c = con.read_parquet(str(catalog), table_name=table_name)
 
