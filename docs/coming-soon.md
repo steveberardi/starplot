@@ -1,11 +1,10 @@
 <table class="table-coming-soon">
     <tr>
-        <td>v0.18</td>
+        <td>v0.19</td>
         <td>
             <h4>⭐ Next Release ⭐</h4>
             <ul>
-                <li>Custom star catalogs</li>
-                <li>Custom sky cultures (constellations, star names)</li>
+                <li>Support for more coordinate systems</li>
             </ul>
         </td>
         <td></td>
@@ -20,7 +19,7 @@
         <td></td>
     </tr>
     <tr>
-        <td>v0.19+</td>
+        <td>v0.20+</td>
         <td>
             <ul>
                 <li>Planet moons</li>

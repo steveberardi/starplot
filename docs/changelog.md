@@ -2,6 +2,7 @@
 - Adds function for plotting an arrow, from one point to another or as a pointer to a target
 - Adds support for custom data catalogs for stars, DSOs, and constellations
 - Converts sky object models to data classes, improving performance when many objects are plotted
+- Adds Farsi translation
 
 
 ## v0.17.x

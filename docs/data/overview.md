@@ -10,54 +10,13 @@ Starplot has a [Catalog][starplot.data.Catalog] class that represents a catalog 
         show_root_heading: true
 
 
----
-
-
-## Stars
-
-Starplot has two officially supported star catalogs:
-
-::: starplot.data.catalogs.BIG_SKY
-    options:
-        inherited_members: true
-        show_docstring_attributes: true
-        show_root_heading: true
-
-
-
-::: starplot.data.catalogs.BIG_SKY_MAG11
-    options:
-        inherited_members: true
-        show_docstring_attributes: true
-        show_root_heading: true
-
----
-
-## Constellations
-
-::: starplot.data.catalogs.CONSTELLATIONS_IAU
-    options:
-        inherited_members: true
-        show_docstring_attributes: true
-        show_root_heading: true
-
----
-
-
-## Deep Sky Objects
-
-::: starplot.data.catalogs.OPEN_NGC
-    options:
-        inherited_members: true
-        show_docstring_attributes: true
-        show_root_heading: true
 
 
 ---
 
-## Building Custom Catalogs
+## Creating Catalogs
 
-Building a new catalog is a two-step process:
+Creating a new catalog is a two-step process:
 
 1. Creating a reader that reads some source data and yields sky objects
 2. Calling the class method `Catalog.build` with the iterable

@@ -18,7 +18,9 @@ class SkyObject(
     CreateOpticMixin,
 ):
     """
-    Basic sky object model.
+    Base class for sky objects. 
+    
+    All sky object classes inherit from this base class.
     """
 
     ra: float

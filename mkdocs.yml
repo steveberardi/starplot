@@ -22,7 +22,10 @@ nav:
             - Constellations: data/constellations.md
             - Deep Sky Objects: data/dsos.md
             - Building: data/building.md
-            - Star Designations: data/star-designations.md
+        - Object Names:
+            - Stars: object-names/stars.md
+            - Constellations: object-names/constellations.md
+            - Deep Sky Objects: object-names/dsos.md
         - Localization: reference-localization.md
         - Settings: reference-settings.md
     - Data Sources: data-sources.md

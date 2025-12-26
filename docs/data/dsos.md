@@ -1,4 +1,4 @@
-
+Starplot has one officially supported catalog of deep sky objects (DSOs):
 
 ::: starplot.data.catalogs.OPEN_NGC
     options:
@@ -6,7 +6,7 @@
         show_docstring_attributes: true
         show_root_heading: true
 
----
+
 
 <style>
 
@@ -17,7 +17,7 @@
 <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
 
-The table below shows all the deep sky objects (DSOs) available in Starplot's database.
+The table below shows all the deep sky objects (DSOs) available in OpenNGC's database.
 
 <div id="grid"></div>
 
