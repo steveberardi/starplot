@@ -2,10 +2,10 @@ from dataclasses import dataclass
 from typing import Optional, Iterator
 from enum import Enum
 
-import numpy as np
 from ibis import _
 from shapely import Polygon, MultiPolygon
 
+from starplot.data.utils import to_pandas
 from starplot.data.catalogs import Catalog, OPEN_NGC
 from starplot.data.dsos import load
 from starplot.models.base import SkyObject
@@ -152,7 +152,7 @@ class DSO(SkyObject):
         Returns:
             Iterator of DSO instances
         """
-        df = load(catalog=catalog).to_pandas()
+        df = to_pandas(load(catalog=catalog))
 
         for d in df.itertuples():
             yield from_tuple(d)
@@ -178,7 +178,7 @@ class DSO(SkyObject):
         for k, v in kwargs.items():
             filters.append(getattr(_, k) == v)
 
-        df = load(catalog=catalog, filters=filters, sql=sql).to_pandas()
+        df = to_pandas(load(catalog=catalog, filters=filters, sql=sql))
 
         results = [from_tuple(d) for d in df.itertuples()]
 
@@ -208,8 +208,7 @@ class DSO(SkyObject):
             List of DSOs that match all `where` expressions
 
         """
-        df = load(catalog=catalog, filters=where, sql=sql).to_pandas()
-        df = df.replace({np.nan: None})
+        df = to_pandas(load(catalog=catalog, filters=where, sql=sql))
         return [from_tuple(d) for d in df.itertuples()]
 
     @classmethod

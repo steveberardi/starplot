@@ -23,7 +23,7 @@ The table below shows all the star designations in Starplot's database, by their
             'Flamsteed',
         ],
         server: {
-            url: '../star_designations.json',
+            url: '/data/star_designations.json',
             then: data => data.map(star => [
                 star.hip,
                 star.name,

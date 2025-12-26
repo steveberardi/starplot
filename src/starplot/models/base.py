@@ -18,8 +18,8 @@ class SkyObject(
     CreateOpticMixin,
 ):
     """
-    Base class for sky objects. 
-    
+    Base class for sky objects.
+
     All sky object classes inherit from this base class.
     """
 

@@ -7,9 +7,7 @@ Starplot has one officially supported catalog of deep sky objects (DSOs):
         show_root_heading: true
 
 
-
 <style>
-
     .md-content {
         max-width: 100%;
     }
@@ -42,15 +40,15 @@ The table below shows all the deep sky objects (DSOs) available in OpenNGC's dat
             'Geometry',
         ],
         server: {
-            url: '../ongc.json',
+            url: '/data/ongc.json',
             then: data => data.map(dso => [
-                dso.Name,
-                dso.Type,
-                dso.RA,
-                dso.DEC,
-                dso.Magnitude,
-                dso.Size,
-                dso.Geometry,
+                dso.name,
+                dso.type,
+                dso.ra,
+                dso.dec,
+                dso.magnitude,
+                dso.size,
+                dso.geom_type,
             ])
         } ,
         language: {
@@ -62,3 +60,5 @@ The table below shows all the deep sky objects (DSOs) available in OpenNGC's dat
     }).render(document.getElementById("grid"));
 
 </script>
+
+<br/><br/>

@@ -74,9 +74,6 @@ profile:
 db: 
 	@$(DOCKER_RUN) "python data/scripts/db.py"
 
-ongc: 
-	@$(DOCKER_RUN) "python data/scripts/dso2.py"
-
 build-data-clean:
 	mkdir -p data/build
 	rm -rf data/build/*

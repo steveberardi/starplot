@@ -17,14 +17,14 @@ Note that Serpens is treated as two separate constellations in Starplot.
             limit: 50
         },
         columns: [
-            'IAU id', 
+            'IAU ID', 
             'Name',
         ],
         server: {
-            url: '../constellations.json',
+            url: '/data/constellations.json',
             then: data => data.map(c => [
-                c.name,
                 c.iau_id,
+                c.name,
             ])
         } ,
         language: {

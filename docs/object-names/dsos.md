@@ -1,12 +1,19 @@
 
+
+
+
+<style>
+
+    .md-content {
+        max-width: 100%;
+    }
+</style>
 <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
 
-The table below shows all the constellations in Starplot's database, with their names and IAU id.
+The table below shows all the deep sky objects (DSOs) available in OpenNGC's database.
 
-Note that Serpens is treated as two separate constellations in Starplot.
-
-<div id="grid" class="constellations-data-grid"></div>
+<div id="grid"></div>
 
 <script>
 
@@ -17,14 +24,29 @@ Note that Serpens is treated as two separate constellations in Starplot.
             limit: 50
         },
         columns: [
-            'Name',
-            'IAU id', 
+            { 
+                name: 'Name',
+                formatter: (cell) => gridjs.html(`<b>${cell}</b>`),
+            },
+            'Common Names',
+            'Type', 
+            'RA',
+            'DEC',
+            'Magnitude',
+            'Size (deg²)',
+            'Geometry',
         ],
         server: {
-            url: '../constellations.json',
-            then: data => data.map(c => [
-                c.name,
-                c.iau_id,
+            url: '/data/ongc.json',
+            then: data => data.map(dso => [
+                dso.name,
+                dso.common_names,
+                dso.type,
+                dso.ra,
+                dso.dec,
+                dso.magnitude,
+                dso.size,
+                dso.geom_type,
             ])
         } ,
         language: {
