@@ -62,7 +62,10 @@ def load(
     filters = filters or []
     dsos = table(catalog=catalog, language=settings.language)
 
-    if extent:
+    if catalog.healpix_nside and extent is not None:
+        healpix_indices = catalog.healpix_ids_from_extent(extent)
+        dsos = dsos.filter(dsos.healpix_index.isin(healpix_indices))
+    elif extent:
         dsos = dsos.filter(_.geometry.intersects(extent))
 
     filters.extend([_.ra.notnull() & _.dec.notnull()])
