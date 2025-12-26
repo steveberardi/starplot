@@ -16,6 +16,7 @@ RUN pip install uv
 RUN uv pip install --system -r requirements.txt
 RUN uv pip install --system -r requirements-dev.txt
 
+ENV STARPLOT_DATA_PATH=/starplot/data
 ENV PYTHONPATH=/starplot/src/
 
 RUN git config --global --add safe.directory /starplot

@@ -34,7 +34,6 @@ p.stars(
     ],
     bayer_labels=True,
     flamsteed_labels=True,
-    catalog="big-sky-mag11",
 )
 
 p.nebula(
