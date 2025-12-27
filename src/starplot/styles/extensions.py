@@ -28,6 +28,7 @@ ANTIQUE = load("antique.yml")
 NORD = load("nord.yml")
 CB_WONG = load("cb_wong.yml")
 COLOR_PRINT = load("color_print.yml")
+PUBLICATION = load("publication.yml")
 
 # Horizon Background Gradient Presets
 # GRADIENTS = load("gradient_presets.yml")

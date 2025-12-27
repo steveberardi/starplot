@@ -1,0 +1,8 @@
+star:
+  marker:
+    edge_width: 0
+    edge_color: null
+
+constellation_labels:
+  border_width: 0
+  border_color: null

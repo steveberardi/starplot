@@ -235,6 +235,7 @@ style = styles.PlotStyle().extend(
 - **Plot types**
     - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
+    - `PUBLICATION` - Styling rules tailored for plots that will be imported to design applications ([details](#extensions-publication))
 - **Gradients**
     - `GRADIENT_DAYLIGHT`
     - `GRADIENT_BOLD_SUNSET`
@@ -389,7 +390,20 @@ Basic styling tailored for map plots
     ```
 </div>
 
-    
+
+<!-- PUBLICATION -->
+<h2 class="doc doc-heading" id="extensions-publication"><code>PUBLICATION</code></h2>
+
+<div class="indent" markdown>
+Styling rules tailored for plots that will be imported to design applications
+
+???- star "Source"
+
+    ```yaml 
+    --8<-- "src/starplot/styles/ext/publication.yml"
+    ```
+</div>
+
 ---
 
 ## Code Reference
