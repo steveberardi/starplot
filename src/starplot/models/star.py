@@ -197,24 +197,8 @@ class Star(SkyObject):
 
 
 def from_tuple(star: tuple) -> Star:
-    s = Star(
-        ra=star.ra,
-        dec=star.dec,
-        healpix_index=getattr(star, "healpix_index", None),
-        constellation_id=getattr(star, "constellation_id", None),
-        magnitude=star.magnitude,
-        hip=getattr(star, "hip", None),
-        bv=getattr(star, "bv", None),
-        tyc=getattr(star, "tyc_id", None),
-        ccdm=getattr(star, "ccdm", None),
-        parallax_mas=getattr(star, "parallax_mas", None),
-        ra_mas_per_year=getattr(star, "ra_mas_per_year", None),
-        dec_mas_per_year=getattr(star, "dec_mas_per_year", None),
-        name=getattr(star, "name", None),
-        bayer=getattr(star, "bayer", None),
-        flamsteed=getattr(star, "flamsteed", None),
-        geometry=star.geometry,
-    )
+    kwargs = {f: getattr(star, f) for f in Star._fields() if getattr(star, f, None)}
+    s = Star(**kwargs)
     s._row_id = getattr(star, "rowid", None)
 
     # print(set(star._fields) )

@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from functools import cache
 from typing import Optional
 
@@ -50,3 +50,8 @@ class SkyObject(
     @cache
     def _dir(cls):
         return dir(cls)
+
+    @classmethod
+    @cache
+    def _fields(cls):
+        return [f.name for f in fields(cls)]

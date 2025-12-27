@@ -87,6 +87,9 @@ class DSO(SkyObject):
     So, you can use any attributes of this model in your callables. Note that some may be null.
     """
 
+    geometry: Polygon | MultiPolygon
+    """Shapely Polygon of the DSO's extent. Right ascension coordinates are in degrees (0...360)."""
+
     name: str = None
     """Name of the DSO (as specified in OpenNGC)"""
 
@@ -129,9 +132,6 @@ class DSO(SkyObject):
     """
     Index Catalogue (IC) identifier. *Note that this field is a string, to support objects like '4974 NED01'.*
     """
-
-    geometry: Polygon | MultiPolygon = None
-    """Shapely Polygon of the DSO's extent. Right ascension coordinates are in degrees (0...360)."""
 
     def __repr__(self) -> str:
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
@@ -237,23 +237,11 @@ class DSO(SkyObject):
 
 
 def from_tuple(d: tuple) -> DSO:
-    dso = DSO(
-        ra=d.ra,
-        dec=d.dec,
-        constellation_id=d.constellation_id,
-        name=d.name,
-        common_names=d.common_names.split(",") if d.common_names else [],
-        type=d.type,
-        maj_ax=d.maj_ax,
-        min_ax=d.min_ax,
-        angle=d.angle,
-        magnitude=d.magnitude,
-        size=d.size,
-        m=d.m,
-        ngc=d.ngc,
-        ic=d.ic,
-        geometry=d.geometry,
-    )
+    kwargs = {f: getattr(d, f) for f in DSO._fields() if getattr(d, f, None)}
+    if "common_names" in kwargs:
+        kwargs["common_names"] = kwargs["common_names"].split(",")
+
+    dso = DSO(**kwargs)
     dso._row_id = getattr(d, "rowid", None)
     return dso
 

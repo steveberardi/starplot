@@ -55,7 +55,9 @@ class ConstellationPlotterMixin:
         return display_x > 0 and display_y > 0
 
     @profile
-    def _prepare_constellation_stars(self, constellations: list[Constellation]) -> dict[int, tuple[float, float]]:
+    def _prepare_constellation_stars(
+        self, constellations: list[Constellation]
+    ) -> dict[int, tuple[float, float]]:
         """
         Returns dictionary of stars and their position:
 
