@@ -8,7 +8,7 @@ from shapely import Polygon, MultiPolygon
 from starplot.data.utils import to_pandas
 from starplot.data.catalogs import Catalog, OPEN_NGC
 from starplot.data.dsos import load
-from starplot.models.base import SkyObject
+from starplot.models.base import SkyObject, CatalogObject
 
 
 class DsoType(str, Enum):
@@ -81,7 +81,7 @@ class DsoType(str, Enum):
 
 
 @dataclass(slots=True, kw_only=True)
-class DSO(SkyObject):
+class DSO(CatalogObject, SkyObject):
     """
     Deep Sky Object (DSO) model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting DSOs.
     So, you can use any attributes of this model in your callables. Note that some may be null.
@@ -237,8 +237,8 @@ class DSO(SkyObject):
 
 
 def from_tuple(d: tuple) -> DSO:
-    kwargs = {f: getattr(d, f) for f in DSO._fields() if getattr(d, f, None)}
-    if "common_names" in kwargs:
+    kwargs = {f: getattr(d, f) for f in DSO._fields() if hasattr(d, f)}
+    if "common_names" in kwargs and kwargs["common_names"] is not None:
         kwargs["common_names"] = kwargs["common_names"].split(",")
 
     dso = DSO(**kwargs)

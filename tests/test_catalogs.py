@@ -9,6 +9,7 @@ from .utils import TEST_DATA_PATH
 def test_build_catalog():
     stars = [
         Star(
+            pk=1,
             ra=120,
             dec=10,
             magnitude=1,
@@ -17,6 +18,7 @@ def test_build_catalog():
             geometry=Point(120, 10),
         ),
         Star(
+            pk=2,
             ra=140,
             dec=15,
             magnitude=4,
@@ -25,6 +27,7 @@ def test_build_catalog():
             geometry=Point(140, 15),
         ),
         Star(
+            pk=3,
             ra=160,
             dec=20,
             magnitude=5,
@@ -42,6 +45,7 @@ def test_build_catalog():
         columns=[
             "ra",
             "dec",
+            "pk",
             "magnitude",
             "epoch_year",
             "name",

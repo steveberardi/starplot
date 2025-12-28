@@ -46,6 +46,7 @@ def table(
         name=getattr(c, name_column),
         rowid=row_number(),
         sk=row_number(),
+        pk=row_number()
     )
 
 
@@ -76,7 +77,7 @@ def load_borders(extent=None, filters=None):
     filters = filters or []
     con = db.connect()
     c = con.table("constellation_borders")
-    c = c.mutate(rowid=row_number())
+    c = c.mutate(pk=row_number())
 
     if extent:
         filters.append(_.geometry.intersects(extent))

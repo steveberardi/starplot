@@ -48,6 +48,7 @@ def table(
         common_names=getattr(dsos, name_column),
         rowid=row_number(),
         sk=row_number(),
+        pk=row_number(),
     )
 
 

@@ -32,6 +32,8 @@ def to_parquet(
     df = df.sort_values(sorting_columns)
 
     table = pa.Table.from_pandas(df)
+    if "__index_level_0__" in table.column_names:
+        table = table.drop_columns("__index_level_0__")
     sort_columns = [pq.SortingColumn(columns.index(c)) for c in sorting_columns]
 
     if partition_columns:

@@ -5,13 +5,13 @@ import numpy as np
 from ibis import _
 from shapely.geometry import Point
 
-from starplot.models.base import SkyObject
+from starplot.models.base import SkyObject, CatalogObject
 from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.data.stars import load as _load_stars
 
 
 @dataclass(slots=True, kw_only=True)
-class Star(SkyObject):
+class Star(CatalogObject, SkyObject):
     """
     Star model.
     """
@@ -197,7 +197,7 @@ class Star(SkyObject):
 
 
 def from_tuple(star: tuple) -> Star:
-    kwargs = {f: getattr(star, f) for f in Star._fields() if getattr(star, f, None)}
+    kwargs = {f: getattr(star, f) for f in Star._fields() if hasattr(star, f)}
     s = Star(**kwargs)
     s._row_id = getattr(star, "rowid", None)
 

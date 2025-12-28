@@ -20,7 +20,7 @@ Catalogue of Constellation Boundary Data; Davenhall A.C., Leggett S.K. (1989) [V
 Created by Steve Berardi with QGIS + GDAL from NASA's [Deep Star Maps](https://svs.gsfc.nasa.gov/4851)
 
 
-!!! star "New - Custom Catalogs"
+!!! star "🎉 New! Custom Catalogs"
     Starplot now supports custom data catalogs for stars, constellations, and DSOs!
     
     [See the overview for more information](data/overview.md).

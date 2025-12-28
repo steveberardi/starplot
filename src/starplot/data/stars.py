@@ -27,6 +27,7 @@ def table(
         geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
         rowid=row_number(),
         sk=row_number(),
+        pk=row_number(),
     )
 
     designation_columns = ["name", "bayer", "flamsteed"] + LANGUAGE_NAME_COLUMNS

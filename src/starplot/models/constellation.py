@@ -4,13 +4,13 @@ from dataclasses import dataclass
 from ibis import _
 from shapely import Polygon, MultiPolygon
 
-from starplot.models.base import SkyObject
+from starplot.models.base import SkyObject, CatalogObject
 from starplot.data.catalogs import Catalog, CONSTELLATIONS_IAU
 from starplot.data.constellations import load
 
 
 @dataclass(slots=True, kw_only=True)
-class Constellation(SkyObject):
+class Constellation(CatalogObject, SkyObject):
     """
     Constellation model.
     """
@@ -129,6 +129,6 @@ class Constellation(SkyObject):
 
 
 def from_tuple(c: tuple) -> Constellation:
-    kwargs = {f: getattr(c, f) for f in Constellation._fields() if getattr(c, f, None)}
+    kwargs = {f: getattr(c, f) for f in Constellation._fields() if hasattr(c, f)}
     c = Constellation(**kwargs)
     return c
