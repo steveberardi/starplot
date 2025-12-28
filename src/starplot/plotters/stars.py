@@ -211,11 +211,11 @@ class StarPlotterMixin:
 
         if sql_labels:
             result = (
-                star_results_labeled.alias("_").sql(sql_labels).select("sk").execute()
+                star_results_labeled.alias("_").sql(sql_labels).select("pk").execute()
             )
-            skids = result["sk"].to_list()
+            pks = result["pk"].to_list()
             star_results_labeled = star_results_labeled.filter(
-                ibis_table.sk.isin(skids)
+                ibis_table.pk.isin(pks)
             )
 
         label_row_ids = star_results_labeled.to_pandas()["rowid"].tolist()

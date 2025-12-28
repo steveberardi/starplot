@@ -47,7 +47,6 @@ def table(
         geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
         common_names=getattr(dsos, name_column),
         rowid=row_number(),
-        sk=row_number(),
         pk=row_number(),
     )
 
@@ -73,8 +72,8 @@ def load(
         dsos = dsos.filter(*filters)
 
     if sql:
-        result = dsos.alias("_").sql(sql).select("sk").execute()
-        skids = result["sk"].to_list()
-        dsos = dsos.filter(_.sk.isin(skids))
+        result = dsos.alias("_").sql(sql).select("pk").execute()
+        pks = result["pk"].to_list()
+        dsos = dsos.filter(_.pk.isin(pks))
 
     return dsos

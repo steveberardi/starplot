@@ -45,7 +45,6 @@ def table(
         boundary=_.boundary.cast("geometry"),  # cast WKB to geometry type
         name=getattr(c, name_column),
         rowid=row_number(),
-        sk=row_number(),
         pk=row_number()
     )
 
@@ -66,9 +65,9 @@ def load(
         c = c.filter(*filters)
 
     if sql:
-        result = c.alias("_").sql(sql).select("sk").execute()
-        skids = result["sk"].to_list()
-        c = c.filter(_.sk.isin(skids))
+        result = c.alias("_").sql(sql).select("pk").execute()
+        pks = result["pk"].to_list()
+        c = c.filter(_.pk.isin(pks))
 
     return c
 

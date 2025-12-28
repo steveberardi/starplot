@@ -148,10 +148,10 @@ class DsoPlotterMixin:
 
         if sql_labels:
             result = (
-                dso_results_labeled.alias("_").sql(sql_labels).select("sk").execute()
+                dso_results_labeled.alias("_").sql(sql_labels).select("pk").execute()
             )
-            skids = result["sk"].to_list()
-            dso_results_labeled = dso_results_labeled.filter(_.sk.isin(skids))
+            pks = result["pk"].to_list()
+            dso_results_labeled = dso_results_labeled.filter(_.pk.isin(pks))
 
         label_row_ids = dso_results_labeled.to_pandas()["rowid"].tolist()
 

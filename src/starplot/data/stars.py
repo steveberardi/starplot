@@ -26,7 +26,6 @@ def table(
     stars = stars.mutate(
         geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
         rowid=row_number(),
-        sk=row_number(),
         pk=row_number(),
     )
 
@@ -69,8 +68,8 @@ def load(
         stars = stars.filter(*filters)
 
     if sql:
-        result = stars.alias("_").sql(sql).select("sk").execute()
-        skids = result["sk"].to_list()
-        stars = stars.filter(_.sk.isin(skids))
+        result = stars.alias("_").sql(sql).select("pk").execute()
+        pks = result["pk"].to_list()
+        stars = stars.filter(_.pk.isin(pks))
 
     return stars
