@@ -199,13 +199,10 @@ class Star(CatalogObject, SkyObject):
 def from_tuple(star: tuple) -> Star:
     kwargs = {f: getattr(star, f) for f in Star._fields() if hasattr(star, f)}
     s = Star(**kwargs)
-    s._row_id = getattr(star, "rowid", None)
 
     # print(set(star._fields) )
     # populate extra fields
     # fields = Star._dir() + [
-    #     'rowid',
-    #     # 'sk',
     #     'Index',
     #     'constellation',
     #     'constellation_id',

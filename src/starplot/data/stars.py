@@ -25,7 +25,6 @@ def table(
 
     stars = stars.mutate(
         geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
-        rowid=row_number(),
         pk=row_number(),
     )
 

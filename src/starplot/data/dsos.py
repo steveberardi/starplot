@@ -46,7 +46,6 @@ def table(
     return dsos.mutate(
         geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
         common_names=getattr(dsos, name_column),
-        rowid=row_number(),
         pk=row_number(),
     )
 

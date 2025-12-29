@@ -60,7 +60,7 @@ class StarPlotterMixin:
         self,
         star_objects: list[Star],
         star_sizes: list[float],
-        label_row_ids: list,
+        label_pks: list,
         style: ObjectStyle,
         bayer_labels: bool,
         flamsteed_labels: bool,
@@ -71,7 +71,7 @@ class StarPlotterMixin:
 
         # Plot all star common names first
         for i, s in enumerate(star_objects):
-            if s._row_id not in label_row_ids:
+            if s.pk not in label_pks:
                 continue
 
             if (
@@ -214,11 +214,9 @@ class StarPlotterMixin:
                 star_results_labeled.alias("_").sql(sql_labels).select("pk").execute()
             )
             pks = result["pk"].to_list()
-            star_results_labeled = star_results_labeled.filter(
-                ibis_table.pk.isin(pks)
-            )
+            star_results_labeled = star_results_labeled.filter(ibis_table.pk.isin(pks))
 
-        label_row_ids = star_results_labeled.to_pandas()["rowid"].tolist()
+        label_pks = star_results_labeled.to_pandas()["pk"].tolist()
 
         stars_df = star_results.to_pandas()
         stars_df["ra_hours"], stars_df["dec_degrees"] = (stars_df.ra / 15, stars_df.dec)
@@ -327,7 +325,7 @@ class StarPlotterMixin:
         self._star_labels(
             star_objects,
             sizes,
-            label_row_ids,
+            label_pks,
             style,
             bayer_labels,
             flamsteed_labels,

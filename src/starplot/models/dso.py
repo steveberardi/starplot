@@ -241,9 +241,7 @@ def from_tuple(d: tuple) -> DSO:
     if "common_names" in kwargs and kwargs["common_names"] is not None:
         kwargs["common_names"] = kwargs["common_names"].split(",")
 
-    dso = DSO(**kwargs)
-    dso._row_id = getattr(d, "rowid", None)
-    return dso
+    return DSO(**kwargs)
 
 
 ONGC_TYPE = {

@@ -12,7 +12,6 @@ def constellation_at():
     return load_constellation_map()
 
 
-
 @dataclass(slots=True, kw_only=True)
 class SkyObject(
     CreateMapMixin,
@@ -57,8 +56,8 @@ class SkyObject(
     def _fields(cls):
         return [f.name for f in fields(cls)]
 
+
 @dataclass(kw_only=True)
 class CatalogObject:
     pk: int
     """Primary key of object in catalog. Needs to be unique across all objects in the catalog."""
-

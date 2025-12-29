@@ -153,7 +153,7 @@ class DsoPlotterMixin:
             pks = result["pk"].to_list()
             dso_results_labeled = dso_results_labeled.filter(_.pk.isin(pks))
 
-        label_row_ids = dso_results_labeled.to_pandas()["rowid"].tolist()
+        label_pks = dso_results_labeled.to_pandas()["pk"].tolist()
 
         results_df = dso_results.to_pandas()
         results_df = results_df.replace({np.nan: None})
@@ -177,7 +177,7 @@ class DsoPlotterMixin:
             _alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
             style.marker.alpha = _alpha_fn(_dso)
 
-            if _dso._row_id not in label_row_ids:
+            if _dso.pk not in label_pks:
                 label = None
 
             if true_size and d.size is not None:
