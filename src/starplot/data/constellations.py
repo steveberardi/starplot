@@ -44,7 +44,6 @@ def table(
     return c.mutate(
         boundary=_.boundary.cast("geometry"),  # cast WKB to geometry type
         name=getattr(c, name_column),
-        pk=row_number(),
     )
 
 

@@ -25,7 +25,6 @@ def table(
 
     stars = stars.mutate(
         geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
-        pk=row_number(),
     )
 
     designation_columns = ["name", "bayer", "flamsteed"] + LANGUAGE_NAME_COLUMNS

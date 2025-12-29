@@ -238,8 +238,8 @@ class Catalog:
 # --------------------------------------------------------
 
 BIG_SKY = Catalog(
-    path=settings.data_path / "stars.bigksy.0.1.0.mag16.parquet",
-    url="https://github.com/steveberardi/starplot-bigsky/releases/download/v0.1.0/stars.bigksy.0.1.0.mag16.parquet",
+    path=settings.data_path / "stars.bigksy.0.1.1.mag16.parquet",
+    url="https://github.com/steveberardi/starplot-bigsky/releases/download/v0.1.1/stars.bigksy.0.1.1.mag16.parquet",
 )
 """
 [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 2.5M stars
@@ -248,8 +248,8 @@ This is the full version of the Big Sky Catalog, which includes 2,557,500 stars 
 """
 
 BIG_SKY_MAG11 = Catalog(
-    path=settings.data_path / "stars.bigksy.0.1.0.mag11.parquet",
-    url="https://github.com/steveberardi/starplot-bigsky/releases/download/v0.1.0/stars.bigksy.0.1.0.mag11.parquet",
+    path=settings.data_path / "stars.bigksy.0.1.1.mag11.parquet",
+    url="https://github.com/steveberardi/starplot-bigsky/releases/download/v0.1.1/stars.bigksy.0.1.1.mag11.parquet",
 )
 """
 [Big Sky Catalog](https://github.com/steveberardi/bigsky) ~ 136,125 stars with limiting magnitude 11
@@ -258,16 +258,16 @@ This is an _abridged_ version of the Big Sky Catalog.
 """
 
 OPEN_NGC = Catalog(
-    path=settings.data_path / "ongc.0.1.0.parquet",
-    url="https://github.com/steveberardi/starplot-ongc/releases/download/v0.1.0/ongc.0.1.0.parquet",
+    path=settings.data_path / "ongc.0.1.1.parquet",
+    url="https://github.com/steveberardi/starplot-ongc/releases/download/v0.1.1/ongc.0.1.1.parquet",
 )
 """
 [OpenNGC](https://github.com/mattiaverga/OpenNGC) catalog, including nebulae outlines.
 """
 
 CONSTELLATIONS_IAU = Catalog(
-    path=settings.data_path / "constellations-iau-0.1.0.parquet",
-    url="https://github.com/steveberardi/starplot-constellations/releases/download/v0.1.0/constellations.0.1.0.parquet",
+    path=settings.data_path / "constellations-iau-0.1.1.parquet",
+    url="https://github.com/steveberardi/starplot-constellations/releases/download/v0.1.1/constellations.0.1.1.parquet",
 )
 """
 Constellations recognized by IAU, with lines by Sky & Telescope.
