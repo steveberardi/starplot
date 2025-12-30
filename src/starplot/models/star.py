@@ -3,7 +3,7 @@ from typing import Optional, Union, Iterator
 
 import numpy as np
 from ibis import _
-from shapely.geometry import Point
+from shapely import from_wkb, Point, Geometry
 
 from starplot.models.base import SkyObject, CatalogObject
 from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
@@ -198,6 +198,8 @@ class Star(CatalogObject, SkyObject):
 
 def from_tuple(star: tuple) -> Star:
     kwargs = {f: getattr(star, f) for f in Star._fields() if hasattr(star, f)}
+    if not isinstance(kwargs["geometry"], Geometry):
+        kwargs["geometry"] = from_wkb(kwargs["geometry"])
     s = Star(**kwargs)
 
     # print(set(star._fields) )
