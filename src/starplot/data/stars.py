@@ -1,7 +1,7 @@
 from functools import cache
 from pathlib import Path
 
-from ibis import _, row_number
+from ibis import _
 from shapely import Polygon, MultiPolygon
 
 from starplot.config import settings

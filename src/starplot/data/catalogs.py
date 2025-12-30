@@ -133,11 +133,14 @@ class Catalog:
             minx, miny, maxx, maxy = p.bounds
             radius = max(abs(maxx - minx), abs(maxy - miny))
             healpix_ids.update(
-                self._healpix.cone_search_lonlat(
-                    lon=p.centroid.x * u.deg,
-                    lat=p.centroid.y * u.deg,
-                    radius=radius * u.deg,
-                )
+                [
+                    int(i)
+                    for i in self._healpix.cone_search_lonlat(
+                        lon=p.centroid.x * u.deg,
+                        lat=p.centroid.y * u.deg,
+                        radius=radius * u.deg,
+                    )
+                ]
             )
         return healpix_ids
 
