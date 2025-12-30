@@ -3,6 +3,7 @@
 - Adds support for custom data catalogs for stars, DSOs, and constellations
 - Converts sky object models to data classes, improving performance when many objects are plotted
 - Adds Farsi translation
+- Increases max field of view for optic plots to 20 degrees
 
 
 ## v0.17.x
