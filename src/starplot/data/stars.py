@@ -58,7 +58,7 @@ def load(
     stars = table(catalog=catalog, language=settings.language)
 
     if (
-        catalog.spatial_query_method == SpatialQueryMethod.HEALPIX
+        catalog.spatial_query_method == SpatialQueryMethod.HEALPIX.value
         and catalog.healpix_nside
         and extent is not None
     ):
