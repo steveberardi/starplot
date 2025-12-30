@@ -1,4 +1,5 @@
 import glob
+from enum import Enum
 
 from collections.abc import Iterable
 from dataclasses import dataclass
@@ -72,6 +73,11 @@ def to_parquet(
     # print(gdf)
 
 
+class SpatialQueryMethod(Enum):
+    GEOMETRY = "geometry"
+    HEALPIX = "healpix"
+
+
 @dataclass
 class Catalog:
     """Catalog of objects"""
@@ -87,6 +93,8 @@ class Catalog:
 
     healpix_nside: int = None
     """HEALPix resolution (NSIDE)"""
+
+    spatial_query_method: SpatialQueryMethod = SpatialQueryMethod.GEOMETRY
 
     _healpix: HEALPix = None
 

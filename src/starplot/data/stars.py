@@ -6,7 +6,7 @@ from shapely import Polygon, MultiPolygon
 
 from starplot.config import settings
 from starplot.data import db
-from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
+from starplot.data.catalogs import Catalog, SpatialQueryMethod, BIG_SKY_MAG11
 from starplot.data.translations import language_name_column, LANGUAGE_NAME_COLUMNS
 
 
@@ -23,9 +23,10 @@ def table(
     else:
         stars = con.read_parquet(str(catalog), table_name=table_name)
 
-    stars = stars.mutate(
-        geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
-    )
+    if catalog.spatial_query_method == SpatialQueryMethod.GEOMETRY:
+        stars = stars.mutate(
+            geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
+        )
 
     designation_columns = ["name", "bayer", "flamsteed"] + LANGUAGE_NAME_COLUMNS
     designation_columns_missing = {
@@ -56,7 +57,11 @@ def load(
     filters = filters or []
     stars = table(catalog=catalog, language=settings.language)
 
-    if catalog.healpix_nside and extent is not None:
+    if (
+        catalog.spatial_query_method == SpatialQueryMethod.HEALPIX
+        and catalog.healpix_nside
+        and extent is not None
+    ):
         healpix_indices = catalog.healpix_ids_from_extent(extent)
         stars = stars.filter(stars.healpix_index.isin(healpix_indices))
     elif extent:
