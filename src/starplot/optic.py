@@ -197,7 +197,10 @@ class OpticPlot(
         self.dec_min = ex[0][1]
         self.dec_max = ex[2][1]
 
-        # TODO : handle < 0
+        if self.ra_max < 0:
+            self.ra_max += 360
+        if self.ra_min < 0:
+            self.ra_min += 360
 
         # handle wrapping
         if self.ra_max < self.ra_min:
