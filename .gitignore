@@ -12,6 +12,7 @@ duckdb-extensions
 # ignore this because it's large and created on release
 sky.db
 *.parquet
+gaia*/
 
 # Catalogs
 *.parquet

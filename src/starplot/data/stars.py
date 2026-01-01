@@ -57,6 +57,9 @@ def load(
     filters = filters or []
     stars = table(catalog=catalog, language=settings.language)
 
+    if filters:
+        stars = stars.filter(*filters)
+    
     if (
         catalog.spatial_query_method == SpatialQueryMethod.HEALPIX.value
         and catalog.healpix_nside
@@ -64,11 +67,23 @@ def load(
     ):
         healpix_indices = catalog.healpix_ids_from_extent(extent)
         stars = stars.filter(stars.healpix_index.isin(healpix_indices))
-    elif extent:
+        # TODO : create temp table of results, then filter by geometry
+        stars = con.create_table("stars_temp", obj=stars, temp=True, overwrite=True)
+        # temp = temp.mutate(
+        #     geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
+        # )
+        # stars = temp.filter(temp.geometry.intersects(extent))
+    # elif extent:
+    #     stars = stars.filter(stars.geometry.intersects(extent))
+
+    stars = stars.mutate(
+        geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
+    )
+    if extent:
         stars = stars.filter(stars.geometry.intersects(extent))
 
-    if filters:
-        stars = stars.filter(*filters)
+    # if filters:
+    #     stars = stars.filter(*filters)
 
     if sql:
         result = stars.alias("_").sql(sql).select("pk").execute()

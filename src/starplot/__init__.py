@@ -1,6 +1,6 @@
 """Star charts and maps of the sky"""
 
-__version__ = "0.18.0b8"
+__version__ = "0.18.0b9"
 
 from .base import BasePlot  # noqa: F401
 from .map import MapPlot  # noqa: F401

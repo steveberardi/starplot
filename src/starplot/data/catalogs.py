@@ -74,8 +74,13 @@ def to_parquet(
 
 
 class SpatialQueryMethod(Enum):
+    """Options for spatial querying method"""
+    
     GEOMETRY = "geometry"
+    """Use the `geometry` field"""
+
     HEALPIX = "healpix"
+    """Use the `healpix_index` field"""
 
 
 @dataclass
@@ -95,6 +100,14 @@ class Catalog:
     """HEALPix resolution (NSIDE)"""
 
     spatial_query_method: SpatialQueryMethod = SpatialQueryMethod.GEOMETRY
+    """
+    Method to use for spatial querying on this catalog. 
+
+    For relatively small catalogs (less than 1 million objects), the geometry method should have good performance.
+    
+    For larger catalogs, you can improve querying performance tremendously by defining a `healpix_nside` on the catalog,
+    and setting this query method to `SpatialQueryMethod.HEALPIX`
+    """
 
     _healpix: HEALPix = None
 
