@@ -10,11 +10,12 @@
 - ⭐ **Zenith Charts** - shows the entire sky at a specific time and place
 - 🌃 **Horizon Charts** - shows the horizon at a specific time and place
 - 🔭 **Optic Simulations** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
-- 🪐 **Planets and Deep Sky Objects (DSOs)** - more than 14,000 objects built-in
+- 🪐 **Planets and Deep Sky Objects (DSOs)** - with support for plotting their true extent
 - ☄️ **Comets and Satellites** - easy trajectory plotting
 - 🎨 **Custom Styles** - for all objects and with 8+ built-in themes
 - 📥 **Export** - png, svg, jpeg
 - 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
+- 📓 **Custom Data Catalogs** - with helpers for building and optimizing
 - 🧭 **Label Collision Avoidance** - ensuring all labels are readable
 - 🌐 **Localization** - label translations for French, Chinese, and Persian (coming soon!)
 

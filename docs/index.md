@@ -30,6 +30,8 @@ Starplot is a Python library for creating star charts and maps of the sky.
 
 - 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
 
+- 📓 **Custom Data Catalogs** - with helpers for building and optimizing
+
 - 🧭 **Label Collision Avoidance** - ensuring all labels are readable
 
 - 🌐 **Localization** - label translations for French, Chinese, and Lithuanian

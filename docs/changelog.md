@@ -4,6 +4,7 @@
 - Converts sky object models to data classes, improving performance when many objects are plotted
 - Adds Farsi translation
 - Increases max field of view for optic plots to 20 degrees
+- Optimizes spatial query for optic plots
 
 
 ## v0.17.x
