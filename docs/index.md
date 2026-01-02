@@ -9,7 +9,7 @@ title: Star Charts and Maps of the Sky in Python
 ![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=8b63b0)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge&color=88b063)
 
-Starplot is a Python library for creating star charts and maps of the sky.
+Starplot is a Python library for creating star charts and maps of the sky
 {.text-subtitle}
 
 - 🗺️ **Maps** - including 10+ customizable projections
