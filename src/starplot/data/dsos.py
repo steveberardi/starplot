@@ -5,7 +5,7 @@ from ibis import _
 
 from starplot.config import settings
 from starplot.data import db
-from starplot.data.catalogs import Catalog
+from starplot.data.catalogs import Catalog, SpatialQueryMethod
 from starplot.data.translations import (
     language_name_column,
     LANGUAGES,
@@ -14,10 +14,10 @@ from starplot.data.translations import (
 
 @cache
 def table(
+    con,
     catalog: Catalog | Path | str,
     language: str,
 ):
-    con = db.connect()
     table_name = "deep_sky_objects"
 
     if isinstance(catalog, Catalog):
@@ -43,10 +43,7 @@ def table(
     if name_column not in dsos.columns:
         name_column = "name"
 
-    return dsos.mutate(
-        geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
-        common_names=getattr(dsos, name_column),
-    )
+    return dsos.mutate(common_names=getattr(dsos, name_column))
 
 
 def load(
@@ -56,12 +53,23 @@ def load(
     sql=None,
 ):
     filters = filters or []
-    dsos = table(catalog=catalog, language=settings.language)
+    con = db.connect()
+    dsos = table(con=con, catalog=catalog, language=settings.language)
 
-    if catalog.healpix_nside and extent is not None:
+    if (
+        catalog.spatial_query_method == SpatialQueryMethod.HEALPIX.value
+        and catalog.healpix_nside
+        and extent is not None
+    ):
         healpix_indices = catalog.healpix_ids_from_extent(extent)
         dsos = dsos.filter(dsos.healpix_index.isin(healpix_indices))
-    elif extent:
+        dsos = con.create_table("dsos_temp", obj=dsos, temp=True, overwrite=True)
+    
+    dsos = dsos.mutate(
+        geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
+    )
+
+    if extent:
         dsos = dsos.filter(_.geometry.intersects(extent))
 
     filters.extend([_.ra.notnull() & _.dec.notnull()])
