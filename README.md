@@ -73,6 +73,12 @@ For a demo of Starplot's zenith charts, check out:
 
 [Sky Atlas - Star Chart Creator](https://skyatlas.app/star-charts/)
 
+## Related Repositories
+
+- [starplot-bigsky](https://github.com/steveberardi/starplot-bigsky)
+- [starplot-constellations](https://github.com/steveberardi/starplot-constellations)
+- [starplot-ongc](https://github.com/steveberardi/starplot-ongc)
+
 ## Getting Help / Updates
 
 - Chat with other starplotters on our [Discord server](https://discord.gg/WewJJjshFu)
@@ -85,7 +91,6 @@ For a demo of Starplot's zenith charts, check out:
 Contributing to Starplot is welcome and very much appreciated! Please see [here](CONTRIBUTING.md) for details.
 
 ## Coming Soon
-- 📡 Custom data catalogs
 - 🧮 Coordinate system helpers
 - 🌑 Planet moons
 - ✴️ Custom markers
