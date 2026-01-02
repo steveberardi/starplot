@@ -38,9 +38,10 @@ def test_build_catalog():
     ]
 
     path = TEST_DATA_PATH / "stars.parquet"
-    Catalog.build(
+
+    cat = Catalog(path=path)
+    cat.build(
         objects=stars,
-        path=path,
         chunk_size=200_000,
         columns=[
             "ra",
@@ -58,7 +59,6 @@ def test_build_catalog():
         row_group_size=100_000,
     )
 
-    cat = Catalog(path=path)
     star1 = Star.get(name="star1", catalog=cat)
 
     assert star1.ra == 120

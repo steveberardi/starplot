@@ -64,7 +64,7 @@ def load(
         healpix_indices = catalog.healpix_ids_from_extent(extent)
         dsos = dsos.filter(dsos.healpix_index.isin(healpix_indices))
         dsos = con.create_table("dsos_temp", obj=dsos, temp=True, overwrite=True)
-    
+
     dsos = dsos.mutate(
         geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
     )

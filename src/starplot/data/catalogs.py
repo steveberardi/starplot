@@ -87,8 +87,8 @@ class SpatialQueryMethod(Enum):
 class Catalog:
     """Catalog of objects"""
 
-    path: Path
-    """Path of the catalog"""
+    path: Path | str
+    """Path of the catalog. If using Hive partitions, this should be a glob (e.g. `/data/**/*.parquet`)."""
 
     url: str = None
     """Remote URL of the catalog. If the catalog doesn't exist at the `path` then it'll be downloaded from this URL."""
@@ -174,37 +174,29 @@ class Catalog:
             hive_partitioning=self.hive_partitioning,
         )
 
-    @classmethod
     def build(
-        cls,
+        self,
         objects: Iterable[SkyObject],
-        path: str | Path,
         chunk_size: int = 1_000_000,
         columns: list[str] = None,
         partition_columns: list[str] = None,
         sorting_columns: list[str] = None,
         compression: str = "snappy",
         row_group_size: int = 200_000,
-        healpix_nside: int = None,
     ) -> None:
         """
         Creates a custom catalog of sky objects. Output is one or more Parquet files.
 
         Args:
             objects: Iterable that contains the sky objects for the catalog
-            path: Output path of the catalog. If using Hive partitions, this should be a glob (e.g. `/data/**/**/*.parquet`).
             chunk_size: Max number of objects to write per file
             columns: List of columns to include in the catalog
             partition_columns: List of columns to create Hive partitions for
             sorting_columns: List of columns to sort by
             compression: Type of compression to use
             row_group_size: Row group size for the catalog parquet file
-            healpix_nside: HEALPix NSIDE value
         """
-
-        if not isinstance(path, Path):
-            path = Path(path)
-
+        path = self.path
         if partition_columns:
             path.mkdir(parents=True, exist_ok=True)
 
@@ -215,8 +207,8 @@ class Catalog:
         rows = []
 
         hpix = None
-        if healpix_nside is not None:
-            hpix = HEALPix(nside=healpix_nside, order="nested")
+        if self.healpix_nside is not None:
+            hpix = HEALPix(nside=self.healpix_nside, order="nested")
             columns.append("healpix_index")
 
         def serialize(obj):
