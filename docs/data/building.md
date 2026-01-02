@@ -1,5 +1,5 @@
 
-## Creating Catalogs
+# Creating Catalogs
 
 Creating a new catalog is a two-step process:
 
@@ -8,17 +8,23 @@ Creating a new catalog is a two-step process:
 
 ---
 
-### Creating small catalogs (< 1M objects)
+## Creating small catalogs (< 1M objects)
 
 
 **Define sorting columns**
 
 When building a catalog you can optionally specify a list of `sorting_columns`. The catalog file(s) will be sorted by the fields in this list. If you plan on querying a catalog on a specific field frequently and that field has a medium or high standard deviation then you can improve query performance by sorting on that field. This will help the data backend scan data quickly.
 
+**Examples**
+
+- [Big Sky Star Catalog Builder](https://github.com/steveberardi/starplot-bigsky)
+- [Constellations Catalog Builder](https://github.com/steveberardi/starplot-constellations)
+- [OpenNGC DSO Catalog Builder](https://github.com/steveberardi/starplot-ongc)
+
 
 ---
 
-### Creating large catalogs (1M+ objects)
+## Creating large catalogs (1M+ objects)
 
 When building very large catalogs, Starplot has a few options available for ensuring good performance on querying the catalog.
 
@@ -44,7 +50,7 @@ Since most fields on Starplot models have high cardinality, the only fields that
 
 [HEALPix](https://en.wikipedia.org/wiki/HEALPix) is an algorithm for dividing a sphere into equal-area sub-divisions, which are referred to as "pixels." It's commonly used for partitioning astronomical or geospatial data.
 
-The NSIDE is the "resolution" of a HEALPix map and determines the number of sub-divisions/pixels:
+The NSIDE is the "resolution" of a HEALPix map for a dataset and determines the number of sub-divisions/pixels:
 
 ```
 num_pixels = 12 * nside^2
@@ -70,6 +76,15 @@ Starplot can perform spatial queries on catalogs by using the `geometry` field o
 ✅ Set the spatial query method to HEALPix
 
 ✅ Combine Parquet files in each partition folder into a single file
+
+
+**Examples**
+
+- [Gaia DR3 Catalog Builder](https://github.com/steveberardi/starplot-gaia-dr3)
+
+
+---
+
 
 ### Example
 
