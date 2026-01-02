@@ -13,7 +13,6 @@ The size of the catalog you want to build and how you expect to query it will af
 
 ## Creating small catalogs (< 1M objects)
 
-
 **Define sorting columns**
 
 When building a catalog you can optionally specify a list of `sorting_columns`. The catalog file(s) will be sorted by the fields in this list. If you plan on querying a catalog on a specific field frequently and that field has a medium or high standard deviation then you can improve query performance by sorting on that field. This will help the data backend scan data quickly.
@@ -21,9 +20,9 @@ When building a catalog you can optionally specify a list of `sorting_columns`. 
 **Examples**
 
 - [Big Sky Star Catalog Builder](https://github.com/steveberardi/starplot-bigsky)
+- [HYG Star Catalog Builder](https://github.com/steveberardi/starplot-hyg)
 - [Constellations Catalog Builder](https://github.com/steveberardi/starplot-constellations)
 - [OpenNGC DSO Catalog Builder](https://github.com/steveberardi/starplot-ongc)
-
 
 ---
 
