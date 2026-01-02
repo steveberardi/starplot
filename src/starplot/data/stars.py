@@ -12,12 +12,11 @@ from starplot.data.translations import language_name_column, LANGUAGE_NAME_COLUM
 
 @cache
 def table(
+    con,
     catalog: Catalog | Path | str = BIG_SKY_MAG11,
     table_name="stars",
     language: str = "en-us",
 ):
-    con = db.connect()
-
     if isinstance(catalog, Catalog):
         stars = catalog._load(connection=con, table_name=table_name)
     else:
@@ -50,7 +49,8 @@ def load(
     sql=None,
 ):
     filters = filters or []
-    stars = table(catalog=catalog, language=settings.language)
+    con = db.connect()
+    stars = table(con=con, catalog=catalog, language=settings.language)
 
     if (
         catalog.spatial_query_method == SpatialQueryMethod.HEALPIX.value
@@ -59,11 +59,13 @@ def load(
     ):
         healpix_indices = catalog.healpix_ids_from_extent(extent)
         stars = stars.filter(stars.healpix_index.isin(healpix_indices))
-        
+        stars = con.create_table("stars_temp", obj=stars, temp=True, overwrite=True)
+
+    stars = stars.mutate(
+        geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
+    )
+
     if extent:
-        stars = stars.mutate(
-            geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
-        )
         stars = stars.filter(stars.geometry.intersects(extent))
 
     if filters:

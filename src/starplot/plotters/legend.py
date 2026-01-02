@@ -207,7 +207,8 @@ class LegendPlotterMixin:
             for mag in np.arange(start, stop, step):
                 s = style.matplot_kwargs()
                 s["markersize"] = (
-                    size_fn(Star(pk=1, ra=0, dec=0, magnitude=mag, geometry=None)) ** 0.5
+                    size_fn(Star(pk=1, ra=0, dec=0, magnitude=mag, geometry=None))
+                    ** 0.5
                 ) * self.scale
                 label = label_fn(mag)
                 yield Line2D(

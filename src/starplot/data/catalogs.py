@@ -75,7 +75,7 @@ def to_parquet(
 
 class SpatialQueryMethod(Enum):
     """Options for spatial querying method"""
-    
+
     GEOMETRY = "geometry"
     """Use the `geometry` field"""
 

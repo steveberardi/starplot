@@ -4,13 +4,13 @@
         <td>
             <h4>⭐ Next Release ⭐</h4>
             <ul>
-                <li>Support for more coordinate systems</li>
+                <li>Label collision handling improvements</li>
             </ul>
         </td>
         <td></td>
     </tr>
     <tr>
-        <td>v0.19</td>
+        <td>v0.20</td>
         <td>
             <ul>
                 <li>Support for more coordinate systems</li>
@@ -19,7 +19,7 @@
         <td></td>
     </tr>
     <tr>
-        <td>v0.20+</td>
+        <td>v0.21+</td>
         <td>
             <ul>
                 <li>Planet moons</li>
