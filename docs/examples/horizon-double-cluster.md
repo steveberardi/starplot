@@ -14,8 +14,8 @@ This example uses many of Starplot's features:
 
 - [Looking up objects][starplot.Constellation.get]
 - Using properties on those objects to [selectively plot stars](/reference-selecting-objects/) (in this example, we use the constellation models to _only_ plot stars that are part of the lines in the constellation)
-- Defining a simple [callable](/reference-callables/) for labeling each open cluster
-- Drawing a circle to [show the field of view for bincoulars][starplot.HorizonPlot.bino_fov]
+- Drawing a circle to [show the field of view for bincoulars][starplot.HorizonPlot.optic_fov]
+- Drawing an [arrow][starplot.HorizonPlot.arrow] to show which stars you can use as guides to finding the double cluster
 
 ```python
 --8<-- "examples/horizon_double_cluster.py"

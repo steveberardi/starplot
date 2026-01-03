@@ -1,12 +1,14 @@
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 
 import numpy as np
+from shapely import Polygon
 from skyfield.api import Angle, wgs84
 from skyfield import almanac
 
 from starplot.data import load
-from starplot.models.base import SkyObject, ShapelyPolygon
+from starplot.models.base import SkyObject
 from starplot.geometry import circle
 from starplot.utils import dt_or_now
 
@@ -24,13 +26,14 @@ class MoonPhase(str, Enum):
     WANING_CRESCENT = "Waning Crescent"
 
 
+@dataclass(slots=True, kw_only=True)
 class Moon(SkyObject):
     """Moon model. Only used for Earth's moon right now, but will potentially represent other planets' moons in future versions."""
 
     name: str = "Moon"
     """Name of the moon"""
 
-    dt: datetime
+    dt: datetime = None
     """Date/time of moon's position"""
 
     apparent_size: float
@@ -45,7 +48,7 @@ class Moon(SkyObject):
     illumination: float
     """Percent of illumination (0 to 1)"""
 
-    geometry: ShapelyPolygon = None
+    geometry: Polygon = None
     """Shapely Polygon of the moon's extent. Right ascension coordinates are in degrees (0 to 360)."""
 
     @classmethod
@@ -54,7 +57,7 @@ class Moon(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> "Moon":
         """
         Get the Moon for a specific date/time and observing location.

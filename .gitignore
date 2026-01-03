@@ -2,10 +2,7 @@
 scripts/scratchpad.py
 
 # astronomy data
-constellationship.fab
-de421.bsp
-hip_main.dat
-hip8.dat
+*.bsp
 CometEls.txt
 ongc.gpkg
 
@@ -14,6 +11,10 @@ duckdb-extensions
 # Sky Object Database
 # ignore this because it's large and created on release
 sky.db
+*.parquet
+gaia*/
+
+# Catalogs
 *.parquet
 
 # Data Folder

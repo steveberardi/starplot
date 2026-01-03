@@ -1,6 +1,7 @@
 import sys
 
 import requests
+import numpy as np
 
 
 def download(url, download_path, description=""):
@@ -25,3 +26,7 @@ def download(url, download_path, description=""):
             sys.stdout.flush()
 
         print("Download complete!")
+
+
+def to_pandas(value):
+    return value.to_pandas().replace({np.nan: None})

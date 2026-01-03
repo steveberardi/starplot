@@ -1,6 +1,13 @@
+Starplot has one officially supported catalog of deep sky objects (DSOs):
+
+::: starplot.data.catalogs.OPEN_NGC
+    options:
+        inherited_members: true
+        show_docstring_attributes: true
+        show_root_heading: true
+
 
 <style>
-
     .md-content {
         max-width: 100%;
     }
@@ -8,7 +15,7 @@
 <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
 
-The table below shows all the deep sky objects (DSOs) available in Starplot's database.
+The table below shows all the deep sky objects (DSOs) available in OpenNGC's database.
 
 <div id="grid"></div>
 
@@ -33,15 +40,15 @@ The table below shows all the deep sky objects (DSOs) available in Starplot's da
             'Geometry',
         ],
         server: {
-            url: '../ongc.json',
+            url: '/data/ongc.json',
             then: data => data.map(dso => [
-                dso.Name,
-                dso.Type,
-                dso.RA,
-                dso.DEC,
-                dso.Magnitude,
-                dso.Size,
-                dso.Geometry,
+                dso.name,
+                dso.type,
+                dso.ra,
+                dso.dec,
+                dso.magnitude,
+                dso.size,
+                dso.geom_type,
             ])
         } ,
         language: {
@@ -53,3 +60,5 @@ The table below shows all the deep sky objects (DSOs) available in Starplot's da
     }).render(document.getElementById("grid"));
 
 </script>
+
+<br/><br/>

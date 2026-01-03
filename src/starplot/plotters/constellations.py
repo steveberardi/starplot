@@ -10,11 +10,11 @@ from matplotlib.collections import LineCollection
 from ibis import _
 
 from starplot.coordinates import CoordinateSystem
-from starplot.data import constellations as condata, constellation_lines as conlines
-from starplot.data.stars import load as load_stars, StarCatalog
-from starplot.data.constellation_stars import CONSTELLATION_HIPS
+from starplot.data import constellations as condata
+from starplot.data.catalogs import Catalog, CONSTELLATIONS_IAU, BIG_SKY_MAG11
+from starplot.data.stars import load as load_stars
 from starplot.models import Star, Constellation
-from starplot.models.constellation import from_tuple as constellation_from_tuple
+from starplot.models.constellation import from_tuple
 from starplot.projections import (
     StereoNorth,
     StereoSouth,
@@ -55,7 +55,9 @@ class ConstellationPlotterMixin:
         return display_x > 0 and display_y > 0
 
     @profile
-    def _prepare_constellation_stars(self) -> dict[int, tuple[float, float]]:
+    def _prepare_constellation_stars(
+        self, constellations: list[Constellation]
+    ) -> dict[int, tuple[float, float]]:
         """
         Returns dictionary of stars and their position:
 
@@ -63,9 +65,13 @@ class ConstellationPlotterMixin:
 
         Where (x, y) is the plotted coordinate system (RA/DEC or AZ/ALT)
         """
+        hips = []
+        for c in constellations:
+            hips.extend(c.star_hip_ids)
+
         results = load_stars(
-            catalog=StarCatalog.BIG_SKY_MAG11,
-            filters=[_.hip.isin(CONSTELLATION_HIPS)],
+            catalog=BIG_SKY_MAG11,
+            filters=[_.hip.isin(hips)],
         )
         df = results.to_pandas()
         df = self._prepare_star_coords(df, limit_by_altaz=False)
@@ -79,6 +85,7 @@ class ConstellationPlotterMixin:
         style: LineStyle = None,
         where: list = None,
         sql: str = None,
+        catalog: Catalog = CONSTELLATIONS_IAU,
     ):
         """Plots the constellation lines **only**. To plot constellation borders and/or labels, see separate functions for them.
 
@@ -95,11 +102,13 @@ class ConstellationPlotterMixin:
         ctr = 0
 
         extent = self._extent_mask()
-        results = condata.load(extent=extent, filters=where, sql=sql)
+        results = condata.load(extent=extent, filters=where, sql=sql, catalog=catalog)
         constellations_df = results.to_pandas()
 
         if constellations_df.empty:
             return
+
+        constellations = [from_tuple(c) for c in constellations_df.itertuples()]
 
         projection = getattr(self, "projection", None)
         if isinstance(projection, GEODETIC_PROJECTIONS):
@@ -110,10 +119,10 @@ class ConstellationPlotterMixin:
         style_kwargs = style.matplot_kwargs(self.scale)
         constellation_points_to_index = []
         lines = []
-        constars = self._prepare_constellation_stars()
+        constars = self._prepare_constellation_stars(constellations)
 
-        for c in constellations_df.itertuples():
-            hiplines = conlines.hips[c.iau_id]
+        for c in constellations:
+            hiplines = c.star_hip_lines
             inbounds = False
 
             for s1_hip, s2_hip in hiplines:
@@ -168,8 +177,7 @@ class ConstellationPlotterMixin:
                     ctr += 1
 
             if inbounds:
-                obj = constellation_from_tuple(c)
-                self._objects.constellations.append(obj)
+                self._objects.constellations.append(c)
 
         style_kwargs = style.matplot_line_collection_kwargs(self.scale)
 

@@ -4,6 +4,7 @@ from ibis import _
 import numpy as np
 
 from starplot.data.dsos import load
+from starplot.data.catalogs import Catalog, OPEN_NGC
 from starplot.data.translations import translate
 from starplot.models.dso import (
     DSO,
@@ -111,6 +112,7 @@ class DsoPlotterMixin:
         label_fn: Callable[[DSO], str] = DSO.get_label,
         sql: str = None,
         sql_labels: str = None,
+        catalog: Catalog = OPEN_NGC,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
@@ -138,7 +140,7 @@ class DsoPlotterMixin:
             legend_labels = {**DSO_LEGEND_LABELS, **legend_labels}
 
         extent = self._extent_mask()
-        dso_results = load(extent=extent, filters=where, sql=sql)
+        dso_results = load(extent=extent, filters=where, sql=sql, catalog=catalog)
 
         dso_results_labeled = dso_results
         for f in where_labels:
@@ -146,19 +148,19 @@ class DsoPlotterMixin:
 
         if sql_labels:
             result = (
-                dso_results_labeled.alias("_").sql(sql_labels).select("sk").execute()
+                dso_results_labeled.alias("_").sql(sql_labels).select("pk").execute()
             )
-            skids = result["sk"].to_list()
-            dso_results_labeled = dso_results_labeled.filter(_.sk.isin(skids))
+            pks = result["pk"].to_list()
+            dso_results_labeled = dso_results_labeled.filter(_.pk.isin(pks))
 
-        label_row_ids = dso_results_labeled.to_pandas()["rowid"].tolist()
+        label_pks = dso_results_labeled.to_pandas()["pk"].tolist()
 
         results_df = dso_results.to_pandas()
         results_df = results_df.replace({np.nan: None})
 
         for d in results_df.itertuples():
-            ra = d.ra_degrees
-            dec = d.dec_degrees
+            ra = d.ra
+            dec = d.dec
             dso_type = ONGC_TYPE_MAP[d.type]
             style = self.style.get_dso_style(dso_type)
             maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
@@ -175,10 +177,10 @@ class DsoPlotterMixin:
             _alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
             style.marker.alpha = _alpha_fn(_dso)
 
-            if _dso._row_id not in label_row_ids:
+            if _dso.pk not in label_pks:
                 label = None
 
-            if true_size and d.size_deg2 is not None:
+            if true_size and d.size is not None:
                 if "Polygon" == str(d.geometry.geom_type):
                     self._plot_dso_polygon(d.geometry, style)
 

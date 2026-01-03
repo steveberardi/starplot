@@ -1,14 +1,17 @@
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Iterator
 
+from shapely import Point
 from skyfield.api import wgs84, EarthSatellite
 from skyfield.timelib import Timescale
 
 from starplot.data import load
-from starplot.models.base import SkyObject, ShapelyPoint
+from starplot.models.base import SkyObject
 from starplot.utils import dt_or_now
 
 
+@dataclass(slots=True, kw_only=True)
 class Satellite(SkyObject):
     """
     Satellites can be created in two ways:
@@ -18,12 +21,12 @@ class Satellite(SkyObject):
 
     """
 
-    name: str
+    name: str = None
     """
     Name of the satellite
     """
 
-    dt: datetime
+    dt: datetime = None
     """Date/time of satellite's position"""
 
     lat: float | None = None
@@ -38,10 +41,10 @@ class Satellite(SkyObject):
     ephemeris: str = None
     """Ephemeris used when retrieving this instance"""
 
-    geometry: ShapelyPoint = None
+    geometry: Point = None
     """Shapely Point of the satellite's position. Right ascension coordinates are in degrees (0...360)."""
 
-    _satellite: EarthSatellite
+    _satellite: EarthSatellite = None
 
     @classmethod
     def from_json(
@@ -50,7 +53,7 @@ class Satellite(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> "Satellite":
         """
         Get a satellite for a specific date/time/location from a CelesTrak JSON.
@@ -77,7 +80,7 @@ class Satellite(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> "Satellite":
         """
         Get a satellite for a specific date/time/location from a two-line element set (TLE).
@@ -152,7 +155,7 @@ def get_satellite_at_date_location(
         lon=lon,
         distance=distance.au,
         ephemeris="na",
-        geometry=ShapelyPoint(ra.hours * 15, dec.degrees),
+        geometry=Point(ra.hours * 15, dec.degrees),
     )
     setattr(result, "_satellite", satellite)
     return result

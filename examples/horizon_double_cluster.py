@@ -6,6 +6,7 @@ from starplot import (
     PlotStyle,
     style_extensions,
     DSO,
+    Star,
     Constellation,
     Observer,
     _,
@@ -37,16 +38,16 @@ p = HorizonPlot(
     observer=observer,
     style=style,
     resolution=4096,
-    scale=1.25,
+    scale=1.35,
 )
 p.constellations(where=[_.iau_id.isin(["cas", "umi", "per"])])
 p.stars(
     where=[_.hip.isin(cas.star_hip_ids + umi.star_hip_ids + per.star_hip_ids)],
     where_labels=[_.magnitude < 2],
 )
-p.style.dso_open_cluster.label.font_size = 27
 p.open_clusters(
     where=[_.name.isin(["NGC0884", "NGC0869"])],
+    where_labels=[False],
     true_size=False,
 )
 double_cluster = DSO.get(name="NGC0884")
@@ -58,7 +59,16 @@ p.optic_fov(
         magnification=10,
     ),
 )
-p.constellation_labels()
+
+star1 = Star.get(hip=4427)
+p.arrow(
+    origin=(star1.ra, star1.dec),
+    target=(double_cluster.ra, double_cluster.dec),
+    scale=0.92,
+    style__zorder=0,
+    style__head_width=100,
+)
+
 p.horizon()
 p.style.gridlines.line.width = 2
 p.gridlines()

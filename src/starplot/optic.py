@@ -5,9 +5,9 @@ from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot.coordinates import CoordinateSystem
-from starplot import callables
+from starplot import callables, geod
 from starplot.base import BasePlot, DPI
-from starplot.data.stars import StarCatalog
+from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star, Optic, Camera
 from starplot.models.observer import Observer
@@ -65,7 +65,7 @@ class OpticPlot(
     _coordinate_system = CoordinateSystem.AZ_ALT
     _gradient_direction = GradientDirection.RADIAL
 
-    FIELD_OF_VIEW_MAX = 9.0
+    FIELD_OF_VIEW_MAX = 20
 
     def __init__(
         self,
@@ -73,7 +73,7 @@ class OpticPlot(
         dec: float,
         optic: Optic,
         observer: Observer = Observer(),
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_OPTIC_STYLE,
         resolution: int = 4096,
         hide_colliding_labels: bool = True,
@@ -115,7 +115,7 @@ class OpticPlot(
         )
         if self.optic.true_fov > self.FIELD_OF_VIEW_MAX:
             raise ValueError(
-                f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX})"
+                f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX}). Tip: Use horizon or map plots for wider fields of view."
             )
         self._calc_position()
         self._adjust_radec_minmax()
@@ -186,13 +186,33 @@ class OpticPlot(
             raise ValueError("Target is below horizon at specified time/location.")
 
     def _adjust_radec_minmax(self):
-        self.ra_min = self.ra - self.optic.true_fov * 10
-        self.ra_max = self.ra + self.optic.true_fov * 10
-        self.dec_max = self.dec + self.optic.true_fov / 2 * 1.03
-        self.dec_min = self.dec - self.optic.true_fov / 2 * 1.03
+        fov = self.optic.true_fov
+        ex = geod.rectangle(
+            center=(self.ra, self.dec),
+            height_degrees=fov,
+            width_degrees=fov,
+        )
+        self.ra_min = ex[0][0]
+        self.ra_max = ex[2][0]
+        self.dec_min = ex[0][1]
+        self.dec_max = ex[2][1]
 
-        if self.dec > 70 or self.dec < -70:
-            # naive method of getting all the stars near the poles
+        if self.ra_max < 0:
+            self.ra_max += 360
+        if self.ra_min < 0:
+            self.ra_min += 360
+
+        # handle wrapping
+        if self.ra_max < self.ra_min:
+            self.ra_max += 360
+
+        if self.dec > self.dec_max:
+            self.dec_max = 90
+            self.ra_min = 0
+            self.ra_max = 360
+
+        if self.dec < self.dec_min:
+            self.dec_min = -90
             self.ra_min = 0
             self.ra_max = 360
 
@@ -217,7 +237,7 @@ class OpticPlot(
             ras, decs, sizes, alphas, colors, style, **kwargs
         )
 
-        if type(self._background_clip_path) == patches.Rectangle:
+        if isinstance(self._background_clip_path, patches.Rectangle):
             # convert to generic path to handle possible rotation angle:
             clip_path = path.Path(self._background_clip_path.get_corners())
             plotted.set_clip_path(clip_path, transform=self.ax.transData)
@@ -229,7 +249,7 @@ class OpticPlot(
         self,
         where: list = None,
         where_labels: list = None,
-        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
+        catalog: Catalog = BIG_SKY_MAG11,
         style: ObjectStyle = None,
         rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,

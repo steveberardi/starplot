@@ -22,6 +22,7 @@ from starplot.plotters import (
     MilkyWayPlotterMixin,
     LegendPlotterMixin,
     GradientBackgroundMixin,
+    ArrowPlotterMixin,
 )
 from starplot.projections import StereoNorth, StereoSouth, ProjectionBase
 from starplot.styles import (
@@ -46,6 +47,7 @@ class MapPlot(
     ConstellationPlotterMixin,
     LegendPlotterMixin,
     GradientBackgroundMixin,
+    ArrowPlotterMixin,
 ):
     """Creates a new map plot.
 
@@ -81,7 +83,7 @@ class MapPlot(
         dec_min: float = -90,
         dec_max: float = 90,
         observer: Observer = Observer(),
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_MAP_STYLE,
         resolution: int = 4096,
         hide_colliding_labels: bool = True,

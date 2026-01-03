@@ -1,13 +1,15 @@
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import Iterator
 
 import numpy as np
 
+from shapely import Polygon
 from skyfield.api import Angle, wgs84
 
 from starplot.data import load
-from starplot.models.base import SkyObject, ShapelyPolygon
+from starplot.models.base import SkyObject
 from starplot.geometry import circle
 from starplot.utils import dt_or_now
 
@@ -47,10 +49,11 @@ Retrieved on 18-APR-2024
 """
 
 
+@dataclass(slots=True, kw_only=True)
 class Planet(SkyObject):
     """Planet model."""
 
-    name: str
+    name: str = None
     """
     Name of the planet:
 
@@ -65,13 +68,13 @@ class Planet(SkyObject):
     
     """
 
-    dt: datetime
+    dt: datetime = None
     """Date/time of planet's position"""
 
-    apparent_size: float
+    apparent_size: float = 0
     """Apparent size (degrees)"""
 
-    geometry: ShapelyPolygon = None
+    geometry: Polygon = None
     """Shapely Polygon of the planet's extent. Right ascension coordinates are in degrees (0...360)."""
 
     @classmethod
@@ -80,7 +83,7 @@ class Planet(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> Iterator["Planet"]:
         """
         Iterator for getting all planets at a specific date/time and observing location.
@@ -132,7 +135,7 @@ class Planet(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> "Planet":
         """
         Get a planet for a specific date/time.

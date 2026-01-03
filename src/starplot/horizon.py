@@ -19,6 +19,7 @@ from starplot.plotters import (
     MilkyWayPlotterMixin,
     GradientBackgroundMixin,
     LegendPlotterMixin,
+    ArrowPlotterMixin,
 )
 from starplot.styles import (
     PlotStyle,
@@ -52,6 +53,7 @@ class HorizonPlot(
     MilkyWayPlotterMixin,
     GradientBackgroundMixin,
     LegendPlotterMixin,
+    ArrowPlotterMixin,
 ):
     """Creates a new horizon plot.
 
@@ -84,7 +86,7 @@ class HorizonPlot(
         altitude: tuple[float, float],
         azimuth: tuple[float, float],
         observer: Observer = Observer(),
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_HORIZON_STYLE,
         resolution: int = 4096,
         hide_colliding_labels: bool = True,
@@ -156,6 +158,9 @@ class HorizonPlot(
 
     def _prepare_star_coords(self, df, limit_by_altaz=True):
         # import geopandas as gpd
+
+        # Skyfield needs these columns
+        df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
 
         stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()

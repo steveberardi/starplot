@@ -235,6 +235,7 @@ style = styles.PlotStyle().extend(
 - **Plot types**
     - `OPTIC` - Basic styling tailored for optic plots ([details](#extensions-optic))
     - `MAP` - Basic styling tailored for map plots ([details](#extensions-map))
+    - `PUBLICATION` - Styling rules tailored for plots that will be imported to design applications ([details](#extensions-publication))
 - **Gradients**
     - `GRADIENT_DAYLIGHT`
     - `GRADIENT_BOLD_SUNSET`
@@ -389,7 +390,20 @@ Basic styling tailored for map plots
     ```
 </div>
 
-    
+
+<!-- PUBLICATION -->
+<h2 class="doc doc-heading" id="extensions-publication"><code>PUBLICATION</code></h2>
+
+<div class="indent" markdown>
+Styling rules tailored for plots that will be imported to design applications
+
+???- star "Source"
+
+    ```yaml 
+    --8<-- "src/starplot/styles/ext/publication.yml"
+    ```
+</div>
+
 ---
 
 ## Code Reference
@@ -420,11 +434,16 @@ Basic styling tailored for map plots
         show_root_heading: true
         show_docstring_attributes: true
 
-
 ::: starplot.styles.LabelStyle
     options:
         show_root_heading: true
         show_docstring_attributes: true
+
+::: starplot.styles.ArrowStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        inherited_members: true
 
 ---
 
@@ -481,6 +500,18 @@ Basic styling tailored for map plots
         members: true
 
 ::: starplot.styles.AnchorPointEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.CapStyleEnum
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+        members: true
+
+::: starplot.styles.JoinStyleEnum
     options:
         show_root_heading: true
         show_docstring_attributes: true

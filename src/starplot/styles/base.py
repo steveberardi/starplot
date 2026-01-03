@@ -197,9 +197,15 @@ class LineStyleEnum(str, Enum):
     DOTTED = "dotted"
 
 
-class DashCapStyleEnum(str, Enum):
+class CapStyleEnum(str, Enum):
     BUTT = "butt"
     PROJECTING = "projecting"
+    ROUND = "round"
+
+
+class JoinStyleEnum(str, Enum):
+    MITRE = "mitre"
+    BEVEL = "bevel"
     ROUND = "round"
 
 
@@ -318,7 +324,7 @@ class MarkerStyle(BaseStyle):
     line_style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
     """Edge line style. Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
 
-    dash_capstyle: DashCapStyleEnum = DashCapStyleEnum.PROJECTING
+    dash_capstyle: CapStyleEnum = CapStyleEnum.PROJECTING
     """Style of dash endpoints"""
 
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
@@ -393,7 +399,7 @@ class LineStyle(BaseStyle):
     style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
     """Style of the line (e.g. solid, dashed, etc). Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
 
-    dash_capstyle: DashCapStyleEnum = DashCapStyleEnum.PROJECTING
+    dash_capstyle: CapStyleEnum = CapStyleEnum.PROJECTING
     """Style of dash endpoints"""
 
     alpha: float = 1.0
@@ -493,6 +499,34 @@ class PolygonStyle(BaseStyle):
             zorder=self.zorder,
             line_style=self.line_style,
         )
+
+
+class ArrowStyle(PolygonStyle):
+    body_width: float = 24
+    """Width of the arrow's body, in pixels"""
+
+    head_width: float = 60
+    """Width of the arrow's head, in pixels"""
+
+    head_height: float = 100
+    """Height of the arrow's head, in pixels"""
+
+    cap_style: CapStyleEnum = CapStyleEnum.BUTT
+    """Cap style of the arrow"""
+
+    join_style: JoinStyleEnum = JoinStyleEnum.MITRE
+    """Join style of the arrow"""
+
+    def shapely_kwargs(self):
+        cap_styles = {
+            CapStyleEnum.BUTT: "flat",
+            CapStyleEnum.ROUND: "round",
+            CapStyleEnum.PROJECTING: "square",
+        }
+        return {
+            "cap_style": cap_styles[self.cap_style],
+            "join_style": self.join_style,
+        }
 
 
 class LabelStyle(BaseStyle):
@@ -1096,7 +1130,7 @@ class PlotStyle(BaseStyle):
             color="#777",
             width=3,
             style=LineStyleEnum.DOTTED,
-            dash_capstyle=DashCapStyleEnum.ROUND,
+            dash_capstyle=CapStyleEnum.ROUND,
             alpha=1,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
@@ -1135,7 +1169,7 @@ class PlotStyle(BaseStyle):
             edge_width=4,
             edge_color="#000",
             style=LineStyleEnum.SOLID,
-            dash_capstyle=DashCapStyleEnum.BUTT,
+            dash_capstyle=CapStyleEnum.BUTT,
             alpha=1,
             zorder=ZOrderEnum.LAYER_5,
         ),
@@ -1167,6 +1201,14 @@ class PlotStyle(BaseStyle):
         line_style=[1, [2, 3]],
         edge_width=3,
         zorder=-1000,
+    )
+    """Styling for optic fields of view"""
+
+    arrow: ArrowStyle = ArrowStyle(
+        fill_color="hsl(0, 99%, 31%)",
+        edge_color="#ff0019",
+        edge_width=2,
+        zorder=ZOrderEnum.LAYER_4,
     )
     """Styling for optic fields of view"""
 

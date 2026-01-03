@@ -10,11 +10,12 @@
 - ⭐ **Zenith Charts** - shows the entire sky at a specific time and place
 - 🌃 **Horizon Charts** - shows the horizon at a specific time and place
 - 🔭 **Optic Simulations** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
-- 🪐 **Planets and Deep Sky Objects (DSOs)** - more than 14,000 objects built-in
+- 🪐 **Planets and Deep Sky Objects (DSOs)** - with support for plotting their true extent
 - ☄️ **Comets and Satellites** - easy trajectory plotting
 - 🎨 **Custom Styles** - for all objects and with 8+ built-in themes
 - 📥 **Export** - png, svg, jpeg
 - 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
+- 📓 **Custom Data Catalogs** - with helpers for building and optimizing
 - 🧭 **Label Collision Avoidance** - ensuring all labels are readable
 - 🌐 **Localization** - label translations for French, Chinese, and Persian (coming soon!)
 
@@ -84,13 +85,20 @@ For a demo of Starplot's zenith charts, check out:
 Contributing to Starplot is welcome and very much appreciated! Please see [here](CONTRIBUTING.md) for details.
 
 ## Coming Soon
-- 📡 Custom data catalogs
 - 🧮 Coordinate system helpers
 - 🌑 Planet moons
 - ✴️ Custom markers
 - 😄 🔭 Clear skies
 
 See more details on the [Public Roadmap](https://trello.com/b/sUksygn4/starplot-roadmap)
+
+## Related Repositories
+
+- [starplot-bigsky](https://github.com/steveberardi/starplot-bigsky)
+- [starplot-constellations](https://github.com/steveberardi/starplot-constellations)
+- [starplot-ongc](https://github.com/steveberardi/starplot-ongc)
+- [starplot-hyg](https://github.com/steveberardi/starplot-hyg)
+- [starplot-gaia-dr3](https://github.com/steveberardi/starplot-gaia-dr3)
 
 ## License
 [MIT License](https://github.com/steveberardi/starplot/blob/main/LICENSE)

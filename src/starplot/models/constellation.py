@@ -1,15 +1,31 @@
 from typing import Iterator
+from dataclasses import dataclass
 
 from ibis import _
+from shapely import Polygon, MultiPolygon
 
-from starplot.models.base import SkyObject, ShapelyPolygon, ShapelyMultiPolygon
-from starplot.data import constellations
+from starplot.models.base import SkyObject, CatalogObject
+from starplot.data.catalogs import Catalog, CONSTELLATIONS_IAU
+from starplot.data.constellations import load
 
 
-class Constellation(SkyObject):
+@dataclass(slots=True, kw_only=True)
+class Constellation(CatalogObject, SkyObject):
     """
     Constellation model.
     """
+
+    boundary: Polygon | MultiPolygon
+    """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
+
+    star_hip_ids: list[int]
+    """List of HIP ids for stars that are part of the _lines_ for this constellation."""
+
+    star_hip_lines: list[list[int, int]]
+    """Nested list of star HIP ids that represent the lines of this constellation. Each pair of HIP ids represents a line between those stars."""
+
+    name: str = None
+    """Name of constellation"""
 
     iau_id: str = None
     """
@@ -19,27 +35,29 @@ class Constellation(SkyObject):
     Serpens Caput has the `iau_id` of `ser1` and Serpens Cauda is `ser2`
     """
 
-    name: str = None
-    """Name of constellation"""
-
-    star_hip_ids: list[int] = None
-    """List of HIP ids for stars that are part of the _lines_ for this constellation."""
-
-    boundary: ShapelyPolygon | ShapelyMultiPolygon = None
-    """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
-
     def __repr__(self) -> str:
         return f"Constellation(iau_id={self.iau_id}, name={self.name}, ra={self.ra}, dec={self.dec})"
 
     @classmethod
-    def all(cls) -> Iterator["Constellation"]:
-        df = constellations.load().to_pandas()
+    def all(cls, catalog: Catalog = CONSTELLATIONS_IAU) -> Iterator["Constellation"]:
+        """
+        Get all constellations from a catalog
+
+        Args:
+            catalog: Catalog you want to get constellation objects from
+
+        Returns:
+            Iterator of Constellation instances
+        """
+        df = load(catalog=catalog).to_pandas()
 
         for c in df.itertuples():
             yield from_tuple(c)
 
     @classmethod
-    def get(cls, sql: str = None, **kwargs) -> "Constellation":
+    def get(
+        cls, catalog: Catalog = CONSTELLATIONS_IAU, sql: str = None, **kwargs
+    ) -> "Constellation":
         """
         Get a Constellation, by matching its attributes.
 
@@ -48,6 +66,7 @@ class Constellation(SkyObject):
             hercules = Constellation.get(name="Hercules")
 
         Args:
+            catalog: The catalog of constellations to use
             sql: SQL query for selecting constellation (table name is "_")
             **kwargs: Attributes on the constellation you want to match
 
@@ -58,7 +77,7 @@ class Constellation(SkyObject):
         for k, v in kwargs.items():
             filters.append(getattr(_, k) == v)
 
-        df = constellations.load(filters=filters, sql=sql).to_pandas()
+        df = load(catalog=catalog, filters=filters, sql=sql).to_pandas()
         results = [from_tuple(c) for c in df.itertuples()]
 
         if len(results) == 1:
@@ -72,11 +91,17 @@ class Constellation(SkyObject):
         return None
 
     @classmethod
-    def find(cls, where: list = None, sql: str = None) -> list["Constellation"]:
+    def find(
+        cls,
+        catalog: Catalog = CONSTELLATIONS_IAU,
+        where: list = None,
+        sql: str = None,
+    ) -> list["Constellation"]:
         """
         Find Constellations
 
         Args:
+            catalog: The catalog of constellations to use
             where: A list of expressions that determine which constellations to find. See [Selecting Objects](/reference-selecting-objects/) for details.
             sql: SQL query for selecting constellations (table name is "_")
 
@@ -84,7 +109,7 @@ class Constellation(SkyObject):
             List of Constellations that match all `where` expressions
 
         """
-        df = constellations.load(filters=where, sql=sql).to_pandas()
+        df = load(catalog=catalog, filters=where, sql=sql).to_pandas()
 
         return [from_tuple(c) for c in df.itertuples()]
 
@@ -104,13 +129,6 @@ class Constellation(SkyObject):
 
 
 def from_tuple(c: tuple) -> Constellation:
-    c = Constellation(
-        ra=c.ra,
-        dec=c.dec,
-        iau_id=c.iau_id.lower(),
-        name=c.name,
-        star_hip_ids=c.star_hip_ids,
-        boundary=c.geometry,
-    )
-    c._constellation_id = c.iau_id
+    kwargs = {f: getattr(c, f) for f in Constellation._fields() if hasattr(c, f)}
+    c = Constellation(**kwargs)
     return c

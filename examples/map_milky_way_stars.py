@@ -1,4 +1,5 @@
 from starplot import MapPlot, Mollweide, _
+from starplot.data.catalogs import BIG_SKY
 from starplot.styles import PlotStyle, extensions
 from starplot.callables import size_by_magnitude_factory, color_by_bv
 
@@ -29,7 +30,7 @@ p.stars(
     size_fn=_sizer,
     alpha_fn=alpha,
     color_fn=color_by_bv,
-    catalog="big-sky",
+    catalog=BIG_SKY,
     style__marker__edge_color="#c5c5c5",
 )
 p.stars(
@@ -38,7 +39,7 @@ p.stars(
     size_fn=lambda s: _sizer(s) * 1.5,
     alpha_fn=lambda s: 0.4,
     color_fn=color_by_bv,
-    catalog="big-sky",
+    catalog=BIG_SKY,
     style__marker__symbol="star_8",
     style__marker__edge_color=None,
 )

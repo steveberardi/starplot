@@ -5,17 +5,6 @@ from pathlib import Path
 from dataclasses import dataclass, field
 
 
-STARPLOT_PATH = Path(__file__).resolve().parent
-"""Path of starplot source"""
-
-DATA_PATH = STARPLOT_PATH / "data" / "library"
-"""Path of starplot data"""
-
-
-RAW_DATA_PATH = STARPLOT_PATH.parent.parent / "raw"
-BUILD_PATH = STARPLOT_PATH.parent.parent / "build"
-
-
 def _get_path(var_name, default) -> Path:
     def _get():
         value = os.environ.get(var_name, default)
@@ -31,24 +20,11 @@ class SvgTextType(str, Enum):
 
 @dataclass
 class Settings:
-    download_path: Path = field(
-        default_factory=_get_path("STARPLOT_DOWNLOAD_PATH", DATA_PATH / "downloads")
-    )
+    data_path: Path = field(default_factory=_get_path("STARPLOT_DATA_PATH", Path.cwd()))
     """
-    Path for downloaded data, including the Big Sky catalog, ephemeris files, etc.
+    Path that Starplot will use for data and the DuckDB spatial extension, which is required for the data backend.
     
-    Default = `<starplot_source_path>/data/library/downloads/`
-    """
-
-    duckdb_extension_path: Path = field(
-        default_factory=_get_path(
-            "STARPLOT_DUCKDB_EXTENSION_PATH", DATA_PATH / "duckdb-extensions"
-        )
-    )
-    """
-    Path for the DuckDB spatial extension, which is required for the data backend.
-
-    Default = `<starplot_source_path>/data/library/duckdb-extensions/`
+    Default = current working directory
     """
 
     svg_text_type: SvgTextType = field(
@@ -77,11 +53,12 @@ class Settings:
 
     Supported values:
 
-    - `en-US` = English
-    - `fr` = French
-    - `zh-CN` = Chinese. Make sure you have a good Chinese font installed (such as [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC)) and you'll also need to set that as the font in your plot's style.
-    - `lt` = Lithuanian
+    - `en-us` = English (default)
     - `fa` = Persian (Farsi). Make sure you have a Persian font installed that supports RTL (such as [Vazir](https://github.com/rastikerdar/vazir-font) or [Noto Sans Arabic](https://fonts.google.com/noto/specimen/Noto+Sans+Arabic)) and set it as the font in your plot's style.
+    - `fr` = French
+    - `lt` = Lithuanian
+    - `zh-cn` = Chinese. Make sure you have a good Chinese font installed (such as [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC)) and you'll also need to set that as the font in your plot's style.
+    - `zh-tw` = Traditional Chinese
 
     **🌐 Want to see another language available? Please help us add it! [Details here](https://github.com/steveberardi/starplot/tree/main/data/raw/translations).**
     """

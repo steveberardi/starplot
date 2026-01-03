@@ -1,11 +1,14 @@
+from dataclasses import dataclass
 from typing import Optional, Iterator
 from enum import Enum
 
 from ibis import _
+from shapely import Polygon, MultiPolygon
 
+from starplot.data.utils import to_pandas
+from starplot.data.catalogs import Catalog, OPEN_NGC
 from starplot.data.dsos import load
-from starplot.mixins import CreateMapMixin, CreateOpticMixin
-from starplot.models.base import SkyObject, ShapelyPolygon, ShapelyMultiPolygon
+from starplot.models.base import SkyObject, CatalogObject
 
 
 class DsoType(str, Enum):
@@ -77,16 +80,20 @@ class DsoType(str, Enum):
     """Duplicate record of another object"""
 
 
-class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
+@dataclass(slots=True, kw_only=True)
+class DSO(CatalogObject, SkyObject):
     """
     Deep Sky Object (DSO) model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting DSOs.
     So, you can use any attributes of this model in your callables. Note that some may be null.
     """
 
-    name: str
+    geometry: Polygon | MultiPolygon
+    """Shapely Polygon of the DSO's extent. Right ascension coordinates are in degrees (0...360)."""
+
+    name: str = None
     """Name of the DSO (as specified in OpenNGC)"""
 
-    type: DsoType
+    type: DsoType = DsoType.UNKNOWN
     """Type of DSO"""
 
     common_names: list[str] = None
@@ -126,21 +133,32 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
     Index Catalogue (IC) identifier. *Note that this field is a string, to support objects like '4974 NED01'.*
     """
 
-    geometry: ShapelyPolygon | ShapelyMultiPolygon = None
-    """Shapely Polygon of the DSO's extent. Right ascension coordinates are in degrees (0...360)."""
-
     def __repr__(self) -> str:
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
 
+    # def __post_init__(self):
+    #     self.magnitude = (
+    #         self.magnitude if self.magnitude and np.isfinite(self.magnitude) else None
+    #     )
+
     @classmethod
-    def all(cls) -> Iterator["DSO"]:
-        df = load().to_pandas()
+    def all(cls, catalog: Catalog = OPEN_NGC) -> Iterator["DSO"]:
+        """
+        Get all DSOs from a catalog
+
+        Args:
+            catalog: Catalog you want to get DSO objects from
+
+        Returns:
+            Iterator of DSO instances
+        """
+        df = to_pandas(load(catalog=catalog))
 
         for d in df.itertuples():
             yield from_tuple(d)
 
     @classmethod
-    def get(cls, sql: str = None, **kwargs) -> "DSO":
+    def get(cls, catalog: Catalog = OPEN_NGC, sql: str = None, **kwargs) -> "DSO":
         """
         Get a DSO, by matching its attributes.
 
@@ -149,6 +167,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
             d = DSO.get(m=13)
 
         Args:
+            catalog: Catalog you want to search
             sql: SQL query for selecting DSO (table name is "_")
             **kwargs: Attributes on the DSO you want to match
 
@@ -159,7 +178,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         for k, v in kwargs.items():
             filters.append(getattr(_, k) == v)
 
-        df = load(filters=filters, sql=sql).to_pandas()
+        df = to_pandas(load(catalog=catalog, filters=filters, sql=sql))
 
         results = [from_tuple(d) for d in df.itertuples()]
 
@@ -174,11 +193,14 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
         return None
 
     @classmethod
-    def find(cls, where: list = None, sql: str = None) -> list["DSO"]:
+    def find(
+        cls, catalog: Catalog = OPEN_NGC, where: list = None, sql: str = None
+    ) -> list["DSO"]:
         """
         Find DSOs
 
         Args:
+            catalog: Catalog you want to search
             where: A list of expressions that determine which DSOs to find. See [Selecting Objects](/reference-selecting-objects/) for details.
             sql: SQL query for selecting DSOs (table name is "_")
 
@@ -186,7 +208,7 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
             List of DSOs that match all `where` expressions
 
         """
-        df = load(filters=where, sql=sql).to_pandas()
+        df = to_pandas(load(catalog=catalog, filters=where, sql=sql))
         return [from_tuple(d) for d in df.itertuples()]
 
     @classmethod
@@ -215,25 +237,11 @@ class DSO(SkyObject, CreateMapMixin, CreateOpticMixin):
 
 
 def from_tuple(d: tuple) -> DSO:
-    dso = DSO(
-        name=d.name,
-        common_names=d.common_names.split(",") if d.common_names else [],
-        ra=d.ra,
-        dec=d.dec,
-        type=d.type,
-        maj_ax=d.maj_ax,
-        min_ax=d.min_ax,
-        angle=d.angle,
-        magnitude=d.magnitude,
-        size=d.size,
-        m=d.m,
-        ngc=d.ngc,
-        ic=d.ic,
-        geometry=d.geometry,
-    )
-    dso._constellation_id = d.constellation_id
-    dso._row_id = getattr(d, "rowid", None)
-    return dso
+    kwargs = {f: getattr(d, f) for f in DSO._fields() if hasattr(d, f)}
+    if "common_names" in kwargs and kwargs["common_names"] is not None:
+        kwargs["common_names"] = kwargs["common_names"].split(",")
+
+    return DSO(**kwargs)
 
 
 ONGC_TYPE = {

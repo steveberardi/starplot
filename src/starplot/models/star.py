@@ -1,21 +1,29 @@
-import math
-from typing import Optional, Union, Iterator, Any
+from dataclasses import dataclass
+from typing import Optional, Union, Iterator
 
 import numpy as np
 from ibis import _
-from pydantic import field_validator
+from shapely import from_wkb, Point, Geometry
 
-from starplot.models.base import SkyObject, ShapelyPoint
-from starplot.data.stars import StarCatalog, load as _load_stars
+from starplot.models.base import SkyObject, CatalogObject
+from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
+from starplot.data.stars import load as _load_stars
 
 
-class Star(SkyObject):
+@dataclass(slots=True, kw_only=True)
+class Star(CatalogObject, SkyObject):
     """
     Star model.
     """
 
     magnitude: float
     """Magnitude"""
+
+    geometry: Point
+    """Shapely Point of the star's position. Right ascension coordinates are in degrees (0...360)."""
+
+    epoch_year: float = None
+    """Epoch of position"""
 
     bv: Optional[float] = None
     """B-V Color Index, if available"""
@@ -29,6 +37,15 @@ class Star(SkyObject):
     ccdm: Optional[str] = None
     """CCDM Component Identifier (if applicable)"""
 
+    parallax_mas: float = None
+    """Trigonometric parallax in milliarcseconds"""
+
+    ra_mas_per_year: float = None
+    """Right ascension proper motion in milliarcseconds per Julian year"""
+
+    dec_mas_per_year: float = None
+    """Declination proper motion in milliarcseconds per Julian year"""
+
     name: Optional[str] = None
     """Name, if available"""
 
@@ -38,26 +55,35 @@ class Star(SkyObject):
     flamsteed: Optional[int] = None
     """Flamsteed number, if available"""
 
-    geometry: ShapelyPoint = None
-    """Shapely Point of the star's position. Right ascension coordinates are in degrees (0...360)."""
-
-    @field_validator("flamsteed", "hip", mode="before")
-    @classmethod
-    def nan(cls, value: int) -> int:
-        if not value or math.isnan(value):
-            return None
-
-        return int(value)
-
-    def model_post_init(self, context: Any) -> None:
+    def __post_init__(self):
         self.bayer = self.bayer or None
-        self.hip = self.hip if self.hip is not None and np.isfinite(self.hip) else None
+        self.hip = (
+            int(self.hip) if self.hip is not None and np.isfinite(self.hip) else None
+        )
+        self.flamsteed = (
+            int(self.flamsteed)
+            if self.flamsteed is not None and np.isfinite(self.flamsteed)
+            else None
+        )
 
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
 
+    @property
+    def is_primary(self) -> bool:
+        return not bool(self.ccdm) or self.ccdm.startswith("A")
+
     @classmethod
-    def all(cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11) -> Iterator["Star"]:
+    def all(cls, catalog: Catalog = BIG_SKY_MAG11) -> Iterator["Star"]:
+        """
+        Get all stars from a catalog
+
+        Args:
+            catalog: Catalog you want to get star objects from
+
+        Returns:
+            Iterator of Star instances
+        """
         df = _load_stars(catalog=catalog).to_pandas()
 
         for s in df.itertuples():
@@ -65,67 +91,92 @@ class Star(SkyObject):
 
     @classmethod
     def get(
-        cls, catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11, sql: str = None, **kwargs
+        cls, catalog: Catalog = BIG_SKY_MAG11, sql: str = None, **kwargs
     ) -> Union["Star", None]:
         """
         Get a Star, by matching its attributes as specified in `**kwargs`
+
+        If there are multiple matches, then the first match (sorted by CCDM) will be returned.
 
         Example:
 
             sirius = Star.get(name="Sirius")
 
         Args:
-            catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
+            catalog: The catalog of stars to use
             sql: SQL query for selecting star (table name is "_")
             **kwargs: Attributes on the star you want to match
 
-        Raises: `ValueError` if more than one star is matched
-
         Returns:
-            Star instance if there's exactly one match or `None` if there are zero matches
+            First star that matches specified attributes, when sorted by CCDM -- or `None` if no star matches
         """
         filters = []
 
         for k, v in kwargs.items():
             filters.append(getattr(_, k) == v)
 
-        df = _load_stars(
+        table = _load_stars(
             catalog=catalog,
             filters=filters,
             sql=sql,
-        ).to_pandas()
+        )
 
+        if "ccdm" in table.columns:
+            table = table.order_by(table.ccdm)
+
+        df = table.to_pandas()
         results = [from_tuple(s) for s in df.itertuples()]
 
-        if len(results) == 1:
+        if results:
             return results[0]
-
-        if len(results) > 1:
-            raise ValueError(
-                "More than one match. Use find() instead or narrow your search."
-            )
 
         return None
 
     @classmethod
     def find(
         cls,
+        catalog: Catalog = BIG_SKY_MAG11,
         where: list = None,
         sql: str = None,
-        catalog: StarCatalog = StarCatalog.BIG_SKY_MAG11,
     ) -> list["Star"]:
         """
         Find Stars
 
         Args:
+            catalog: The catalog of stars to use
             where: A list of expressions that determine which stars to find. See [Selecting Objects](/reference-selecting-objects/) for details.
             sql: SQL query for selecting stars (table name is "_")
-            catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [`StarCatalog`](/reference-data/#starplot.data.stars.StarCatalog) for details
 
         Returns:
             List of Stars that match all `where` expressions
 
         """
+        # from ibis import to_sql
+
+        # from starplot.data import db, DataFiles
+        # con = db.connect()
+
+        # exp = _load_stars(
+        #     catalog=catalog,
+        #     filters=where,
+        #     sql=sql,
+        # )
+
+        # con.con.execute("INSTALL spatial; LOAD spatial;")
+        # result = con.raw_sql(to_sql(exp))
+        # # result = con.con.execute(to_sql(exp))
+        # # result = con.con.execute(f"SELECT * FROM read_parquet('{DataFiles.BIG_SKY_MAG9}') where magnitude < 8")
+
+        # rows =[]
+        # while True:
+        #     batch = result.fetchmany(5000)
+        #     if not batch:
+        #         break  # No more rows to fetch
+        #     for row in batch:
+        #         rows.append(row)
+
+        # return rows
+
         df = _load_stars(
             catalog=catalog,
             filters=where,
@@ -146,20 +197,24 @@ class Star(SkyObject):
 
 
 def from_tuple(star: tuple) -> Star:
-    s = Star(
-        ra=star.ra,
-        dec=star.dec,
-        hip=getattr(star, "hip", None),
-        magnitude=star.magnitude,
-        bv=getattr(star, "bv", None),
-        tyc=getattr(star, "tyc_id", None),
-        ccdm=getattr(star, "ccdm", None),
-        name=getattr(star, "name", None),
-        geometry=star.geometry,
-        bayer=getattr(star, "bayer", None),
-        flamsteed=getattr(star, "flamsteed", None),
-    )
-    s._constellation_id = getattr(star, "constellation", None)
-    s._row_id = getattr(star, "rowid", None)
+    kwargs = {f: getattr(star, f) for f in Star._fields() if hasattr(star, f)}
+    if not isinstance(kwargs["geometry"], Geometry):
+        kwargs["geometry"] = from_wkb(kwargs["geometry"])
+    s = Star(**kwargs)
+
+    # print(set(star._fields) )
+    # populate extra fields
+    # fields = Star._dir() + [
+    #     'Index',
+    #     'constellation',
+    #     'constellation_id',
+    # ]
+    # extra_fields = set(star._fields) - set(fields)
+    # extra = {}
+    # for f in extra_fields:
+    #     # setattr(s, f, getattr(star, f))
+    #     extra[f] = getattr(star, f)
+
+    # s.extra = extra
 
     return s

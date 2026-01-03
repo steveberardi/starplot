@@ -1,30 +1,27 @@
 import json
 
-import numpy as np
 
+def create_ongc_json():
+    from starplot.models.dso import DSO, DSO_LEGEND_LABELS
 
-def create_dso_json():
-    from starplot.models.dso import DSO_LEGEND_LABELS
-    from starplot.data.dsos import load
-
-    ongc = load().to_pandas()
-    ongc = ongc.replace({np.nan: None})
+    ongc = DSO.all()
     dsos = []
 
-    for dso in ongc.itertuples():
+    for dso in ongc:
         if not dso.geometry:
             continue
 
         d = {
-            "Name": dso.name,
-            "Type": DSO_LEGEND_LABELS.get(dso.type),
-            "RA": round(dso.ra_degrees, 2),
-            "DEC": round(dso.dec_degrees, 2),
-            "Magnitude": dso.mag_v or dso.mag_b or "None",
-            "Major Axis": dso.maj_ax,
-            "Minor Axis": dso.min_ax,
-            "Size": dso.size_deg2,
-            "Geometry": dso.geometry.geom_type,
+            "name": dso.name,
+            "common_names": ", ".join(dso.common_names),
+            "type": DSO_LEGEND_LABELS.get(dso.type),
+            "ra": round(dso.ra, 2),
+            "dec": round(dso.dec, 2),
+            "magnitude": dso.magnitude if dso.magnitude else "None",
+            "maj_ax": dso.maj_ax,
+            "min_ax": dso.min_ax,
+            "size": dso.size,
+            "geom_type": dso.geometry.geom_type,
         }
 
         dsos.append(d)
@@ -34,14 +31,12 @@ def create_dso_json():
 
 
 def create_star_designation_json():
-    from starplot import _
-    from starplot.data.stars import load
+    from starplot import Star, _
 
-    hip_stars = load(filters=[_.hip.notnull(), _.hip != 0]).to_pandas()
-    hip_stars = hip_stars.replace({np.nan: None})
+    hip_stars = Star.find(where=[_.hip.notnull(), _.hip != 0])
     stars = []
 
-    for s in hip_stars.itertuples():
+    for s in hip_stars:
         if not any([s.name, s.bayer, s.flamsteed]):
             continue
         d = {
@@ -57,14 +52,12 @@ def create_star_designation_json():
 
 
 def create_constellations_json():
-    from starplot import _
-    from starplot.data.constellations import load
+    from starplot import Constellation, _
 
-    df = load().to_pandas()
-    df = df.replace({np.nan: None})
+    iau = Constellation.all()
     constellations = []
 
-    for con in df.itertuples():
+    for con in iau:
         c = {
             "name": con.name,
             "iau_id": con.iau_id,
@@ -76,7 +69,7 @@ def create_constellations_json():
 
 
 def build():
-    create_dso_json()
+    create_ongc_json()
     create_star_designation_json()
     create_constellations_json()
 

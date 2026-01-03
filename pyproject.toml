@@ -34,6 +34,7 @@ dependencies = [
     "requests >= 2.31.0",
     "duckdb < 1.4.0",
     "ibis-framework[duckdb,geospatial] < 11",
+    "astropy-healpix >= 1.1.2"
 ]
 
 [project.urls]
@@ -47,14 +48,14 @@ starplot = "starplot.cli:main"
 [tool.flit.sdist]
 include = [
     "src/starplot/data/library/sky.db", 
-    "src/starplot/data/library/bigsky*.parquet",
+    "src/starplot/data/library/*.parquet",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["./tests"]
 filterwarnings = ["ignore::DeprecationWarning"]
 
-[tool.ruff]
+[tool.ruff.lint]
 ignore = ["E501"]
 
 [tool.marimo.display]

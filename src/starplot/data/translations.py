@@ -234,10 +234,68 @@ LABELS = {
         "w": "غ",
         "milky way": "کهکشان راه شیری",
     },
+    "lt": {
+        "legend": "legenda",
+        "star": "žvaigždė",
+        "deep sky object": "tolimojo kosmoso objektas",
+        "open cluster": "padrikasis spiečius",
+        "globular cluster": "kamuolinis spiečius",
+        "nebula": "ūkas",
+        "galaxy": "galaktika",
+        "dark nebula": "tamsusis ūkas",
+        "association of stars": "žvaigždžių asociacija",
+        "double star": "dvinarė žvaigždė",
+        "emission nebula": "emisinis ūkas",
+        "galaxy pair": "galaktikų pora",
+        "galaxy triplet": "galaktikų trejetas",
+        "galaxy cluster": "galaktikų spiečius",
+        "group of galaxies": "galaktikų grupė",
+        "hii ionized region": "hii jonizuotas regionas",
+        "nova star": "nova (žvaigždė)",
+        "planetary nebula": "planetinis ūkas",
+        "reflection nebula": "atspindžio ūkas",
+        "star cluster nebula": "žvaigždžių spiečiaus ūkas",
+        "supernova remnant": "supernovos liekana",
+        "unknown": "nežinomas",
+        "mercury": "Merkurijus",
+        "venus": "Venera",
+        "mars": "Marsas",
+        "jupiter": "Jupiteris",
+        "saturn": "Saturnas",
+        "uranus": "Uranas",
+        "neptune": "Neptūnas",
+        "pluto": "Plutonas",
+        "sun": "Saulė",
+        "moon": "Mėnulis",
+        "north": "Šiaurė",
+        "east": "Rytai",
+        "south": "Pietūs",
+        "west": "Vakarai",
+        "ecliptic": "Ekliptika",
+        "celestial equator": "Dangaus pusiaujas",
+        "n": "Š",
+        "e": "R",
+        "s": "P",
+        "w": "V",
+        "milky way": "Paukščių Takas",
+    },
 }
 
 
+LANGUAGES = [
+    "en-us",
+    "fa",
+    "fr",
+    "lt",
+    "zh-cn",
+    "zh-tw",
+]
+
+
 def language_name_column(language: str, column_prefix: str = "name") -> str:
+    # if language.lower() not in LANGUAGES:
+    #     raise ValueError("Unsupported language")
+
     language_name = language.replace("-", "_").lower()
     return f"{column_prefix}_{language_name}"
 
@@ -252,3 +310,6 @@ def translate(text: str, language: str) -> str:
         return text
 
     return translation.title()
+
+
+LANGUAGE_NAME_COLUMNS = [language_name_column(lang) for lang in LANGUAGES]

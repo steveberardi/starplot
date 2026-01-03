@@ -16,15 +16,20 @@ nav:
         - Selecting Objects: reference-selecting-objects.md
         - Styling: reference-styling.md
         - Callables: reference-callables.md
-        - Data:
-            - Star Catalogs: data/star-catalogs.md
-            - Star Designations: data/star-designations.md
-            - Deep Sky Objects: data/dsos.md
+        - Data Catalogs:
+            - Overview: data/overview.md
+            - Stars: data/stars.md
             - Constellations: data/constellations.md
+            - Deep Sky Objects: data/dsos.md
+            - Building: data/building.md
+        - Object Names:
+            - Stars: object-names/stars.md
+            - Constellations: object-names/constellations.md
+            - Deep Sky Objects: object-names/dsos.md
         - Localization: reference-localization.md
         - Settings: reference-settings.md
     - Data Sources: data-sources.md
-    - Publications: publications.md
+    - Showcase: showcase.md
     - License: license.md
     - Changelog: changelog.md
     - Coming Soon: coming-soon.md

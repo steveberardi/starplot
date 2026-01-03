@@ -1,63 +1,10 @@
-import json
-
+from dataclasses import dataclass, fields
 from functools import cache
 from typing import Optional
 
-from shapely import to_geojson, from_geojson, Geometry
-from shapely.geometry import Polygon, MultiPolygon, Point
-
-from pydantic_core import core_schema
-
-from pydantic import (
-    BaseModel,
-    computed_field,
-)
 from skyfield.api import position_of_radec, load_constellation_map
 
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
-
-
-class ShapelyPydantic:
-    @classmethod
-    def validate(cls, field_value, info):
-        return field_value.is_valid
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
-        def validate_from_geojson(value: dict) -> Geometry:
-            return from_geojson(json.loads(value))
-
-        from_dict_schema = core_schema.chain_schema(
-            [
-                core_schema.dict_schema(),
-                core_schema.no_info_plain_validator_function(validate_from_geojson),
-            ]
-        )
-
-        return core_schema.json_or_python_schema(
-            json_schema=from_dict_schema,
-            python_schema=core_schema.union_schema(
-                [
-                    core_schema.is_instance_schema(Geometry),
-                    from_dict_schema,
-                ]
-            ),
-            serialization=core_schema.plain_serializer_function_ser_schema(
-                lambda instance: json.loads(to_geojson(instance))
-            ),
-        )
-
-
-class ShapelyPolygon(ShapelyPydantic, Polygon):
-    pass
-
-
-class ShapelyMultiPolygon(ShapelyPydantic, MultiPolygon):
-    pass
-
-
-class ShapelyPoint(ShapelyPydantic, Point):
-    pass
 
 
 @cache
@@ -65,9 +12,15 @@ def constellation_at():
     return load_constellation_map()
 
 
-class SkyObject(BaseModel, CreateMapMixin, CreateOpticMixin):
+@dataclass(slots=True, kw_only=True)
+class SkyObject(
+    CreateMapMixin,
+    CreateOpticMixin,
+):
     """
-    Basic sky object model.
+    Base class for sky objects.
+
+    All sky object classes inherit from this base class.
     """
 
     ra: float
@@ -76,19 +29,35 @@ class SkyObject(BaseModel, CreateMapMixin, CreateOpticMixin):
     dec: float
     """Declination, in degrees (-90 to 90)"""
 
-    _constellation_id: Optional[str] = None
+    constellation_id: Optional[str] = None
+    """Three-letter IAU id of the constellation that contains this object"""
 
-    @computed_field
-    @property
-    def constellation_id(self) -> str | None:
-        """Identifier of the constellation that contains this object. The ID is the three-letter (all lowercase) abbreviation from the International Astronomical Union (IAU)."""
-        if not self._constellation_id:
-            pos = position_of_radec(self.ra / 15, self.dec)
-            self._constellation_id = constellation_at()(pos).lower()
-        return self._constellation_id
+    healpix_index: int = None
+    """[HEALPix](https://en.wikipedia.org/wiki/HEALPix) pixel index of this object's RA/DEC"""
 
     def constellation(self):
-        """Returns an instance of the [`Constellation`][starplot.models.Constellation] that contains this object"""
+        """Returns an instance of the [`Constellation`][starplot.models.Constellation] that contains this object, or `None` if no constellation is found."""
         from starplot.models import Constellation
 
         return Constellation.get(iau_id=self.constellation_id)
+
+    def populate_constellation_id(self):
+        """Populates the constellation_id field based on the location of this object"""
+        pos = position_of_radec(self.ra / 15, self.dec)
+        self.constellation_id = constellation_at()(pos).lower()
+
+    @classmethod
+    @cache
+    def _dir(cls):
+        return dir(cls)
+
+    @classmethod
+    @cache
+    def _fields(cls):
+        return [f.name for f in fields(cls)]
+
+
+@dataclass(kw_only=True)
+class CatalogObject:
+    pk: int
+    """Primary key of object in catalog. Needs to be unique across all objects in the catalog."""

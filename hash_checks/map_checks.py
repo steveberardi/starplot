@@ -1,13 +1,15 @@
+import random
+
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import numpy as np
-from pytz import timezone
 
 from starplot import (
     styles,
     DSO,
+    Star,
     DsoType,
     Moon,
     Constellation,
@@ -52,7 +54,7 @@ BASIC_DSO_TYPES = [
     DsoType.ASSOCIATION_OF_STARS.value,
 ]
 
-
+utc = ZoneInfo("UTC")
 tz = ZoneInfo("America/Los_Angeles")
 dt_dec_16 = datetime(2023, 12, 16, 21, 0, 0, 0, tzinfo=tz)
 
@@ -131,6 +133,9 @@ def check_map_orion_base():
 
 def check_map_orion_extra():
     filename = DATA_PATH / "map-orion-extra.png"
+
+    random.seed(12)
+
     mercator_base.marker(
         ra=4.5 * 15,
         dec=5,
@@ -149,6 +154,10 @@ def check_map_orion_extra():
         label="hello worldzz label offset",
         legend_label="hello legend",
     )
+    mercator_base.arrow(
+        target=(4.5 * 15, 5),
+    )
+
     mercator_base.circle(
         (7 * 15, -10),
         5,
@@ -158,6 +167,16 @@ def check_map_orion_extra():
         ),
         legend_label="blue circle",
     )
+
+    alhena = Star.get(name="Alhena")
+    ain = Star.get(name="Ain")
+    mercator_base.arrow(
+        origin=(alhena.ra, alhena.dec),
+        target=(ain.ra, ain.dec),
+        style__head_width=140,
+        style__body_width=80,
+    )
+
     mercator_base.legend()
     mercator_base.export(filename, padding=0.5)
     return filename
@@ -199,7 +218,7 @@ def check_map_stereo_base():
 
 def check_map_with_planets():
     filename = DATA_PATH / "map-mercator-planets.png"
-    dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+    dt = datetime(2023, 8, 27, 23, 0, 0, 0, tzinfo=utc)
 
     observer = Observer(dt=dt)
 
@@ -226,7 +245,7 @@ def check_map_with_planets():
 
 def check_map_with_planets_gradient():
     filename = DATA_PATH / "map-mercator-planets-gradient.png"
-    dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+    dt = datetime(2023, 8, 27, 23, 0, 0, 0, tzinfo=utc)
     observer = Observer(dt=dt)
 
     p = MapPlot(
@@ -255,7 +274,7 @@ def check_map_with_planets_gradient():
 
 def check_map_scope_bino_fov():
     filename = DATA_PATH / "map-scope-bino-fov.png"
-    dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+    dt = datetime(2023, 8, 27, 23, 0, 0, 0, tzinfo=utc)
 
     scope = Scope(
         focal_length=600,
@@ -281,7 +300,6 @@ def check_map_scope_bino_fov():
         dt=dt,
         style=style,
         resolution=2000,
-        star_catalog="big-sky-mag11",
         scale=1,
     )
     p.stars(where=[_.magnitude < 12])
@@ -610,7 +628,6 @@ def check_map_label_callables():
     )
 
     p.stars(
-        catalog="big-sky-mag11",
         label_fn=lambda s: str(int(s.hip)) if s.hip else None,
         where=[_.magnitude < 9.6, _.geometry.intersects(m45.geometry)],
         where_labels=[_.magnitude < 5],

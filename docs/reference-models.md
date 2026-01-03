@@ -17,7 +17,7 @@ Starplot has models to represent an observer and some of the objects you can plo
 
 ## Sky Objects
 
-::: starplot.Star
+::: starplot.models.base.SkyObject
     options:
         inherited_members: true
         docstring_section_style: list
@@ -25,6 +25,13 @@ Starplot has models to represent an observer and some of the objects you can plo
         show_docstring_attributes: true
         members_order: source
 
+::: starplot.Star
+    options:
+        inherited_members: true
+        docstring_section_style: list
+        show_root_heading: true
+        show_docstring_attributes: true
+        members_order: source
 
 ::: starplot.Constellation
     options:
@@ -97,7 +104,11 @@ Starplot has models to represent an observer and some of the objects you can plo
         members_order: source
 
 
+<<<<<<< HEAD
+# Optics
+=======
 ## Optics
+>>>>>>> main
 
 ## ::: starplot.models.Optic
     options:

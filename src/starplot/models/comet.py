@@ -6,9 +6,10 @@ from dataclasses import dataclass, fields
 from skyfield.api import wgs84
 from skyfield.data import mpc
 from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
+from shapely import Point
 
 from starplot.data import load
-from starplot.models.base import SkyObject, ShapelyPoint
+from starplot.models.base import SkyObject
 from starplot.utils import dt_or_now
 
 
@@ -127,6 +128,7 @@ class SkyfieldComet:
             raise KeyError
 
 
+@dataclass(slots=True, kw_only=True)
 class Comet(SkyObject):
     """
     Comets can be created in three ways:
@@ -137,12 +139,12 @@ class Comet(SkyObject):
 
     """
 
-    name: str
+    name: str = None
     """
     Name of the comet (as designated by IAU Minor Planet Center)
     """
 
-    dt: datetime
+    dt: datetime = None
     """Date/time of comet's position"""
 
     lat: float | None = None
@@ -157,7 +159,7 @@ class Comet(SkyObject):
     ephemeris: str = None
     """Ephemeris used when retrieving this instance"""
 
-    geometry: ShapelyPoint = None
+    geometry: Point = None
     """Shapely Point of the comet's position. Right ascension coordinates are in degrees (0...360)."""
 
     data: SkyfieldComet = None
@@ -169,7 +171,7 @@ class Comet(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
     ) -> "Comet":
         """
         Get a comet for a specific date/time/location from an IAU MPC JSON.
@@ -192,7 +194,7 @@ class Comet(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
         reload: bool = False,
     ) -> Iterator["Comet"]:
         """
@@ -225,7 +227,7 @@ class Comet(SkyObject):
         dt: datetime = None,
         lat: float = None,
         lon: float = None,
-        ephemeris: str = "de421_2001.bsp",
+        ephemeris: str = "de421.bsp",
         reload: bool = False,
     ) -> "Comet":
         """
@@ -327,6 +329,6 @@ def get_comet_at_date_location(
         lon=lon,
         distance=distance.au,
         ephemeris=ephemeris,
-        geometry=ShapelyPoint(ra.hours * 15, dec.degrees),
+        geometry=Point(ra.hours * 15, dec.degrees),
         data=comet,
     )
