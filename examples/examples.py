@@ -55,7 +55,7 @@ if __name__ == "__main__":
     processes = []
 
     # download catalogs if they dont exist
-    download_all_catalogs()
+    download_all_catalogs(silent=True)
 
     with Pool(num_workers) as pool:
         pool.map(run_example, example_files)

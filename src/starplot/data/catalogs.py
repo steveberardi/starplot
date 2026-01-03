@@ -129,18 +129,19 @@ class Catalog:
         """Returns true if the catalog path exists, else False."""
         return any(glob.iglob(str(self.path)))
 
-    def download(self):
+    def download(self, silent: bool = False):
         """Downloads the catalog from its URL to its path"""
         download(
-            self.url,
-            self.path,
-            f"Catalog: {self.url}",
+            url=self.url,
+            download_path=self.path,
+            description=f"Catalog: {self.url}",
+            silent=silent,
         )
 
-    def download_if_not_exists(self):
+    def download_if_not_exists(self, silent: bool = False):
         """Downloads the catalog only if it doesn't already exist at its path"""
         if not self.exists() and self.url:
-            self.download()
+            self.download(silent=silent)
 
     def healpix_ids_from_extent(self, extent: Polygon | MultiPolygon) -> list[int]:
         """
@@ -304,9 +305,9 @@ Constellations recognized by IAU, with lines by Sky & Telescope.
 """
 
 
-def download_all_catalogs():
-    BIG_SKY.download_if_not_exists()
-    BIG_SKY_MAG9.download_if_not_exists()
-    BIG_SKY_MAG11.download_if_not_exists()
-    OPEN_NGC.download_if_not_exists()
-    CONSTELLATIONS_IAU.download_if_not_exists()
+def download_all_catalogs(silent=False):
+    BIG_SKY.download_if_not_exists(silent=silent)
+    BIG_SKY_MAG9.download_if_not_exists(silent=silent)
+    BIG_SKY_MAG11.download_if_not_exists(silent=silent)
+    OPEN_NGC.download_if_not_exists(silent=silent)
+    CONSTELLATIONS_IAU.download_if_not_exists(silent=silent)
