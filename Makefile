@@ -127,7 +127,7 @@ docs-publish:
 flit-build:
 	$(DOCKER_RUN) "python -m flit build"
 
-# flit-publish: DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
+flit-publish: DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
 flit-publish:
 	$(DOCKER_RUN) "python -m flit publish"
 
