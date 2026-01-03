@@ -185,7 +185,7 @@ class Catalog:
         row_group_size: int = 200_000,
     ) -> None:
         """
-        Creates a custom catalog of sky objects. Output is one or more Parquet files.
+        Creates the catalog from an iterable of sky objects. Output is one or more Parquet files.
 
         Args:
             objects: Iterable that contains the sky objects for the catalog
@@ -194,7 +194,7 @@ class Catalog:
             partition_columns: List of columns to create Hive partitions for
             sorting_columns: List of columns to sort by
             compression: Type of compression to use -- this is passed directly to PyArrow's Parquet writer.
-            row_group_size: Row group size for the catalog Parquet file
+            row_group_size: Row group size for the Parquet files
         """
         path = self.path
         if partition_columns:
