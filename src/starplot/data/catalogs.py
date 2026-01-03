@@ -137,6 +137,11 @@ class Catalog:
             f"Catalog: {self.url}",
         )
 
+    def download_if_not_exists(self):
+        """Downloads the catalog only if it doesn't already exist at its path"""
+        if not self.exists() and self.url:
+            self.download()
+
     def healpix_ids_from_extent(self, extent: Polygon | MultiPolygon) -> list[int]:
         """
         Returns HEALPix ids from a given polygon or multipolygon
@@ -166,8 +171,7 @@ class Catalog:
         return healpix_ids
 
     def _load(self, connection, table_name) -> Table:
-        if not self.exists() and self.url:
-            self.download()
+        self.download_if_not_exists()
         return connection.read_parquet(
             str(self.path),
             table_name=table_name,
@@ -298,3 +302,11 @@ CONSTELLATIONS_IAU = Catalog(
 """
 Constellations recognized by IAU, with lines by Sky & Telescope.
 """
+
+
+def download_all_catalogs():
+    BIG_SKY.download_if_not_exists()
+    BIG_SKY_MAG9.download_if_not_exists()
+    BIG_SKY_MAG11.download_if_not_exists()
+    OPEN_NGC.download_if_not_exists()
+    CONSTELLATIONS_IAU.download_if_not_exists()
