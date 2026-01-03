@@ -13,7 +13,7 @@ def create_ongc_json():
 
         d = {
             "name": dso.name,
-            "common_names": ", ".join(dso.common_names),
+            "common_names": ", ".join(dso.common_names) if dso.common_names else "",
             "type": DSO_LEGEND_LABELS.get(dso.type),
             "ra": round(dso.ra, 2),
             "dec": round(dso.dec, 2),
