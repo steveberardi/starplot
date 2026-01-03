@@ -73,12 +73,6 @@ For a demo of Starplot's zenith charts, check out:
 
 [Sky Atlas - Star Chart Creator](https://skyatlas.app/star-charts/)
 
-## Related Repositories
-
-- [starplot-bigsky](https://github.com/steveberardi/starplot-bigsky)
-- [starplot-constellations](https://github.com/steveberardi/starplot-constellations)
-- [starplot-ongc](https://github.com/steveberardi/starplot-ongc)
-
 ## Getting Help / Updates
 
 - Chat with other starplotters on our [Discord server](https://discord.gg/WewJJjshFu)
@@ -97,6 +91,14 @@ Contributing to Starplot is welcome and very much appreciated! Please see [here]
 - 😄 🔭 Clear skies
 
 See more details on the [Public Roadmap](https://trello.com/b/sUksygn4/starplot-roadmap)
+
+## Related Repositories
+
+- [starplot-bigsky](https://github.com/steveberardi/starplot-bigsky)
+- [starplot-constellations](https://github.com/steveberardi/starplot-constellations)
+- [starplot-ongc](https://github.com/steveberardi/starplot-ongc)
+- [starplot-hyg](https://github.com/steveberardi/starplot-hyg)
+- [starplot-gaia-dr3](https://github.com/steveberardi/starplot-gaia-dr3)
 
 ## License
 [MIT License](https://github.com/steveberardi/starplot/blob/main/LICENSE)

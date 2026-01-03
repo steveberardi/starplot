@@ -39,7 +39,7 @@ def test_build_catalog():
 
     path = TEST_DATA_PATH / "stars.parquet"
 
-    cat = Catalog(path=path)
+    cat = Catalog(path=path, healpix_nside=2)
     cat.build(
         objects=stars,
         chunk_size=200_000,
@@ -64,4 +64,14 @@ def test_build_catalog():
     assert star1.ra == 120
     assert star1.dec == 10
     assert star1.name == "star1"
+    assert star1.healpix_index == 21
+
+    star2 = Star.get(name="star2", catalog=cat)
+    assert star2.name == "star2"
+    assert star2.healpix_index == 4
+
+    star3 = Star.get(name="star3", catalog=cat)
+    assert star3.name == "star3"
+    assert star3.healpix_index == 27
+
     assert len(list(Star.all(catalog=cat))) == 3
