@@ -1,4 +1,8 @@
-- [GrapheStellar](https://www.inimod.org/graphestellar/) - project that documents sky cultures visually, and uses Starplot for creating some of its charts.
+Below is a list of projects that have used Starplot in some way:
+
+- [All Sky Map](https://steveberardimaps.com/products/all-sky-map) - printed map of the entire sky, used Starplot for creating the maps
+
+- [GrapheStellar](https://www.inimod.org/graphestellar/) - documenting sky cultures visually, and uses Starplot for creating some of its charts.
 
 - [Inky Starmap](https://github.com/Marcel-Jan/inkystarmap) - map of the night sky on an Inky Impressions e-ink display
 
@@ -10,7 +14,7 @@
 
 - [In the Sky Tonight](https://skyatlas.app/tonight/) - uses Starplot to create "all sky" zenith charts that show the sky tonight. A chart is created each day for the Northern hemisphere, Southern hemisphere, and equator.
 
-⭐ **If you've created something with Starplot, we'd love to add it to this list**. Please tell us about it 
+**If you've created something with Starplot, we'd love to add it to this list**. Please tell us about it by contacting us on [Discord](https://discord.gg/WewJJjshFu), [BlueSky](https://bsky.app/profile/starplot.dev), or [e-mailing Steve Berardi](https://steveberardi.com/contact/).
 
 <div class="info-panel bg-info columns-2" style="padding: 40px;">
     <a href="https://steveberardimaps.com/products/all-sky-map" target="_blank">
@@ -41,8 +45,6 @@
 ## How to Cite Starplot
 
 If you use Starplot to help create images for a publication, we'd greatly appreciate a citation. Please see Starplot's [GitHub repo](https://github.com/steveberardi/starplot) for an easy way to generate citations in different formats (on the [repo's homepage](https://github.com/steveberardi/starplot), look to the right side under the "About" section). We also maintain a [citation file](https://github.com/steveberardi/starplot/blob/main/CITATION.cff).
-
-We'd also love to list your publication on this page, so if you'd like to share please [email Steve Berardi](https://steveberardi.com/contact/), or join us on our [Discord server](https://discord.gg/WewJJjshFu).
 
 
 <br/><br/>
