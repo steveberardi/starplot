@@ -190,11 +190,11 @@ class Catalog:
         Args:
             objects: Iterable that contains the sky objects for the catalog
             chunk_size: Max number of objects to write per file
-            columns: List of columns to include in the catalog
+            columns: List of columns to include in the catalog. Only the columns in this list will be written to the Parquet files.
             partition_columns: List of columns to create Hive partitions for
             sorting_columns: List of columns to sort by
-            compression: Type of compression to use
-            row_group_size: Row group size for the catalog parquet file
+            compression: Type of compression to use -- this is passed directly to PyArrow's Parquet writer.
+            row_group_size: Row group size for the catalog Parquet file
         """
         path = self.path
         if partition_columns:

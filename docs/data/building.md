@@ -9,6 +9,15 @@ Creating a new catalog is usually a three-step process:
 
 The size of the catalog you want to build and how you expect to query it will affect how you structure and build the catalog. See more on this in the sections below.
 
+
+---
+
+## Important Details
+
+- Every sky object in a catalog needs to have an integer `pk` defined, and this needs to be unique for each object in the catalog. Starplot currently does not enforce this uniqueness itself, so be sure to make this unique when building a catalog.
+
+
+
 ---
 
 ## Creating small catalogs (< 1M objects)

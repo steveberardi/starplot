@@ -1,3 +1,17 @@
+- [GrapheStellar](https://www.inimod.org/graphestellar/) - project that documents sky cultures visually, and uses Starplot for creating some of its charts.
+
+- [Inky Starmap](https://github.com/Marcel-Jan/inkystarmap) - map of the night sky on an Inky Impressions e-ink display
+
+- [Starplot Glasgow](https://shecodesthecosmos.co.uk/2025/09/02/starplot-glasgow-stargazing-from-your-browser/) - a web app that lets you generate star plots of the night sky as seen from Glasgow.
+
+- [Whitin Observatory](https://www.instagram.com/whitinobservatory/) - uses Starplot for creating and sharing sky maps
+
+- [Star Chart Generator](https://skyatlas.app/star-charts/) - uses Starplot to create "all sky" zenith charts for a specific time and place.
+
+- [In the Sky Tonight](https://skyatlas.app/tonight/) - uses Starplot to create "all sky" zenith charts that show the sky tonight. A chart is created each day for the Northern hemisphere, Southern hemisphere, and equator.
+
+⭐ **If you've created something with Starplot, we'd love to add it to this list**. Please tell us about it 
+
 <div class="info-panel bg-info columns-2" style="padding: 40px;">
     <a href="https://steveberardimaps.com/products/all-sky-map" target="_blank">
         <img src="/images/cover-front-sm-360.png" style="max-width: 240px; margin-right: 28px; border: 1px solid #222b46;" class="off-glb">

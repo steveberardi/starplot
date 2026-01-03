@@ -69,8 +69,6 @@ p.arrow(
     style__head_width=100,
 )
 
-
-p.constellation_labels()
 p.horizon()
 p.style.gridlines.line.width = 2
 p.gridlines()
