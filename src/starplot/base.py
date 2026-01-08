@@ -610,12 +610,11 @@ class BasePlot(ABC):
             plt.close(self.fig)
 
     @profile
-    def export(self, filename: str, format: str = "png", padding: float = 0, **kwargs):
+    def export(self, filename: str, padding: float = 0, **kwargs):
         """Exports the plot to an image file.
 
         Args:
-            filename: Filename of exported file
-            format: Format of file (options are "png", "jpeg", or "svg")
+            filename: Filename of exported file (the format will be inferred from the extension)
             padding: Padding (in inches) around the image
             **kwargs: Any keyword arguments to pass through to matplotlib's `savefig` method
 
@@ -623,7 +622,6 @@ class BasePlot(ABC):
         self.logger.debug("Exporting...")
         self.fig.savefig(
             filename,
-            format=format,
             bbox_inches="tight",
             pad_inches=padding,
             dpi=144,  # (self.resolution / self.figure_size * 1.28),

@@ -5,6 +5,8 @@
 - Adds Farsi translation
 - Increases max field of view for optic plots to 20 degrees
 - Optimizes spatial query for optic plots
+- [**v0.18.1**] 
+    - Sets schema explicitly for catalog objects
 
 
 ## v0.17.x
