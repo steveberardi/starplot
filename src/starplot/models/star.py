@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional, Union, Iterator
 
 import numpy as np
+import pyarrow as pa
 from ibis import _
 from shapely import from_wkb, Point, Geometry
 
@@ -54,6 +55,27 @@ class Star(CatalogObject, SkyObject):
 
     flamsteed: Optional[int] = None
     """Flamsteed number, if available"""
+
+    @classmethod
+    def _pyarrow_schema(cls):
+        base_schema = super(Star, cls)._pyarrow_schema()
+        star_fields = [
+            pa.field("pk", pa.int64(), nullable=False),
+            pa.field("geometry", pa.binary(), nullable=False),
+            pa.field("magnitude", pa.float64(), nullable=False),
+            pa.field("epoch_year", pa.float64()),
+            pa.field("bv", pa.float64()),
+            pa.field("hip", pa.int64()),
+            pa.field("tyc", pa.string()),
+            pa.field("ccdm", pa.string()),
+            pa.field("parallax_mas", pa.float64()),
+            pa.field("ra_mas_per_year", pa.float64()),
+            pa.field("dec_mas_per_year", pa.float64()),
+            pa.field("name", pa.string()),
+            pa.field("bayer", pa.string()),
+            pa.field("flamsteed", pa.int64()),
+        ]
+        return pa.schema(list(base_schema) + star_fields)
 
     def __post_init__(self):
         self.bayer = self.bayer or None
