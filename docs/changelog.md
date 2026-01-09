@@ -7,6 +7,7 @@
 - Optimizes spatial query for optic plots
 - [**v0.18.1**] 
     - Sets schema explicitly for catalog objects
+    - Removes `format` kwarg on `export` function
 
 
 ## v0.17.x
