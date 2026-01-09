@@ -39,7 +39,7 @@ map_moon_phase_waxing_crescent:
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b38ccc3333cccc33
 map_orion_base:
-  dhash: 18193b7e3e2f64691b393b5e2e2d646918192b4e2a2f6469
+  dhash: 18193b7e3e2f64691b393b5e2a2d646918192b4e2e2f6469
   filename: /starplot/hash_checks/data/map-orion-base.png
   phash: bf794a2417a4b594
 map_orion_extra:

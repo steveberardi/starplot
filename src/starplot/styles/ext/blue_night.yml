@@ -59,7 +59,6 @@ ecliptic:
 star:
   label:
     font_color: hsl(210, 29%, 94%)
-    font_weight: bold
   marker:
     color: hsl(210, 29%, 98%)
     edge_color: hsl(210, 29%, 15%)
@@ -157,7 +156,6 @@ sun:
   label:
     font_color: hsl(60, 92%, 71%)
     font_size: 9
-    font_weight: bold
   marker:
     color: hsl(209, 50%, 90%)
     edge_color: hsl(209, 50%, 94%)

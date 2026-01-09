@@ -109,7 +109,6 @@ gridlines:
   label:
     font_alpha: 0.8
     font_color: '#c2d2f3'
-    font_weight: light
   line:
     alpha: 0.8
     color: '#888'
@@ -130,21 +129,18 @@ planets:
 star:
   label:
     font_color: '#88c0d0'
-    font_weight: bold
   marker:
     color: '#88c0d0'
     edge_color: '#4c566a'
 sun:
   label:
     font_color: '#88c0d0'
-    font_weight: bold
   marker:
     color: '#88c0d0'
     edge_color: '#88c0d0'
 moon:
   label:
     font_color: '#88c0d0'
-    font_weight: bold
   marker:
     color: '#88c0d0'
 

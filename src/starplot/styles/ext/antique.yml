@@ -52,7 +52,7 @@ constellation_lines:
   alpha: 0.3
   color: hsl(48, 80%, 14%)
 constellation_labels:
-  font_weight: light
+  font_weight: 300
   font_color: hsl(60, 3%, 52%)
   font_alpha: 0.46
   font_name: "serif"
@@ -77,7 +77,7 @@ gridlines:
     font_alpha: 0.8
     font_color: hsl(60, 3%, 92%)
     font_size: 8
-    font_weight: light
+    font_weight: 300
   line:
     alpha: 0.6
     color: hsl(68, 11%, 71%)
