@@ -1,14 +1,14 @@
 import sys
 
 from starplot.styles import fonts
+from starplot.config import settings
+from starplot.data import db
+from starplot.data.catalogs import download_all_catalogs
 
 COMMANDS = ["setup"]
 
 
 def setup(options):
-    from starplot.config import settings
-    from starplot.data import db, bigsky
-
     print("Installing DuckDB spatial extension...")
 
     con = db.connect()
@@ -16,11 +16,8 @@ def setup(options):
 
     fonts.load()
 
-    print(f"Installed to: {settings.data_path}")
-
-    if "--install-big-sky" in options:
-        bigsky.download_if_not_exists()
-        print(f"Big Sky Catalog downloaded and installed to: {settings.download_path}")
+    print(f"Downloading data catalogs to: {settings.data_path}")
+    download_all_catalogs()
 
 
 def main():
