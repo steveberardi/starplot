@@ -70,7 +70,7 @@ for sat in iss.trajectory(dt_start, dt_end, step=timedelta(seconds=1)):
                 "border_color": "#000",
                 "border_width": 6,
                 "font_size": 38,
-                "font_weight": "heavy",
+                "font_weight": 800,
                 "offset_x": "auto",
                 "offset_y": "auto",
                 "zorder": 5_000,

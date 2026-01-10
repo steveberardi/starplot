@@ -1,6 +1,6 @@
 """Star charts and maps of the sky"""
 
-__version__ = "0.18.0"
+__version__ = "0.18.1"
 
 from .base import BasePlot  # noqa: F401
 from .map import MapPlot  # noqa: F401
@@ -25,6 +25,7 @@ from .models import (
     Satellite,  # noqa: F401
     Observer,  # noqa: F401
 )
+from .data import Catalog  # noqa: F401 F403
 from .styles import *  # noqa: F401 F403
 from .projections import *  # noqa: F401 F403
 from .config import settings  # noqa: F401

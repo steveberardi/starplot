@@ -85,15 +85,18 @@ class FillStyleEnum(str, Enum):
     """Do not fill the marker. It'll still have an edge, but the inside will be transparent."""
 
 
-class FontWeightEnum(str, Enum):
+class FontWeightEnum(int, Enum):
     """Options for font weight."""
 
-    NORMAL = "normal"
-    BOLD = "bold"
-    HEAVY = "heavy"
-    LIGHT = "light"
-    ULTRA_BOLD = "ultrabold"
-    ULTRA_LIGHT = "ultralight"
+    THIN = 100
+    EXTRA_LIGHT = 200
+    LIGHT = 300
+    NORMAL = 400
+    MEDIUM = 500
+    SEMI_BOLD = 600
+    BOLD = 700
+    EXTRA_BOLD = 800
+    HEAVY = 900
 
 
 class FontStyleEnum(str, Enum):
@@ -725,7 +728,7 @@ class LegendStyle(BaseStyle):
     title_font_size: int = 36
     """Font size of the legend title"""
 
-    title_font_weight: FontWeightEnum = FontWeightEnum.HEAVY
+    title_font_weight: FontWeightEnum = FontWeightEnum.BOLD
     """Font weight of the legend title"""
 
     title_font_name: str = "Inter"

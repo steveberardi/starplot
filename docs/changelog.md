@@ -5,6 +5,10 @@
 - Adds Farsi translation
 - Increases max field of view for optic plots to 20 degrees
 - Optimizes spatial query for optic plots
+- [**v0.18.1**] 
+    - Sets schema explicitly for catalog objects
+    - Removes `format` kwarg on `export` function
+    - Changes font weight style from string to integer, and added missing weights
 
 
 ## v0.17.x

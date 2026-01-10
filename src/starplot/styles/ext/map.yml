@@ -5,7 +5,7 @@ constellation_lines:
 
 constellation_labels:
   font_size: 34
-  font_weight: heavy
+  font_weight: 800
 
 star:
   label:

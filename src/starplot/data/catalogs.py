@@ -8,6 +8,7 @@ from pathlib import Path
 from astropy import units as u
 from astropy_healpix import HEALPix
 from ibis import Table
+import pyarrow as pa
 from shapely import Geometry, Polygon, MultiPolygon
 
 from starplot.config import settings
@@ -15,10 +16,32 @@ from starplot.models.base import SkyObject
 from starplot.data.utils import download
 
 
+def merge_schemas(df, explicit_schema: pa.Schema) -> pa.Schema:
+    """Merge explicit schema with inferred schema for remaining columns."""
+    df_columns = df.columns.tolist()
+
+    explicit_cols = {field.name for field in explicit_schema}
+
+    # infer schema for ALL columns
+    inferred_table = pa.Table.from_pandas(df)
+    inferred_schema = inferred_table.schema
+
+    # add explicit fields first
+    fields = [f for f in explicit_schema if f.name in df_columns]
+
+    # add inferred fields for remaining columns
+    for field in inferred_schema:
+        if field.name not in explicit_cols:
+            fields.append(field)
+
+    return pa.schema(fields)
+
+
 def to_parquet(
     rows: list[dict],
     path: Path,
     columns: list[str] = None,
+    schema: pa.Schema = None,
     partition_columns: list[str] = None,
     sorting_columns: list[str] = None,
     compression: str = "snappy",
@@ -26,15 +49,17 @@ def to_parquet(
     chunk_id: int = 0,
 ) -> None:
     import pandas as pd
-    import pyarrow as pa
     import pyarrow.parquet as pq
 
     df = pd.DataFrame(rows)
     df = df.sort_values(sorting_columns)
 
-    table = pa.Table.from_pandas(df)
+    merged_schema = merge_schemas(df, schema)
+    table = pa.Table.from_pandas(df, schema=merged_schema)
+
     if "__index_level_0__" in table.column_names:
         table = table.drop_columns("__index_level_0__")
+
     sort_columns = [pq.SortingColumn(columns.index(c)) for c in sorting_columns]
 
     if partition_columns:
@@ -206,6 +231,7 @@ class Catalog:
             path.mkdir(parents=True, exist_ok=True)
 
         chunk_ctr = 0
+        schema = None
         columns = columns or []
         partition_columns = partition_columns or []
         sorting_columns = sorting_columns or []
@@ -221,6 +247,9 @@ class Catalog:
             return obj.wkb if isinstance(obj, Geometry) else obj
 
         for row in objects:
+            if schema is None:
+                schema = row._pyarrow_schema()
+
             if hpix:
                 idx = hpix.lonlat_to_healpix([row.ra] * u.deg, [row.dec] * u.deg)
                 row.healpix_index = idx[0]
@@ -232,6 +261,7 @@ class Catalog:
                     rows=rows,
                     path=path,
                     columns=columns,
+                    schema=schema,
                     partition_columns=partition_columns,
                     sorting_columns=sorting_columns,
                     compression=compression,
@@ -246,6 +276,7 @@ class Catalog:
                 rows=rows,
                 path=path,
                 columns=columns,
+                schema=schema,
                 partition_columns=partition_columns,
                 sorting_columns=sorting_columns,
                 compression=compression,

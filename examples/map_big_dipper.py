@@ -24,6 +24,6 @@ p.stars(
     style__marker__symbol="star",
     style__marker__color="#ffff6c",
     style__label__font_size=14,
-    style__label__font_weight="normal",
+    style__label__font_weight=400,
 )
 p.export("map_big_dipper.png", transparent=True)
