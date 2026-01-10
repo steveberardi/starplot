@@ -76,15 +76,38 @@ class DsoPlotterMixin:
 
     def nebula(self, **kwargs):
         """
-        Plots nebula DSO types:
+        Plots all nebula DSO types (except for dark nebulae):
 
         - Nebula
         - Emission Nebula
         - Star Cluster Nebula
         - Reflection Nebula
         - HII Ionized Regions
+        - Planetary Nebula
 
-        * Note that this does NOT plot dark nebulae
+        This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
+        """
+        nebula_types = [
+            DsoType.NEBULA.value,
+            DsoType.EMISSION_NEBULA.value,
+            DsoType.STAR_CLUSTER_NEBULA.value,
+            DsoType.REFLECTION_NEBULA.value,
+            DsoType.HII_IONIZED_REGION.value,
+            DsoType.PLANETARY_NEBULA.value,
+        ]
+        where = kwargs.pop("where", [])
+        where.append(_.type.isin(nebula_types))
+        self.dsos(where=where, **kwargs)
+
+    def bright_nebula(self, **kwargs):
+        """
+        Plots the following nebula DSO types:
+
+        - Nebula
+        - Emission Nebula
+        - Star Cluster Nebula
+        - Reflection Nebula
+        - HII Ionized Regions
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
@@ -107,6 +130,16 @@ class DsoPlotterMixin:
         """
         where = kwargs.pop("where", [])
         where.append(_.type == DsoType.PLANETARY_NEBULA.value)
+        self.dsos(where=where, **kwargs)
+
+    def dark_nebula(self, **kwargs):
+        """
+        Plots dark nebula
+
+        This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
+        """
+        where = kwargs.pop("where", [])
+        where.append(_.type == DsoType.DARK_NEBULA.value)
         self.dsos(where=where, **kwargs)
 
     @profile
