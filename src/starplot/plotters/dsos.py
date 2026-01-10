@@ -79,7 +79,6 @@ class DsoPlotterMixin:
         Plots nebula DSO types:
 
         - Nebula
-        - Planetary Nebula
         - Emission Nebula
         - Star Cluster Nebula
         - Reflection Nebula
@@ -91,7 +90,6 @@ class DsoPlotterMixin:
         """
         nebula_types = [
             DsoType.NEBULA.value,
-            DsoType.PLANETARY_NEBULA.value,
             DsoType.EMISSION_NEBULA.value,
             DsoType.STAR_CLUSTER_NEBULA.value,
             DsoType.REFLECTION_NEBULA.value,
@@ -99,6 +97,16 @@ class DsoPlotterMixin:
         ]
         where = kwargs.pop("where", [])
         where.append(_.type.isin(nebula_types))
+        self.dsos(where=where, **kwargs)
+
+    def planetary_nebula(self, **kwargs):
+        """
+        Plots planetary nebula
+
+        This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
+        """
+        where = kwargs.pop("where", [])
+        where.append(_.type == DsoType.PLANETARY_NEBULA.value)
         self.dsos(where=where, **kwargs)
 
     @profile
