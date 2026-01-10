@@ -16,7 +16,7 @@ group_blue = {
     "NGC4244": {"RA": 184.372, "DEC": 37.807, "distance": 4.31},
     "NGC4449": {"RA": 187.046, "DEC": 44.093, "distance": 4.27},
 }
-gal_ra  = np.array([g["RA"] for g in group_blue.values()])
+gal_ra = np.array([g["RA"] for g in group_blue.values()])
 gal_dec = np.array([g["DEC"] for g in group_blue.values()])
 gal_names = list(group_blue.keys())
 
@@ -32,30 +32,37 @@ group_silver = {
     "IC3687": {"RA": 190.563, "DEC": 38.5019, "distance": 4.57},
     "HolmI": {"RA": 145.135, "DEC": 71.1864, "distance": 3.84},
 }
-other_gal_ra  = np.array([g["RA"] for g in group_silver.values()])
+other_gal_ra = np.array([g["RA"] for g in group_silver.values()])
 other_gal_dec = np.array([g["DEC"] for g in group_silver.values()])
 other_gal_names = list(group_silver.keys())
 
+
 def get_hurricane():
-    u = np.array([  [2.444,7.553],
-                    [0.513,7.046],
-                    [-1.243,5.433],
-                    [-2.353,2.975],
-                    [-2.578,0.092],
-                    [-2.075,-1.795],
-                    [-0.336,-2.870],
-                    [2.609,-2.016]  ])
-    u[:,0] -= 0.098
-    codes = [1] + [2]*(len(u)-2) + [2]
+    u = np.array(
+        [
+            [2.444, 7.553],
+            [0.513, 7.046],
+            [-1.243, 5.433],
+            [-2.353, 2.975],
+            [-2.578, 0.092],
+            [-2.075, -1.795],
+            [-0.336, -2.870],
+            [2.609, -2.016],
+        ]
+    )
+    u[:, 0] -= 0.098
+    codes = [1] + [2] * (len(u) - 2) + [2]
     u = np.append(u, -u[::-1], axis=0)
     codes += codes
     # Scale to angular size
     scale = 1.15 / np.max(np.abs(u))
     return mpath.Path(scale * u, codes, closed=False)
+
+
 hurricane = get_hurricane()
 
 center_coord = SkyCoord(ra=160, dec=58, unit="deg")
-center_ra = center_coord.ra.deg 
+center_ra = center_coord.ra.deg
 center_dec = center_coord.dec.deg
 
 style = PlotStyle().extend(
@@ -77,37 +84,88 @@ p.stars(
     where=[_.magnitude < 8],
     bayer_labels=True,
     where_labels=[_.magnitude < 1.75],
-    alpha_fn=lambda star: max(0.01, 1. - 0.1 * star.magnitude),
+    alpha_fn=lambda star: max(0.01, 1.0 - 0.1 * star.magnitude),
 )
 
 for ra, dec, name in zip(gal_ra, gal_dec, gal_names):
     # Build hurricane polygon in sky coordinates (degrees)
-    ra_offsets = hurricane.vertices[:, 0] / np.cos(np.radians(dec)) # Adjust angular size for declination
+    ra_offsets = hurricane.vertices[:, 0] / np.cos(
+        np.radians(dec)
+    )  # Adjust angular size for declination
     dec_offsets = hurricane.vertices[:, 1]
     hurricane_lon = ra + ra_offsets
     hurricane_lat = dec + dec_offsets
     # Convert RA to the longitude convention starplot/cartopy use (RA increases eastward)
     hurricane_lon_cartopy = np.mod(360.0 - hurricane_lon, 360.0)
     # Transform each vertex into the map projection
-    projected_vertices = np.array([
-        p.ax.projection.transform_point(lon, lat, ccrs.PlateCarree())
-        for lon, lat in zip(hurricane_lon_cartopy, hurricane_lat)
-    ])
+    projected_vertices = np.array(
+        [
+            p.ax.projection.transform_point(lon, lat, ccrs.PlateCarree())
+            for lon, lat in zip(hurricane_lon_cartopy, hurricane_lat)
+        ]
+    )
 
     patch = mpatches.PathPatch(
         mpath.Path(projected_vertices, hurricane.codes),
-        facecolor='lightblue',
-        edgecolor='navy',
-        linewidth=5.,
+        facecolor="lightblue",
+        edgecolor="navy",
+        linewidth=5.0,
         zorder=30,
     )
     p.ax.add_patch(patch)
-    p.marker(ra=ra, dec=dec, style={'marker': {'symbol': 'circle', 'size': 10, 'color': 'darkblue', 'edge_color': 'navy', 'edge_width': 3.}})
-    p.text(text=name, ra=ra, dec=dec, style={'font_color': 'navy', 'font_size': 28, 'font_weight': 700, 'offset_x': 35, 'offset_y': 35}, hide_on_collision=True)
+    p.marker(
+        ra=ra,
+        dec=dec,
+        style={
+            "marker": {
+                "symbol": "circle",
+                "size": 10,
+                "color": "darkblue",
+                "edge_color": "navy",
+                "edge_width": 3.0,
+            }
+        },
+    )
+    p.text(
+        text=name,
+        ra=ra,
+        dec=dec,
+        style={
+            "font_color": "navy",
+            "font_size": 28,
+            "font_weight": 700,
+            "offset_x": 35,
+            "offset_y": 35,
+        },
+        hide_on_collision=True,
+    )
 
 for ra, dec, name in zip(other_gal_ra, other_gal_dec, other_gal_names):
-    p.marker(ra=ra, dec=dec, style={'marker': {'symbol': 'ellipse', 'size': 30, 'color': 'orange', 'edge_color': 'black', 'edge_width': 2.}})
-    p.text(text=name, ra=ra, dec=dec, style={'font_color': 'black', 'font_size': 28, 'offset_x': 15., 'offset_y': 40.}, hide_on_collision=True)
+    p.marker(
+        ra=ra,
+        dec=dec,
+        style={
+            "marker": {
+                "symbol": "ellipse",
+                "size": 30,
+                "color": "orange",
+                "edge_color": "black",
+                "edge_width": 2.0,
+            }
+        },
+    )
+    p.text(
+        text=name,
+        ra=ra,
+        dec=dec,
+        style={
+            "font_color": "black",
+            "font_size": 28,
+            "offset_x": 15.0,
+            "offset_y": 40.0,
+        },
+        hide_on_collision=True,
+    )
 
 p.gridlines()
 p.constellations(style__color="#78d78e", style__alpha=0.25)
@@ -116,6 +174,6 @@ p.constellation_labels(style__font_size=28, style__font_color="#035019")
 p.milky_way()
 p.ecliptic()
 p.celestial_equator()
-p.ax.tick_params(axis='both', labelsize=28)
+p.ax.tick_params(axis="both", labelsize=28)
 
 p.export("galaxy_custom_marker.png", padding=0.3, transparent=True)
