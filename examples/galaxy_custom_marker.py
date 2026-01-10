@@ -1,10 +1,11 @@
 import numpy as np
-from starplot import MapPlot, LambertAzEqArea, _
-from starplot.styles import PlotStyle, extensions
-from astropy.coordinates import SkyCoord
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
 import cartopy.crs as ccrs
+from astropy.coordinates import SkyCoord
+
+from starplot import MapPlot, LambertAzEqArea, _
+from starplot.styles import PlotStyle, extensions
 
 group_blue = {
     "M81": {"RA": 148.888, "DEC": 69.065, "distance": 3.70},
@@ -102,7 +103,7 @@ for ra, dec, name in zip(gal_ra, gal_dec, gal_names):
     )
     p.ax.add_patch(patch)
     p.marker(ra=ra, dec=dec, style={'marker': {'symbol': 'circle', 'size': 10, 'color': 'darkblue', 'edge_color': 'navy', 'edge_width': 3.}})
-    p.text(text=name, ra=ra, dec=dec, style={'font_color': 'navy', 'font_size': 28, 'font_weight': 'bold', 'offset_x': 35, 'offset_y': 35}, hide_on_collision=True)
+    p.text(text=name, ra=ra, dec=dec, style={'font_color': 'navy', 'font_size': 28, 'font_weight': 700, 'offset_x': 35, 'offset_y': 35}, hide_on_collision=True)
 
 for ra, dec, name in zip(other_gal_ra, other_gal_dec, other_gal_names):
     p.marker(ra=ra, dec=dec, style={'marker': {'symbol': 'ellipse', 'size': 30, 'color': 'orange', 'edge_color': 'black', 'edge_width': 2.}})
@@ -117,4 +118,4 @@ p.ecliptic()
 p.celestial_equator()
 p.ax.tick_params(axis='both', labelsize=28)
 
-p.export("galaxies_overplot_constellations.png", padding=0.3, transparent=True)
+p.export("galaxy_custom_marker.png", padding=0.3, transparent=True)
