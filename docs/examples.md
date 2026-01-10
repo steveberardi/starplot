@@ -108,6 +108,12 @@
             <p class="example-card-title">Map of Cassiopeia</p>
         </a>
     </li>
+    <li>
+        <a href="/examples/map-custom-marker/">
+            <img src="/images/examples/galaxy_custom_marker-sm.png" alt="Custom Markers for Galaxies" class="off-glb" loading="lazy"/>
+            <p class="example-card-title">Custom Markers for Galaxies</p>
+        </a>
+    </li>
 </ul>
 
 </div>

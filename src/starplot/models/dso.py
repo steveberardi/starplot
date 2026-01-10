@@ -3,6 +3,7 @@ from typing import Optional, Iterator
 from enum import Enum
 
 from ibis import _
+import pyarrow as pa
 from shapely import Polygon, MultiPolygon
 
 from starplot.data.utils import to_pandas
@@ -133,13 +134,28 @@ class DSO(CatalogObject, SkyObject):
     Index Catalogue (IC) identifier. *Note that this field is a string, to support objects like '4974 NED01'.*
     """
 
+    @classmethod
+    def _pyarrow_schema(cls):
+        base_schema = super(DSO, cls)._pyarrow_schema()
+        dso_fields = [
+            pa.field("pk", pa.int64(), nullable=False),
+            pa.field("geometry", pa.binary(), nullable=False),
+            pa.field("name", pa.string()),
+            pa.field("type", pa.string()),
+            pa.field("common_names", pa.string()),
+            pa.field("magnitude", pa.float64()),
+            pa.field("maj_ax", pa.float64()),
+            pa.field("min_ax", pa.float64()),
+            pa.field("angle", pa.float64()),
+            pa.field("size", pa.float64()),
+            pa.field("m", pa.string()),
+            pa.field("ngc", pa.string()),
+            pa.field("ic", pa.string()),
+        ]
+        return pa.schema(list(base_schema) + dso_fields)
+
     def __repr__(self) -> str:
         return f"DSO(name={self.name}, magnitude={self.magnitude})"
-
-    # def __post_init__(self):
-    #     self.magnitude = (
-    #         self.magnitude if self.magnitude and np.isfinite(self.magnitude) else None
-    #     )
 
     @classmethod
     def all(cls, catalog: Catalog = OPEN_NGC) -> Iterator["DSO"]:

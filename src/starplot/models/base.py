@@ -2,6 +2,7 @@ from dataclasses import dataclass, fields
 from functools import cache
 from typing import Optional
 
+import pyarrow as pa
 from skyfield.api import position_of_radec, load_constellation_map
 
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
@@ -55,6 +56,19 @@ class SkyObject(
     @cache
     def _fields(cls):
         return [f.name for f in fields(cls)]
+
+    @classmethod
+    @cache
+    def _pyarrow_schema(cls):
+        """Returns explicit schema"""
+        return pa.schema(
+            [
+                pa.field("ra", pa.float64(), nullable=False),
+                pa.field("dec", pa.float64(), nullable=False),
+                pa.field("constellation_id", pa.string()),
+                pa.field("healpix_index", pa.int64()),
+            ]
+        )
 
 
 @dataclass(kw_only=True)

@@ -2,7 +2,7 @@ PYTHON=./venv/bin/python
 DE421_URL=https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp
 
 ifeq ($(CI), true)
- DR_ARGS=
+ DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
 else
  DR_ARGS=-it --env-file ./.env
 endif
@@ -127,7 +127,6 @@ docs-publish:
 flit-build:
 	$(DOCKER_RUN) "python -m flit build"
 
-flit-publish: DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
 flit-publish:
 	$(DOCKER_RUN) "python -m flit publish"
 

@@ -1,4 +1,3 @@
-
 # Creating Catalogs
 
 Creating a new catalog is usually a three-step process:
@@ -17,7 +16,6 @@ The size of the catalog you want to build and how you expect to query it will af
 - Every sky object in a catalog needs to have an integer `pk` defined, and this needs to be unique for each object in the catalog. Starplot currently does not enforce this uniqueness itself, so be sure to make this unique when building a catalog.
 
 
-
 ---
 
 ## Creating small catalogs (< 1M objects)
@@ -32,6 +30,7 @@ When building a catalog you can optionally specify a list of `sorting_columns`. 
 - [HYG Star Catalog Builder](https://github.com/steveberardi/starplot-hyg)
 - [Constellations Catalog Builder](https://github.com/steveberardi/starplot-constellations)
 - [OpenNGC DSO Catalog Builder](https://github.com/steveberardi/starplot-ongc)
+- [HyperLeda Galaxy Catalog Builder](https://github.com/steveberardi/starplot-hyperleda)
 
 ---
 

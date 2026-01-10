@@ -23,6 +23,6 @@ Created by Steve Berardi with QGIS + GDAL from NASA's [Deep Star Maps](https://s
 !!! star "🎉 New! Custom Catalogs"
     Starplot now supports custom data catalogs for stars, constellations, and DSOs!
     
-    [See the overview for more information](data/overview.md).
+    [See here for more information](data/overview.md)
 
 <br/><br/>

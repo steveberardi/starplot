@@ -61,7 +61,7 @@ p.marker(
         },
         "label": {
             "font_size": 25,
-            "font_weight": "bold",
+            "font_weight": 600,
             "font_color": "#c83cc8",
             "font_alpha": 1,
         },
