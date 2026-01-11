@@ -49,7 +49,7 @@ p.open_clusters(
 
 with p.style.dso_open_cluster as oc:
     oc.label.font_size = 26
-    oc.label.font_weight = "heavy"
+    oc.label.font_weight = 800
     p.open_clusters(
         # plot larger clusters as their true apparent size
         where=[_.size > 0.2, mag_filters],
@@ -63,7 +63,7 @@ p.nebula(
 )
 with p.style.dso_nebula as neb:
     neb.label.font_size = 26
-    neb.label.font_weight = "heavy"
+    neb.label.font_weight = 800
     p.nebula(
         where=[mag_filters, _.size > 0.2],
         label_fn=dso_label,

@@ -50,7 +50,7 @@ p.marker(
         "label": {
             "zorder": 200,
             "font_size": 22,
-            "font_weight": "bold",
+            "font_weight": 700,
             "font_color": "hsl(44, 70%, 64%)",
             "font_alpha": 1,
             "offset_x": "auto",
