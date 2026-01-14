@@ -45,7 +45,6 @@ constellation_lines:
 constellation_labels:
   font_alpha: 0.37
   font_color: hsl(209, 23%, 80%)
-  font_weight: 300
 constellation_borders:
   width: 2
   color: hsl(209, 50%, 74%)

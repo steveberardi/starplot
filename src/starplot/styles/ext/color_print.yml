@@ -24,7 +24,7 @@ celestial_equator:
 constellation:
   label:
     font_size: 4
-    font_weight: 300
+    font_weight: 200
     font_color: '#8c8c8c'
     font_alpha: 0.1
   line:
@@ -51,7 +51,7 @@ gridlines:
     font_alpha: 1
     font_color:  hsl(211, 80%, 97%)
     font_size: 18
-    font_weight: 300
+    font_weight: 200
   line:
     alpha: 0.4
     color: '#888'
