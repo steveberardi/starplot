@@ -104,26 +104,14 @@ Starplot has models to represent an observer and some of the objects you can plo
         members_order: source
 
 
-<<<<<<< HEAD
-# Optics
-=======
 ## Optics
->>>>>>> main
 
-## ::: starplot.models.Optic
+::: starplot.models.Optic
     options:
         show_root_heading: true
         heading_level: 2
 
-## ::: starplot.models.Binoculars
-    options:
-        inherited_members: true
-        show_docstring_attributes: true
-        merge_init_into_class: true
-        show_root_heading: true
-        heading_level: 2
-
-## ::: starplot.models.Scope
+::: starplot.models.Binoculars
     options:
         inherited_members: true
         show_docstring_attributes: true
@@ -131,7 +119,7 @@ Starplot has models to represent an observer and some of the objects you can plo
         show_root_heading: true
         heading_level: 2
 
-## ::: starplot.models.Refractor
+::: starplot.models.Scope
     options:
         inherited_members: true
         show_docstring_attributes: true
@@ -139,7 +127,7 @@ Starplot has models to represent an observer and some of the objects you can plo
         show_root_heading: true
         heading_level: 2
 
-## ::: starplot.models.Reflector
+::: starplot.models.Refractor
     options:
         inherited_members: true
         show_docstring_attributes: true
@@ -147,7 +135,15 @@ Starplot has models to represent an observer and some of the objects you can plo
         show_root_heading: true
         heading_level: 2
 
-## ::: starplot.models.Camera
+::: starplot.models.Reflector
+    options:
+        inherited_members: true
+        show_docstring_attributes: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+::: starplot.models.Camera
     options:
         inherited_members: true
         show_docstring_attributes: true
