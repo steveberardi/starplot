@@ -1,5 +1,4 @@
 import csv
-from pathlib import Path
 
 from data_settings import RAW_PATH
 
@@ -39,3 +38,10 @@ def get_translations(filename):
                 translations[language][row[0]] = row[2]
 
     return translations
+
+
+def get_label_dict(language_code):
+    with open(TRANSLATIONS_PATH / language_code / "other_terms.csv", "r") as terms_file:
+        reader = csv.reader(terms_file)
+        next(reader)
+        return {english: translation for english, translation in reader}
