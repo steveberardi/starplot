@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=8b63b0)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge&color=88b063)
 
-**Starplot** is a Python library for creating star charts and maps of the sky.
+**Starplot** is a Python library for creating star charts and maps of the sky
 
 - 🗺️ **Maps** - including 10+ customizable projections
 - ⭐ **Zenith Charts** - shows the entire sky at a specific time and place
@@ -17,7 +17,7 @@
 - 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
 - 📓 **Custom Data Catalogs** - with helpers for building and optimizing
 - 🧭 **Label Collision Avoidance** - ensuring all labels are readable
-- 🌐 **Localization** - label translations for French, Chinese, and Persian (coming soon!)
+- 🌐 **Localization** - label translations for Chinese, French, Lithuanian, Persian, and Spanish
 
 ## Examples
 *Zenith chart of the stars from a specific time/location:*
