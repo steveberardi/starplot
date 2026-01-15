@@ -13,6 +13,7 @@ class TestLanguages:
             (11767, "zh-cn", "北极星"),
             (11767, "lt", "Šiaurinė žvaigždė (Polaris)"),
             (11767, "fa", "ستاره قطبی"),
+            (107259, "es", "Estrella Granate"),
         ],
     )
     def test_star_name(self, star_hip_id, language, expected_value):
@@ -24,6 +25,7 @@ class TestLanguages:
         "constellation_id, language, expected_value",
         [
             ("cma", "en-us", "Canis Major"),
+            ("and", "es", "Andrómeda"),
             ("cma", "fr", "Grand chien"),
             ("cma", "zh-cn", "大犬"),
             ("cma", "lt", "Didysis Šuo"),
@@ -39,6 +41,7 @@ class TestLanguages:
         "messier, language, expected_value",
         [
             ("11", "en-us", "Wild Duck Cluster"),
+            ("11", "es", "Cúmulo Patos Salvajes"),
             ("11", "fr", "Amas du Canard sauvage"),
             ("11", "zh-cn", "野鸭星团"),
             ("11", "lt", "Laukinės anties spiečius (M11)"),
