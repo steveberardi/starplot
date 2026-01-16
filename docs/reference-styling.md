@@ -480,6 +480,7 @@ Styling rules tailored for plots that will be imported to design applications
         show_root_heading: true
         show_docstring_attributes: true
         members: true
+        members_order: source
 
 ::: starplot.styles.LineStyleEnum
     options:
