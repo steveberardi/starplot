@@ -90,13 +90,27 @@ class FontWeightEnum(int, Enum):
 
     THIN = 100
     EXTRA_LIGHT = 200
-    LIGHT = 300
+    # LIGHT = 300   # matplotlib's font dict doesn't have 300?
     NORMAL = 400
     MEDIUM = 500
     SEMI_BOLD = 600
     BOLD = 700
     EXTRA_BOLD = 800
     HEAVY = 900
+
+    def as_matplot(self) -> str:
+        """Returns the font weight as a matplotlib string, which avoids a bug with integer font weights and rendering text as elements in SVG."""
+        return {
+            FontWeightEnum.THIN: "ultralight",
+            FontWeightEnum.EXTRA_LIGHT: "light",  # matplotlib maps 'light' to 200, which is really extra light
+            # FontWeightEnum.LIGHT: "light",
+            FontWeightEnum.NORMAL: "normal",
+            FontWeightEnum.MEDIUM: "medium",
+            FontWeightEnum.SEMI_BOLD: "semibold",
+            FontWeightEnum.BOLD: "bold",
+            FontWeightEnum.EXTRA_BOLD: "extra bold",
+            FontWeightEnum.HEAVY: "black",
+        }[self.value]
 
 
 class FontStyleEnum(str, Enum):
@@ -598,7 +612,7 @@ class LabelStyle(BaseStyle):
             fontsize=self.font_size * scale,
             fontstyle=self.font_style,
             fontname=self.font_name,
-            weight=self.font_weight,
+            weight=FontWeightEnum(self.font_weight).as_matplot(),
             alpha=self.font_alpha,
             zorder=self.zorder,
         )
@@ -744,7 +758,7 @@ class LegendStyle(BaseStyle):
             framealpha=self.background_alpha,
             prop={
                 "family": self.font_name,
-                "weight": self.font_weight,
+                "weight": FontWeightEnum(self.font_weight),
                 "size": self.font_size * scale,
             },
             labelcolor=self.font_color.as_hex(),
@@ -858,7 +872,7 @@ class PlotStyle(BaseStyle):
 
     bayer_labels: LabelStyle = LabelStyle(
         font_size=21,
-        font_weight=FontWeightEnum.LIGHT,
+        font_weight=FontWeightEnum.EXTRA_LIGHT,
         font_name="GFS Didot",
         zorder=ZOrderEnum.LAYER_4,
         anchor_point=AnchorPointEnum.TOP_LEFT,
@@ -1158,7 +1172,7 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=22,
             font_color="#999",
-            font_weight=FontWeightEnum.LIGHT,
+            font_weight=FontWeightEnum.EXTRA_LIGHT,
             font_alpha=0.65,
             zorder=ZOrderEnum.LAYER_3,
         ),

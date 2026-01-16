@@ -54,6 +54,7 @@ class Settings:
     Supported values:
 
     - `en-us` = English (default)
+    - `es` = Spanish
     - `fa` = Persian (Farsi). Make sure you have a Persian font installed that supports RTL (such as [Vazir](https://github.com/rastikerdar/vazir-font) or [Noto Sans Arabic](https://fonts.google.com/noto/specimen/Noto+Sans+Arabic)) and set it as the font in your plot's style.
     - `fr` = French
     - `lt` = Lithuanian
