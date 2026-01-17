@@ -230,7 +230,6 @@ def check_map_with_planets():
         dec_min=-40,
         dec_max=40,
         observer=observer,
-        hide_colliding_labels=False,
         style=STYLE,
         resolution=RESOLUTION,
         autoscale=True,
@@ -256,7 +255,6 @@ def check_map_with_planets_gradient():
         dec_min=-40,
         dec_max=40,
         observer=observer,
-        hide_colliding_labels=False,
         style=styles.PlotStyle().extend(
             styles.extensions.BLUE_GOLD,
             styles.extensions.GRADIENT_PRE_DAWN,

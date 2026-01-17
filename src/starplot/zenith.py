@@ -8,7 +8,7 @@ from starplot.models.observer import Observer
 from starplot.projections import Stereographic
 from starplot.styles import LabelStyle, PlotStyle, PathStyle, GradientDirection
 from starplot.styles.helpers import use_style
-
+from starplot.plotters.text import CollisionHandler
 
 DEFAULT_MAP_STYLE = PlotStyle()  # .extend(extensions.MAP)
 
@@ -21,7 +21,6 @@ class ZenithPlot(MapPlot):
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
-        hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         scale: Scaling factor that will be applied to all sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set the scale to 2. At `scale=1` and `resolution=4096` (the default), all sizes are optimized visually for a map that covers 1-3 constellations. So, if you're creating a plot of a _larger_ extent, then it'd probably be good to decrease the scale (i.e. make everything smaller) -- and _increase_ the scale if you're plotting a very small area.
         autoscale: If True, then the scale will be set automatically based on resolution.
         suppress_warnings: If True (the default), then all warnings will be suppressed
@@ -40,7 +39,7 @@ class ZenithPlot(MapPlot):
         ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_MAP_STYLE,
         resolution: int = 4096,
-        hide_colliding_labels: bool = True,
+        collision_handler: CollisionHandler = CollisionHandler(),
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
@@ -62,7 +61,7 @@ class ZenithPlot(MapPlot):
             ephemeris,
             style,
             resolution,
-            hide_colliding_labels,
+            collision_handler=collision_handler,
             clip_path=None,
             scale=scale,
             autoscale=autoscale,

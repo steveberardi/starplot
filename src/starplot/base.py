@@ -79,7 +79,6 @@ class BasePlot(TextPlotterMixin, ABC):
         ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_STYLE,
         resolution: int = 4096,
-        hide_colliding_labels: bool = True,
         collision_handler: CollisionHandler = CollisionHandler(),
         scale: float = 1.0,
         autoscale: bool = False,
@@ -102,7 +101,6 @@ class BasePlot(TextPlotterMixin, ABC):
         self.style = style
         self.figure_size = resolution * px
         self.resolution = resolution
-        self.hide_colliding_labels = hide_colliding_labels
         self.collision_handler = collision_handler
 
         self.scale = scale

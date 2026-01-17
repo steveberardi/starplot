@@ -21,6 +21,7 @@ from starplot.plotters import (
     LegendPlotterMixin,
     ArrowPlotterMixin,
 )
+from starplot.plotters.text import CollisionHandler
 from starplot.styles import (
     PlotStyle,
     extensions,
@@ -66,7 +67,6 @@ class HorizonPlot(
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc)
         resolution: Size (in pixels) of largest dimension of the map
-        hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
         scale: Scaling factor that will be applied to all relevant sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set scale to 2.
         autoscale: If True, then the scale will be automatically set based on resolution
         suppress_warnings: If True (the default), then all warnings will be suppressed
@@ -89,7 +89,7 @@ class HorizonPlot(
         ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_HORIZON_STYLE,
         resolution: int = 4096,
-        hide_colliding_labels: bool = True,
+        collision_handler: CollisionHandler = CollisionHandler(),
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
@@ -101,7 +101,7 @@ class HorizonPlot(
             ephemeris,
             style,
             resolution,
-            hide_colliding_labels,
+            collision_handler=collision_handler,
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,

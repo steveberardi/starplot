@@ -371,7 +371,6 @@ class TextPlotterMixin:
         ra: float,
         dec: float,
         style: LabelStyle = None,
-        hide_on_collision: bool = True,
         collision_handler: CollisionHandler = CollisionHandler(),
         **kwargs,
     ):
