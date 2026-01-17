@@ -1,9 +1,11 @@
+# ruff: noqa: F401,F403
+
 from pathlib import Path
 
 from skyfield.api import Loader
 
 from starplot.config import settings
-from .catalogs import Catalog  # noqa: F401
+from .catalogs import Catalog
 
 load = Loader(settings.data_path)  # used for loading ephemeris
 

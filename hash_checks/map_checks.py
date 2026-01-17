@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 import numpy as np
 
 from starplot import (
+    MapPlot,
     styles,
     DSO,
     Star,
@@ -20,9 +21,8 @@ from starplot import (
     Mollweide,
     StereoNorth,
     CollisionHandler,
+    Binoculars, Scope
 )
-from starplot.map import MapPlot
-from starplot.models import Binoculars, Scope
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"

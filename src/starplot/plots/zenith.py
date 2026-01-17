@@ -3,7 +3,7 @@ from matplotlib import path, patches
 
 from starplot.coordinates import CoordinateSystem
 from starplot.data.translations import translate
-from starplot.map import MapPlot
+from starplot.plots.map import MapPlot
 from starplot.models.observer import Observer
 from starplot.projections import Stereographic
 from starplot.styles import LabelStyle, PlotStyle, PathStyle, GradientDirection

@@ -4,9 +4,10 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
 
-from starplot.coordinates import CoordinateSystem
+
 from starplot import callables, geod
-from starplot.base import BasePlot, DPI
+from starplot.coordinates import CoordinateSystem
+from starplot.plots.base import BasePlot, DPI
 from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star, Optic, Camera

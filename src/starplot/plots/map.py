@@ -12,7 +12,7 @@ import numpy as np
 
 from starplot.coordinates import CoordinateSystem
 from starplot import geod
-from starplot.base import BasePlot, DPI
+from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.plotters import (

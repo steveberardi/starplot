@@ -9,7 +9,7 @@ from matplotlib.ticker import FixedLocator, FuncFormatter
 from skyfield.api import wgs84, Star as SkyfieldStar
 from shapely import Point, Polygon, MultiPolygon
 from starplot.coordinates import CoordinateSystem
-from starplot.base import BasePlot, DPI
+from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.plotters import (
