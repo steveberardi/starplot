@@ -335,6 +335,11 @@ CONSTELLATIONS_IAU = Catalog(
 Constellations recognized by IAU, with lines by Sky & Telescope.
 """
 
+MILKY_WAY = Catalog(
+    path=settings.data_path / "milky_way-0.1.0.parquet",
+    url="https://github.com/steveberardi/starplot-milkyway/releases/download/v0.1.0/milky_way.parquet",
+)
+
 
 def download_all_catalogs(silent=False):
     BIG_SKY.download_if_not_exists(silent=silent)
@@ -342,3 +347,4 @@ def download_all_catalogs(silent=False):
     BIG_SKY_MAG11.download_if_not_exists(silent=silent)
     OPEN_NGC.download_if_not_exists(silent=silent)
     CONSTELLATIONS_IAU.download_if_not_exists(silent=silent)
+    MILKY_WAY.download_if_not_exists(silent=silent)

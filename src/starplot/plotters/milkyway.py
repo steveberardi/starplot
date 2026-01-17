@@ -2,7 +2,8 @@ from shapely.ops import unary_union
 
 from ibis import _
 
-from starplot.data import db, DataFiles, Catalog
+from starplot.data import db
+from starplot.data.catalogs import Catalog, MILKY_WAY
 from starplot.styles import PolygonStyle
 from starplot.styles.helpers import use_style
 from starplot.geometry import split_polygon_at_zero
@@ -13,19 +14,16 @@ from starplot.models.milky_way import from_tuple
 class MilkyWayPlotterMixin:
     @profile
     @use_style(PolygonStyle, "milky_way")
-    def milky_way(self, style: PolygonStyle = None):
+    def milky_way(self, style: PolygonStyle = None, catalog: Catalog = MILKY_WAY):
         """
         Plots the Milky Way
 
         Args:
             style: Styling of the Milky Way. If None, then the plot's style (specified when creating the plot) will be used
+            catalog: Catalog to use for Milky Way polygons
         """
         con = db.connect()
-
-        catalog = Catalog(
-            path=DataFiles.MILKY_WAY,
-        )
-        mw = con.read_parquet(str(catalog.path), table_name="milky_way")
+        mw = catalog._load(connection=con, table_name="milky_way")
         mw = mw.mutate(
             geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
         )
