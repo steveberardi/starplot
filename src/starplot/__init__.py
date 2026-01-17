@@ -2,7 +2,7 @@
 
 """Star charts and maps of the sky"""
 
-__version__ = "0.18.3"
+__version__ = "0.19.0b1"
 
 from .plots import (
     MapPlot,
@@ -28,6 +28,7 @@ from .models import (
     Satellite,
     Observer,
     EPOCH_J2000,
+    MilkyWay,
 )
 from .data import Catalog
 from .styles import *

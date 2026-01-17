@@ -23,4 +23,6 @@ class DataFiles:
 
     DSO_NAMES = INTERNAL_DATA_PATH / "dso_names.parquet"
 
+    MILKY_WAY = INTERNAL_DATA_PATH / "milky_way.parquet"
+
     DATABASE = INTERNAL_DATA_PATH / "sky.db"

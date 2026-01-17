@@ -10,6 +10,7 @@ from starplot.data.translations import LANGUAGES
 import star_designations, constellation_names, dso_names
 from data_settings import BUILD_PATH, RAW_PATH
 from translations import get_label_dict
+from milky_way import build as build_milky_way
 
 db_path = BUILD_PATH / "sky.db"
 
@@ -34,6 +35,9 @@ def build_all():
     )
     shutil.copy(BUILD_PATH / "dso_names.parquet", DataFiles.DSO_NAMES)
 
+    build_milky_way()
+    shutil.copy(BUILD_PATH / "milky_way.parquet", DataFiles.MILKY_WAY)
+
     translations_terms = {}
     for language_code in LANGUAGES:
         translations_terms[language_code] = get_label_dict(language_code)
@@ -48,14 +52,14 @@ def build_db():
     con.load_extension("spatial")
 
     # Milky Way
-    milky_way_src = RAW_PATH / "milkyway.json"
-    con.execute(
-        (
-            "DROP TABLE IF EXISTS milky_way;"
-            f"CREATE TABLE milky_way AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{milky_way_src}'));"
-            "CREATE INDEX milky_way_geometry_idx ON milky_way USING RTREE (geometry);"
-        ),
-    )
+    # milky_way_src = RAW_PATH / "milkyway.json"
+    # con.execute(
+    #     (
+    #         "DROP TABLE IF EXISTS milky_way;"
+    #         f"CREATE TABLE milky_way AS (select * EXCLUDE geom, geom AS geometry from ST_Read('{milky_way_src}'));"
+    #         "CREATE INDEX milky_way_geometry_idx ON milky_way USING RTREE (geometry);"
+    #     ),
+    # )
 
     constellation_borders_src = RAW_PATH / "constellation_borders.json"
     con.sql(
