@@ -54,7 +54,24 @@ class CollisionHandler:
     """Random seed for randomly generating points"""
 
     anchor_fallbacks: list[AnchorPointEnum] = None
-    """A list of anchor points to try for point-based labels"""
+    """
+    If a point-based label's preferred anchor point results in a collision, then these fallbacks will be tried in 
+    sequence until a collision-free position is found.
+
+    Default:
+    ```python
+    [
+        AnchorPointEnum.BOTTOM_RIGHT,
+        AnchorPointEnum.TOP_LEFT,
+        AnchorPointEnum.TOP_RIGHT,
+        AnchorPointEnum.BOTTOM_LEFT,
+        AnchorPointEnum.BOTTOM_CENTER,
+        AnchorPointEnum.TOP_CENTER,
+        AnchorPointEnum.RIGHT_CENTER,
+        AnchorPointEnum.LEFT_CENTER,
+    ]
+    ```
+    """
 
     def __post_init__(self):
         self.anchor_fallbacks = self.anchor_fallbacks or [
