@@ -15,6 +15,7 @@ from starplot.models.dso import (
 )
 from starplot.styles import MarkerSymbolEnum
 from starplot.profile import profile
+from starplot.plotters.text import CollisionHandler
 
 
 class DsoPlotterMixin:
@@ -154,6 +155,7 @@ class DsoPlotterMixin:
         sql: str = None,
         sql_labels: str = None,
         catalog: Catalog = OPEN_NGC,
+        collision_handler: CollisionHandler = None,
     ):
         """
         Plots Deep Sky Objects (DSOs), from OpenNGC
@@ -174,6 +176,7 @@ class DsoPlotterMixin:
 
         where = where or []
         where_labels = where_labels or []
+        handler = collision_handler or self.collision_handler
 
         if legend_labels is None:
             legend_labels = {}
@@ -257,7 +260,14 @@ class DsoPlotterMixin:
                         )
 
                 if label:
-                    self.text(label, ra, dec, style.label, gid=f"dso-{d.type}-label")
+                    self.text(
+                        label,
+                        ra,
+                        dec,
+                        style.label,
+                        collision_handler=handler,
+                        gid=f"dso-{d.type}-label",
+                    )
 
                 self._add_legend_handle_marker(legend_label, style.marker)
 
@@ -269,6 +279,7 @@ class DsoPlotterMixin:
                     style=style,
                     label=label,
                     legend_label=legend_label,
+                    collision_handler=handler,
                     skip_bounds_check=True,
                     gid_marker=f"dso-{d.type}-marker",
                     gid_label=f"dso-{d.type}-label",

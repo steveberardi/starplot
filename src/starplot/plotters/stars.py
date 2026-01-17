@@ -13,6 +13,7 @@ from starplot.data.translations import translate
 from starplot.models.star import Star, from_tuple
 from starplot.styles import ObjectStyle, use_style
 from starplot.profile import profile
+from starplot.plotters.text import CollisionHandler
 
 
 class StarPlotterMixin:
@@ -65,6 +66,7 @@ class StarPlotterMixin:
         bayer_labels: bool,
         flamsteed_labels: bool,
         label_fn: Callable[[Star], str],
+        collision_handler: CollisionHandler,
     ):
         _bayer = []
         _flamsteed = []
@@ -100,7 +102,7 @@ class StarPlotterMixin:
                         marker_size=star_sizes[i],
                         scale=self.scale,
                     ),
-                    hide_on_collision=self.hide_colliding_labels,
+                    collision_handler=collision_handler,
                     gid="stars-label-name",
                 )
 
@@ -121,7 +123,7 @@ class StarPlotterMixin:
                     marker_size=star_size,
                     scale=self.scale,
                 ),
-                hide_on_collision=self.hide_colliding_labels,
+                collision_handler=collision_handler,
                 gid="stars-label-bayer",
             )
 
@@ -135,7 +137,7 @@ class StarPlotterMixin:
                     marker_size=star_size,
                     scale=self.scale,
                 ),
-                hide_on_collision=self.hide_colliding_labels,
+                collision_handler=collision_handler,
                 gid="stars-label-flamsteed",
             )
 
@@ -163,17 +165,10 @@ class StarPlotterMixin:
         flamsteed_labels: bool = False,
         sql: str = None,
         sql_labels: str = None,
-        *args,
-        **kwargs,
+        collision_handler: CollisionHandler = None,
     ):
         """
         Plots stars
-
-        Labels for stars are determined in this order:
-
-        1. Return value from `label_fn`
-        2. Value for star's HIP id in `labels`
-        3. IAU-designated name, as listed in the [data reference](/data/star-designations/)
 
         Args:
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
@@ -199,6 +194,7 @@ class StarPlotterMixin:
         alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
         color_fn = color_fn or (lambda d: color_hex)
 
+        handler = collision_handler or self.collision_handler
         where = where or []
         where_labels = where_labels or []
         stars_to_index = []
@@ -330,4 +326,5 @@ class StarPlotterMixin:
             bayer_labels,
             flamsteed_labels,
             label_fn,
+            handler,
         )

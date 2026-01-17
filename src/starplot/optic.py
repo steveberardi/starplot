@@ -1,4 +1,4 @@
-from typing import Callable, Mapping
+from typing import Callable
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches, path
@@ -27,6 +27,7 @@ from starplot.styles import (
     GradientDirection,
 )
 from starplot.utils import azimuth_to_string
+from starplot.plotters.text import CollisionHandler
 
 DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
 
@@ -251,43 +252,34 @@ class OpticPlot(
         where_labels: list = None,
         catalog: Catalog = BIG_SKY_MAG11,
         style: ObjectStyle = None,
-        rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
         label_fn: Callable[[Star], str] = Star.get_label,
-        labels: Mapping[int, str] = None,
         legend_label: str = "Star",
         bayer_labels: bool = False,
         flamsteed_labels: bool = False,
         sql: str = None,
-        *args,
-        **kwargs,
+        sql_labels: str = None,
+        collision_handler: CollisionHandler = None,
     ):
         """
         Plots stars
-
-        Labels for stars are determined in this order:
-
-        1. Return value from `label_fn`
-        2. Value for star's HIP id in `labels`
-        3. IAU-designated name, as listed in the [data reference](/data/star-designations/)
 
         Args:
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [star catalogs](/data/star-catalogs/) for details
             style: If `None`, then the plot's style for stars will be used
-            rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
-            label_fn: Callable for determining the label of each star. If `None`, then the names in the `labels` kwarg will be used.
-            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If `None`, then the star's IAU-designated name will be used.
+            label_fn: Callable for determining the label of each star.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted.
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
             sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
+            sql_labels: SQL query for selecting stars that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
         """
         optic_star_multiplier = self.FIELD_OF_VIEW_MAX / self.optic.true_fov
         size_fn_mx = None
@@ -302,18 +294,16 @@ class OpticPlot(
             where_labels=where_labels,
             catalog=catalog,
             style=style,
-            rasterize=rasterize,
             size_fn=size_fn_mx,
             alpha_fn=alpha_fn,
             color_fn=color_fn,
             label_fn=label_fn,
-            labels=labels,
             legend_label=legend_label,
             bayer_labels=bayer_labels,
             flamsteed_labels=flamsteed_labels,
             sql=sql,
-            *args,
-            **kwargs,
+            sql_labels=sql_labels,
+            collision_handler=collision_handler,
         )
 
     @use_style(LabelStyle, "info_text")

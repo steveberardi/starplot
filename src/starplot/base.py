@@ -31,7 +31,7 @@ from starplot.styles import (
     GradientDirection,
     fonts,
 )
-from starplot.plotters.text import TextPlotterMixin
+from starplot.plotters.text import TextPlotterMixin, CollisionHandler
 from starplot.styles.helpers import use_style
 from starplot.profile import profile
 
@@ -80,6 +80,7 @@ class BasePlot(TextPlotterMixin, ABC):
         style: PlotStyle = DEFAULT_STYLE,
         resolution: int = 4096,
         hide_colliding_labels: bool = True,
+        collision_handler: CollisionHandler = CollisionHandler(),
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
@@ -102,6 +103,7 @@ class BasePlot(TextPlotterMixin, ABC):
         self.figure_size = resolution * px
         self.resolution = resolution
         self.hide_colliding_labels = hide_colliding_labels
+        self.collision_handler = collision_handler
 
         self.scale = scale
         self.autoscale = autoscale
@@ -219,6 +221,7 @@ class BasePlot(TextPlotterMixin, ABC):
         label: Optional[str] = None,
         legend_label: str = None,
         skip_bounds_check: bool = False,
+        collision_handler: CollisionHandler = None,
         **kwargs,
     ) -> None:
         """Plots a marker
@@ -282,7 +285,7 @@ class BasePlot(TextPlotterMixin, ABC):
                 ra,
                 dec,
                 label_style,
-                hide_on_collision=self.hide_colliding_labels,
+                collision_handler=collision_handler or self.collision_handler,
                 gid=kwargs.get("gid_label") or "marker-label",
             )
 
@@ -296,6 +299,7 @@ class BasePlot(TextPlotterMixin, ABC):
         true_size: bool = False,
         labels: Dict[PlanetName, str] = PLANET_LABELS_DEFAULT,
         legend_label: str = "Planet",
+        collision_handler: CollisionHandler = None,
     ) -> None:
         """
         Plots the planets.
@@ -314,6 +318,7 @@ class BasePlot(TextPlotterMixin, ABC):
         )
 
         legend_label = translate(legend_label, self.language)
+        handler = collision_handler or self.collision_handler
 
         for p in planets:
             label = labels.get(p.name)
@@ -335,7 +340,12 @@ class BasePlot(TextPlotterMixin, ABC):
 
                 if label:
                     self.text(
-                        label.upper(), p.ra, p.dec, style.label, gid="planet-label"
+                        label.upper(),
+                        p.ra,
+                        p.dec,
+                        style.label,
+                        collision_handler=handler,
+                        gid="planet-label",
                     )
             else:
                 self.marker(
@@ -344,6 +354,7 @@ class BasePlot(TextPlotterMixin, ABC):
                     style=style,
                     label=label.upper() if label else None,
                     legend_label=legend_label,
+                    collision_handler=handler,
                     gid_marker="planet-marker",
                     gid_label="planet-label",
                 )
@@ -355,6 +366,7 @@ class BasePlot(TextPlotterMixin, ABC):
         true_size: bool = False,
         label: str = "Sun",
         legend_label: str = "Sun",
+        collision_handler: CollisionHandler = None,
     ) -> None:
         """
         Plots the Sun.
@@ -376,6 +388,7 @@ class BasePlot(TextPlotterMixin, ABC):
         label = translate(label, self.language)
         legend_label = translate(legend_label, self.language)
         s.name = label or s.name
+        handler = collision_handler or self.collision_handler
 
         if not self.in_bounds(s.ra, s.dec):
             return
@@ -399,7 +412,14 @@ class BasePlot(TextPlotterMixin, ABC):
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
-                self.text(label, s.ra, s.dec, style.label, gid="sun-label")
+                self.text(
+                    label,
+                    s.ra,
+                    s.dec,
+                    style.label,
+                    collision_handler=handler,
+                    gid="sun-label",
+                )
 
         else:
             self.marker(
@@ -408,6 +428,7 @@ class BasePlot(TextPlotterMixin, ABC):
                 style=style,
                 label=label,
                 legend_label=legend_label,
+                collision_handler=handler,
                 gid_marker="sun-marker",
                 gid_label="sun-label",
             )
@@ -635,6 +656,7 @@ class BasePlot(TextPlotterMixin, ABC):
         show_phase: bool = False,
         label: str = "Moon",
         legend_label: str = "Moon",
+        collision_handler: CollisionHandler = None,
     ) -> None:
         """
         Plots the Moon.
@@ -656,6 +678,7 @@ class BasePlot(TextPlotterMixin, ABC):
         label = translate(label, self.language)
         legend_label = translate(legend_label, self.language)
         m.name = label or m.name
+        handler = collision_handler or self.collision_handler
 
         if not self.in_bounds(m.ra, m.dec):
             return
@@ -689,7 +712,14 @@ class BasePlot(TextPlotterMixin, ABC):
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
-                self.text(label, m.ra, m.dec, style.label, gid="moon-label")
+                self.text(
+                    label,
+                    m.ra,
+                    m.dec,
+                    style.label,
+                    collision_handler=handler,
+                    gid="moon-label",
+                )
 
         else:
             self.marker(
@@ -698,6 +728,7 @@ class BasePlot(TextPlotterMixin, ABC):
                 style=style,
                 label=label,
                 legend_label=legend_label,
+                collision_handler=handler,
                 gid_marker="moon-marker",
                 gid_label="moon-label",
             )
@@ -820,7 +851,12 @@ class BasePlot(TextPlotterMixin, ABC):
             )
 
     @use_style(PathStyle, "ecliptic")
-    def ecliptic(self, style: PathStyle = None, label: str = "ECLIPTIC"):
+    def ecliptic(
+        self,
+        style: PathStyle = None,
+        label: str = "ECLIPTIC",
+        collision_handler: CollisionHandler = None,
+    ):
         """Plots the ecliptic
 
         Args:
@@ -854,11 +890,21 @@ class BasePlot(TextPlotterMixin, ABC):
             label_spacing = int(len(inbounds) / 4)
 
             for ra, dec in [inbounds[label_spacing], inbounds[label_spacing * 2]]:
-                self.text(label, ra, dec, style.label, gid="ecliptic-label")
+                self.text(
+                    label,
+                    ra,
+                    dec,
+                    style.label,
+                    collision_handler=collision_handler or self.collision_handler,
+                    gid="ecliptic-label",
+                )
 
     @use_style(PathStyle, "celestial_equator")
     def celestial_equator(
-        self, style: PathStyle = None, label: str = "CELESTIAL EQUATOR"
+        self,
+        style: PathStyle = None,
+        label: str = "CELESTIAL EQUATOR",
+        collision_handler: CollisionHandler = None,
     ):
         """
         Plots the celestial equator
@@ -896,5 +942,6 @@ class BasePlot(TextPlotterMixin, ABC):
                     ra,
                     0.25,
                     style.label,
+                    collision_handler=collision_handler or self.collision_handler,
                     gid="celestial-equator-label",
                 )

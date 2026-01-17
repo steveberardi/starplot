@@ -4,7 +4,7 @@ import pytest
 
 from pytz import timezone
 
-from starplot import MapPlot, Mercator, Miller, Observer
+from starplot import MapPlot, Mercator, Miller, Observer, _
 
 
 def test_map_radec_invalid():
@@ -38,7 +38,7 @@ def test_map_objects_list():
     p.open_clusters()
     assert "NGC2632" in [d.name for d in p.objects.dsos]
 
-    p.stars(mag=8)
+    p.stars(where=[_.magnitude < 8])
     assert 42578 in [s.hip for s in p.objects.stars]
 
     assert p.objects.moon is None
