@@ -21,7 +21,8 @@ from starplot import (
     Mollweide,
     StereoNorth,
     CollisionHandler,
-    Binoculars, Scope
+    Binoculars,
+    Scope,
 )
 
 HERE = Path(__file__).resolve().parent

@@ -59,11 +59,10 @@ class HorizonPlot(
     """Creates a new horizon plot.
 
     Args:
-        lat: Latitude of observer's location
-        lon: Longitude of observer's location
+
         altitude: Tuple of altitude range to plot (min, max)
         azimuth: Tuple of azimuth range to plot (min, max)
-        dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
+        observer: Observer instance which specifies a time and place. Defaults to `Observer()`
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
         resolution: Size (in pixels) of largest dimension of the map
@@ -86,7 +85,7 @@ class HorizonPlot(
         self,
         altitude: tuple[float, float],
         azimuth: tuple[float, float],
-        observer: Observer = Observer(),
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_HORIZON_STYLE,
         resolution: int = 4096,
@@ -97,6 +96,8 @@ class HorizonPlot(
         *args,
         **kwargs,
     ) -> "HorizonPlot":
+        observer = observer or Observer()
+
         super().__init__(
             observer,
             ephemeris,
@@ -161,7 +162,7 @@ class HorizonPlot(
         # import geopandas as gpd
 
         # Skyfield needs these columns
-        df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
+        # df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
 
         stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()

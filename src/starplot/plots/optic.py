@@ -44,12 +44,10 @@ class OpticPlot(
     """Creates a new optic plot.
 
     Args:
-        optic: Optic instance that defines optical parameters
         ra: Right ascension of target center, in degrees (0...360)
         dec: Declination of target center, in degrees (-90...90)
-        lat: Latitude of observer's location
-        lon: Longitude of observer's location
-        dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
+        optic: Optic instance that defines optical parameters
+        observer: Observer instance which specifies a time and place. Defaults to `Observer()`
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
         resolution: Size (in pixels) of largest dimension of the map
@@ -74,7 +72,7 @@ class OpticPlot(
         ra: float,
         dec: float,
         optic: Optic,
-        observer: Observer = Observer(),
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_OPTIC_STYLE,
         resolution: int = 4096,
@@ -86,6 +84,7 @@ class OpticPlot(
         *args,
         **kwargs,
     ) -> "OpticPlot":
+        observer = observer or Observer()
         super().__init__(
             observer,
             ephemeris,

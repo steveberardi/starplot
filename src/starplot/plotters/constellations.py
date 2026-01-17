@@ -64,6 +64,7 @@ class ConstellationPlotterMixin:
             filters=[_.hip.isin(hips)],
         )
         df = results.to_pandas()
+        df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
         df = self._prepare_star_coords(df, limit_by_altaz=False)
 
         return {star.hip: (star.x, star.y) for star in df.itertuples()}
@@ -116,7 +117,7 @@ class ConstellationPlotterMixin:
             inbounds = False
 
             for s1_hip, s2_hip in hiplines:
-                if not constars.get(s2_hip):
+                if not constars.get(s1_hip) or not constars.get(s2_hip):
                     continue
                 s1_ra, s1_dec = constars.get(s1_hip)
                 s2_ra, s2_dec = constars.get(s2_hip)

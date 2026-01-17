@@ -6,6 +6,8 @@ from skyfield.timelib import Timescale
 
 from starplot.data import load
 
+ts = load.timescale()
+
 
 class Observer(BaseModel):
     """
@@ -19,8 +21,18 @@ class Observer(BaseModel):
         lat=33.363484,
         lon=-116.836394,
     )
-
     ```
+
+    To create an observer at a specific epoch for map plots:
+
+    ```python
+    from starplot.data import load
+
+    ts = load.timescale()
+
+    epoch_j2000 = Observer(dt=ts.J(2000).utc_datetime())
+    ```
+
     """
 
     dt: AwareDatetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -47,7 +59,7 @@ class Observer(BaseModel):
 
         Timescale instance of the specified datetime (used by Skyfield)
         """
-        return load.timescale().from_datetime(self.dt)
+        return ts.from_datetime(self.dt)
 
     @computed_field
     @cached_property
@@ -69,3 +81,7 @@ class Observer(BaseModel):
     #     earth = self.ephemeris["earth"]
     #     self.location = earth + wgs84.latlon(self.lat, self.lon)
     #     return self.location.at(self.timescale).observe
+
+
+EPOCH_J2000 = Observer(dt=ts.J(2000).utc_datetime())
+"""An observer that represents epoch J2000"""

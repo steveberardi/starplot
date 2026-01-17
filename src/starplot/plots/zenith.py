@@ -17,7 +17,7 @@ class ZenithPlot(MapPlot):
     """Creates a new zenith plot.
 
     Args:
-        observer: Observer instance which specifies a time and place
+        observer: Observer instance which specifies a time and place. Defaults to `Observer()`
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
         resolution: Size (in pixels) of largest dimension of the map
@@ -36,7 +36,7 @@ class ZenithPlot(MapPlot):
 
     def __init__(
         self,
-        observer: Observer = Observer(),
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_MAP_STYLE,
         resolution: int = 4096,
@@ -47,6 +47,7 @@ class ZenithPlot(MapPlot):
         *args,
         **kwargs,
     ) -> "ZenithPlot":
+        observer = observer or Observer()
         projection = Stereographic(
             center_ra=observer.lst,
             center_dec=observer.lat,
@@ -175,3 +176,25 @@ class ZenithPlot(MapPlot):
 
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon()
+
+    def _prepare_star_coords(self, df, limit_by_altaz=False):
+        # TODO : reconcile this commented code
+        # self.location = self.earth + wgs84.latlon(
+        #     self.observer.lat, self.observer.lon
+        # )
+        # df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
+        # stars_apparent = (
+        #     self.location.at(self.observer.timescale)
+        #     .observe(SkyfieldStar.from_dataframe(df))
+        #     .apparent()
+        # )
+        # # we only need altitude
+        # stars_alt, _, _ = stars_apparent.altaz()
+        # df["alt"] = stars_alt.degrees
+        # df = df[df["alt"] > 0]
+
+        df["x"], df["y"] = (
+            df["ra"],
+            df["dec"],
+        )
+        return df

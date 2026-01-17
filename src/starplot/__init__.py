@@ -27,6 +27,7 @@ from .models import (
     Camera,
     Satellite,
     Observer,
+    EPOCH_J2000,
 )
 from .data import Catalog
 from .styles import *

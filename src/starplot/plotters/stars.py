@@ -4,7 +4,7 @@ from typing import Callable
 import rtree
 import numpy as np
 from ibis import _ as ibis_table
-from skyfield.api import Star as SkyfieldStar, wgs84
+from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
 from starplot.data import stars
@@ -218,30 +218,15 @@ class StarPlotterMixin:
         stars_df = star_results.to_pandas()
         stars_df["ra_hours"], stars_df["dec_degrees"] = (stars_df.ra / 15, stars_df.dec)
 
-        if getattr(self, "projection", None) == "zenith":
-            # filter stars for zenith plots to only include those above horizon
-            self.location = self.earth + wgs84.latlon(
-                self.observer.lat, self.observer.lon
-            )
-            stars_apparent = (
-                self.location.at(self.observer.timescale)
-                .observe(SkyfieldStar.from_dataframe(stars_df))
-                .apparent()
-            )
-            # we only need altitude
-            stars_alt, _, _ = stars_apparent.altaz()
-            stars_df["alt"] = stars_alt.degrees
-            stars_df = stars_df[stars_df["alt"] > 0]
-        else:
-            nearby_stars = SkyfieldStar.from_dataframe(stars_df)
-            astrometric = self.earth.at(self.observer.timescale).observe(nearby_stars)
-            stars_ra, stars_dec, _ = astrometric.radec()
-            stars_df["ra"], stars_df["dec"] = (
-                stars_ra.hours * 15,
-                stars_dec.degrees,
-            )
-
+        nearby_stars = SkyfieldStar.from_dataframe(stars_df)
+        astrometric = self.earth.at(self.observer.timescale).observe(nearby_stars)
+        stars_ra, stars_dec, _ = astrometric.radec()
+        stars_df["ra"], stars_df["dec"] = (
+            stars_ra.hours * 15,
+            stars_dec.degrees,
+        )
         stars_df = self._prepare_star_coords(stars_df)
+
         starz = []
         rtree_id = 1
 

@@ -14,7 +14,7 @@ from starplot.coordinates import CoordinateSystem
 from starplot import geod
 from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
-from starplot.models.observer import Observer
+from starplot.models.observer import Observer, EPOCH_J2000
 from starplot.plotters import (
     ConstellationPlotterMixin,
     StarPlotterMixin,
@@ -58,7 +58,7 @@ class MapPlot(
         ra_max: Maximum right ascension of the map's extent, in degrees (0...360)
         dec_min: Minimum declination of the map's extent, in degrees (-90...90)
         dec_max: Maximum declination of the map's extent, in degrees (-90...90)
-        observer: Observer instance which specifies a time and place
+        observer: Observer instance which specifies a time and place. Defaults to an observer at epoch J2000
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
         resolution: Size (in pixels) of largest dimension of the map
@@ -83,7 +83,7 @@ class MapPlot(
         ra_max: float = 360,
         dec_min: float = -90,
         dec_max: float = 90,
-        observer: Observer = Observer(),
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_MAP_STYLE,
         resolution: int = 4096,
@@ -95,6 +95,8 @@ class MapPlot(
         *args,
         **kwargs,
     ) -> "MapPlot":
+        observer = observer or EPOCH_J2000
+
         super().__init__(
             observer,
             ephemeris,

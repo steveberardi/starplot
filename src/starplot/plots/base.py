@@ -76,7 +76,7 @@ class BasePlot(TextPlotterMixin, ABC):
 
     def __init__(
         self,
-        observer: Observer = Observer(),
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
@@ -112,7 +112,7 @@ class BasePlot(TextPlotterMixin, ABC):
         if suppress_warnings:
             warnings.suppress()
 
-        self.observer = observer
+        self.observer = observer or Observer()
         self._ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
         self.earth = self.ephemeris["earth"]
