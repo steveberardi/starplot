@@ -29,16 +29,6 @@ from starplot.utils import points_on_line
 from starplot.geometry import is_wrapped_polygon
 from starplot.plotters.text import CollisionHandler
 
-DEFAULT_AUTO_ADJUST_SETTINGS = {
-    "avoid_constellation_lines": False,
-    "point_generation_max_iterations": 10,
-    "distance_step_size": 2,
-    "max_distance": 3_000,
-    "label_padding": 6,
-    "seed": None,
-}
-"""Default settings for auto-adjusting constellation labels"""
-
 GEODETIC_PROJECTIONS = (
     Equidistant,
     LambertAzEqArea,
@@ -269,8 +259,9 @@ class ConstellationPlotterMixin:
         """
 
         # TODO : reconcile this
-        collision_handler = CollisionHandler(allow_constellation_line_collisions = True, seed=1)
-
+        collision_handler = CollisionHandler(
+            allow_constellation_line_collisions=True, seed=1
+        )
 
         # self._constellation_labels(style, label_fn, collision_handler=collision_handler)
 
@@ -312,4 +303,3 @@ class ConstellationPlotterMixin:
                 collision_handler=collision_handler,
                 gid="constellations-label-name",
             )
-        

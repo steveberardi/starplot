@@ -272,23 +272,9 @@ class TextPlotterMixin:
         if StarplotSettings.svg_text_type == SvgTextType.PATH:
             kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
 
-
-        DEFAULT_AUTO_ADJUST_SETTINGS = {
-            "avoid_constellation_lines": False,
-            "point_generation_max_iterations": 10,
-            "distance_step_size": 2,
-            "max_distance": 3_000,
-            "label_padding": 6,
-            "seed": None,
-        }
-        
-        # avoid_constellation_lines = settings.get("avoid_constellation_lines", False)
-        padding = 6 #settings.get("label_padding", 3)
-        max_distance = 3_000 # settings.get("max_distance", 300)
-        distance_step_size = 2 # settings.get("distance_step_size", 1)
-        point_iterations = collision_handler.attempts # settings.get("point_generation_max_iterations", 500)
-        random_seed = collision_handler.seed # settings.get("seed")
-
+        padding = 6
+        max_distance = 3_000
+        distance_step_size = 2
         attempts = 0
         height = None
         width = None
@@ -313,8 +299,8 @@ class TextPlotterMixin:
                 new_areas[poly],
                 origin_point=origin,
                 distance=distance,
-                max_iterations=point_iterations,
-                seed=random_seed,
+                max_iterations=collision_handler.attempts,
+                seed=collision_handler.seed,
             )
 
             if point is None:
