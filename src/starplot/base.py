@@ -231,6 +231,7 @@ class BasePlot(TextPlotterMixin, ABC):
             style: Styling for the marker
             legend_label: How to label the marker in the legend. If `None`, then the marker will not be added to the legend
             skip_bounds_check: If True, then don't check the marker coordinates to ensure they're within the bounds of the plot. If you're plotting many markers, setting this to True can speed up plotting time.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
 
         """
 
@@ -309,6 +310,7 @@ class BasePlot(TextPlotterMixin, ABC):
             true_size: If True, then each planet's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.models.planet.PlanetName])
             legend_label: How to label the planets in the legend. If `None`, then the planets will not be added to the legend
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         labels = labels or {}
         planets = models.Planet.all(
@@ -376,6 +378,7 @@ class BasePlot(TextPlotterMixin, ABC):
             true_size: If True, then the Sun's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
             label: How the Sun will be labeled on the plot
             legend_label: How the sun will be labeled in the legend
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         s = models.Sun.get(
             dt=self.observer.dt,
@@ -665,7 +668,9 @@ class BasePlot(TextPlotterMixin, ABC):
             style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then the Moon's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
             show_phase: If True, and if `true_size = True`, then the approximate phase of the moon will be illustrated. The dark side of the moon will be colored with the marker's `edge_color`.
-            label: How the Moon will be labeled on the plot and legend
+            label: How the Moon will be labeled on the plot
+            legend_label: How the Moon will be labeled in the legend
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         m = models.Moon.get(
             dt=self.observer.dt,
@@ -860,6 +865,7 @@ class BasePlot(TextPlotterMixin, ABC):
         Args:
             style: Styling of the ecliptic. If None, then the plot's style will be used
             label: How the ecliptic will be labeled on the plot
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         x = []
         y = []
@@ -910,6 +916,7 @@ class BasePlot(TextPlotterMixin, ABC):
         Args:
             style: Styling of the celestial equator. If None, then the plot's style will be used
             label: How the celestial equator will be labeled on the plot
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         x = []
         y = []

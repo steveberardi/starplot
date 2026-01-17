@@ -371,7 +371,7 @@ class TextPlotterMixin:
         ra: float,
         dec: float,
         style: LabelStyle = None,
-        collision_handler: CollisionHandler = CollisionHandler(),
+        collision_handler: CollisionHandler = None,
         **kwargs,
     ):
         """
@@ -382,12 +382,13 @@ class TextPlotterMixin:
             ra: Right ascension of text (0...360)
             dec: Declination of text (-90...90)
             style: Styling of the text
-            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with text, markers, etc
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         if not text:
             return
 
         style = style or LabelStyle()
+        collision_handler = collision_handler or self.collision_handler
 
         if style.offset_x == "auto":
             style.offset_x = 0

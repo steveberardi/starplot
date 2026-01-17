@@ -173,7 +173,7 @@ class StarPlotterMixin:
         Args:
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
-            catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [star catalogs](/data/star-catalogs/) for details
+            catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
             style: If `None`, then the plot's style for stars will be used
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
@@ -184,6 +184,7 @@ class StarPlotterMixin:
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
             sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             sql_labels: SQL query for selecting stars that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
 
         # fallback to style if callables are None

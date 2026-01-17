@@ -254,7 +254,7 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellation labels. If None, then the plot's style (specified when creating the plot) will be used
             label_fn: Callable for determining the label for each constellation. The default function returns the constellation's name in uppercase.
-            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with text, markers, etc
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
 
         # TODO : reconcile this

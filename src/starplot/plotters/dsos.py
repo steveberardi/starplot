@@ -170,6 +170,8 @@ class DsoPlotterMixin:
             label_fn: Callable for determining the label of each DSO.
             sql: SQL query for selecting DSOs (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             sql_labels: SQL query for selecting DSOs that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
+            catalog: The catalog of DSOs to use -- see [catalogs overview](/data/overview/) for details
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
 
         # TODO: add kwarg styles
