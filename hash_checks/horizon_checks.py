@@ -2,7 +2,7 @@ from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from starplot import styles, HorizonPlot, _, Observer, Star
+from starplot import styles, HorizonPlot, _, Observer, Star, CollisionHandler
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -14,7 +14,7 @@ STYLE = styles.PlotStyle().extend(
 
 RESOLUTION = 4096
 
-AUTO_ADJUST_SETTINGS = {"seed": 1}
+HANDLER = CollisionHandler(seed=1)
 
 TZ_PT = ZoneInfo("US/Pacific")
 
@@ -41,7 +41,7 @@ def _horizon():
     p.stars(where=[_.magnitude < 5])
     p.ecliptic()
     p.horizon()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
     p.gridlines()
     return p
 
@@ -75,7 +75,7 @@ def check_horizon_north_celestial_pole():
     p.stars(where=[_.magnitude < 5])
     p.ecliptic()
     p.horizon()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
     p.gridlines()
 
     polaris = Star.get(name="Polaris")
@@ -110,7 +110,7 @@ def check_horizon_gradient_background():
     p.stars(where=[_.magnitude < 5])
     p.ecliptic()
     p.horizon()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
     p.gridlines()
 
     filename = DATA_PATH / "horizon-gradient-background.png"

@@ -47,7 +47,11 @@ class CollisionHandler:
     plot_on_fail: bool = False
     """If True, then labels will be plotted even if no allowed position is found"""
 
-    attempts: int = 100
+    attempts: int = 10
+    """Max attempts to find a good label position"""
+
+    seed: int = None
+    """Random seed for randomly generating points"""
 
     anchor_fallbacks: list[AnchorPointEnum] = None
     """A list of anchor points to try for point-based labels"""
@@ -259,10 +263,7 @@ class TextPlotterMixin:
         dec: float,
         text: str,
         area,
-        hide_on_collision: bool,
         collision_handler: CollisionHandler,
-        clip_on: bool = True,
-        settings: dict = None,
         **kwargs,
     ) -> Text | None:
         kwargs["va"] = "center"
@@ -271,13 +272,22 @@ class TextPlotterMixin:
         if StarplotSettings.svg_text_type == SvgTextType.PATH:
             kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
 
-        avoid_constellation_lines = settings.get("avoid_constellation_lines", False)
-        padding = settings.get("label_padding", 3)
-        settings.get("buffer", 0.1)
-        max_distance = settings.get("max_distance", 300)
-        distance_step_size = settings.get("distance_step_size", 1)
-        point_iterations = settings.get("point_generation_max_iterations", 500)
-        random_seed = settings.get("seed")
+
+        DEFAULT_AUTO_ADJUST_SETTINGS = {
+            "avoid_constellation_lines": False,
+            "point_generation_max_iterations": 10,
+            "distance_step_size": 2,
+            "max_distance": 3_000,
+            "label_padding": 6,
+            "seed": None,
+        }
+        
+        # avoid_constellation_lines = settings.get("avoid_constellation_lines", False)
+        padding = 6 #settings.get("label_padding", 3)
+        max_distance = 3_000 # settings.get("max_distance", 300)
+        distance_step_size = 2 # settings.get("distance_step_size", 1)
+        point_iterations = collision_handler.attempts # settings.get("point_generation_max_iterations", 500)
+        random_seed = collision_handler.seed # settings.get("seed")
 
         attempts = 0
         height = None
@@ -332,10 +342,10 @@ class TextPlotterMixin:
             is_open = self._is_open_space(
                 bbox,
                 padding=padding,
-                avoid_clipped=clip_on,
-                avoid_constellation_collision=avoid_constellation_lines,
-                avoid_marker_collisions=hide_on_collision,
-                avoid_label_collisions=hide_on_collision,
+                avoid_clipped=not collision_handler.allow_clipped,
+                avoid_constellation_collision=not collision_handler.allow_constellation_line_collisions,
+                avoid_marker_collisions=not collision_handler.allow_marker_collisions,
+                avoid_label_collisions=not collision_handler.allow_label_collisions,
             )
 
             # # TODO : remove label if not fully inside area?
@@ -391,12 +401,10 @@ class TextPlotterMixin:
                 text,
                 **style.matplot_kwargs(self.scale),
                 area=kwargs.pop("area"),
-                hide_on_collision=hide_on_collision,
                 collision_handler=collision_handler,
                 xycoords="data",
                 xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
                 textcoords="offset points",
-                settings=kwargs.pop("auto_adjust_settings"),
                 **kwargs,
             )
         else:

@@ -19,6 +19,7 @@ from starplot import (
     Mercator,
     Mollweide,
     StereoNorth,
+    CollisionHandler,
 )
 from starplot.map import MapPlot
 from starplot.models import Binoculars, Scope
@@ -33,7 +34,7 @@ RESOLUTION = 3200
 
 POWAY = {"lat": 32.97, "lon": -117.038611}
 
-AUTO_ADJUST_SETTINGS = {"seed": 1}
+HANDLER = CollisionHandler(seed=1)
 
 BASIC_DSO_TYPES = [
     # Star Clusters ----------
@@ -87,7 +88,7 @@ def _mercator():
     p.ecliptic()
     p.celestial_equator()
     p.constellation_borders()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
     return p
 
 
@@ -121,7 +122,7 @@ def _stereo_north():
     p.gridlines()
     p.constellations()
     p.constellation_borders()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
     return p
 
 
@@ -204,7 +205,7 @@ def check_map_coma_berenices_dso_size():
     p.celestial_equator()
     p.constellations()
     p.constellation_borders()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
     p.export(filename, padding=0.5)
     return filename
 
@@ -378,7 +379,7 @@ def check_map_wrapping():
     )
     p.gridlines()
     p.constellations()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
     p.title("Andromeda + nebula + Vega")
     p.export(filename, padding=0.3)
     return filename
@@ -548,7 +549,7 @@ def check_map_plot_limit_by_geometry():
     )
     p.constellations(where=[_.boundary.intersects(lyra.boundary)])
     p.constellation_borders()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
 
     filename = DATA_PATH / "map-limit-by-geometry.png"
     p.export(filename)
@@ -586,7 +587,7 @@ def check_map_plot_custom_clip_path_virgo():
     )
     p.constellations()
     p.constellation_borders()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
 
     p.line(
         coordinates=[
