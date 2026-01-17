@@ -366,7 +366,6 @@ class TextPlotterMixin:
             ra: Right ascension of text (0...360)
             dec: Declination of text (-90...90)
             style: Styling of the text
-            hide_on_collision: If True, then the text will not be plotted if it collides with another label
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with text, markers, etc
         """
         if not text:

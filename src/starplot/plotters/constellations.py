@@ -254,16 +254,13 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellation labels. If None, then the plot's style (specified when creating the plot) will be used
             label_fn: Callable for determining the label for each constellation. The default function returns the constellation's name in uppercase.
-            auto_adjust: If True (the default), then labels will be automatically adjusted to avoid collisions with other labels and stars **Important: you must plot stars and constellations first for this to work**. This uses a fairly simple method: for each constellation it finds the centroid of all plotted constellation stars with lines and then generates random points in the constellation boundary starting at the centroid and then progressively increasing the distance from the centroid.
-            auto_adjust_settings: Optional settings for the auto adjustment algorithm.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with text, markers, etc
         """
 
         # TODO : reconcile this
         collision_handler = CollisionHandler(
             allow_constellation_line_collisions=True, seed=1
         )
-
-        # self._constellation_labels(style, label_fn, collision_handler=collision_handler)
 
         hips = []
         for c in self.objects.constellations:
