@@ -34,7 +34,7 @@ RESOLUTION = 3200
 
 POWAY = {"lat": 32.97, "lon": -117.038611}
 
-HANDLER = CollisionHandler(seed=1)
+HANDLER = CollisionHandler(seed=1, allow_constellation_line_collisions=True)
 
 BASIC_DSO_TYPES = [
     # Star Clusters ----------

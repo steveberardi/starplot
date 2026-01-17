@@ -43,8 +43,6 @@ LOG_FORMATTER = logging.Formatter(
 LOG_HANDLER.setFormatter(LOG_FORMATTER)
 LOGGER.addHandler(LOG_HANDLER)
 
-DEFAULT_STYLE = PlotStyle()
-
 DEFAULT_RESOLUTION = 4096
 
 DPI = 100
@@ -73,13 +71,16 @@ class BasePlot(TextPlotterMixin, ABC):
     The plot's style.
     """
 
+    collision_handler: CollisionHandler
+    """Default [collision handler][starplot.CollisionHandler] for the plot."""
+
     def __init__(
         self,
         observer: Observer = Observer(),
         ephemeris: str = "de421.bsp",
-        style: PlotStyle = DEFAULT_STYLE,
+        style: PlotStyle = None,
         resolution: int = 4096,
-        collision_handler: CollisionHandler = CollisionHandler(),
+        collision_handler: CollisionHandler = None,
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
@@ -98,10 +99,10 @@ class BasePlot(TextPlotterMixin, ABC):
 
         self.language = StarplotSettings.language
 
-        self.style = style
+        self.style = style or PlotStyle()
         self.figure_size = resolution * px
         self.resolution = resolution
-        self.collision_handler = collision_handler
+        self.collision_handler = collision_handler or CollisionHandler()
 
         self.scale = scale
         self.autoscale = autoscale

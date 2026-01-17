@@ -14,7 +14,7 @@ STYLE = styles.PlotStyle().extend(
 
 RESOLUTION = 4096
 
-HANDLER = CollisionHandler(seed=1)
+HANDLER = CollisionHandler(seed=1, allow_constellation_line_collisions=True)
 
 TZ_PT = ZoneInfo("US/Pacific")
 

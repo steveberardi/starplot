@@ -244,7 +244,7 @@ class ConstellationPlotterMixin:
         self,
         style: LabelStyle = None,
         label_fn: Callable[[Constellation], str] = Constellation.get_label,
-        collision_handler: CollisionHandler = CollisionHandler(),
+        collision_handler: CollisionHandler = None,
     ):
         """
         Plots constellation labels for all constellations that have been plotted. This means you must plot the constellations before plotting their labels.
@@ -254,12 +254,11 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellation labels. If None, then the plot's style (specified when creating the plot) will be used
             label_fn: Callable for determining the label for each constellation. The default function returns the constellation's name in uppercase.
-            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with other labels, markers, etc. If `None`, then `CollisionHandler(allow_constellation_line_collisions=True)` will be used (**Important: this function does NOT default to the plot's collision handler, since it's the only area-based label function and collisions should be handled differently**).
         """
 
-        # TODO : reconcile this
-        collision_handler = CollisionHandler(
-            allow_constellation_line_collisions=True, seed=1
+        collision_handler = collision_handler or CollisionHandler(
+            allow_constellation_line_collisions=True
         )
 
         hips = []

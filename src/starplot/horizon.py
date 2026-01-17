@@ -65,8 +65,9 @@ class HorizonPlot(
         azimuth: Tuple of azimuth range to plot (min, max)
         dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
-        style: Styling for the plot (colors, sizes, fonts, etc)
+        style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
         resolution: Size (in pixels) of largest dimension of the map
+        collision_handler: Default [CollisionHandler][starplot.CollisionHandler] for the plot that describes what to do on label collisions with other labels, markers, etc.
         scale: Scaling factor that will be applied to all relevant sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set scale to 2.
         autoscale: If True, then the scale will be automatically set based on resolution
         suppress_warnings: If True (the default), then all warnings will be suppressed
@@ -89,7 +90,7 @@ class HorizonPlot(
         ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_HORIZON_STYLE,
         resolution: int = 4096,
-        collision_handler: CollisionHandler = CollisionHandler(),
+        collision_handler: CollisionHandler = None,
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
