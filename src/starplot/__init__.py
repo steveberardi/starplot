@@ -29,6 +29,7 @@ from .data import Catalog  # noqa: F401 F403
 from .styles import *  # noqa: F401 F403
 from .projections import *  # noqa: F401 F403
 from .config import settings  # noqa: F401
+from .plotters.text import CollisionHandler  # noqa: F401
 
 from ibis import _  # noqa: F401 F403
 

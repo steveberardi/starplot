@@ -3,7 +3,8 @@ from random import randrange
 
 import numpy as np
 import rtree
-from shapely import Polygon, Point
+from shapely import Point
+from matplotlib.text import Text
 
 from starplot.config import settings as StarplotSettings, SvgTextType
 from starplot.styles import AnchorPointEnum, LabelStyle
@@ -27,16 +28,29 @@ BBox = tuple[float, float, float, float]
 
 @dataclass
 class CollisionHandler:
+    """
+    Dataclass that describes how to handle label collisions with other objects, like text, markers, constellation lines, etc.
+    """
+
     allow_clipped: bool = False
+    """If True, then labels will be plotted if they're clipped (i.e. part of the label is outside the plot area)"""
+
     allow_label_collisions: bool = False
+    """If True, then labels will be plotted if they collide with another label"""
+
     allow_marker_collisions: bool = False
+    """If True, then labels will be plotted if they collide with another marker"""
+
     allow_constellation_line_collisions: bool = False
+    """If True, then labels will be plotted if they collide with a constellation line"""
 
     plot_on_fail: bool = False
+    """If True, then labels will be plotted even if no allowed position is found"""
 
     attempts: int = 100
 
     anchor_fallbacks: list[AnchorPointEnum] = None
+    """A list of anchor points to try for point-based labels"""
 
     def __post_init__(self):
         self.anchor_fallbacks = self.anchor_fallbacks or [
@@ -58,6 +72,7 @@ class TextPlotterMixin:
         self._constellations_rtree = rtree.index.Index()
         self._stars_rtree = rtree.index.Index()
         self._markers_rtree = rtree.index.Index()
+        self.collision_handler = kwargs.pop("collision_handler", CollisionHandler())
 
     def _is_label_collision(self, bbox: BBox) -> bool:
         ix = list(self._labels_rtree.intersection(bbox))
@@ -84,7 +99,7 @@ class TextPlotterMixin:
 
         return False
 
-    def _add_label_to_rtree(self, label, extent=None):
+    def _add_label_to_rtree(self, label: Text, extent=None):
         extent = extent or label.get_window_extent(
             renderer=self.fig.canvas.get_renderer()
         )
@@ -136,16 +151,14 @@ class TextPlotterMixin:
 
         return True
 
-    def _get_label_bbox(self, label) -> BBox:
+    def _get_label_bbox(self, label: Text) -> BBox:
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
         return (extent.x0, extent.y0, extent.x1, extent.y1)
 
     def _maybe_remove_label(
         self,
-        label,
-        remove_on_collision=True,
-        remove_on_clipped=True,
-        remove_on_constellation_collision=True,
+        label: Text,
+        collision_handler: CollisionHandler,
     ) -> bool:
         """Returns true if the label is removed, else false"""
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
@@ -156,25 +169,33 @@ class TextPlotterMixin:
             label.remove()
             return True
 
-        if remove_on_clipped and self._is_clipped(points):
+        if not collision_handler.allow_clipped and self._is_clipped(points):
             label.remove()
             return True
 
-        if remove_on_collision and (
-            self._is_label_collision(bbox)
-            or self._is_star_collision(bbox)
-            or self._is_marker_collision(bbox)
+        if not collision_handler.allow_label_collisions and self._is_label_collision(
+            bbox
         ):
             label.remove()
             return True
 
-        if remove_on_constellation_collision and self._is_constellation_collision(bbox):
+        if not collision_handler.allow_marker_collisions and (
+            self._is_star_collision(bbox) or self._is_marker_collision(bbox)
+        ):
+            label.remove()
+            return True
+
+        if (
+            not collision_handler.allow_constellation_line_collisions
+            and self._is_constellation_collision(bbox)
+        ):
             label.remove()
             return True
 
         return False
 
-    def _text(self, x, y, text, **kwargs):
+    def _text(self, x, y, text, **kwargs) -> Text:
+        """Plots text at (x, y)"""
         label = self.ax.annotate(
             text,
             (x, y),
@@ -192,11 +213,8 @@ class TextPlotterMixin:
         dec: float,
         text: str,
         collision_handler: CollisionHandler,
-        hide_on_collision: bool,
-        force: bool = False,
-        clip_on: bool = True,
         **kwargs,
-    ):
+    ) -> Text | None:
         if not text:
             return None
 
@@ -204,10 +222,6 @@ class TextPlotterMixin:
 
         if StarplotSettings.svg_text_type == SvgTextType.PATH:
             kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
-
-        remove_on_constellation_collision = kwargs.pop(
-            "remove_on_constellation_collision", True
-        )
 
         original_va = kwargs.pop("va", None)
         original_ha = kwargs.pop("ha", None)
@@ -231,16 +245,11 @@ class TextPlotterMixin:
                 offset_y = 0
 
             label = self._text(
-                x, y, text, **kwargs, va=va, ha=ha, xytext=(offset_x, offset_y)
+                x, y, text, va=va, ha=ha, xytext=(offset_x, offset_y), **kwargs
             )
-            removed = self._maybe_remove_label(
-                label,
-                remove_on_collision=hide_on_collision,
-                remove_on_clipped=clip_on,
-                remove_on_constellation_collision=remove_on_constellation_collision,
-            )
+            removed = self._maybe_remove_label(label, collision_handler)
 
-            if force or not removed:
+            if collision_handler.plot_on_fail or not removed:
                 self._add_label_to_rtree(label)
                 return label
 
@@ -255,7 +264,7 @@ class TextPlotterMixin:
         clip_on: bool = True,
         settings: dict = None,
         **kwargs,
-    ) -> None:
+    ) -> Text | None:
         kwargs["va"] = "center"
         kwargs["ha"] = "center"
 
@@ -362,6 +371,7 @@ class TextPlotterMixin:
             dec: Declination of text (-90...90)
             style: Styling of the text
             hide_on_collision: If True, then the text will not be plotted if it collides with another label
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with text, markers, etc
         """
         if not text:
             return
@@ -395,7 +405,6 @@ class TextPlotterMixin:
                 dec,
                 text,
                 **style.matplot_kwargs(self.scale),
-                hide_on_collision=hide_on_collision,
                 collision_handler=collision_handler,
                 xycoords="data",
                 xytext=(style.offset_x * self.scale, style.offset_y * self.scale),

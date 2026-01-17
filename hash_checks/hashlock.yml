@@ -63,13 +63,13 @@ map_stereo_base:
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
   phash: 8a2e66d4949e0ff4
 map_with_planets:
-  dhash: 639344668ddb323b629304668ddb323b2a9304668ddb323b
+  dhash: 6393446f8ddb323b6293046e8ddb323b2293046e8ddb323b
   filename: /starplot/hash_checks/data/map-mercator-planets.png
-  phash: e8c29d89a67f5312
+  phash: eac29d89a67f5602
 map_with_planets_gradient:
-  dhash: 156cfa9972248440146cea9952248540046caa9d522c2222
+  dhash: 1564aa913624c4400c64ea913624c540046caa95162c2222
   filename: /starplot/hash_checks/data/map-mercator-planets-gradient.png
-  phash: 9d25e67ed900a46d
+  phash: 941fe676d910b22d
 map_wrapping:
   dhash: 96e8514d2b2d4d4596e8514d2b2d4d4596e8514d2b2d4d45
   filename: /starplot/hash_checks/data/map-wrapping.png
