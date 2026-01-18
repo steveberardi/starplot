@@ -1,4 +1,12 @@
+## v0.19.x
+- Adds a `CollisionHandler` for defining what to do when labels collide with something
+- Introduces catalogs for the Milky Way and constellation borders
+- Makes map plots default to plotting at epoch J2000
+
+
 ## v0.18.x
+[Documentation](https://archives.starplot.dev/0.18.3/)
+
 - Adds function for plotting an arrow, from one point to another or as a pointer to a target
 - Adds support for custom data catalogs for stars, DSOs, and constellations
 - Converts sky object models to data classes, improving performance when many objects are plotted
