@@ -200,7 +200,7 @@ def check_map_coma_berenices_dso_size():
         scale=1.5,
     )
     p.stars(where=[_.magnitude < 8], bayer_labels=True)
-    p.open_clusters(where=[(_.magnitude < 8) | (_.magnitude.isnull())], true_size=True)
+    p.open_clusters(where=[(_.magnitude < 8) | (_.magnitude.isnull())])
     p.gridlines()
     p.ecliptic()
     p.celestial_equator()

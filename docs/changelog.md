@@ -2,7 +2,7 @@
 - Adds a `CollisionHandler` for defining what to do when labels collide with something
 - Introduces catalogs for the Milky Way and constellation borders
 - Makes map plots default to plotting at epoch J2000
-
+- Replaces the `true_size` kwarg on the DSO plotting function with `where_true_size` which is a list of filters
 
 ## v0.18.x
 [Documentation](https://archives.starplot.dev/0.18.3/)
