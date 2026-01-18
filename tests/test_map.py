@@ -4,7 +4,7 @@ import pytest
 
 from pytz import timezone
 
-from starplot import MapPlot, Mercator, Miller, Observer, _
+from starplot import Star, MapPlot, Mercator, Miller, Observer, _
 
 
 def test_map_radec_invalid():
@@ -72,3 +72,39 @@ def test_map_objects_list_planets():
 def test_marker_no_label():
     p = MapPlot(projection=Mercator())
     p.marker(ra=150, dec=0, style__marker__color="blue")
+
+
+def test_plots_at_astrometric():
+    """Asserts that map plots plot astrometric positions, NOT apparent"""
+
+    barnard = Star.get(hip=87937)  # Barnard's Star
+    p = MapPlot(
+        projection=Miller(),
+        observer=Observer.at_epoch(2000),
+        ra_min=17.5 * 15,
+        ra_max=18.5 * 15,
+        dec_min=4,
+        dec_max=5,
+    )
+    p.stars(where=[_.magnitude < 10])
+
+    for s in p.objects.stars:  # find Barnard
+        if s.hip == 87937:
+            assert round(barnard.ra, 3) == round(s.ra, 3)
+            assert round(barnard.dec, 3) == round(s.dec, 3)
+
+    # Epoch 1991.25
+    p = MapPlot(
+        projection=Miller(),
+        observer=Observer.at_epoch(1991.25),
+        ra_min=17.5 * 15,
+        ra_max=18.5 * 15,
+        dec_min=4,
+        dec_max=5,
+    )
+    p.stars(where=[_.magnitude < 10])
+
+    for s in p.objects.stars:  # find Barnard
+        if s.hip == 87937:
+            assert 269.454 == round(s.ra, 3)
+            assert 4.668 == round(s.dec, 3)

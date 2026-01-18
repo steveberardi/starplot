@@ -23,16 +23,6 @@ class Observer(BaseModel):
     )
     ```
 
-    To create an observer at a specific epoch for map plots:
-
-    ```python
-    from starplot.data import load
-
-    ts = load.timescale()
-
-    epoch_j2000 = Observer(dt=ts.J(2000).utc_datetime())
-    ```
-
     """
 
     dt: AwareDatetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -71,6 +61,13 @@ class Observer(BaseModel):
         """
         return float(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
 
+    @classmethod
+    def at_epoch(cls, epoch: float) -> "Observer":
+        """
+        Returns an Observer for the specified epoch (Julian year)
+        """
+        return Observer(dt=ts.J(epoch).utc_datetime())
+
     # @computed_field
     # @cached_property
     # def location(self):
@@ -81,7 +78,3 @@ class Observer(BaseModel):
     #     earth = self.ephemeris["earth"]
     #     self.location = earth + wgs84.latlon(self.lat, self.lon)
     #     return self.location.at(self.timescale).observe
-
-
-EPOCH_J2000 = Observer(dt=ts.J(2000).utc_datetime())
-"""An observer that represents epoch J2000"""

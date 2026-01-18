@@ -17,5 +17,5 @@ from .optics import (
 )
 from .objects import ObjectList
 from .satellite import Satellite
-from .observer import Observer, EPOCH_J2000
+from .observer import Observer
 from .milky_way import MilkyWay

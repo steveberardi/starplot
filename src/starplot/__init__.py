@@ -28,7 +28,6 @@ from .models import (
     Camera,
     Satellite,
     Observer,
-    EPOCH_J2000,
     MilkyWay,
 )
 from .data import Catalog

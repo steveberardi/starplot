@@ -14,7 +14,7 @@ from starplot.coordinates import CoordinateSystem
 from starplot import geod
 from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
-from starplot.models.observer import Observer, EPOCH_J2000
+from starplot.models.observer import Observer
 from starplot.plotters import (
     ConstellationPlotterMixin,
     StarPlotterMixin,
@@ -95,7 +95,7 @@ class MapPlot(
         *args,
         **kwargs,
     ) -> "MapPlot":
-        observer = observer or EPOCH_J2000
+        observer = observer or Observer.at_epoch(2000)
 
         super().__init__(
             observer,
