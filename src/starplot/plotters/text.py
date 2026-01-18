@@ -45,7 +45,7 @@ class CollisionHandler:
     """If True, then labels will be plotted if they collide with a constellation line"""
 
     plot_on_fail: bool = False
-    """If True, then labels will be plotted even if no allowed position is found"""
+    """If True, then labels will be plotted even if no allowed position is found. They will be plotted at their last attempted position."""
 
     attempts: int = 10
     """Max attempts to find a good label position"""
@@ -358,9 +358,13 @@ class TextPlotterMixin:
             if is_open and label is None:
                 label = self._text(x, y, text, **kwargs)
 
-            if is_open:
+            if is_open or (
+                collision_handler.plot_on_fail
+                and attempts == collision_handler.attempts
+            ):
                 self._add_label_to_rtree(label)
                 return label
+
             elif label is not None:
                 label.remove()
 
