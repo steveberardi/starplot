@@ -9,7 +9,7 @@ from matplotlib.ticker import FixedLocator, FuncFormatter
 from skyfield.api import wgs84, Star as SkyfieldStar
 from shapely import Point, Polygon, MultiPolygon
 from starplot.coordinates import CoordinateSystem
-from starplot.base import BasePlot, DPI
+from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.plotters import (
@@ -21,6 +21,7 @@ from starplot.plotters import (
     LegendPlotterMixin,
     ArrowPlotterMixin,
 )
+from starplot.plotters.text import CollisionHandler
 from starplot.styles import (
     PlotStyle,
     extensions,
@@ -58,15 +59,14 @@ class HorizonPlot(
     """Creates a new horizon plot.
 
     Args:
-        lat: Latitude of observer's location
-        lon: Longitude of observer's location
+
         altitude: Tuple of altitude range to plot (min, max)
         azimuth: Tuple of azimuth range to plot (min, max)
-        dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
+        observer: Observer instance which specifies a time and place. Defaults to `Observer()`
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
-        style: Styling for the plot (colors, sizes, fonts, etc)
+        style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
         resolution: Size (in pixels) of largest dimension of the map
-        hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
+        collision_handler: Default [CollisionHandler][starplot.CollisionHandler] for the plot that describes what to do on label collisions with other labels, markers, etc.
         scale: Scaling factor that will be applied to all relevant sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set scale to 2.
         autoscale: If True, then the scale will be automatically set based on resolution
         suppress_warnings: If True (the default), then all warnings will be suppressed
@@ -85,23 +85,25 @@ class HorizonPlot(
         self,
         altitude: tuple[float, float],
         azimuth: tuple[float, float],
-        observer: Observer = Observer(),
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_HORIZON_STYLE,
         resolution: int = 4096,
-        hide_colliding_labels: bool = True,
+        collision_handler: CollisionHandler = None,
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
         *args,
         **kwargs,
     ) -> "HorizonPlot":
+        observer = observer or Observer()
+
         super().__init__(
             observer,
             ephemeris,
             style,
             resolution,
-            hide_colliding_labels,
+            collision_handler=collision_handler,
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
@@ -160,7 +162,7 @@ class HorizonPlot(
         # import geopandas as gpd
 
         # Skyfield needs these columns
-        df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
+        # df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
 
         stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()

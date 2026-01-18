@@ -23,6 +23,8 @@ HERE = Path(__file__).resolve().parent
 
 RESULTS_PATH = HERE / "results.html"
 
+NUM_WORKERS = 10
+
 console = Console()
 
 
@@ -91,7 +93,7 @@ class Hashio:
         # mp.set_start_method("spawn")  # required for M1 macs? or macOS issue?
 
         console.print("Getting hashes...", style="bold")
-        with mp.Pool(5) as p:
+        with mp.Pool(NUM_WORKERS) as p:
             results = p.map(self._call_wrapper, self.callables)
 
         return {func_name: hashes for func_name, hashes in results}

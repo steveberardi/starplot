@@ -48,7 +48,7 @@ p.stars(
 p.open_clusters(
     where=[_.name.isin(["NGC0884", "NGC0869"])],
     where_labels=[False],
-    true_size=False,
+    where_true_size=[False],
 )
 double_cluster = DSO.get(name="NGC0884")
 p.optic_fov(

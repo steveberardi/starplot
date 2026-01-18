@@ -40,19 +40,18 @@ p.nebula(
     where=[
         (_.magnitude.isnull()) | (_.magnitude < 12),
     ],
-    true_size=True,
 )
 p.open_clusters(
     where=[
         (_.magnitude.isnull()) | (_.magnitude < 12),
     ],
-    true_size=False,
+    where_true_size=[False],
 )
 p.globular_clusters(
     where=[
         (_.magnitude.isnull()) | (_.magnitude < 12),
     ],
-    true_size=False,
+    where_true_size=[False],
 )
 p.ecliptic()
 p.celestial_equator()

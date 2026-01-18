@@ -25,12 +25,9 @@ p.stars(where=[_.magnitude < 8], bayer_labels=True, where_labels=[_.magnitude < 
 p.open_clusters(
     where=[_.size < 1, _.magnitude < 9],
     where_labels=[False],
-    true_size=False,
-)
-p.open_clusters(
-    # plot larger clusters as their true apparent size
-    where=[_.size > 1, (_.magnitude < 9) | (_.magnitude.isnull())],
-    where_labels=[False],
+    where_true_size=[
+        _.size > 1
+    ],  # only plot larger clusters as their true apparent size
 )
 
 p.nebula(

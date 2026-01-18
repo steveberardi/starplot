@@ -12,7 +12,7 @@ import numpy as np
 
 from starplot.coordinates import CoordinateSystem
 from starplot import geod
-from starplot.base import BasePlot, DPI
+from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.plotters import (
@@ -24,6 +24,7 @@ from starplot.plotters import (
     GradientBackgroundMixin,
     ArrowPlotterMixin,
 )
+from starplot.plotters.text import CollisionHandler
 from starplot.projections import StereoNorth, StereoSouth, ProjectionBase
 from starplot.styles import (
     ObjectStyle,
@@ -57,11 +58,11 @@ class MapPlot(
         ra_max: Maximum right ascension of the map's extent, in degrees (0...360)
         dec_min: Minimum declination of the map's extent, in degrees (-90...90)
         dec_max: Maximum declination of the map's extent, in degrees (-90...90)
-        observer: Observer instance which specifies a time and place
+        observer: Observer instance which specifies a time and place. Defaults to an observer at epoch J2000
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
-        style: Styling for the plot (colors, sizes, fonts, etc)
+        style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
         resolution: Size (in pixels) of largest dimension of the map
-        hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
+        collision_handler: Default [CollisionHandler][starplot.CollisionHandler] for the plot that describes what to do on label collisions with other labels, markers, etc.
         clip_path: An optional Shapely Polygon that specifies the clip path of the plot -- only objects inside the polygon will be plotted. If `None` (the default), then the clip path will be the extent of the map you specified with the RA/DEC parameters.
         scale: Scaling factor that will be applied to all sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set the scale to 2. At `scale=1` and `resolution=4096` (the default), all sizes are optimized visually for a map that covers 1-3 constellations. So, if you're creating a plot of a _larger_ extent, then it'd probably be good to decrease the scale (i.e. make everything smaller) -- and _increase_ the scale if you're plotting a very small area.
         autoscale: If True, then the scale will be set automatically based on resolution.
@@ -82,11 +83,11 @@ class MapPlot(
         ra_max: float = 360,
         dec_min: float = -90,
         dec_max: float = 90,
-        observer: Observer = Observer(),
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_MAP_STYLE,
         resolution: int = 4096,
-        hide_colliding_labels: bool = True,
+        collision_handler: CollisionHandler = None,
         clip_path: Polygon = None,
         scale: float = 1.0,
         autoscale: bool = False,
@@ -94,12 +95,14 @@ class MapPlot(
         *args,
         **kwargs,
     ) -> "MapPlot":
+        observer = observer or Observer.at_epoch(2000)
+
         super().__init__(
             observer,
             ephemeris,
             style,
             resolution,
-            hide_colliding_labels,
+            collision_handler=collision_handler,
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,

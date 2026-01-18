@@ -30,11 +30,15 @@ p.stars(where=[_.magnitude < 4.6])
 
 # plot galaxies and open clusters with a limiting magnitude of 9
 # but do NOT plot their labels or their true apparent size
-p.galaxies(where=[_.magnitude < 9], where_labels=[False], true_size=False)
+p.galaxies(
+    where=[_.magnitude < 9],
+    where_labels=[False],
+    where_true_size=[False],
+)
 p.open_clusters(
     where=[(_.magnitude < 9) | (_.magnitude.isnull())],
     where_labels=[False],
-    true_size=False,
+    where_true_size=[False],
 )
 
 # plot constellation borders and the ecliptic

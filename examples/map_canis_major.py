@@ -21,7 +21,7 @@ p.constellations(
     where=[_.iau_id == "cma"],
 )
 p.constellation_borders()
-p.open_clusters(where=[_.magnitude < 9], true_size=False)
+p.open_clusters(where=[_.magnitude < 9], where_true_size=[False])
 p.stars(where=[_.magnitude < 9], where_labels=[_.magnitude < 4], bayer_labels=True)
 p.constellation_labels()
 

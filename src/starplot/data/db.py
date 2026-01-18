@@ -12,13 +12,7 @@ NAME_TABLES = {
 
 
 def connect():
-    connection = duckdb.connect(
-        DataFiles.DATABASE,
-        read_only=True,
-        # threads=4,
-        # memory_limit="1GB",
-    )
-
+    connection = duckdb.connect()
     path = settings.data_path / "duckdb-extensions"
     connection.raw_sql(f"SET extension_directory = '{str(path)}';")
 

@@ -6,6 +6,8 @@ from skyfield.timelib import Timescale
 
 from starplot.data import load
 
+ts = load.timescale()
+
 
 class Observer(BaseModel):
     """
@@ -19,8 +21,8 @@ class Observer(BaseModel):
         lat=33.363484,
         lon=-116.836394,
     )
-
     ```
+
     """
 
     dt: AwareDatetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -47,7 +49,7 @@ class Observer(BaseModel):
 
         Timescale instance of the specified datetime (used by Skyfield)
         """
-        return load.timescale().from_datetime(self.dt)
+        return ts.from_datetime(self.dt)
 
     @computed_field
     @cached_property
@@ -58,6 +60,13 @@ class Observer(BaseModel):
         Local sidereal time (in degrees)
         """
         return float(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
+
+    @classmethod
+    def at_epoch(cls, epoch: float) -> "Observer":
+        """
+        Returns an Observer for the specified epoch (Julian year)
+        """
+        return Observer(dt=ts.J(epoch).utc_datetime())
 
     # @computed_field
     # @cached_property
