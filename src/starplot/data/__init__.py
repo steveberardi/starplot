@@ -18,11 +18,5 @@ INTERNAL_DATA_PATH = HERE / "library"
 
 class DataFiles:
     STAR_DESIGNATIONS = INTERNAL_DATA_PATH / "star_designations.parquet"
-
     CONSTELLATION_NAMES = INTERNAL_DATA_PATH / "constellation_names.parquet"
-
     DSO_NAMES = INTERNAL_DATA_PATH / "dso_names.parquet"
-
-    CONSTELLATION_BORDERS  = INTERNAL_DATA_PATH / "constellation_borders.parquet"
-
-    DATABASE = INTERNAL_DATA_PATH / "sky.db"

@@ -10,8 +10,13 @@ from matplotlib.collections import LineCollection
 from ibis import _
 
 from starplot.coordinates import CoordinateSystem
-from starplot.data import constellations as condata
-from starplot.data.catalogs import Catalog, CONSTELLATIONS_IAU, BIG_SKY_MAG11
+from starplot.data import db, constellations as condata
+from starplot.data.catalogs import (
+    Catalog,
+    CONSTELLATIONS_IAU,
+    CONSTELLATION_BORDERS,
+    BIG_SKY_MAG11,
+)
 from starplot.data.stars import load as load_stars
 from starplot.models import Star, Constellation
 from starplot.models.constellation import from_tuple
@@ -197,18 +202,16 @@ class ConstellationPlotterMixin:
 
     @profile
     @use_style(LineStyle, "constellation_borders")
-    def constellation_borders(self, style: LineStyle = None):
+    def constellation_borders(
+        self, style: LineStyle = None, catalog: Catalog = CONSTELLATION_BORDERS
+    ):
         """Plots the constellation borders
 
         Args:
             style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
+            catalog: Catalog to use for constellation borders
         """
-        from starplot.data import DataFiles, db
-
         con = db.connect()
-
-        catalog = Catalog(path=DataFiles.CONSTELLATION_BORDERS)
-
         borders = catalog._load(connection=con, table_name="constellation_borders")
         borders = borders.mutate(
             geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
@@ -216,8 +219,6 @@ class ConstellationPlotterMixin:
 
         extent = self._extent_mask()
         borders_df = borders.filter(_.geometry.intersects(extent)).to_pandas()
-
-
 
         if borders_df.empty:
             return

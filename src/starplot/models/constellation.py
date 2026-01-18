@@ -133,6 +133,7 @@ def from_tuple(c: tuple) -> Constellation:
     c = Constellation(**kwargs)
     return c
 
+
 @dataclass(slots=True, kw_only=True)
 class ConstellationBorder(CatalogObject, SkyObject):
     geometry: LineString

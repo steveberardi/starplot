@@ -87,10 +87,6 @@ build-doc-data:
 version:
 	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"
 
-
-constellation_borders:
-	@$(DOCKER_RUN) "python data/scripts/constellation_borders.py"
-
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------
