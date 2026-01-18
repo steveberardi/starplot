@@ -112,12 +112,12 @@ def _stereo_north():
         bayer_labels=True,
     )
     p.dsos(
-        true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude <= 9),
             _.type.isin(BASIC_DSO_TYPES),
         ],
         where_labels=[False],
+        where_true_size=[False],
     )
     p.milky_way()
     p.gridlines()
@@ -538,13 +538,13 @@ def check_map_plot_limit_by_geometry():
         where=[_.magnitude < 9, _.geometry.intersects(lyra.boundary)], bayer_labels=True
     )
     p.dsos(
-        true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude < 9),
             _.type.isin(BASIC_DSO_TYPES),
             _.geometry.intersects(lyra.boundary),
         ],
         where_labels=[False],
+        where_true_size=[False],
     )
     p.constellations(where=[_.boundary.intersects(lyra.boundary)])
     p.constellation_borders()
@@ -577,12 +577,12 @@ def check_map_plot_custom_clip_path_virgo():
 
     p.stars(where=[_.magnitude < 9], bayer_labels=True)
     p.dsos(
-        true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude < 9),
             _.type.isin(BASIC_DSO_TYPES),
         ],
         where_labels=[False],
+        where_true_size=[False],
     )
     p.constellations()
     p.constellation_borders()

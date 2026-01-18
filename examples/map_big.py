@@ -26,21 +26,21 @@ p.open_clusters(
         _.magnitude <= 8,
     ],
     where_labels=[False],
-    true_size=False,
+    where_true_size=[False],
 )
 p.globular_clusters(
     where=[
         _.magnitude <= 9,
     ],
     where_labels=[False],
-    true_size=False,
+    where_true_size=[False],
 )
 p.galaxies(
     where=[
         _.magnitude <= 10,
     ],
     where_labels=[False],
-    true_size=False,
+    where_true_size=[False],
 )
 p.nebula(
     where=[(_.magnitude <= 10) | (_.magnitude.isnull()), _.size > 0.05],
