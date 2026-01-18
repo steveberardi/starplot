@@ -11,6 +11,8 @@ import star_designations, constellation_names, dso_names
 from data_settings import BUILD_PATH, RAW_PATH
 from translations import get_label_dict
 
+from constellation_borders import build as build_conborders
+
 db_path = BUILD_PATH / "sky.db"
 
 
@@ -41,6 +43,9 @@ def build_all():
     with open(BUILD_PATH / "terms.json", "w", encoding="utf-8") as term_file:
         term_file.write(json.dumps(translations_terms, indent=4, ensure_ascii=False))
 
+
+    build_conborders()
+    shutil.copy(BUILD_PATH / "constellation-borders.parquet", DataFiles.CONSTELLATION_BORDERS)
 
 def build_db():
     con = duckdb.connect(db_path)

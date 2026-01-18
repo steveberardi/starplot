@@ -2,7 +2,7 @@ from typing import Iterator
 from dataclasses import dataclass
 
 from ibis import _
-from shapely import Polygon, MultiPolygon
+from shapely import Polygon, MultiPolygon, LineString
 
 from starplot.models.base import SkyObject, CatalogObject
 from starplot.data.catalogs import Catalog, CONSTELLATIONS_IAU
@@ -132,3 +132,8 @@ def from_tuple(c: tuple) -> Constellation:
     kwargs = {f: getattr(c, f) for f in Constellation._fields() if hasattr(c, f)}
     c = Constellation(**kwargs)
     return c
+
+@dataclass(slots=True, kw_only=True)
+class ConstellationBorder(CatalogObject, SkyObject):
+    geometry: LineString
+    """Shapely LineString of the border. Right ascension coordinates are in degrees (0...360)."""

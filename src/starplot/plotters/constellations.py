@@ -203,9 +203,21 @@ class ConstellationPlotterMixin:
         Args:
             style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
         """
+        from starplot.data import DataFiles, db
+
+        con = db.connect()
+
+        catalog = Catalog(path=DataFiles.CONSTELLATION_BORDERS)
+
+        borders = catalog._load(connection=con, table_name="constellation_borders")
+        borders = borders.mutate(
+            geometry=_.geometry.cast("geometry"),  # cast WKB to geometry type
+        )
+
         extent = self._extent_mask()
-        results = condata.load_borders(extent=extent)
-        borders_df = results.to_pandas()
+        borders_df = borders.filter(_.geometry.intersects(extent)).to_pandas()
+
+
 
         if borders_df.empty:
             return

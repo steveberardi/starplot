@@ -2,7 +2,7 @@
 
 """Star charts and maps of the sky"""
 
-__version__ = "0.19.0b1"
+__version__ = "0.19.0b2"
 
 from .plots import (
     MapPlot,
@@ -15,6 +15,7 @@ from .models import (
     DsoType,
     Star,
     Constellation,
+    ConstellationBorder,
     Comet,
     Planet,
     Moon,
