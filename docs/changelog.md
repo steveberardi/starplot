@@ -3,6 +3,7 @@
 - Introduces catalogs for the Milky Way and constellation borders
 - Makes map plots default to plotting at epoch J2000
 - Replaces the `true_size` kwarg on the DSO plotting function with `where_true_size` which is a list of filters
+- Fixes a bug with auto label offsets from markers
 
 ## v0.18.x
 [Documentation](https://archives.starplot.dev/0.18.3/)
