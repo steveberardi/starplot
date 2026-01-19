@@ -77,12 +77,11 @@ def _mercator():
     p.stars(where=[_.magnitude < 7.6], bayer_labels=True)
     p.dsos(
         where=[
-            (_.magnitude.isnull()) | (_.magnitude <= 8),
-            _.size.notnull(),
-            _.size > 0.1,
+            (_.magnitude.isnull()) | (_.magnitude < 9),
             _.type.isin(BASIC_DSO_TYPES),
         ],
         where_labels=[False],
+        where_true_size=[_.size > 1],
     )
     p.milky_way()
     p.gridlines()

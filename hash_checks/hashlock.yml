@@ -1,13 +1,13 @@
 horizon_base:
-  dhash: 8e92ca8ec68a86f08eb2ca8ec69a86d08aa2cc8ec69a86f0
+  dhash: 8e92da8ec68a86f08ab2de8ec69a86d08aa2d68ec69a86f0
   filename: /starplot/hash_checks/data/horizon-base.png
-  phash: c1913ed03eb43b87
+  phash: c1913fd13e903b87
 horizon_gradient_background:
   dhash: d16ca2f2b2b6a296f16ca272b2b6ba96f16ca2b2b29aae92
   filename: /starplot/hash_checks/data/horizon-gradient-background.png
   phash: 954f43c16bc56ce4
 horizon_north_celestial_pole:
-  dhash: b0aaaab2a2b2a696b0aeaab282b2a696b0aaaaf2a2b2aec4
+  dhash: b0aaaab2a2b2a696b0aeaab2a2b2a696b0aaaaf2a2b2aec4
   filename: /starplot/hash_checks/data/horizon-north-celestial-pole.png
   phash: d4907ad16bd16bc2
 map_allow_all_collisions:
@@ -47,13 +47,13 @@ map_moon_phase_waxing_crescent:
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b38ccc3333cccc33
 map_orion_base:
-  dhash: 18193b7e3e2f64691b393b5e2e2d646918192b4e2a2f6469
+  dhash: 18193b5e2e2f656919193b5e2e23656958193b9e2a2f6469
   filename: /starplot/hash_checks/data/map-orion-base.png
-  phash: bf794a2417a4b594
+  phash: bf7942249785b594
 map_orion_extra:
-  dhash: 181b397f3b2d656d1b1b194b2b25656d540b1b4b2b2d6567
+  dhash: 191b393f2b2f6d691b1b195b2b276d695c1b1b1e2b2f6d6b
   filename: /starplot/hash_checks/data/map-orion-extra.png
-  phash: bf616486c39e909e
+  phash: bf61e20ec39e909a
 map_plot_custom_clip_path_virgo:
   dhash: 23032137950c040443032507870c0c0203032507070e0402
   filename: /starplot/hash_checks/data/map-custom-clip-path-virgo.png

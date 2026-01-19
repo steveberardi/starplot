@@ -271,15 +271,39 @@ class TextPlotterMixin:
                 x, y, text, va=va, ha=ha, xytext=(offset_x, offset_y), **kwargs
             )
 
-            if collision_handler.plot_on_fail and (
-                attempts == collision_handler.attempts or attempts == len(anchors)
+            if (
+                collision_handler.plot_on_fail
+                and label
+                and (attempts == collision_handler.attempts or attempts == len(anchors))
             ):
                 self._add_label_to_rtree(label)
                 return label
 
             removed = self._maybe_remove_label(label, collision_handler)
+
             if not removed:
                 self._add_label_to_rtree(label)
+
+                # from matplotlib.patches import Rectangle
+                # bbox = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+                # bbox = bbox.transformed(self.ax.transAxes.inverted())
+                # # bbox = bbox.padded(1)
+                # # bbox = bbox.expanded(1, 2)
+                # rect = Rectangle(
+                #     # Bbox(x0=0.19034844035799406, y0=0.8351746595026188, x1=0.20519408725358892, y1=0.8615984521601776)
+                #     (bbox.x0, bbox.y0),  # (x, y) position in display pixels
+                #     width=bbox.width,
+                #     height=bbox.height,
+                #     transform=self.ax.transAxes,
+                #     fill=False,
+                #     facecolor='none',
+                #     edgecolor='red',
+                #     linewidth=1,
+                #     alpha=1,
+                #     zorder=100_000,
+                # )
+                # self.ax.add_patch(rect)
+
                 return label
 
     def _text_area(
@@ -399,7 +423,8 @@ class TextPlotterMixin:
         if not text:
             return
 
-        style = style or LabelStyle()
+        style = style.model_copy()  # need a copy because we possibly mutate it below
+
         collision_handler = collision_handler or self.collision_handler
 
         if style.offset_x == "auto":
