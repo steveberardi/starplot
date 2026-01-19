@@ -126,7 +126,7 @@ class TextPlotterMixin:
         )
         self.labels.append(label)
         self._labels_rtree.insert(
-            0, np.array((extent.x0 - 1, extent.y0 - 1, extent.x1 + 1, extent.y1 + 1))
+            0, (extent.x0 - 1, extent.y0 - 1, extent.x1 + 1, extent.y1 + 1)
         )
 
     def _is_open_space(
@@ -174,7 +174,7 @@ class TextPlotterMixin:
 
     def _get_label_bbox(self, label: Text) -> BBox:
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-        return (extent.x0, extent.y0, extent.x1, extent.y1)
+        return (float(extent.x0), float(extent.y0), float(extent.x1), float(extent.y1))
 
     def _maybe_remove_label(
         self,
@@ -183,7 +183,7 @@ class TextPlotterMixin:
     ) -> bool:
         """Returns true if the label is removed, else false"""
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-        bbox = self._get_label_bbox(label)
+        bbox = (float(extent.x0), float(extent.y0), float(extent.x1), float(extent.y1))
         points = [(extent.x0, extent.y0), (extent.x1, extent.y1)]
 
         if any([np.isnan(c) for c in bbox]):
@@ -247,6 +247,7 @@ class TextPlotterMixin:
         original_va = kwargs.pop("va", None)
         original_ha = kwargs.pop("ha", None)
         original_offset_x, original_offset_y = kwargs.pop("xytext", (0, 0))
+        attempts = 0
 
         anchors = [(original_va, original_ha)]
         for a in collision_handler.anchor_fallbacks:
@@ -254,6 +255,7 @@ class TextPlotterMixin:
             anchors.append((d["va"], d["ha"]))
 
         for va, ha in anchors:
+            attempts += 1
             offset_x, offset_y = original_offset_x, original_offset_y
             if original_ha != ha:
                 offset_x *= -1
@@ -268,9 +270,15 @@ class TextPlotterMixin:
             label = self._text(
                 x, y, text, va=va, ha=ha, xytext=(offset_x, offset_y), **kwargs
             )
-            removed = self._maybe_remove_label(label, collision_handler)
 
-            if collision_handler.plot_on_fail or not removed:
+            if collision_handler.plot_on_fail and (
+                attempts == collision_handler.attempts or attempts == len(anchors)
+            ):
+                self._add_label_to_rtree(label)
+                return label
+
+            removed = self._maybe_remove_label(label, collision_handler)
+            if not removed:
                 self._add_label_to_rtree(label)
                 return label
 

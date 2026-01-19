@@ -682,9 +682,35 @@ def check_map_allow_all_collisions():
         collision_handler=handler,
     )
     p.stars(where=[_.magnitude < 6], bayer_labels=True, flamsteed_labels=True)
-    p.messier(where_true_size=[False])
-    p.open_clusters(where=[_.magnitude < 10], where_true_size=[False])
+    p.dsos(where=[_.magnitude < 10], where_true_size=[False])
     filename = DATA_PATH / "map-allow-all-collisions.png"
+    p.export(filename)
+    p.close_fig()
+    return filename
+
+
+def check_map_allow_marker_and_line_collisions():
+    handler = CollisionHandler(
+        seed=1,
+        allow_marker_collisions=True,
+        allow_constellation_line_collisions=True,
+        plot_on_fail=True,
+    )
+    p = MapPlot(
+        projection=Miller(),
+        ra_min=17.5 * 15,
+        ra_max=19.5 * 15,
+        dec_min=-30,
+        dec_max=-10,
+        style=STYLE,
+        resolution=3000,
+        scale=1.5,
+        collision_handler=handler,
+    )
+    p.constellations()
+    p.stars(where=[_.magnitude < 8], bayer_labels=True, flamsteed_labels=True)
+    p.dsos(where=[_.magnitude < 10], where_true_size=[False])
+    filename = DATA_PATH / "map-allow-some-collisions.png"
     p.export(filename)
     p.close_fig()
     return filename
