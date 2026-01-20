@@ -47,7 +47,7 @@ class CollisionHandler:
     plot_on_fail: bool = False
     """If True, then labels will be plotted even if no allowed position is found. They will be plotted at their last attempted position."""
 
-    attempts: int = 10
+    attempts: int = 500
     """Max attempts to find a good label position"""
 
     seed: int = None
@@ -283,6 +283,9 @@ class TextPlotterMixin:
 
             if not removed:
                 self._add_label_to_rtree(label)
+                return label
+            elif attempts == collision_handler.attempts or attempts == len(anchors):
+                return None
 
                 # from matplotlib.patches import Rectangle
                 # bbox = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
@@ -303,8 +306,6 @@ class TextPlotterMixin:
                 #     zorder=100_000,
                 # )
                 # self.ax.add_patch(rect)
-
-                return label
 
     def _text_area(
         self,
@@ -348,7 +349,7 @@ class TextPlotterMixin:
                 new_areas[poly],
                 origin_point=origin,
                 distance=distance,
-                max_iterations=collision_handler.attempts,
+                max_iterations=10,
                 seed=collision_handler.seed,
             )
 
@@ -399,6 +400,9 @@ class TextPlotterMixin:
 
             elif label is not None:
                 label.remove()
+
+            elif attempts == collision_handler.attempts:
+                return None
 
     @use_style(LabelStyle)
     def text(

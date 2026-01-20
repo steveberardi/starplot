@@ -171,9 +171,9 @@ if __name__ == "__main__":
 
         console.print(f"\nPASSED: {passed}\n", style="green")
 
-        if failed:
-            console.print("FAILED: retrying...\n", style="bold red")
-            passed, failed, new = h.check()
+        # if failed:
+        #     console.print("FAILED: retrying...\n", style="bold red")
+        #     passed, failed, new = h.check()
 
         if failed or new:
             console.print(f"FAILED: {failed}\n", style="bold red")
