@@ -16,6 +16,8 @@ nav:
         - Selecting Objects: reference-selecting-objects.md
         - Styling: reference-styling.md
         - Callables: reference-callables.md
+        - Collision Handling: reference-collisions.md
+        - Positions: reference-positions.md
         - Data Catalogs:
             - Overview: data/overview.md
             - Stars: data/stars.md

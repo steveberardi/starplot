@@ -1,5 +1,6 @@
 # ruff: noqa: F401,F403
-from .constellation import Constellation
+
+from .constellation import Constellation, ConstellationBorder
 from .comet import Comet
 from .dso import DSO, DsoType
 from .star import Star
@@ -17,3 +18,4 @@ from .optics import (
 from .objects import ObjectList
 from .satellite import Satellite
 from .observer import Observer
+from .milky_way import MilkyWay

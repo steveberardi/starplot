@@ -137,7 +137,6 @@ for ra, dec, name in zip(gal_ra, gal_dec, gal_names):
             "offset_x": 35,
             "offset_y": 35,
         },
-        hide_on_collision=True,
     )
 
 for ra, dec, name in zip(other_gal_ra, other_gal_dec, other_gal_names):
@@ -164,7 +163,6 @@ for ra, dec, name in zip(other_gal_ra, other_gal_dec, other_gal_names):
             "offset_x": 15.0,
             "offset_y": 40.0,
         },
-        hide_on_collision=True,
     )
 
 p.gridlines()

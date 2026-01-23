@@ -15,6 +15,7 @@ from starplot.models.dso import (
 )
 from starplot.styles import MarkerSymbolEnum
 from starplot.profile import profile
+from starplot.plotters.text import CollisionHandler
 
 
 class DsoPlotterMixin:
@@ -147,33 +148,37 @@ class DsoPlotterMixin:
         self,
         where: list = None,
         where_labels: list = None,
-        true_size: bool = True,
+        where_true_size: list = None,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
         alpha_fn: Callable[[DSO], float] = None,
         label_fn: Callable[[DSO], str] = DSO.get_label,
         sql: str = None,
         sql_labels: str = None,
         catalog: Catalog = OPEN_NGC,
+        collision_handler: CollisionHandler = None,
     ):
         """
-        Plots Deep Sky Objects (DSOs), from OpenNGC
+        Plots Deep Sky Objects (DSOs).
 
         Args:
             where: A list of expressions that determine which DSOs to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which DSOs are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            true_size: If True, then each DSO will be plotted as its true apparent size in the sky (note: this increases plotting time). If False, then the style's marker size will be used. Also, keep in mind not all DSOs have a defined size (according to OpenNGC) -- so these will use the style's marker size.
-            labels: A dictionary that maps DSO names (as specified in OpenNGC) to the label that'll be plotted for that object. By default, the DSO's name in OpenNGC will be used as the label. If you want to hide all labels, then set this arg to `None`.
+            where_labels: A list of expressions that determine which DSOs are labeled on the plot. By default all DSOs are labeled. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_true_size: A list of expressions that determine which DSOs are plotted as their true apparent size in the sky. By default all DSOs are plotted as their true size.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
             label_fn: Callable for determining the label of each DSO.
             sql: SQL query for selecting DSOs (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             sql_labels: SQL query for selecting DSOs that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
+            catalog: The catalog of DSOs to use -- see [catalogs overview](/data/overview/) for details
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
 
         # TODO: add kwarg styles
 
         where = where or []
         where_labels = where_labels or []
+        where_true_size = where_true_size or []
+        handler = collision_handler or self.collision_handler
 
         if legend_labels is None:
             legend_labels = {}
@@ -183,21 +188,23 @@ class DsoPlotterMixin:
         extent = self._extent_mask()
         dso_results = load(extent=extent, filters=where, sql=sql, catalog=catalog)
 
-        dso_results_labeled = dso_results
+        dsos_labeled = dso_results
         for f in where_labels:
-            dso_results_labeled = dso_results_labeled.filter(f)
+            dsos_labeled = dsos_labeled.filter(f)
+
+        dsos_true_size = dso_results
+        for f in where_true_size:
+            dsos_true_size = dsos_true_size.filter(f)
 
         if sql_labels:
-            result = (
-                dso_results_labeled.alias("_").sql(sql_labels).select("pk").execute()
-            )
+            result = dsos_labeled.alias("_").sql(sql_labels).select("pk").execute()
             pks = result["pk"].to_list()
-            dso_results_labeled = dso_results_labeled.filter(_.pk.isin(pks))
+            dsos_labeled = dsos_labeled.filter(_.pk.isin(pks))
 
-        label_pks = dso_results_labeled.to_pandas()["pk"].tolist()
+        label_pks = dsos_labeled.select("pk").to_pandas()["pk"].tolist()
+        true_size_pks = dsos_true_size.select("pk").to_pandas()["pk"].tolist()
 
-        results_df = dso_results.to_pandas()
-        results_df = results_df.replace({np.nan: None})
+        results_df = dso_results.to_pandas().replace({np.nan: None})
 
         for d in results_df.itertuples():
             ra = d.ra
@@ -221,7 +228,9 @@ class DsoPlotterMixin:
             if _dso.pk not in label_pks:
                 label = None
 
-            if true_size and d.size is not None:
+            _true_size = _dso.pk in true_size_pks
+
+            if _true_size and d.size is not None:
                 if "Polygon" == str(d.geometry.geom_type):
                     self._plot_dso_polygon(d.geometry, style)
 
@@ -257,7 +266,14 @@ class DsoPlotterMixin:
                         )
 
                 if label:
-                    self.text(label, ra, dec, style.label, gid=f"dso-{d.type}-label")
+                    self.text(
+                        label,
+                        ra,
+                        dec,
+                        style.label,
+                        collision_handler=handler,
+                        gid=f"dso-{d.type}-label",
+                    )
 
                 self._add_legend_handle_marker(legend_label, style.marker)
 
@@ -269,6 +285,7 @@ class DsoPlotterMixin:
                     style=style,
                     label=label,
                     legend_label=legend_label,
+                    collision_handler=handler,
                     skip_bounds_check=True,
                     gid_marker=f"dso-{d.type}-marker",
                     gid_label=f"dso-{d.type}-label",

@@ -3,12 +3,12 @@ from matplotlib import path, patches
 
 from starplot.coordinates import CoordinateSystem
 from starplot.data.translations import translate
-from starplot.map import MapPlot
+from starplot.plots.map import MapPlot
 from starplot.models.observer import Observer
 from starplot.projections import Stereographic
 from starplot.styles import LabelStyle, PlotStyle, PathStyle, GradientDirection
 from starplot.styles.helpers import use_style
-
+from starplot.plotters.text import CollisionHandler
 
 DEFAULT_MAP_STYLE = PlotStyle()  # .extend(extensions.MAP)
 
@@ -17,11 +17,11 @@ class ZenithPlot(MapPlot):
     """Creates a new zenith plot.
 
     Args:
-        observer: Observer instance which specifies a time and place
+        observer: Observer instance which specifies a time and place. Defaults to `Observer()`
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
-        style: Styling for the plot (colors, sizes, fonts, etc)
+        style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
         resolution: Size (in pixels) of largest dimension of the map
-        hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
+        collision_handler: Default [CollisionHandler][starplot.CollisionHandler] for the plot that describes what to do on label collisions with other labels, markers, etc.
         scale: Scaling factor that will be applied to all sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set the scale to 2. At `scale=1` and `resolution=4096` (the default), all sizes are optimized visually for a map that covers 1-3 constellations. So, if you're creating a plot of a _larger_ extent, then it'd probably be good to decrease the scale (i.e. make everything smaller) -- and _increase_ the scale if you're plotting a very small area.
         autoscale: If True, then the scale will be set automatically based on resolution.
         suppress_warnings: If True (the default), then all warnings will be suppressed
@@ -36,17 +36,18 @@ class ZenithPlot(MapPlot):
 
     def __init__(
         self,
-        observer: Observer = Observer(),
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
         style: PlotStyle = DEFAULT_MAP_STYLE,
         resolution: int = 4096,
-        hide_colliding_labels: bool = True,
+        collision_handler: CollisionHandler = None,
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
         *args,
         **kwargs,
     ) -> "ZenithPlot":
+        observer = observer or Observer()
         projection = Stereographic(
             center_ra=observer.lst,
             center_dec=observer.lat,
@@ -62,7 +63,7 @@ class ZenithPlot(MapPlot):
             ephemeris,
             style,
             resolution,
-            hide_colliding_labels,
+            collision_handler=collision_handler,
             clip_path=None,
             scale=scale,
             autoscale=autoscale,
@@ -175,3 +176,25 @@ class ZenithPlot(MapPlot):
 
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon()
+
+    def _prepare_star_coords(self, df, limit_by_altaz=False):
+        # TODO : reconcile this commented code
+        # self.location = self.earth + wgs84.latlon(
+        #     self.observer.lat, self.observer.lon
+        # )
+        # df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
+        # stars_apparent = (
+        #     self.location.at(self.observer.timescale)
+        #     .observe(SkyfieldStar.from_dataframe(df))
+        #     .apparent()
+        # )
+        # # we only need altitude
+        # stars_alt, _, _ = stars_apparent.altaz()
+        # df["alt"] = stars_alt.degrees
+        # df = df[df["alt"] > 0]
+
+        df["x"], df["y"] = (
+            df["ra"],
+            df["dec"],
+        )
+        return df

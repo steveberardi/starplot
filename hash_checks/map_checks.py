@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 import numpy as np
 
 from starplot import (
+    MapPlot,
     styles,
     DSO,
     Star,
@@ -19,9 +20,10 @@ from starplot import (
     Mercator,
     Mollweide,
     StereoNorth,
+    CollisionHandler,
+    Binoculars,
+    Scope,
 )
-from starplot.map import MapPlot
-from starplot.models import Binoculars, Scope
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
@@ -33,7 +35,7 @@ RESOLUTION = 3200
 
 POWAY = {"lat": 32.97, "lon": -117.038611}
 
-AUTO_ADJUST_SETTINGS = {"seed": 1}
+HANDLER = CollisionHandler(seed=1, allow_constellation_line_collisions=True)
 
 BASIC_DSO_TYPES = [
     # Star Clusters ----------
@@ -75,19 +77,18 @@ def _mercator():
     p.stars(where=[_.magnitude < 7.6], bayer_labels=True)
     p.dsos(
         where=[
-            (_.magnitude.isnull()) | (_.magnitude <= 8),
-            _.size.notnull(),
-            _.size > 0.1,
+            (_.magnitude.isnull()) | (_.magnitude < 9),
             _.type.isin(BASIC_DSO_TYPES),
         ],
         where_labels=[False],
+        where_true_size=[_.size > 1],
     )
     p.milky_way()
     p.gridlines()
     p.ecliptic()
     p.celestial_equator()
     p.constellation_borders()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
     return p
 
 
@@ -110,18 +111,18 @@ def _stereo_north():
         bayer_labels=True,
     )
     p.dsos(
-        true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude <= 9),
             _.type.isin(BASIC_DSO_TYPES),
         ],
         where_labels=[False],
+        where_true_size=[False],
     )
     p.milky_way()
     p.gridlines()
     p.constellations()
     p.constellation_borders()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
     return p
 
 
@@ -198,13 +199,13 @@ def check_map_coma_berenices_dso_size():
         scale=1.5,
     )
     p.stars(where=[_.magnitude < 8], bayer_labels=True)
-    p.open_clusters(where=[(_.magnitude < 8) | (_.magnitude.isnull())], true_size=True)
+    p.open_clusters(where=[(_.magnitude < 8) | (_.magnitude.isnull())])
     p.gridlines()
     p.ecliptic()
     p.celestial_equator()
     p.constellations()
     p.constellation_borders()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
     p.export(filename, padding=0.5)
     return filename
 
@@ -229,7 +230,6 @@ def check_map_with_planets():
         dec_min=-40,
         dec_max=40,
         observer=observer,
-        hide_colliding_labels=False,
         style=STYLE,
         resolution=RESOLUTION,
         autoscale=True,
@@ -255,7 +255,6 @@ def check_map_with_planets_gradient():
         dec_min=-40,
         dec_max=40,
         observer=observer,
-        hide_colliding_labels=False,
         style=styles.PlotStyle().extend(
             styles.extensions.BLUE_GOLD,
             styles.extensions.GRADIENT_PRE_DAWN,
@@ -378,7 +377,7 @@ def check_map_wrapping():
     )
     p.gridlines()
     p.constellations()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
     p.title("Andromeda + nebula + Vega")
     p.export(filename, padding=0.3)
     return filename
@@ -538,17 +537,17 @@ def check_map_plot_limit_by_geometry():
         where=[_.magnitude < 9, _.geometry.intersects(lyra.boundary)], bayer_labels=True
     )
     p.dsos(
-        true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude < 9),
             _.type.isin(BASIC_DSO_TYPES),
             _.geometry.intersects(lyra.boundary),
         ],
         where_labels=[False],
+        where_true_size=[False],
     )
     p.constellations(where=[_.boundary.intersects(lyra.boundary)])
     p.constellation_borders()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
 
     filename = DATA_PATH / "map-limit-by-geometry.png"
     p.export(filename)
@@ -577,16 +576,16 @@ def check_map_plot_custom_clip_path_virgo():
 
     p.stars(where=[_.magnitude < 9], bayer_labels=True)
     p.dsos(
-        true_size=False,
         where=[
             (_.magnitude.isnull()) | (_.magnitude < 9),
             _.type.isin(BASIC_DSO_TYPES),
         ],
         where_labels=[False],
+        where_true_size=[False],
     )
     p.constellations()
     p.constellation_borders()
-    p.constellation_labels(auto_adjust_settings=AUTO_ADJUST_SETTINGS)
+    p.constellation_labels(collision_handler=HANDLER)
 
     p.line(
         coordinates=[
@@ -656,6 +655,61 @@ def check_map_milky_way_multi_polygon():
     p.milky_way()
 
     filename = DATA_PATH / "map-milky-way-multi-polygon.png"
+    p.export(filename)
+    p.close_fig()
+    return filename
+
+
+def check_map_allow_all_collisions():
+    handler = CollisionHandler(
+        seed=1,
+        allow_clipped=True,
+        allow_label_collisions=True,
+        allow_marker_collisions=True,
+        allow_constellation_line_collisions=True,
+        plot_on_fail=True,
+    )
+    p = MapPlot(
+        projection=Miller(),
+        ra_min=17.5 * 15,
+        ra_max=19.5 * 15,
+        dec_min=-30,
+        dec_max=-20,
+        style=STYLE,
+        resolution=3000,
+        scale=1.5,
+        collision_handler=handler,
+    )
+    p.stars(where=[_.magnitude < 6], bayer_labels=True, flamsteed_labels=True)
+    p.dsos(where=[_.magnitude < 10], where_true_size=[False])
+    filename = DATA_PATH / "map-allow-all-collisions.png"
+    p.export(filename)
+    p.close_fig()
+    return filename
+
+
+def check_map_allow_marker_and_line_collisions():
+    handler = CollisionHandler(
+        seed=1,
+        allow_marker_collisions=True,
+        allow_constellation_line_collisions=True,
+        plot_on_fail=True,
+    )
+    p = MapPlot(
+        projection=Miller(),
+        ra_min=17.5 * 15,
+        ra_max=19.5 * 15,
+        dec_min=-30,
+        dec_max=-10,
+        style=STYLE,
+        resolution=3000,
+        scale=1.5,
+        collision_handler=handler,
+    )
+    p.constellations()
+    p.stars(where=[_.magnitude < 8], bayer_labels=True, flamsteed_labels=True)
+    p.dsos(where=[_.magnitude < 10], where_true_size=[False])
+    filename = DATA_PATH / "map-allow-some-collisions.png"
     p.export(filename)
     p.close_fig()
     return filename

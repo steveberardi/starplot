@@ -100,6 +100,7 @@ See more details on the [Public Roadmap](https://trello.com/b/sUksygn4/starplot-
 - [starplot-hyg](https://github.com/steveberardi/starplot-hyg)
 - [starplot-gaia-dr3](https://github.com/steveberardi/starplot-gaia-dr3)
 - [starplot-hyperleda](https://github.com/steveberardi/starplot-hyperleda)
+- [starplot-milkyway](https://github.com/steveberardi/starplot-milkyway)
 
 ## License
 [MIT License](https://github.com/steveberardi/starplot/blob/main/LICENSE)

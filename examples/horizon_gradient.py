@@ -36,7 +36,10 @@ p.stars(
     style__marker__symbol="star_4",
 )
 
-p.messier(where=[_.magnitude < 11], true_size=False)
+p.messier(
+    where=[_.magnitude < 11],
+    where_true_size=[False],
+)
 
 p.constellation_labels()
 p.horizon(labels={180: "SOUTH"})
