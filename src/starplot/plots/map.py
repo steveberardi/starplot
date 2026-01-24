@@ -126,7 +126,6 @@ class MapPlot(
 
         if clip_path and clip_path.geom_type == "MultiPolygon":
             clip_path = geometry.union_at_zero(clip_path.geoms[0], clip_path.geoms[1])
-            # clip_path = clip_path.buffer(-0.1, cap_style="square", join_style="mitre")
 
         self.clip_path = clip_path
 
