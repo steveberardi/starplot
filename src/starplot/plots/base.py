@@ -122,7 +122,9 @@ class BasePlot(TextPlotterMixin, ABC):
         self._legend = None
         self._legend_handles = {}
 
-        self.log_level = logging.DEBUG if kwargs.get("debug") else logging.ERROR
+        self.debug = StarplotSettings.debug or bool(kwargs.get("debug"))
+        self.debug_text = StarplotSettings.debug or bool(kwargs.get("debug_text"))
+        self.log_level = logging.DEBUG if self.debug else logging.ERROR
         self.logger = LOGGER
         self.logger.setLevel(self.log_level)
 

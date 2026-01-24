@@ -125,7 +125,7 @@ class Constellation(CatalogObject, SkyObject):
         Returns the uppercase name of the constellation.
 
         """
-        return constellation.name.upper()
+        return constellation.name.upper().replace(" ", "\n")
 
 
 def from_tuple(c: tuple) -> Constellation:

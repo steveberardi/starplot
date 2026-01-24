@@ -1,17 +1,17 @@
 from dataclasses import dataclass
-from random import randrange
 
 import numpy as np
 import rtree
 from shapely import Point
+from shapely.errors import GEOSException
 from matplotlib.text import Text
 
 from starplot.config import settings as StarplotSettings, SvgTextType
 from starplot.styles import AnchorPointEnum, LabelStyle
 from starplot.styles.helpers import use_style
 from starplot.geometry import (
-    unwrap_polygon_360,
     random_point_in_polygon_at_distance,
+    union_at_zero,
 )
 
 """
@@ -322,31 +322,69 @@ class TextPlotterMixin:
         if StarplotSettings.svg_text_type == SvgTextType.PATH:
             kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
 
-        padding = 6
-        max_distance = 3_000
+        padding = 0
+        max_distance = 2_000
         distance_step_size = 2
         attempts = 0
         height = None
         width = None
         bbox = None
-        areas = (
-            [p for p in area.geoms] if "MultiPolygon" == str(area.geom_type) else [area]
-        )
-        new_areas = []
+
         origin = Point(ra, dec)
 
-        for a in areas:
-            unwrapped = unwrap_polygon_360(a)
-            # new_buffer = unwrapped.area / 10 * -1 * buffer * self.scale
-            # new_buffer = -1 * buffer * self.scale
-            # new_poly = unwrapped.buffer(new_buffer)
-            new_areas.append(unwrapped)
+        total_area = (
+            area
+            if area.geom_type != "MultiPolygon"
+            else union_at_zero(area.geoms[0], area.geoms[1])
+        )
+        original_size = total_area.area
+        buffer = -0.05 if original_size < 400 else -1
+
+        # Intersect with extent
+        extent = self._extent_mask()
+
+        try:
+            area = area.intersection(extent)
+        except GEOSException:
+            # TODO : handle this better
+            pass
+
+        area = (
+            area
+            if area.geom_type != "MultiPolygon"
+            else union_at_zero(area.geoms[0], area.geoms[1])
+        )
+        area = area.buffer(buffer, cap_style="square", join_style="mitre")
+
+        if not area.contains(origin) or area.area < (original_size * 0.9):
+            origin = area.centroid
+
+        if self.debug_text and area.is_valid and not origin.is_empty:
+            """Plots marker at origin and polygon of area"""
+            self.marker(
+                origin.x,
+                origin.y,
+                style={
+                    "marker": {
+                        "symbol": "triangle",
+                        "color": "red",
+                    }
+                },
+            )
+            self.polygon(
+                geometry=area,
+                style={
+                    "edge_color": "red",
+                    "edge_width": 2,
+                },
+            )
 
         for d in range(0, max_distance, distance_step_size):
-            distance = d / 20
-            poly = randrange(len(new_areas))
+            if not area.contains(origin):
+                continue
+            distance = d / 25
             point = random_point_in_polygon_at_distance(
-                new_areas[poly],
+                area,
                 origin_point=origin,
                 distance=distance,
                 max_iterations=10,
@@ -438,7 +476,7 @@ class TextPlotterMixin:
             style.offset_y = 0
 
         if kwargs.get("area"):
-            return self._text_area(
+            label = self._text_area(
                 ra,
                 dec,
                 text,
@@ -451,7 +489,7 @@ class TextPlotterMixin:
                 **kwargs,
             )
         else:
-            return self._text_point(
+            label = self._text_point(
                 ra,
                 dec,
                 text,
@@ -462,3 +500,25 @@ class TextPlotterMixin:
                 textcoords="offset points",
                 **kwargs,
             )
+
+        if self.debug_text and label:
+            """Plots bounding box around label"""
+            from matplotlib.patches import Rectangle
+
+            bbox = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+            bbox = bbox.transformed(self.ax.transAxes.inverted())
+            rect = Rectangle(
+                (bbox.x0, bbox.y0),  # (x, y) position in display pixels
+                width=bbox.width,
+                height=bbox.height,
+                transform=self.ax.transAxes,
+                fill=False,
+                facecolor="none",
+                edgecolor="red",
+                linewidth=1,
+                alpha=1,
+                zorder=100_000,
+            )
+            self.ax.add_patch(rect)
+
+        return label

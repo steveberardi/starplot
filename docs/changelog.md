@@ -4,6 +4,9 @@
 - Makes map plots default to plotting at epoch J2000
 - Replaces the `true_size` kwarg on the DSO plotting function with `where_true_size` which is a list of filters
 - Fixes a bug with auto label offsets from markers
+- [**v0.19.1**] Fixes issue with constellation boundaries
+
+---
 
 ## v0.18.x
 [Documentation](https://archives.starplot.dev/0.18.3/)
@@ -24,6 +27,8 @@
     - Adds Spanish translation
     - Remaps font weights to strings, to avoid a bug in matplotlib
 
+---
+
 ## v0.17.x
 [Documentation](https://archives.starplot.dev/0.17.1/)
 
@@ -38,6 +43,7 @@
     - Adds Lithuanian translation
     - Fixes a few small errors in the Chinese translation
 
+---
 
 ## v0.16.x
 [Documentation](https://archives.starplot.dev/0.16.7/) | [Migration Guide](migration-guides/0.16.0.md)
@@ -66,6 +72,7 @@
 - [**v0.16.6**] Support for Python 3.13
 - [**v0.16.7**] Fixes bug with plotting horizon labels on horizon plots that prevented the use of offsets
 
+---
 
 ## v0.15.x
 [Documentation](https://archives.starplot.dev/0.15.8/)
@@ -97,6 +104,7 @@
     - Adds a `sql` kwarg to object selection and plotting functions to allow querying by SQL
 - [**v0.15.8**] Fixes four point star marker
 
+---
 
 ## v0.14.x
 [Documentation](https://archives.starplot.dev/0.14.0/)
@@ -107,6 +115,8 @@
 - Plots constellation lines and borders as a `LineCollection` to improve performance
 - Adds option to suppress warnings from dependencies
 - Adds legend labels to shape functions
+
+---
 
 ## v0.13.x
 [Documentation](https://archives.starplot.dev/0.13.0/)
@@ -120,6 +130,8 @@
 - Adds the standard symbol for planetary nebulae
 - Adds a border size/color property to label styles
 - Bundles fonts: Inter & GFS Didot
+
+---
 
 ## v0.12.x
 [Documentation](https://archives.starplot.dev/0.12.5/)
@@ -140,6 +152,8 @@
     - Fixes bug with a few constellation ids
     - Fixes bug with `zenith()` function on map plots
 
+---
+
 ## v0.11.x
 [Documentation](https://archives.starplot.dev/0.11.4/)
 
@@ -158,6 +172,8 @@
 - [**v0.11.2**] Adds `requests` as a required dependency
 - [**v0.11.3**] Fixes bug with plotting the celestial equator
 - [**v0.11.4**] Fixes bug with filtering DSOs by NGC/IC identifier
+
+---
 
 ## v0.10.x
 [Documentation](https://archives.starplot.dev/0.10.2/)
@@ -178,6 +194,8 @@
     - Adds lat/lon kwargs to Sun/Moon/Planet models to allow _apparent_ RA/DEC calculation
 - [**v0.10.2**] Fixes a few issues with plotting legends
 
+---
+
 ## v0.9.x
 [Documentation](https://archives.starplot.dev/0.9.1/)
 
@@ -189,6 +207,8 @@
 - Stars are now plotted in order of their calculated size, which prevents "bigger" stars from hiding "smaller" stars
 - Added more marker symbols and style extensions
 - [**v0.9.1**] Fixes bug with plotting moon and planets as their true size
+
+---
 
 ## v0.8.x
 [Documentation](https://archives.starplot.dev/0.8.4/)
@@ -202,5 +222,7 @@
 - [**v0.8.2**] Fixes a small bug in determining if a RA/DEC is in bounds of a plot
 - [**v0.8.3**] More consistent polygon/circle sizing across projections
 - [**v0.8.4**] Fixes a small bug in plotting text labels of DSOs, which prevented some styles from getting applied
+
+---
 
 <br/><br/>

@@ -321,23 +321,23 @@ This is an _abridged_ version of the Big Sky Catalog.
 
 OPEN_NGC = Catalog(
     path=settings.data_path / "ongc.0.1.2.parquet",
-    url="https://github.com/steveberardi/starplot-ongc/releases/download/v0.1.1/ongc.0.1.1.parquet",
+    url="https://github.com/steveberardi/starplot-ongc/releases/download/v0.1.2/ongc.0.1.2.parquet",
 )
 """
 [OpenNGC](https://github.com/mattiaverga/OpenNGC) catalog, including nebulae outlines.
 """
 
 CONSTELLATIONS_IAU = Catalog(
-    path=settings.data_path / "constellations-iau-0.2.0.parquet",
-    url="https://github.com/steveberardi/starplot-constellations/releases/download/v0.2.0/constellations.0.2.0.parquet",
+    path=settings.data_path / "constellations.0.3.1.parquet",
+    url="https://github.com/steveberardi/starplot-constellations/releases/download/v0.3.1/constellations.0.3.1.parquet",
 )
 """
 Constellations recognized by IAU, with lines by Sky & Telescope.
 """
 
 CONSTELLATION_BORDERS = Catalog(
-    path=settings.data_path / "constellations-borders-0.2.0.parquet",
-    url="https://github.com/steveberardi/starplot-constellations/releases/download/v0.2.0/constellations-borders.0.2.0.parquet",
+    path=settings.data_path / "constellations-borders-0.3.1.parquet",
+    url="https://github.com/steveberardi/starplot-constellations/releases/download/v0.3.1/constellations-borders.0.3.1.parquet",
 )
 
 MILKY_WAY = Catalog(

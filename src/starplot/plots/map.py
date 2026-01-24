@@ -11,7 +11,7 @@ from skyfield.api import wgs84
 import numpy as np
 
 from starplot.coordinates import CoordinateSystem
-from starplot import geod
+from starplot import geod, geometry
 from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
@@ -123,6 +123,10 @@ class MapPlot(
         self.ra_max = ra_max
         self.dec_min = dec_min
         self.dec_max = dec_max
+
+        if clip_path and clip_path.geom_type == "MultiPolygon":
+            clip_path = geometry.union_at_zero(clip_path.geoms[0], clip_path.geoms[1])
+
         self.clip_path = clip_path
 
         self._geodetic = ccrs.Geodetic()
