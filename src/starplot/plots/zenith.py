@@ -128,6 +128,12 @@ class ZenithPlot(MapPlot):
                 **style.label.matplot_kwargs(self.scale),
             )
 
+    def _adjust_radec_minmax(self):
+        self.ra_min = 0
+        self.ra_max = 360
+        self.dec_min = -90
+        self.dec_max = 90
+
     def _set_extent(self):
         theta = np.linspace(0, 2 * np.pi, 100)
         center, radius = [0.5, 0.5], 0.45

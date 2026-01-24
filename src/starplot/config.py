@@ -13,6 +13,14 @@ def _get_path(var_name, default) -> Path:
     return _get
 
 
+def _get_boolean(var_name, default) -> bool:
+    def _get():
+        value = os.environ.get(var_name)
+        return default if not value else bool(value.lower() == "true")
+
+    return _get
+
+
 class SvgTextType(str, Enum):
     PATH = "path"
     ELEMENT = "element"
@@ -63,6 +71,8 @@ class Settings:
 
     **🌐 Want to see another language available? Please help us add it! [Details here](https://github.com/steveberardi/starplot/tree/main/data/raw/translations).**
     """
+
+    debug: bool = field(default_factory=_get_boolean("STARPLOT_DEBUG", False))
 
 
 settings = Settings()

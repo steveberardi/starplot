@@ -12,6 +12,17 @@ class ExtentMaskMixin:
 
         If the extent crosses equinox, then a MultiPolygon will be returned
         """
+        if self._is_global_extent():
+            return Polygon(
+                [
+                    (0, -90),
+                    (360, -90),
+                    (360, 90),
+                    (0, 90),
+                    (0, -90),
+                ]
+            )
+
         if self.ra_max <= 360:
             coords = [
                 [self.ra_min, self.dec_min],
