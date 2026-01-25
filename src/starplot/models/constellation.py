@@ -35,6 +35,9 @@ class Constellation(CatalogObject, SkyObject):
     Serpens Caput has the `iau_id` of `ser1` and Serpens Cauda is `ser2`
     """
 
+    border: LineString = None
+
+
     def __repr__(self) -> str:
         return f"Constellation(iau_id={self.iau_id}, name={self.name}, ra={self.ra}, dec={self.dec})"
 
