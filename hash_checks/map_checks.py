@@ -20,9 +20,11 @@ from starplot import (
     Mercator,
     Mollweide,
     StereoNorth,
+    StereoSouth,
     CollisionHandler,
     Binoculars,
     Scope,
+    geometry,
 )
 
 HERE = Path(__file__).resolve().parent
@@ -713,3 +715,75 @@ def check_map_allow_marker_and_line_collisions():
     p.export(filename)
     p.close_fig()
     return filename
+
+def check_map_constellation_clip_path():
+    constellation = Constellation.get(iau_id="and")
+
+    boundary = constellation.boundary 
+
+    if boundary.geom_type == "MultiPolygon":
+        boundary = geometry.union_at_zero(boundary.geoms[0], boundary.geoms[1])
+
+    extent = boundary.bounds # bbox (minx, miny, maxx, maxy)
+    
+    if constellation.dec > 60:
+        proj = StereoNorth
+    elif constellation.dec < -60:
+        proj = StereoSouth
+    else:
+        proj = Miller
+
+
+    if extent[0] < 0:
+        extent = (extent[0] + 360, extent[1], extent[2] + 360, extent[3])
+
+    center_ra = max((extent[0] + extent[2])/2, 0)
+    if center_ra > 360:
+        center_ra -= 360
+
+    p = MapPlot(
+        projection=proj(center_ra=center_ra),
+        ra_min=extent[0],
+        ra_max=extent[2],
+        dec_min=extent[1],
+        dec_max=extent[3],
+        style=styles.PlotStyle().extend(
+            styles.extensions.BLUE_NIGHT,
+            styles.extensions.MAP,
+        ),
+        clip_path=boundary,
+        resolution=2000,
+        scale=0.8,
+    )
+
+    p.line(
+        geometry=constellation.border,
+        style=p.style.constellation_borders,
+    )
+    
+    for hip1, hip2 in constellation.star_hip_lines:
+        star1 = Star.get(hip=hip1)
+        star2 = Star.get(hip=hip2)
+        p.line(
+            coordinates=[
+                (star1.ra, star1.dec),
+                (star2.ra, star2.dec),
+            ],
+            style=p.style.constellation_lines
+        )
+
+    p.stars(
+        where=[_.hip.isin(constellation.star_hip_ids)], 
+        where_labels=[_.magnitude < 4], 
+        bayer_labels=True,
+    )
+   
+    p.title(constellation.name, style__line_spacing=80)
+
+    p.ax.set_axis_off()  # hide the axis background that's outside the clip path
+
+    filename = DATA_PATH / "map-constellation-clip-path.png"
+    p.export(filename, padding=0.5)
+
+    return filename
+
