@@ -5,6 +5,9 @@
 - Replaces the `true_size` kwarg on the DSO plotting function with `where_true_size` which is a list of filters
 - Fixes a bug with auto label offsets from markers
 - [**v0.19.1**] Fixes issue with constellation boundaries
+- [**v0.19.2**]
+    - Adds a `border` field to the constellation model
+    - Modifies the `line` function to accept a Shapely geometry OR a list of coordinates
 
 ---
 

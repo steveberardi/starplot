@@ -16,7 +16,11 @@ class Constellation(CatalogObject, SkyObject):
     """
 
     boundary: Polygon | MultiPolygon
-    """Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360)."""
+    """
+    Shapely Polygon of the constellation's boundary. Right ascension coordinates are in degrees (0...360).
+    
+    If the constellation's boundary crosses the 0-meridian, then this will be a MultiPolygon split at the meridian.
+    """
 
     star_hip_ids: list[int]
     """List of HIP ids for stars that are part of the _lines_ for this constellation."""
@@ -36,7 +40,11 @@ class Constellation(CatalogObject, SkyObject):
     """
 
     border: LineString = None
-
+    """
+    Shapely LineString of the constellation's border. Right ascension coordinates are in degrees (0...360).
+    
+    Coordinates in this geometry may extend past RA=360, if the border crosses the 0-meridian. This makes it ready to plot with the `line` function.
+    """
 
     def __repr__(self) -> str:
         return f"Constellation(iau_id={self.iau_id}, name={self.name}, ra={self.ra}, dec={self.dec})"

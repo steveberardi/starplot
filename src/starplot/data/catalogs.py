@@ -328,8 +328,8 @@ OPEN_NGC = Catalog(
 """
 
 CONSTELLATIONS_IAU = Catalog(
-    path=settings.data_path / "constellations.0.3.1.parquet",
-    url="https://github.com/steveberardi/starplot-constellations/releases/download/v0.3.1/constellations.0.3.1.parquet",
+    path=settings.data_path / "constellations.0.3.2.parquet",
+    url="https://github.com/steveberardi/starplot-constellations/releases/download/v0.3.2/constellations.0.3.2.parquet",
 )
 """
 Constellations recognized by IAU, with lines by Sky & Telescope.

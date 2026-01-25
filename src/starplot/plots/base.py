@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt, patheffects
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
-from shapely import Polygon
+from shapely import Polygon, LineString
 
 from starplot.coordinates import CoordinateSystem
 from starplot import geod, models, warnings
@@ -633,14 +633,27 @@ class BasePlot(TextPlotterMixin, ABC):
             )
 
     @use_style(LineStyle)
-    def line(self, coordinates: list[tuple[float, float]], style: LineStyle, **kwargs):
+    def line(
+        self,
+        style: LineStyle,
+        coordinates: list[tuple[float, float]] = None,
+        geometry: LineString = None,
+        **kwargs,
+    ):
         """Plots a line
 
         Args:
             coordinates: List of coordinates, e.g. `[(ra, dec), (ra, dec)]`
+            geometry: A shapely LineString. If this value is passed, then the `coordinates` kwarg will be ignored.
             style: Style of the line
         """
-        x, y = zip(*[self._prepare_coords(*p) for p in coordinates])
+
+        if coordinates is None and geometry is None:
+            raise ValueError("Must pass coordinates or geometry when plotting lines.")
+
+        coords = geometry.coords if geometry is not None else coordinates
+
+        x, y = zip(*[self._prepare_coords(*p) for p in coords])
 
         self.ax.plot(
             x,
