@@ -1,4 +1,5 @@
 ## v0.19.x
+
 - Adds a `CollisionHandler` for defining what to do when labels collide with something
 - Introduces catalogs for the Milky Way and constellation borders
 - Makes map plots default to plotting at epoch J2000
