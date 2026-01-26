@@ -11,7 +11,7 @@ from skyfield.api import wgs84
 import numpy as np
 
 from starplot.coordinates import CoordinateSystem
-from starplot import geod, geometry
+from starplot import geod
 from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer

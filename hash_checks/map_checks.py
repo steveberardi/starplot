@@ -25,7 +25,6 @@ from starplot import (
     CollisionHandler,
     Binoculars,
     Scope,
-    geometry,
 )
 
 HERE = Path(__file__).resolve().parent
@@ -717,12 +716,13 @@ def check_map_allow_marker_and_line_collisions():
     p.close_fig()
     return filename
 
+
 def check_map_constellation_clip_path():
     constellation = Constellation.get(iau_id="and")
 
     ra, dec = [p for p in constellation.border.coords.xy]
     extent = (min(ra) - 2, max(min(dec) - 2, -90), max(ra) + 2, min(max(dec) + 2, 90))
-    
+
     if constellation.dec > 60:
         proj = StereoNorth
     elif constellation.dec < -60:
@@ -733,7 +733,7 @@ def check_map_constellation_clip_path():
     if extent[0] < 0:
         extent = (extent[0] + 360, extent[1], extent[2] + 360, extent[3])
 
-    center_ra = (extent[0] + extent[2]) / 2 
+    center_ra = (extent[0] + extent[2]) / 2
     if center_ra < 0:
         center_ra += 360
     elif center_ra > 360:
@@ -758,7 +758,7 @@ def check_map_constellation_clip_path():
         geometry=constellation.border,
         style=p.style.constellation_borders,
     )
-    
+
     for hip1, hip2 in constellation.star_hip_lines:
         star1 = Star.get(hip=hip1)
         star2 = Star.get(hip=hip2)
@@ -767,15 +767,15 @@ def check_map_constellation_clip_path():
                 (star1.ra, star1.dec),
                 (star2.ra, star2.dec),
             ],
-            style=p.style.constellation_lines
+            style=p.style.constellation_lines,
         )
 
     p.stars(
-        where=[_.hip.isin(constellation.star_hip_ids)], 
-        where_labels=[_.magnitude < 4], 
+        where=[_.hip.isin(constellation.star_hip_ids)],
+        where_labels=[_.magnitude < 4],
         bayer_labels=True,
     )
-   
+
     p.title(constellation.name, style__line_spacing=80)
 
     p.ax.set_axis_off()  # hide the axis background that's outside the clip path
@@ -784,4 +784,3 @@ def check_map_constellation_clip_path():
     p.export(filename, padding=0.5)
 
     return filename
-
