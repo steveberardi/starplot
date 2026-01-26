@@ -124,9 +124,6 @@ class MapPlot(
         self.dec_min = dec_min
         self.dec_max = dec_max
 
-        if clip_path and clip_path.geom_type == "MultiPolygon":
-            clip_path = geometry.union_at_zero(clip_path.geoms[0], clip_path.geoms[1])
-
         self.clip_path = clip_path
 
         self._geodetic = ccrs.Geodetic()

@@ -23,9 +23,9 @@ map_coma_berenices_dso_size:
   filename: /starplot/hash_checks/data/map-coma-berenices-dso-size.png
   phash: 92966d6d4d9616c9
 map_constellation_clip_path:
-  dhash: b34b6e96e4f81910b34b6e96e4f81910b36b6e96e4f81910
+  dhash: 3202ee96e47819103002ee96e4781910b002ee96e4781910
   filename: /starplot/hash_checks/data/map-constellation-clip-path.png
-  phash: 99ec1b18ccd98ec6
+  phash: 99c45b99c4d98ec6
 map_custom_stars:
   dhash: 5e21a1ceac2c84485e21a1ceac2c84485e21a1ceac2c8448
   filename: /starplot/hash_checks/data/map-custom-stars.png

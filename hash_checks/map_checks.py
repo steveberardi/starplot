@@ -5,6 +5,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import numpy as np
+from shapely import Polygon
 
 from starplot import (
     MapPlot,
@@ -719,12 +720,8 @@ def check_map_allow_marker_and_line_collisions():
 def check_map_constellation_clip_path():
     constellation = Constellation.get(iau_id="and")
 
-    boundary = constellation.boundary 
-
-    if boundary.geom_type == "MultiPolygon":
-        boundary = geometry.union_at_zero(boundary.geoms[0], boundary.geoms[1])
-
-    extent = boundary.bounds # bbox (minx, miny, maxx, maxy)
+    ra, dec = [p for p in constellation.border.coords.xy]
+    extent = (min(ra) - 2, max(min(dec) - 2, -90), max(ra) + 2, min(max(dec) + 2, 90))
     
     if constellation.dec > 60:
         proj = StereoNorth
@@ -733,12 +730,13 @@ def check_map_constellation_clip_path():
     else:
         proj = Miller
 
-
     if extent[0] < 0:
         extent = (extent[0] + 360, extent[1], extent[2] + 360, extent[3])
 
-    center_ra = max((extent[0] + extent[2])/2, 0)
-    if center_ra > 360:
+    center_ra = (extent[0] + extent[2]) / 2 
+    if center_ra < 0:
+        center_ra += 360
+    elif center_ra > 360:
         center_ra -= 360
 
     p = MapPlot(
@@ -751,7 +749,7 @@ def check_map_constellation_clip_path():
             styles.extensions.BLUE_NIGHT,
             styles.extensions.MAP,
         ),
-        clip_path=boundary,
+        clip_path=Polygon(constellation.border.coords),
         resolution=2000,
         scale=0.8,
     )
