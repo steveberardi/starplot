@@ -334,9 +334,9 @@ class BasePlot(TextPlotterMixin, ABC):
                 polygon_style = style.marker.to_polygon_style()
                 polygon_style.edge_color = None
                 self.circle(
-                    (p.ra, p.dec),
-                    p.apparent_size,
-                    polygon_style,
+                    center=(p.ra, p.dec),
+                    radius_degrees=p.apparent_size / 2,
+                    style=polygon_style,
                     gid="planet-marker",
                 )
                 self._add_legend_handle_marker(legend_label, style.marker)
@@ -406,10 +406,11 @@ class BasePlot(TextPlotterMixin, ABC):
             polygon_style.edge_color = None
 
             self.circle(
-                (s.ra, s.dec),
-                s.apparent_size,
+                center=(s.ra, s.dec),
+                radius_degrees=s.apparent_size / 2,
                 style=polygon_style,
                 gid="sun-marker",
+                num_pts=200,
             )
 
             style.marker.symbol = MarkerSymbolEnum.CIRCLE
@@ -713,9 +714,9 @@ class BasePlot(TextPlotterMixin, ABC):
 
             if show_phase:
                 self._moon_with_phase(
-                    m.phase_description,
-                    (m.ra, m.dec),
-                    m.apparent_size,
+                    moon_phase=m.phase_description,
+                    center=(m.ra, m.dec),
+                    radius_degrees=m.apparent_size / 2,
                     style=polygon_style,
                     dark_side_color=style.marker.edge_color,
                 )
@@ -810,8 +811,8 @@ class BasePlot(TextPlotterMixin, ABC):
         # Plot left side
         self.ellipse(
             center,
-            radius_degrees * 2,
-            radius_degrees * 2,
+            height_degrees=radius_degrees * 2,
+            width_degrees=radius_degrees * 2,
             style=left,
             num_pts=num_pts,
             angle=0,
@@ -821,8 +822,8 @@ class BasePlot(TextPlotterMixin, ABC):
         # Plot right side
         self.ellipse(
             center,
-            radius_degrees * 2,
-            radius_degrees * 2,
+            height_degrees=radius_degrees * 2,
+            width_degrees=radius_degrees * 2,
             style=right,
             num_pts=num_pts,
             angle=180,
@@ -832,8 +833,8 @@ class BasePlot(TextPlotterMixin, ABC):
         # Plot middle
         self.ellipse(
             center,
-            radius_degrees * 2,
-            radius_degrees,
+            height_degrees=radius_degrees * 2,
+            width_degrees=radius_degrees,
             style=middle,
             gid="moon-marker",
         )

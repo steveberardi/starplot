@@ -1,7 +1,7 @@
 import math
 
 import pyproj
-
+import numpy as np
 
 GEOD = pyproj.Geod("+a=6378137 +f=0.0", sphere=True)
 
@@ -70,11 +70,10 @@ def ellipse(
 
     height = distance_m(height_degrees / 2)  # b
     width = distance_m(width_degrees / 2)  # a
+    step_size = (end_angle - start_angle) / num_pts
 
     points = []
-    for angle_pt in range(
-        start_angle, end_angle + 1, int((end_angle - start_angle) / num_pts)
-    ):
+    for angle_pt in np.arange(start_angle, end_angle + step_size, step_size):
         radians = math.radians(angle_pt)
         radius_a = (height * width) / math.sqrt(
             height**2 * (math.sin(radians)) ** 2
