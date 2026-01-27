@@ -2,7 +2,7 @@
 
 """Star charts and maps of the sky"""
 
-__version__ = "0.19.2b1"
+__version__ = "0.19.2"
 
 from .plots import (
     MapPlot,
