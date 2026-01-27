@@ -22,7 +22,7 @@ class Sun(SkyObject):
     """Date/time of Sun's position"""
 
     apparent_size: float = 0
-    """Apparent size (degrees)"""
+    """Apparent diameter (degrees)"""
 
     geometry: Polygon = None
     """Shapely Polygon of the Sun's extent. Right ascension coordinates are in degrees (0...360)."""

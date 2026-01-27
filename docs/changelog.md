@@ -1,10 +1,15 @@
 ## v0.19.x
+
 - Adds a `CollisionHandler` for defining what to do when labels collide with something
 - Introduces catalogs for the Milky Way and constellation borders
 - Makes map plots default to plotting at epoch J2000
 - Replaces the `true_size` kwarg on the DSO plotting function with `where_true_size` which is a list of filters
 - Fixes a bug with auto label offsets from markers
 - [**v0.19.1**] Fixes issue with constellation boundaries
+- [**v0.19.2**]
+    - Adds a `border` field to the constellation model
+    - Modifies the `line` function to accept a Shapely geometry OR a list of coordinates
+    - Fixes bug with plotting true apparent size of solar system objects
 
 ---
 

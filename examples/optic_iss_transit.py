@@ -26,7 +26,7 @@ p = OpticPlot(
     dec=moon.dec,
     observer=observer,
     optic=Binoculars(
-        magnification=15,
+        magnification=20,
         fov=65,
     ),
     style=style,
