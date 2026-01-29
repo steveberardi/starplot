@@ -452,19 +452,21 @@ class MapPlot(
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.figure_background_color.as_hex(),
-            layout="constrained",
+            # layout="constrained",
             dpi=DPI,
         )
 
+
         self._proj = self.projection.crs
         self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
+        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
         self._set_extent()
         self._adjust_radec_minmax()
 
         self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
 
-        self._fit_to_ax()
+        # self._fit_to_ax()
         self._plot_background_clip_path()
 
     def _ax_to_radec(self, x, y):

@@ -561,10 +561,14 @@ class HorizonPlot(
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.figure_background_color.as_hex(),
-            layout="constrained",
+            # layout="constrained",
             dpi=DPI,
         )
-        self.ax = plt.axes(projection=self._proj)
+        # self.ax = plt.axes(projection=self._proj)
+
+        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
+        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
+
         self.ax.xaxis.set_visible(False)
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")
@@ -578,7 +582,7 @@ class HorizonPlot(
 
         self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
 
-        self._fit_to_ax()
+        # self._fit_to_ax()
 
         # if self.gradient_preset:
         #     self.apply_gradient_background(self.gradient_preset)

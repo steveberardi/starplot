@@ -436,15 +436,18 @@ class OpticPlot(
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.figure_background_color.as_hex(),
-            layout="constrained",
+            # layout="constrained",
             dpi=DPI,
         )
-        self.ax = plt.axes(projection=self._proj)
+        # self.ax = plt.axes(projection=self._proj)
+        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
+        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
+
         self.ax.xaxis.set_visible(False)
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")
 
-        self._fit_to_ax()
+        # self._fit_to_ax()
         self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
         self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
         self.optic.transform(self.ax)

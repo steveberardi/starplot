@@ -504,7 +504,7 @@ class TextPlotterMixin:
         if self.debug_text and label:
             """Plots bounding box around label"""
             from matplotlib.patches import Rectangle
-
+            
             bbox = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
             bbox = bbox.transformed(self.ax.transAxes.inverted())
             rect = Rectangle(
