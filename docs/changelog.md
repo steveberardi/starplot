@@ -10,6 +10,9 @@
     - Adds a `border` field to the constellation model
     - Modifies the `line` function to accept a Shapely geometry OR a list of coordinates
     - Fixes bug with plotting true apparent size of solar system objects
+- [**v0.19.3**]
+    - Makes `resolution` property more predictable
+    - Fixes multiple issues with label collision handling
 
 ---
 
