@@ -221,7 +221,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self.fig.savefig(
             filename,
             bbox_inches="tight",
-            pad_inches=padding,
+            pad_inches=padding * self.scale,
             dpi=DPI,  # (self.resolution / self.figure_size * 1.28),
             **kwargs,
         )
