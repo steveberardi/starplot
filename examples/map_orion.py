@@ -23,7 +23,7 @@ p.constellation_borders()
 p.stars(where=[_.magnitude < 8], bayer_labels=True, where_labels=[_.magnitude < 5])
 
 p.open_clusters(
-    where=[_.size < 1, _.magnitude < 9],
+    where=[(_.magnitude < 9) | (_.magnitude.isnull())],
     where_labels=[False],
     where_true_size=[
         _.size > 1

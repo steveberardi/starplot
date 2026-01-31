@@ -320,7 +320,7 @@ class OpticPlot(
             style: If `None`, then the plot's style for info text will be used
         """
         self.ax.set_xlim(-1.22 * self.optic.xlim, 1.22 * self.optic.xlim)
-        self.ax.set_ylim(-1.12 * self.optic.ylim, 1.12 * self.optic.ylim)
+        self.ax.set_ylim(-1.1 * self.optic.ylim, 1.1 * self.optic.ylim)
         self.optic.transform(
             self.ax
         )  # apply transform again because new xy limits will undo the transform
@@ -359,7 +359,7 @@ class OpticPlot(
         )
         table.auto_set_font_size(False)
         table.set_fontsize(style.font_size)
-        table.scale(1, 3.1)
+        table.scale(1, 5)
 
         # Apply style to all cells
         for row in [0, 1]:
@@ -420,13 +420,6 @@ class OpticPlot(
         )
         self.ax.add_patch(outer_border)
 
-    def _fit_to_ax(self) -> None:
-        bbox = self.ax.get_window_extent().transformed(
-            self.fig.dpi_scale_trans.inverted()
-        )
-        width, height = bbox.width, bbox.height
-        self.fig.set_size_inches(width, height)
-
     def _init_plot(self):
         self._proj = ccrs.AzimuthalEquidistant(
             central_longitude=self.pos_az.degrees,
@@ -439,7 +432,6 @@ class OpticPlot(
             # layout="constrained",
             dpi=DPI,
         )
-        # self.ax = plt.axes(projection=self._proj)
         self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
         self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
@@ -447,7 +439,7 @@ class OpticPlot(
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")
 
-        # self._fit_to_ax()
+        self._fit_to_ax()
         self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
         self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
         self.optic.transform(self.ax)

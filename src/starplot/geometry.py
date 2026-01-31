@@ -3,7 +3,7 @@ import math
 from typing import Union
 
 from shapely import transform, union_all
-from shapely.geometry import Point, Polygon, MultiPolygon
+from shapely.geometry import Point, Polygon, MultiPolygon, LineString
 
 from starplot import geod
 
@@ -289,3 +289,8 @@ def is_wrapped_polygon(polygon: Polygon) -> bool:
         return True
 
     return False
+
+
+def line_segment(start, end, step):
+    """Returns coordinates on the line from start to end at the specified step-size"""
+    return LineString([start, end]).segmentize(step).coords

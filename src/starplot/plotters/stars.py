@@ -250,8 +250,7 @@ class StarPlotterMixin:
 
             if obj.magnitude < 5:
                 rtree_id += 1
-                # radius = ((size**0.5 / 2) / self.scale) #/ 3.14
-                radius = size**0.5 / 5
+                radius = size**0.5 / 6
                 bbox = np.array(
                     (
                         display_x - radius,
@@ -260,6 +259,8 @@ class StarPlotterMixin:
                         display_y + radius,
                     )
                 )
+                if self.debug_text:
+                    self._debug_bbox(bbox, color="#39FF14", width=1)
                 if self._stars_rtree.get_size() > 0:
                     self._stars_rtree.insert(
                         0,

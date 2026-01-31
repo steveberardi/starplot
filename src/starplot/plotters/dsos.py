@@ -286,7 +286,7 @@ class DsoPlotterMixin:
                     label=label,
                     legend_label=legend_label,
                     collision_handler=handler,
-                    skip_bounds_check=True,
+                    # skip_bounds_check=True,
                     gid_marker=f"dso-{d.type}-marker",
                     gid_label=f"dso-{d.type}-label",
                 )
