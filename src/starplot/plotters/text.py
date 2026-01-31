@@ -255,6 +255,7 @@ class TextPlotterMixin:
 
             if ha == "center":
                 offset_x = 0
+                offset_y = 0
 
             if height and width:
                 offset_x_px = abs(offset_x * (self.dpi / 72))
@@ -287,8 +288,8 @@ class TextPlotterMixin:
                     y0 = int(display_y - offset_y_px - height)
                     y1 = int(display_y - offset_y_px)
                 elif va == "center":
-                    y0 = int(display_y + offset_y_px)
-                    y1 = int(display_y + offset_y_px + height)
+                    y0 = int(display_y - height / 2) + offset_y
+                    y1 = int(display_y + height / 2) + offset_y
 
                 bbox = (x0, y0, x1, y1)
                 label = None
@@ -519,9 +520,8 @@ class TextPlotterMixin:
                 **style.matplot_kwargs(self.scale),
                 collision_handler=collision_handler,
                 xycoords="data",
-                xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
-                # xytext=(style.offset_x * 1, style.offset_y * 1),
-                textcoords="offset pixels",
+                xytext=(int(style.offset_x * self.scale), int(style.offset_y * self.scale)),
+                textcoords="offset points",
                 **kwargs,
             )
 
