@@ -106,10 +106,12 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self.resolution = resolution
         self.collision_handler = collision_handler or CollisionHandler()
 
-        self.scale = scale / 1.44
+        self.scale = scale
         self.autoscale = autoscale
         if self.autoscale:
-            self.scale = self.resolution / DEFAULT_RESOLUTION  # / 1.44
+            self.scale = self.resolution / DEFAULT_RESOLUTION
+
+        self.scale *= 1.13
 
         if suppress_warnings:
             warnings.suppress()

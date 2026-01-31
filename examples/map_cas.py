@@ -13,14 +13,14 @@ p = MapPlot(
     dec_min=49.5,
     dec_max=68,
     style=style,
-    resolution=4000 * 1,
+    resolution=3600,
     scale=1.2,
 )
 p.constellations(where=[_.iau_id == "cas"])  # only plot the lines of Cassiopeia
 
 p.stars(
     where=[
-        _.magnitude < 9,
+        _.magnitude < 8,
     ],
     bayer_labels=True,
     flamsteed_labels=True,

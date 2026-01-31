@@ -268,7 +268,7 @@ class TextPlotterMixin:
                     x0 = int(display_x - offset_x_px - width)
                     x1 = int(display_x - offset_x_px)
                 else:
-                    x0 = int(display_x + offset_x_px - width / 2)
+                    x0 = int(display_x - offset_x_px - width / 2)
                     x1 = int(display_x + offset_x_px + width / 2)
 
                 if va == "bottom":
