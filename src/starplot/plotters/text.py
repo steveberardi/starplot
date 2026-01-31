@@ -239,7 +239,6 @@ class TextPlotterMixin:
         data_xy = self._proj.transform_point(x, y, self._crs)
         display_x, display_y = self.ax.transData.transform(data_xy)
 
-        # print(text) # ζ
         anchors = {(original_va, original_ha)}
         for a in collision_handler.anchor_fallbacks:
             d = AnchorPointEnum.from_str(a).as_matplot()
