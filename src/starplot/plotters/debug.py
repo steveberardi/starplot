@@ -1,8 +1,5 @@
-
-
 from matplotlib.patches import Rectangle
 from matplotlib.transforms import Bbox
-
 
 
 class DebugPlotterMixin:

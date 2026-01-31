@@ -239,12 +239,13 @@ class TextPlotterMixin:
         data_xy = self._proj.transform_point(x, y, self._crs)
         display_x, display_y = self.ax.transData.transform(data_xy)
 
-        anchors = [(original_va, original_ha)]
+        # print(text) # ζ
+        anchors = {(original_va, original_ha)}
         for a in collision_handler.anchor_fallbacks:
             d = AnchorPointEnum.from_str(a).as_matplot()
-            anchors.append((d["va"], d["ha"]))
+            anchors.add((d["va"], d["ha"]))
 
-        for va, ha in set(anchors):
+        for va, ha in anchors:
             attempts += 1
             offset_x, offset_y = original_offset_x, original_offset_y
             if original_ha != ha and ha != "center":
@@ -263,21 +264,13 @@ class TextPlotterMixin:
 
                 if ha == "left":
                     x0 = int(display_x + offset_x_px)
-                    y0 = int(display_y + offset_y_px - height)
                     x1 = int(display_x + offset_x_px + width)
-                    y1 = int(display_y + offset_y_px + height)
-
                 elif ha == "right":
                     x0 = int(display_x - offset_x_px - width)
-                    y0 = int(display_y + offset_y_px - height)
                     x1 = int(display_x - offset_x_px)
-                    y1 = int(display_y + offset_y_px + height)
-
                 else:
                     x0 = int(display_x + offset_x_px - width / 2)
-                    y0 = int(display_y + offset_y_px - height)
                     x1 = int(display_x + offset_x_px + width / 2)
-                    y1 = int(display_y + offset_y_px + height)
 
                 if va == "bottom":
                     # TOP
@@ -287,7 +280,8 @@ class TextPlotterMixin:
                     # BOTTOM
                     y0 = int(display_y - offset_y_px - height)
                     y1 = int(display_y - offset_y_px)
-                elif va == "center":
+                else:
+                    # CENTER
                     y0 = int(display_y - height / 2) + offset_y
                     y1 = int(display_y + height / 2) + offset_y
 
@@ -314,8 +308,8 @@ class TextPlotterMixin:
                 allow_marker_collisions=collision_handler.allow_marker_collisions,
                 allow_label_collisions=collision_handler.allow_label_collisions,
             )
-            is_final_attempt = (
-                attempts == collision_handler.attempts or attempts == len(anchors)
+            is_final_attempt = bool(
+                (attempts == collision_handler.attempts) or (attempts == len(anchors))
             )
 
             if is_open or (collision_handler.plot_on_fail and is_final_attempt):
@@ -329,7 +323,9 @@ class TextPlotterMixin:
                 label.remove()
 
             elif attempts == collision_handler.attempts or attempts == len(anchors):
-                return None
+                break
+
+        return None
 
     def _text_area(
         self,
@@ -520,7 +516,10 @@ class TextPlotterMixin:
                 **style.matplot_kwargs(self.scale),
                 collision_handler=collision_handler,
                 xycoords="data",
-                xytext=(int(style.offset_x * self.scale), int(style.offset_y * self.scale)),
+                xytext=(
+                    int(style.offset_x * self.scale),
+                    int(style.offset_y * self.scale),
+                ),
                 textcoords="offset points",
                 **kwargs,
             )
