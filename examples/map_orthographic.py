@@ -49,7 +49,6 @@ p.nebula(
     where_true_size=[False],
 )
 
-# p.constellation_labels(style__font_alpha=0.4)
 p.ecliptic()
 p.celestial_equator()
 p.milky_way()

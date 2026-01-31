@@ -163,7 +163,6 @@ class ConstellationPlotterMixin:
                 ):
                     continue
 
-                # for x, y in points_on_line(start, end, num_points=25):
                 for x, y in line_segment(display_start, display_end, radius * 4):
                     if x < 0 or y < 0:
                         continue
