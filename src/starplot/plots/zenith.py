@@ -105,7 +105,7 @@ class ZenithPlot(MapPlot):
         self.ax.add_patch(patch)
         self._background_clip_path = patch
         self._update_clip_path_polygon(
-            buffer=style.line.width / 2 + 2 * style.line.edge_width + 20
+            buffer=style.line.width / 2 + 2 * style.line.edge_width + 40
         )
 
         if not labels:
@@ -181,7 +181,7 @@ class ZenithPlot(MapPlot):
         self.ax.set_facecolor(background_color)
 
         self.ax.add_patch(self._background_clip_path)
-        self._update_clip_path_polygon()
+        self._update_clip_path_polygon(buffer=20)
 
     def _prepare_star_coords(self, df, limit_by_altaz=False):
         # TODO : reconcile this commented code

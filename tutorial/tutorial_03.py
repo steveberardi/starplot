@@ -26,7 +26,7 @@ p = ZenithPlot(
 # lines to determine where to place labels for stars (labels will look better if they're
 # not crossing a constellation line)
 p.constellations()
-p.stars(where=[_.magnitude < 4.6])
+p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 3])
 
 # plot galaxies and open clusters with a limiting magnitude of 9
 # but do NOT plot their labels or their true apparent size

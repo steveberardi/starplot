@@ -635,6 +635,8 @@ class LabelStyle(BaseStyle):
         return style
 
     def offset_from_marker(self, marker_symbol, marker_size, scale: float = 1.0):
+        """Handles auto offsets from marker"""
+
         if self.offset_x != "auto" or self.offset_y != "auto":
             return self
 
@@ -654,8 +656,7 @@ class LabelStyle(BaseStyle):
             offset /= SQR_2
             offset *= scale
 
-        offset += 1.1
-
+        offset += 0.65
         new_style.offset_x = offset * float(x_direction)
         new_style.offset_y = offset * float(y_direction)
 

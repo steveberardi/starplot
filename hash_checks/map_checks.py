@@ -650,7 +650,7 @@ def check_map_milky_way_multi_polygon():
         dec_max=0,
         style=STYLE,
         resolution=3000,
-        autoscale=True,
+        scale=1.4,
     )
     p.stars(where=[_.magnitude < 6], bayer_labels=True)
     p.constellations()

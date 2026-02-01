@@ -18,7 +18,7 @@ p = ZenithPlot(
     scale=0.9,
 )
 p.constellations()  # Plot the constellation lines first
-p.stars(where=[_.magnitude < 4.6])
+p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 3])
 p.horizon()
 p.constellation_labels()  # Plot the constellation labels last to avoid collisions
 

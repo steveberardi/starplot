@@ -31,6 +31,7 @@ from starplot.styles import (
     GradientDirection,
     fonts,
 )
+from starplot.plotters.debug import DebugPlotterMixin
 from starplot.plotters.text import TextPlotterMixin, CollisionHandler
 from starplot.styles.helpers import use_style
 from starplot.profile import profile
@@ -48,7 +49,7 @@ DEFAULT_RESOLUTION = 4096
 DPI = 100
 
 
-class BasePlot(TextPlotterMixin, ABC):
+class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
     _background_clip_path = None
     _clip_path_polygon: Polygon = None  # clip path in display coordinates
     _coordinate_system = CoordinateSystem.RA_DEC
@@ -94,8 +95,9 @@ class BasePlot(TextPlotterMixin, ABC):
         else:
             plt.rcParams["svg.fonttype"] = "none"
 
-        px = 1 / DPI  # plt.rcParams["figure.dpi"]  # pixel in inches
+        px = 1 / DPI  # pixel in inches
         self.pixels_per_point = DPI / 72
+        self.dpi = DPI
 
         self.language = StarplotSettings.language
 
@@ -108,6 +110,8 @@ class BasePlot(TextPlotterMixin, ABC):
         self.autoscale = autoscale
         if self.autoscale:
             self.scale = self.resolution / DEFAULT_RESOLUTION
+
+        self.scale *= 1.28
 
         if suppress_warnings:
             warnings.suppress()
@@ -144,8 +148,21 @@ class BasePlot(TextPlotterMixin, ABC):
         return ra, dec
 
     def _update_clip_path_polygon(self, buffer=8):
+        self.fig.draw_without_rendering()
         coords = self._background_clip_path.get_verts()
         self._clip_path_polygon = Polygon(coords).buffer(-1 * buffer)
+
+        # if self.debug_text:
+        #     patch = patches.Polygon(
+        #         Polygon(coords).buffer(-1 * buffer).exterior.coords,
+        #         fill=False,
+        #         facecolor="none",
+        #         edgecolor="red",
+        #         linewidth=4,
+        #         zorder=5_000,
+        #         transform=None,
+        #     )
+        #     self.ax.add_patch(patch)
 
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
         if label is not None and label not in self._legend_handles:
@@ -159,6 +176,14 @@ class BasePlot(TextPlotterMixin, ABC):
                 linestyle="None",
                 label=label,
             )
+
+    def _fit_to_ax(self) -> None:
+        self.fig.draw_without_rendering()
+        bbox = self.ax.get_window_extent().transformed(
+            self.fig.dpi_scale_trans.inverted()
+        )
+        width, height = bbox.width, bbox.height
+        self.fig.set_size_inches(width, height)
 
     @property
     def magnitude_range(self) -> tuple[float, float]:
@@ -208,8 +233,8 @@ class BasePlot(TextPlotterMixin, ABC):
         self.fig.savefig(
             filename,
             bbox_inches="tight",
-            pad_inches=padding,
-            dpi=144,  # (self.resolution / self.figure_size * 1.28),
+            pad_inches=padding * self.scale,
+            dpi=DPI,
             **kwargs,
         )
 

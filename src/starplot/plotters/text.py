@@ -1,10 +1,11 @@
+import math
 from dataclasses import dataclass
 
 import numpy as np
 import rtree
-from shapely import Point
+from shapely import Point, box
 from shapely.errors import GEOSException
-from matplotlib.text import Text
+from matplotlib.text import Annotation
 
 from starplot.config import settings as StarplotSettings, SvgTextType
 from starplot.styles import AnchorPointEnum, LabelStyle
@@ -23,7 +24,19 @@ Long term strategy:
 
 """
 
-BBox = tuple[float, float, float, float]
+BBox = tuple[int, int, int, int]
+"""Tuple of integers representing bounding box (xmin, ymin, xmax, ymax) -- in display coordinates."""
+
+
+def round_away_from_zero(x):
+    """
+    Returns ceiling if number is greater than 0, else returns floor
+
+    round_away_from_zero(5.1) -> 6
+    round_away_from_zero(-5.1) -> -6
+
+    """
+    return math.ceil(x) if x > 0 else math.floor(x)
 
 
 @dataclass
@@ -120,33 +133,58 @@ class TextPlotterMixin:
 
         return False
 
-    def _add_label_to_rtree(self, label: Text, extent=None):
-        extent = extent or label.get_window_extent(
-            renderer=self.fig.canvas.get_renderer()
+    def _is_clipped_box(self, bbox: BBox) -> bool:
+        return not self._clip_path_polygon.contains(box(*bbox))
+
+    def _get_label_bbox(self, label: Annotation) -> BBox:
+        self.fig.draw_without_rendering()
+        extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
+        result = (
+            extent.xmin,
+            extent.ymin,
+            extent.xmax,
+            extent.ymax,
         )
+        if any([np.isnan(p) for p in result]):
+            return None
+
+        return tuple(int(p) for p in result)
+
+    def _add_label_to_rtree(self, label: Annotation, bbox: BBox = None) -> None:
+        """
+        Adds a label to the R-Tree, which is a spatial index for all plotted labels and used for collision detection.
+
+        If text debugging is enabled, then a white bounding box will be plotted around the label.
+
+        Args:
+            label: Annotation instance returned from matplotlib's annotate() function
+            bbox: Tuple of integers representing bounding box (xmin, ymin, xmax, ymax) -- in display coordinates. If None, then bounding box will be obtained from label instance.
+        """
+        bbox = bbox or self._get_label_bbox(label)
+
+        if self.debug_text:
+            self._debug_bbox(bbox, color="white", width=1.5)
+
         self.labels.append(label)
-        self._labels_rtree.insert(
-            0, (extent.x0 - 1, extent.y0 - 1, extent.x1 + 1, extent.y1 + 1)
-        )
+        self._labels_rtree.insert(0, (int(c) for c in bbox))
 
     def _is_open_space(
         self,
         bbox: BBox,
         padding=0,
-        avoid_clipped=True,
-        avoid_label_collisions=True,
-        avoid_marker_collisions=True,
-        avoid_constellation_collision=True,
+        allow_clipped=False,
+        allow_label_collisions=False,
+        allow_marker_collisions=False,
+        allow_constellation_collisions=False,
     ) -> bool:
         """
-        Returns true if the boox covers an open space (i.e. no collisions)
+        Returns true if the bounding box is in an open space, according to the allow_* kwargs.
 
         Args:
-            bbox: 4-element tuple of lower left and upper right coordinates
+            bbox: Tuple of integers representing bounding box (xmin, ymin, xmax, ymax) -- in display coordinates.
         """
         x0, y0, x1, y1 = bbox
-        points = [(x0, y0), (x1, y1)]
-        bbox = (
+        bbox_padded = (
             x0 - padding,
             y0 - padding,
             x1 + padding,
@@ -156,66 +194,26 @@ class TextPlotterMixin:
         if any([np.isnan(c) for c in (x0, y0, x1, y1)]):
             return False
 
-        if avoid_clipped and self._is_clipped(points):
+        if not allow_clipped and self._is_clipped_box(bbox_padded):
             return False
 
-        if avoid_label_collisions and self._is_label_collision(bbox):
+        if not allow_label_collisions and self._is_label_collision(bbox_padded):
             return False
 
-        if avoid_marker_collisions and (
-            self._is_star_collision(bbox) or self._is_marker_collision(bbox)
+        if not allow_marker_collisions and (
+            self._is_star_collision(bbox_padded)
+            or self._is_marker_collision(bbox_padded)
         ):
             return False
 
-        if avoid_constellation_collision and self._is_constellation_collision(bbox):
+        if not allow_constellation_collisions and self._is_constellation_collision(
+            bbox_padded
+        ):
             return False
 
         return True
 
-    def _get_label_bbox(self, label: Text) -> BBox:
-        extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-        return (float(extent.x0), float(extent.y0), float(extent.x1), float(extent.y1))
-
-    def _maybe_remove_label(
-        self,
-        label: Text,
-        collision_handler: CollisionHandler,
-    ) -> bool:
-        """Returns true if the label is removed, else false"""
-        extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-        bbox = (float(extent.x0), float(extent.y0), float(extent.x1), float(extent.y1))
-        points = [(extent.x0, extent.y0), (extent.x1, extent.y1)]
-
-        if any([np.isnan(c) for c in bbox]):
-            label.remove()
-            return True
-
-        if not collision_handler.allow_clipped and self._is_clipped(points):
-            label.remove()
-            return True
-
-        if not collision_handler.allow_label_collisions and self._is_label_collision(
-            bbox
-        ):
-            label.remove()
-            return True
-
-        if not collision_handler.allow_marker_collisions and (
-            self._is_star_collision(bbox) or self._is_marker_collision(bbox)
-        ):
-            label.remove()
-            return True
-
-        if (
-            not collision_handler.allow_constellation_line_collisions
-            and self._is_constellation_collision(bbox)
-        ):
-            label.remove()
-            return True
-
-        return False
-
-    def _text(self, x, y, text, **kwargs) -> Text:
+    def _text(self, x, y, text, **kwargs) -> Annotation:
         """Plots text at (x, y)"""
         label = self.ax.annotate(
             text,
@@ -235,7 +233,7 @@ class TextPlotterMixin:
         text: str,
         collision_handler: CollisionHandler,
         **kwargs,
-    ) -> Text | None:
+    ) -> Annotation | None:
         if not text:
             return None
 
@@ -247,7 +245,13 @@ class TextPlotterMixin:
         original_va = kwargs.pop("va", None)
         original_ha = kwargs.pop("ha", None)
         original_offset_x, original_offset_y = kwargs.pop("xytext", (0, 0))
+
         attempts = 0
+        height = 0
+        width = 0
+
+        data_xy = self._proj.transform_point(x, y, self._crs)
+        display_x, display_y = self.ax.transData.transform(data_xy)
 
         anchors = [(original_va, original_ha)]
         for a in collision_handler.anchor_fallbacks:
@@ -257,7 +261,7 @@ class TextPlotterMixin:
         for va, ha in anchors:
             attempts += 1
             offset_x, offset_y = original_offset_x, original_offset_y
-            if original_ha != ha:
+            if original_ha != ha and ha != "center":
                 offset_x *= -1
 
             if original_va != va:
@@ -265,47 +269,82 @@ class TextPlotterMixin:
 
             if ha == "center":
                 offset_x = 0
-                offset_y = 0
+                # offset_y *= 2
 
-            label = self._text(
-                x, y, text, va=va, ha=ha, xytext=(offset_x, offset_y), **kwargs
+            # if va == "center":
+            #     offset_x *= 2
+
+            offset_x = round_away_from_zero(offset_x)
+            offset_y = round_away_from_zero(offset_y)
+
+            if height and width:
+                offset_x_px = abs(offset_x * (self.dpi / 72))
+                offset_y_px = abs(offset_y * (self.dpi / 72))
+
+                if ha == "left":
+                    x0 = int(display_x + offset_x_px)
+                    x1 = int(display_x + offset_x_px + width)
+                elif ha == "right":
+                    x0 = int(display_x - offset_x_px - width)
+                    x1 = int(display_x - offset_x_px)
+                else:
+                    x0 = int(display_x - offset_x_px - width / 2)
+                    x1 = int(display_x + offset_x_px + width / 2)
+
+                if va == "bottom":
+                    # TOP
+                    y0 = int(display_y + offset_y_px)
+                    y1 = int(display_y + offset_y_px + height)
+                elif va == "top":
+                    # BOTTOM
+                    y0 = int(display_y - offset_y_px - height)
+                    y1 = int(display_y - offset_y_px)
+                else:
+                    # CENTER
+                    y0 = int(display_y - height / 2) + offset_y
+                    y1 = int(display_y + height / 2) + offset_y
+
+                bbox = (x0, y0, x1, y1)
+                label = None
+
+            else:
+                label = self._text(
+                    x, y, text, va=va, ha=ha, xytext=(offset_x, offset_y), **kwargs
+                )
+                bbox = self._get_label_bbox(label)
+
+                if bbox is None:
+                    continue
+
+                height = bbox[3] - bbox[1]
+                width = bbox[2] - bbox[0]
+
+            is_open = self._is_open_space(
+                bbox,
+                padding=0,
+                allow_clipped=collision_handler.allow_clipped,
+                allow_constellation_collisions=collision_handler.allow_constellation_line_collisions,
+                allow_marker_collisions=collision_handler.allow_marker_collisions,
+                allow_label_collisions=collision_handler.allow_label_collisions,
+            )
+            is_final_attempt = bool(
+                (attempts == collision_handler.attempts) or (attempts == len(anchors))
             )
 
-            if (
-                collision_handler.plot_on_fail
-                and label
-                and (attempts == collision_handler.attempts or attempts == len(anchors))
-            ):
-                self._add_label_to_rtree(label)
+            if is_open or (collision_handler.plot_on_fail and is_final_attempt):
+                label = label or self._text(
+                    x, y, text, va=va, ha=ha, xytext=(offset_x, offset_y), **kwargs
+                )
+                self._add_label_to_rtree(label, bbox=bbox)
                 return label
 
-            removed = self._maybe_remove_label(label, collision_handler)
+            elif label is not None:
+                label.remove()
 
-            if not removed:
-                self._add_label_to_rtree(label)
-                return label
             elif attempts == collision_handler.attempts or attempts == len(anchors):
-                return None
+                break
 
-                # from matplotlib.patches import Rectangle
-                # bbox = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-                # bbox = bbox.transformed(self.ax.transAxes.inverted())
-                # # bbox = bbox.padded(1)
-                # # bbox = bbox.expanded(1, 2)
-                # rect = Rectangle(
-                #     # Bbox(x0=0.19034844035799406, y0=0.8351746595026188, x1=0.20519408725358892, y1=0.8615984521601776)
-                #     (bbox.x0, bbox.y0),  # (x, y) position in display pixels
-                #     width=bbox.width,
-                #     height=bbox.height,
-                #     transform=self.ax.transAxes,
-                #     fill=False,
-                #     facecolor='none',
-                #     edgecolor='red',
-                #     linewidth=1,
-                #     alpha=1,
-                #     zorder=100_000,
-                # )
-                # self.ax.add_patch(rect)
+        return None
 
     def _text_area(
         self,
@@ -315,7 +354,7 @@ class TextPlotterMixin:
         area,
         collision_handler: CollisionHandler,
         **kwargs,
-    ) -> Text | None:
+    ) -> Annotation | None:
         kwargs["va"] = "center"
         kwargs["ha"] = "center"
 
@@ -380,6 +419,8 @@ class TextPlotterMixin:
             )
 
         for d in range(0, max_distance, distance_step_size):
+            attempts += 1
+
             if not area.contains(origin):
                 continue
             distance = d / 25
@@ -410,30 +451,28 @@ class TextPlotterMixin:
             else:
                 label = self._text(x, y, text, **kwargs)
                 bbox = self._get_label_bbox(label)
+
+                if bbox is None:
+                    continue
+
                 height = bbox[3] - bbox[1]
                 width = bbox[2] - bbox[0]
 
             is_open = self._is_open_space(
                 bbox,
                 padding=padding,
-                avoid_clipped=not collision_handler.allow_clipped,
-                avoid_constellation_collision=not collision_handler.allow_constellation_line_collisions,
-                avoid_marker_collisions=not collision_handler.allow_marker_collisions,
-                avoid_label_collisions=not collision_handler.allow_label_collisions,
+                allow_clipped=collision_handler.allow_clipped,
+                allow_constellation_collisions=collision_handler.allow_constellation_line_collisions,
+                allow_marker_collisions=collision_handler.allow_marker_collisions,
+                allow_label_collisions=collision_handler.allow_label_collisions,
             )
+            is_final_attempt = attempts == collision_handler.attempts
 
             # # TODO : remove label if not fully inside area?
 
-            attempts += 1
-
-            if is_open and label is None:
-                label = self._text(x, y, text, **kwargs)
-
-            if is_open or (
-                collision_handler.plot_on_fail
-                and attempts == collision_handler.attempts
-            ):
-                self._add_label_to_rtree(label)
+            if is_open or (collision_handler.plot_on_fail and is_final_attempt):
+                label = label or self._text(x, y, text, **kwargs)
+                self._add_label_to_rtree(label, bbox=bbox)
                 return label
 
             elif label is not None:
@@ -484,7 +523,10 @@ class TextPlotterMixin:
                 area=kwargs.pop("area"),
                 collision_handler=collision_handler,
                 xycoords="data",
-                xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
+                xytext=(
+                    style.offset_x * self.scale,
+                    style.offset_y * self.scale,
+                ),
                 textcoords="offset points",
                 **kwargs,
             )
@@ -496,29 +538,17 @@ class TextPlotterMixin:
                 **style.matplot_kwargs(self.scale),
                 collision_handler=collision_handler,
                 xycoords="data",
-                xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
+                xytext=(
+                    style.offset_x * self.scale,
+                    style.offset_y * self.scale,
+                ),
                 textcoords="offset points",
                 **kwargs,
             )
 
         if self.debug_text and label:
-            """Plots bounding box around label"""
-            from matplotlib.patches import Rectangle
-
-            bbox = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-            bbox = bbox.transformed(self.ax.transAxes.inverted())
-            rect = Rectangle(
-                (bbox.x0, bbox.y0),  # (x, y) position in display pixels
-                width=bbox.width,
-                height=bbox.height,
-                transform=self.ax.transAxes,
-                fill=False,
-                facecolor="none",
-                edgecolor="red",
-                linewidth=1,
-                alpha=1,
-                zorder=100_000,
-            )
-            self.ax.add_patch(rect)
+            """Plots RED box around actual position of label"""
+            bbox = self._get_label_bbox(label)
+            self._debug_bbox(bbox, color="red", width=1)
 
         return label

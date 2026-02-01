@@ -30,8 +30,7 @@ from starplot.projections import (
 from starplot.profile import profile
 from starplot.styles import LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
-from starplot.utils import points_on_line
-from starplot.geometry import is_wrapped_polygon
+from starplot.geometry import is_wrapped_polygon, line_segment
 from starplot.plotters.text import CollisionHandler
 
 GEODETIC_PROJECTIONS = (
@@ -150,27 +149,33 @@ class ConstellationPlotterMixin:
 
                 start = self._proj.transform_point(x1, y1, self._geodetic)
                 end = self._proj.transform_point(x2, y2, self._geodetic)
-                radius = style.width or 1
+                radius = style.width * self.scale if style.width else 1
 
                 if any([np.isnan(n) for n in start + end]):
                     continue
 
-                for x, y in points_on_line(start, end, num_points=25):
-                    display_x, display_y = self.ax.transData.transform((x, y))
-                    if display_x < 0 or display_y < 0:
+                display_start = self.ax.transData.transform(start)
+                display_end = self.ax.transData.transform(end)
+
+                if (
+                    display_start[0] == display_end[0]
+                    and display_start[1] == display_end[1]
+                ):
+                    continue
+
+                for x, y in line_segment(display_start, display_end, radius * 4):
+                    if x < 0 or y < 0:
                         continue
-                    constellation_points_to_index.append(
-                        (
-                            ctr,
-                            (
-                                display_x - radius,
-                                display_y - radius,
-                                display_x + radius,
-                                display_y + radius,
-                            ),
-                            None,
-                        )
+                    bbox = (
+                        x - radius,
+                        y - radius,
+                        x + radius,
+                        y + radius,
                     )
+                    if self.debug_text:
+                        self._debug_bbox(bbox, color="#39FF14", width=0.5)
+
+                    constellation_points_to_index.append((ctr, bbox, None))
                     ctr += 1
 
             if inbounds:

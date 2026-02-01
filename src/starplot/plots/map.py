@@ -358,7 +358,7 @@ class MapPlot(
         ra_locations = ra_locations or [x for x in range(0, 360, 15)]
         dec_locations = dec_locations or [d for d in range(-80, 90, 10)]
 
-        line_style_kwargs = style.line.matplot_kwargs()
+        line_style_kwargs = style.line.matplot_kwargs(self.scale)
         gridlines = self.ax.gridlines(
             draw_labels=labels,
             x_inline=False,
@@ -376,7 +376,7 @@ class MapPlot(
         if labels:
             self._axis_labels = True
 
-        label_style_kwargs = style.label.matplot_kwargs()
+        label_style_kwargs = style.label.matplot_kwargs(self.scale)
         label_style_kwargs.pop("va")
         label_style_kwargs.pop("ha")
 
@@ -427,21 +427,8 @@ class MapPlot(
             right=True,
         )
 
-    def _fit_to_ax(self) -> None:
-        bbox = self.ax.get_window_extent().transformed(
-            self.fig.dpi_scale_trans.inverted()
-        )
-        width, height = bbox.width, bbox.height
-        self.fig.set_size_inches(width, height)
-
     def _set_extent(self):
         bounds = self._latlon_bounds()
-        # (bounds[2] + bounds[3]) / 2
-        # center_lon = (bounds[0] + bounds[1]) / 2
-
-        # if hasattr(self.projection, "center_ra"):
-        #     self.projection.center_ra = -1 * center_lon
-
         if self._is_global_extent():
             # this cartopy function works better for setting global extents
             self.ax.set_global()
@@ -452,12 +439,13 @@ class MapPlot(
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.figure_background_color.as_hex(),
-            layout="constrained",
+            # layout="constrained",
             dpi=DPI,
         )
 
         self._proj = self.projection.crs
         self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
+        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
         self._set_extent()
         self._adjust_radec_minmax()

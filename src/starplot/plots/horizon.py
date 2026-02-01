@@ -436,11 +436,11 @@ class HorizonPlot(
         x_locations = [x - 180 for x in x_locations]
         y_locations = alt_locations or [d for d in range(-90, 90, 10)]
 
-        label_style_kwargs = style.label.matplot_kwargs()
+        label_style_kwargs = style.label.matplot_kwargs(self.scale)
         label_style_kwargs.pop("va")
         label_style_kwargs.pop("ha")
 
-        line_style_kwargs = style.line.matplot_kwargs()
+        line_style_kwargs = style.line.matplot_kwargs(self.scale)
         gridlines = self.ax.gridlines(
             draw_labels=show_labels,
             x_inline=False,
@@ -523,13 +523,6 @@ class HorizonPlot(
         az, alt = self._crs.transform_point(x_projected, y_projected, self._proj)
         return float(az), float(alt)
 
-    def _fit_to_ax(self) -> None:
-        bbox = self.ax.get_window_extent().transformed(
-            self.fig.dpi_scale_trans.inverted()
-        )
-        width, height = bbox.width, bbox.height
-        self.fig.set_size_inches(width, height)
-
     def _plot_background_clip_path(self):
         if self.style.has_gradient_background():
             background_color = "#ffffff00"
@@ -561,10 +554,12 @@ class HorizonPlot(
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.figure_background_color.as_hex(),
-            layout="constrained",
+            # layout="constrained",
             dpi=DPI,
         )
-        self.ax = plt.axes(projection=self._proj)
+        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
+        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
+
         self.ax.xaxis.set_visible(False)
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")
@@ -577,10 +572,5 @@ class HorizonPlot(
         ]
 
         self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
-
         self._fit_to_ax()
-
-        # if self.gradient_preset:
-        #     self.apply_gradient_background(self.gradient_preset)
-
         self._plot_background_clip_path()
