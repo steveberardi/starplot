@@ -183,18 +183,6 @@ class ZenithPlot(MapPlot):
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon(buffer=20)
 
-        # self.ppp = patches.Circle(
-        #     (0.50, 0.50),
-        #     radius=0.45,
-        #     fill=False,
-        #     facecolor="none",
-        #     edgecolor="yellow",
-        #     linewidth=4,
-        #     zorder=5_000,
-        #     transform=self.ax.transAxes,
-        # )
-        # self.ax.add_patch(self.ppp)
-
     def _prepare_star_coords(self, df, limit_by_altaz=False):
         # TODO : reconcile this commented code
         # self.location = self.earth + wgs84.latlon(
