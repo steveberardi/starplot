@@ -229,14 +229,12 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             **kwargs: Any keyword arguments to pass through to matplotlib's `savefig` method
 
         """
-        # self.ax.axis('off')
-        # self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
         self.logger.debug("Exporting...")
         self.fig.savefig(
             filename,
             bbox_inches="tight",
             pad_inches=padding * self.scale,
-            dpi=DPI,  # (self.resolution / self.figure_size * 1.28),
+            dpi=DPI,
             **kwargs,
         )
 

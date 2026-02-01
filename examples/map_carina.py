@@ -80,7 +80,7 @@ p.constellation_labels()
 p.legend(
     style__alignment="left",
     style__location="outside right upper",
-    style__padding_x=-150,
+    style__padding_x=-20,
     style__num_columns=1,
 )
 p.star_magnitude_scale(
