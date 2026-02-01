@@ -1,3 +1,4 @@
+import math
 from dataclasses import dataclass
 
 import numpy as np
@@ -25,6 +26,17 @@ Long term strategy:
 
 BBox = tuple[int, int, int, int]
 """Tuple of integers representing bounding box (xmin, ymin, xmax, ymax) -- in display coordinates."""
+
+
+def round_away_from_zero(x):
+    """
+    Returns ceiling if number is greater than 0, else returns floor
+
+    round_away_from_zero(5.1) -> 6
+    round_away_from_zero(-5.1) -> -6
+
+    """
+    return math.ceil(x) if x > 0 else math.floor(x)
 
 
 @dataclass
@@ -257,6 +269,13 @@ class TextPlotterMixin:
 
             if ha == "center":
                 offset_x = 0
+                # offset_y *= 2
+
+            # if va == "center":
+            #     offset_x *= 2
+
+            offset_x = round_away_from_zero(offset_x)
+            offset_y = round_away_from_zero(offset_y)
 
             if height and width:
                 offset_x_px = abs(offset_x * (self.dpi / 72))
@@ -504,7 +523,10 @@ class TextPlotterMixin:
                 area=kwargs.pop("area"),
                 collision_handler=collision_handler,
                 xycoords="data",
-                xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
+                xytext=(
+                    style.offset_x * self.scale,
+                    style.offset_y * self.scale,
+                ),
                 textcoords="offset points",
                 **kwargs,
             )
@@ -517,8 +539,8 @@ class TextPlotterMixin:
                 collision_handler=collision_handler,
                 xycoords="data",
                 xytext=(
-                    int(style.offset_x * self.scale),
-                    int(style.offset_y * self.scale),
+                    style.offset_x * self.scale,
+                    style.offset_y * self.scale,
                 ),
                 textcoords="offset points",
                 **kwargs,

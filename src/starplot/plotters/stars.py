@@ -250,7 +250,7 @@ class StarPlotterMixin:
 
             if obj.magnitude < 5:
                 rtree_id += 1
-                radius = size**0.5 / 6
+                radius = size**0.5 / 5
                 bbox = np.array(
                     (
                         display_x - radius,
