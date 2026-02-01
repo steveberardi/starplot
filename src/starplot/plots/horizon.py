@@ -436,11 +436,11 @@ class HorizonPlot(
         x_locations = [x - 180 for x in x_locations]
         y_locations = alt_locations or [d for d in range(-90, 90, 10)]
 
-        label_style_kwargs = style.label.matplot_kwargs()
+        label_style_kwargs = style.label.matplot_kwargs(self.scale)
         label_style_kwargs.pop("va")
         label_style_kwargs.pop("ha")
 
-        line_style_kwargs = style.line.matplot_kwargs()
+        line_style_kwargs = style.line.matplot_kwargs(self.scale)
         gridlines = self.ax.gridlines(
             draw_labels=show_labels,
             x_inline=False,

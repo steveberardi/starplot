@@ -358,7 +358,7 @@ class MapPlot(
         ra_locations = ra_locations or [x for x in range(0, 360, 15)]
         dec_locations = dec_locations or [d for d in range(-80, 90, 10)]
 
-        line_style_kwargs = style.line.matplot_kwargs()
+        line_style_kwargs = style.line.matplot_kwargs(self.scale)
         gridlines = self.ax.gridlines(
             draw_labels=labels,
             x_inline=False,
@@ -376,7 +376,7 @@ class MapPlot(
         if labels:
             self._axis_labels = True
 
-        label_style_kwargs = style.label.matplot_kwargs()
+        label_style_kwargs = style.label.matplot_kwargs(self.scale)
         label_style_kwargs.pop("va")
         label_style_kwargs.pop("ha")
 

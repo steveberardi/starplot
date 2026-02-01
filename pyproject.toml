@@ -33,8 +33,9 @@ dependencies = [
     "pyogrio >= 0.10.0",
     "rtree >= 1.2.0",
     "requests >= 2.31.0",
-    "duckdb < 1.4.0",
-    "ibis-framework[duckdb,geospatial] < 11",
+    "duckdb >= 1.4.4",
+    "sqlglot < 28.7.0",
+    "ibis-framework[duckdb,geospatial] >= 11",
     "astropy-healpix >= 1.1.2"
 ]
 

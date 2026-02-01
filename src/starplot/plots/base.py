@@ -111,7 +111,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         if self.autoscale:
             self.scale = self.resolution / DEFAULT_RESOLUTION
 
-        self.scale *= 1.13
+        self.scale *= 1.28
 
         if suppress_warnings:
             warnings.suppress()

@@ -239,10 +239,10 @@ class TextPlotterMixin:
         data_xy = self._proj.transform_point(x, y, self._crs)
         display_x, display_y = self.ax.transData.transform(data_xy)
 
-        anchors = {(original_va, original_ha)}
+        anchors = [(original_va, original_ha)]
         for a in collision_handler.anchor_fallbacks:
             d = AnchorPointEnum.from_str(a).as_matplot()
-            anchors.add((d["va"], d["ha"]))
+            anchors.append((d["va"], d["ha"]))
 
         for va, ha in anchors:
             attempts += 1
@@ -255,7 +255,6 @@ class TextPlotterMixin:
 
             if ha == "center":
                 offset_x = 0
-                offset_y = 0
 
             if height and width:
                 offset_x_px = abs(offset_x * (self.dpi / 72))
