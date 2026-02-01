@@ -149,11 +149,11 @@ optic_wrapping:
 zenith_base:
   dhash: 71f8cc8e8ad4e87171f8cc868ad4e87171f8cc868ad4e871
   filename: /starplot/hash_checks/data/zenith-base.png
-  phash: 90d50b752955647f
+  phash: 90d50b7d2955645f
 zenith_chinese:
-  dhash: 44863331272b86504c863339252b865471cc8e0f0f8ecc71
+  dhash: 44863331272b86744c863339252b865471cc8e0f0f8ecc71
   filename: /starplot/hash_checks/data/zenith-chinese.png
-  phash: ef30c1469ecb19cc
+  phash: ef30c5469acb19cc
 zenith_gradient:
   dhash: 5486133b312b867044863339312b865471cc960f078ecc71
   filename: /starplot/hash_checks/data/zenith-gradient.png

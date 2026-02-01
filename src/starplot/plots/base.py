@@ -152,6 +152,18 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         coords = self._background_clip_path.get_verts()
         self._clip_path_polygon = Polygon(coords).buffer(-1 * buffer)
 
+        if self.debug_text:
+            patch = patches.Polygon(
+                Polygon(coords).buffer(-1 * buffer).exterior.coords,
+                fill=False,
+                facecolor="none",
+                edgecolor="red",
+                linewidth=4,
+                zorder=5_000,
+                transform=None,
+            )
+            self.ax.add_patch(patch)
+
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
         if label is not None and label not in self._legend_handles:
             s = style.matplot_kwargs()

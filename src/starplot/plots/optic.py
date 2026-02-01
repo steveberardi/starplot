@@ -392,7 +392,7 @@ class OpticPlot(
         )
         self.ax.set_facecolor(background_color)
         self.ax.add_patch(self._background_clip_path)
-        self._update_clip_path_polygon()
+        self._update_clip_path_polygon(buffer=15)
 
         # Inner Border
         # inner_border = self.optic.patch(

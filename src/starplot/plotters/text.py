@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import rtree
-from shapely import Point
+from shapely import Point, box
 from shapely.errors import GEOSException
 from matplotlib.text import Annotation
 
@@ -121,6 +121,9 @@ class TextPlotterMixin:
 
         return False
 
+    def _is_clipped_box(self, bbox: BBox) -> bool:
+        return not self._clip_path_polygon.contains(box(*bbox))
+
     def _get_label_bbox(self, label: Annotation) -> BBox:
         self.fig.draw_without_rendering()
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
@@ -169,7 +172,6 @@ class TextPlotterMixin:
             bbox: Tuple of integers representing bounding box (xmin, ymin, xmax, ymax) -- in display coordinates.
         """
         x0, y0, x1, y1 = bbox
-        points = [(x0, y0), (x1, y1)]
         bbox_padded = (
             x0 - padding,
             y0 - padding,
@@ -180,7 +182,7 @@ class TextPlotterMixin:
         if any([np.isnan(c) for c in (x0, y0, x1, y1)]):
             return False
 
-        if not allow_clipped and self._is_clipped(points):
+        if not allow_clipped and self._is_clipped_box(bbox_padded):
             return False
 
         if not allow_label_collisions and self._is_label_collision(bbox_padded):
