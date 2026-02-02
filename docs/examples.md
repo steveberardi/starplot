@@ -114,6 +114,12 @@
             <p class="example-card-title">Custom Markers for Galaxies</p>
         </a>
     </li>
+    <li>
+        <a href="/examples/map-virgo-cluster/">
+            <img src="/images/examples/map_virgo_cluster-sm.png" alt="Map of the Virgo Galaxy Cluster" class="off-glb" loading="lazy"/>
+            <p class="example-card-title">Virgo Galaxy Cluster</p>
+        </a>
+    </li>
 </ul>
 
 </div>

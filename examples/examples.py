@@ -29,7 +29,7 @@ def get_example_names():
     filenames = []
 
     for filename in glob.iglob("*.py"):
-        # if filename not in ["horizon_double_cluster.py"]:
+        # if filename not in ["map_virgo_cluster.py"]:
         #     continue
 
         if filename.endswith("examples.py"):
