@@ -166,7 +166,7 @@ class TextPlotterMixin:
             self._debug_bbox(bbox, color="white", width=1.5)
 
         self.labels.append(label)
-        self._labels_rtree.insert(0, (int(c) for c in bbox))
+        self._labels_rtree.insert(0, bbox)
 
     def _is_open_space(
         self,
