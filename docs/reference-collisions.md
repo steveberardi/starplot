@@ -2,6 +2,8 @@ One of the biggest contributors to the visual quality of a map is labeling, whic
 
 When you create a plot, you can specify the default collision handler that'll be used when plotting text. But, you can also override this default on all functions that plot text (either directly or as a side effect). There's one exception to this though: since constellation labels are area-based labels they have their own default collision handler. 
 
+_See the [Virgo Galaxy Cluster](/examples/map-virgo-cluster/) plot for an example of using a custom collision handler._
+
 
 !!! tip "New Feature"
 
