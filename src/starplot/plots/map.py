@@ -31,12 +31,10 @@ from starplot.styles import (
     PlotStyle,
     PathStyle,
     GradientDirection,
+    extensions,
 )
 from starplot.styles.helpers import use_style
 from starplot.utils import lon_to_ra, ra_to_lon
-
-
-DEFAULT_MAP_STYLE = PlotStyle()  # .extend(extensions.MAP)
 
 
 class MapPlot(
@@ -85,7 +83,7 @@ class MapPlot(
         dec_max: float = 90,
         observer: Observer = None,
         ephemeris: str = "de421.bsp",
-        style: PlotStyle = DEFAULT_MAP_STYLE,
+        style: PlotStyle = None,
         resolution: int = 4096,
         collision_handler: CollisionHandler = None,
         clip_path: Polygon = None,
@@ -96,6 +94,7 @@ class MapPlot(
         **kwargs,
     ) -> "MapPlot":
         observer = observer or Observer.at_epoch(2000)
+        style = style or PlotStyle().extend(extensions.MAP)
 
         super().__init__(
             observer,

@@ -30,8 +30,6 @@ from starplot.styles import (
     GradientDirection,
 )
 
-DEFAULT_HORIZON_STYLE = PlotStyle().extend(extensions.MAP)
-
 DEFAULT_HORIZON_LABELS = {
     0: "N",
     45: "NE",
@@ -87,7 +85,7 @@ class HorizonPlot(
         azimuth: tuple[float, float],
         observer: Observer = None,
         ephemeris: str = "de421.bsp",
-        style: PlotStyle = DEFAULT_HORIZON_STYLE,
+        style: PlotStyle = None,
         resolution: int = 4096,
         collision_handler: CollisionHandler = None,
         scale: float = 1.0,
@@ -97,6 +95,7 @@ class HorizonPlot(
         **kwargs,
     ) -> "HorizonPlot":
         observer = observer or Observer()
+        style = style or PlotStyle().extend(extensions.MAP)
 
         super().__init__(
             observer,
