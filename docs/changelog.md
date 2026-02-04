@@ -14,6 +14,7 @@
     - Makes `resolution` property more predictable
     - Fixes multiple issues with label collision handling
 - [**v0.19.4**] Fixes tiny bug with plotting labels
+- [**v0.19.5**] Fixes bug with plotting labels when `attempts=1`
 
 ---
 
