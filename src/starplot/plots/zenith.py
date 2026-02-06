@@ -6,11 +6,15 @@ from starplot.data.translations import translate
 from starplot.plots.map import MapPlot
 from starplot.models.observer import Observer
 from starplot.projections import Stereographic
-from starplot.styles import LabelStyle, PlotStyle, PathStyle, GradientDirection
+from starplot.styles import (
+    LabelStyle,
+    PlotStyle,
+    PathStyle,
+    GradientDirection,
+    extensions,
+)
 from starplot.styles.helpers import use_style
 from starplot.plotters.text import CollisionHandler
-
-DEFAULT_MAP_STYLE = PlotStyle()  # .extend(extensions.MAP)
 
 
 class ZenithPlot(MapPlot):
@@ -38,7 +42,7 @@ class ZenithPlot(MapPlot):
         self,
         observer: Observer = None,
         ephemeris: str = "de421.bsp",
-        style: PlotStyle = DEFAULT_MAP_STYLE,
+        style: PlotStyle = None,
         resolution: int = 4096,
         collision_handler: CollisionHandler = None,
         scale: float = 1.0,
@@ -52,6 +56,7 @@ class ZenithPlot(MapPlot):
             center_ra=observer.lst,
             center_dec=observer.lat,
         )
+        style = style or PlotStyle().extend(extensions.MAP)
 
         super().__init__(
             projection,

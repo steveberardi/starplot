@@ -67,6 +67,15 @@ class ConstellationPlotterMixin:
             catalog=BIG_SKY_MAG11,
             filters=[_.hip.isin(hips)],
         )
+        results = results.select(
+            "ra",
+            "dec",
+            "epoch_year",
+            "hip",
+            "parallax_mas",
+            "ra_mas_per_year",
+            "dec_mas_per_year",
+        )
         df = results.to_pandas()
         df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
         df = self._prepare_star_coords(df, limit_by_altaz=False)

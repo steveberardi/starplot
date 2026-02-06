@@ -338,13 +338,11 @@ class TextPlotterMixin:
                 self._add_label_to_rtree(label, bbox=bbox)
                 return label
 
-            elif label is not None:
+            if label is not None:
                 label.remove()
 
-            elif attempts == collision_handler.attempts or attempts == len(anchors):
-                break
-
-        return None
+            if is_final_attempt:
+                return None
 
     def _text_area(
         self,
@@ -475,10 +473,10 @@ class TextPlotterMixin:
                 self._add_label_to_rtree(label, bbox=bbox)
                 return label
 
-            elif label is not None:
+            if label is not None:
                 label.remove()
 
-            elif attempts == collision_handler.attempts:
+            if is_final_attempt:
                 return None
 
     @use_style(LabelStyle)

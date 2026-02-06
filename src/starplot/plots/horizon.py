@@ -7,7 +7,7 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator, FuncFormatter
 from skyfield.api import wgs84, Star as SkyfieldStar
-from shapely import Point, Polygon, MultiPolygon
+from shapely import Polygon, MultiPolygon
 from starplot.coordinates import CoordinateSystem
 from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
@@ -29,8 +29,6 @@ from starplot.styles import (
     PathStyle,
     GradientDirection,
 )
-
-DEFAULT_HORIZON_STYLE = PlotStyle().extend(extensions.MAP)
 
 DEFAULT_HORIZON_LABELS = {
     0: "N",
@@ -87,7 +85,7 @@ class HorizonPlot(
         azimuth: tuple[float, float],
         observer: Observer = None,
         ephemeris: str = "de421.bsp",
-        style: PlotStyle = DEFAULT_HORIZON_STYLE,
+        style: PlotStyle = None,
         resolution: int = 4096,
         collision_handler: CollisionHandler = None,
         scale: float = 1.0,
@@ -97,6 +95,7 @@ class HorizonPlot(
         **kwargs,
     ) -> "HorizonPlot":
         observer = observer or Observer()
+        style = style or PlotStyle().extend(extensions.MAP)
 
         super().__init__(
             observer,
@@ -204,7 +203,9 @@ class HorizonPlot(
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        return self.altaz_mask.contains(Point(az, alt))
+        # return self.altaz_mask.contains(Point(az, alt))
+        x, y = self._to_ax(az, alt)
+        return 0 <= x <= 1 and 0 <= y <= 1
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_altaz(y, x)  # alt = y, az = x

@@ -30,8 +30,6 @@ from starplot.styles import (
 from starplot.utils import azimuth_to_string
 from starplot.plotters.text import CollisionHandler
 
-DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
-
 
 class OpticPlot(
     BasePlot,
@@ -74,7 +72,7 @@ class OpticPlot(
         optic: Optic,
         observer: Observer = None,
         ephemeris: str = "de421.bsp",
-        style: PlotStyle = DEFAULT_OPTIC_STYLE,
+        style: PlotStyle = None,
         resolution: int = 4096,
         collision_handler: CollisionHandler = None,
         raise_on_below_horizon: bool = True,
@@ -85,6 +83,8 @@ class OpticPlot(
         **kwargs,
     ) -> "OpticPlot":
         observer = observer or Observer()
+        style = style or PlotStyle().extend(extensions.OPTIC)
+
         super().__init__(
             observer,
             ephemeris,
