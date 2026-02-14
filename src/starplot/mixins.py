@@ -312,7 +312,7 @@ class HorizonExtentMaskMixin:
         #     print(current_polygon_coords)
 
         # print(len(polygon_coords))
-        from starplot.geometry import split_polygon_at_360
+        from starplot.geometry import split_polygon_at_zero
 
         # polygons = split_polygon_at_zero(extent)
 
@@ -322,7 +322,7 @@ class HorizonExtentMaskMixin:
         # extent = MultiPolygon([Polygon(c) for c in polygon_coords])
         # extent = Polygon(coords)
         extent = convex_hull(MultiPoint(coords))
-        polygons = split_polygon_at_360(extent)
+        polygons = split_polygon_at_zero(extent)
 
         pprint(polygons)
 
