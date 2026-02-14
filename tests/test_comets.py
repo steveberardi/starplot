@@ -1,3 +1,5 @@
+import pytest
+
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from unittest.mock import patch, MagicMock
@@ -38,10 +40,10 @@ class TestComet:
         c2025_a6_lemmon.populate_constellation_id()
 
         assert c2025_a6_lemmon.name == "C/2025 A6 (Lemmon)"
-        assert c2025_a6_lemmon.ra == 218.8720302905781
-        assert c2025_a6_lemmon.dec == 27.73131019077249
+        assert c2025_a6_lemmon.ra == pytest.approx(218.8720302905781, rel=1e-6)
+        assert c2025_a6_lemmon.dec == pytest.approx(27.73131019077249, rel=1e-6)
         assert c2025_a6_lemmon.constellation_id == "boo"
-        assert c2025_a6_lemmon.distance == 0.5980228047821197
+        assert c2025_a6_lemmon.distance == pytest.approx(0.5980228047821197, rel=1e-6)
 
     def test_comet_get_at_date_location(self):
         dt = datetime(2025, 10, 21, 19, 0, tzinfo=TZ_PT)
@@ -55,11 +57,11 @@ class TestComet:
         assert c2025_a6_lemmon.constellation_id == "boo"
 
         # specifying location gets apparent location in the sky, so RA/DEC should be different
-        assert c2025_a6_lemmon.ra == 218.86217824786402
-        assert c2025_a6_lemmon.dec == 27.731583564862603
+        assert c2025_a6_lemmon.ra == pytest.approx(218.86217824786402, rel=1e-6)
+        assert c2025_a6_lemmon.dec == pytest.approx(27.731583564862603, rel=1e-6)
 
         # and distance should be different too
-        assert c2025_a6_lemmon.distance == 0.5980091198158166
+        assert c2025_a6_lemmon.distance == pytest.approx(0.5980091198158166, rel=1e-6)
 
     def test_comet_get_trajectory(self):
         dt = datetime(2025, 10, 21, 19, 0, tzinfo=TZ_PT)

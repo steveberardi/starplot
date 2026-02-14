@@ -29,7 +29,10 @@ p.constellations()
 p.constellation_borders()
 
 p.stars(
-    where=[_.magnitude < 8], bayer_labels=True, flamsteed_labels=True
+    where=[_.magnitude < 8],
+    where_labels=[_.magnitude < 3],
+    bayer_labels=True,
+    flamsteed_labels=True,
 )  # include Bayer and Flamsteed labels with the stars
 
 

@@ -25,7 +25,10 @@ p = ZenithPlot(
 p.horizon()
 p.constellations()
 p.stars(where=[_.magnitude < 4.86], where_labels=[_.magnitude < 2.4])
-p.messier(where=[_.magnitude < 10], true_size=False)
+p.messier(
+    where=[_.magnitude < 10],
+    where_true_size=[False],
+)
 p.ecliptic()
 p.celestial_equator()
 p.milky_way()

@@ -29,7 +29,7 @@ def get_example_names():
     filenames = []
 
     for filename in glob.iglob("*.py"):
-        # if filename not in ["horizon_double_cluster.py"]:
+        # if filename not in ["map_virgo_cluster.py"]:
         #     continue
 
         if filename.endswith("examples.py"):
@@ -49,7 +49,7 @@ def run_example(filename):
 
 
 if __name__ == "__main__":
-    num_workers = 4
+    num_workers = 10
     start = time.time()
     example_files = get_example_names()
     processes = []

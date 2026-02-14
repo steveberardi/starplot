@@ -1,4 +1,4 @@
-Starplot is available on [PyPI](https://pypi.org/project/starplot/), and its dependencies have binary wheels for most operating systems, so installation should be easy via pip. See below for details.
+Starplot is available on [PyPI](https://pypi.org/project/starplot/) and [Conda](https://anaconda.org/channels/conda-forge/packages/starplot/overview), and its dependencies have binary wheels for most operating systems, so installation should be easy. See below for details.
 
 Supported Python versions: 3.10 / 3.11 / 3.12 / 3.13
 
@@ -8,11 +8,16 @@ Supported Python versions: 3.10 / 3.11 / 3.12 / 3.13
 pip install starplot
 ```
 
+Or, via [Conda](https://anaconda.org/channels/conda-forge/packages/starplot/overview):
+```
+conda install conda-forge::starplot
+```
+
 <h3>2. Setup Starplot (optional)</h3>
 ```
 starplot setup
 ```
-This will install the required [spatial extension](https://duckdb.org/docs/stable/core_extensions/spatial/overview.html) for DuckDB, build the matplotlib font cache, and download data catalogs for stars, constellations, and deep sky objects. Starplot will do this automatically, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
+This will install the required [spatial extension](https://duckdb.org/docs/stable/core_extensions/spatial/overview.html) for DuckDB, build the matplotlib font cache, and download data catalogs for stars, constellations, and deep sky objects. Starplot will do this automatically when you first create a plot, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
 
 
 ---

@@ -1,12 +1,13 @@
-from typing import Callable, Mapping
+from typing import Callable
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
 
-from starplot.coordinates import CoordinateSystem
+
 from starplot import callables, geod
-from starplot.base import BasePlot, DPI
+from starplot.coordinates import CoordinateSystem
+from starplot.plots.base import BasePlot, DPI
 from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star, Optic, Camera
@@ -27,8 +28,7 @@ from starplot.styles import (
     GradientDirection,
 )
 from starplot.utils import azimuth_to_string
-
-DEFAULT_OPTIC_STYLE = PlotStyle().extend(extensions.OPTIC)
+from starplot.plotters.text import CollisionHandler
 
 
 class OpticPlot(
@@ -42,16 +42,14 @@ class OpticPlot(
     """Creates a new optic plot.
 
     Args:
-        optic: Optic instance that defines optical parameters
         ra: Right ascension of target center, in degrees (0...360)
         dec: Declination of target center, in degrees (-90...90)
-        lat: Latitude of observer's location
-        lon: Longitude of observer's location
-        dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
+        optic: Optic instance that defines optical parameters
+        observer: Observer instance which specifies a time and place. Defaults to `Observer()`
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
-        style: Styling for the plot (colors, sizes, fonts, etc)
+        style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
         resolution: Size (in pixels) of largest dimension of the map
-        hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
+        collision_handler: Default [CollisionHandler][starplot.CollisionHandler] for the plot that describes what to do on label collisions with other labels, markers, etc.
         raise_on_below_horizon: If True, then a ValueError will be raised if the target is below the horizon at the observing time/location
         scale: Scaling factor that will be applied to all sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set the scale to 2. At `scale=1` and `resolution=4096` (the default), all sizes are optimized visually for a map that covers 1-3 constellations. So, if you're creating a plot of a _larger_ extent, then it'd probably be good to decrease the scale (i.e. make everything smaller) -- and _increase_ the scale if you're plotting a very small area.
         autoscale: If True, then the scale will be set automatically based on resolution.
@@ -72,11 +70,11 @@ class OpticPlot(
         ra: float,
         dec: float,
         optic: Optic,
-        observer: Observer = Observer(),
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
-        style: PlotStyle = DEFAULT_OPTIC_STYLE,
+        style: PlotStyle = None,
         resolution: int = 4096,
-        hide_colliding_labels: bool = True,
+        collision_handler: CollisionHandler = None,
         raise_on_below_horizon: bool = True,
         scale: float = 1.0,
         autoscale: bool = False,
@@ -84,12 +82,15 @@ class OpticPlot(
         *args,
         **kwargs,
     ) -> "OpticPlot":
+        observer = observer or Observer()
+        style = style or PlotStyle().extend(extensions.OPTIC)
+
         super().__init__(
             observer,
             ephemeris,
             style,
             resolution,
-            hide_colliding_labels,
+            collision_handler=collision_handler,
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
@@ -251,43 +252,35 @@ class OpticPlot(
         where_labels: list = None,
         catalog: Catalog = BIG_SKY_MAG11,
         style: ObjectStyle = None,
-        rasterize: bool = False,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
         alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
         color_fn: Callable[[Star], str] = None,
         label_fn: Callable[[Star], str] = Star.get_label,
-        labels: Mapping[int, str] = None,
         legend_label: str = "Star",
         bayer_labels: bool = False,
         flamsteed_labels: bool = False,
         sql: str = None,
-        *args,
-        **kwargs,
+        sql_labels: str = None,
+        collision_handler: CollisionHandler = None,
     ):
         """
         Plots stars
 
-        Labels for stars are determined in this order:
-
-        1. Return value from `label_fn`
-        2. Value for star's HIP id in `labels`
-        3. IAU-designated name, as listed in the [data reference](/data/star-designations/)
-
         Args:
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            catalog: The catalog of stars to use: "big-sky-mag11", or "big-sky" -- see [star catalogs](/data/star-catalogs/) for details
+            catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
             style: If `None`, then the plot's style for stars will be used
-            rasterize: If True, then the stars will be rasterized when plotted, which can speed up exporting to SVG and reduce the file size but with a loss of image quality
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
-            label_fn: Callable for determining the label of each star. If `None`, then the names in the `labels` kwarg will be used.
-            labels: A dictionary that maps a star's HIP id to the label that'll be plotted for that star. If `None`, then the star's IAU-designated name will be used.
+            label_fn: Callable for determining the label of each star.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
             bayer_labels: If True, then Bayer labels for stars will be plotted.
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
             sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
+            sql_labels: SQL query for selecting stars that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         optic_star_multiplier = self.FIELD_OF_VIEW_MAX / self.optic.true_fov
         size_fn_mx = None
@@ -302,18 +295,16 @@ class OpticPlot(
             where_labels=where_labels,
             catalog=catalog,
             style=style,
-            rasterize=rasterize,
             size_fn=size_fn_mx,
             alpha_fn=alpha_fn,
             color_fn=color_fn,
             label_fn=label_fn,
-            labels=labels,
             legend_label=legend_label,
             bayer_labels=bayer_labels,
             flamsteed_labels=flamsteed_labels,
             sql=sql,
-            *args,
-            **kwargs,
+            sql_labels=sql_labels,
+            collision_handler=collision_handler,
         )
 
     @use_style(LabelStyle, "info_text")
@@ -329,7 +320,7 @@ class OpticPlot(
             style: If `None`, then the plot's style for info text will be used
         """
         self.ax.set_xlim(-1.22 * self.optic.xlim, 1.22 * self.optic.xlim)
-        self.ax.set_ylim(-1.12 * self.optic.ylim, 1.12 * self.optic.ylim)
+        self.ax.set_ylim(-1.1 * self.optic.ylim, 1.1 * self.optic.ylim)
         self.optic.transform(
             self.ax
         )  # apply transform again because new xy limits will undo the transform
@@ -368,7 +359,7 @@ class OpticPlot(
         )
         table.auto_set_font_size(False)
         table.set_fontsize(style.font_size)
-        table.scale(1, 3.1)
+        table.scale(1, 5)
 
         # Apply style to all cells
         for row in [0, 1]:
@@ -401,7 +392,7 @@ class OpticPlot(
         )
         self.ax.set_facecolor(background_color)
         self.ax.add_patch(self._background_clip_path)
-        self._update_clip_path_polygon()
+        self._update_clip_path_polygon(buffer=15)
 
         # Inner Border
         # inner_border = self.optic.patch(
@@ -429,13 +420,6 @@ class OpticPlot(
         )
         self.ax.add_patch(outer_border)
 
-    def _fit_to_ax(self) -> None:
-        bbox = self.ax.get_window_extent().transformed(
-            self.fig.dpi_scale_trans.inverted()
-        )
-        width, height = bbox.width, bbox.height
-        self.fig.set_size_inches(width, height)
-
     def _init_plot(self):
         self._proj = ccrs.AzimuthalEquidistant(
             central_longitude=self.pos_az.degrees,
@@ -445,10 +429,12 @@ class OpticPlot(
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.figure_background_color.as_hex(),
-            layout="constrained",
+            # layout="constrained",
             dpi=DPI,
         )
-        self.ax = plt.axes(projection=self._proj)
+        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
+        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
+
         self.ax.xaxis.set_visible(False)
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")

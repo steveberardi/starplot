@@ -716,7 +716,6 @@ class ExperimentalPlotterMixin:
                 ra,
                 dec,
                 style,
-                hide_on_collision=self.hide_colliding_labels,
                 area=MultiPolygon(polygons_sorted[:3])
                 if len(polygons_sorted)
                 else constellation.boundary,

@@ -2,6 +2,8 @@
 
 These plots use the [Lambert azimuthal equal-area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection), with the horizon as the central altitude (0 degrees) and the central azimuth is determined by the azimuth range you define when creating the plot.
 
+Stars on horizon plots are plotted in their [_apparent_ positions](reference-positions.md).
+
 ::: starplot.HorizonPlot
     options:
         inherited_members: true

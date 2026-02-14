@@ -44,7 +44,7 @@ p.open_clusters(
     where=[_.size < 0.2, _.magnitude < 11],
     where_labels=[False],
     label_fn=dso_label,
-    true_size=False,
+    where_true_size=[False],
 )
 
 with p.style.dso_open_cluster as oc:
@@ -59,7 +59,7 @@ with p.style.dso_open_cluster as oc:
 p.nebula(
     where=[mag_filters, _.size < 0.2],
     label_fn=dso_label,
-    true_size=False,
+    where_true_size=[False],
 )
 with p.style.dso_nebula as neb:
     neb.label.font_size = 26
@@ -72,7 +72,7 @@ with p.style.dso_nebula as neb:
 p.galaxies(
     where=[mag_filters],
     label_fn=dso_label,
-    true_size=False,
+    where_true_size=[False],
 )
 
 p.constellation_labels()
@@ -80,7 +80,7 @@ p.constellation_labels()
 p.legend(
     style__alignment="left",
     style__location="outside right upper",
-    style__padding_x=-250,
+    style__padding_x=-20,
     style__num_columns=1,
 )
 p.star_magnitude_scale(

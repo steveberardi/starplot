@@ -52,7 +52,7 @@ class ArrowPlotterMixin:
         max_attempts: int = 100,
     ):
         """
-        Plots an arrow from one point to another.
+        Plots an arrow from one point to another if you specify both `origin` and `target`. If you only specify a `target`, then the arrow will serve as a "pointer" to that target.
 
         Args:
             origin: Starting point (ra, dec)

@@ -7,9 +7,9 @@ from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator, FuncFormatter
 from skyfield.api import wgs84, Star as SkyfieldStar
-from shapely import Point, Polygon, MultiPolygon
+from shapely import Polygon, MultiPolygon
 from starplot.coordinates import CoordinateSystem
-from starplot.base import BasePlot, DPI
+from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.plotters import (
@@ -21,6 +21,7 @@ from starplot.plotters import (
     LegendPlotterMixin,
     ArrowPlotterMixin,
 )
+from starplot.plotters.text import CollisionHandler
 from starplot.styles import (
     PlotStyle,
     extensions,
@@ -28,8 +29,6 @@ from starplot.styles import (
     PathStyle,
     GradientDirection,
 )
-
-DEFAULT_HORIZON_STYLE = PlotStyle().extend(extensions.MAP)
 
 DEFAULT_HORIZON_LABELS = {
     0: "N",
@@ -58,15 +57,14 @@ class HorizonPlot(
     """Creates a new horizon plot.
 
     Args:
-        lat: Latitude of observer's location
-        lon: Longitude of observer's location
+
         altitude: Tuple of altitude range to plot (min, max)
         azimuth: Tuple of azimuth range to plot (min, max)
-        dt: Date/time of observation (*must be timezone-aware*). Default = current UTC time.
+        observer: Observer instance which specifies a time and place. Defaults to `Observer()`
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
-        style: Styling for the plot (colors, sizes, fonts, etc)
+        style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
         resolution: Size (in pixels) of largest dimension of the map
-        hide_colliding_labels: If True, then labels will not be plotted if they collide with another existing label
+        collision_handler: Default [CollisionHandler][starplot.CollisionHandler] for the plot that describes what to do on label collisions with other labels, markers, etc.
         scale: Scaling factor that will be applied to all relevant sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set scale to 2.
         autoscale: If True, then the scale will be automatically set based on resolution
         suppress_warnings: If True (the default), then all warnings will be suppressed
@@ -85,23 +83,26 @@ class HorizonPlot(
         self,
         altitude: tuple[float, float],
         azimuth: tuple[float, float],
-        observer: Observer = Observer(),
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
-        style: PlotStyle = DEFAULT_HORIZON_STYLE,
+        style: PlotStyle = None,
         resolution: int = 4096,
-        hide_colliding_labels: bool = True,
+        collision_handler: CollisionHandler = None,
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
         *args,
         **kwargs,
     ) -> "HorizonPlot":
+        observer = observer or Observer()
+        style = style or PlotStyle().extend(extensions.MAP)
+
         super().__init__(
             observer,
             ephemeris,
             style,
             resolution,
-            hide_colliding_labels,
+            collision_handler=collision_handler,
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
@@ -160,7 +161,7 @@ class HorizonPlot(
         # import geopandas as gpd
 
         # Skyfield needs these columns
-        df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
+        # df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
 
         stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
         nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
@@ -202,7 +203,9 @@ class HorizonPlot(
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        return self.altaz_mask.contains(Point(az, alt))
+        # return self.altaz_mask.contains(Point(az, alt))
+        x, y = self._to_ax(az, alt)
+        return 0 <= x <= 1 and 0 <= y <= 1
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_altaz(y, x)  # alt = y, az = x
@@ -434,11 +437,11 @@ class HorizonPlot(
         x_locations = [x - 180 for x in x_locations]
         y_locations = alt_locations or [d for d in range(-90, 90, 10)]
 
-        label_style_kwargs = style.label.matplot_kwargs()
+        label_style_kwargs = style.label.matplot_kwargs(self.scale)
         label_style_kwargs.pop("va")
         label_style_kwargs.pop("ha")
 
-        line_style_kwargs = style.line.matplot_kwargs()
+        line_style_kwargs = style.line.matplot_kwargs(self.scale)
         gridlines = self.ax.gridlines(
             draw_labels=show_labels,
             x_inline=False,
@@ -521,13 +524,6 @@ class HorizonPlot(
         az, alt = self._crs.transform_point(x_projected, y_projected, self._proj)
         return float(az), float(alt)
 
-    def _fit_to_ax(self) -> None:
-        bbox = self.ax.get_window_extent().transformed(
-            self.fig.dpi_scale_trans.inverted()
-        )
-        width, height = bbox.width, bbox.height
-        self.fig.set_size_inches(width, height)
-
     def _plot_background_clip_path(self):
         if self.style.has_gradient_background():
             background_color = "#ffffff00"
@@ -559,10 +555,12 @@ class HorizonPlot(
         self.fig = plt.figure(
             figsize=(self.figure_size, self.figure_size),
             facecolor=self.style.figure_background_color.as_hex(),
-            layout="constrained",
+            # layout="constrained",
             dpi=DPI,
         )
-        self.ax = plt.axes(projection=self._proj)
+        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
+        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
+
         self.ax.xaxis.set_visible(False)
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")
@@ -575,10 +573,5 @@ class HorizonPlot(
         ]
 
         self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
-
         self._fit_to_ax()
-
-        # if self.gradient_preset:
-        #     self.apply_gradient_background(self.gradient_preset)
-
         self._plot_background_clip_path()

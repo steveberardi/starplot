@@ -39,17 +39,17 @@ p.stars(
 )
 
 p.nebula(
-    # select DSOs which have no defined magnitude or less than 7
+    # select nebulae which have no defined magnitude or less than 7
     where=[_.magnitude.isnull() | (_.magnitude < 7)],
-    true_size=True,  # plot nebula as their true size
+    where_true_size=[_.size > 1],  # only plot large nebula as their true size
 )
 p.open_clusters(
     where=[_.magnitude.isnull() | (_.magnitude < 7)],
-    true_size=False,
+    where_true_size=[False],
 )
 p.globular_clusters(
     where=[_.magnitude.isnull() | (_.magnitude < 7)],
-    true_size=False,
+    where_true_size=[False],
 )
 
 p.ecliptic()

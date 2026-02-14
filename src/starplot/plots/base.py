@@ -1,16 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Union, Optional
-from random import randrange
 import logging
 
 import numpy as np
-import rtree
 from matplotlib import patches
 from matplotlib import pyplot as plt, patheffects
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
-from shapely import Polygon, Point
+from shapely import Polygon, LineString
 
 from starplot.coordinates import CoordinateSystem
 from starplot import geod, models, warnings
@@ -22,7 +20,6 @@ from starplot.models.moon import MoonPhase
 from starplot.models.optics import Optic, Camera
 from starplot.models.observer import Observer
 from starplot.styles import (
-    AnchorPointEnum,
     PlotStyle,
     MarkerStyle,
     ObjectStyle,
@@ -34,11 +31,9 @@ from starplot.styles import (
     GradientDirection,
     fonts,
 )
+from starplot.plotters.debug import DebugPlotterMixin
+from starplot.plotters.text import TextPlotterMixin, CollisionHandler
 from starplot.styles.helpers import use_style
-from starplot.geometry import (
-    unwrap_polygon_360,
-    random_point_in_polygon_at_distance,
-)
 from starplot.profile import profile
 
 LOGGER = logging.getLogger("starplot")
@@ -49,14 +44,12 @@ LOG_FORMATTER = logging.Formatter(
 LOG_HANDLER.setFormatter(LOG_FORMATTER)
 LOGGER.addHandler(LOG_HANDLER)
 
-DEFAULT_STYLE = PlotStyle()
-
 DEFAULT_RESOLUTION = 4096
 
 DPI = 100
 
 
-class BasePlot(ABC):
+class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
     _background_clip_path = None
     _clip_path_polygon: Polygon = None  # clip path in display coordinates
     _coordinate_system = CoordinateSystem.RA_DEC
@@ -79,59 +72,63 @@ class BasePlot(ABC):
     The plot's style.
     """
 
+    collision_handler: CollisionHandler
+    """Default [collision handler][starplot.CollisionHandler] for the plot."""
+
     def __init__(
         self,
-        observer: Observer = Observer(),
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
-        style: PlotStyle = DEFAULT_STYLE,
+        style: PlotStyle = None,
         resolution: int = 4096,
-        hide_colliding_labels: bool = True,
+        collision_handler: CollisionHandler = None,
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
         *args,
         **kwargs,
     ):
+        super().__init__(*args, **kwargs)
+
         if StarplotSettings.svg_text_type == SvgTextType.PATH:
             plt.rcParams["svg.fonttype"] = "path"
         else:
             plt.rcParams["svg.fonttype"] = "none"
 
-        px = 1 / DPI  # plt.rcParams["figure.dpi"]  # pixel in inches
+        px = 1 / DPI  # pixel in inches
         self.pixels_per_point = DPI / 72
+        self.dpi = DPI
 
         self.language = StarplotSettings.language
 
-        self.style = style
+        self.style = style or PlotStyle()
         self.figure_size = resolution * px
         self.resolution = resolution
-        self.hide_colliding_labels = hide_colliding_labels
+        self.collision_handler = collision_handler or CollisionHandler()
 
         self.scale = scale
         self.autoscale = autoscale
         if self.autoscale:
             self.scale = self.resolution / DEFAULT_RESOLUTION
 
+        self.scale *= 1.28
+
         if suppress_warnings:
             warnings.suppress()
 
-        self.observer = observer
+        self.observer = observer or Observer()
         self._ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
         self.earth = self.ephemeris["earth"]
-
-        self.labels = []
-        self._labels_rtree = rtree.index.Index()
-        self._constellations_rtree = rtree.index.Index()
-        self._stars_rtree = rtree.index.Index()
-        self._markers_rtree = rtree.index.Index()
 
         self._background_clip_path = None
 
         self._legend = None
         self._legend_handles = {}
 
-        self.log_level = logging.DEBUG if kwargs.get("debug") else logging.ERROR
+        self.debug = StarplotSettings.debug or bool(kwargs.get("debug"))
+        self.debug_text = StarplotSettings.debug or bool(kwargs.get("debug_text"))
+        self.log_level = logging.DEBUG if self.debug else logging.ERROR
         self.logger = LOGGER
         self.logger.setLevel(self.log_level)
 
@@ -151,129 +148,21 @@ class BasePlot(ABC):
         return ra, dec
 
     def _update_clip_path_polygon(self, buffer=8):
+        self.fig.draw_without_rendering()
         coords = self._background_clip_path.get_verts()
         self._clip_path_polygon = Polygon(coords).buffer(-1 * buffer)
 
-    def _is_label_collision(self, bbox) -> bool:
-        ix = list(self._labels_rtree.intersection(bbox))
-        return len(ix) > 0
-
-    def _is_constellation_collision(self, bbox) -> bool:
-        ix = list(self._constellations_rtree.intersection(bbox))
-        return len(ix) > 0
-
-    def _is_star_collision(self, bbox) -> bool:
-        ix = list(self._stars_rtree.intersection(bbox))
-        return len(ix) > 0
-
-    def _is_marker_collision(self, bbox) -> bool:
-        ix = list(self._markers_rtree.intersection(bbox))
-        return len(ix) > 0
-
-    def _is_clipped(self, points) -> bool:
-        p = self._clip_path_polygon
-
-        for x, y in points:
-            if not p.contains(Point(x, y)):
-                return True
-
-        return False
-
-    def _add_label_to_rtree(self, label, extent=None):
-        extent = extent or label.get_window_extent(
-            renderer=self.fig.canvas.get_renderer()
-        )
-        self.labels.append(label)
-        self._labels_rtree.insert(
-            0, np.array((extent.x0 - 1, extent.y0 - 1, extent.x1 + 1, extent.y1 + 1))
-        )
-
-    def _is_open_space(
-        self,
-        bbox: tuple[float, float, float, float],
-        padding=0,
-        avoid_clipped=True,
-        avoid_label_collisions=True,
-        avoid_marker_collisions=True,
-        avoid_constellation_collision=True,
-    ) -> bool:
-        """
-        Returns true if the boox covers an open space (i.e. no collisions)
-
-        Args:
-            bbox: 4-element tuple of lower left and upper right coordinates
-        """
-        x0, y0, x1, y1 = bbox
-        points = [(x0, y0), (x1, y1)]
-        bbox = (
-            x0 - padding,
-            y0 - padding,
-            x1 + padding,
-            y1 + padding,
-        )
-
-        if any([np.isnan(c) for c in (x0, y0, x1, y1)]):
-            return False
-
-        if avoid_clipped and self._is_clipped(points):
-            return False
-
-        if avoid_label_collisions and self._is_label_collision(bbox):
-            return False
-
-        if avoid_marker_collisions and (
-            self._is_star_collision(bbox) or self._is_marker_collision(bbox)
-        ):
-            return False
-
-        if avoid_constellation_collision and self._is_constellation_collision(bbox):
-            return False
-
-        return True
-
-    def _get_label_bbox(self, label):
-        extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-        return (extent.x0, extent.y0, extent.x1, extent.y1)
-
-    def _maybe_remove_label(
-        self,
-        label,
-        remove_on_collision=True,
-        remove_on_clipped=True,
-        remove_on_constellation_collision=True,
-        padding=0,
-    ) -> bool:
-        """Returns true if the label is removed, else false"""
-        extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-        bbox = (
-            extent.x0 - padding,
-            extent.y0 - padding,
-            extent.x1 + padding,
-            extent.y1 + padding,
-        )
-        points = [(extent.x0, extent.y0), (extent.x1, extent.y1)]
-
-        if any([np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]):
-            label.remove()
-            return True
-
-        if remove_on_clipped and self._is_clipped(points):
-            label.remove()
-            return True
-
-        if remove_on_collision and (
-            self._is_label_collision(bbox)
-            or self._is_star_collision(bbox)
-            or self._is_marker_collision(bbox)
-        ):
-            label.remove()
-            return True
-
-        if remove_on_constellation_collision and self._is_constellation_collision(bbox):
-            label.remove()
-            return True
-
-        return False
+        # if self.debug_text:
+        #     patch = patches.Polygon(
+        #         Polygon(coords).buffer(-1 * buffer).exterior.coords,
+        #         fill=False,
+        #         facecolor="none",
+        #         edgecolor="red",
+        #         linewidth=4,
+        #         zorder=5_000,
+        #         transform=None,
+        #     )
+        #     self.ax.add_patch(patch)
 
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
         if label is not None and label not in self._legend_handles:
@@ -288,234 +177,13 @@ class BasePlot(ABC):
                 label=label,
             )
 
-    def _collision_score(self, label) -> int:
-        config = {
-            "labels": 1.0,  # always fail
-            "stars": 0.5,
-            "constellations": 0.8,
-            "anchors": [
-                ("bottom right", 0),
-                ("top right", 0.2),
-                ("top left", 0.5),
-            ],
-            "on_fail": "plot",
-        }
-        extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-
-        if any(
-            [np.isnan(c) for c in (extent.x0, extent.y0, extent.x1, extent.y1)]
-        ) or self._is_clipped(extent):
-            return 1
-
-        x_labels = (
-            len(
-                list(
-                    self._labels_rtree.intersection(
-                        (extent.x0, extent.y0, extent.x1, extent.y1)
-                    )
-                )
-            )
-            * config["labels"]
+    def _fit_to_ax(self) -> None:
+        self.fig.draw_without_rendering()
+        bbox = self.ax.get_window_extent().transformed(
+            self.fig.dpi_scale_trans.inverted()
         )
-
-        if x_labels >= 1:
-            return 1
-
-        x_constellations = (
-            len(
-                list(
-                    self._constellations_rtree.intersection(
-                        (extent.x0, extent.y0, extent.x1, extent.y1)
-                    )
-                )
-            )
-            * config["constellations"]
-        )
-
-        if x_constellations >= 1:
-            return 1
-
-        x_stars = (
-            len(
-                list(
-                    self._stars_rtree.intersection(
-                        (extent.x0, extent.y0, extent.x1, extent.y1)
-                    )
-                )
-            )
-            * config["stars"]
-        )
-        if x_stars >= 1:
-            return 1
-
-        return sum([x_labels, x_constellations, x_stars]) / 3
-
-    def _text(self, x, y, text, **kwargs):
-        label = self.ax.annotate(
-            text,
-            (x, y),
-            **kwargs,
-            **self._plot_kwargs(),
-        )
-        if kwargs.get("clip_on"):
-            label.set_clip_on(True)
-            label.set_clip_path(self._background_clip_path)
-        return label
-
-    def _text_point(
-        self,
-        ra: float,
-        dec: float,
-        text: str,
-        hide_on_collision: bool = True,
-        force: bool = False,
-        clip_on: bool = True,
-        **kwargs,
-    ):
-        if not text:
-            return None
-
-        x, y = self._prepare_coords(ra, dec)
-
-        if StarplotSettings.svg_text_type == SvgTextType.PATH:
-            kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
-
-        remove_on_constellation_collision = kwargs.pop(
-            "remove_on_constellation_collision", True
-        )
-
-        original_va = kwargs.pop("va", None)
-        original_ha = kwargs.pop("ha", None)
-        original_offset_x, original_offset_y = kwargs.pop("xytext", (0, 0))
-
-        anchors = [(original_va, original_ha)]
-        for a in self.style.text_anchor_fallbacks:
-            d = AnchorPointEnum.from_str(a).as_matplot()
-            anchors.append((d["va"], d["ha"]))
-
-        for va, ha in anchors:
-            offset_x, offset_y = original_offset_x, original_offset_y
-            if original_ha != ha:
-                offset_x *= -1
-
-            if original_va != va:
-                offset_y *= -1
-
-            if ha == "center":
-                offset_x = 0
-                offset_y = 0
-
-            label = self._text(
-                x, y, text, **kwargs, va=va, ha=ha, xytext=(offset_x, offset_y)
-            )
-            removed = self._maybe_remove_label(
-                label,
-                remove_on_collision=hide_on_collision,
-                remove_on_clipped=clip_on,
-                remove_on_constellation_collision=remove_on_constellation_collision,
-            )
-
-            if force or not removed:
-                self._add_label_to_rtree(label)
-                return label
-
-    def _text_area(
-        self,
-        ra: float,
-        dec: float,
-        text: str,
-        area,
-        hide_on_collision: bool = True,
-        force: bool = False,
-        clip_on: bool = True,
-        settings: dict = None,
-        **kwargs,
-    ) -> None:
-        kwargs["va"] = "center"
-        kwargs["ha"] = "center"
-
-        if StarplotSettings.svg_text_type == SvgTextType.PATH:
-            kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
-
-        avoid_constellation_lines = settings.get("avoid_constellation_lines", False)
-        padding = settings.get("label_padding", 3)
-        settings.get("buffer", 0.1)
-        max_distance = settings.get("max_distance", 300)
-        distance_step_size = settings.get("distance_step_size", 1)
-        point_iterations = settings.get("point_generation_max_iterations", 500)
-        random_seed = settings.get("seed")
-
-        attempts = 0
-        height = None
-        width = None
-        bbox = None
-        areas = (
-            [p for p in area.geoms] if "MultiPolygon" == str(area.geom_type) else [area]
-        )
-        new_areas = []
-        origin = Point(ra, dec)
-
-        for a in areas:
-            unwrapped = unwrap_polygon_360(a)
-            # new_buffer = unwrapped.area / 10 * -1 * buffer * self.scale
-            # new_buffer = -1 * buffer * self.scale
-            # new_poly = unwrapped.buffer(new_buffer)
-            new_areas.append(unwrapped)
-
-        for d in range(0, max_distance, distance_step_size):
-            distance = d / 20
-            poly = randrange(len(new_areas))
-            point = random_point_in_polygon_at_distance(
-                new_areas[poly],
-                origin_point=origin,
-                distance=distance,
-                max_iterations=point_iterations,
-                seed=random_seed,
-            )
-
-            if point is None:
-                continue
-
-            x, y = self._prepare_coords(point.x, point.y)
-
-            if height and width:
-                data_xy = self._proj.transform_point(x, y, self._crs)
-                display_x, display_y = self.ax.transData.transform(data_xy)
-                bbox = (
-                    display_x - width / 2,
-                    display_y - height / 2,
-                    display_x + width / 2,
-                    display_y + height / 2,
-                )
-                label = None
-
-            else:
-                label = self._text(x, y, text, **kwargs)
-                bbox = self._get_label_bbox(label)
-                height = bbox[3] - bbox[1]
-                width = bbox[2] - bbox[0]
-
-            is_open = self._is_open_space(
-                bbox,
-                padding=padding,
-                avoid_clipped=clip_on,
-                avoid_constellation_collision=avoid_constellation_lines,
-                avoid_marker_collisions=hide_on_collision,
-                avoid_label_collisions=hide_on_collision,
-            )
-
-            # # TODO : remove label if not fully inside area?
-
-            attempts += 1
-
-            if is_open and label is None:
-                label = self._text(x, y, text, **kwargs)
-
-            if is_open:
-                self._add_label_to_rtree(label)
-                return label
-            elif label is not None:
-                label.remove()
+        width, height = bbox.width, bbox.height
+        self.fig.set_size_inches(width, height)
 
     @property
     def magnitude_range(self) -> tuple[float, float]:
@@ -524,64 +192,6 @@ class BasePlot(ABC):
         """
         mags = [s.magnitude for s in self.objects.stars]
         return (min(mags), max(mags))
-
-    @use_style(LabelStyle)
-    def text(
-        self,
-        text: str,
-        ra: float,
-        dec: float,
-        style: LabelStyle = None,
-        hide_on_collision: bool = True,
-        **kwargs,
-    ):
-        """
-        Plots text
-
-        Args:
-            text: Text to plot
-            ra: Right ascension of text (0...360)
-            dec: Declination of text (-90...90)
-            style: Styling of the text
-            hide_on_collision: If True, then the text will not be plotted if it collides with another label
-        """
-        if not text:
-            return
-
-        style = style or LabelStyle()
-
-        if style.offset_x == "auto":
-            style.offset_x = 0
-
-        if style.offset_y == "auto":
-            style.offset_y = 0
-
-        if kwargs.get("area"):
-            return self._text_area(
-                ra,
-                dec,
-                text,
-                **style.matplot_kwargs(self.scale),
-                area=kwargs.pop("area"),
-                hide_on_collision=hide_on_collision,
-                xycoords="data",
-                xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
-                textcoords="offset points",
-                settings=kwargs.pop("auto_adjust_settings"),
-                **kwargs,
-            )
-        else:
-            return self._text_point(
-                ra,
-                dec,
-                text,
-                **style.matplot_kwargs(self.scale),
-                hide_on_collision=hide_on_collision,
-                xycoords="data",
-                xytext=(style.offset_x * self.scale, style.offset_y * self.scale),
-                textcoords="offset points",
-                **kwargs,
-            )
 
     @property
     def objects(self) -> models.ObjectList:
@@ -623,8 +233,8 @@ class BasePlot(ABC):
         self.fig.savefig(
             filename,
             bbox_inches="tight",
-            pad_inches=padding,
-            dpi=144,  # (self.resolution / self.figure_size * 1.28),
+            pad_inches=padding * self.scale,
+            dpi=DPI,
             **kwargs,
         )
 
@@ -637,6 +247,7 @@ class BasePlot(ABC):
         label: Optional[str] = None,
         legend_label: str = None,
         skip_bounds_check: bool = False,
+        collision_handler: CollisionHandler = None,
         **kwargs,
     ) -> None:
         """Plots a marker
@@ -648,6 +259,7 @@ class BasePlot(ABC):
             style: Styling for the marker
             legend_label: How to label the marker in the legend. If `None`, then the marker will not be added to the legend
             skip_bounds_check: If True, then don't check the marker coordinates to ensure they're within the bounds of the plot. If you're plotting many markers, setting this to True can speed up plotting time.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
 
         """
 
@@ -700,7 +312,7 @@ class BasePlot(ABC):
                 ra,
                 dec,
                 label_style,
-                hide_on_collision=self.hide_colliding_labels,
+                collision_handler=collision_handler or self.collision_handler,
                 gid=kwargs.get("gid_label") or "marker-label",
             )
 
@@ -714,6 +326,7 @@ class BasePlot(ABC):
         true_size: bool = False,
         labels: Dict[PlanetName, str] = PLANET_LABELS_DEFAULT,
         legend_label: str = "Planet",
+        collision_handler: CollisionHandler = None,
     ) -> None:
         """
         Plots the planets.
@@ -725,6 +338,7 @@ class BasePlot(ABC):
             true_size: If True, then each planet's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
             labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.models.planet.PlanetName])
             legend_label: How to label the planets in the legend. If `None`, then the planets will not be added to the legend
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         labels = labels or {}
         planets = models.Planet.all(
@@ -732,6 +346,7 @@ class BasePlot(ABC):
         )
 
         legend_label = translate(legend_label, self.language)
+        handler = collision_handler or self.collision_handler
 
         for p in planets:
             label = labels.get(p.name)
@@ -744,16 +359,21 @@ class BasePlot(ABC):
                 polygon_style = style.marker.to_polygon_style()
                 polygon_style.edge_color = None
                 self.circle(
-                    (p.ra, p.dec),
-                    p.apparent_size,
-                    polygon_style,
+                    center=(p.ra, p.dec),
+                    radius_degrees=p.apparent_size / 2,
+                    style=polygon_style,
                     gid="planet-marker",
                 )
                 self._add_legend_handle_marker(legend_label, style.marker)
 
                 if label:
                     self.text(
-                        label.upper(), p.ra, p.dec, style.label, gid="planet-label"
+                        label.upper(),
+                        p.ra,
+                        p.dec,
+                        style.label,
+                        collision_handler=handler,
+                        gid="planet-label",
                     )
             else:
                 self.marker(
@@ -762,6 +382,7 @@ class BasePlot(ABC):
                     style=style,
                     label=label.upper() if label else None,
                     legend_label=legend_label,
+                    collision_handler=handler,
                     gid_marker="planet-marker",
                     gid_label="planet-label",
                 )
@@ -773,6 +394,7 @@ class BasePlot(ABC):
         true_size: bool = False,
         label: str = "Sun",
         legend_label: str = "Sun",
+        collision_handler: CollisionHandler = None,
     ) -> None:
         """
         Plots the Sun.
@@ -784,6 +406,7 @@ class BasePlot(ABC):
             true_size: If True, then the Sun's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
             label: How the Sun will be labeled on the plot
             legend_label: How the sun will be labeled in the legend
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         s = models.Sun.get(
             dt=self.observer.dt,
@@ -794,6 +417,7 @@ class BasePlot(ABC):
         label = translate(label, self.language)
         legend_label = translate(legend_label, self.language)
         s.name = label or s.name
+        handler = collision_handler or self.collision_handler
 
         if not self.in_bounds(s.ra, s.dec):
             return
@@ -807,17 +431,25 @@ class BasePlot(ABC):
             polygon_style.edge_color = None
 
             self.circle(
-                (s.ra, s.dec),
-                s.apparent_size,
+                center=(s.ra, s.dec),
+                radius_degrees=s.apparent_size / 2,
                 style=polygon_style,
                 gid="sun-marker",
+                num_pts=200,
             )
 
             style.marker.symbol = MarkerSymbolEnum.CIRCLE
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
-                self.text(label, s.ra, s.dec, style.label, gid="sun-label")
+                self.text(
+                    label,
+                    s.ra,
+                    s.dec,
+                    style.label,
+                    collision_handler=handler,
+                    gid="sun-label",
+                )
 
         else:
             self.marker(
@@ -826,6 +458,7 @@ class BasePlot(ABC):
                 style=style,
                 label=label,
                 legend_label=legend_label,
+                collision_handler=handler,
                 gid_marker="sun-marker",
                 gid_label="sun-label",
             )
@@ -1026,14 +659,27 @@ class BasePlot(ABC):
             )
 
     @use_style(LineStyle)
-    def line(self, coordinates: list[tuple[float, float]], style: LineStyle, **kwargs):
+    def line(
+        self,
+        style: LineStyle,
+        coordinates: list[tuple[float, float]] = None,
+        geometry: LineString = None,
+        **kwargs,
+    ):
         """Plots a line
 
         Args:
             coordinates: List of coordinates, e.g. `[(ra, dec), (ra, dec)]`
+            geometry: A shapely LineString. If this value is passed, then the `coordinates` kwarg will be ignored.
             style: Style of the line
         """
-        x, y = zip(*[self._prepare_coords(*p) for p in coordinates])
+
+        if coordinates is None and geometry is None:
+            raise ValueError("Must pass coordinates or geometry when plotting lines.")
+
+        coords = geometry.coords if geometry is not None else coordinates
+
+        x, y = zip(*[self._prepare_coords(*p) for p in coords])
 
         self.ax.plot(
             x,
@@ -1053,6 +699,7 @@ class BasePlot(ABC):
         show_phase: bool = False,
         label: str = "Moon",
         legend_label: str = "Moon",
+        collision_handler: CollisionHandler = None,
     ) -> None:
         """
         Plots the Moon.
@@ -1063,7 +710,9 @@ class BasePlot(ABC):
             style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then the Moon's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
             show_phase: If True, and if `true_size = True`, then the approximate phase of the moon will be illustrated. The dark side of the moon will be colored with the marker's `edge_color`.
-            label: How the Moon will be labeled on the plot and legend
+            label: How the Moon will be labeled on the plot
+            legend_label: How the Moon will be labeled in the legend
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         m = models.Moon.get(
             dt=self.observer.dt,
@@ -1074,6 +723,7 @@ class BasePlot(ABC):
         label = translate(label, self.language)
         legend_label = translate(legend_label, self.language)
         m.name = label or m.name
+        handler = collision_handler or self.collision_handler
 
         if not self.in_bounds(m.ra, m.dec):
             return
@@ -1089,9 +739,9 @@ class BasePlot(ABC):
 
             if show_phase:
                 self._moon_with_phase(
-                    m.phase_description,
-                    (m.ra, m.dec),
-                    m.apparent_size,
+                    moon_phase=m.phase_description,
+                    center=(m.ra, m.dec),
+                    radius_degrees=m.apparent_size / 2,
                     style=polygon_style,
                     dark_side_color=style.marker.edge_color,
                 )
@@ -1107,7 +757,14 @@ class BasePlot(ABC):
             self._add_legend_handle_marker(legend_label, style.marker)
 
             if label:
-                self.text(label, m.ra, m.dec, style.label, gid="moon-label")
+                self.text(
+                    label,
+                    m.ra,
+                    m.dec,
+                    style.label,
+                    collision_handler=handler,
+                    gid="moon-label",
+                )
 
         else:
             self.marker(
@@ -1116,6 +773,7 @@ class BasePlot(ABC):
                 style=style,
                 label=label,
                 legend_label=legend_label,
+                collision_handler=handler,
                 gid_marker="moon-marker",
                 gid_label="moon-label",
             )
@@ -1178,8 +836,8 @@ class BasePlot(ABC):
         # Plot left side
         self.ellipse(
             center,
-            radius_degrees * 2,
-            radius_degrees * 2,
+            height_degrees=radius_degrees * 2,
+            width_degrees=radius_degrees * 2,
             style=left,
             num_pts=num_pts,
             angle=0,
@@ -1189,8 +847,8 @@ class BasePlot(ABC):
         # Plot right side
         self.ellipse(
             center,
-            radius_degrees * 2,
-            radius_degrees * 2,
+            height_degrees=radius_degrees * 2,
+            width_degrees=radius_degrees * 2,
             style=right,
             num_pts=num_pts,
             angle=180,
@@ -1200,8 +858,8 @@ class BasePlot(ABC):
         # Plot middle
         self.ellipse(
             center,
-            radius_degrees * 2,
-            radius_degrees,
+            height_degrees=radius_degrees * 2,
+            width_degrees=radius_degrees,
             style=middle,
             gid="moon-marker",
         )
@@ -1238,12 +896,18 @@ class BasePlot(ABC):
             )
 
     @use_style(PathStyle, "ecliptic")
-    def ecliptic(self, style: PathStyle = None, label: str = "ECLIPTIC"):
+    def ecliptic(
+        self,
+        style: PathStyle = None,
+        label: str = "ECLIPTIC",
+        collision_handler: CollisionHandler = None,
+    ):
         """Plots the ecliptic
 
         Args:
             style: Styling of the ecliptic. If None, then the plot's style will be used
             label: How the ecliptic will be labeled on the plot
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         x = []
         y = []
@@ -1272,11 +936,21 @@ class BasePlot(ABC):
             label_spacing = int(len(inbounds) / 4)
 
             for ra, dec in [inbounds[label_spacing], inbounds[label_spacing * 2]]:
-                self.text(label, ra, dec, style.label, gid="ecliptic-label")
+                self.text(
+                    label,
+                    ra,
+                    dec,
+                    style.label,
+                    collision_handler=collision_handler or self.collision_handler,
+                    gid="ecliptic-label",
+                )
 
     @use_style(PathStyle, "celestial_equator")
     def celestial_equator(
-        self, style: PathStyle = None, label: str = "CELESTIAL EQUATOR"
+        self,
+        style: PathStyle = None,
+        label: str = "CELESTIAL EQUATOR",
+        collision_handler: CollisionHandler = None,
     ):
         """
         Plots the celestial equator
@@ -1284,6 +958,7 @@ class BasePlot(ABC):
         Args:
             style: Styling of the celestial equator. If None, then the plot's style will be used
             label: How the celestial equator will be labeled on the plot
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         x = []
         y = []
@@ -1314,5 +989,6 @@ class BasePlot(ABC):
                     ra,
                     0.25,
                     style.label,
+                    collision_handler=collision_handler or self.collision_handler,
                     gid="celestial-equator-label",
                 )

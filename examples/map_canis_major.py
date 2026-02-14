@@ -1,3 +1,5 @@
+from shapely import Polygon
+
 from starplot import MapPlot, Miller, Constellation, _
 from starplot.styles import PlotStyle, extensions
 
@@ -14,14 +16,17 @@ p = MapPlot(
     dec_max=-10.9,
     style=style,
     resolution=3400,
-    clip_path=canis_major.boundary,
+    clip_path=Polygon(canis_major.border.coords),
     scale=1.2,
 )
 p.constellations(
     where=[_.iau_id == "cma"],
 )
-p.constellation_borders()
-p.open_clusters(where=[_.magnitude < 9], true_size=False)
+p.line(
+    geometry=canis_major.border,
+    style=p.style.constellation_borders,
+)
+p.open_clusters(where=[_.magnitude < 9], where_true_size=[False])
 p.stars(where=[_.magnitude < 9], where_labels=[_.magnitude < 4], bayer_labels=True)
 p.constellation_labels()
 

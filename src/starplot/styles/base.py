@@ -2,7 +2,7 @@ import json
 
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Union, List
+from typing import Optional, Union
 
 import yaml
 
@@ -635,6 +635,8 @@ class LabelStyle(BaseStyle):
         return style
 
     def offset_from_marker(self, marker_symbol, marker_size, scale: float = 1.0):
+        """Handles auto offsets from marker"""
+
         if self.offset_x != "auto" or self.offset_y != "auto":
             return self
 
@@ -654,8 +656,7 @@ class LabelStyle(BaseStyle):
             offset /= SQR_2
             offset *= scale
 
-        offset += 1.1
-
+        offset += 0.65
         new_style.offset_x = offset * float(x_direction)
         new_style.offset_y = offset * float(y_direction)
 
@@ -812,18 +813,6 @@ class PlotStyle(BaseStyle):
     """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `border_width` and `border_color` properties."""
 
     text_border_color: ColorStr = ColorStr("#fff")
-
-    text_anchor_fallbacks: List[AnchorPointEnum] = [
-        AnchorPointEnum.BOTTOM_RIGHT,
-        AnchorPointEnum.TOP_LEFT,
-        AnchorPointEnum.TOP_RIGHT,
-        AnchorPointEnum.BOTTOM_LEFT,
-        AnchorPointEnum.BOTTOM_CENTER,
-        AnchorPointEnum.TOP_CENTER,
-        AnchorPointEnum.RIGHT_CENTER,
-        AnchorPointEnum.LEFT_CENTER,
-    ]
-    """If a label's preferred anchor point results in a collision, then these fallbacks will be tried in sequence until a collision-free position is found."""
 
     # Borders
     border_font_size: int = 18

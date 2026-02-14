@@ -25,21 +25,32 @@ p = MapPlot(
     ),
     observer=observer,
     style=style,
-    scale=0.9,  # lower the scale since it shows a large area
+    resolution=2800,
+    scale=0.86,  # lower the scale since it shows a large area
 )
 p.gridlines(labels=False)
 p.constellations()
 p.constellation_borders()
 
-p.stars(where=[_.magnitude < 8], where_labels=[_.magnitude < 5])
-p.open_clusters(where=[_.magnitude < 12], true_size=False, where_labels=[False])
-p.galaxies(where=[_.magnitude < 12], true_size=False, where_labels=[False])
-p.nebula(where=[_.magnitude < 12], true_size=False, where_labels=[False])
+p.stars(where=[_.magnitude < 7], where_labels=[False])
+p.open_clusters(
+    where=[_.magnitude < 12],
+    where_labels=[False],
+    where_true_size=[False],
+)
+p.galaxies(
+    where=[_.magnitude < 12],
+    where_labels=[False],
+    where_true_size=[False],
+)
+p.nebula(
+    where=[_.magnitude < 12],
+    where_labels=[False],
+    where_true_size=[False],
+)
 
-p.constellation_labels(style__font_alpha=0.4)
 p.ecliptic()
 p.celestial_equator()
 p.milky_way()
-p.planets()
 
 p.export("map_orthographic.png", padding=0.3, transparent=True)

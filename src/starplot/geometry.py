@@ -2,8 +2,8 @@ import random
 import math
 from typing import Union
 
-from shapely import transform
-from shapely.geometry import Point, Polygon, MultiPolygon
+from shapely import transform, union_all
+from shapely.geometry import Point, Polygon, MultiPolygon, LineString
 
 from starplot import geod
 
@@ -94,6 +94,22 @@ def unwrap_polygon_360(polygon: Polygon) -> Polygon:
         return Polygon(list(zip(new_ra, dec)))
 
     return polygon
+
+
+def union_at_zero(a: Polygon, b: Polygon) -> Polygon:
+    """Returns union of two polygons"""
+    a_ra = list(a.exterior.coords.xy)[0]
+    b_ra = list(b.exterior.coords.xy)[0]
+
+    if max(a_ra) == 360 and min(b_ra) == 0:
+        points = list(zip(*b.exterior.coords.xy))
+        b = Polygon([[ra + 360, dec] for ra, dec in points])
+
+    elif min(a_ra) == 0 and max(b_ra) == 360:
+        points = list(zip(*a.exterior.coords.xy))
+        a = Polygon([[ra + 360, dec] for ra, dec in points])
+
+    return union_all([a, b])
 
 
 def split_polygon_at_zero(polygon: Polygon) -> list[Polygon]:
@@ -273,3 +289,8 @@ def is_wrapped_polygon(polygon: Polygon) -> bool:
         return True
 
     return False
+
+
+def line_segment(start, end, step):
+    """Returns coordinates on the line from start to end at the specified step-size"""
+    return LineString([start, end]).segmentize(step).coords

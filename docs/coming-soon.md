@@ -1,17 +1,8 @@
 <table class="table-coming-soon">
     <tr>
-        <td>v0.19</td>
-        <td>
-            <h4>⭐ Next Release ⭐</h4>
-            <ul>
-                <li>Label collision handling improvements</li>
-            </ul>
-        </td>
-        <td></td>
-    </tr>
-    <tr>
         <td>v0.20</td>
         <td>
+            <h4>⭐ Next Release ⭐</h4>
             <ul>
                 <li>Support for more coordinate systems</li>
             </ul>
@@ -19,7 +10,16 @@
         <td></td>
     </tr>
     <tr>
-        <td>v0.21+</td>
+        <td>v0.21</td>
+        <td>
+            <ul>
+                <li>TBD</li>
+            </ul>
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>v0.22+</td>
         <td>
             <ul>
                 <li>Planet moons</li>

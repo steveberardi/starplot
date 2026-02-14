@@ -37,7 +37,7 @@ class Moon(SkyObject):
     """Date/time of moon's position"""
 
     apparent_size: float
-    """Apparent size in the sky (degrees)"""
+    """Apparent diameter in the sky (degrees)"""
 
     phase_angle: float
     """Angle of the moon from the Sun (degrees)"""

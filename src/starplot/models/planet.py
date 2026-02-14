@@ -72,7 +72,7 @@ class Planet(SkyObject):
     """Date/time of planet's position"""
 
     apparent_size: float = 0
-    """Apparent size (degrees)"""
+    """Apparent diameter (degrees)"""
 
     geometry: Polygon = None
     """Shapely Polygon of the planet's extent. Right ascension coordinates are in degrees (0...360)."""

@@ -1,4 +1,4 @@
-from starplot import MapPlot, LambertAzEqArea, _
+from starplot import MapPlot, LambertAzEqArea, DsoType, _
 from starplot.styles import PlotStyle, extensions
 
 
@@ -13,30 +13,34 @@ p = MapPlot(
     dec_min=49.5,
     dec_max=68,
     style=style,
-    resolution=4000 * 1,
+    resolution=3600,
     scale=1.2,
 )
 p.constellations(where=[_.iau_id == "cas"])  # only plot the lines of Cassiopeia
 
 p.stars(
     where=[
-        _.magnitude < 9,
+        _.magnitude < 8,
     ],
     bayer_labels=True,
     flamsteed_labels=True,
 )
 
-p.nebula(
+p.dsos(
     where=[
+        _.type.isin(
+            [
+                DsoType.OPEN_CLUSTER.value,
+                DsoType.NEBULA.value,
+                DsoType.EMISSION_NEBULA.value,
+                DsoType.REFLECTION_NEBULA.value,
+                DsoType.HII_IONIZED_REGION.value,
+                DsoType.STAR_CLUSTER_NEBULA.value,
+            ]
+        ),
         (_.magnitude.isnull()) | (_.magnitude < 8),
     ],
-    true_size=True,
-)
-p.open_clusters(
-    where=[
-        (_.magnitude.isnull()) | (_.magnitude < 8),
-    ],
-    true_size=False,
+    where_true_size=[_.size > 1],
 )
 
 p.constellation_labels()
