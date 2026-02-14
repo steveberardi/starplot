@@ -36,23 +36,26 @@ def rectangle(
     height_m = distance_m(height_degrees)
     width_m = distance_m(width_degrees)
 
-    c = math.sqrt((height_m / 2) ** 2 + (width_m / 2) ** 2)
+    distance = math.sqrt((height_m / 2) ** 2 + (width_m / 2) ** 2)
     angle_th = math.atan((height_m / 2) / (width_m / 2))
 
     angle_th = math.degrees(angle_th)
     points = []
 
-    p0_lon, p0_lat, _ = GEOD.fwd([ra], [dec], angle + (90 - angle_th), c)
-    p1_lon, p1_lat, _ = GEOD.fwd([ra], [dec], angle + (90 + angle_th), c)
-    p2_lon, p2_lat, _ = GEOD.fwd([ra], [dec], angle + (270 - angle_th), c)
-    p3_lon, p3_lat, _ = GEOD.fwd([ra], [dec], angle + (270 + angle_th), c)
+    lons, lats, _ = GEOD.fwd(
+        [ra] * 4,
+        [dec] * 4,
+        [
+            angle + (90 - angle_th),
+            angle + (90 + angle_th),
+            angle + (270 - angle_th),
+            angle + (270 + angle_th),
+        ],
+        [distance] * 4,
+    )
+    points = list(zip(lons, lats))
 
-    points.append((p0_lon[0], p0_lat[0]))
-    points.append((p1_lon[0], p1_lat[0]))
-    points.append((p2_lon[0], p2_lat[0]))
-    points.append((p3_lon[0], p3_lat[0]))
-
-    return points
+    return [(round(ra, 4), round(dec, 4)) for ra, dec in points]
 
 
 def ellipse(
