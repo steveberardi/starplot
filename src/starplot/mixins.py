@@ -364,17 +364,18 @@ class CreateMapMixin:
         Returns:
             MapPlot: new instance of a [`MapPlot`][starplot.MapPlot]
         """
-        from starplot import MapPlot, geod
+        from starplot import MapPlot, geometry
 
-        ex = geod.rectangle(
+        extent = geometry.rectangle(
             center=(self.ra, self.dec),
             height_degrees=height_degrees,
             width_degrees=width_degrees,
         )
-        ra_min = ex[0][0]
-        ra_max = ex[2][0]
-        dec_min = ex[0][1]
-        dec_max = ex[2][1]
+        minx, miny, maxx, maxy = extent.bounds
+        ra_min = minx
+        ra_max = maxx
+        dec_min = miny
+        dec_max = maxy
 
         # handle wrapping
         if ra_max < ra_min:

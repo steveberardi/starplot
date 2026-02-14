@@ -2,10 +2,11 @@ import random
 import math
 from typing import Union
 
+import pyproj
+import numpy as np
+
 from shapely import transform, union_all
 from shapely.geometry import Point, Polygon, MultiPolygon, LineString
-
-from starplot import geod
 
 GLOBAL_EXTENT = Polygon(
     [
@@ -17,20 +18,146 @@ GLOBAL_EXTENT = Polygon(
     ]
 )
 
+GEOD = pyproj.Geod("+a=6378137 +f=0.0", sphere=True)
 
-def circle(center, diameter_degrees, num_pts=100):
-    points = geod.ellipse(
+
+def distance_m(distance_degrees: float, lat: float = 0, lon: float = 0):
+    _, _, distance = GEOD.inv(lon, lat, lon + distance_degrees, lat)
+    return distance
+
+
+def away_from_poles(dec):
+    # for some reason cartopy does not like plotting things EXACTLY at the poles
+    # so, this is a little hack to avoid the bug (or maybe a misconception?) by
+    # plotting a tiny bit away from the pole
+    if dec == 90:
+        dec -= 0.00000001
+    if dec == -90:
+        dec += 0.00000001
+
+    return dec
+
+
+def rectangle(
+    center: tuple,
+    height_degrees: float,
+    width_degrees: float,
+    angle: float = 0,
+) -> Polygon:
+    """
+    Returns a rectangle polygon on a sphere, with coordinates in degrees.
+
+    If the rectangle crosses the meridian at X=0, then the X coordinates will extend past 360.
+
+    Args:
+        center: Center of rectangle (x, y) in degrees
+        height_degrees: Height of rectangle in degrees
+        width_degrees: Width of rectangle in degrees
+        angle: Angle to rotate rectangle, in degrees
+
+    Returns:
+        Polygon of rectangle
+    """
+
+    ra, dec = center
+    dec = away_from_poles(dec)
+    angle = 180 - angle
+
+    height_m = distance_m(height_degrees)
+    width_m = distance_m(width_degrees)
+
+    distance = math.sqrt((height_m / 2) ** 2 + (width_m / 2) ** 2)
+    angle_th = math.atan((height_m / 2) / (width_m / 2))
+
+    angle_th = math.degrees(angle_th)
+    points = []
+
+    lons, lats, _ = GEOD.fwd(
+        [ra] * 4,
+        [dec] * 4,
+        [
+            angle + (90 - angle_th),
+            angle + (90 + angle_th),
+            angle + (270 - angle_th),
+            angle + (270 + angle_th),
+        ],
+        [distance] * 4,
+    )
+    if min(lons) < 0:
+        lons = [lon + 360 for lon in lons]
+
+    points = list(zip(lons, lats))
+    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
+    points.append(points[0])
+    return Polygon(points)
+
+
+def ellipse(
+    center: tuple,
+    height_degrees: float,
+    width_degrees: float,
+    angle: float = 0,
+    num_pts: int = 100,
+    start_angle: int = 0,
+    end_angle: int = 360,
+) -> Polygon:
+    """
+    Returns an ellipse polygon on a sphere, with coordinates in degrees.
+
+    If the ellipse crosses the meridian at X=0, then the X coordinates will extend past 360.
+
+    Args:
+        center: Center of ellipse (x, y) in degrees
+        height_degrees: Height of ellipse in degrees
+        width_degrees: Width of ellipse in degrees
+        angle: Angle to rotate ellipse, in degrees
+        num_pts: Number of evenly-spaced points to generate for the ellipse. At least 100 is recommended to ensure good-looking curves.
+        start_angle: Angle to start drawing the ellipse
+        end_angle: Angle to stop drawing the ellipse
+
+    Returns:
+        Polygon of ellipse
+    """
+
+    ra, dec = center
+    dec = away_from_poles(dec)
+    angle = 180 - angle
+
+    height = distance_m(height_degrees / 2)  # b
+    width = distance_m(width_degrees / 2)  # a
+    step_size = (end_angle - start_angle) / num_pts
+
+    lons = []
+    lats = []
+    points = []
+    for angle_pt in np.arange(start_angle, end_angle + step_size, step_size):
+        radians = math.radians(angle_pt)
+        radius_a = (height * width) / math.sqrt(
+            height**2 * (math.sin(radians)) ** 2
+            + width**2 * (math.cos(radians)) ** 2
+        )
+        lon, lat, _ = GEOD.fwd([ra], [dec], angle + angle_pt, radius_a)
+
+        lons.append(lon[0])
+        lats.append(lat[0])
+
+    if min(lons) < 0:
+        lons = [lon + 360 for lon in lons]
+
+    points = list(zip(lons, lats))
+    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
+    points.append(points[0])
+    return Polygon(points)
+
+
+def circle(center, diameter_degrees, num_pts=100) -> Polygon:
+    return ellipse(
         center,
         diameter_degrees,
         diameter_degrees,
         angle=0,
         num_pts=num_pts,
     )
-    # points = [
-    #     (round(24 - utils.lon_to_ra(lon), 4), round(dec, 4)) for lon, dec in points
-    # ]
-    points = [(round(lon, 4), round(dec, 4)) for lon, dec in points]
-    return Polygon(points)
 
 
 def to_24h(geometry: Union[Point, Polygon, MultiPolygon]):
@@ -53,22 +180,6 @@ def unwrap_polygon(polygon: Polygon) -> Polygon:
             x += 24
         elif prev is not None and prev < 12 and x > 20:
             x -= 24
-        new_points.append((x, y))
-        prev = x
-
-    return Polygon(new_points)
-
-
-def unwrap_polygon_360_old(polygon: Polygon) -> Polygon:
-    points = list(zip(*polygon.exterior.coords.xy))
-    new_points = []
-    prev = None
-
-    for x, y in points:
-        if prev is not None and prev > 300 and x < 180:
-            x -= 360
-        elif prev is not None and prev < 180 and x > 300:
-            x += 360
         new_points.append((x, y))
         prev = x
 
@@ -250,23 +361,6 @@ def random_point_in_polygon_at_distance(
     return None
 
 
-def wrapped_polygon_adjustment_old(polygon: Polygon) -> int:
-    if "MultiPolygon" == str(polygon.geom_type):
-        return 0
-
-    points = list(zip(*polygon.exterior.coords.xy))
-    prev = None
-
-    for ra, _ in points:
-        if prev is not None and prev > 300 and ra < 180:
-            return 360
-        elif prev is not None and prev < 180 and ra > 300:
-            return -360
-        prev = ra
-
-    return 0
-
-
 def wrapped_polygon_adjustment(polygon: Polygon) -> int:
     if "MultiPolygon" == str(polygon.geom_type):
         return 0
@@ -291,6 +385,6 @@ def is_wrapped_polygon(polygon: Polygon) -> bool:
     return False
 
 
-def line_segment(start, end, step):
+def line_segment(start, end, step) -> list[tuple[float, float]]:
     """Returns coordinates on the line from start to end at the specified step-size"""
     return LineString([start, end]).segmentize(step).coords

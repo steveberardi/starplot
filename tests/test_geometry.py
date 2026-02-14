@@ -1,62 +1,70 @@
-from starplot import geod
+from starplot import geometry
 
 
 def test_square_simple():
-    result = geod.rectangle(
+    polygon = geometry.rectangle(
         center=(200, 0),
         height_degrees=4,
         width_degrees=4,
     )
-    assert result == [
-        (-162.0008, -1.9996),
-        (-162.0008, 1.9996),
-        (-157.9992, 1.9996),
-        (-157.9992, -1.9996),
+    points = list(zip(*polygon.exterior.coords.xy))
+    assert points == [
+        (197.9992, -1.9996),
+        (197.9992, 1.9996),
+        (202.0008, 1.9996),
+        (202.0008, -1.9996),
+        (197.9992, -1.9996),
     ]
-    assert len(result) == 4
+    assert len(points) == 5
 
 
 def test_rectangle():
-    result = geod.rectangle(
+    polygon = geometry.rectangle(
         center=(50, 0),
         height_degrees=1,
         width_degrees=2,
     )
-    assert result == [
+    points = list(zip(*polygon.exterior.coords.xy))
+    assert points == [
         (49.0, -0.5),
         (49.0, 0.5),
         (51.0, 0.5),
         (51.0, -0.5),
+        (49.0, -0.5),
     ]
-    assert len(result) == 4
+    assert len(points) == 5
 
 
 def test_square_at_meridian():
-    result = geod.rectangle(
+    polygon = geometry.rectangle(
         center=(360, 0),
         height_degrees=4,
         width_degrees=4,
     )
-    assert result == [
-        (-2.0008, -1.9996),
-        (-2.0008, 1.9996),
-        (2.0008, 1.9996),
-        (2.0008, -1.9996),
+    points = list(zip(*polygon.exterior.coords.xy))
+    assert points == [
+        (357.9992, -1.9996),
+        (357.9992, 1.9996),
+        (362.0008, 1.9996),
+        (362.0008, -1.9996),
+        (357.9992, -1.9996),
     ]
-    assert len(result) == 4
+    assert len(points) == 5
 
 
 def test_circle_at_meridian():
-    result = geod.circle(
+    polygon = geometry.circle(
         center=(358, 0),
-        radius_degrees=8,
+        diameter_degrees=16,
         num_pts=4,
     )
-    assert result == [
-        (-2.0, -8.0),
-        (-10.0, 0.0),
-        (-2.0, 8.0),
-        (6.0, 0.0),
-        (-2.0, -8.0),
+    points = list(zip(*polygon.exterior.coords.xy))
+    assert points == [
+        (358.0, -8.0),
+        (350.0, 0.0),
+        (358.0, 8.0),
+        (366.0, 0.0),
+        (358.0, -8.0),
+        (358.0, -8.0),
     ]
-    assert len(result) == 5
+    assert len(points) == 6

@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt, patches, path
 from skyfield.api import wgs84, Star as SkyfieldStar
 
 
-from starplot import callables, geod
+from starplot import callables, geometry
 from starplot.coordinates import CoordinateSystem
 from starplot.plots.base import BasePlot, DPI
 from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
@@ -188,15 +188,16 @@ class OpticPlot(
 
     def _adjust_radec_minmax(self):
         fov = self.optic.true_fov
-        ex = geod.rectangle(
+        extent = geometry.rectangle(
             center=(self.ra, self.dec),
             height_degrees=fov,
             width_degrees=fov,
         )
-        self.ra_min = ex[0][0]
-        self.ra_max = ex[2][0]
-        self.dec_min = ex[0][1]
-        self.dec_max = ex[2][1]
+        minx, miny, maxx, maxy = extent.bounds
+        self.ra_min = minx
+        self.ra_max = maxx
+        self.dec_min = miny
+        self.dec_max = maxy
 
         if self.ra_max < 0:
             self.ra_max += 360

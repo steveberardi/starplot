@@ -11,7 +11,8 @@ from matplotlib.lines import Line2D
 from shapely import Polygon, LineString
 
 from starplot.coordinates import CoordinateSystem
-from starplot import geod, models, warnings
+from starplot import models, warnings
+from starplot import geometry as _geometry
 from starplot.config import settings as StarplotSettings, SvgTextType
 from starplot.data import load, ecliptic
 from starplot.data.translations import translate
@@ -564,12 +565,13 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             angle: Angle of rotation clockwise (degrees)
             legend_label: Label for this object in the legend
         """
-        points = geod.rectangle(
+        polygon = _geometry.rectangle(
             center,
             height_degrees,
             width_degrees,
             angle,
         )
+        points = list(zip(*polygon.exterior.coords.xy))
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
         if legend_label is not None:
@@ -606,7 +608,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             legend_label: Label for this object in the legend
         """
 
-        points = geod.ellipse(
+        polygon = _geometry.ellipse(
             center,
             height_degrees,
             width_degrees,
@@ -615,6 +617,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             start_angle,
             end_angle,
         )
+        points = list(zip(*polygon.exterior.coords.xy))
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
         if legend_label is not None:
