@@ -286,6 +286,17 @@ class BaseGeometry:
     1. For intersection testing: needs to be split at zero and restricted to 0-360
     2. For plotting: needs to be extended past 360 if applicable
     
+    TODO:
+
+        Functions
+        - intersects
+        
+        Properties
+        - centroid
+        - bbox
+        - wkt
+        - wkb
+
     """
     def intersects(self):
         """
