@@ -17,6 +17,7 @@
 - [**v0.19.5**] 
     - Fixes bug with plotting labels when `attempts=1`
     - Improves performance of plotting constellations on horizon plots
+- [**v0.19.6**] Fixes issue with running Starplot in a Jupyter notebook
 
 ---
 

@@ -10,9 +10,9 @@ COMMANDS = ["setup"]
 
 def setup(options):
     print("Installing DuckDB spatial extension...")
+    db.connect()  # installs spatial extension as side-effect
 
-    con = db.connect()
-
+    print("Building font cache...")
     fonts.load()
 
     print(f"Downloading data catalogs to: {settings.data_path}")
