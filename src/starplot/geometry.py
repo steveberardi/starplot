@@ -274,3 +274,22 @@ def is_wrapped_polygon(polygon: Polygon) -> bool:
 def line_segment(start, end, step) -> list[tuple[float, float]]:
     """Returns coordinates on the line from start to end at the specified step-size"""
     return LineString([start, end]).segmentize(step).coords
+
+
+
+class BaseGeometry:
+
+    """
+    Wrapper around shapely geometries
+
+    Two types of polygons needed:
+    1. For intersection testing: needs to be split at zero and restricted to 0-360
+    2. For plotting: needs to be extended past 360 if applicable
+    
+    """
+    def intersects(self):
+        """
+        
+
+        """
+        pass
