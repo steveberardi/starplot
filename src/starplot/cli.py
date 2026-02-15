@@ -12,7 +12,6 @@ def setup(options):
     print("Installing DuckDB spatial extension...")
 
     con = db.connect()
-    con.load_extension("spatial")
 
     fonts.load()
 
