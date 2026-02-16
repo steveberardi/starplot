@@ -99,6 +99,68 @@ class CollisionHandler:
         ]
 
 
+
+def find_smooth_sections(x, y, min_length=5, curvature_threshold=0.1):
+    """
+    Find sections of the line where curvature is low (smooth).
+
+    Args:
+        x, y: line coordinates
+        min_length: minimum number of points for a smooth section
+        curvature_threshold: maximum curvature to consider "smooth"
+
+    Returns:
+        List of (start_idx, end_idx, smoothness_score) tuples
+    """
+    if len(x) < 3:
+        return [(0, len(x) - 1, 1.0)]
+
+    # First derivative
+    dx = np.diff(x)
+    dy = np.diff(y)
+
+    # Second derivative (change in slope)
+    ddx = np.diff(dx)
+    ddy = np.diff(dy)
+
+    # Curvature approximation
+    curvature = np.abs(ddx) + np.abs(ddy)
+
+    # Normalize by typical scale
+    curvature = curvature / (np.median(curvature) + 1e-10)
+
+    # Find smooth regions
+    is_smooth = curvature < curvature_threshold
+
+    # Find contiguous smooth sections with scores
+    smooth_sections = []
+    start = None
+
+    for i in range(len(is_smooth)):
+        if is_smooth[i] and start is None:
+            start = i
+        elif not is_smooth[i] and start is not None:
+            if i - start >= min_length:
+                # Calculate smoothness score (inverse of average curvature)
+                section_curvature = curvature[start:i]
+                smoothness_score = 1.0 / (np.mean(section_curvature) + 1e-10)
+                smooth_sections.append((start, i, smoothness_score))
+            start = None
+
+    # Check last section
+    if start is not None and len(is_smooth) - start >= min_length:
+        section_curvature = curvature[start:]
+        smoothness_score = 1.0 / (np.mean(section_curvature) + 1e-10)
+        smooth_sections.append((start, len(is_smooth), smoothness_score))
+
+    # Sort by smoothness score (descending)
+    smooth_sections.sort(key=lambda s: s[2], reverse=True)
+
+    return smooth_sections if smooth_sections else [(0, len(x) - 1, 1.0)]
+
+
+
+
 class TextPlotterMixin:
     def __init__(self, *args, **kwargs):
         self.labels = []
@@ -478,6 +540,144 @@ class TextPlotterMixin:
 
             if is_final_attempt:
                 return None
+
+    def _text_line(
+        self,
+        x,
+        y,
+        labels,
+        collision_handler: CollisionHandler,
+        min_spacing=None,
+        prefer_center=True,
+        curvature_threshold=0.8,
+        **kwargs,
+    ):
+        """
+        Plot multiple labels on the smoothest sections of the line.
+
+        Args:
+            x, y: line coordinates
+            labels: list of label strings to plot
+            min_spacing: minimum spacing between labels (as fraction of line length)
+                        If None, uses 1/(n_labels+1)
+            prefer_center: if True, place labels at center of smooth sections
+            curvature_threshold: threshold for determining smooth sections
+
+        Returns:
+            List of indices where labels were placed
+        """
+
+        # TODO : 
+        # - add collision handling
+        # - make extra positions more intelligent (e.g. find position far from already selected)
+
+        n_labels = len(labels)
+
+        xy = list(zip(x, y))
+
+        data_xy = [self._proj.transform_point(_x, _y, self._crs) for _x, _y in xy]
+        display_xy = self.ax.transData.transform(data_xy)
+
+        display_x, display_y = zip(*display_xy)
+        x, y = zip(*data_xy)
+        
+        if min_spacing is None:
+            min_spacing = 1.0 / (n_labels + 1)
+
+        min_distance = int(min_spacing * len(x))
+
+        # Find all smooth sections
+        smooth_sections = find_smooth_sections(
+            display_x, display_y, min_length=1, curvature_threshold=curvature_threshold
+        )
+        print("SMOOTH = ", len(smooth_sections))
+
+        # Select top N sections, ensuring they don't overlap
+        selected_positions = []
+        used_sections = []
+
+        for section_start, section_end, score in smooth_sections:
+            # Calculate center of this section
+            if prefer_center:
+                section_center = (section_start + section_end) // 2
+            else:
+                section_center = section_start
+
+            # Check if this section is too close to already selected positions
+            too_close = False
+            for pos in selected_positions:
+                if abs(section_center - pos) < min_distance:
+                    too_close = True
+                    break
+
+            if not too_close:
+                selected_positions.append(section_center)
+                used_sections.append((section_start, section_end, score))
+
+                # if len(selected_positions) >= n_labels:
+                #     break
+
+        print("SELECTED = ", len(selected_positions))
+
+        # If we don't have enough positions, add more based on spacing
+        if len(selected_positions) < n_labels:
+            # Fall back to evenly spaced positions
+
+            # TODO : this should pick farthest
+            for i in range(len(selected_positions), n_labels):
+                pos = int((i + 1) * len(x) / (n_labels + 1))
+                selected_positions.append(pos)
+
+        chunk_size = len(x) // 4
+        evenly_spaced = [i for i in range(chunk_size, len(x), chunk_size)]
+        # Sort positions by x coordinate for consistent ordering
+        selected_positions.sort()
+
+        selected_positions.extend(evenly_spaced)
+
+        print("SELECTED = ", len(selected_positions))
+        print(selected_positions)
+
+        plotted_label_count = 0
+
+        # Plot labels at selected positions
+        label_positions = []
+        for i, (pos, label) in enumerate(zip(selected_positions[:n_labels], labels)):
+            idx = max(0, min(pos, len(x) - 2))
+
+            x_pos = x[idx]
+            y_pos = y[idx]
+
+            # calculate angle in display coordinates
+            points_data = np.array([[x[idx], y[idx]], [x[idx + 1], y[idx + 1]]])
+            points_display = self.ax.transData.transform(points_data)
+            dx_display = points_display[1, 0] - points_display[0, 0]
+            dy_display = points_display[1, 1] - points_display[0, 1]
+            angle = np.degrees(np.arctan2(dy_display, dx_display))
+
+            # Keep text upright
+            if angle > 90:
+                angle -= 180
+            elif angle < -90:
+                angle += 180
+
+            kwargs.pop("ha", None)
+            kwargs.pop("va", None)
+            kwargs.pop("transform", None) # we're plotting in display coords
+
+            self.ax.text(
+                x_pos,
+                y_pos,
+                label,
+                rotation=angle,
+                ha="center",
+                va="center",
+                **kwargs,
+            )
+
+            label_positions.append(idx)
+
+        return label_positions
 
     @use_style(LabelStyle)
     def text(

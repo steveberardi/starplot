@@ -31,6 +31,7 @@ from starplot.styles import (
     PathStyle,
     GradientDirection,
 )
+from starplot.profile import profile
 
 
 class GalaxyPlot(
@@ -180,6 +181,7 @@ class GalaxyPlot(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
 
+    @profile
     @use_style(PathStyle, "galactic_equator")
     def galactic_equator(
         self,
@@ -206,25 +208,12 @@ class GalaxyPlot(
 
         radec = list(zip(ra_values, dec_values))
 
-        self.line(
-            style=style.line,
+        self.line_label(
+            label=label,
+            collision_handler=collision_handler or self.collision_handler,
+            style=style,
             coordinates=radec,
         )
-
-        if not label:
-            return
-
-        label_spacing = int(len(radec) / 4)
-
-        for ra, dec in radec[label_spacing::label_spacing]:
-            self.text(
-                label,
-                ra,
-                dec,
-                style.label,
-                collision_handler=collision_handler or self.collision_handler,
-                gid="galactic-equator-label",
-            )
 
     @use_style(PathStyle, "gridlines")
     def gridlines(

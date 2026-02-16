@@ -895,6 +895,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
                 style=style,
             )
 
+    @profile
     @use_style(PathStyle, "ecliptic")
     def ecliptic(
         self,
@@ -922,6 +923,16 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             if self.in_bounds(ra * 15, dec):
                 inbounds.append((ra * 15, dec))
 
+        coords = [(ra * 15, dec) for ra, dec in ecliptic.RA_DECS]
+
+        self.line_label(
+            style=style,
+            label=label.upper(),
+            collision_handler=collision_handler or self.collision_handler,
+            coordinates=coords,
+        )
+        return
+
         self.ax.plot(
             x,
             y,
@@ -945,6 +956,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
                     gid="ecliptic-label",
                 )
 
+    @profile
     @use_style(PathStyle, "celestial_equator")
     def celestial_equator(
         self,
@@ -960,12 +972,20 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             label: How the celestial equator will be labeled on the plot
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
+        label = translate(label, self.language)
+        coords = [(ra, 0) for ra in range(0, 361)]
+        coords.reverse() # TODO : solve this on the text_line function instead
+        self.line_label(
+            style=style,
+            label=label.upper(),
+            collision_handler=collision_handler or self.collision_handler,
+            coordinates=coords,
+            gid="celestial-equator",
+        )
+        return
+    
         x = []
         y = []
-
-        # TODO : handle wrapping
-
-        label = translate(label, self.language)
 
         for ra in range(25):
             x0, y0 = self._prepare_coords(ra * 15, 0)
@@ -992,3 +1012,68 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
                     collision_handler=collision_handler or self.collision_handler,
                     gid="celestial-equator-label",
                 )
+
+    @use_style(PathStyle)
+    def line_label(
+        self,
+        style: PathStyle,
+        label: str = None,
+        collision_handler: CollisionHandler = None,
+        num_labels: int = 2,
+        coordinates: list[tuple[float, float]] = None,
+        geometry: LineString = None,
+        **kwargs,
+    ):
+        """Plots a line, with optional labels. Either coordinates OR geometry must be specified.
+
+        Args:
+            style: Style of the line
+            label: Label for the line
+            num_labels: Number of labels to plot along the line
+            coordinates: List of coordinates, e.g. `[(ra, dec), (ra, dec)]`
+            geometry: A shapely LineString. If this value is passed, then the `coordinates` kwarg will be ignored.
+            
+        """
+
+        if coordinates is None and geometry is None:
+            raise ValueError("Must pass coordinates or geometry when plotting lines.")
+
+        
+        coords = geometry.coords if geometry is not None else coordinates
+        prepared_coords = [self._prepare_coords(*p) for p in coords]
+        x, y = zip(*prepared_coords)
+
+        gid = kwargs.get('gid') or "line"
+            
+        self.ax.plot(
+            x,
+            y,
+            clip_on=True,
+            clip_path=self._background_clip_path,
+            dash_capstyle=style.line.dash_capstyle,
+            gid=gid,
+            **style.line.matplot_kwargs(self.scale),
+            **self._plot_kwargs(),
+        )
+
+        if not label:
+            return
+        
+        prepared_coords = [(x, y) for x, y in prepared_coords if self._in_bounds_xy(x, y)]
+
+        if not prepared_coords:
+            return
+        
+        x, y = zip(*prepared_coords)
+
+
+        self._text_line(
+            x,
+            y,
+            [label] * num_labels,
+            collision_handler=collision_handler or self.collision_handler,
+            min_spacing=0.75,
+            **style.label.matplot_kwargs(self.scale),
+            **self._plot_kwargs(),
+            clip_path=self._background_clip_path,
+        )
