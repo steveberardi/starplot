@@ -47,7 +47,6 @@ class GalaxyPlot(
     """Creates a new galaxy plot.
 
     Args:
-
         center_lon: Central galactic longitude of the Mollweide projection
         observer: Observer instance which specifies a time and place. Defaults to `Observer()`
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
@@ -127,11 +126,7 @@ class GalaxyPlot(
     def _prepare_star_coords(self, df, limit_by_altaz=True):
         stars_position = self.observe(SkyfieldStar.from_dataframe(df))
         lat, lon, _ = stars_position.frame_latlon(galactic_frame)
-
-        df["x"], df["y"] = (
-            lon.degrees,
-            lat.degrees,
-        )
+        df["x"], df["y"] = (lon.degrees, lat.degrees)
         return df
 
     def _plot_kwargs(self) -> dict:
