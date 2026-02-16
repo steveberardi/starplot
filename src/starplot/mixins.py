@@ -23,30 +23,35 @@ class ExtentMaskMixin:
                 ]
             )
 
-        if self.ra_max <= 360:
+        ra_min = self.ra_min
+        ra_max = self.ra_max
+        dec_min = self.dec_min
+        dec_max = self.dec_max
+
+        if ra_max <= 360:
             coords = [
-                [self.ra_min, self.dec_min],
-                [self.ra_max, self.dec_min],
-                [self.ra_max, self.dec_max],
-                [self.ra_min, self.dec_max],
-                [self.ra_min, self.dec_min],
+                [ra_min, dec_min],
+                [ra_max, dec_min],
+                [ra_max, dec_max],
+                [ra_min, dec_max],
+                [ra_min, dec_min],
             ]
             return Polygon(coords)
 
         else:
             coords_1 = [
-                [self.ra_min, self.dec_min],
-                [360, self.dec_min],
-                [360, self.dec_max],
-                [self.ra_min, self.dec_max],
-                [self.ra_min, self.dec_min],
+                [ra_min, dec_min],
+                [360, dec_min],
+                [360, dec_max],
+                [ra_min, dec_max],
+                [ra_min, dec_min],
             ]
             coords_2 = [
-                [0, self.dec_min],
-                [(self.ra_max - 360), self.dec_min],
-                [(self.ra_max - 360), self.dec_max],
-                [0, self.dec_max],
-                [0, self.dec_min],
+                [0, dec_min],
+                [(ra_max - 360), dec_min],
+                [(ra_max - 360), dec_max],
+                [0, dec_max],
+                [0, dec_min],
             ]
 
             return MultiPolygon(

@@ -137,7 +137,7 @@ class TextPlotterMixin:
         return not self._clip_path_polygon.contains(box(*bbox))
 
     def _get_label_bbox(self, label: Annotation) -> BBox:
-        self.fig.draw_without_rendering()
+        # self.fig.draw_without_rendering() # maybe dont need this line after all?
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
         result = (
             extent.xmin,

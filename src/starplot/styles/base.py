@@ -1130,7 +1130,6 @@ class PlotStyle(BaseStyle):
     )
     """Styling for gridlines (including Right Ascension / Declination labels). *Only applies to map plots*."""
 
-    # Ecliptic
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(
             color="#777",
@@ -1149,7 +1148,6 @@ class PlotStyle(BaseStyle):
     )
     """Styling for the Ecliptic"""
 
-    # Celestial Equator
     celestial_equator: PathStyle = PathStyle(
         line=LineStyle(
             color="#999",
@@ -1167,6 +1165,24 @@ class PlotStyle(BaseStyle):
         ),
     )
     """Styling for the Celestial Equator"""
+
+    galactic_equator: PathStyle = PathStyle(
+        line=LineStyle(
+            color="#999",
+            width=3,
+            style=LineStyleEnum.SOLID,
+            alpha=0.65,
+            zorder=ZOrderEnum.LAYER_3,
+        ),
+        label=LabelStyle(
+            font_size=18,
+            font_color="#7c7c7c",
+            font_weight=FontWeightEnum.NORMAL,
+            font_alpha=1,
+            zorder=ZOrderEnum.LAYER_3,
+        ),
+    )
+    """Styling for the Galactic Equator"""
 
     horizon: PathStyle = PathStyle(
         line=LineStyle(

@@ -173,6 +173,9 @@ class MapPlot(
         ]
 
     def _adjust_radec_minmax(self):
+        if self._is_global_extent():
+            return
+
         # adjust declination to match extent
         extent = self.ax.get_extent(crs=self._plate_carree)
         self.dec_min = extent[2]
