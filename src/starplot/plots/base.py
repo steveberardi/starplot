@@ -785,7 +785,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         radius_degrees: float,
         style: PolygonStyle,
         dark_side_color: str,
-        num_pts: int = 100,
+        num_pts: int = 200,
     ):
         """
         Plots the (approximate) moon phase by drawing two half circles and one ellipse in the center,
