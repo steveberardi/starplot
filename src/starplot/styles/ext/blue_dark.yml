@@ -7,6 +7,12 @@ border_bg_color: hsl(209, 50%, 20%)
 border_font_color: hsl(209, 56%, 86%)
 border_line_color: hsl(209, 38%, 50%)
 
+title:
+  font_color: hsl(209, 56%, 86%)
+bayer_labels:
+  font_alpha: 0.8
+  font_color: hsl(209, 53%, 82%)
+
 horizon:
   line:
     color: hsl(209, 60%, 13%)
@@ -20,20 +26,18 @@ zenith:
   label:
     font_color: hsl(209, 20%, 75%)
 
-title:
-  font_color: hsl(209, 56%, 86%)
-bayer_labels:
-  font_alpha: 0.8
-  font_color: hsl(209, 53%, 82%)
+# Lines
 celestial_equator:
   label:
     font_color: hsl(209, 30%, 80%)
+    border_color: hsl(209, 50%, 24%)
   line:
     color: hsl(209, 30%, 80%)
 
 ecliptic:
   label:
     font_color: '#e33b3b'
+    border_color: hsl(209, 50%, 24%)
   line:
     color: '#e33b3b'
     alpha: 1

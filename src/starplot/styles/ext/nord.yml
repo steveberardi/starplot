@@ -6,6 +6,9 @@ border_bg_color: '#2e3440'
 border_font_color: '#a3be8c'
 border_line_color: '#a3be8c'
 
+title:
+  font_color: '#a3be8c'
+
 horizon:
   line:
     color: '#2e3440'
@@ -19,13 +22,19 @@ zenith:
   label:
     font_color: '#D99CBA'
 
-title:
-  font_color: '#a3be8c'
 celestial_equator:
   label:
     font_color: '#77A67F'
+    border_color: '#4c566a'
   line:
     color: '#77A67F'
+
+ecliptic:
+  label:
+    font_color: '#D99CBA'
+    border_color: '#4c566a'
+  line:
+    color: '#D99CBA'
 
 # Constellations
 constellation_labels:
@@ -100,11 +109,6 @@ dso_nonexistant: *DSO
 dso_unknown: *DSO
 dso_duplicate: *DSO
 
-ecliptic:
-  label:
-    font_color: '#D99CBA'
-  line:
-    color: '#D99CBA'
 gridlines:
   label:
     font_alpha: 0.8

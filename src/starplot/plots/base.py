@@ -902,6 +902,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         style: PathStyle = None,
         label: str = "ECLIPTIC",
         collision_handler: CollisionHandler = None,
+        num_labels: int = 2,
     ):
         """Plots the ecliptic
 
@@ -928,6 +929,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self.line_label(
             style=style,
             label=label.upper(),
+            num_labels=num_labels,
             collision_handler=collision_handler or self.collision_handler,
             coordinates=coords,
         )
@@ -963,6 +965,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         style: PathStyle = None,
         label: str = "CELESTIAL EQUATOR",
         collision_handler: CollisionHandler = None,
+        num_labels: int = 2,
     ):
         """
         Plots the celestial equator
@@ -974,16 +977,16 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         """
         label = translate(label, self.language)
         coords = [(ra, 0) for ra in range(0, 361)]
-        coords.reverse() # TODO : solve this on the text_line function instead
         self.line_label(
             style=style,
             label=label.upper(),
+            num_labels=num_labels,
             collision_handler=collision_handler or self.collision_handler,
             coordinates=coords,
             gid="celestial-equator",
         )
         return
-    
+
         x = []
         y = []
 
@@ -1032,19 +1035,18 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             num_labels: Number of labels to plot along the line
             coordinates: List of coordinates, e.g. `[(ra, dec), (ra, dec)]`
             geometry: A shapely LineString. If this value is passed, then the `coordinates` kwarg will be ignored.
-            
+
         """
 
         if coordinates is None and geometry is None:
             raise ValueError("Must pass coordinates or geometry when plotting lines.")
 
-        
         coords = geometry.coords if geometry is not None else coordinates
         prepared_coords = [self._prepare_coords(*p) for p in coords]
         x, y = zip(*prepared_coords)
 
-        gid = kwargs.get('gid') or "line"
-            
+        gid = kwargs.get("gid") or "line"
+
         self.ax.plot(
             x,
             y,
@@ -1058,22 +1060,25 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
 
         if not label:
             return
-        
-        prepared_coords = [(x, y) for x, y in prepared_coords if self._in_bounds_xy(x, y)]
+
+        prepared_coords = [
+            (x, y) for x, y in prepared_coords if self._in_bounds_xy(x, y)
+        ]
 
         if not prepared_coords:
             return
-        
-        x, y = zip(*prepared_coords)
 
+        x, y = zip(*prepared_coords)
 
         self._text_line(
             x,
             y,
-            [label] * num_labels,
+            label,
+            num_labels=num_labels,
             collision_handler=collision_handler or self.collision_handler,
-            min_spacing=0.75,
+            min_spacing=0.65,
             **style.label.matplot_kwargs(self.scale),
             **self._plot_kwargs(),
             clip_path=self._background_clip_path,
+            gid=gid,
         )

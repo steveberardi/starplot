@@ -99,6 +99,51 @@ class CollisionHandler:
         ]
 
 
+def sort_by_evenness_with_existing(
+    x, y, existing_positions, candidate_positions, n_new_labels
+):
+    """
+    Sort candidates considering both ideal spacing and existing label positions.
+    """
+    # Calculate what the spacing should be with all labels
+    total_labels = len(existing_positions) + n_new_labels
+
+    # For each candidate, calculate how it improves overall spacing
+    def calculate_spacing_quality(new_positions):
+        """
+        Calculate spacing quality metric.
+        Lower = better (more even spacing).
+        """
+        all_positions = sorted(existing_positions + list(new_positions))
+
+        # Calculate gaps between consecutive labels
+        gaps = [
+            all_positions[i + 1] - all_positions[i]
+            for i in range(len(all_positions) - 1)
+        ]
+
+        # Ideal gap
+        ideal_gap = len(x) / len(all_positions)
+
+        # Calculate variance from ideal gap
+        variance = sum((gap - ideal_gap) ** 2 for gap in gaps)
+
+        return variance
+
+    # Score each candidate based on how much it improves spacing
+    candidate_scores = []
+
+    for candidate in candidate_positions:
+        # Calculate quality if we add this candidate
+        score = calculate_spacing_quality([candidate])
+        candidate_scores.append((candidate, score))
+
+    # Sort by score (lower = better)
+    candidate_scores.sort(key=lambda x: x[1])
+
+    # Return just the positions
+    return [pos for pos, score in candidate_scores]
+
 
 def find_smooth_sections(x, y, min_length=5, curvature_threshold=0.1):
     """
@@ -157,8 +202,6 @@ def find_smooth_sections(x, y, min_length=5, curvature_threshold=0.1):
     smooth_sections.sort(key=lambda s: s[2], reverse=True)
 
     return smooth_sections if smooth_sections else [(0, len(x) - 1, 1.0)]
-
-
 
 
 class TextPlotterMixin:
@@ -545,8 +588,9 @@ class TextPlotterMixin:
         self,
         x,
         y,
-        labels,
-        collision_handler: CollisionHandler,
+        text: str,
+        num_labels: int = 2,
+        collision_handler: CollisionHandler = None,
         min_spacing=None,
         prefer_center=True,
         curvature_threshold=0.8,
@@ -567,30 +611,26 @@ class TextPlotterMixin:
             List of indices where labels were placed
         """
 
-        # TODO : 
-        # - add collision handling
-        # - make extra positions more intelligent (e.g. find position far from already selected)
-
-        n_labels = len(labels)
-
         xy = list(zip(x, y))
-
         data_xy = [self._proj.transform_point(_x, _y, self._crs) for _x, _y in xy]
         display_xy = self.ax.transData.transform(data_xy)
 
+        # sort coords by display x value
+        display_xy = display_xy[display_xy[:, 0].argsort()]
+
         display_x, display_y = zip(*display_xy)
         x, y = zip(*data_xy)
-        
-        if min_spacing is None:
-            min_spacing = 1.0 / (n_labels + 1)
 
-        min_distance = int(min_spacing * len(x))
+        if min_spacing is None:
+            min_spacing = 1.0 / (num_labels + 1)
+
+        min_distance = int(min_spacing * len(display_x))
 
         # Find all smooth sections
         smooth_sections = find_smooth_sections(
             display_x, display_y, min_length=1, curvature_threshold=curvature_threshold
         )
-        print("SMOOTH = ", len(smooth_sections))
+        # print("SMOOTH = ", len(smooth_sections))
 
         # Select top N sections, ensuring they don't overlap
         selected_positions = []
@@ -617,42 +657,45 @@ class TextPlotterMixin:
                 # if len(selected_positions) >= n_labels:
                 #     break
 
-        print("SELECTED = ", len(selected_positions))
+        # print("SELECTED = ", len(selected_positions))
 
+        # selected_positions = []
         # If we don't have enough positions, add more based on spacing
-        if len(selected_positions) < n_labels:
-            # Fall back to evenly spaced positions
+        # if len(selected_positions) < num_labels:
+        #     # Fall back to evenly spaced positions
+        #     for i in range(len(selected_positions), num_labels):
+        #         pos = int((i + 1) * len(display_x) / (num_labels + 1))
+        #         selected_positions.append(pos)
 
-            # TODO : this should pick farthest
-            for i in range(len(selected_positions), n_labels):
-                pos = int((i + 1) * len(x) / (n_labels + 1))
-                selected_positions.append(pos)
+        """
+        
+        1. create list of evenly spaced indices
+        2. try selected positions first
+        3. if not plotted number of labels, then try evenly spaced
+        4. sort evenly spaced by distance from plotted
+        """
 
-        chunk_size = len(x) // 4
-        evenly_spaced = [i for i in range(chunk_size, len(x), chunk_size)]
         # Sort positions by x coordinate for consistent ordering
-        selected_positions.sort()
+        # selected_positions.sort()
 
-        selected_positions.extend(evenly_spaced)
+        # chunk_size = max(1, len(display_x) // (num_labels + 1))
+        # selected_positions = [i for i in range(chunk_size, len(display_x) - chunk_size, chunk_size)]
 
-        print("SELECTED = ", len(selected_positions))
-        print(selected_positions)
+        # selected_positions = []
 
-        plotted_label_count = 0
+        attempts = 0
+        plotted_positions = []
 
-        # Plot labels at selected positions
-        label_positions = []
-        for i, (pos, label) in enumerate(zip(selected_positions[:n_labels], labels)):
-            idx = max(0, min(pos, len(x) - 2))
+        kwargs.pop("ha", None)
+        kwargs.pop("va", None)
+        kwargs.pop("transform", None)  # we're plotting in axes coords
 
-            x_pos = x[idx]
-            y_pos = y[idx]
-
+        def plot_label(x0, y0, x1, y1, text):
             # calculate angle in display coordinates
-            points_data = np.array([[x[idx], y[idx]], [x[idx + 1], y[idx + 1]]])
-            points_display = self.ax.transData.transform(points_data)
-            dx_display = points_display[1, 0] - points_display[0, 0]
-            dy_display = points_display[1, 1] - points_display[0, 1]
+            # points_data = np.array([[x0, y0], [x1, y1]])
+            # points_display = self.ax.transData.transform(points_data)
+            dx_display = x1 - x0
+            dy_display = y1 - y0
             angle = np.degrees(np.arctan2(dy_display, dx_display))
 
             # Keep text upright
@@ -661,23 +704,115 @@ class TextPlotterMixin:
             elif angle < -90:
                 angle += 180
 
-            kwargs.pop("ha", None)
-            kwargs.pop("va", None)
-            kwargs.pop("transform", None) # we're plotting in display coords
+            axes_coords = self.ax.transAxes.inverted().transform([(x0, y0)])
+            x_axes, y_axes = axes_coords[0]
 
-            self.ax.text(
-                x_pos,
-                y_pos,
-                label,
+            return self.ax.text(
+                x_axes,
+                y_axes,
+                text,
                 rotation=angle,
                 ha="center",
                 va="center",
+                transform=self.ax.transAxes,
                 **kwargs,
             )
 
-            label_positions.append(idx)
+        for pos in selected_positions:
+            attempts += 1
 
-        return label_positions
+            idx = max(0, min(pos, len(display_x) - 2))
+            x0 = display_x[idx]
+            y0 = display_y[idx]
+            x1 = display_x[idx + 1]
+            y1 = display_y[idx + 1]
+
+            label = plot_label(x0, y0, x1, y1, text)
+            bbox = self._get_label_bbox(label)
+
+            if bbox is None:
+                continue
+
+            is_open = self._is_open_space(
+                bbox,
+                padding=0,
+                allow_clipped=collision_handler.allow_clipped,
+                allow_constellation_collisions=collision_handler.allow_constellation_line_collisions,
+                allow_marker_collisions=collision_handler.allow_marker_collisions,
+                allow_label_collisions=collision_handler.allow_label_collisions,
+            )
+            is_final_attempt = attempts == collision_handler.attempts
+
+            if is_open or (collision_handler.plot_on_fail and is_final_attempt):
+                self._add_label_to_rtree(label, bbox=bbox)
+                plotted_positions.append(idx)
+                if self.debug_text and label:
+                    self._debug_bbox(bbox, color="red", width=1)
+
+            elif label is not None:
+                label.remove()
+
+            if is_final_attempt or len(plotted_positions) == num_labels:
+                return
+
+        # find and try more positions
+        chunk_size = max(1, len(display_x) // 10)
+        evenly_spaced = [
+            i for i in range(chunk_size, len(display_x) - chunk_size, chunk_size)
+        ]
+        evenly_spaced = evenly_spaced[1:-1]
+
+        # print(chunk_size, [int(display_x[i]) for i in plotted_positions], [int(display_x[i]) for i in more_positions])
+
+        while (
+            len(plotted_positions) < num_labels
+            and attempts < collision_handler.attempts
+            and len(evenly_spaced) > 0
+        ):
+            attempts += 1
+
+            if plotted_positions:
+                evenly_spaced = sort_by_evenness_with_existing(
+                    display_x,
+                    display_y,
+                    plotted_positions,
+                    evenly_spaced,
+                    len(evenly_spaced),
+                )
+
+            pos = evenly_spaced.pop(0)
+
+            idx = max(0, min(pos, len(display_x) - 2))
+            x0 = display_x[idx]
+            y0 = display_y[idx]
+            x1 = display_x[idx + 1]
+            y1 = display_y[idx + 1]
+
+            label = plot_label(x0, y0, x1, y1, text)
+            bbox = self._get_label_bbox(label)
+
+            if bbox is None:
+                continue
+
+            is_open = self._is_open_space(
+                bbox,
+                padding=0,
+                allow_clipped=collision_handler.allow_clipped,
+                allow_constellation_collisions=collision_handler.allow_constellation_line_collisions,
+                allow_marker_collisions=collision_handler.allow_marker_collisions,
+                allow_label_collisions=collision_handler.allow_label_collisions,
+            )
+            is_final_attempt = attempts == collision_handler.attempts
+
+            if is_open or (collision_handler.plot_on_fail and is_final_attempt):
+                self._add_label_to_rtree(label, bbox=bbox)
+                plotted_positions.append(idx)
+
+            elif label is not None:
+                label.remove()
+
+            if is_final_attempt or len(plotted_positions) == num_labels:
+                return
 
     @use_style(LabelStyle)
     def text(
