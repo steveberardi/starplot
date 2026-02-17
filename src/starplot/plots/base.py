@@ -793,6 +793,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         """
         illuminated_color = style.fill_color
 
+        ellipse_b_radius_degrees = np.abs(radius_degrees * (2 * self._objects.moon.illumination - 1))
+
         left = style.copy()
         right = style.copy()
         middle = style.copy()
@@ -859,7 +861,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self.ellipse(
             center,
             height_degrees=radius_degrees * 2,
-            width_degrees=radius_degrees,
+            width_degrees=ellipse_b_radius_degrees * 2,
+            num_pts=num_pts,
             style=middle,
             gid="moon-marker",
         )
