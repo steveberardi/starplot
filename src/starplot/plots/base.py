@@ -785,13 +785,15 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         radius_degrees: float,
         style: PolygonStyle,
         dark_side_color: str,
-        num_pts: int = 100,
+        num_pts: int = 200,
     ):
         """
         Plots the (approximate) moon phase by drawing two half circles and one ellipse in the center,
         and then determining the color of each of the three shapes by the moon phase.
         """
         illuminated_color = style.fill_color
+
+        ellipse_b_radius_degrees = np.abs(radius_degrees * (2 * self._objects.moon.illumination - 1))
 
         left = style.copy()
         right = style.copy()
@@ -859,7 +861,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self.ellipse(
             center,
             height_degrees=radius_degrees * 2,
-            width_degrees=radius_degrees,
+            width_degrees=ellipse_b_radius_degrees * 2,
+            num_pts=num_pts,
             style=middle,
             gid="moon-marker",
         )
