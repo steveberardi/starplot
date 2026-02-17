@@ -595,20 +595,22 @@ class TextPlotterMixin:
         prefer_center=True,
         curvature_threshold=0.8,
         **kwargs,
-    ):
+    ) -> None:
         """
-        Plot multiple labels on the smoothest sections of the line.
+        Plots text labels along a line:
+
+        - Finds smoothest sections and tries those first
+        - Falls back to evenly spaced labels (based on already plotted labels)
 
         Args:
-            x, y: line coordinates
-            labels: list of label strings to plot
-            min_spacing: minimum spacing between labels (as fraction of line length)
-                        If None, uses 1/(n_labels+1)
+            x, y: line data coordinates
+            text: text to plot
+            num_labels: Number of labels to plot
+            collision_handler: Collision handler to use
+            min_spacing: minimum spacing between labels (as fraction of line length). If None, uses 1/(n_labels+1)
             prefer_center: if True, place labels at center of smooth sections
             curvature_threshold: threshold for determining smooth sections
 
-        Returns:
-            List of indices where labels were placed
         """
 
         xy = list(zip(x, y))
@@ -630,7 +632,6 @@ class TextPlotterMixin:
         smooth_sections = find_smooth_sections(
             display_x, display_y, min_length=1, curvature_threshold=curvature_threshold
         )
-        # print("SMOOTH = ", len(smooth_sections))
 
         # Select top N sections, ensuring they don't overlap
         selected_positions = []
@@ -654,35 +655,6 @@ class TextPlotterMixin:
                 selected_positions.append(section_center)
                 used_sections.append((section_start, section_end, score))
 
-                # if len(selected_positions) >= n_labels:
-                #     break
-
-        # print("SELECTED = ", len(selected_positions))
-
-        # selected_positions = []
-        # If we don't have enough positions, add more based on spacing
-        # if len(selected_positions) < num_labels:
-        #     # Fall back to evenly spaced positions
-        #     for i in range(len(selected_positions), num_labels):
-        #         pos = int((i + 1) * len(display_x) / (num_labels + 1))
-        #         selected_positions.append(pos)
-
-        """
-        
-        1. create list of evenly spaced indices
-        2. try selected positions first
-        3. if not plotted number of labels, then try evenly spaced
-        4. sort evenly spaced by distance from plotted
-        """
-
-        # Sort positions by x coordinate for consistent ordering
-        # selected_positions.sort()
-
-        # chunk_size = max(1, len(display_x) // (num_labels + 1))
-        # selected_positions = [i for i in range(chunk_size, len(display_x) - chunk_size, chunk_size)]
-
-        # selected_positions = []
-
         attempts = 0
         plotted_positions = []
 
@@ -692,13 +664,11 @@ class TextPlotterMixin:
 
         def plot_label(x0, y0, x1, y1, text):
             # calculate angle in display coordinates
-            # points_data = np.array([[x0, y0], [x1, y1]])
-            # points_display = self.ax.transData.transform(points_data)
             dx_display = x1 - x0
             dy_display = y1 - y0
             angle = np.degrees(np.arctan2(dy_display, dx_display))
 
-            # Keep text upright
+            # keep text upright
             if angle > 90:
                 angle -= 180
             elif angle < -90:
@@ -718,8 +688,30 @@ class TextPlotterMixin:
                 **kwargs,
             )
 
-        for pos in selected_positions:
+        chunk_size = max(1, len(display_x) // 10)
+        evenly_spaced = [
+            i for i in range(chunk_size, len(display_x) - chunk_size, chunk_size)
+        ]
+        evenly_spaced = evenly_spaced[1:-1]
+        positions = selected_positions + evenly_spaced
+
+        while (
+            len(plotted_positions) < num_labels
+            and attempts < collision_handler.attempts
+            and len(positions) > 0
+        ):
             attempts += 1
+
+            if plotted_positions:
+                positions = sort_by_evenness_with_existing(
+                    display_x,
+                    display_y,
+                    plotted_positions,
+                    positions,
+                    len(positions),
+                )
+
+            pos = positions.pop(0)
 
             idx = max(0, min(pos, len(display_x) - 2))
             x0 = display_x[idx]
@@ -748,65 +740,6 @@ class TextPlotterMixin:
                 plotted_positions.append(idx)
                 if self.debug_text and label:
                     self._debug_bbox(bbox, color="red", width=1)
-
-            elif label is not None:
-                label.remove()
-
-            if is_final_attempt or len(plotted_positions) == num_labels:
-                return
-
-        # find and try more positions
-        chunk_size = max(1, len(display_x) // 10)
-        evenly_spaced = [
-            i for i in range(chunk_size, len(display_x) - chunk_size, chunk_size)
-        ]
-        evenly_spaced = evenly_spaced[1:-1]
-
-        # print(chunk_size, [int(display_x[i]) for i in plotted_positions], [int(display_x[i]) for i in more_positions])
-
-        while (
-            len(plotted_positions) < num_labels
-            and attempts < collision_handler.attempts
-            and len(evenly_spaced) > 0
-        ):
-            attempts += 1
-
-            if plotted_positions:
-                evenly_spaced = sort_by_evenness_with_existing(
-                    display_x,
-                    display_y,
-                    plotted_positions,
-                    evenly_spaced,
-                    len(evenly_spaced),
-                )
-
-            pos = evenly_spaced.pop(0)
-
-            idx = max(0, min(pos, len(display_x) - 2))
-            x0 = display_x[idx]
-            y0 = display_y[idx]
-            x1 = display_x[idx + 1]
-            y1 = display_y[idx + 1]
-
-            label = plot_label(x0, y0, x1, y1, text)
-            bbox = self._get_label_bbox(label)
-
-            if bbox is None:
-                continue
-
-            is_open = self._is_open_space(
-                bbox,
-                padding=0,
-                allow_clipped=collision_handler.allow_clipped,
-                allow_constellation_collisions=collision_handler.allow_constellation_line_collisions,
-                allow_marker_collisions=collision_handler.allow_marker_collisions,
-                allow_label_collisions=collision_handler.allow_label_collisions,
-            )
-            is_final_attempt = attempts == collision_handler.attempts
-
-            if is_open or (collision_handler.plot_on_fail and is_final_attempt):
-                self._add_label_to_rtree(label, bbox=bbox)
-                plotted_positions.append(idx)
 
             elif label is not None:
                 label.remove()

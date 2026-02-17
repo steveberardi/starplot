@@ -901,14 +901,15 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self,
         style: PathStyle = None,
         label: str = "ECLIPTIC",
-        collision_handler: CollisionHandler = None,
         num_labels: int = 2,
+        collision_handler: CollisionHandler = None,
     ):
         """Plots the ecliptic
 
         Args:
             style: Styling of the ecliptic. If None, then the plot's style will be used
             label: How the ecliptic will be labeled on the plot
+            num_labels: Max number of labels to plot along the line
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         x = []
@@ -933,30 +934,6 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             collision_handler=collision_handler or self.collision_handler,
             coordinates=coords,
         )
-        return
-
-        self.ax.plot(
-            x,
-            y,
-            dash_capstyle=style.line.dash_capstyle,
-            clip_path=self._background_clip_path,
-            gid="ecliptic-line",
-            **style.line.matplot_kwargs(self.scale),
-            **self._plot_kwargs(),
-        )
-
-        if label and len(inbounds) > 4:
-            label_spacing = int(len(inbounds) / 4)
-
-            for ra, dec in [inbounds[label_spacing], inbounds[label_spacing * 2]]:
-                self.text(
-                    label,
-                    ra,
-                    dec,
-                    style.label,
-                    collision_handler=collision_handler or self.collision_handler,
-                    gid="ecliptic-label",
-                )
 
     @profile
     @use_style(PathStyle, "celestial_equator")
@@ -964,8 +941,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self,
         style: PathStyle = None,
         label: str = "CELESTIAL EQUATOR",
-        collision_handler: CollisionHandler = None,
         num_labels: int = 2,
+        collision_handler: CollisionHandler = None,
     ):
         """
         Plots the celestial equator
@@ -973,6 +950,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         Args:
             style: Styling of the celestial equator. If None, then the plot's style will be used
             label: How the celestial equator will be labeled on the plot
+            num_labels: Max number of labels to plot along the line
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         label = translate(label, self.language)
@@ -985,36 +963,6 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             coordinates=coords,
             gid="celestial-equator",
         )
-        return
-
-        x = []
-        y = []
-
-        for ra in range(25):
-            x0, y0 = self._prepare_coords(ra * 15, 0)
-            x.append(x0)
-            y.append(y0)
-
-        self.ax.plot(
-            x,
-            y,
-            clip_path=self._background_clip_path,
-            gid="celestial-equator-line",
-            **style.line.matplot_kwargs(self.scale),
-            **self._plot_kwargs(),
-        )
-
-        if label:
-            label_spacing = (self.ra_max - self.ra_min) / 3
-            for ra in np.arange(self.ra_min, self.ra_max, label_spacing):
-                self.text(
-                    label,
-                    ra,
-                    0.25,
-                    style.label,
-                    collision_handler=collision_handler or self.collision_handler,
-                    gid="celestial-equator-label",
-                )
 
     @use_style(PathStyle)
     def line_label(

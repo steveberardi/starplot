@@ -187,6 +187,7 @@ class GalaxyPlot(
         self,
         style: PathStyle = None,
         label: str = "GALACTIC EQUATOR",
+        num_labels: int = 2,
         collision_handler: CollisionHandler = None,
     ):
         """
@@ -195,6 +196,7 @@ class GalaxyPlot(
         Args:
             style: Styling of the galactic equator. If None, then the plot's style will be used
             label: How the galactic equator will be labeled on the plot
+            num_labels: Max number of labels to plot along the line
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         lons = np.array([ra for ra in range(0, 361)])  # galactic longitudes
@@ -210,6 +212,7 @@ class GalaxyPlot(
 
         self.line_label(
             label=label,
+            num_labels=num_labels,
             collision_handler=collision_handler or self.collision_handler,
             style=style,
             coordinates=radec,
