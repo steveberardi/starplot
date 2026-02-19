@@ -99,50 +99,48 @@ class CollisionHandler:
         ]
 
 
-def sort_by_evenness_with_existing(
-    x, y, existing_positions, candidate_positions, n_new_labels
-):
+def next_best_position(
+    plotted_positions: list[int],
+    available_positions: list[int],
+    num_labels: int,
+    num_positions: int,
+) -> int:
     """
-    Sort candidates considering both ideal spacing and existing label positions.
+    Returns the next best (evenly spaced) position based on distance from plotted positions
+
+    Assumes original positions are evenly spaced on line
+
+    Args:
+        plotted_positions: List of indices of plotted label positions on the line
+        available_positions: List of available positions to plot labels
+        num_labels: Number of labels to be plotted on the line
+        num_positions: Original number of positions that were available
+
+    Returns:
+        Next best (evenly spaced) position (the index from original list of coordinates)
     """
-    # Calculate what the spacing should be with all labels
-    total_labels = len(existing_positions) + n_new_labels
 
-    # For each candidate, calculate how it improves overall spacing
-    def calculate_spacing_quality(new_positions):
-        """
-        Calculate spacing quality metric.
-        Lower = better (more even spacing).
-        """
-        all_positions = sorted(existing_positions + list(new_positions))
+    if len(plotted_positions) == 0:
+        return available_positions[len(available_positions) // (num_labels + 1)]
 
-        # Calculate gaps between consecutive labels
-        gaps = [
-            all_positions[i + 1] - all_positions[i]
-            for i in range(len(all_positions) - 1)
-        ]
+    positions = [0] + sorted(plotted_positions) + [num_positions - 1]
+    diffs = [positions[i] - positions[i - 1] for i in range(1, len(positions))]
+    avg = sum(diffs) / len(diffs)
 
-        # Ideal gap
-        ideal_gap = len(x) / len(all_positions)
+    # filter out available positions that are too close to plotted positions
+    # (i.e. closer than average distance)
+    possible = []
+    for p in available_positions:
+        min_distance = min([abs(plotted - p) for plotted in plotted_positions])
+        if min_distance >= avg * 0.9:
+            possible.append((min_distance, p))
 
-        # Calculate variance from ideal gap
-        variance = sum((gap - ideal_gap) ** 2 for gap in gaps)
+    if not possible:
+        return None
 
-        return variance
+    possible.sort()
 
-    # Score each candidate based on how much it improves spacing
-    candidate_scores = []
-
-    for candidate in candidate_positions:
-        # Calculate quality if we add this candidate
-        score = calculate_spacing_quality([candidate])
-        candidate_scores.append((candidate, score))
-
-    # Sort by score (lower = better)
-    candidate_scores.sort(key=lambda x: x[1])
-
-    # Return just the positions
-    return [pos for pos, score in candidate_scores]
+    return possible[0][1]
 
 
 def find_smooth_sections(x, y, min_length=5, curvature_threshold=0.1):
@@ -613,13 +611,16 @@ class TextPlotterMixin:
 
         """
 
+        kwargs.pop("ha", None)  # alignment is forced to center of line
+        kwargs.pop("va", None)
+        kwargs.pop("transform", None)  # we'll plot in axes coords
+
         xy = list(zip(x, y))
         data_xy = [self._proj.transform_point(_x, _y, self._crs) for _x, _y in xy]
         display_xy = self.ax.transData.transform(data_xy)
 
         # sort coords by display x value
         display_xy = display_xy[display_xy[:, 0].argsort()]
-
         display_x, display_y = zip(*display_xy)
         x, y = zip(*data_xy)
 
@@ -634,7 +635,7 @@ class TextPlotterMixin:
         )
 
         # Select top N sections, ensuring they don't overlap
-        selected_positions = []
+        smooth_positions = []
         used_sections = []
 
         for section_start, section_end, score in smooth_sections:
@@ -646,21 +647,14 @@ class TextPlotterMixin:
 
             # Check if this section is too close to already selected positions
             too_close = False
-            for pos in selected_positions:
+            for pos in smooth_positions:
                 if abs(section_center - pos) < min_distance:
                     too_close = True
                     break
 
             if not too_close:
-                selected_positions.append(section_center)
+                smooth_positions.append(section_center)
                 used_sections.append((section_start, section_end, score))
-
-        attempts = 0
-        plotted_positions = []
-
-        kwargs.pop("ha", None)
-        kwargs.pop("va", None)
-        kwargs.pop("transform", None)  # we're plotting in axes coords
 
         def plot_label(x0, y0, x1, y1, text):
             # calculate angle in display coordinates
@@ -688,12 +682,12 @@ class TextPlotterMixin:
                 **kwargs,
             )
 
-        chunk_size = max(1, len(display_x) // 10)
-        evenly_spaced = [
-            i for i in range(chunk_size, len(display_x) - chunk_size, chunk_size)
+        offset = len(display_x) // 20  # offset from start/end of line
+        positions = [p for p in range(len(display_x)) if p not in smooth_positions][
+            offset : -1 * offset
         ]
-        evenly_spaced = evenly_spaced[1:-1]
-        positions = selected_positions + evenly_spaced
+        attempts = 0
+        plotted_positions = set()
 
         while (
             len(plotted_positions) < num_labels
@@ -702,25 +696,31 @@ class TextPlotterMixin:
         ):
             attempts += 1
 
-            if plotted_positions:
-                positions = sort_by_evenness_with_existing(
-                    display_x,
-                    display_y,
+            if smooth_positions:
+                pos = smooth_positions.pop()
+            else:
+                pos = next_best_position(
                     plotted_positions,
                     positions,
-                    len(positions),
+                    num_labels,
+                    len(display_x),
                 )
 
-            pos = positions.pop(0)
+            if pos is None:
+                return
+            if pos in positions:
+                positions.remove(pos)
 
-            idx = max(0, min(pos, len(display_x) - 2))
-            x0 = display_x[idx]
-            y0 = display_y[idx]
-            x1 = display_x[idx + 1]
-            y1 = display_y[idx + 1]
+            pos = max(0, min(pos, len(display_x) - 2))
+            x0 = display_x[pos]
+            y0 = display_y[pos]
+            x1 = display_x[pos + 1]
+            y1 = display_y[pos + 1]
 
             label = plot_label(x0, y0, x1, y1, text)
             bbox = self._get_label_bbox(label)
+
+            # TODO : find better bbox (that's rotated with text)
 
             if bbox is None:
                 continue
@@ -737,7 +737,7 @@ class TextPlotterMixin:
 
             if is_open or (collision_handler.plot_on_fail and is_final_attempt):
                 self._add_label_to_rtree(label, bbox=bbox)
-                plotted_positions.append(idx)
+                plotted_positions.add(pos)
                 if self.debug_text and label:
                     self._debug_bbox(bbox, color="red", width=1)
 
