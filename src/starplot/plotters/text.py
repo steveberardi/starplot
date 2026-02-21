@@ -610,6 +610,10 @@ class TextPlotterMixin:
             curvature_threshold: threshold for determining smooth sections
 
         """
+        collision_handler = CollisionHandler(
+            allow_constellation_line_collisions=True,
+            # allow_marker_collisions=True,
+        )
 
         kwargs.pop("ha", None)  # alignment is forced to center of line
         kwargs.pop("va", None)

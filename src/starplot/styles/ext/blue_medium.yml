@@ -84,12 +84,10 @@ zenith:
 dso_galaxy:
   marker:
     alpha: 1
-    # color: hsl(330, 80%, 85%)
-    # edge_color: hsl(330, 34%, 33%)
     color: hsl(330, 90%, 82%)
-    edge_color: hsl(330, 84%, 23%)
+    edge_color: hsl(330, 84%, 20%)
   label:
-    font_color: hsl(330, 34%, 33%)
+    font_color: hsl(330, 34%, 25%)
 
 dso_nebula: &DSO-NEB
   marker:

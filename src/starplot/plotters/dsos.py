@@ -265,7 +265,7 @@ class DsoPlotterMixin:
                             angle=angle or 0,
                         )
 
-                if label:
+                if label and self.in_bounds(ra, dec):
                     self.text(
                         label,
                         ra,

@@ -58,9 +58,9 @@ dso_galaxy:
   marker:
     alpha: 1
     color: hsl(330, 80%, 85%)
-    edge_color: hsl(330, 34%, 43%)
+    edge_color: hsl(330, 84%, 20%)
   label:
-    font_color: hsl(330, 34%, 43%)
+    font_color: hsl(330, 84%, 20%)
 
 dso_nebula: &DSO-NEB
   marker:
