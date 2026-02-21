@@ -143,7 +143,9 @@ def next_best_position(
     return possible[0][1]
 
 
-def find_smooth_sections(coordinates, min_length=2, curvature_threshold=0.1) -> list[tuple[int, int, float]]:
+def find_smooth_sections(
+    coordinates, min_length=2, curvature_threshold=0.1
+) -> list[tuple[int, int, float]]:
     """
     Find smooth sections of a (i.e. where curvature is low).
 
