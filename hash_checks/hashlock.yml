@@ -1,9 +1,9 @@
 horizon_base:
-  dhash: 8e869a8e868a82b08686ca8e869a92b08ec6c68e869ad270
+  dhash: 8e868a8e868a82b08686ce8e869a92b08ec6c68e869ad270
   filename: /starplot/hash_checks/data/horizon-base.png
   phash: c1843fd17e913b86
 horizon_gradient_background:
-  dhash: f1682072b2a6a294f1682272b2beaa94f168a2b2b29a9ad0
+  dhash: f1682072b2a6a294f1682672b2beaa94f168a6b2b29a9ad0
   filename: /starplot/hash_checks/data/horizon-gradient-background.png
   phash: 945e62c12bc56ef4
 horizon_north_celestial_pole:
@@ -51,11 +51,11 @@ map_moon_phase_waxing_crescent:
   filename: /starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b38ccc3333cccc33
 map_orion_base:
-  dhash: 18393b3e2d2f656819393b5e2e23656a5c19399e2e2b6568
+  dhash: 18393b3e2e2f656819393b5e2e23656a5c19399e2e2b6568
   filename: /starplot/hash_checks/data/map-orion-base.png
-  phash: bff9526495853194
+  phash: bff9526495843594
 map_orion_extra:
-  dhash: 181b397b2d2f6d6d5b1b195b29236d6d521b1b9a2b2b6d6d
+  dhash: 181b397b2d2f6d6d4b1b195b2b236d6d521b1b9a2b2b6d6d
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: bf716646859e9096
 map_plot_custom_clip_path_virgo:
@@ -75,13 +75,13 @@ map_stereo_base:
   filename: /starplot/hash_checks/data/map-stereo-north-base.png
   phash: 8a2f62d2949e4fb4
 map_with_planets:
-  dhash: 639104e68d5b323a6a9104e68d5b323a2a9105e68d5b323b
+  dhash: 639104e68d5b323a6b9104e68d5b323a2a9104e68d5b323b
   filename: /starplot/hash_checks/data/map-mercator-planets.png
   phash: e8429d89a43f5f52
 map_with_planets_gradient:
-  dhash: 956eba1972248544946efa1952248544846eaa155214b222
+  dhash: 946eba117224c544946efa195224c544846ea23d522cb222
   filename: /starplot/hash_checks/data/map-mercator-planets-gradient.png
-  phash: bd25e276db50a02d
+  phash: 9d2de276db50a02d
 map_wrapping:
   dhash: 0ee8c32d8b2947490ee8c32d8b2947490ee8c32d8b294749
   filename: /starplot/hash_checks/data/map-wrapping.png
@@ -147,7 +147,7 @@ optic_wrapping:
   filename: /starplot/hash_checks/data/optic-wrapping.png
   phash: d1066e1b792ef138
 zenith_base:
-  dhash: 71f8cc8e8ad4e87171f8cc868ad4e87171f8cc868ed4e871
+  dhash: 71f8cc8eaad4e87171f8cc868ad4e87171f8cc868ed4e871
   filename: /starplot/hash_checks/data/zenith-base.png
   phash: 90d50b7d2955645f
 zenith_chinese:

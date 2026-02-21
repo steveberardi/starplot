@@ -187,7 +187,7 @@ class GalaxyPlot(
         self,
         style: PathStyle = None,
         label: str = "GALACTIC EQUATOR",
-        num_labels: int = 2,
+        num_labels: int = 1,
         collision_handler: CollisionHandler = None,
     ):
         """

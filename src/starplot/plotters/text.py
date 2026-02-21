@@ -143,18 +143,20 @@ def next_best_position(
     return possible[0][1]
 
 
-def find_smooth_sections(x, y, min_length=5, curvature_threshold=0.1):
+def find_smooth_sections(coordinates, min_length=2, curvature_threshold=0.1) -> list[tuple[int, int, float]]:
     """
-    Find sections of the line where curvature is low (smooth).
+    Find smooth sections of a (i.e. where curvature is low).
 
     Args:
-        x, y: line coordinates
+        coordinates: line coordinates
         min_length: minimum number of points for a smooth section
         curvature_threshold: maximum curvature to consider "smooth"
 
     Returns:
         List of (start_idx, end_idx, smoothness_score) tuples
     """
+    x, y = zip(*coordinates)
+
     if len(x) < 3:
         return [(0, len(x) - 1, 1.0)]
 
@@ -587,10 +589,9 @@ class TextPlotterMixin:
         x,
         y,
         text: str,
-        num_labels: int = 2,
+        num_labels: int = 1,
         collision_handler: CollisionHandler = None,
         min_spacing=None,
-        prefer_center=True,
         curvature_threshold=0.8,
         **kwargs,
     ) -> None:
@@ -625,31 +626,20 @@ class TextPlotterMixin:
 
         # sort coords by display x value
         display_xy = display_xy[display_xy[:, 0].argsort()]
-        display_x, display_y = zip(*display_xy)
-        x, y = zip(*data_xy)
+        num_positions = len(display_xy)
 
         if min_spacing is None:
             min_spacing = 1.0 / (num_labels + 1)
 
-        min_distance = int(min_spacing * len(display_x))
-
-        # Find all smooth sections
+        min_distance = int(min_spacing * num_positions)
         smooth_sections = find_smooth_sections(
-            display_x, display_y, min_length=1, curvature_threshold=curvature_threshold
+            display_xy, min_length=2, curvature_threshold=curvature_threshold
         )
 
-        # Select top N sections, ensuring they don't overlap
         smooth_positions = []
-        used_sections = []
+        for section_start, section_end, _ in smooth_sections:
+            section_center = (section_start + section_end) // 2
 
-        for section_start, section_end, score in smooth_sections:
-            # Calculate center of this section
-            if prefer_center:
-                section_center = (section_start + section_end) // 2
-            else:
-                section_center = section_start
-
-            # Check if this section is too close to already selected positions
             too_close = False
             for pos in smooth_positions:
                 if abs(section_center - pos) < min_distance:
@@ -658,7 +648,6 @@ class TextPlotterMixin:
 
             if not too_close:
                 smooth_positions.append(section_center)
-                used_sections.append((section_start, section_end, score))
 
         def plot_label(x0, y0, x1, y1, text):
             # calculate angle in display coordinates
@@ -686,10 +675,9 @@ class TextPlotterMixin:
                 **kwargs,
             )
 
-        offset = len(display_x) // 20  # offset from start/end of line
-        positions = [p for p in range(len(display_x)) if p not in smooth_positions][
-            offset : -1 * offset
-        ]
+        offset = num_positions // 20  # offset from start/end of line
+        positions = [p for p in range(num_positions) if p not in smooth_positions]
+        positions = positions[offset : -1 * offset]
         attempts = 0
         plotted_positions = set()
 
@@ -704,10 +692,7 @@ class TextPlotterMixin:
                 pos = smooth_positions.pop()
             else:
                 pos = next_best_position(
-                    plotted_positions,
-                    positions,
-                    num_labels,
-                    len(display_x),
+                    plotted_positions, positions, num_labels, num_positions
                 )
 
             if pos is None:
@@ -715,12 +700,9 @@ class TextPlotterMixin:
             if pos in positions:
                 positions.remove(pos)
 
-            pos = max(0, min(pos, len(display_x) - 2))
-            x0 = display_x[pos]
-            y0 = display_y[pos]
-            x1 = display_x[pos + 1]
-            y1 = display_y[pos + 1]
-
+            pos = max(0, min(pos, num_positions - 2))
+            x0, y0 = display_xy[pos]
+            x1, y1 = display_xy[pos + 1]
             label = plot_label(x0, y0, x1, y1, text)
             bbox = self._get_label_bbox(label)
 

@@ -906,7 +906,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self,
         style: PathStyle = None,
         label: str = "ECLIPTIC",
-        num_labels: int = 2,
+        num_labels: int = 1,
         collision_handler: CollisionHandler = None,
     ):
         """Plots the ecliptic
@@ -946,7 +946,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self,
         style: PathStyle = None,
         label: str = "CELESTIAL EQUATOR",
-        num_labels: int = 2,
+        num_labels: int = 1,
         collision_handler: CollisionHandler = None,
     ):
         """
