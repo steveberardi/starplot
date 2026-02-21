@@ -276,7 +276,6 @@ def line_segment(start, end, step) -> list[tuple[float, float]]:
     return LineString([start, end]).segmentize(step).coords
 
 
-
 class BaseGeometry:
 
     """
@@ -285,12 +284,12 @@ class BaseGeometry:
     Two types of polygons needed:
     1. For intersection testing: needs to be split at zero and restricted to 0-360
     2. For plotting: needs to be extended past 360 if applicable
-    
+
     TODO:
 
         Functions
         - intersects
-        
+
         Properties
         - centroid
         - bbox
@@ -298,9 +297,7 @@ class BaseGeometry:
         - wkb
 
     """
-    def intersects(self):
-        """
-        
 
-        """
+    def intersects(self):
+        """ """
         pass
