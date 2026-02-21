@@ -49,9 +49,9 @@ class GalaxyPlot(
 
     Args:
         center_lon: Central galactic longitude of the Mollweide projection
-        observer: Observer instance which specifies a time and place. Defaults to `Observer()`
+        observer: Observer instance which specifies a time and place. Defaults to an observer at epoch J2000
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
-        style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
+        style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()` with the MAP extension
         resolution: Size (in pixels) of largest dimension of the map
         collision_handler: Default [CollisionHandler][starplot.CollisionHandler] for the plot that describes what to do on label collisions with other labels, markers, etc.
         scale: Scaling factor that will be applied to all relevant sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set scale to 2.
@@ -80,7 +80,7 @@ class GalaxyPlot(
         *args,
         **kwargs,
     ) -> "GalaxyPlot":
-        observer = observer or Observer()
+        observer = observer or Observer.at_epoch(2000)
         style = style or PlotStyle().extend(extensions.MAP)
 
         super().__init__(
