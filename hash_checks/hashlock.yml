@@ -95,7 +95,7 @@ optic_clipping:
   filename: /starplot/hash_checks/data/optic-clipping.png
   phash: 95687a872f9868f2
 optic_iss_moon_transit:
-  dhash: 70d0ceb0f088f47071d08eb0f48ad47171c48ab6b4aac471
+  dhash: 70d0ceb0f088f47071d08eb4f48ac47171c48ab6b4aac471
   filename: /starplot/hash_checks/data/optic-iss-moon-transit.png
   phash: c49d33624c9d3367
 optic_m45_binoculars:
@@ -121,13 +121,13 @@ optic_m45_scope_gradient:
 optic_moon_phase_full:
   dhash: 0e334d71714d330e0e334d71714d330e0e334d71714d330e
   filename: /starplot/hash_checks/data/optic-moon-phase-full.png
-  phash: ff63a06bc5268326
+  phash: ff63a062d5338626
 optic_moon_phase_new:
   dhash: 0814084d4d0814080814084d4d0814080814084d4d081408
   filename: /starplot/hash_checks/data/optic-moon-phase-new.png
-  phash: b333cccc3333998c
+  phash: b333cccc333389cc
 optic_moon_phase_waxing_crescent:
-  dhash: 0e3345495145330e0e3345495145330e0e3345495145330e
+  dhash: 0e334559514d330e0e334559514d330e0e334559514d330e
   filename: /starplot/hash_checks/data/optic-moon-phase-waxing-crescent.png
   phash: bb26e4999166c699
 optic_orion_nebula_refractor:
