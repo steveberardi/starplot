@@ -709,7 +709,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         Args:
             style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then the Moon's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
-            show_phase: If True, and if `true_size = True`, then the approximate phase of the moon will be illustrated. The dark side of the moon will be colored with the marker's `edge_color`.
+            show_phase: If True, and if `true_size = True`, then the phase of the moon will be illustrated. The dark side of the moon will be colored with the marker's `edge_color`.
             label: How the Moon will be labeled on the plot
             legend_label: How the Moon will be labeled in the legend
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
