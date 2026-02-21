@@ -11,7 +11,7 @@ from skyfield.api import wgs84
 import numpy as np
 
 from starplot.coordinates import CoordinateSystem
-from starplot import geod
+from starplot import geometry
 from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
@@ -265,12 +265,13 @@ class MapPlot(
         zenith = observer.from_altaz(alt_degrees=90, az_degrees=0)
         ra, dec, _ = zenith.radec()
 
-        points = geod.ellipse(
+        polygon = geometry.ellipse(
             center=(ra.hours * 15, dec.degrees),
             height_degrees=180,
             width_degrees=180,
             num_pts=100,
         )
+        points = list(zip(*polygon.exterior.coords.xy))
         x = []
         y = []
 

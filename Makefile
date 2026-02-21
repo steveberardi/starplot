@@ -35,7 +35,7 @@ format:
 	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)"
 
 test:
-	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
+	$(DOCKER_RUN) "python -m pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html ."
 
 check-hashes:
 	$(DOCKER_RUN) "python hash_checks/hashio.py check"
