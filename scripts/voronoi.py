@@ -10,7 +10,6 @@ from shapely import (
     delaunay_triangles,
     distance,
 )
-from pytz import timezone
 from matplotlib import patches
 from starplot import Star, DSO, Constellation
 from starplot.styles import PlotStyle, extensions, PolygonStyle

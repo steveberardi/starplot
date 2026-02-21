@@ -1,8 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 import pytest
-
-from pytz import timezone
 
 from starplot import _, DSO, Star, Constellation, Sun, Moon, Planet
 
@@ -103,7 +102,7 @@ class TestDSO:
 
 class TestMoon:
     def test_moon_get(self):
-        dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+        dt = datetime(2023, 8, 27, 23, 0, 0, 0, tzinfo=timezone.utc)
         m = Moon.get(dt)
         assert m.ra == pytest.approx(292.53617734161276)
         assert m.dec == pytest.approx(-26.96492167310071)
@@ -114,14 +113,14 @@ class TestMoon:
         assert m.illumination == pytest.approx(0.7553895183806317)
 
     def test_moon_get_new_moon(self):
-        dt = timezone("UTC").localize(datetime(2024, 4, 8, 12, 0, 0, 0))
+        dt = datetime(2024, 4, 8, 12, 0, 0, 0, tzinfo=timezone.utc)
         m = Moon.get(dt)
         assert m.phase_description == "New Moon"
         assert m.phase_angle == 356.2894192723546
         assert m.illumination == 0.020614337375807645
 
     def test_moon_get_full_moon(self):
-        dt = timezone("UTC").localize(datetime(2024, 4, 23, 14, 0, 0, 0))
+        dt = datetime(2024, 4, 23, 14, 0, 0, 0, tzinfo=timezone.utc)
         m = Moon.get(dt)
         assert m.phase_description == "Full Moon"
         assert m.phase_angle == 175.42641200608864
@@ -131,8 +130,8 @@ class TestMoon:
 class TestSolarEclipse:
     def test_total_solar_eclipse(self):
         # time of total eclipse in Cleveland, Ohio
-        eastern = timezone("US/Eastern")
-        dt = eastern.localize(datetime(2024, 4, 8, 15, 13, 47, 0))
+        eastern = ZoneInfo("US/Eastern")
+        dt = datetime(2024, 4, 8, 15, 13, 47, 0, tzinfo=eastern)
         lat = 41.482222
         lon = -81.669722
 
@@ -150,7 +149,7 @@ class TestSolarEclipse:
 
 class TestPlanet:
     def test_planet_get(self):
-        dt = timezone("UTC").localize(datetime(2024, 4, 7, 21, 0, 0, 0))
+        dt = datetime(2024, 4, 7, 21, 0, 0, 0, tzinfo=timezone.utc)
         jupiter = Planet.get("jupiter", dt)
         assert jupiter.ra == pytest.approx(46.29005575002272)
         assert jupiter.dec == pytest.approx(16.56207889273591)
@@ -158,6 +157,6 @@ class TestPlanet:
         assert jupiter.apparent_size == 0.009162890626143375
 
     def test_planet_all(self):
-        dt = timezone("UTC").localize(datetime(2024, 4, 7, 21, 0, 0, 0))
+        dt = datetime(2024, 4, 7, 21, 0, 0, 0, tzinfo=timezone.utc)
         planets = [p for p in Planet.all(dt)]
         assert len(planets) == 8
