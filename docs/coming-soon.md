@@ -14,7 +14,6 @@
         <td>v0.22</td>
         <td>
             <ul>
-                <li>Improved line labeling</li>
                 <li>TBD</li>
             </ul>
         </td>

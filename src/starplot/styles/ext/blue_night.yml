@@ -129,9 +129,9 @@ dso_planetary_nebula: *DSO-NEB
 
 dso_open_cluster: &DSO-OC
   marker:
-    alpha: 1
-    color: hsl(62, 48%, 36%)
-    edge_color: hsl(58, 100%, 60%)
+    alpha: 0.9
+    color: hsl(62, 58%, 42%)
+    edge_color: hsl(58, 100%, 64%)
     edge_width: 1
   label:
     font_color: hsl(58, 98%, 58%)
