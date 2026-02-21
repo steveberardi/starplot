@@ -9,6 +9,7 @@ from .plots import (
     HorizonPlot,
     OpticPlot,
     ZenithPlot,
+    GalaxyPlot,
 )
 from .models import (
     DSO,

@@ -99,6 +99,109 @@ class CollisionHandler:
         ]
 
 
+def next_best_position(
+    plotted_positions: list[int],
+    available_positions: list[int],
+    num_labels: int,
+    num_positions: int,
+) -> int:
+    """
+    Returns the next best (evenly spaced) position based on distance from plotted positions
+
+    Assumes original positions are evenly spaced on line
+
+    Args:
+        plotted_positions: List of indices of plotted label positions on the line
+        available_positions: List of available positions to plot labels
+        num_labels: Number of labels to be plotted on the line
+        num_positions: Original number of positions that were available
+
+    Returns:
+        Next best (evenly spaced) position (the index from original list of coordinates)
+    """
+
+    if len(plotted_positions) == 0:
+        return available_positions[len(available_positions) // (num_labels + 1)]
+
+    positions = [0] + sorted(plotted_positions) + [num_positions - 1]
+    diffs = [positions[i] - positions[i - 1] for i in range(1, len(positions))]
+    avg = sum(diffs) / len(diffs)
+
+    # filter out available positions that are too close to plotted positions
+    # (i.e. closer than average distance)
+    possible = []
+    for p in available_positions:
+        min_distance = min([abs(plotted - p) for plotted in plotted_positions])
+        if min_distance >= avg * 0.9:
+            possible.append((min_distance, p))
+
+    if not possible:
+        return None
+
+    possible.sort()
+
+    return possible[0][1]
+
+
+def find_smooth_sections(x, y, min_length=5, curvature_threshold=0.1):
+    """
+    Find sections of the line where curvature is low (smooth).
+
+    Args:
+        x, y: line coordinates
+        min_length: minimum number of points for a smooth section
+        curvature_threshold: maximum curvature to consider "smooth"
+
+    Returns:
+        List of (start_idx, end_idx, smoothness_score) tuples
+    """
+    if len(x) < 3:
+        return [(0, len(x) - 1, 1.0)]
+
+    # First derivative
+    dx = np.diff(x)
+    dy = np.diff(y)
+
+    # Second derivative (change in slope)
+    ddx = np.diff(dx)
+    ddy = np.diff(dy)
+
+    # Curvature approximation
+    curvature = np.abs(ddx) + np.abs(ddy)
+
+    # Normalize by typical scale
+    curvature = curvature / (np.median(curvature) + 1e-10)
+
+    # Find smooth regions
+    is_smooth = curvature < curvature_threshold
+
+    # Find contiguous smooth sections with scores
+    smooth_sections = []
+    start = None
+
+    for i in range(len(is_smooth)):
+        if is_smooth[i] and start is None:
+            start = i
+        elif not is_smooth[i] and start is not None:
+            if i - start >= min_length:
+                # Calculate smoothness score (inverse of average curvature)
+                section_curvature = curvature[start:i]
+                smoothness_score = 1.0 / (np.mean(section_curvature) + 1e-10)
+                smooth_sections.append((start, i, smoothness_score))
+            start = None
+
+    # Check last section
+    if start is not None and len(is_smooth) - start >= min_length:
+        section_curvature = curvature[start:]
+        smoothness_score = 1.0 / (np.mean(section_curvature) + 1e-10)
+        smooth_sections.append((start, len(is_smooth), smoothness_score))
+
+    # Sort by smoothness score (descending)
+    smooth_sections.sort(key=lambda s: s[2], reverse=True)
+
+    return smooth_sections if smooth_sections else [(0, len(x) - 1, 1.0)]
+
+
 class TextPlotterMixin:
     def __init__(self, *args, **kwargs):
         self.labels = []
@@ -137,7 +240,7 @@ class TextPlotterMixin:
         return not self._clip_path_polygon.contains(box(*bbox))
 
     def _get_label_bbox(self, label: Annotation) -> BBox:
-        self.fig.draw_without_rendering()
+        # self.fig.draw_without_rendering() # maybe dont need this line after all?
         extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
         result = (
             extent.xmin,
@@ -478,6 +581,175 @@ class TextPlotterMixin:
 
             if is_final_attempt:
                 return None
+
+    def _text_line(
+        self,
+        x,
+        y,
+        text: str,
+        num_labels: int = 2,
+        collision_handler: CollisionHandler = None,
+        min_spacing=None,
+        prefer_center=True,
+        curvature_threshold=0.8,
+        **kwargs,
+    ) -> None:
+        """
+        Plots text labels along a line:
+
+        - Finds smoothest sections and tries those first
+        - Falls back to evenly spaced labels (based on already plotted labels)
+
+        Args:
+            x, y: line data coordinates
+            text: text to plot
+            num_labels: Number of labels to plot
+            collision_handler: Collision handler to use
+            min_spacing: minimum spacing between labels (as fraction of line length). If None, uses 1/(n_labels+1)
+            prefer_center: if True, place labels at center of smooth sections
+            curvature_threshold: threshold for determining smooth sections
+
+        """
+        collision_handler = CollisionHandler(
+            allow_constellation_line_collisions=True,
+            # allow_marker_collisions=True,
+        )
+
+        kwargs.pop("ha", None)  # alignment is forced to center of line
+        kwargs.pop("va", None)
+        kwargs.pop("transform", None)  # we'll plot in axes coords
+
+        xy = list(zip(x, y))
+        data_xy = [self._proj.transform_point(_x, _y, self._crs) for _x, _y in xy]
+        display_xy = self.ax.transData.transform(data_xy)
+
+        # sort coords by display x value
+        display_xy = display_xy[display_xy[:, 0].argsort()]
+        display_x, display_y = zip(*display_xy)
+        x, y = zip(*data_xy)
+
+        if min_spacing is None:
+            min_spacing = 1.0 / (num_labels + 1)
+
+        min_distance = int(min_spacing * len(display_x))
+
+        # Find all smooth sections
+        smooth_sections = find_smooth_sections(
+            display_x, display_y, min_length=1, curvature_threshold=curvature_threshold
+        )
+
+        # Select top N sections, ensuring they don't overlap
+        smooth_positions = []
+        used_sections = []
+
+        for section_start, section_end, score in smooth_sections:
+            # Calculate center of this section
+            if prefer_center:
+                section_center = (section_start + section_end) // 2
+            else:
+                section_center = section_start
+
+            # Check if this section is too close to already selected positions
+            too_close = False
+            for pos in smooth_positions:
+                if abs(section_center - pos) < min_distance:
+                    too_close = True
+                    break
+
+            if not too_close:
+                smooth_positions.append(section_center)
+                used_sections.append((section_start, section_end, score))
+
+        def plot_label(x0, y0, x1, y1, text):
+            # calculate angle in display coordinates
+            dx_display = x1 - x0
+            dy_display = y1 - y0
+            angle = np.degrees(np.arctan2(dy_display, dx_display))
+
+            # keep text upright
+            if angle > 90:
+                angle -= 180
+            elif angle < -90:
+                angle += 180
+
+            axes_coords = self.ax.transAxes.inverted().transform([(x0, y0)])
+            x_axes, y_axes = axes_coords[0]
+
+            return self.ax.text(
+                x_axes,
+                y_axes,
+                text,
+                rotation=angle,
+                ha="center",
+                va="center",
+                transform=self.ax.transAxes,
+                **kwargs,
+            )
+
+        offset = len(display_x) // 20  # offset from start/end of line
+        positions = [p for p in range(len(display_x)) if p not in smooth_positions][
+            offset : -1 * offset
+        ]
+        attempts = 0
+        plotted_positions = set()
+
+        while (
+            len(plotted_positions) < num_labels
+            and attempts < collision_handler.attempts
+            and len(positions) > 0
+        ):
+            attempts += 1
+
+            if smooth_positions:
+                pos = smooth_positions.pop()
+            else:
+                pos = next_best_position(
+                    plotted_positions,
+                    positions,
+                    num_labels,
+                    len(display_x),
+                )
+
+            if pos is None:
+                return
+            if pos in positions:
+                positions.remove(pos)
+
+            pos = max(0, min(pos, len(display_x) - 2))
+            x0 = display_x[pos]
+            y0 = display_y[pos]
+            x1 = display_x[pos + 1]
+            y1 = display_y[pos + 1]
+
+            label = plot_label(x0, y0, x1, y1, text)
+            bbox = self._get_label_bbox(label)
+
+            # TODO : find better bbox (that's rotated with text)
+
+            if bbox is None:
+                continue
+
+            is_open = self._is_open_space(
+                bbox,
+                padding=0,
+                allow_clipped=collision_handler.allow_clipped,
+                allow_constellation_collisions=collision_handler.allow_constellation_line_collisions,
+                allow_marker_collisions=collision_handler.allow_marker_collisions,
+                allow_label_collisions=collision_handler.allow_label_collisions,
+            )
+            is_final_attempt = attempts == collision_handler.attempts
+
+            if is_open or (collision_handler.plot_on_fail and is_final_attempt):
+                self._add_label_to_rtree(label, bbox=bbox)
+                plotted_positions.add(pos)
+                if self.debug_text and label:
+                    self._debug_bbox(bbox, color="red", width=1)
+
+            elif label is not None:
+                label.remove()
+
+            if is_final_attempt or len(plotted_positions) == num_labels:
+                return
 
     @use_style(LabelStyle)
     def text(
