@@ -33,7 +33,7 @@ p = MapPlot(
     style=style,
     resolution=3000,
     scale=1,
-    collision_handler=collision_handler,
+    point_label_handler=collision_handler,
 )
 p.title("Virgo Cluster", style__font_color="hsl(330, 44%, 92%)")
 p.stars(where=[_.magnitude < 12], where_labels=[False])

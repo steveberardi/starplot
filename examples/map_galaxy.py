@@ -16,7 +16,7 @@ p = GalaxyPlot(
 )
 p.gridlines()
 
-p.galactic_equator()
+p.galactic_equator(num_labels=2)
 p.celestial_equator(num_labels=2)
 p.ecliptic(num_labels=2)
 

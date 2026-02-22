@@ -213,7 +213,6 @@ class TextPlotterMixin:
         self._constellations_rtree = rtree.index.Index()
         self._stars_rtree = rtree.index.Index()
         self._markers_rtree = rtree.index.Index()
-        self.collision_handler = kwargs.pop("collision_handler", CollisionHandler())
 
     def _is_label_collision(self, bbox: BBox) -> bool:
         ix = list(self._labels_rtree.intersection(bbox))
@@ -613,11 +612,6 @@ class TextPlotterMixin:
             curvature_threshold: threshold for determining smooth sections
 
         """
-        collision_handler = CollisionHandler(
-            allow_constellation_line_collisions=True,
-            # allow_marker_collisions=True,
-        )
-
         kwargs.pop("ha", None)  # alignment is forced to center of line
         kwargs.pop("va", None)
         kwargs.pop("transform", None)  # we'll plot in axes coords
@@ -753,14 +747,14 @@ class TextPlotterMixin:
             ra: Right ascension of text (0...360)
             dec: Declination of text (-90...90)
             style: Styling of the text
-            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with other labels, markers, etc. If `None`, then the plot's `point_label_handler` will be used.
         """
         if not text:
             return
 
         style = style.model_copy()  # need a copy because we possibly mutate it below
 
-        collision_handler = collision_handler or self.collision_handler
+        collision_handler = collision_handler or self.point_label_handler
 
         if style.offset_x == "auto":
             style.offset_x = 0

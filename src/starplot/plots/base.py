@@ -25,7 +25,6 @@ from starplot.styles import (
     MarkerStyle,
     ObjectStyle,
     LabelStyle,
-    LineStyle,
     MarkerSymbolEnum,
     PathStyle,
     PolygonStyle,
@@ -73,8 +72,14 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
     The plot's style.
     """
 
-    collision_handler: CollisionHandler
-    """Default [collision handler][starplot.CollisionHandler] for the plot."""
+    point_label_handler: CollisionHandler
+    """Default [collision handler][starplot.CollisionHandler] for point labels."""
+
+    area_label_handler: CollisionHandler
+    """Default [collision handler][starplot.CollisionHandler] for area labels."""
+
+    path_label_handler: CollisionHandler
+    """Default [collision handler][starplot.CollisionHandler] for path labels."""
 
     def __init__(
         self,
@@ -82,7 +87,9 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         ephemeris: str = "de421.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
-        collision_handler: CollisionHandler = None,
+        point_label_handler: CollisionHandler = None,
+        area_label_handler: CollisionHandler = None,
+        path_label_handler: CollisionHandler = None,
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
@@ -105,7 +112,14 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self.style = style or PlotStyle()
         self.figure_size = resolution * px
         self.resolution = resolution
-        self.collision_handler = collision_handler or CollisionHandler()
+
+        self.point_label_handler = point_label_handler or CollisionHandler()
+        self.area_label_handler = area_label_handler or CollisionHandler(
+            allow_constellation_line_collisions=True
+        )
+        self.path_label_handler = path_label_handler or CollisionHandler(
+            allow_constellation_line_collisions=True
+        )
 
         self.scale = scale
         self.autoscale = autoscale
@@ -313,7 +327,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
                 ra,
                 dec,
                 label_style,
-                collision_handler=collision_handler or self.collision_handler,
+                collision_handler=collision_handler or self.point_label_handler,
                 gid=kwargs.get("gid_label") or "marker-label",
             )
 
@@ -347,7 +361,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         )
 
         legend_label = translate(legend_label, self.language)
-        handler = collision_handler or self.collision_handler
+        handler = collision_handler or self.point_label_handler
 
         for p in planets:
             label = labels.get(p.name)
@@ -418,7 +432,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         label = translate(label, self.language)
         legend_label = translate(legend_label, self.language)
         s.name = label or s.name
-        handler = collision_handler or self.collision_handler
+        handler = collision_handler or self.point_label_handler
 
         if not self.in_bounds(s.ra, s.dec):
             return
@@ -661,39 +675,6 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
                 style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE),
             )
 
-    @use_style(LineStyle)
-    def line(
-        self,
-        style: LineStyle,
-        coordinates: list[tuple[float, float]] = None,
-        geometry: LineString = None,
-        **kwargs,
-    ):
-        """Plots a line
-
-        Args:
-            coordinates: List of coordinates, e.g. `[(ra, dec), (ra, dec)]`
-            geometry: A shapely LineString. If this value is passed, then the `coordinates` kwarg will be ignored.
-            style: Style of the line
-        """
-
-        if coordinates is None and geometry is None:
-            raise ValueError("Must pass coordinates or geometry when plotting lines.")
-
-        coords = geometry.coords if geometry is not None else coordinates
-
-        x, y = zip(*[self._prepare_coords(*p) for p in coords])
-
-        self.ax.plot(
-            x,
-            y,
-            clip_on=True,
-            clip_path=self._background_clip_path,
-            gid=kwargs.get("gid") or "line",
-            **style.matplot_kwargs(self.scale),
-            **self._plot_kwargs(),
-        )
-
     @use_style(ObjectStyle, "moon")
     def moon(
         self,
@@ -726,7 +707,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         label = translate(label, self.language)
         legend_label = translate(legend_label, self.language)
         m.name = label or m.name
-        handler = collision_handler or self.collision_handler
+        handler = collision_handler or self.point_label_handler
 
         if not self.in_bounds(m.ra, m.dec):
             return
@@ -918,7 +899,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             style: Styling of the ecliptic. If None, then the plot's style will be used
             label: How the ecliptic will be labeled on the plot
             num_labels: Max number of labels to plot along the line
-            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the plot's `path_label_handler` will be used.
         """
         x = []
         y = []
@@ -935,11 +916,11 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
 
         coords = [(ra * 15, dec) for ra, dec in ecliptic.RA_DECS]
 
-        self.line_label(
+        self.line(
             style=style,
             label=label.upper(),
             num_labels=num_labels,
-            collision_handler=collision_handler or self.collision_handler,
+            collision_handler=collision_handler,
             coordinates=coords,
         )
 
@@ -959,38 +940,40 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             style: Styling of the celestial equator. If None, then the plot's style will be used
             label: How the celestial equator will be labeled on the plot
             num_labels: Max number of labels to plot along the line
-            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the plot's `path_label_handler` will be used.
         """
         label = translate(label, self.language)
         coords = [(ra, 0) for ra in range(0, 361)]
-        self.line_label(
+        self.line(
             style=style,
             label=label.upper(),
             num_labels=num_labels,
-            collision_handler=collision_handler or self.collision_handler,
+            collision_handler=collision_handler,
             coordinates=coords,
             gid="celestial-equator",
         )
 
     @use_style(PathStyle)
-    def line_label(
+    def line(
         self,
-        style: PathStyle,
-        label: str = None,
-        collision_handler: CollisionHandler = None,
-        num_labels: int = 2,
         coordinates: list[tuple[float, float]] = None,
         geometry: LineString = None,
+        style: PathStyle = None,
+        label: str = None,
+        num_labels: int = 2,
+        collision_handler: CollisionHandler = None,
         **kwargs,
     ):
         """Plots a line, with optional labels. Either coordinates OR geometry must be specified.
 
         Args:
+
+            coordinates: List of coordinates, e.g. `[(ra, dec), (ra, dec)]`
+            geometry: A shapely LineString. If this value is passed, then the `coordinates` kwarg will be ignored.
             style: Style of the line
             label: Label for the line
             num_labels: Number of labels to plot along the line
-            coordinates: List of coordinates, e.g. `[(ra, dec), (ra, dec)]`
-            geometry: A shapely LineString. If this value is passed, then the `coordinates` kwarg will be ignored.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the plot's `path_label_handler` will be used.
 
         """
 
@@ -1026,12 +1009,14 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
 
         x, y = zip(*prepared_coords)
 
+        collision_handler = collision_handler or self.path_label_handler
+
         self._text_line(
             x,
             y,
             label,
             num_labels=num_labels,
-            collision_handler=collision_handler or self.collision_handler,
+            collision_handler=collision_handler,
             min_spacing=0.65,
             **style.label.matplot_kwargs(self.scale),
             **self._plot_kwargs(),
