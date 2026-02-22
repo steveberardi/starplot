@@ -30,6 +30,7 @@ from starplot.styles import (
     PolygonStyle,
     GradientDirection,
     fonts,
+    AnchorPointEnum,
 )
 from starplot.plotters.debug import DebugPlotterMixin
 from starplot.plotters.text import TextPlotterMixin, CollisionHandler
@@ -113,7 +114,19 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self.figure_size = resolution * px
         self.resolution = resolution
 
-        self.point_label_handler = point_label_handler or CollisionHandler()
+        self.point_label_handler = point_label_handler or CollisionHandler(
+            attempts=10,
+            anchor_fallbacks=[
+                AnchorPointEnum.BOTTOM_RIGHT,
+                AnchorPointEnum.TOP_LEFT,
+                AnchorPointEnum.TOP_RIGHT,
+                AnchorPointEnum.BOTTOM_LEFT,
+                AnchorPointEnum.BOTTOM_CENTER,
+                AnchorPointEnum.TOP_CENTER,
+                AnchorPointEnum.RIGHT_CENTER,
+                AnchorPointEnum.LEFT_CENTER,
+            ],
+        )
         self.area_label_handler = area_label_handler or CollisionHandler(
             allow_constellation_line_collisions=True
         )
