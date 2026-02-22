@@ -1,4 +1,12 @@
+## v0.20.x
+
+- Adds a `GalaxyPlot` for plotting in galactic coordinates
+- Adds label support to lines with automatic angle adjustment
+- Plots the Moon's precise phase / illumination when `show_phase=True`
+
+
 ## v0.19.x
+[Documentation](https://archives.starplot.dev/0.19.6/)
 
 - Adds a `CollisionHandler` for defining what to do when labels collide with something
 - Introduces catalogs for the Milky Way and constellation borders

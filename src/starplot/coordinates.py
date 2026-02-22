@@ -4,3 +4,4 @@ class CoordinateSystem:
     AXES = "axes"
     PROJECTED = "projected"
     DISPLAY = "display"
+    GALACTIC = "galactic"

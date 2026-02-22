@@ -44,13 +44,22 @@ horizon:
 
 celestial_equator:
   label:
-    font_color: hsl(211deg 47% 81%)
+    font_color: hsl(211, 47%, 81%)
+    border_color: hsl(210, 29%, 15%)
   line:
-    color: hsl(211deg 47% 61%)
+    color: hsl(211, 47%, 61%)
+
+galactic_equator:
+  label:
+    font_color: hsl(211, 47%, 91%)
+    border_color: hsl(210, 29%, 15%)
+  line:
+    color: hsl(211, 47%, 91%)
 
 ecliptic:
   label:
-    font_color: '#e33b3b'
+    font_color: hsl(1, 90%, 60%)
+    border_color: hsl(210, 29%, 15%)
   line:
     color: hsl(1, 80%, 40%)
     alpha: 1
@@ -120,9 +129,9 @@ dso_planetary_nebula: *DSO-NEB
 
 dso_open_cluster: &DSO-OC
   marker:
-    alpha: 1
-    color: hsl(62, 48%, 33%)
-    edge_color: hsl(58, 98%, 74%)
+    alpha: 0.9
+    color: hsl(62, 58%, 42%)
+    edge_color: hsl(58, 100%, 64%)
     edge_width: 1
   label:
     font_color: hsl(58, 98%, 58%)

@@ -23,30 +23,35 @@ class ExtentMaskMixin:
                 ]
             )
 
-        if self.ra_max <= 360:
+        ra_min = self.ra_min
+        ra_max = self.ra_max
+        dec_min = self.dec_min
+        dec_max = self.dec_max
+
+        if ra_max <= 360:
             coords = [
-                [self.ra_min, self.dec_min],
-                [self.ra_max, self.dec_min],
-                [self.ra_max, self.dec_max],
-                [self.ra_min, self.dec_max],
-                [self.ra_min, self.dec_min],
+                [ra_min, dec_min],
+                [ra_max, dec_min],
+                [ra_max, dec_max],
+                [ra_min, dec_max],
+                [ra_min, dec_min],
             ]
             return Polygon(coords)
 
         else:
             coords_1 = [
-                [self.ra_min, self.dec_min],
-                [360, self.dec_min],
-                [360, self.dec_max],
-                [self.ra_min, self.dec_max],
-                [self.ra_min, self.dec_min],
+                [ra_min, dec_min],
+                [360, dec_min],
+                [360, dec_max],
+                [ra_min, dec_max],
+                [ra_min, dec_min],
             ]
             coords_2 = [
-                [0, self.dec_min],
-                [(self.ra_max - 360), self.dec_min],
-                [(self.ra_max - 360), self.dec_max],
-                [0, self.dec_max],
-                [0, self.dec_min],
+                [0, dec_min],
+                [(ra_max - 360), dec_min],
+                [(ra_max - 360), dec_max],
+                [0, dec_max],
+                [0, dec_min],
             ]
 
             return MultiPolygon(
@@ -312,7 +317,7 @@ class HorizonExtentMaskMixin:
         #     print(current_polygon_coords)
 
         # print(len(polygon_coords))
-        from starplot.geometry import split_polygon_at_360
+        from starplot.geometry import split_polygon_at_zero
 
         # polygons = split_polygon_at_zero(extent)
 
@@ -322,7 +327,7 @@ class HorizonExtentMaskMixin:
         # extent = MultiPolygon([Polygon(c) for c in polygon_coords])
         # extent = Polygon(coords)
         extent = convex_hull(MultiPoint(coords))
-        polygons = split_polygon_at_360(extent)
+        polygons = split_polygon_at_zero(extent)
 
         pprint(polygons)
 
@@ -364,17 +369,18 @@ class CreateMapMixin:
         Returns:
             MapPlot: new instance of a [`MapPlot`][starplot.MapPlot]
         """
-        from starplot import MapPlot, geod
+        from starplot import MapPlot, geometry
 
-        ex = geod.rectangle(
+        extent = geometry.rectangle(
             center=(self.ra, self.dec),
             height_degrees=height_degrees,
             width_degrees=width_degrees,
         )
-        ra_min = ex[0][0]
-        ra_max = ex[2][0]
-        dec_min = ex[0][1]
-        dec_max = ex[2][1]
+        minx, miny, maxx, maxy = extent.bounds
+        ra_min = minx
+        ra_max = maxx
+        dec_min = miny
+        dec_max = maxy
 
         # handle wrapping
         if ra_max < ra_min:

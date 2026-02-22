@@ -35,7 +35,7 @@ format:
 	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)"
 
 test:
-	$(DOCKER_RUN) "python -m pytest --cov=src/ --cov-report=term --cov-report=html ."
+	$(DOCKER_RUN) "python -m pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html ."
 
 check-hashes:
 	$(DOCKER_RUN) "python hash_checks/hashio.py check"
@@ -65,10 +65,10 @@ examples:
 tutorial:
 	$(DOCKER_RUN) "cd tutorial && python build.py"
 
-profile: DR_ARGS=-it -p 8080:8080
+profile: DR_ARGS=-it -p 8081:8081
 profile:
 	$(DOCKER_RUN) "python -m cProfile -o temp/results.prof scripts/scratchpad.py && \
-	snakeviz -s -p 8080 -H 0.0.0.0 temp/results.prof"
+	snakeviz -s -p 8081 -H 0.0.0.0 temp/results.prof"
 
 # builds ALL data files and then database:
 db: 

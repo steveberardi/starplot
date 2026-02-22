@@ -1,5 +1,5 @@
 from datetime import datetime
-from pytz import timezone
+from zoneinfo import ZoneInfo
 
 from starplot import MapPlot, Orthographic, Observer, _
 from starplot.styles import PlotStyle, extensions
@@ -10,7 +10,7 @@ style = PlotStyle().extend(
     extensions.MAP,
 )
 
-tz = timezone("America/Los_Angeles")
+tz = ZoneInfo("America/Los_Angeles")
 dt = datetime(2024, 10, 19, 21, 00, tzinfo=tz)
 
 observer = Observer(

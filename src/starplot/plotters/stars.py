@@ -195,7 +195,7 @@ class StarPlotterMixin:
         alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
         color_fn = color_fn or (lambda d: color_hex)
 
-        handler = collision_handler or self.collision_handler
+        handler = collision_handler or self.point_label_handler
         where = where or []
         where_labels = where_labels or []
         stars_to_index = []

@@ -1,8 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
-
-from pytz import timezone
 
 from starplot import Star, MapPlot, Mercator, Miller, Observer, _
 
@@ -46,7 +44,7 @@ def test_map_objects_list():
 
 
 def test_map_objects_list_planets():
-    dt = timezone("UTC").localize(datetime(2023, 8, 27, 23, 0, 0, 0))
+    dt = datetime(2023, 8, 27, 23, 0, 0, 0, tzinfo=timezone.utc)
 
     p = MapPlot(
         projection=Miller(),

@@ -57,7 +57,6 @@ class HorizonPlot(
     """Creates a new horizon plot.
 
     Args:
-
         altitude: Tuple of altitude range to plot (min, max)
         azimuth: Tuple of azimuth range to plot (min, max)
         observer: Observer instance which specifies a time and place. Defaults to `Observer()`
