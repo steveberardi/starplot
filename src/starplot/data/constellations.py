@@ -1,7 +1,7 @@
 from functools import cache
 from pathlib import Path
 
-from ibis import _, row_number
+from ibis import _
 
 from starplot.config import settings
 from starplot.data import db

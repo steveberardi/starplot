@@ -12,6 +12,7 @@ NAME_TABLES = {
     "dso_names": DataFiles.DSO_NAMES,
 }
 
+
 @cache
 def connect():
     path = settings.data_path / "duckdb-extensions"
