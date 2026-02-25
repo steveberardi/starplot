@@ -28,7 +28,7 @@ p.stars(
 )
 p.export("map_milky_way_stars.png", padding=0.1, transparent=True)
 
-# apply a median filter and increase contrast
+# apply a median filter to increase contrast
 with Image.open("map_milky_way_stars.png") as img:
     filtered = img.filter(ImageFilter.MedianFilter(size=5))
     filtered.save("map_milky_way_stars.png")

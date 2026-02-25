@@ -12,6 +12,7 @@ Plots that use astrometric positions:
 
 - [MapPlot](reference-mapplot.md)
 - [ZenithPlot](reference-zenithplot.md)
+- [GalaxyPlot](reference-galaxyplot.md)
 
 
 ### Apparent Position
