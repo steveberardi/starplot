@@ -14,10 +14,9 @@ NAME_TABLES = {
 
 
 @cache
-def connect():
-    path = settings.data_path / "duckdb-extensions"
+def _connect(extensions_path):
     connection = duckdb.connect()
-    connection.raw_sql(f"SET extension_directory = '{str(path)}';")
+    connection.raw_sql(f"SET extension_directory = '{str(extensions_path)}';")
     connection.raw_sql("INSTALL spatial;")
     connection.load_extension("spatial")
 
@@ -27,3 +26,8 @@ def connect():
         connection.read_parquet(NAME_TABLES[table_name], table_name=table_name)
 
     return connection
+
+
+def connect():
+    path = settings.data_path / "duckdb-extensions"
+    return _connect(extensions_path=path)
