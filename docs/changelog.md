@@ -3,6 +3,7 @@
 - Adds a `GalaxyPlot` for plotting in galactic coordinates
 - Adds label support to lines with automatic angle adjustment
 - Plots the Moon's precise phase / illumination when `show_phase=True`
+- Separate collision handlers for points, areas, and paths
 
 
 ## v0.19.x
