@@ -367,9 +367,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         labels = labels or {}
-        planets = models.Planet.all(
-            self.observer, self.ephemeris_name
-        )
+        planets = models.Planet.all(self.observer, self.ephemeris_name)
 
         legend_label = translate(legend_label, self.language)
         handler = collision_handler or self.point_label_handler

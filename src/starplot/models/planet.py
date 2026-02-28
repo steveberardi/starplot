@@ -6,13 +6,12 @@ from typing import Iterator
 import numpy as np
 
 from shapely import Polygon
-from skyfield.api import Angle, wgs84
+from skyfield.api import Angle
 
 from starplot.data import load
 from starplot.models.base import SkyObject
 from starplot.models.observer import Observer
 from starplot.geometry import circle
-from starplot.utils import dt_or_now
 
 
 class PlanetName(str, Enum):
@@ -94,7 +93,7 @@ class Planet(SkyObject):
 
         observer = observer or Observer(lat=None, lon=None)
         eph = load(ephemeris)
-        
+
         for p in PlanetName:
             planet = eph[f"{p.value} barycenter"]
             ra, dec, distance = observer.locate(planet, ephemeris=ephemeris)

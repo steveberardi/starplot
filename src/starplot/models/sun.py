@@ -3,13 +3,12 @@ from datetime import datetime
 
 import numpy as np
 from shapely import Polygon
-from skyfield.api import Angle, wgs84
+from skyfield.api import Angle
 
 from starplot.data import load
 from starplot.models.base import SkyObject
 from starplot.models.observer import Observer
 from starplot.geometry import circle
-from starplot.utils import dt_or_now
 
 
 @dataclass(slots=True)

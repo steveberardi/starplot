@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from functools import cached_property, cache
+from functools import cached_property
 from typing import Callable
 
 
@@ -109,6 +109,6 @@ class Observer(BaseModel):
         if self.has_location:
             ra, dec, distance = self.observe(ephemeris)(obj).apparent().radec()
             return ra, dec, distance
-            
+
         ra, dec, distance = self.observe(ephemeris)(obj).radec()
         return ra, dec, distance

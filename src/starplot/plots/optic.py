@@ -2,7 +2,7 @@ from typing import Callable
 
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches, path
-from skyfield.api import wgs84, Star as SkyfieldStar
+from skyfield.api import Star as SkyfieldStar
 
 
 from starplot import callables, geometry

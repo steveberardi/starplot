@@ -11,6 +11,7 @@ from starplot.models.observer import Observer
 
 ts = load.timescale()
 
+
 @dataclass(slots=True, kw_only=True)
 class Satellite(SkyObject):
     """
@@ -50,7 +51,7 @@ class Satellite(SkyObject):
         """
         observer = observer or Observer()
         return get_satellite_at_date_location(
-            satellite=EarthSatellite.from_omm(ts, data), 
+            satellite=EarthSatellite.from_omm(ts, data),
             observer=observer,
         )
 
@@ -70,7 +71,7 @@ class Satellite(SkyObject):
             line1: Line 1 of the two-line element set (TLE)
             line2: Line 2 of the two-line element set (TLE)
             observer: Observer instance that specifies a time and location
-    
+
         """
         observer = observer or Observer()
         return get_satellite_at_date_location(
@@ -104,11 +105,15 @@ class Satellite(SkyObject):
             observer_kwargs = self.observer.model_dump()
             observer_kwargs["dt"] = dt
             new_observer = Observer(**observer_kwargs)
-            yield get_satellite_at_date_location(satellite=self._satellite, observer=new_observer)
+            yield get_satellite_at_date_location(
+                satellite=self._satellite, observer=new_observer
+            )
             dt += step
 
 
-def get_satellite_at_date_location(satellite: EarthSatellite, observer: Observer) -> Satellite:
+def get_satellite_at_date_location(
+    satellite: EarthSatellite, observer: Observer
+) -> Satellite:
     t = observer.timescale
     lat = observer.lat
     lon = observer.lon

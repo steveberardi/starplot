@@ -52,10 +52,7 @@ class TestSatellite:
             lat=33.363484,
             lon=-116.836394,
         )
-        iss = Satellite.from_json(
-            data=ISS_JSON_22_OCT_2025,
-            observer=observer
-        )
+        iss = Satellite.from_json(data=ISS_JSON_22_OCT_2025, observer=observer)
         assert iss.name == "ISS (ZARYA)"
         assert iss.ra == pytest.approx(105.27042780805024, rel=1e-6)
         assert iss.dec == pytest.approx(6.7511296688128315, rel=1e-6)
@@ -66,10 +63,7 @@ class TestSatellite:
             lat=33.363484,
             lon=-116.836394,
         )
-        iss = Satellite.from_json(
-            data=ISS_JSON_22_OCT_2025,
-            observer=observer
-        )
+        iss = Satellite.from_json(data=ISS_JSON_22_OCT_2025, observer=observer)
 
         dt_start = datetime(2025, 10, 19, 19, 0, tzinfo=TZ_PT)
         dt_end = datetime(2025, 10, 21, 19, 0, tzinfo=TZ_PT)

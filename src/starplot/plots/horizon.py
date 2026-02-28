@@ -6,7 +6,7 @@ from typing import Callable
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator, FuncFormatter
-from skyfield.api import wgs84, Star as SkyfieldStar
+from skyfield.api import Star as SkyfieldStar
 from shapely import Polygon, MultiPolygon
 from starplot.coordinates import CoordinateSystem
 from starplot.plots.base import BasePlot, DPI
@@ -229,7 +229,6 @@ class HorizonPlot(
 
     def _polygon(self, points, style, **kwargs):
         super()._polygon(points, style, transform=self._crs, **kwargs)
-
 
     @cache
     def _extent_mask_altaz(self):
