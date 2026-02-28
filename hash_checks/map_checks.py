@@ -22,6 +22,7 @@ from starplot import (
     Mollweide,
     StereoNorth,
     StereoSouth,
+    PlateCarree,
     CollisionHandler,
     Binoculars,
     Scope,
@@ -783,4 +784,23 @@ def check_map_constellation_clip_path():
     filename = DATA_PATH / "map-constellation-clip-path.png"
     p.export(filename, padding=0.5)
 
+    return filename
+
+
+def check_map_plate_caree():
+    filename = DATA_PATH / "map-plate-caree.png"
+    p = MapPlot(
+        projection=PlateCarree(),
+        style=styles.PlotStyle().extend(
+            styles.extensions.BLUE_NIGHT,
+            styles.extensions.MAP,
+        ),
+        resolution=4000,
+        scale=0.75,
+    )
+    p.stars(where=[_.magnitude < 4], where_labels=[False])
+    p.gridlines()
+    p.ecliptic()
+    p.constellations()
+    p.export(filename)
     return filename

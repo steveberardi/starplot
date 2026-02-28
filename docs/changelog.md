@@ -5,6 +5,7 @@
 - Plots the Moon's precise phase / illumination when `show_phase=True`
 - Separate collision handlers for points, areas, and paths
 - Refactored some models to expect an observer instance instead of lat/lon/dt
+- Adds the PlateCarree projection
 
 
 ## v0.19.x

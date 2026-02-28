@@ -124,6 +124,12 @@ class Mercator(ProjectionBase, CenterRA):
     _ccrs = ccrs.Mercator
 
 
+class PlateCarree(ProjectionBase, CenterRA):
+    """An equirectangular projection"""
+
+    _ccrs = ccrs.PlateCarree
+
+
 class ObliqueMercator(ProjectionBase, CenterRADEC, Azimuth):
     """Oblique Mercator projection"""
 

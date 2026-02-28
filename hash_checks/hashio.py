@@ -23,7 +23,7 @@ HERE = Path(__file__).resolve().parent
 
 RESULTS_PATH = HERE / "results.html"
 
-NUM_WORKERS = 10
+NUM_WORKERS = 12
 
 console = Console()
 
