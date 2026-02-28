@@ -145,7 +145,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             warnings.suppress()
 
         self.observer = observer or Observer()
-        self._ephemeris_name = ephemeris
+        self.ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
         self.earth = self.ephemeris["earth"]
 
@@ -368,7 +368,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         """
         labels = labels or {}
         planets = models.Planet.all(
-            self.observer.dt, self.observer.lat, self.observer.lon, self._ephemeris_name
+            self.observer, self.ephemeris_name
         )
 
         legend_label = translate(legend_label, self.language)
@@ -433,10 +433,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         s = models.Sun.get(
-            dt=self.observer.dt,
-            lat=self.observer.lat,
-            lon=self.observer.lon,
-            ephemeris=self._ephemeris_name,
+            observer=self.observer,
+            ephemeris=self.ephemeris_name,
         )
         label = translate(label, self.language)
         legend_label = translate(legend_label, self.language)
@@ -706,10 +704,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
         m = models.Moon.get(
-            dt=self.observer.dt,
-            lat=self.observer.lat,
-            lon=self.observer.lon,
-            ephemeris=self._ephemeris_name,
+            observer=self.observer,
+            ephemeris=self.ephemeris_name,
         )
         label = translate(label, self.language)
         legend_label = translate(legend_label, self.language)

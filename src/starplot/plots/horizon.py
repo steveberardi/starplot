@@ -181,6 +181,18 @@ class HorizonPlot(
 
         return df
 
+    def _calc_position(self):
+        self.observe = self.observer.observe(self.ephemeris_name)
+
+        self.ra_min = 0
+        self.ra_max = 360
+        self.dec_min = self.observer.lat - 90
+        self.dec_max = self.observer.lat + 90
+
+        self.logger.debug(
+            f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
+        )
+
     def _plot_kwargs(self) -> dict:
         return dict(transform=self._crs)
 
@@ -218,70 +230,6 @@ class HorizonPlot(
     def _polygon(self, points, style, **kwargs):
         super()._polygon(points, style, transform=self._crs, **kwargs)
 
-    def _calc_position(self):
-        earth = self.ephemeris["earth"]
-        self.location = earth + wgs84.latlon(self.observer.lat, self.observer.lon)
-        self.observe = self.location.at(self.observer.timescale).observe
-
-        # locations = [
-        #     self.location.at(self.timescale).from_altaz(
-        #         alt_degrees=self.alt[0], az_degrees=self.az[0]
-        #     ),  # lower left
-        #     self.location.at(self.timescale).from_altaz(
-        #         alt_degrees=self.alt[0], az_degrees=self.az[1]
-        #     ),  # lower right
-        #     self.location.at(self.timescale).from_altaz(
-        #         alt_degrees=self.alt[1], az_degrees=self.center_az
-        #     ),  # top center
-        #     self.location.at(self.timescale).from_altaz(
-        #         alt_degrees=self.center_alt, az_degrees=self.center_az
-        #     ),  # center
-        #     self.location.at(self.timescale).from_altaz(alt_degrees=self.alt[1], az_degrees=self.az[0]), # upper left
-        #     self.location.at(self.timescale).from_altaz(alt_degrees=self.alt[1], az_degrees=self.az[1]), # upper right
-        # ]
-
-        # self.ra_min = None
-        # self.ra_max = None
-        # self.dec_max = None
-        # self.dec_min = None
-        # print(self.alt)
-        # print(self.az)
-        # for location in locations:
-        #     ra, dec, _ = location.radec()
-        #     ra = ra.hours
-        #     dec = dec.degrees
-        #     print(ra, dec)
-        #     if self.ra_min is None or ra < self.ra_min:
-        #         self.ra_min = ra
-
-        #     if self.ra_max is None or ra > self.ra_max:
-        #         self.ra_max = ra
-
-        #     if self.dec_min is None or dec < self.dec_min:
-        #         self.dec_min = dec
-
-        #     if self.dec_max is None or dec > self.dec_max:
-        #         self.dec_max = dec
-
-        # if self.dec_max > 70 or self.dec_min < -70:
-        #     # naive method of getting all the stars near the poles
-        #     self.ra_min = 0
-        #     self.ra_max = 24
-        # else:
-        #     self.ra_min = max(self.ra_min - 4, 0)
-        #     self.ra_max = min(self.ra_max + 4, 24)
-
-        # self.dec_min -= 10
-        # self.dec_max += 10
-
-        self.ra_min = 0
-        self.ra_max = 360
-        self.dec_min = self.observer.lat - 90
-        self.dec_max = self.observer.lat + 90
-
-        self.logger.debug(
-            f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
-        )
 
     @cache
     def _extent_mask_altaz(self):

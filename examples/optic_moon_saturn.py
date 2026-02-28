@@ -12,7 +12,7 @@ observer = Observer(
     lon=-116.585556,
 )
 
-m = Moon.get(dt=observer.dt, lat=observer.lat, lon=observer.lon)
+m = Moon.get(observer)
 
 op = m.create_optic(
     observer=observer,

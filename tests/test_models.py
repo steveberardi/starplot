@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from starplot import _, DSO, Star, Constellation, Sun, Moon, Planet
+from starplot import _, DSO, Star, Constellation, Sun, Moon, Planet, Observer
 
 
 class TestStar:
@@ -103,7 +103,12 @@ class TestDSO:
 class TestMoon:
     def test_moon_get(self):
         dt = datetime(2023, 8, 27, 23, 0, 0, 0, tzinfo=timezone.utc)
-        m = Moon.get(dt)
+        observer = Observer(
+            dt=dt,
+            lat=None,
+            lon=None,
+        )
+        m = Moon.get(observer)
         assert m.ra == pytest.approx(292.53617734161276)
         assert m.dec == pytest.approx(-26.96492167310071)
         assert m.dt == dt
@@ -114,14 +119,24 @@ class TestMoon:
 
     def test_moon_get_new_moon(self):
         dt = datetime(2024, 4, 8, 12, 0, 0, 0, tzinfo=timezone.utc)
-        m = Moon.get(dt)
+        observer = Observer(
+            dt=dt,
+            lat=None,
+            lon=None,
+        )
+        m = Moon.get(observer)
         assert m.phase_description == "New Moon"
         assert m.phase_angle == 356.2894192723546
         assert m.illumination == 0.020614337375807645
 
     def test_moon_get_full_moon(self):
         dt = datetime(2024, 4, 23, 14, 0, 0, 0, tzinfo=timezone.utc)
-        m = Moon.get(dt)
+        observer = Observer(
+            dt=dt,
+            lat=None,
+            lon=None,
+        )
+        m = Moon.get(observer)
         assert m.phase_description == "Full Moon"
         assert m.phase_angle == 175.42641200608864
         assert m.illumination == 0.9745911778116035
@@ -135,8 +150,13 @@ class TestSolarEclipse:
         lat = 41.482222
         lon = -81.669722
 
-        m = Moon.get(dt=dt, lat=lat, lon=lon)
-        s = Sun.get(dt=dt, lat=lat, lon=lon)
+        observer = Observer(
+            dt=dt,
+            lat=lat,
+            lon=lon,
+        )
+        m = Moon.get(observer)
+        s = Sun.get(observer)
 
         assert m.ra == pytest.approx(17.611428857038238)
         assert m.dec == pytest.approx(7.469561912433153)
@@ -150,7 +170,12 @@ class TestSolarEclipse:
 class TestPlanet:
     def test_planet_get(self):
         dt = datetime(2024, 4, 7, 21, 0, 0, 0, tzinfo=timezone.utc)
-        jupiter = Planet.get("jupiter", dt)
+        observer = Observer(
+            dt=dt,
+            lat=None,
+            lon=None,
+        )
+        jupiter = Planet.get("jupiter", observer)
         assert jupiter.ra == pytest.approx(46.29005575002272)
         assert jupiter.dec == pytest.approx(16.56207889273591)
         assert jupiter.dt == dt
@@ -158,5 +183,10 @@ class TestPlanet:
 
     def test_planet_all(self):
         dt = datetime(2024, 4, 7, 21, 0, 0, 0, tzinfo=timezone.utc)
-        planets = [p for p in Planet.all(dt)]
+        observer = Observer(
+            dt=dt,
+            lat=None,
+            lon=None,
+        )
+        planets = [p for p in Planet.all(observer)]
         assert len(planets) == 8

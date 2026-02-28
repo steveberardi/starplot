@@ -19,7 +19,7 @@ observer = Observer(
     lon=-116.507025,
 )
 
-moon = Moon.get(dt=observer.dt, lat=observer.lat, lon=observer.lon)
+moon = Moon.get(observer)
 
 p = OpticPlot(
     ra=moon.ra,
@@ -39,8 +39,7 @@ iss = Satellite.from_tle(
     name="ISS (ZARYA)",
     line1="1 25544U 98067A   25312.42041502  .00013418  00000+0  24734-3 0  9990",
     line2="2 25544  51.6332 312.3676 0004093  47.8963 312.2373 15.49452868537539",
-    lat=observer.lat,
-    lon=observer.lon,
+    observer=observer,
 )
 
 dt_start = observer.dt - timedelta(minutes=1)

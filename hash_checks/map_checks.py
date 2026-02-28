@@ -489,7 +489,7 @@ def check_map_moon_phase_waxing_crescent():
         **POWAY,
         dt=dt_dec_16,
     )
-    m = Moon.get(dt=dt_dec_16, **POWAY)
+    m = Moon.get(observer)
     p = m.create_map(
         height_degrees=4,
         width_degrees=4,

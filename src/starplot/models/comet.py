@@ -3,14 +3,13 @@ from typing import Iterator
 from functools import cache
 from dataclasses import dataclass, fields
 
-from skyfield.api import wgs84
 from skyfield.data import mpc
 from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
 from shapely import Point
 
 from starplot.data import load
 from starplot.models.base import SkyObject
-from starplot.utils import dt_or_now
+from starplot.models.observer import Observer
 
 
 @dataclass
@@ -144,14 +143,8 @@ class Comet(SkyObject):
     Name of the comet (as designated by IAU Minor Planet Center)
     """
 
-    dt: datetime = None
-    """Date/time of comet's position"""
-
-    lat: float | None = None
-    """Latitude of observing location"""
-
-    lon: float | None = None
-    """Longitude of observing location"""
+    observer: Observer = None
+    """Observer of this comet instance"""
 
     distance: float | None = None
     """Distance to comet, in Astronomical units (the Earth-Sun distance of 149,597,870,700 m)"""
@@ -168,9 +161,7 @@ class Comet(SkyObject):
     def from_json(
         cls,
         data: dict,
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
     ) -> "Comet":
         """
@@ -178,22 +169,18 @@ class Comet(SkyObject):
 
         Args:
             data: Dictionary of the IAU MPC JSON
-            dt: Datetime you want the comet for (must be timezone aware!). _Defaults to current UTC time_.
-            lat: Latitude of observing location. If you set this (and longitude), then the comet's _apparent_ RA/DEC will be calculated.
-            lon: Longitude of observing location
+            observer: Observer instance that specifies a time and location
             ephemeris: Ephemeris to use for calculating comet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
-        dt = dt_or_now(dt)
         comet = SkyfieldComet.from_mpc_json(data)
+        observer = observer or Observer()
 
-        return get_comet_at_date_location(comet, dt, lat, lon, ephemeris)
+        return get_comet_at_date_location(comet, observer, ephemeris)
 
     @classmethod
     def all(
         cls,
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
         reload: bool = False,
     ) -> Iterator["Comet"]:
@@ -201,22 +188,18 @@ class Comet(SkyObject):
         Iterator for getting all comets at a specific date/time and observing location.
 
         Args:
-            dt: Datetime you want the comets for (must be timezone aware!). _Defaults to current UTC time_.
-            lat: Latitude of observing location. If you set this (and longitude), then the comet's _apparent_ RA/DEC will be calculated.
-            lon: Longitude of observing location
+            observer: Observer instance that specifies a time and location
             ephemeris: Ephemeris to use for calculating comet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
             reload: If True, then the comet data file will be re-downloaded. Otherwise, it'll use the existing file if available.
         """
-        dt = dt_or_now(dt)
         comets = get_comets(reload=reload)
+        observer = observer or Observer()
         for name in comets.index.values:
             row = comets.loc[name]
             comet = SkyfieldComet(**row.to_dict())
             yield get_comet_at_date_location(
                 comet=comet,
-                dt=dt,
-                lat=lat,
-                lon=lon,
+                observer=observer,
                 ephemeris=ephemeris,
             )
 
@@ -224,9 +207,7 @@ class Comet(SkyObject):
     def get(
         cls,
         name: str,
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
         reload: bool = False,
     ) -> "Comet":
@@ -235,15 +216,13 @@ class Comet(SkyObject):
 
         Args:
             name: Name of the comet you want to get (as designated by IAU Minor Planet Center)
-            dt: Datetime you want the comet for (must be timezone aware!). _Defaults to current UTC time_.
-            lat: Latitude of observing location. If you set this (and longitude), then the comet's _apparent_ RA/DEC will be calculated.
-            lon: Longitude of observing location
+            observer: Observer instance that specifies a time and location
             ephemeris: Ephemeris to use for calculating comet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
             reload: If True, then the comet data file will be re-downloaded. Otherwise, it'll use the existing file if available.
         """
-        dt = dt_or_now(dt)
         comet = SkyfieldComet.from_mpc_remote(name, reload)
-        return get_comet_at_date_location(comet, dt, lat, lon, ephemeris)
+        observer = observer or Observer()
+        return get_comet_at_date_location(comet, observer, ephemeris)
 
     def trajectory(
         self, date_start: datetime, date_end: datetime, step: timedelta = None
@@ -259,16 +238,16 @@ class Comet(SkyObject):
         Returns:
             Iterator that yields a Comet instance at each step in the date range
         """
-
-        step = step or timedelta(days=1)
         dt = date_start
+        step = step or timedelta(days=1)
 
         while dt < date_end:
+            observer_kwargs = self.observer.model_dump()
+            observer_kwargs["dt"] = dt
+            new_observer = Observer(**observer_kwargs)
             yield get_comet_at_date_location(
                 comet=self.data,
-                dt=dt,
-                lat=self.lat,
-                lon=self.lon,
+                observer=new_observer,
                 ephemeris=self.ephemeris,
             )
             dt += step
@@ -301,32 +280,21 @@ def get_comets(reload=False):
 
 
 def get_comet_at_date_location(
-    comet: SkyfieldComet, dt: datetime, lat: float, lon: float, ephemeris: str
+    comet: SkyfieldComet, observer: Observer, ephemeris: str
 ) -> Comet:
     """
     Creates a Comet instance for date and (optional) observing location.
     """
     ts = load.timescale()
     eph = load(ephemeris)
-    sun, earth = eph["sun"], eph["earth"]
-    c = sun + mpc.comet_orbit(comet, ts, GM_SUN)
-    t = ts.from_datetime(dt)
-
-    if lat is not None and lon is not None:
-        position = earth + wgs84.latlon(lat, lon)
-        astrometric = position.at(t).observe(c)
-        apparent = astrometric.apparent()
-        ra, dec, distance = apparent.radec()
-    else:
-        ra, dec, distance = earth.at(t).observe(c).radec()
+    c = eph["sun"] + mpc.comet_orbit(comet, ts, GM_SUN)
+    ra, dec, distance = observer.locate(c, ephemeris=ephemeris)
 
     return Comet(
         name=comet.designation,
         ra=ra.hours * 15,
         dec=dec.degrees,
-        dt=dt,
-        lat=lat,
-        lon=lon,
+        observer=observer,
         distance=distance.au,
         ephemeris=ephemeris,
         geometry=Point(ra.hours * 15, dec.degrees),

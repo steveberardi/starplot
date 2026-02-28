@@ -141,9 +141,8 @@ class OpticPlot(
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
         point = SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec)
-        position = self.observe(point)
-        pos_apparent = position.apparent()
-        pos_alt, pos_az, _ = pos_apparent.altaz()
+        apparent = self.observe(point).apparent()
+        pos_alt, pos_az, _ = apparent.altaz()
         return pos_az.degrees, pos_alt.degrees
 
     def _plot_kwargs(self) -> dict:
@@ -179,15 +178,12 @@ class OpticPlot(
         super()._polygon(points, style, transform=self._crs, **kwargs)
 
     def _calc_position(self):
-        earth = self.ephemeris["earth"]
+        self.observe = self.observer.observe(self.ephemeris_name)
 
-        self.location = earth + wgs84.latlon(self.observer.lat, self.observer.lon)
-        self.star = SkyfieldStar(ra_hours=self.ra / 15, dec_degrees=self.dec)
-        self.observe = self.location.at(self.observer.timescale).observe
-        self.position = self.observe(self.star)
+        target = SkyfieldStar(ra_hours=self.ra / 15, dec_degrees=self.dec)
+        apparent = self.observe(target).apparent()
 
-        self.pos_apparent = self.position.apparent()
-        self.pos_alt, self.pos_az, _ = self.pos_apparent.altaz()
+        self.pos_alt, self.pos_az, _ = apparent.altaz()
 
         if self.pos_alt.degrees < 0 and self.raise_on_below_horizon:
             raise ValueError("Target is below horizon at specified time/location.")

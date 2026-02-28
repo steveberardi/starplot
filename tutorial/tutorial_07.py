@@ -14,7 +14,7 @@ observer = Observer(
 )
 
 # get Jupiter for tonight
-jupiter = Planet.get("jupiter", tonight)
+jupiter = Planet.get("jupiter", observer)
 
 # create an optic plot directly from Jupiter instance
 p = jupiter.create_optic(

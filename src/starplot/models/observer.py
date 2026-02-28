@@ -1,8 +1,11 @@
 from datetime import datetime, timezone
-from functools import cached_property
+from functools import cached_property, cache
+from typing import Callable
+
 
 from pydantic import BaseModel, AwareDatetime, Field, computed_field
 from skyfield.timelib import Timescale
+from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot.data import load
 
@@ -32,11 +35,20 @@ class Observer(BaseModel):
     Defaults to current time in UTC.
     """
 
-    lat: float = Field(default=0, ge=-90, le=90)
+    lat: float | None = Field(default=0, ge=-90, le=90)
     """Latitude of observer location"""
 
-    lon: float = Field(default=0, ge=-180, le=180)
+    lon: float | None = Field(default=0, ge=-180, le=180)
     """Longitude of observer location"""
+
+    elevation: float = 0
+    """Elevation of observer, in meters"""
+
+    temperature: float | None = None
+    """Temperature in degrees Celsius. This is only used for determining atmospheric refraction for apparent positions."""
+
+    pressure: float | None = None
+    """Atmospheric pressure in millibars. This is only used for determining atmospheric refraction for apparent positions."""
 
     class Config:
         arbitrary_types_allowed = True
@@ -61,6 +73,11 @@ class Observer(BaseModel):
         """
         return float(360.0 * self.timescale.gmst / 24.0 + self.lon) % 360.0
 
+    @computed_field
+    @cached_property
+    def has_location(self) -> bool:
+        return self.lat is not None and self.lon is not None
+
     @classmethod
     def at_epoch(cls, epoch: float) -> "Observer":
         """
@@ -68,13 +85,30 @@ class Observer(BaseModel):
         """
         return Observer(dt=ts.J(epoch).utc_datetime())
 
-    # @computed_field
-    # @cached_property
-    # def location(self):
-    #     earth = self.ephemeris["earth"]
-    #     return earth + wgs84.latlon(self.lat, self.lon)
+    def position(self, ephemeris: str = "de421.bsp"):
+        """
+        Returns a Skyfield position for this observer.
 
-    # def observe(self):
-    #     earth = self.ephemeris["earth"]
-    #     self.location = earth + wgs84.latlon(self.lat, self.lon)
-    #     return self.location.at(self.timescale).observe
+        If the observer has no lat/lon, then the Earth's center will be returned.
+
+        Args:
+            ephemeris: Ephemeris to use
+        """
+        eph = load(ephemeris)
+        earth = eph["earth"]
+
+        if self.lat is None and self.lon is None:
+            return earth
+
+        return earth + wgs84.latlon(self.lat, self.lon, self.elevation)
+
+    def observe(self, ephemeris: str = "de421.bsp") -> Callable:
+        return self.position(ephemeris).at(self.timescale).observe
+
+    def locate(self, obj: SkyfieldStar, ephemeris: str = "de421.bsp"):
+        if self.has_location:
+            ra, dec, distance = self.observe(ephemeris)(obj).apparent().radec()
+            return ra, dec, distance
+            
+        ra, dec, distance = self.observe(ephemeris)(obj).radec()
+        return ra, dec, distance

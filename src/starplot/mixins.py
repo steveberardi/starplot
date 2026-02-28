@@ -116,65 +116,6 @@ class HorizonExtentMaskMixin:
                 ]
             )
 
-    @cache
-    def _extent_mask2(self):
-        locations = [
-            self.location.at(self.observer.timescale).from_altaz(
-                alt_degrees=self.alt[0], az_degrees=self._az[0]
-            ),  # lower left
-            self.location.at(self.observer.timescale).from_altaz(
-                alt_degrees=self.alt[0], az_degrees=self._az[1]
-            ),  # lower right
-            self.location.at(self.observer.timescale).from_altaz(
-                alt_degrees=self.alt[1], az_degrees=self._az[1]
-            ),  # upper right
-            self.location.at(self.observer.timescale).from_altaz(
-                alt_degrees=self.alt[1], az_degrees=self.center_az
-            ),  # top center
-            # self.location.at(self.observer.timescale).from_altaz(
-            #     alt_degrees=self.center_alt, az_degrees=self.center_az
-            # ),  # center
-            self.location.at(self.observer.timescale).from_altaz(
-                alt_degrees=self.alt[1], az_degrees=self._az[0]
-            ),  # upper left
-            self.location.at(self.observer.timescale).from_altaz(
-                alt_degrees=self.alt[0], az_degrees=self._az[0]
-            ),  # lower left
-        ]
-
-        # self.ra_min = None
-        # self.ra_max = None
-        # self.dec_max = None
-        # self.dec_min = None
-        from pprint import pprint
-        from shapely import segmentize
-
-        self.location.at(self.observer.timescale).from_altaz(
-            alt_degrees=self.center_alt, az_degrees=self.center_az
-        )  # center
-        print(self.alt)
-        print(self._az)
-
-        coords = []
-        for location in locations:
-            ra, dec, _ = location.radec()
-            ra = ra.hours * 15
-            if ra < 180:
-                ra += 360
-            dec = dec.degrees
-            coords.append([float(ra), float(dec)])
-
-        pprint(coords)
-        # coords = reversed(coords)
-        extent = Polygon(coords)
-
-        extent = segmentize(extent, max_segment_length=2)
-
-        self.polygon(style__fill_color="red", style__alpha=0.3, geometry=extent)
-        # print(extent)
-
-        return extent
-
     @profile
     @cache
     def _extent_mask2(self):
