@@ -6,9 +6,7 @@ Stars on galaxy plots are plotted in their [_astrometric_ positions](reference-p
 
 !!! tip "New Feature - Feedback wanted!"
 
-    These plots are a newer feature of Starplot (introduced in version 0.20.0), and will continue to evolve in future versions. 
-    
-    If you notice any unexpected behavior or you think there's a useful feature missing, please [open an issue on GitHub](https://github.com/steveberardi/starplot/issues).
+    These plots are a newer feature of Starplot (introduced in version 0.20.0), and will continue to evolve in future versions. If you notice any unexpected behavior or you think there's a useful feature missing, please [open an issue on GitHub](https://github.com/steveberardi/starplot/issues).
     
 
 ::: starplot.GalaxyPlot

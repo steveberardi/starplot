@@ -357,9 +357,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         collision_handler: CollisionHandler = None,
     ) -> None:
         """
-        Plots the planets.
-
-        If you specified a lat/lon when creating the plot (e.g. for perspective projections or optic plots), then the planet's _apparent_ RA/DEC will be calculated.
+        Plots the planets, at their _apparent_ RA/DEC (based on the observer you defined).
 
         Args:
             style: Styling of the planets. If None, then the plot's style (specified when creating the plot) will be used
@@ -425,9 +423,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         collision_handler: CollisionHandler = None,
     ) -> None:
         """
-        Plots the Sun.
-
-        If you specified a lat/lon when creating the plot (e.g. for perspective projections or optic plots), then the Sun's _apparent_ RA/DEC will be calculated.
+        Plots the Sun, at its _apparent_ RA/DEC (based on the observer you defined).
 
         Args:
             style: Styling of the Sun. If None, then the plot's style (specified when creating the plot) will be used
@@ -699,9 +695,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         collision_handler: CollisionHandler = None,
     ) -> None:
         """
-        Plots the Moon.
-
-        If you specified a lat/lon when creating the plot (e.g. for perspective projections or optic plots), then the Moon's _apparent_ RA/DEC will be calculated.
+        Plots the Moon, at its _apparent_ RA/DEC (based on the observer you defined).
 
         Args:
             style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
