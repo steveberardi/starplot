@@ -158,12 +158,12 @@ class TestSolarEclipse:
         m = Moon.get(observer)
         s = Sun.get(observer)
 
-        assert m.ra == pytest.approx(17.611428857038238)
-        assert m.dec == pytest.approx(7.469561912433153)
+        assert m.ra == pytest.approx(17.616677574315425)
+        assert m.dec == pytest.approx(7.471714505620887)
         assert m.apparent_size == pytest.approx(0.5615855003639567)
 
-        assert s.ra == pytest.approx(17.624241364540502)
-        assert s.dec == pytest.approx(7.475828971935881)
+        assert s.ra == pytest.approx(17.629489939869988)
+        assert s.dec == pytest.approx(7.477981411072887)
         assert s.apparent_size == pytest.approx(0.5321154425811137)
 
 

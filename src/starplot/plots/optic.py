@@ -131,19 +131,19 @@ class OpticPlot(
     @property
     def alt(self):
         """Altitude of target (degrees)"""
-        return self.pos_alt.degrees
+        return self.pos_alt
 
     @property
     def az(self):
         """Azimuth of target (degrees)"""
-        return self.pos_az.degrees
+        return self.pos_az
 
     def _prepare_coords(self, ra, dec) -> (float, float):
         """Converts RA/DEC to AZ/ALT"""
-        point = SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec)
-        apparent = self.observe(point).apparent()
-        pos_alt, pos_az, _ = apparent.altaz()
-        return pos_az.degrees, pos_alt.degrees
+        return self.observer._apparent(
+            obj=SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec),
+            ephemeris=self.ephemeris_name,
+        )
 
     def _plot_kwargs(self) -> dict:
         return dict(transform=self._crs)
@@ -181,11 +181,11 @@ class OpticPlot(
         self.observe = self.observer.observe(self.ephemeris_name)
 
         target = SkyfieldStar(ra_hours=self.ra / 15, dec_degrees=self.dec)
-        apparent = self.observe(target).apparent()
-
-        self.pos_alt, self.pos_az, _ = apparent.altaz()
-
-        if self.pos_alt.degrees < 0 and self.raise_on_below_horizon:
+        self.pos_az, self.pos_alt = self.observer._apparent(
+            obj=target,
+            ephemeris=self.ephemeris_name,
+        )
+        if self.pos_alt < 0 and self.raise_on_below_horizon:
             raise ValueError("Target is below horizon at specified time/location.")
 
     def _adjust_radec_minmax(self):
@@ -228,11 +228,9 @@ class OpticPlot(
         return self.in_bounds_altaz(y, x)  # alt = y, az = x
 
     def _prepare_star_coords(self, df):
-        stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
-        nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
-        df["x"], df["y"] = (
-            nearby_stars_az.degrees,
-            nearby_stars_alt.degrees,
+        df["x"], df["y"] = self.observer._apparent(
+            obj=SkyfieldStar.from_dataframe(df),
+            ephemeris=self.ephemeris_name,
         )
         return df
 
@@ -343,7 +341,7 @@ class OpticPlot(
             f"Optic - {self.optic.label}",
         ]
         values = [
-            f"{self.pos_alt.degrees:.0f}\N{DEGREE SIGN} / {self.pos_az.degrees:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az.degrees)})",
+            f"{self.pos_alt:.0f}\N{DEGREE SIGN} / {self.pos_az:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az)})",
             f"{(self.ra / 15):.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
             f"{self.observer.lat:.2f}\N{DEGREE SIGN}, {self.observer.lon:.2f}\N{DEGREE SIGN}",
             dt_str,
@@ -425,8 +423,8 @@ class OpticPlot(
 
     def _init_plot(self):
         self._proj = ccrs.AzimuthalEquidistant(
-            central_longitude=self.pos_az.degrees,
-            central_latitude=self.pos_alt.degrees,
+            central_longitude=self.pos_az,
+            central_latitude=self.pos_alt,
         )
         self._proj.threshold = 1000
         self.fig = plt.figure(

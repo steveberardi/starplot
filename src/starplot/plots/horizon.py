@@ -157,23 +157,18 @@ class HorizonPlot(
             ra -= 360
         if ra < 0:
             ra += 360
-        point = SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec)
-        position = self.observe(point).apparent()
-        pos_alt, pos_az, _ = position.altaz()
-        return pos_az.degrees, pos_alt.degrees
+
+        return self.observer._apparent(
+            obj=SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec),
+            ephemeris=self.ephemeris_name,
+        )
 
     def _prepare_star_coords(self, df, limit_by_altaz=True):
-        # import geopandas as gpd
-
-        # Skyfield needs these columns
-        # df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
-
-        stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
-        nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
-        df["x"], df["y"] = (
-            nearby_stars_az.degrees,
-            nearby_stars_alt.degrees,
+        df["x"], df["y"] = self.observer._apparent(
+            obj=SkyfieldStar.from_dataframe(df),
+            ephemeris=self.ephemeris_name,
         )
+
         # if limit_by_altaz:
         #     extent = self._extent_mask_altaz()
         #     df["_geometry_az_alt"] = gpd.points_from_xy(df.x, df.y)

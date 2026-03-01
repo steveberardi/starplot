@@ -6,6 +6,8 @@
 - Separate collision handlers for points, areas, and paths
 - Refactored some models to expect an observer instance instead of lat/lon/dt
 - Adds the PlateCarree projection
+- Adds effect of atmospheric refraction to horizon and optic plots
+- Fixes a bug with calculating apparent positions of solar system objects in horizon/optic plots
 
 
 ## v0.19.x

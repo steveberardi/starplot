@@ -1,13 +1,13 @@
 horizon_base:
-  dhash: 8e868a8e868a82b08686ce8e869a92b08ec6c68e869ad270
+  dhash: 8e868a8e868ac2f08686ce8e869ad2f08ec6c68e869ad2d0
   filename: /starplot/hash_checks/data/horizon-base.png
-  phash: c1843fd17e913b86
+  phash: c1843fc17e913b87
 horizon_gradient_background:
-  dhash: f1682072b2a6a294f1682672b2beaa94f168a6b2b29a9ad0
+  dhash: f1682072b2a6a2d0f1682672b2beaa94f168a6b2b29a9ad0
   filename: /starplot/hash_checks/data/horizon-gradient-background.png
   phash: 945e62c12bc56ef4
 horizon_north_celestial_pole:
-  dhash: 989aaa888ab2aab09a8a8aba8ab2a2b4928a8aba8aa2aa90
+  dhash: 989aaa888ab2aab09a8a8aba8ab2a2b0928a8aba8aa2aa50
   filename: /starplot/hash_checks/data/horizon-north-celestial-pole.png
   phash: d5d13a902ad47ee2
 map_allow_all_collisions:
@@ -109,7 +109,7 @@ optic_m45_binoculars:
 optic_m45_camera:
   dhash: 4d717151716159f54d717151716159f54d717151716159f5
   filename: /starplot/hash_checks/data/optic-m45-camera.png
-  phash: ae7b846ec43bd184
+  phash: aa7b846ec43bd1c4
 optic_m45_reflector:
   dhash: 8e1f2b7123330f4d8e1f2b7123330f4d8e1f2b7123330f4d
   filename: /starplot/hash_checks/data/optic-m45-reflector.png
@@ -141,7 +141,7 @@ optic_orion_nebula_refractor:
 optic_polaris_binoculars:
   dhash: 8e172b5533330fcd8e172b5533330fcd8e172b5533330fcd
   filename: /starplot/hash_checks/data/optic-binoculars-polaris.png
-  phash: aa6b847186f18ed3
+  phash: aa7b847182f18ed3
 optic_solar_eclipse_binoculars:
   dhash: 71cc928a8a92cc7171cc928a8a92cc7171c0b28a8a92c071
   filename: /starplot/hash_checks/data/optic-binoculars-eclipse.png

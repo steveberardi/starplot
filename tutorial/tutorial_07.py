@@ -5,10 +5,10 @@ from starplot import Planet, Observer, Refractor
 from starplot.styles import PlotStyle, extensions
 
 tz = ZoneInfo("America/Los_Angeles")
-tonight = datetime.now(tz).replace(hour=21)
+dt = datetime(2025, 2, 18, 21, 0, 0, tzinfo=tz)
 
 observer = Observer(
-    dt=tonight,
+    dt=dt,
     lat=32.97,
     lon=-117.038611,
 )
@@ -33,8 +33,8 @@ p.planets(
     # since we're plotting the planets as their "true size"
     # the 'auto' offset won't work (it's not supported yet!)
     # so we manually set the offsets here:
-    style__label__offset_x=68,
-    style__label__offset_y=-30,
+    style__label__offset_x=50,
+    style__label__offset_y=-20,
     style__label__font_size=56,
     style__marker__color="#fcdb72",
 )

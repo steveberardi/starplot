@@ -58,10 +58,10 @@ def test_map_objects_list_planets():
     p.sun()
     p.moon()
 
-    assert p.objects.moon.ra == pytest.approx(292.0009374668436)
+    assert p.objects.moon.ra == pytest.approx(291.99637857192045)
     assert p.objects.moon.dt == dt
 
-    assert p.objects.sun.ra == pytest.approx(155.97667374473494)
+    assert p.objects.sun.ra == pytest.approx(155.9820867071985)
     assert p.objects.sun.dt == dt
 
     assert len(p.objects.planets) == 8

@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from functools import cached_property
+from functools import cached_property, cache
 from typing import Callable
 
 
@@ -25,7 +25,6 @@ class Observer(BaseModel):
         lon=-116.836394,
     )
     ```
-
     """
 
     dt: AwareDatetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -44,13 +43,14 @@ class Observer(BaseModel):
     elevation: float = 0
     """Elevation of observer, in meters"""
 
-    temperature: float | None = None
+    temperature: float = 10
     """Temperature in degrees Celsius. This is only used for determining atmospheric refraction for apparent positions."""
 
     pressure: float | None = None
-    """Atmospheric pressure in millibars. This is only used for determining atmospheric refraction for apparent positions."""
+    """Atmospheric pressure in millibars. If `None`, then it'll be estimated based on the observer's elevation. This is only used for determining atmospheric refraction for apparent positions."""
 
     class Config:
+        frozen = True
         arbitrary_types_allowed = True
 
     @computed_field
@@ -85,6 +85,7 @@ class Observer(BaseModel):
         """
         return Observer(dt=ts.J(epoch).utc_datetime())
 
+    @cache
     def position(self, ephemeris: str = "de421.bsp"):
         """
         Returns a Skyfield position for this observer.
@@ -102,13 +103,23 @@ class Observer(BaseModel):
 
         return earth + wgs84.latlon(self.lat, self.lon, self.elevation)
 
+    @cache
     def observe(self, ephemeris: str = "de421.bsp") -> Callable:
         return self.position(ephemeris).at(self.timescale).observe
 
-    def locate(self, obj: SkyfieldStar, ephemeris: str = "de421.bsp"):
-        if self.has_location:
-            ra, dec, distance = self.observe(ephemeris)(obj).apparent().radec()
-            return ra, dec, distance
-
+    def _astrometric(self, obj: SkyfieldStar, ephemeris: str = "de421.bsp"):
         ra, dec, distance = self.observe(ephemeris)(obj).radec()
         return ra, dec, distance
+
+    def _apparent(self, obj: SkyfieldStar, ephemeris: str = "de421.bsp"):
+        """Returns apparent AZ, ALT of object"""
+        pressure_mbar = self.pressure if self.pressure is not None else "standard"
+        pos_alt, pos_az, _ = (
+            self.observe(ephemeris)(obj)
+            .apparent()
+            .altaz(
+                temperature_C=self.temperature,
+                pressure_mbar=pressure_mbar,
+            )
+        )
+        return pos_az.degrees, pos_alt.degrees

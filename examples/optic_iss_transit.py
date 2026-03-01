@@ -76,7 +76,7 @@ for sat in iss.trajectory(dt_start, dt_end, step=timedelta(seconds=1)):
                 "zorder": 5_000,
             },
         },
-        label=sat.dt.strftime("%-H:%M:%S"),
+        label=sat.observer.dt.strftime("%-H:%M:%S"),
     )
 
 p.export("optic_iss_transit.png", padding=0.1, transparent=True)

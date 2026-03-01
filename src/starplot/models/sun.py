@@ -46,7 +46,7 @@ class Sun(SkyObject):
         eph = load(ephemeris)
         sun = eph["sun"]
 
-        ra, dec, distance = observer.locate(sun, ephemeris=ephemeris)
+        ra, dec, distance = observer._astrometric(sun, ephemeris=ephemeris)
 
         apparent_diameter_degrees = Angle(
             radians=np.arcsin(RADIUS_KM / distance.km) * 2.0

@@ -732,8 +732,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
                 )
             else:
                 self.circle(
-                    (m.ra, m.dec),
-                    m.apparent_size,
+                    center=(m.ra, m.dec),
+                    radius_degrees=m.apparent_size / 2,
                     style=polygon_style,
                     gid="moon-marker",
                 )

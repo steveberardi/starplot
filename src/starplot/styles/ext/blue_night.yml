@@ -16,7 +16,7 @@ legend:
   font_color: hsl(210, 29%, 94%)
 
 info_text:
-  font_color: hsl(210, 29%, 8%)
+  font_color: hsl(210, 29%, 94%)
 
 gridlines:
   label:

@@ -72,7 +72,7 @@ class Moon(SkyObject):
         eph = load(ephemeris)
         moon = eph["moon"]
 
-        ra, dec, distance = observer.locate(moon, ephemeris=ephemeris)
+        ra, dec, distance = observer._astrometric(moon, ephemeris=ephemeris)
 
         apparent_diameter_degrees = Angle(
             radians=np.arcsin(RADIUS_KM / distance.km) * 2.0

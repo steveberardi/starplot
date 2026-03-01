@@ -288,7 +288,7 @@ def get_comet_at_date_location(
     ts = load.timescale()
     eph = load(ephemeris)
     c = eph["sun"] + mpc.comet_orbit(comet, ts, GM_SUN)
-    ra, dec, distance = observer.locate(c, ephemeris=ephemeris)
+    ra, dec, distance = observer._astrometric(c, ephemeris=ephemeris)
 
     return Comet(
         name=comet.designation,

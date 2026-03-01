@@ -96,7 +96,7 @@ class Planet(SkyObject):
 
         for p in PlanetName:
             planet = eph[f"{p.value} barycenter"]
-            ra, dec, distance = observer.locate(planet, ephemeris=ephemeris)
+            ra, dec, distance = observer._astrometric(planet, ephemeris=ephemeris)
 
             # angular diameter:
             # https://rhodesmill.org/skyfield/examples.html#what-is-the-angular-diameter-of-a-planet-given-its-radius

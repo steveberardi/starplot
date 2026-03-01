@@ -66,9 +66,9 @@ class TestComet:
         assert c2025_a6_lemmon.name == "C/2025 A6 (Lemmon)"
         assert c2025_a6_lemmon.constellation_id == "boo"
 
-        # specifying location gets apparent location in the sky, so RA/DEC should be different
-        assert c2025_a6_lemmon.ra == pytest.approx(218.86217824786402, rel=1e-6)
-        assert c2025_a6_lemmon.dec == pytest.approx(27.731583564862603, rel=1e-6)
+        # specifying location so RA/DEC should be different
+        assert c2025_a6_lemmon.ra == pytest.approx(218.86818463626201, rel=1e-6)
+        assert c2025_a6_lemmon.dec == pytest.approx(27.729481037132114, rel=1e-6)
 
         # and distance should be different too
         assert c2025_a6_lemmon.distance == pytest.approx(0.5980091198158166, rel=1e-6)
