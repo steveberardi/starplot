@@ -2,7 +2,7 @@ from starplot import MapPlot, StereoNorth, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.BLUE_DARK, extensions.MAP, {"background_color": "#2C3F62"}
+    extensions.BLUE_DARK, extensions.MAP, {"background_color": "#193561"}
 )
 
 p = MapPlot(
@@ -22,7 +22,7 @@ p.stars(
     ],
     size_fn=lambda s: 2600,  # make stars a constant size
     style__marker__symbol="star",
-    style__marker__color="#ffff6c",
+    style__marker__color="hsl(59, 100%, 53%)",
     style__label__font_size=14,
     style__label__font_weight=400,
 )

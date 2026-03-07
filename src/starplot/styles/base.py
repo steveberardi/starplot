@@ -759,7 +759,7 @@ class LegendStyle(BaseStyle):
             framealpha=self.background_alpha,
             prop={
                 "family": self.font_name,
-                "weight": FontWeightEnum(self.font_weight),
+                "weight": FontWeightEnum(self.font_weight).as_matplot(),
                 "size": self.font_size * scale,
             },
             labelcolor=self.font_color.as_hex(),
@@ -769,7 +769,7 @@ class LegendStyle(BaseStyle):
             mode="expand" if self.expand else None,
             facecolor=self.background_color.as_hex(),
             title_fontproperties=dict(
-                weight=self.title_font_weight,
+                weight=FontWeightEnum(self.title_font_weight).as_matplot(),
                 size=self.title_font_size,
                 family=self.title_font_name.split(","),
             ),
