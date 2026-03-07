@@ -1,8 +1,7 @@
 import math
-from datetime import datetime
+from datetime import datetime, timezone
 
 import numpy as np
-from pytz import timezone
 
 
 def in_circle(x, y, center_x=0, center_y=0, radius=0.9) -> bool:
@@ -149,7 +148,7 @@ def azimuth_to_string(azimuth_degrees: int):
 
 
 def dt_or_now(dt):
-    return dt or timezone("UTC").localize(datetime.now())
+    return dt or datetime.now(tz=timezone.utc)
 
 
 def points_on_line(start, end, num_points=100):

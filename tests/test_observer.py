@@ -53,3 +53,9 @@ def test_lst():
     dt = datetime(2025, 8, 2, 7, 54, 0, 0, tzinfo=tz)
     obs = Observer(dt=dt, lat=35, lon=-117.0634)
     assert obs.lst == pytest.approx(57.89127678132414, rel=1e-6)
+
+
+def test_immutable():
+    obs = Observer(lat=35, lon=-117.0634)
+    with pytest.raises(ValidationError, match=r"Instance is frozen"):
+        obs.lat = 90

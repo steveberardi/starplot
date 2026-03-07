@@ -6,7 +6,7 @@ from typing import Callable
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator, FuncFormatter
-from skyfield.api import wgs84, Star as SkyfieldStar
+from skyfield.api import Star as SkyfieldStar
 from shapely import Polygon, MultiPolygon
 from starplot.coordinates import CoordinateSystem
 from starplot.plots.base import BasePlot, DPI
@@ -57,14 +57,15 @@ class HorizonPlot(
     """Creates a new horizon plot.
 
     Args:
-
         altitude: Tuple of altitude range to plot (min, max)
         azimuth: Tuple of azimuth range to plot (min, max)
         observer: Observer instance which specifies a time and place. Defaults to `Observer()`
         ephemeris: Ephemeris to use for calculating planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         style: Styling for the plot (colors, sizes, fonts, etc). If `None`, it defaults to `PlotStyle()`
         resolution: Size (in pixels) of largest dimension of the map
-        collision_handler: Default [CollisionHandler][starplot.CollisionHandler] for the plot that describes what to do on label collisions with other labels, markers, etc.
+        point_label_handler: Default [CollisionHandler][starplot.CollisionHandler] for point labels.
+        area_label_handler: Default [CollisionHandler][starplot.CollisionHandler] for area labels.
+        path_label_handler: Default [CollisionHandler][starplot.CollisionHandler] for path labels.
         scale: Scaling factor that will be applied to all relevant sizes in styles (e.g. font size, marker size, line widths, etc). For example, if you want to make everything 2x bigger, then set scale to 2.
         autoscale: If True, then the scale will be automatically set based on resolution
         suppress_warnings: If True (the default), then all warnings will be suppressed
@@ -87,7 +88,9 @@ class HorizonPlot(
         ephemeris: str = "de421.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
-        collision_handler: CollisionHandler = None,
+        point_label_handler: CollisionHandler = None,
+        area_label_handler: CollisionHandler = None,
+        path_label_handler: CollisionHandler = None,
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
@@ -102,7 +105,9 @@ class HorizonPlot(
             ephemeris,
             style,
             resolution,
-            collision_handler=collision_handler,
+            point_label_handler=point_label_handler,
+            area_label_handler=area_label_handler,
+            path_label_handler=path_label_handler,
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
@@ -152,29 +157,36 @@ class HorizonPlot(
             ra -= 360
         if ra < 0:
             ra += 360
-        point = SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec)
-        position = self.observe(point).apparent()
-        pos_alt, pos_az, _ = position.altaz()
-        return pos_az.degrees, pos_alt.degrees
+
+        return self.observer._apparent(
+            obj=SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec),
+            ephemeris=self.ephemeris_name,
+        )
 
     def _prepare_star_coords(self, df, limit_by_altaz=True):
-        # import geopandas as gpd
-
-        # Skyfield needs these columns
-        # df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
-
-        stars_apparent = self.observe(SkyfieldStar.from_dataframe(df)).apparent()
-        nearby_stars_alt, nearby_stars_az, _ = stars_apparent.altaz()
-        df["x"], df["y"] = (
-            nearby_stars_az.degrees,
-            nearby_stars_alt.degrees,
+        df["x"], df["y"] = self.observer._apparent(
+            obj=SkyfieldStar.from_dataframe(df),
+            ephemeris=self.ephemeris_name,
         )
+
         # if limit_by_altaz:
         #     extent = self._extent_mask_altaz()
         #     df["_geometry_az_alt"] = gpd.points_from_xy(df.x, df.y)
         #     df = df[df["_geometry_az_alt"].intersects(extent)]
 
         return df
+
+    def _calc_position(self):
+        self.observe = self.observer.observe(self.ephemeris_name)
+
+        self.ra_min = 0
+        self.ra_max = 360
+        self.dec_min = self.observer.lat - 90
+        self.dec_max = self.observer.lat + 90
+
+        self.logger.debug(
+            f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
+        )
 
     def _plot_kwargs(self) -> dict:
         return dict(transform=self._crs)
@@ -212,71 +224,6 @@ class HorizonPlot(
 
     def _polygon(self, points, style, **kwargs):
         super()._polygon(points, style, transform=self._crs, **kwargs)
-
-    def _calc_position(self):
-        earth = self.ephemeris["earth"]
-        self.location = earth + wgs84.latlon(self.observer.lat, self.observer.lon)
-        self.observe = self.location.at(self.observer.timescale).observe
-
-        # locations = [
-        #     self.location.at(self.timescale).from_altaz(
-        #         alt_degrees=self.alt[0], az_degrees=self.az[0]
-        #     ),  # lower left
-        #     self.location.at(self.timescale).from_altaz(
-        #         alt_degrees=self.alt[0], az_degrees=self.az[1]
-        #     ),  # lower right
-        #     self.location.at(self.timescale).from_altaz(
-        #         alt_degrees=self.alt[1], az_degrees=self.center_az
-        #     ),  # top center
-        #     self.location.at(self.timescale).from_altaz(
-        #         alt_degrees=self.center_alt, az_degrees=self.center_az
-        #     ),  # center
-        #     self.location.at(self.timescale).from_altaz(alt_degrees=self.alt[1], az_degrees=self.az[0]), # upper left
-        #     self.location.at(self.timescale).from_altaz(alt_degrees=self.alt[1], az_degrees=self.az[1]), # upper right
-        # ]
-
-        # self.ra_min = None
-        # self.ra_max = None
-        # self.dec_max = None
-        # self.dec_min = None
-        # print(self.alt)
-        # print(self.az)
-        # for location in locations:
-        #     ra, dec, _ = location.radec()
-        #     ra = ra.hours
-        #     dec = dec.degrees
-        #     print(ra, dec)
-        #     if self.ra_min is None or ra < self.ra_min:
-        #         self.ra_min = ra
-
-        #     if self.ra_max is None or ra > self.ra_max:
-        #         self.ra_max = ra
-
-        #     if self.dec_min is None or dec < self.dec_min:
-        #         self.dec_min = dec
-
-        #     if self.dec_max is None or dec > self.dec_max:
-        #         self.dec_max = dec
-
-        # if self.dec_max > 70 or self.dec_min < -70:
-        #     # naive method of getting all the stars near the poles
-        #     self.ra_min = 0
-        #     self.ra_max = 24
-        # else:
-        #     self.ra_min = max(self.ra_min - 4, 0)
-        #     self.ra_max = min(self.ra_max + 4, 24)
-
-        # self.dec_min -= 10
-        # self.dec_max += 10
-
-        self.ra_min = 0
-        self.ra_max = 360
-        self.dec_min = self.observer.lat - 90
-        self.dec_max = self.observer.lat + 90
-
-        self.logger.debug(
-            f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
-        )
 
     @cache
     def _extent_mask_altaz(self):

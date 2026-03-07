@@ -12,6 +12,7 @@ nav:
         - ZenithPlot: reference-zenithplot.md
         - HorizonPlot: reference-horizonplot.md
         - OpticPlot: reference-opticplot.md
+        - GalaxyPlot: reference-galaxyplot.md
         - Models: reference-models.md
         - Selecting Objects: reference-selecting-objects.md
         - Styling: reference-styling.md

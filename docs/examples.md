@@ -90,10 +90,16 @@
             <p class="example-card-title">The Big Dipper</p>
         </a>
     </li>
-    <li>
+    <!-- <li>
         <a href="/examples/map-sagittarius/">
             <img src="/images/examples/map_sagittarius-sm.png" alt="Map of Sagittarius" class="off-glb" loading="lazy"/>
             <p class="example-card-title">Map of Sagittarius</p>
+        </a>
+    </li> -->
+    <li>
+        <a href="/examples/map-galaxy/">
+            <img src="/images/examples/map_galaxy-sm.png" alt="Open Clusters around the Milky Way" class="off-glb" loading="lazy"/>
+            <p class="example-card-title">Galaxy Plot</p>
         </a>
     </li>
     <li>

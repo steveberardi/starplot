@@ -3,12 +3,12 @@ from datetime import datetime
 
 import numpy as np
 from shapely import Polygon
-from skyfield.api import Angle, wgs84
+from skyfield.api import Angle
 
 from starplot.data import load
 from starplot.models.base import SkyObject
+from starplot.models.observer import Observer
 from starplot.geometry import circle
-from starplot.utils import dt_or_now
 
 
 @dataclass(slots=True)
@@ -30,35 +30,23 @@ class Sun(SkyObject):
     @classmethod
     def get(
         cls,
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
     ) -> "Sun":
         """
         Get the Sun for a specific date/time and observing location.
 
         Args:
-            dt: Datetime you want the Sun for (must be timezone aware!). _Defaults to current UTC time_.
-            lat: Latitude of observing location. If you set this (and longitude), then the Sun's _apparent_ RA/DEC will be calculated.
-            lon: Longitude of observing location
+            observer: Observer instance that specifies a time and location
             ephemeris: Ephemeris to use for calculating Sun/moon/planet positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
         RADIUS_KM = 695_700
 
-        dt = dt_or_now(dt)
-        ephemeris = load(ephemeris)
-        timescale = load.timescale().from_datetime(dt)
-        earth, sun = ephemeris["earth"], ephemeris["sun"]
+        observer = observer or Observer(lat=None, lon=None)
+        eph = load(ephemeris)
+        sun = eph["sun"]
 
-        if lat is not None and lon is not None:
-            position = earth + wgs84.latlon(lat, lon)
-            astrometric = position.at(timescale).observe(sun)
-            apparent = astrometric.apparent()
-            ra, dec, distance = apparent.radec()
-        else:
-            astrometric = earth.at(timescale).observe(sun)
-            ra, dec, distance = astrometric.radec()
+        ra, dec, distance = observer._astrometric(sun, ephemeris=ephemeris)
 
         apparent_diameter_degrees = Angle(
             radians=np.arcsin(RADIUS_KM / distance.km) * 2.0
@@ -68,7 +56,7 @@ class Sun(SkyObject):
             ra=ra.hours * 15,
             dec=dec.degrees,
             name="Sun",
-            dt=dt,
+            dt=observer.dt,
             apparent_size=apparent_diameter_degrees,
             geometry=circle((ra.hours * 15, dec.degrees), apparent_diameter_degrees),
         )

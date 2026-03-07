@@ -286,9 +286,7 @@ class ConstellationPlotterMixin:
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with other labels, markers, etc. If `None`, then `CollisionHandler(allow_constellation_line_collisions=True)` will be used (**Important: this function does NOT default to the plot's collision handler, since it's the only area-based label function and collisions should be handled differently**).
         """
 
-        collision_handler = collision_handler or CollisionHandler(
-            allow_constellation_line_collisions=True
-        )
+        collision_handler = collision_handler or self.area_label_handler
 
         hips = []
         for c in self.objects.constellations:

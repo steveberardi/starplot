@@ -29,6 +29,7 @@ bigsky*.parquet
 hash_checks/data/*.png
 hash_checks/results.html
 
+.tmp/
 temp*
 temp.py
 temp/

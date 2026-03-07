@@ -3,7 +3,7 @@ import pytest
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from starplot import Satellite
+from starplot import Satellite, Observer
 
 TZ_PT = ZoneInfo("America/Los_Angeles")
 
@@ -30,13 +30,16 @@ ISS_JSON_22_OCT_2025 = {
 
 class TestSatellite:
     def test_satellite_from_tle(self):
+        observer = Observer(
+            dt=datetime(2025, 10, 21, 19, 0, 0, 0, tzinfo=TZ_PT),
+            lat=33.363484,
+            lon=-116.836394,
+        )
         dsp = Satellite.from_tle(
             name="DSP",
             line1="1 04630U 70093A   25292.65131557 -.00000140  00000+0  00000+0 0  9999",
             line2="2 04630  14.7699  40.6283 1365231 267.2558  75.6583  1.20217148240949",
-            dt=datetime(2025, 10, 21, 19, 0, 0, 0, tzinfo=TZ_PT),
-            lat=33.363484,
-            lon=-116.836394,
+            observer=observer,
         )
 
         assert dsp.name == "DSP"
@@ -44,23 +47,23 @@ class TestSatellite:
         assert dsp.dec == pytest.approx(-14.166679872233521, rel=1e-6)
 
     def test_satellite_from_json(self):
-        iss = Satellite.from_json(
-            data=ISS_JSON_22_OCT_2025,
+        observer = Observer(
             dt=datetime(2025, 10, 21, 19, 0, 0, 0, tzinfo=TZ_PT),
             lat=33.363484,
             lon=-116.836394,
         )
+        iss = Satellite.from_json(data=ISS_JSON_22_OCT_2025, observer=observer)
         assert iss.name == "ISS (ZARYA)"
         assert iss.ra == pytest.approx(105.27042780805024, rel=1e-6)
         assert iss.dec == pytest.approx(6.7511296688128315, rel=1e-6)
 
     def test_satellite_get_trajectory(self):
-        iss = Satellite.from_json(
-            data=ISS_JSON_22_OCT_2025,
+        observer = Observer(
             dt=datetime(2025, 10, 21, 19, 0, 0, 0, tzinfo=TZ_PT),
             lat=33.363484,
             lon=-116.836394,
         )
+        iss = Satellite.from_json(data=ISS_JSON_22_OCT_2025, observer=observer)
 
         dt_start = datetime(2025, 10, 19, 19, 0, tzinfo=TZ_PT)
         dt_end = datetime(2025, 10, 21, 19, 0, tzinfo=TZ_PT)
@@ -70,7 +73,7 @@ class TestSatellite:
         # default time step for satellite trajectory is 1 hour
         assert len(satellites) == 48
 
-        assert satellites[0].dt == dt_start
+        assert satellites[0].observer.dt == dt_start
 
         # last satellite should be one hour before end time because end is not inclusive
-        assert satellites[-1].dt == dt_end - timedelta(hours=1)
+        assert satellites[-1].observer.dt == dt_end - timedelta(hours=1)

@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from unittest.mock import patch, MagicMock
 
-from starplot import Comet
+from starplot import Comet, Observer
 
 from .utils import TEST_DATA_PATH
 
@@ -35,8 +35,13 @@ class TestComet:
 
     def test_comet_get_at_date(self):
         dt = datetime(2025, 10, 21, 19, 0, tzinfo=TZ_PT)
+        observer = Observer(
+            dt=dt,
+            lat=None,
+            lon=None,
+        )
 
-        c2025_a6_lemmon = Comet.get(name="C/2025 A6 (Lemmon)", dt=dt)
+        c2025_a6_lemmon = Comet.get(name="C/2025 A6 (Lemmon)", observer=observer)
         c2025_a6_lemmon.populate_constellation_id()
 
         assert c2025_a6_lemmon.name == "C/2025 A6 (Lemmon)"
@@ -49,16 +54,21 @@ class TestComet:
         dt = datetime(2025, 10, 21, 19, 0, tzinfo=TZ_PT)
         lat = 33.363484
         lon = -116.836394
+        observer = Observer(
+            dt=dt,
+            lat=lat,
+            lon=lon,
+        )
 
-        c2025_a6_lemmon = Comet.get(name="C/2025 A6 (Lemmon)", dt=dt, lat=lat, lon=lon)
+        c2025_a6_lemmon = Comet.get(name="C/2025 A6 (Lemmon)", observer=observer)
         c2025_a6_lemmon.populate_constellation_id()
 
         assert c2025_a6_lemmon.name == "C/2025 A6 (Lemmon)"
         assert c2025_a6_lemmon.constellation_id == "boo"
 
-        # specifying location gets apparent location in the sky, so RA/DEC should be different
-        assert c2025_a6_lemmon.ra == pytest.approx(218.86217824786402, rel=1e-6)
-        assert c2025_a6_lemmon.dec == pytest.approx(27.731583564862603, rel=1e-6)
+        # specifying location so RA/DEC should be different
+        assert c2025_a6_lemmon.ra == pytest.approx(218.86818463626201, rel=1e-6)
+        assert c2025_a6_lemmon.dec == pytest.approx(27.729481037132114, rel=1e-6)
 
         # and distance should be different too
         assert c2025_a6_lemmon.distance == pytest.approx(0.5980091198158166, rel=1e-6)
@@ -67,8 +77,13 @@ class TestComet:
         dt = datetime(2025, 10, 21, 19, 0, tzinfo=TZ_PT)
         lat = 33.363484
         lon = -116.836394
+        observer = Observer(
+            dt=dt,
+            lat=lat,
+            lon=lon,
+        )
 
-        c2025_a6_lemmon = Comet.get(name="C/2025 A6 (Lemmon)", dt=dt, lat=lat, lon=lon)
+        c2025_a6_lemmon = Comet.get(name="C/2025 A6 (Lemmon)", observer=observer)
 
         dt_start = datetime(2025, 10, 19, 19, 0, tzinfo=TZ_PT)
         dt_end = datetime(2025, 11, 4, 19, 0, tzinfo=TZ_PT)
@@ -78,7 +93,7 @@ class TestComet:
         ]
 
         assert len(comets) == 16
-        assert comets[0].dt == dt_start
+        assert comets[0].observer.dt == dt_start
 
         # last comet should be one day before end date because end is not inclusive
-        assert comets[-1].dt == dt_end - timedelta(days=1)
+        assert comets[-1].observer.dt == dt_end - timedelta(days=1)

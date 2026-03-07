@@ -16,9 +16,11 @@ Starplot is a Python library for creating star charts and maps of the sky
 
 - ⭐ **Zenith Charts** - shows the entire sky at a specific time and place
 
-- 🌃 **Horizon Charts** - shows the horizon at a specific time and place
+- 🌅 **Horizon Charts** - shows the horizon at a specific time and place
 
 - 🔭 **Optic Simulations** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
+
+- 🌌 **Galactic Charts** - shows a Mollweide projection in galactic coordinates
 
 - 🪐 **Planets and Deep Sky Objects (DSOs)** - with support for plotting their true extent
 

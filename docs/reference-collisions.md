@@ -1,6 +1,12 @@
 One of the biggest contributors to the visual quality of a map is labeling, which includes choosing carefully _what_ to label and also choosing good _positions_ for those labels. Obviously, you don't want labels to collide with each other, but there's also a few more subtle things to consider when labeling points and areas on a map. Starplot has a `CollisionHandler` to control some of these things.
 
-When you create a plot, you can specify the default collision handler that'll be used when plotting text. But, you can also override this default on all functions that plot text (either directly or as a side effect). There's one exception to this though: since constellation labels are area-based labels they have their own default collision handler. 
+When you create a plot, you can specify the default collision handler for three different types of labels:
+
+- **Points** (`point_label_handler`) - stars, DSOs, etc
+- **Areas** (`area_label_handler`) - constellations
+- **Paths** (`path_label_handler`) - ecliptic, celestial equator, etc
+
+You can also override these defaults on all functions that plot text. There are three distinct types of collision handlers because it's very common to want different rules for different types of labels. For example, the default area collision handler allows collisions with constellation lines, but the point handler does not.
 
 _See the [Virgo Galaxy Cluster](/examples/map-virgo-cluster/) plot for an example of using a custom collision handler._
 
@@ -8,6 +14,45 @@ _See the [Virgo Galaxy Cluster](/examples/map-virgo-cluster/) plot for an exampl
 !!! tip "New Feature"
 
     The collision handler is a newer feature of Starplot (introduced in version 0.19.0), and will continue to evolve in future versions. As always, if you notice any unexpected behavior with it, please [open an issue on GitHub](https://github.com/steveberardi/starplot/issues).
+
+
+## Defaults
+
+Below are the defaults for each type of collision handler. These are the defaults for _all_ plot types.
+
+### Points
+
+```python
+CollisionHandler(
+    attempts=10,
+    anchor_fallbacks=[
+        AnchorPointEnum.BOTTOM_RIGHT,
+        AnchorPointEnum.TOP_LEFT,
+        AnchorPointEnum.TOP_RIGHT,
+        AnchorPointEnum.BOTTOM_LEFT,
+        AnchorPointEnum.BOTTOM_CENTER,
+        AnchorPointEnum.TOP_CENTER,
+        AnchorPointEnum.RIGHT_CENTER,
+        AnchorPointEnum.LEFT_CENTER,
+    ]
+)
+```
+
+### Areas
+
+```python
+CollisionHandler(
+    allow_constellation_line_collisions=True
+)
+```
+
+### Paths
+
+```python
+CollisionHandler(
+    allow_constellation_line_collisions=True
+)
+```
 
 
 ::: starplot.CollisionHandler

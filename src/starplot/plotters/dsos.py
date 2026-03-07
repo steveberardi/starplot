@@ -178,7 +178,7 @@ class DsoPlotterMixin:
         where = where or []
         where_labels = where_labels or []
         where_true_size = where_true_size or []
-        handler = collision_handler or self.collision_handler
+        handler = collision_handler or self.point_label_handler
 
         if legend_labels is None:
             legend_labels = {}
@@ -265,7 +265,7 @@ class DsoPlotterMixin:
                             angle=angle or 0,
                         )
 
-                if label:
+                if label and self.in_bounds(ra, dec):
                     self.text(
                         label,
                         ra,

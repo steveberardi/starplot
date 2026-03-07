@@ -173,29 +173,32 @@ class Star(CatalogObject, SkyObject):
             List of Stars that match all `where` expressions
 
         """
+
         # from ibis import to_sql
 
-        # from starplot.data import db, DataFiles
+        # from starplot.data import db
+
         # con = db.connect()
 
         # exp = _load_stars(
         #     catalog=catalog,
         #     filters=where,
         #     sql=sql,
-        # )
+        # ).select(Star._fields())
 
-        # con.con.execute("INSTALL spatial; LOAD spatial;")
         # result = con.raw_sql(to_sql(exp))
-        # # result = con.con.execute(to_sql(exp))
-        # # result = con.con.execute(f"SELECT * FROM read_parquet('{DataFiles.BIG_SKY_MAG9}') where magnitude < 8")
+        # columns = [desc[0] for desc in result.description]
 
         # rows =[]
         # while True:
-        #     batch = result.fetchmany(5000)
+        #     batch = result.fetchmany(5_000)
         #     if not batch:
         #         break  # No more rows to fetch
         #     for row in batch:
-        #         rows.append(row)
+        #         row_dict = dict(zip(columns, row))
+        #         # breakpoint()
+        #         s = from_dict(row_dict)
+        #         rows.append(s)
 
         # return rows
 
@@ -216,6 +219,13 @@ class Star(CatalogObject, SkyObject):
             The star's name
         """
         return star.name
+
+
+def from_dict(star: dict) -> Star:
+    if not isinstance(star["geometry"], Geometry):
+        star["geometry"] = from_wkb(star["geometry"])
+
+    return Star(**star)
 
 
 def from_tuple(star: tuple) -> Star:

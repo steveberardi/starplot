@@ -1,7 +1,7 @@
 from functools import cache
 from pathlib import Path
 
-from ibis import _, row_number
+from ibis import _
 
 from starplot.config import settings
 from starplot.data import db
@@ -67,20 +67,5 @@ def load(
         result = c.alias("_").sql(sql).select("pk").execute()
         pks = result["pk"].to_list()
         c = c.filter(_.pk.isin(pks))
-
-    return c
-
-
-def load_borders(extent=None, filters=None):
-    filters = filters or []
-    con = db.connect()
-    c = con.table("constellation_borders")
-    c = c.mutate(pk=row_number())
-
-    if extent:
-        filters.append(_.geometry.intersects(extent))
-
-    if filters:
-        return c.filter(*filters)
 
     return c

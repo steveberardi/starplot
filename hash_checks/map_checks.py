@@ -22,6 +22,7 @@ from starplot import (
     Mollweide,
     StereoNorth,
     StereoSouth,
+    PlateCarree,
     CollisionHandler,
     Binoculars,
     Scope,
@@ -489,7 +490,7 @@ def check_map_moon_phase_waxing_crescent():
         **POWAY,
         dt=dt_dec_16,
     )
-    m = Moon.get(dt=dt_dec_16, **POWAY)
+    m = Moon.get(observer)
     p = m.create_map(
         height_degrees=4,
         width_degrees=4,
@@ -594,7 +595,7 @@ def check_map_plot_custom_clip_path_virgo():
             (13 * 15, 10),
             (13.42 * 15, -11.1613),  # Spica
         ],
-        style={
+        style__line={
             "color": "red",
             "width": 9,
         },
@@ -680,7 +681,7 @@ def check_map_allow_all_collisions():
         style=STYLE,
         resolution=3000,
         scale=1.5,
-        collision_handler=handler,
+        point_label_handler=handler,
     )
     p.stars(where=[_.magnitude < 6], bayer_labels=True, flamsteed_labels=True)
     p.dsos(where=[_.magnitude < 10], where_true_size=[False])
@@ -706,7 +707,7 @@ def check_map_allow_marker_and_line_collisions():
         style=STYLE,
         resolution=3000,
         scale=1.5,
-        collision_handler=handler,
+        point_label_handler=handler,
     )
     p.constellations()
     p.stars(where=[_.magnitude < 8], bayer_labels=True, flamsteed_labels=True)
@@ -756,7 +757,7 @@ def check_map_constellation_clip_path():
 
     p.line(
         geometry=constellation.border,
-        style=p.style.constellation_borders,
+        style__line=p.style.constellation_borders,
     )
 
     for hip1, hip2 in constellation.star_hip_lines:
@@ -767,7 +768,7 @@ def check_map_constellation_clip_path():
                 (star1.ra, star1.dec),
                 (star2.ra, star2.dec),
             ],
-            style=p.style.constellation_lines,
+            style__line=p.style.constellation_lines,
         )
 
     p.stars(
@@ -783,4 +784,23 @@ def check_map_constellation_clip_path():
     filename = DATA_PATH / "map-constellation-clip-path.png"
     p.export(filename, padding=0.5)
 
+    return filename
+
+
+def check_map_plate_caree():
+    filename = DATA_PATH / "map-plate-caree.png"
+    p = MapPlot(
+        projection=PlateCarree(),
+        style=styles.PlotStyle().extend(
+            styles.extensions.BLUE_NIGHT,
+            styles.extensions.MAP,
+        ),
+        resolution=4000,
+        scale=0.75,
+    )
+    p.stars(where=[_.magnitude < 4], where_labels=[False])
+    p.gridlines()
+    p.ecliptic()
+    p.constellations()
+    p.export(filename)
     return filename

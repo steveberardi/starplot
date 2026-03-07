@@ -4,11 +4,12 @@ from typing import Iterator
 
 from shapely import Point
 from skyfield.api import wgs84, EarthSatellite
-from skyfield.timelib import Timescale
 
 from starplot.data import load
 from starplot.models.base import SkyObject
-from starplot.utils import dt_or_now
+from starplot.models.observer import Observer
+
+ts = load.timescale()
 
 
 @dataclass(slots=True, kw_only=True)
@@ -22,24 +23,13 @@ class Satellite(SkyObject):
     """
 
     name: str = None
-    """
-    Name of the satellite
-    """
+    """Name of the satellite"""
 
-    dt: datetime = None
-    """Date/time of satellite's position"""
-
-    lat: float | None = None
-    """Latitude of observing location"""
-
-    lon: float | None = None
-    """Longitude of observing location"""
+    observer: Observer = None
+    """Observer of this satellite instance"""
 
     distance: float | None = None
     """Distance to satellite, in Astronomical units (the Earth-Sun distance of 149,597,870,700 m)"""
-
-    ephemeris: str = None
-    """Ephemeris used when retrieving this instance"""
 
     geometry: Point = None
     """Shapely Point of the satellite's position. Right ascension coordinates are in degrees (0...360)."""
@@ -50,26 +40,20 @@ class Satellite(SkyObject):
     def from_json(
         cls,
         data: dict,
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
-        ephemeris: str = "de421.bsp",
+        observer: Observer = None,
     ) -> "Satellite":
         """
         Get a satellite for a specific date/time/location from a CelesTrak JSON.
 
         Args:
             data: Dictionary of the CelesTrak JSON
-            dt: Datetime you want the satellite for (must be timezone aware!). _Defaults to current UTC time_.
-            lat: Latitude of observing location. If you set this (and longitude), then the satellite's _apparent_ RA/DEC will be calculated.
-            lon: Longitude of observing location
-            ephemeris: Ephemeris to use for calculating satellite positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
+            observer: Observer instance that specifies a time and location
         """
-        dt = dt_or_now(dt)
-        ts = load.timescale()
-        satellite = EarthSatellite.from_omm(ts, data)
-
-        return get_satellite_at_date_location(satellite, dt, lat, lon, ts)
+        observer = observer or Observer()
+        return get_satellite_at_date_location(
+            satellite=EarthSatellite.from_omm(ts, data),
+            observer=observer,
+        )
 
     @classmethod
     def from_tle(
@@ -77,10 +61,7 @@ class Satellite(SkyObject):
         name: str,
         line1: str,
         line2: str,
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
-        ephemeris: str = "de421.bsp",
+        observer: Observer = None,
     ) -> "Satellite":
         """
         Get a satellite for a specific date/time/location from a two-line element set (TLE).
@@ -89,21 +70,19 @@ class Satellite(SkyObject):
             name: Name of the satellite
             line1: Line 1 of the two-line element set (TLE)
             line2: Line 2 of the two-line element set (TLE)
-            dt: Datetime you want the satellite for (must be timezone aware!). _Defaults to current UTC time_.
-            lat: Latitude of observing location. If you set this (and longitude), then the satellite's _apparent_ RA/DEC will be calculated.
-            lon: Longitude of observing location
-            ephemeris: Ephemeris to use for calculating satellite positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
-        """
-        dt = dt_or_now(dt)
-        ts = load.timescale()
-        satellite = EarthSatellite(
-            line1,
-            line2,
-            name,
-            ts,
-        )
+            observer: Observer instance that specifies a time and location
 
-        return get_satellite_at_date_location(satellite, dt, lat, lon, ts)
+        """
+        observer = observer or Observer()
+        return get_satellite_at_date_location(
+            satellite=EarthSatellite(
+                line1,
+                line2,
+                name,
+                ts,
+            ),
+            observer=observer,
+        )
 
     def trajectory(
         self, date_start: datetime, date_end: datetime, step: timedelta = None
@@ -119,30 +98,31 @@ class Satellite(SkyObject):
         Returns:
             Iterator that yields a Satellite instance at each step in the date range
         """
-
-        step = step or timedelta(hours=1)
         dt = date_start
-        ts = load.timescale()
+        step = step or timedelta(hours=1)
 
         while dt < date_end:
+            observer_kwargs = self.observer.model_dump()
+            observer_kwargs["dt"] = dt
+            new_observer = Observer(**observer_kwargs)
             yield get_satellite_at_date_location(
-                self._satellite, dt, self.lat, self.lon, ts
+                satellite=self._satellite, observer=new_observer
             )
             dt += step
 
 
 def get_satellite_at_date_location(
-    satellite: EarthSatellite, dt: datetime, lat: float, lon: float, ts: Timescale
+    satellite: EarthSatellite, observer: Observer
 ) -> Satellite:
-    t = ts.from_datetime(dt)
+    t = observer.timescale
+    lat = observer.lat
+    lon = observer.lon
 
     if lat is not None and lon is not None:
-        position = wgs84.latlon(lat, lon)
+        position = wgs84.latlon(lat, lon, observer.elevation)
         difference = satellite - position
         topocentric = difference.at(t)
         ra, dec, distance = topocentric.radec()
-        # alt, az, distance = topocentric.altaz()
-        # print(alt, az)
     else:
         ra, dec, distance = satellite.at(t).radec()
 
@@ -150,11 +130,8 @@ def get_satellite_at_date_location(
         name=satellite.name,
         ra=ra.hours * 15,
         dec=dec.degrees,
-        dt=dt,
-        lat=lat,
-        lon=lon,
+        observer=observer,
         distance=distance.au,
-        ephemeris="na",
         geometry=Point(ra.hours * 15, dec.degrees),
     )
     setattr(result, "_satellite", satellite)

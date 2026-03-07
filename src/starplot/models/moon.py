@@ -4,13 +4,13 @@ from enum import Enum
 
 import numpy as np
 from shapely import Polygon
-from skyfield.api import Angle, wgs84
+from skyfield.api import Angle
 from skyfield import almanac
 
 from starplot.data import load
+from starplot.models.observer import Observer
 from starplot.models.base import SkyObject
 from starplot.geometry import circle
-from starplot.utils import dt_or_now
 
 
 class MoonPhase(str, Enum):
@@ -54,41 +54,31 @@ class Moon(SkyObject):
     @classmethod
     def get(
         cls,
-        dt: datetime = None,
-        lat: float = None,
-        lon: float = None,
+        observer: Observer = None,
         ephemeris: str = "de421.bsp",
     ) -> "Moon":
         """
         Get the Moon for a specific date/time and observing location.
 
         Args:
-            dt: Datetime you want the moon for (must be timezone aware!). _Defaults to current UTC time_.
-            lat: Latitude of observing location. If you set this (and longitude), then the Moon's _apparent_ RA/DEC will be calculated.
-            lon: Longitude of observing location
+            observer: Observer instance that specifies a time and location
             ephemeris: Ephemeris to use for calculating moon positions (see [Skyfield's documentation](https://rhodesmill.org/skyfield/planets.html) for details)
         """
         RADIUS_KM = 1_740
 
-        dt = dt_or_now(dt)
-        ephemeris = load(ephemeris)
-        timescale = load.timescale().from_datetime(dt)
-        earth, moon = ephemeris["earth"], ephemeris["moon"]
+        observer = observer or Observer(lat=None, lon=None)
+        timescale = observer.timescale
 
-        if lat is not None and lon is not None:
-            position = earth + wgs84.latlon(lat, lon)
-            astrometric = position.at(timescale).observe(moon)
-            apparent = astrometric.apparent()
-            ra, dec, distance = apparent.radec()
-        else:
-            astrometric = earth.at(timescale).observe(moon)
-            ra, dec, distance = astrometric.radec()
+        eph = load(ephemeris)
+        moon = eph["moon"]
+
+        ra, dec, distance = observer._astrometric(moon, ephemeris=ephemeris)
 
         apparent_diameter_degrees = Angle(
             radians=np.arcsin(RADIUS_KM / distance.km) * 2.0
         ).degrees
 
-        phase_angle = almanac.moon_phase(ephemeris, timescale).degrees
+        phase_angle = almanac.moon_phase(eph, timescale).degrees
 
         if phase_angle <= 180:
             illumination = phase_angle / 180
@@ -96,14 +86,10 @@ class Moon(SkyObject):
             illumination = 2 - (phase_angle / 180)
 
         # phase angle 12 hours BEFORE dt
-        phase_angle_0 = almanac.moon_phase(
-            ephemeris, timescale - timedelta(hours=12)
-        ).degrees
+        phase_angle_0 = almanac.moon_phase(eph, timescale - timedelta(hours=12)).degrees
 
         # phase angle 12 hours AFTER dt
-        phase_angle_1 = almanac.moon_phase(
-            ephemeris, timescale + timedelta(hours=12)
-        ).degrees
+        phase_angle_1 = almanac.moon_phase(eph, timescale + timedelta(hours=12)).degrees
 
         phase = None
 
@@ -135,7 +121,7 @@ class Moon(SkyObject):
             ra=ra.hours * 15,
             dec=dec.degrees,
             name="Moon",
-            dt=dt,
+            dt=observer.dt,
             apparent_size=apparent_diameter_degrees,
             phase_angle=phase_angle,
             phase_description=phase.value,

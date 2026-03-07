@@ -24,7 +24,7 @@ p.constellations(
 )
 p.line(
     geometry=canis_major.border,
-    style=p.style.constellation_borders,
+    style__line=p.style.constellation_borders,
 )
 p.open_clusters(where=[_.magnitude < 9], where_true_size=[False])
 p.stars(where=[_.magnitude < 9], where_labels=[_.magnitude < 4], bayer_labels=True)

@@ -39,13 +39,22 @@ flamsteed_labels:
   font_alpha: 0.9
   font_color: hsl(60, 3%, 17%)
 
-
+# Lines
 celestial_equator:
   label:
     font_color: hsl(188, 35%, 56%)
+    border_color: hsl(48, 80%, 96%)
   line:
     color: hsl(188, 35%, 76%)
     alpha: 0.62
+
+ecliptic:
+  label:
+    font_color: hsl(26, 63%, 50%)
+    border_color: hsl(48, 80%, 96%)
+  line:
+    color: hsl(26, 90%, 62%)
+    alpha: 1
 
 # Constellations
 constellation_lines:
@@ -60,13 +69,6 @@ constellation_borders:
   color: hsl(37, 33%, 40%)
   alpha: 0.8
   zorder: -500
-
-ecliptic:
-  label:
-    font_color: hsl(26, 63%, 50%)
-  line:
-    color: hsl(26, 90%, 62%)
-    alpha: 1
 
 milky_way:
   alpha: 0.2

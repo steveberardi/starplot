@@ -306,7 +306,7 @@ def check_optic_solar_eclipse_binoculars():
 
 
 def check_optic_moon_phase_waxing_crescent():
-    m = Moon.get(dt=dt_dec_16, **POWAY)
+    m = Moon.get(observer_dec_16_poway)
     optic_plot = m.create_optic(
         optic=optics.Binoculars(
             magnification=20,
@@ -333,7 +333,7 @@ def check_optic_moon_phase_new():
         dt=dt_april_8,
         **POWAY,
     )
-    m = Moon.get(dt=dt_april_8, **POWAY)
+    m = Moon.get(observer)
     optic_plot = m.create_optic(
         optic=optics.Binoculars(
             magnification=30,
@@ -361,7 +361,7 @@ def check_optic_moon_phase_full():
         dt=dt_full_moon,
         **POWAY,
     )
-    m = Moon.get(dt=dt_full_moon, **POWAY)
+    m = Moon.get(observer)
     optic_plot = m.create_optic(
         optic=optics.Binoculars(
             magnification=20,
@@ -397,7 +397,7 @@ def check_optic_iss_moon_transit():
         lon=-116.507025,
     )
 
-    moon = Moon.get(dt=observer.dt, lat=observer.lat, lon=observer.lon)
+    moon = Moon.get(observer)
 
     p = OpticPlot(
         ra=moon.ra,
@@ -417,8 +417,7 @@ def check_optic_iss_moon_transit():
         name="ISS (ZARYA)",
         line1="1 25544U 98067A   25312.42041502  .00013418  00000+0  24734-3 0  9990",
         line2="2 25544  51.6332 312.3676 0004093  47.8963 312.2373 15.49452868537539",
-        lat=observer.lat,
-        lon=observer.lon,
+        observer=observer,
     )
 
     dt_start = observer.dt - timedelta(minutes=1)
