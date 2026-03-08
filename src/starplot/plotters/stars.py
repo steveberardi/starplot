@@ -230,18 +230,20 @@ class StarPlotterMixin:
         starz = []
         rtree_id = 1
 
-        for star in stars_df.itertuples():
-            data_xy = self._proj.transform_point(star.x, star.y, self._crs)
-            display_x, display_y = self.ax.transData.transform(data_xy)
+        transformed = self._proj.transform_points(
+            self._crs,
+            stars_df["x"].to_numpy(),
+            stars_df["y"].to_numpy(),
+        )
+        stars_df["data_x"] = transformed[:, 0]
+        stars_df["data_y"] = transformed[:, 1]
+        stars_df[["display_x", "display_y"]] = self.ax.transData.transform(
+            stars_df[["data_x", "data_y"]].to_numpy()
+        )
+        stars_df = stars_df[(stars_df["display_x"] >= 0) & (stars_df["display_y"] >= 0)]
 
-            if (
-                display_x < 0
-                or display_y < 0
-                or np.isnan(display_x)
-                or np.isnan(display_y)
-                or self._is_clipped([(display_x, display_y)])
-            ):
-                continue
+        for star in stars_df.itertuples():
+            display_x, display_y = star.display_x, star.display_y
 
             obj = from_tuple(star)
             size = size_fn(obj) * self.scale**2

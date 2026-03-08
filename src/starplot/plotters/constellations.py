@@ -160,6 +160,8 @@ class ConstellationPlotterMixin:
                 end = self._proj.transform_point(x2, y2, self._geodetic)
                 radius = style.width * self.scale if style.width else 1
 
+                # lines.append([start, end])
+
                 if any([np.isnan(n) for n in start + end]):
                     continue
 
