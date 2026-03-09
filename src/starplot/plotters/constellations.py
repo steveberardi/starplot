@@ -1,7 +1,5 @@
 from typing import Callable
 
-import numpy as np
-
 import rtree
 from shapely import (
     MultiPoint,
@@ -20,34 +18,14 @@ from starplot.data.catalogs import (
 from starplot.data.stars import load as load_stars
 from starplot.models import Star, Constellation
 from starplot.models.constellation import from_tuple
-from starplot.projections import (
-    StereoNorth,
-    StereoSouth,
-    Stereographic,
-    Equidistant,
-    LambertAzEqArea,
-)
 from starplot.profile import profile
 from starplot.styles import LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
-from starplot.geometry import is_wrapped_polygon, line_segment
+from starplot.geometry import is_wrapped_polygon, line_segment, split_line_at_meridian
 from starplot.plotters.text import CollisionHandler
-
-GEODETIC_PROJECTIONS = (
-    Equidistant,
-    LambertAzEqArea,
-    Stereographic,
-    StereoNorth,
-    StereoSouth,
-)
 
 
 class ConstellationPlotterMixin:
-    def inbounds_temp(self, x, y):
-        data_x, data_y = self._proj.transform_point(x, y, self._geodetic)
-        display_x, display_y = self.ax.transData.transform((data_x, data_y))
-        return display_x > 0 and display_y > 0
-
     @profile
     def _prepare_constellation_stars(
         self, constellations: list[Constellation]
@@ -115,12 +93,6 @@ class ConstellationPlotterMixin:
 
         constellations = [from_tuple(c) for c in constellations_df.itertuples()]
 
-        projection = getattr(self, "projection", None)
-        if isinstance(projection, GEODETIC_PROJECTIONS):
-            transform = self._geodetic
-        else:
-            transform = self._plate_carree
-
         style_kwargs = style.matplot_kwargs(self.scale)
         constellation_points_to_index = []
         lines = []
@@ -136,6 +108,9 @@ class ConstellationPlotterMixin:
                 s1_ra, s1_dec = constars.get(s1_hip)
                 s2_ra, s2_dec = constars.get(s2_hip)
 
+                if s1_ra == s2_ra and s1_dec == s2_dec:
+                    continue
+
                 if s1_ra - s2_ra > 60:
                     s2_ra += 360
                 elif s2_ra - s1_ra > 60:
@@ -150,44 +125,43 @@ class ConstellationPlotterMixin:
                 elif not inbounds:
                     continue
 
-                if self._coordinate_system == CoordinateSystem.RA_DEC:
-                    x1 *= -1
-                    x2 *= -1
+                _lines = []
 
-                lines.append([(x1, y1), (x2, y2)])
+                if x2 > 360:
+                    _lines = [*split_line_at_meridian((x1, y1), (x2, y2))]
+                elif x1 > 360:
+                    _lines = [*split_line_at_meridian((x2, y2), (x1, y1))]
+                else:
+                    _lines = [[(x1, y1), (x2, y2)]]
 
-                start = self._proj.transform_point(x1, y1, self._geodetic)
-                end = self._proj.transform_point(x2, y2, self._geodetic)
+                data_lines = [
+                    [self._proj.transform_point(x, y, self._crs) for x, y in line]
+                    for line in _lines
+                ]
+                display_lines = [
+                    [self.ax.transData.transform(p) for p in line]
+                    for line in data_lines
+                ]
+
+                lines.extend(data_lines)
+
                 radius = style.width * self.scale if style.width else 1
 
-                # lines.append([start, end])
+                for display_start, display_end in display_lines:
+                    for x, y in line_segment(display_start, display_end, radius * 4):
+                        if x < 0 or y < 0:
+                            continue
+                        bbox = (
+                            x - radius,
+                            y - radius,
+                            x + radius,
+                            y + radius,
+                        )
+                        if self.debug_text:
+                            self._debug_bbox(bbox, color="#39FF14", width=0.5)
 
-                if any([np.isnan(n) for n in start + end]):
-                    continue
-
-                display_start = self.ax.transData.transform(start)
-                display_end = self.ax.transData.transform(end)
-
-                if (
-                    display_start[0] == display_end[0]
-                    and display_start[1] == display_end[1]
-                ):
-                    continue
-
-                for x, y in line_segment(display_start, display_end, radius * 4):
-                    if x < 0 or y < 0:
-                        continue
-                    bbox = (
-                        x - radius,
-                        y - radius,
-                        x + radius,
-                        y + radius,
-                    )
-                    if self.debug_text:
-                        self._debug_bbox(bbox, color="#39FF14", width=0.5)
-
-                    constellation_points_to_index.append((ctr, bbox, None))
-                    ctr += 1
+                        constellation_points_to_index.append((ctr, bbox, None))
+                        ctr += 1
 
             if inbounds:
                 self._objects.constellations.append(c)
@@ -197,7 +171,6 @@ class ConstellationPlotterMixin:
         line_collection = LineCollection(
             lines,
             **style_kwargs,
-            transform=transform,
             clip_on=True,
             clip_path=self._background_clip_path,
             gid="constellations-line",
