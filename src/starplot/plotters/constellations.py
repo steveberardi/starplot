@@ -93,7 +93,6 @@ class ConstellationPlotterMixin:
 
         constellations = [from_tuple(c) for c in constellations_df.itertuples()]
 
-        style_kwargs = style.matplot_kwargs(self.scale)
         constellation_points_to_index = []
         lines = []
         constars = self._prepare_constellation_stars(constellations)
@@ -105,19 +104,18 @@ class ConstellationPlotterMixin:
             for s1_hip, s2_hip in hiplines:
                 if not constars.get(s1_hip) or not constars.get(s2_hip):
                     continue
-                s1_ra, s1_dec = constars.get(s1_hip)
-                s2_ra, s2_dec = constars.get(s2_hip)
 
-                if s1_ra == s2_ra and s1_dec == s2_dec:
+                x1, y1 = constars.get(s1_hip)
+                x2, y2 = constars.get(s2_hip)
+
+                if x1 == x2 and y1 == y2:
                     continue
 
-                if s1_ra - s2_ra > 60:
-                    s2_ra += 360
-                elif s2_ra - s1_ra > 60:
-                    s1_ra += 360
+                if x1 - x2 > 60:
+                    x2 += 360
+                elif x2 - x1 > 60:
+                    x1 += 360
 
-                x1, x2 = s1_ra, s2_ra
-                y1, y2 = s1_dec, s2_dec
                 if not inbounds and (
                     self._in_bounds_xy(x1, y1) or self._in_bounds_xy(x2, y2)
                 ):
@@ -125,18 +123,18 @@ class ConstellationPlotterMixin:
                 elif not inbounds:
                     continue
 
-                _lines = []
+                xy_lines = []
 
                 if x2 > 360:
-                    _lines = [*split_line_at_meridian((x1, y1), (x2, y2))]
+                    xy_lines = [*split_line_at_meridian((x1, y1), (x2, y2))]
                 elif x1 > 360:
-                    _lines = [*split_line_at_meridian((x2, y2), (x1, y1))]
+                    xy_lines = [*split_line_at_meridian((x2, y2), (x1, y1))]
                 else:
-                    _lines = [[(x1, y1), (x2, y2)]]
+                    xy_lines = [[(x1, y1), (x2, y2)]]
 
                 data_lines = [
                     [self._proj.transform_point(x, y, self._crs) for x, y in line]
-                    for line in _lines
+                    for line in xy_lines
                 ]
                 display_lines = [
                     [self.ax.transData.transform(p) for p in line]
@@ -166,16 +164,13 @@ class ConstellationPlotterMixin:
             if inbounds:
                 self._objects.constellations.append(c)
 
-        style_kwargs = style.matplot_line_collection_kwargs(self.scale)
-
         line_collection = LineCollection(
             lines,
-            **style_kwargs,
             clip_on=True,
             clip_path=self._background_clip_path,
             gid="constellations-line",
+            **style.matplot_line_collection_kwargs(self.scale),
         )
-
         self.ax.add_collection(line_collection)
 
         if self._constellations_rtree.get_size() == 0:
