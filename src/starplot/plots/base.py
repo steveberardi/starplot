@@ -175,6 +175,9 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
     def _prepare_coords(self, ra, dec) -> tuple[float, float]:
         return ra, dec
 
+    def _prepare_coords_many(self, coordinates: list, epoch_year: float = 2000) -> list:
+        return coordinates
+
     def _update_clip_path_polygon(self, buffer=8):
         self.fig.draw_without_rendering()
         coords = self._background_clip_path.get_verts()
@@ -514,7 +517,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         raise NotImplementedError
 
     def _polygon(self, points: list, style: PolygonStyle, **kwargs):
-        points = [self._prepare_coords(*p) for p in points]
+        # points = [self._prepare_coords(*p) for p in points]
+        points = self._prepare_coords_many(points)
         patch = patches.Polygon(
             points,
             # closed=False, # needs to be false for circles at poles?

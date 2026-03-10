@@ -234,6 +234,22 @@ def split_polygon_at_zero(polygon: Polygon) -> list[Polygon]:
     return [polygon]
 
 
+def split_line_at_meridian(p1, p2, meridian=360):
+    """Split a line that crosses the meridian into two segments."""
+    x1, y1 = p1
+    x2, y2 = p2
+
+    # Interpolate the crossing point
+    t = (meridian - x1) / (x2 - x1)
+    y_cross = y1 + t * (y2 - y1)
+
+    # Two segments on either side
+    seg1 = [(x1, y1), (359.9999999, y_cross)]
+    seg2 = [(0, y_cross), (x2 - 360, y2)]  # or -meridian depending on convention
+
+    return seg1, seg2
+
+
 def random_point_in_polygon_at_distance(
     polygon: Polygon,
     origin_point: Point,
