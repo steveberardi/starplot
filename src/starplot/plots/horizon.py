@@ -3,6 +3,8 @@ import math
 from functools import cache
 from typing import Callable
 
+import pandas as pd
+
 from cartopy import crs as ccrs
 from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator, FuncFormatter
@@ -162,6 +164,23 @@ class HorizonPlot(
             obj=SkyfieldStar(ra_hours=ra / 15, dec_degrees=dec),
             ephemeris=self.ephemeris_name,
         )
+
+    def _prepare_coords_many(
+        self, coordinates: list, epoch_year: float = 2000
+    ) -> (float, float):
+        """Converts RA/DEC to AZ/ALT"""
+        df = pd.DataFrame(coordinates, columns=["ra", "dec"])
+        df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
+        df["epoch_year"] = epoch_year
+
+        sf_star = SkyfieldStar.from_dataframe(df)
+
+        df["x"], df["y"] = self.observer._apparent(
+            obj=sf_star,
+            ephemeris=self.ephemeris_name,
+        )
+
+        return list(zip(df["x"], df["y"]))
 
     def _prepare_star_coords(self, df, limit_by_altaz=True):
         df["x"], df["y"] = self.observer._apparent(

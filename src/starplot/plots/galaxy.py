@@ -1,6 +1,7 @@
 from functools import cache
 from typing import Callable
 
+import pandas as pd
 import numpy as np
 import astropy.units as u
 from astropy.coordinates import SkyCoord
@@ -129,6 +130,21 @@ class GalaxyPlot(
         lat, lon, _ = self.observe(point).frame_latlon(galactic_frame)
 
         return lon.degrees, lat.degrees
+
+    def _prepare_coords_many(
+        self, coordinates: list, epoch_year: float = 2000
+    ) -> (float, float):
+        """Converts RA/DEC to AZ/ALT"""
+        df = pd.DataFrame(coordinates, columns=["ra", "dec"])
+        df["ra_hours"], df["dec_degrees"] = (df.ra / 15, df.dec)
+        df["epoch_year"] = epoch_year
+
+        sf_star = SkyfieldStar.from_dataframe(df)
+        position = self.observe(sf_star)
+        lat, lon, _ = position.frame_latlon(galactic_frame)
+        df["x"], df["y"] = (lon.degrees, lat.degrees)
+
+        return list(zip(df["x"], df["y"]))
 
     def _prepare_star_coords(self, df, limit_by_altaz=True):
         stars_position = self.observe(SkyfieldStar.from_dataframe(df))
