@@ -8,6 +8,9 @@
 - Adds the PlateCarree projection
 - Adds effect of atmospheric refraction to horizon and optic plots
 - Fixes a bug with calculating apparent positions of solar system objects in horizon/optic plots
+- [**v0.20.1**]
+    - Optimizes coordinate conversions
+    - Makes constellation lines straight
 
 
 ## v0.19.x
