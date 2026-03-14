@@ -1,4 +1,4 @@
-<html>
+<html data-bs-theme="dark">
 
 <head>
     <title>Hashio Results</title>
@@ -6,10 +6,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --bs-font-monospace: "Fira Code", monospace;
+            --bs-body-font-family: "Inter", sans-serif;
+        }
+
         body {
-            font-family: 'Courier New', Courier, monospace;
             margin: 0;
+            font-family: "Inter", sans-serif;
         }
 
         h3 {
@@ -23,21 +32,17 @@
         h4,
         h5,
         h6 {
-            font-family: Arial, sans-serif;
             font-weight: 700;
-        }
-
-        .btn {
-            font-family: Arial, sans-serif;
         }
 
         th {
             text-align: start;
             font-weight: normal;
+            padding: 2px 16px;
         }
 
         td {
-            padding-right: 2rem;
+            padding: 2px 16px;
         }
 
         .img-result {
@@ -54,65 +59,70 @@
             padding-bottom: 2.1rem;
         }
 
-        .new {
-            /* background-color: rgba(0, 117, 185, 0.3); */
+        .char-equal {
+            color: #6e6e6e;
         }
 
-        .failed {
-            /* background-color: rgba(128, 0, 0, 0.3); */
-        }
-
-        .passed {
-            /* background-color: rgba(108, 198, 108, 0.3); */
+        .char-diff {
+            color: red;
+            font-weight: 600;
         }
     </style>
 </head>
 
 <body>
 
-
-
     <!-- FAILED -->
     <div class="section failed">
 
-        <h2 class="text-danger">❌ <span class="badge text-danger bg-danger-subtle">{{failed|count}}</span> Failed</h2>
-        {% for func_name, values in failed.items() %}
+        <h2 class="text-danger"><span class="badge text-danger bg-danger-subtle">{{failed|count}}</span> Failed</h2>
 
-        <div class="result">
-            <h3>{{ func_name }}</h3>
-            <table>
-                <tr>
-                    <th></th>
-                    <th>dhash</th>
-                    <th>phash</th>
-                </tr>
-                <tr>
-                    <td>expected</td>
-                    <td>{{ values['dhash_expected'] }}</td>
-                    <td>{{ values['phash_expected'] }}</td>
-                </tr>
-                <tr>
-                    <td>actual</td>
-                    <td>{{ values['dhash'] }}</td>
-                    <td>{{ values['phash'] }}</td>
-                </tr>
+        <div class="accordion my-3" id="accordionFailed">
+            {% for func_name, values in failed.items() %}
+            <div class="accordion-item border-danger">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed text-danger fw-bold fs-4 bg-danger-subtle" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#{{ func_name }}" aria-expanded="false"
+                        aria-controls="{{ func_name }}">
+                        ❌ {{ func_name }}
+                    </button>
+                </h2>
+                <div id="{{ func_name }}" class="accordion-collapse collapse show" data-bs-parent="#accordionFailed">
+                    <div class="accordion-body">
+                        <table class="p-2 mb-2 bg-black">
+                            <tr>
+                                <th class="border-end"></th>
+                                <th class="border-end text-secondary pt-2">dhash</th>
+                                <th>phash</th>
+                            </tr>
+                            <tr>
+                                <td class="border-end">expected</td>
+                                <td class="expected-dhash font-monospace border-end">{{ values['dhash_expected'] }}</td>
+                                <td class="expected-phash font-monospace">{{ values['phash_expected'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border-end pb-2">actual</td>
+                                <td class="actual-dhash font-monospace border-end">{{ values['dhash'] }}</td>
+                                <td class="actual-phash font-monospace">{{ values['phash'] }}</td>
+                            </tr>
 
-            </table>
+                        </table>
 
-            <img src="{{ values['filename'] }}" class="img-result ">
-
+                        <img src="{{ values['filename'] }}" class="img-result ">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-
     </div>
 
     <!-- NEW -->
     <div class="section new">
 
-        <h2 class="text-primary">🎉 <span class="badge text-info bg-info-subtle">{{failed|count}}</span> New</h2>
+        <h2 class="text-primary"><span class="badge text-primary bg-primary-subtle">{{failed|count}}</span> New</h2>
         {% for func_name, values in new.items() %}
         <div class="result">
-            <h3>{{ func_name }}</h3>
+            <h3>🎉 {{ func_name }}</h3>
             <img src="{{ values['filename'] }}" class="img-result ">
         </div>
         {% endfor %}
@@ -121,10 +131,11 @@
     <!-- PASSED -->
     <div class="section passed">
 
-        <h2 class="text-success">✅ <span class="badge text-success bg-success-subtle">{{passed|count}}</span> Passed
+        <h2 class="text-success"><span class="badge text-success bg-success-subtle">{{passed|count}}</span> Passed
         </h2>
 
-        <button type="button" class="btn btn-outline-success btn-lg my-3 w-100" id="expand-passed">Expand / Collapse</button>
+        <button type="button" class="btn btn-outline-success btn-lg my-3 w-100" id="expand-passed">Expand /
+            Collapse</button>
 
         <div class="accordion" id="accordionPassed">
             {% for func_name, values in passed.items() %}
@@ -132,7 +143,7 @@
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed bg-success-subtle" type="button" data-bs-toggle="collapse"
                         data-bs-target="#{{ func_name }}" aria-expanded="false" aria-controls="{{ func_name }}">
-                        {{ func_name }}
+                        ✅ {{ func_name }}
                     </button>
                 </h2>
                 <div id="{{ func_name }}" class="accordion-collapse collapse" data-bs-parent="#accordionPassed">
@@ -151,11 +162,45 @@
         crossorigin="anonymous"></script>
 
     <script>
+        function diffSpan(str1, str2) {
+            const maxLen = Math.max(str1.length, str2.length);
+            let html = '';
+
+            for (let i = 0; i < maxLen; i++) {
+                const ch1 = str1[i] ?? '';
+                const ch2 = str2[i] ?? '';
+
+                if (ch1 === ch2) {
+                    html += `<span class="char-equal">${ch2}</span>`;
+                } else {
+                    html += `<span class="char-diff">${ch2 || '␣'}</span>`;
+                }
+            }
+
+            const span = document.createElement('span');
+            span.innerHTML = html;
+            return span;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('expand-passed').addEventListener('click', () => {
                 document.querySelectorAll('#accordionPassed .accordion-collapse').forEach(el => {
                     new bootstrap.Collapse(el, { show: true });
                 });
+            });
+
+            const failedAcc = document.getElementById("accordionFailed");
+            failedAcc.querySelectorAll(".accordion-item").forEach((element) => {
+                const expected_d = element.querySelector(".expected-dhash");
+                const expected_p = element.querySelector(".expected-phash");
+                const actual_d = element.querySelector(".actual-dhash");
+                const actual_p = element.querySelector(".actual-phash");
+
+                const diff_d = diffSpan(expected_d.innerText, actual_d.innerText);
+                const diff_p = diffSpan(expected_p.innerText, actual_p.innerText)
+
+                actual_d.innerHTML = diff_d.outerHTML;
+                actual_p.innerHTML = diff_p.outerHTML;
             });
         });
     </script>
