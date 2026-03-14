@@ -1,58 +1,81 @@
 <html>
-    <head>
-        <title>Hashio Results</title>
-        <style>
-            body {
-                font-family: 'Courier New', Courier, monospace;
-                margin: 0;
-            }
 
-            h3 {
-                font-weight: normal;
-                font-size: 1.6rem;
-            }
+<head>
+    <title>Hashio Results</title>
 
-            th {
-                text-align: start;
-                font-weight: normal;
-            }
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
-            td {
-                padding-right: 2rem;
-            }
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+        }
 
-            .img-result {
-                max-width: 1024px;
-            }
+        h3 {
+            font-weight: normal;
+            font-size: 1.6rem;
+        }
 
-            .section {
-                padding: 2rem;
-                border-bottom: 3px solid black;
-            }
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: Arial, sans-serif;
+            font-weight: 700;
+        }
 
-            .result {
-                padding-bottom: 2.1rem;
-            }
-            
-            .new {
-                background-color: rgba(0, 117, 185, 0.3);
-            }
-            
-            .failed {
-                background-color: rgba(128, 0, 0, 0.3);
-            }
+        .btn {
+            font-family: Arial, sans-serif;
+        }
 
-            .passed {
-                background-color: rgba(108, 198, 108, 0.3);
-            }
+        th {
+            text-align: start;
+            font-weight: normal;
+        }
 
-        </style>
-    </head>
+        td {
+            padding-right: 2rem;
+        }
+
+        .img-result {
+            max-width: 1024px;
+        }
+
+        .section {
+            padding: 2rem;
+            border-bottom: 2px dotted #313654;
+            margin-bottom: 16px;
+        }
+
+        .result {
+            padding-bottom: 2.1rem;
+        }
+
+        .new {
+            /* background-color: rgba(0, 117, 185, 0.3); */
+        }
+
+        .failed {
+            /* background-color: rgba(128, 0, 0, 0.3); */
+        }
+
+        .passed {
+            /* background-color: rgba(108, 198, 108, 0.3); */
+        }
+    </style>
+</head>
+
+<body>
+
+
 
     <!-- FAILED -->
     <div class="section failed">
 
-        <h2>FAILED ({{failed|count}})</h2>
+        <h2 class="text-danger">❌ <span class="badge text-danger bg-danger-subtle">{{failed|count}}</span> Failed</h2>
         {% for func_name, values in failed.items() %}
 
         <div class="result">
@@ -73,7 +96,7 @@
                     <td>{{ values['dhash'] }}</td>
                     <td>{{ values['phash'] }}</td>
                 </tr>
-                
+
             </table>
 
             <img src="{{ values['filename'] }}" class="img-result ">
@@ -86,7 +109,7 @@
     <!-- NEW -->
     <div class="section new">
 
-        <h2>NEW ({{new|count}})</h2>
+        <h2 class="text-primary">🎉 <span class="badge text-info bg-info-subtle">{{failed|count}}</span> New</h2>
         {% for func_name, values in new.items() %}
         <div class="result">
             <h3>{{ func_name }}</h3>
@@ -98,13 +121,45 @@
     <!-- PASSED -->
     <div class="section passed">
 
-        <h2>PASSED ({{passed|count}})</h2>
-        {% for func_name, values in passed.items() %}
-        <div class="result">
-            <h3>{{ func_name }}</h3>
-            <img src="{{ values['filename'] }}" class="img-result ">
+        <h2 class="text-success">✅ <span class="badge text-success bg-success-subtle">{{passed|count}}</span> Passed
+        </h2>
+
+        <button type="button" class="btn btn-outline-success btn-lg my-3 w-100" id="expand-passed">Expand / Collapse</button>
+
+        <div class="accordion" id="accordionPassed">
+            {% for func_name, values in passed.items() %}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success-subtle" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#{{ func_name }}" aria-expanded="false" aria-controls="{{ func_name }}">
+                        {{ func_name }}
+                    </button>
+                </h2>
+                <div id="{{ func_name }}" class="accordion-collapse collapse" data-bs-parent="#accordionPassed">
+                    <div class="accordion-body">
+                        <img src="{{ values['filename'] }}" class="img-result ">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('expand-passed').addEventListener('click', () => {
+                document.querySelectorAll('#accordionPassed .accordion-collapse').forEach(el => {
+                    new bootstrap.Collapse(el, { show: true });
+                });
+            });
+        });
+    </script>
+
+</body>
 
 </html>
