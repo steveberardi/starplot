@@ -12,9 +12,9 @@ on:
 
 jobs:
   test-lint-build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Build Docker Image
       run: make build
     - name: Build sky.db
@@ -31,29 +31,29 @@ jobs:
       run: make flit-build
 
   test-python-3-10:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Run Tests - Python 3.10
       run: make test-3.10 CI=true
   
   test-python-3-11:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Run Tests - Python 3.11
       run: make test-3.11 CI=true
   
   test-python-3-12:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Run Tests - Python 3.12
       run: make test-3.12 CI=true
   
   test-python-3-13:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Run Tests - Python 3.13
       run: make test-3.13 CI=true
