@@ -44,12 +44,18 @@ class Canvas(ABC):
 
     style: PlotStyle
 
+    invert_x: bool = False
+    invert_y: bool = False
+
     def __init__(
         self,
         resolution: int,
         projection: ProjectionBase,
         bounds: tuple[float, float, float, float],
         style: PlotStyle,
+        clip_path=None,
+        invert_x: bool = False,
+        invert_y: bool = False,
         *args,
         **kwargs,
     ):
@@ -57,6 +63,12 @@ class Canvas(ABC):
         self.projection = projection
         self.bounds = bounds
         self.style = style
+
+        self.clip_path = clip_path
+        
+        self.invert_x = invert_x
+        self.invert_y = invert_y
+
 
     @abstractmethod
     def marker(self) -> float:

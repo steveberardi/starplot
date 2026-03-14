@@ -440,6 +440,38 @@ class OpticPlot(
         )
         self.ax.add_patch(outer_border)
 
+    def _latlon_bounds(self):
+        fov = self.optic.true_fov
+        extent = geometry.rectangle(
+            center=(self.pos_az, self.pos_alt),
+            height_degrees=fov,
+            width_degrees=fov,
+        )
+        minx, miny, maxx, maxy = extent.bounds
+
+        return [
+            minx,
+            maxx,
+            miny,
+            maxy,
+        ]
+    
+    def _set_extent(self):
+        self._plate_carree = ccrs.PlateCarree()
+        bounds = self._latlon_bounds()
+        self.ax.set_extent(bounds, crs=self._plate_carree)
+
+        # TODO : create new method on optic class to return polygon of FOV
+
+        import numpy as np
+        from matplotlib import path, patches
+        theta = np.linspace(0, 2 * np.pi, 200)
+        center, radius = [0.5, 0.5], 0.5
+        verts = np.vstack([np.sin(theta), np.cos(theta)]).T
+        circle = path.Path(verts * radius + center)
+        
+        self.ax.set_boundary(circle, transform=self.ax.transAxes)
+
     def _init_plot(self):
         self._proj = ccrs.AzimuthalEquidistant(
             central_longitude=self.pos_az,
@@ -459,9 +491,10 @@ class OpticPlot(
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")
 
+        self._set_extent()
         self._fit_to_ax()
-        self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
-        self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
+        # self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
+        # self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
         self.optic.transform(self.ax)
         self._plot_border()
 
