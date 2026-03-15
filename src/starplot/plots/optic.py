@@ -401,6 +401,25 @@ class OpticPlot(
         else:
             background_color = self.style.background_color.as_hex()
 
+
+        # optic_fov = self.optic.polygon(self.pos_az, self.pos_alt)
+        # points = list(optic_fov.exterior.coords)
+        # self._background_clip_path = patches.Polygon(
+        #     points,
+        #     closed=False,
+        #     facecolor=background_color,
+        #     linewidth=0,
+        #     fill=True,
+        #     zorder=ZOrderEnum.LAYER_1,
+        #     transform=self._crs,
+        # )
+        # self.ax.add_patch(self._background_clip_path)
+        # self._update_clip_path_polygon(buffer=15)
+        # self.ax.set_facecolor(background_color)
+        # return
+
+        # self.ax.set_boundary(path.Path(list(optic_fov.exterior.coords)), transform=self._proj)
+
         # Background of Viewable Area
         self._background_clip_path = self.optic.patch(
             x,
@@ -414,17 +433,6 @@ class OpticPlot(
         self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon(buffer=15)
 
-        # Inner Border
-        # inner_border = self.optic.patch(
-        #     x,
-        #     y,
-        #     linewidth=2 * self.scale,
-        #     edgecolor=self.style.border_line_color.as_hex(),
-        #     fill=False,
-        #     zorder=ZOrderEnum.LAYER_5 + 100,
-        # )
-        # self.ax.add_patch(inner_border)
-
         if self.style.has_gradient_background():
             self._plot_gradient_background(self.style.background_color)
 
@@ -435,6 +443,7 @@ class OpticPlot(
             padding=0.05,
             linewidth=25 * self.scale,
             edgecolor=self.style.border_bg_color.as_hex(),
+            # edgecolor="red",
             fill=False,
             zorder=ZOrderEnum.LAYER_5,
         )
@@ -463,14 +472,9 @@ class OpticPlot(
 
         # TODO : create new method on optic class to return polygon of FOV
 
-        import numpy as np
-        from matplotlib import path, patches
-        theta = np.linspace(0, 2 * np.pi, 200)
-        center, radius = [0.5, 0.5], 0.5
-        verts = np.vstack([np.sin(theta), np.cos(theta)]).T
-        circle = path.Path(verts * radius + center)
-        
-        self.ax.set_boundary(circle, transform=self.ax.transAxes)
+        optic_fov = self.optic.polygon(self.pos_az, self.pos_alt)
+
+        # self.ax.set_boundary(path.Path(list(optic_fov.exterior.coords)), transform=self._crs)
 
     def _init_plot(self):
         self._proj = ccrs.AzimuthalEquidistant(
@@ -491,10 +495,11 @@ class OpticPlot(
         self.ax.yaxis.set_visible(False)
         self.ax.axis("off")
 
-        self._set_extent()
+        # self._set_extent()
+        
         self._fit_to_ax()
-        # self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
-        # self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
+        self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
+        self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
         self.optic.transform(self.ax)
         self._plot_border()
 

@@ -145,12 +145,11 @@ class MplCanvas(Canvas):
         self.fig.set_size_inches(width, height)
 
     def _set_extent(self):
-        bounds = self._latlon_bounds()
         if self._is_global_extent():
             # this cartopy function works better for setting global extents
             self.ax.set_global()
         else:
-            self.ax.set_extent(bounds, crs=self._plate_carree)
+            self.ax.set_extent(self.bounds, crs=self._plate_carree)
 
     def _init_figure(self):
         px = 1 / DPI  # pixel in inches
