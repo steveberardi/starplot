@@ -12,10 +12,6 @@ from starplot.coordinates import CoordinateSystem
 from starplot import models, warnings
 from starplot import geometry as _geometry
 from starplot.config import settings as StarplotSettings, SvgTextType
-from starplot.data import load, ecliptic
-from starplot.data.translations import translate
-from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
-from starplot.models.moon import MoonPhase
 from starplot.models.optics import Optic, Camera
 from starplot.models.observer import Observer
 from starplot.styles import (
@@ -53,6 +49,7 @@ class Canvas(ABC):
         projection: ProjectionBase,
         bounds: tuple[float, float, float, float],
         style: PlotStyle,
+        scale: float = 1.0,
         clip_path=None,
         invert_x: bool = False,
         invert_y: bool = False,
@@ -63,12 +60,12 @@ class Canvas(ABC):
         self.projection = projection
         self.bounds = bounds
         self.style = style
+        self.scale = scale
 
         self.clip_path = clip_path
-        
+
         self.invert_x = invert_x
         self.invert_y = invert_y
-
 
     @abstractmethod
     def marker(self) -> float:
@@ -122,6 +119,7 @@ class MplCanvas(Canvas):
         projection: ProjectionBase,
         bounds: tuple[float, float, float, float],
         style: PlotStyle,
+        suppress_warnings: bool = True,
         *args,
         **kwargs,
     ):
@@ -134,7 +132,52 @@ class MplCanvas(Canvas):
             **kwargs,
         )
 
+        if StarplotSettings.svg_text_type == SvgTextType.PATH:
+            plt.rcParams["svg.fonttype"] = "path"
+        else:
+            plt.rcParams["svg.fonttype"] = "none"
+
+        if suppress_warnings:
+            warnings.suppress()
+
         self._init_figure()
+
+        fonts.load()
+
+    def close(self) -> None:
+        """Closes the underlying matplotlib figure."""
+        if self.fig:
+            plt.close(self.fig)
+
+    def export(self, filename: str, padding: float = 0, **kwargs):
+        """Exports the plot to an image file.
+
+        Args:
+            filename: Filename of exported file (the format will be inferred from the extension)
+            padding: Padding (in inches) around the image
+            **kwargs: Any keyword arguments to pass through to matplotlib's `savefig` method
+
+        """
+        self.fig.savefig(
+            filename,
+            bbox_inches="tight",
+            pad_inches=padding * self.scale,
+            dpi=DPI,
+            **kwargs,
+        )
+
+    def title(self, text: str, style: LabelStyle = None):
+        """
+        Plots a title at the top of the plot
+
+        Args:
+            text: Title text to plot
+            style: Styling of the title. If None, then the plot's style (specified when creating the plot) will be used
+        """
+        style_kwargs = style.matplot_kwargs(self.scale)
+        style_kwargs.pop("linespacing", None)
+        style_kwargs["pad"] = style.line_spacing
+        self.ax.set_title(text, **style_kwargs)
 
     def _fit_to_ax(self) -> None:
         self.fig.draw_without_rendering()

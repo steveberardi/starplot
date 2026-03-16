@@ -2,6 +2,7 @@ from abc import ABC
 from functools import cached_property
 
 from cartopy import crs as ccrs
+from pyproj import CRS, Transformer
 from pydantic import BaseModel, Field
 
 
@@ -116,6 +117,12 @@ class Miller(ProjectionBase, CenterRA):
     """Similar to Mercator: good for declinations between -70 and 70, but distorts objects near the poles"""
 
     _ccrs = ccrs.Miller
+
+    @property
+    def _crs(self):
+        return CRS.from_proj4(
+            f"+proj=mill +lat_0=0 +lon_0={self.center_ra} +x_0=0 +y_0=0 +R=6371000 +units=m"
+        )
 
 
 class Mercator(ProjectionBase, CenterRA):

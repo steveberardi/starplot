@@ -213,11 +213,26 @@ class LineStyleEnum(str, Enum):
     DASHED_DOTS = "dashdot"
     DOTTED = "dotted"
 
+    def css(self) -> str | None:
+        return {
+            LineStyleEnum.SOLID: None,
+            LineStyleEnum.DASHED: "6,3",
+            LineStyleEnum.DOTTED: "2,3",
+            LineStyleEnum.DASHED_DOTS: "6,3,1,3",
+        }.get(self.value)
+
 
 class CapStyleEnum(str, Enum):
     BUTT = "butt"
     PROJECTING = "projecting"
     ROUND = "round"
+
+    def css(self) -> str | None:
+        return {
+            CapStyleEnum.BUTT: "butt",
+            CapStyleEnum.ROUND: "round",
+            CapStyleEnum.PROJECTING: "square",
+        }.get(self.value)
 
 
 class JoinStyleEnum(str, Enum):
@@ -359,6 +374,25 @@ class MarkerStyle(BaseStyle):
     zorder: int = ZOrderEnum.LAYER_2
     """Zorder of marker"""
 
+    def css(self) -> dict:
+        attrs = {
+            "fill": self.color.as_hex() if self.fill != FillStyleEnum.NONE else "none",
+            "fill-opacity": 0 if self.fill == FillStyleEnum.NONE else self.alpha,
+            "stroke": self.edge_color.as_hex(),
+            "stroke-width": self.edge_width,
+            "stroke-opacity": self.alpha,
+        }
+        if isinstance(self.line_style, str):
+            ls_css = LineStyleEnum(self.line_style).css()
+            if ls_css:
+                attrs["stroke-dasharray"] = ls_css
+        elif self.line_style:
+            attrs["stroke-dasharray"] = ",".join(self.line_style)
+
+        attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
+
+        return attrs
+
     @property
     def symbol_matplot(self) -> str:
         return MarkerSymbolEnum(self.symbol).as_matplot()
@@ -431,6 +465,23 @@ class LineStyle(BaseStyle):
     edge_color: Optional[ColorStr] = None
     """Edge color of the line. _If the width or color is falsey then the line will NOT be drawn with an edge._"""
 
+    def css(self) -> dict:
+        attrs = {
+            "stroke": self.color.as_hex(),
+            "stroke-width": self.width,
+            "stroke-opacity": self.alpha,
+        }
+        if isinstance(self.style, str):
+            ls_css = LineStyleEnum(self.style).css()
+            if ls_css:
+                attrs["stroke-dasharray"] = ls_css
+        elif self.style:
+            attrs["stroke-dasharray"] = ",".join(self.style)
+
+        attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
+
+        return attrs
+
     def matplot_kwargs(self, scale: float = 1.0) -> dict:
         line_width = self.width * scale
 
@@ -485,6 +536,25 @@ class PolygonStyle(BaseStyle):
 
     zorder: int = -1
     """Zorder of the polygon"""
+
+    def css(self) -> dict:
+        attrs = {
+            "fill": self.fill_color.as_hex() if self.fill_color else "none",
+            "fill-opacity": self.alpha if self.fill_color else 0,
+            "stroke": self.edge_color.as_hex(),
+            "stroke-width": self.edge_width,
+            "stroke-opacity": self.alpha,
+        }
+        if isinstance(self.line_style, str):
+            ls_css = LineStyleEnum(self.line_style).css()
+            if ls_css:
+                attrs["stroke-dasharray"] = ls_css
+        elif self.line_style:
+            attrs["stroke-dasharray"] = ",".join(self.line_style)
+
+        # attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
+
+        return attrs
 
     def matplot_kwargs(self, scale: float = 1.0) -> dict:
         styles = dict(

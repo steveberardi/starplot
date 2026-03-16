@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Union, Optional
 import logging
-import time
 
 import numpy as np
 from matplotlib import patches
@@ -33,10 +32,12 @@ from starplot.styles import (
     fonts,
     AnchorPointEnum,
 )
+from starplot.projections import ProjectionBase
 from starplot.plotters.debug import DebugPlotterMixin
 from starplot.plotters.text import TextPlotterMixin, CollisionHandler
 from starplot.styles.helpers import use_style
 from starplot.profile import profile
+from starplot.svg.canvas import Canvas
 
 LOGGER = logging.getLogger("starplot")
 LOG_HANDLER = logging.StreamHandler()
@@ -57,19 +58,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
     _coordinate_system = CoordinateSystem.RA_DEC
     _gradient_direction: GradientDirection = GradientDirection.LINEAR
 
-    _start_time: int = None
-
-    ax: Axes
-    """
-    The underlying [Matplotlib axes](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes) that everything is plotted on.
-    
-    **Important**: Most Starplot plotting functions also specify a transform based on the plot's projection when plotting things on the Matplotlib Axes instance, so use this property at your own risk!
-    """
-
-    fig: Figure
-    """
-    The underlying [Matplotlib figure](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure) that the axes is drawn on.
-    """
+    canvas: Canvas
 
     style: PlotStyle
     """
@@ -97,25 +86,43 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
+        # new for canvas backend
+        projection: ProjectionBase = None,
+        bounds: tuple[float, float, float, float] = None,
+        invert_x: bool = False,
+        invert_y: bool = False,
         *args,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
 
-        if StarplotSettings.svg_text_type == SvgTextType.PATH:
-            plt.rcParams["svg.fonttype"] = "path"
-        else:
-            plt.rcParams["svg.fonttype"] = "none"
-
-        px = 1 / DPI  # pixel in inches
-        self.pixels_per_point = DPI / 72
-        self.dpi = DPI
-
         self.language = StarplotSettings.language
 
         self.style = style or PlotStyle()
-        self.figure_size = resolution * px
         self.resolution = resolution
+
+        self.scale = scale
+        self.autoscale = autoscale
+        if self.autoscale:
+            self.scale = self.resolution / DEFAULT_RESOLUTION
+
+        self.scale *= 1.28
+
+        self.canvas = Canvas(
+            resolution=resolution,
+            style=self.style,
+            scale=self.scale,
+            projection=projection,
+            bounds=bounds,
+            clip_path=None,
+            invert_x=invert_x,
+            invert_y=invert_y,
+            suppress_warnings=suppress_warnings,
+        )
+
+        self._background_clip_path = None
+        self._legend = None
+        self._legend_handles = {}
 
         self.point_label_handler = point_label_handler or CollisionHandler(
             attempts=10,
@@ -137,25 +144,10 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             allow_constellation_line_collisions=True
         )
 
-        self.scale = scale
-        self.autoscale = autoscale
-        if self.autoscale:
-            self.scale = self.resolution / DEFAULT_RESOLUTION
-
-        self.scale *= 1.28
-
-        if suppress_warnings:
-            warnings.suppress()
-
         self.observer = observer or Observer()
         self.ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
         self.earth = self.ephemeris["earth"]
-
-        self._background_clip_path = None
-
-        self._legend = None
-        self._legend_handles = {}
 
         self.debug = StarplotSettings.debug or bool(kwargs.get("debug"))
         self.debug_text = StarplotSettings.debug or bool(kwargs.get("debug_text"))
@@ -163,16 +155,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self.logger = LOGGER
         self.logger.setLevel(self.log_level)
 
-        self._start_time = time.perf_counter()
-
-        self.text_border = patheffects.withStroke(
-            linewidth=self.style.text_border_width * self.scale,
-            foreground=self.style.text_border_color.as_hex(),
-        )
-
         self._objects = models.ObjectList()
         self._labeled_stars = []
-        fonts.load()
 
     def _plot_kwargs(self) -> dict:
         return {}
@@ -213,14 +197,6 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
                 label=label,
             )
 
-    def _fit_to_ax(self) -> None:
-        self.fig.draw_without_rendering()
-        bbox = self.ax.get_window_extent().transformed(
-            self.fig.dpi_scale_trans.inverted()
-        )
-        width, height = bbox.width, bbox.height
-        self.fig.set_size_inches(width, height)
-
     @property
     def magnitude_range(self) -> tuple[float, float]:
         """
@@ -245,36 +221,18 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             text: Title text to plot
             style: Styling of the title. If None, then the plot's style (specified when creating the plot) will be used
         """
-        style_kwargs = style.matplot_kwargs(self.scale)
-        style_kwargs.pop("linespacing", None)
-        style_kwargs["pad"] = style.line_spacing
-        self.ax.set_title(text, **style_kwargs)
-
-    def close_fig(self) -> None:
-        """Closes the underlying matplotlib figure."""
-        if self.fig:
-            plt.close(self.fig)
+        self.canvas.title(text, style)
 
     @profile
-    def export(self, filename: str, padding: float = 0, **kwargs):
+    def export(self, filename: str):
         """Exports the plot to an image file.
 
         Args:
             filename: Filename of exported file (the format will be inferred from the extension)
-            padding: Padding (in inches) around the image
-            **kwargs: Any keyword arguments to pass through to matplotlib's `savefig` method
 
         """
         self.logger.debug("Exporting...")
-        self.fig.savefig(
-            filename,
-            bbox_inches="tight",
-            pad_inches=padding * self.scale,
-            dpi=DPI,
-            **kwargs,
-        )
-        elapsed = time.perf_counter() - self._start_time
-        self.logger.debug(f"Elapsed: {elapsed:.5f}s")
+        self.canvas.export(filename)
 
     @use_style(ObjectStyle)
     def marker(
@@ -286,7 +244,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         legend_label: str = None,
         skip_bounds_check: bool = False,
         collision_handler: CollisionHandler = None,
-        **kwargs,
+        gid: str = None,
     ) -> None:
         """Plots a marker
 
@@ -304,17 +262,12 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         if not skip_bounds_check and not self.in_bounds(ra, dec):
             return
 
-        # Plot marker
         x, y = self._prepare_coords(ra, dec)
-        style_kwargs = style.marker.matplot_scatter_kwargs(self.scale)
-        result = self.ax.scatter(
-            x,
-            y,
-            **style_kwargs,
-            **self._plot_kwargs(),
-            clip_on=True,
-            clip_path=self._background_clip_path,
-            gid=kwargs.get("gid_marker") or "marker",
+
+        self.canvas.marker(
+            (x, y),
+            style=style,
+            gid=gid or "marker",
         )
 
         # Add to spatial index
@@ -524,7 +477,6 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         raise NotImplementedError
 
     def _polygon(self, points: list, style: PolygonStyle, **kwargs):
-        # points = [self._prepare_coords(*p) for p in points]
         points = self._prepare_coords_many(points)
         patch = patches.Polygon(
             points,

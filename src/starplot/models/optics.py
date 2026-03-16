@@ -120,7 +120,7 @@ class Scope(Optic):
             radius=self.radius + padding,
             **kwargs,
         )
-    
+
     def polygon(self, center_x, center_y):
         return geometry.circle(
             center=(center_x, center_y),
@@ -243,7 +243,7 @@ class Binoculars(Optic):
             diameter_degrees=self.radius * 2,
             num_pts=200,
         )
-    
+
     def in_bounds(self, x, y, scale: float = 1) -> bool:
         return in_circle(x, y, 0, 0, self.radius * scale)
 
@@ -357,7 +357,7 @@ class Camera(Optic):
             width_degrees=self.radius_x * 2,
             angle=self.rotation,
         )
-    
+
     def in_bounds(self, x, y, scale: float = 1) -> bool:
         radians = math.radians(180 - self.rotation)
 

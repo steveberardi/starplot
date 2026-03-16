@@ -401,7 +401,6 @@ class OpticPlot(
         else:
             background_color = self.style.background_color.as_hex()
 
-
         # optic_fov = self.optic.polygon(self.pos_az, self.pos_alt)
         # points = list(optic_fov.exterior.coords)
         # self._background_clip_path = patches.Polygon(
@@ -464,7 +463,7 @@ class OpticPlot(
             miny,
             maxy,
         ]
-    
+
     def _set_extent(self):
         self._plate_carree = ccrs.PlateCarree()
         bounds = self._latlon_bounds()
@@ -496,7 +495,7 @@ class OpticPlot(
         self.ax.axis("off")
 
         # self._set_extent()
-        
+
         self._fit_to_ax()
         self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
         self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
