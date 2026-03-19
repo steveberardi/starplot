@@ -245,7 +245,7 @@ def split_line_at_meridian(p1, p2, meridian=360):
 
     # Two segments on either side
     seg1 = [(x1, y1), (359.9999999, y_cross)]
-    seg2 = [(0, y_cross), (x2 - 360, y2)]  # or -meridian depending on convention
+    seg2 = [(0.0000001, y_cross), (x2 - 360, y2)]  # or -meridian depending on convention
 
     return seg1, seg2
 

@@ -1,5 +1,3 @@
-import logging
-
 import numpy as np
 from shapely import Polygon, LineString
 
@@ -16,20 +14,14 @@ from starplot.styles import (
     LabelStyle,
     MarkerSymbolEnum,
     PathStyle,
+    LineStyle,
     PolygonStyle,
     GradientDirection,
     AnchorPointEnum,
 )
+from starplot.plotters.text import CollisionHandler
 from starplot.projections import ProjectionBase
 from starplot.svg import symbols
-
-LOGGER = logging.getLogger("starplot-svg")
-LOG_HANDLER = logging.StreamHandler()
-LOG_FORMATTER = logging.Formatter(
-    "\033[1;34m%(name)s\033[0m:[%(levelname)s]: %(message)s"
-)
-LOG_HANDLER.setFormatter(LOG_FORMATTER)
-LOGGER.addHandler(LOG_HANDLER)
 
 
 CRS_WNU = CRS.from_proj4("+proj=latlon +ellps=sphere +axis=wnu +a=6378137")
@@ -82,6 +74,7 @@ class Canvas:
         crs: CRS = None,
         debug: bool = False,
         precision: int = 4,
+        logger = None,
         *args,
         **kwargs,
     ):
@@ -101,9 +94,7 @@ class Canvas:
 
         self.tx = Transformer.from_crs(self.crs, self.projection._crs, always_xy=True)
 
-        self.log_level = logging.DEBUG if self.debug else logging.ERROR
-        self.logger = LOGGER
-        self.logger.setLevel(self.log_level)
+        self.logger = logger
 
         self._init_bounds()
 
@@ -136,6 +127,9 @@ class Canvas:
             self.height = self.resolution
             self.width = self.height / ratio
 
+        # TODO : de-project projected bounds back to EPSG-4326 (for extent mask etc)
+
+        self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
         self.logger.debug(f"Size = {self.height} x {self.width}")
 
     def _register_symbol(self, symbol_id: str, value: str):
@@ -157,7 +151,7 @@ class Canvas:
             (style.zorder, symbols.use(symbol_id, dx, dy, style.size, style.size, css))
         )
 
-    def markers(self, x, y, style: MarkerStyle) -> None:
+    def markers(self, x, y, style: MarkerStyle, sizes=None) -> None:
         dx, dy = self._to_display(x, y)
 
         symbol_id, value = symbols.get(style)
@@ -166,20 +160,23 @@ class Canvas:
         # this can be bottleneck, need to cache
         css = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
 
-        for x, y in list(zip(dx, dy)):
-            self.elements.append(
-                (
-                    style.zorder,
-                    symbols.use(symbol_id, x, y, style.size, style.size, css),
-                )
-            )
+        sizes = sizes or []
+
+        elements = [
+            (
+                style.zorder,
+                symbols.use(symbol_id, x, y, size, size, css),
+            ) for x, y, size in list(zip(dx, dy, sizes))
+        ]
+        self.elements.extend(elements)
 
     def line(
         self,
         coordinates: list[tuple[float, float]] = None,
-        style: PathStyle = None,
+        style: PathStyle | LineStyle = None,
         label: str = None,
         num_labels: int = 2,
+        collision_handler: CollisionHandler = None,
     ) -> None:
         arr = np.array(coordinates)
         xs, ys = arr[:, 0], arr[:, 1]
@@ -188,10 +185,15 @@ class Canvas:
 
         points = " ".join([f"{x},{y}" for x, y in dxy])
 
-        attrs = " ".join([f'{k}="{v}"' for k, v in style.line.css().items()])
+        if isinstance(style, LineStyle):
+            attrs = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
+            z = style.zorder
+        else:
+            attrs = " ".join([f'{k}="{v}"' for k, v in style.line.css().items()])
+            z= style.line.zorder
 
         self.elements.append(
-            (style.line.zorder, f'<polyline points="{points}" {attrs} />')
+            (z, f'<polyline points="{points}" {attrs} />')
         )
 
     def polygon(
@@ -201,6 +203,8 @@ class Canvas:
         xs, ys = arr[:, 0], arr[:, 1]
         dx, dy = self._to_display(xs, ys)
         dxy = list(zip(dx, dy))
+
+        print(dxy[0], dxy[-1], dxy[-2])
 
         points = " ".join([f"{x},{y}" for x, y in dxy])
 
@@ -222,6 +226,11 @@ class Canvas:
     # @abstractmethod
     # def legend(self) -> float:
     #     ...
+
+    def _background(self):
+        self.elements.append(
+            (-1_000_000, f'<rect x="-100" y="-100" height="{self.height+200}" width="{self.width+200}" fill="{self.style.background_color.as_hex()}" />')
+        )
 
     def export(self, filename):
         with open(filename, "w", buffering=1024 * 1024) as outfile:

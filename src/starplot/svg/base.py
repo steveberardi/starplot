@@ -2,11 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Dict, Union, Optional
 import logging
 
+import rtree
 import numpy as np
 from matplotlib import patches
-from matplotlib import pyplot as plt, patheffects
-from matplotlib.axes import Axes
-from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
 from shapely import Polygon, LineString
 
@@ -33,13 +31,14 @@ from starplot.styles import (
     AnchorPointEnum,
 )
 from starplot.projections import ProjectionBase
+from starplot.plotters import StarPlotterMixinSVG
 from starplot.plotters.debug import DebugPlotterMixin
 from starplot.plotters.text import TextPlotterMixin, CollisionHandler
 from starplot.styles.helpers import use_style
 from starplot.profile import profile
 from starplot.svg.canvas import Canvas
 
-LOGGER = logging.getLogger("starplot")
+LOGGER = logging.getLogger("starplot-svg")
 LOG_HANDLER = logging.StreamHandler()
 LOG_FORMATTER = logging.Formatter(
     "\033[1;34m%(name)s\033[0m:[%(levelname)s]: %(message)s"
@@ -49,10 +48,8 @@ LOGGER.addHandler(LOG_HANDLER)
 
 DEFAULT_RESOLUTION = 4096
 
-DPI = 100
 
-
-class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
+class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
     _background_clip_path = None
     _clip_path_polygon: Polygon = None  # clip path in display coordinates
     _coordinate_system = CoordinateSystem.RA_DEC
@@ -77,7 +74,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
     def __init__(
         self,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
         point_label_handler: CollisionHandler = None,
@@ -91,10 +88,17 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         bounds: tuple[float, float, float, float] = None,
         invert_x: bool = False,
         invert_y: bool = False,
+        clip_path=None,
         *args,
         **kwargs,
     ):
-        super().__init__(*args, **kwargs)
+        # super().__init__(*args, **kwargs)
+
+        self.labels = []
+        self._labels_rtree = rtree.index.Index()
+        self._constellations_rtree = rtree.index.Index()
+        self._stars_rtree = rtree.index.Index()
+        self._markers_rtree = rtree.index.Index()
 
         self.language = StarplotSettings.language
 
@@ -118,6 +122,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             invert_x=invert_x,
             invert_y=invert_y,
             suppress_warnings=suppress_warnings,
+            logger=LOGGER,
         )
 
         self._background_clip_path = None
@@ -478,18 +483,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
 
     def _polygon(self, points: list, style: PolygonStyle, **kwargs):
         points = self._prepare_coords_many(points)
-        patch = patches.Polygon(
-            points,
-            # closed=False, # needs to be false for circles at poles?
-            **style.matplot_kwargs(self.scale),
-            **kwargs,
-            # clip_on=True,
-            # clip_path=self._background_clip_path,
-        )
-        self.ax.add_patch(patch)
-        # Need to set clip path AFTER adding patch
-        patch.set_clip_on(True)
-        patch.set_clip_path(self._background_clip_path)
+        self.canvas.polygon(points, style)
+
 
     @use_style(PolygonStyle)
     def polygon(
@@ -865,22 +860,12 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             num_labels: Max number of labels to plot along the line
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the plot's `path_label_handler` will be used.
         """
-        x = []
-        y = []
-        inbounds = []
 
         label = translate(label, self.language)
-
-        for ra, dec in ecliptic.RA_DECS:
-            x0, y0 = self._prepare_coords(ra * 15, dec)
-            x.append(x0)
-            y.append(y0)
-            if self.in_bounds(ra * 15, dec):
-                inbounds.append((ra * 15, dec))
-
+        coords = [(ra * 15, dec) for ra, dec in ecliptic.RA_DECS if self.in_bounds(ra * 15, dec)]
         coords = [(ra * 15, dec) for ra, dec in ecliptic.RA_DECS]
 
-        self.line(
+        self.canvas.line(
             style=style,
             label=label.upper(),
             num_labels=num_labels,
@@ -908,13 +893,13 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         """
         label = translate(label, self.language)
         coords = [(ra, 0) for ra in range(0, 361)]
-        self.line(
+        self.canvas.line(
             style=style,
             label=label.upper(),
             num_labels=num_labels,
             collision_handler=collision_handler,
             coordinates=coords,
-            gid="celestial-equator",
+            # gid="celestial-equator",
         )
 
     @use_style(PathStyle)

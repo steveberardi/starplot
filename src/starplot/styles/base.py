@@ -378,7 +378,7 @@ class MarkerStyle(BaseStyle):
         attrs = {
             "fill": self.color.as_hex() if self.fill != FillStyleEnum.NONE else "none",
             "fill-opacity": 0 if self.fill == FillStyleEnum.NONE else self.alpha,
-            "stroke": self.edge_color.as_hex(),
+            "stroke": self.edge_color.as_hex() if self.edge_color else "none",
             "stroke-width": self.edge_width,
             "stroke-opacity": self.alpha,
         }
@@ -467,16 +467,17 @@ class LineStyle(BaseStyle):
 
     def css(self) -> dict:
         attrs = {
+            "fill": "none",
             "stroke": self.color.as_hex(),
             "stroke-width": self.width,
             "stroke-opacity": self.alpha,
         }
-        if isinstance(self.style, str):
+        if isinstance(self.style, (str, LineStyleEnum)):
             ls_css = LineStyleEnum(self.style).css()
             if ls_css:
                 attrs["stroke-dasharray"] = ls_css
         elif self.style:
-            attrs["stroke-dasharray"] = ",".join(self.style)
+            attrs["stroke-dasharray"] = ",".join([str(n) for n in self.style[1]])
 
         attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
 
@@ -541,7 +542,7 @@ class PolygonStyle(BaseStyle):
         attrs = {
             "fill": self.fill_color.as_hex() if self.fill_color else "none",
             "fill-opacity": self.alpha if self.fill_color else 0,
-            "stroke": self.edge_color.as_hex(),
+            "stroke": self.edge_color.as_hex() if self.edge_color else "none",
             "stroke-width": self.edge_width,
             "stroke-opacity": self.alpha,
         }

@@ -1,7 +1,7 @@
 # ruff: noqa: F401,F403
 
-from .constellations import ConstellationPlotterMixin
-from .stars import StarPlotterMixin
+from .constellations import ConstellationPlotterMixin, ConstellationPlotterMixinSVG
+from .stars import StarPlotterMixin, StarPlotterMixinSVG
 from .dsos import DsoPlotterMixin
 from .milkyway import MilkyWayPlotterMixin
 from .legend import LegendPlotterMixin

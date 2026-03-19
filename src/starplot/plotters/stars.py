@@ -16,6 +16,347 @@ from starplot.profile import profile
 from starplot.plotters.text import CollisionHandler
 
 
+def size_by_magnitude(star: Star) -> float:
+    """
+    Simple sizing by magnitude, using a step size of 1.
+
+    ```python
+    if mag <= 0:
+        size = 3800
+    elif mag <= 1:  # 0..1
+        size = 2400
+    elif mag <= 2:  # 1..2
+        size = 1600
+    elif mag <= 3:  # 2..3
+        size = 1000
+    elif mag <= 4:  # 3..4
+        size = 600
+    elif mag <= 5:  # 4..5
+        size = 300
+    elif mag <= 6:  # 5..6
+        size = 120
+    elif mag <= 7:  # 6..7
+        size = 60
+    elif mag <= 8:  # 7..8
+        size = 40
+    else:           # > 8
+        size = 20
+
+    ```
+    """
+    mag = star.magnitude
+    size = 0
+    if mag <= 0:
+        size = 64
+    elif mag <= 1:  # 0..1
+        size = 50
+    elif mag <= 2:  # 1..2
+        size = 30
+    elif mag <= 3:  # 2..3
+        size = 20
+    elif mag <= 4:  # 3..4
+        size = 15
+    elif mag <= 5:  # 4..5
+        size = 10
+    elif mag <= 6:  # 5..6
+        size = 5
+    elif mag <= 7:  # 6..7
+        size = 4
+    elif mag <= 8:  # 7..8
+        size = 3
+    else:  # > 8
+        size = 2
+
+    return size
+
+
+class StarPlotterMixinSVG:
+    def _load_stars(self, catalog, filters=None, sql=None):
+        extent = self._extent_mask()
+
+        return stars.load(
+            extent=extent,
+            catalog=catalog,
+            filters=filters,
+            sql=sql,
+        )
+
+    def _scatter_stars(self, ras, decs, sizes, alphas, colors, style=None):
+        style = style or self.style.star
+
+        self.canvas.markers(
+            np.array(ras), 
+            np.array(decs), 
+            style=style.marker,
+            sizes=sizes,
+        )
+        
+        # plotted = self.ax.scatter(
+        #     ras,
+        #     decs,
+        #     s=sizes,
+        #     c=colors,
+        #     marker=kwargs.pop("symbol", None) or style.marker.symbol_matplot,
+        #     zorder=kwargs.pop("zorder", None) or style.marker.zorder,
+        #     edgecolors=edge_colors,
+        #     alpha=alphas,
+        #     gid="stars",
+        # )
+
+
+    def _star_labels(
+        self,
+        star_objects: list[Star],
+        star_sizes: list[float],
+        label_pks: list,
+        style: ObjectStyle,
+        bayer_labels: bool,
+        flamsteed_labels: bool,
+        label_fn: Callable[[Star], str],
+        collision_handler: CollisionHandler,
+    ):
+        _bayer = []
+        _flamsteed = []
+
+        # Plot all star common names first
+        for i, s in enumerate(star_objects):
+            if s.pk not in label_pks:
+                continue
+
+            if (
+                s.hip
+                and s.hip in self._labeled_stars
+                or s.tyc
+                and s.tyc in self._labeled_stars
+            ):
+                continue
+            elif s.hip:
+                self._labeled_stars.append(s.hip)
+            elif s.tyc:
+                self._labeled_stars.append(s.tyc)
+
+            label = label_fn(s)
+            bayer_desig = s.bayer
+            flamsteed_num = s.flamsteed
+
+            if label:
+                self.text(
+                    label,
+                    s.ra,
+                    s.dec,
+                    style=style.label.offset_from_marker(
+                        marker_symbol=style.marker.symbol,
+                        marker_size=star_sizes[i],
+                        scale=self.scale,
+                    ),
+                    collision_handler=collision_handler,
+                    gid="stars-label-name",
+                )
+
+            if bayer_labels and bayer_desig and s.is_primary:
+                _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i]))
+
+            if flamsteed_labels and flamsteed_num and not bayer_desig and s.is_primary:
+                _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i]))
+
+        # Plot bayer/flamsteed
+        for bayer_desig, ra, dec, star_size in _bayer:
+            self.text(
+                bayer_desig,
+                ra,
+                dec,
+                style=self.style.bayer_labels.offset_from_marker(
+                    marker_symbol=style.marker.symbol,
+                    marker_size=star_size,
+                    scale=self.scale,
+                ),
+                collision_handler=collision_handler,
+                gid="stars-label-bayer",
+            )
+
+        for flamsteed_num, ra, dec, star_size in _flamsteed:
+            self.text(
+                flamsteed_num,
+                ra,
+                dec,
+                style=self.style.flamsteed_labels.offset_from_marker(
+                    marker_symbol=style.marker.symbol,
+                    marker_size=star_size,
+                    scale=self.scale,
+                ),
+                collision_handler=collision_handler,
+                gid="stars-label-flamsteed",
+            )
+
+    def _prepare_star_coords(self, df, limit_by_altaz=False):
+        df["x"], df["y"] = (
+            df["ra"],
+            df["dec"],
+        )
+        return df
+
+    @profile
+    @use_style(ObjectStyle, "star")
+    def stars(
+        self,
+        where: list = None,
+        where_labels: list = None,
+        catalog: Catalog | Path | str = BIG_SKY_MAG11,
+        style: ObjectStyle = None,
+        size_fn: Callable[[Star], float] = size_by_magnitude,
+        alpha_fn: Callable[[Star], float] = None,
+        color_fn: Callable[[Star], str] = None,
+        label_fn: Callable[[Star], str] = Star.get_label,
+        legend_label: str = "Star",
+        bayer_labels: bool = False,
+        flamsteed_labels: bool = False,
+        sql: str = None,
+        sql_labels: str = None,
+        collision_handler: CollisionHandler = None,
+    ):
+        """
+        Plots stars
+
+        Args:
+            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
+            catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
+            style: If `None`, then the plot's style for stars will be used
+            size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
+            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
+            color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
+            label_fn: Callable for determining the label of each star.
+            legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
+            bayer_labels: If True, then Bayer labels for stars will be plotted.
+            flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
+            sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
+            sql_labels: SQL query for selecting stars that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+        """
+
+        # fallback to style if callables are None
+        color_hex = (
+            style.marker.color.as_hex()
+        )  # calculate color hex once here to avoid repeated calls in color_fn()
+        size_fn = size_fn or (lambda d: style.marker.size)
+        alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
+        color_fn = color_fn or (lambda d: color_hex)
+
+        handler = collision_handler or self.point_label_handler
+        where = where or []
+        where_labels = where_labels or []
+        stars_to_index = []
+
+        star_results = self._load_stars(catalog, filters=where, sql=sql)
+
+        star_results_labeled = star_results
+        for f in where_labels:
+            star_results_labeled = star_results_labeled.filter(f)
+
+        if sql_labels:
+            result = (
+                star_results_labeled.alias("_").sql(sql_labels).select("pk").execute()
+            )
+            pks = result["pk"].to_list()
+            star_results_labeled = star_results_labeled.filter(ibis_table.pk.isin(pks))
+
+        label_pks = star_results_labeled.to_pandas()["pk"].tolist()
+
+        stars_df = star_results.to_pandas()
+        stars_df["ra_hours"], stars_df["dec_degrees"] = (stars_df.ra / 15, stars_df.dec)
+
+        nearby_stars = SkyfieldStar.from_dataframe(stars_df)
+        astrometric = self.earth.at(self.observer.timescale).observe(nearby_stars)
+        stars_ra, stars_dec, _ = astrometric.radec()
+        stars_df["ra"], stars_df["dec"] = (
+            stars_ra.hours * 15,
+            stars_dec.degrees,
+        )
+        stars_df = self._prepare_star_coords(stars_df)
+
+        starz = []
+        rtree_id = 1
+
+        stars_df["display_x"], stars_df["display_y"] = self.canvas._to_display(
+            stars_df["x"].to_numpy(),
+            stars_df["y"].to_numpy(),
+        )
+        stars_df = stars_df[(stars_df["display_x"] >= 0) & (stars_df["display_y"] >= 0)]
+
+        for star in stars_df.itertuples():
+            display_x, display_y = star.display_x, star.display_y
+
+            obj = from_tuple(star)
+            size = size_fn(obj) * self.scale
+            alpha = alpha_fn(obj)
+            color = color_fn(obj) or style.marker.color.as_hex()
+
+            if obj.magnitude < 5:
+                rtree_id += 1
+                radius = size**0.5 / 5
+                bbox = np.array(
+                    (
+                        display_x - radius,
+                        display_y - radius,
+                        display_x + radius,
+                        display_y + radius,
+                    )
+                )
+                if self.debug_text:
+                    self._debug_bbox(bbox, color="#39FF14", width=1)
+                if self._stars_rtree.get_size() > 0:
+                    self._stars_rtree.insert(
+                        0,
+                        bbox,
+                        None,
+                    )
+                else:
+                    # if the index has no stars yet, then wait until end to load for better performance
+                    stars_to_index.append((rtree_id, bbox, None))
+
+            starz.append((star.x, star.y, size, alpha, color, obj))
+
+        starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
+
+        if not starz:
+            self.logger.debug(f"No stars found.")
+            return
+
+        x, y, sizes, alphas, colors, star_objects = zip(*starz)
+
+        self._objects.stars.extend(star_objects)
+
+        self.logger.debug(f"Star count = {len(star_objects)}")
+
+        self._scatter_stars(
+            x,
+            y,
+            sizes,
+            alphas,
+            colors,
+            style=style,
+        )
+
+        return
+        _legend_label = translate(legend_label, self.language) or legend_label
+        self._add_legend_handle_marker(_legend_label, style.marker)
+
+        if stars_to_index:
+            self._stars_rtree = rtree.index.Index(stars_to_index)
+
+        
+        self._star_labels(
+            star_objects,
+            sizes,
+            label_pks,
+            style,
+            bayer_labels,
+            flamsteed_labels,
+            label_fn,
+            handler,
+        )
+
+
 class StarPlotterMixin:
     def _load_stars(self, catalog, filters=None, sql=None):
         extent = self._extent_mask()

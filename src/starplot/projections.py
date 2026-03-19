@@ -160,6 +160,12 @@ class StereoNorth(ProjectionBase, CenterRA):
 
     _ccrs = ccrs.NorthPolarStereo
 
+    @property
+    def _crs(self):
+        return CRS.from_proj4(
+            f"+proj=stere +lat_0=90 +lon_0={self.center_ra} +x_0=0 +y_0=0 +R=6371000 +units=m"
+        )
+
 
 class StereoSouth(ProjectionBase, CenterRA):
     """Good for objects near the south celestial pole, but distorts objects near the mid declinations"""

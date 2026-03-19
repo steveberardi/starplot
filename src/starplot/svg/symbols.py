@@ -16,6 +16,7 @@ def get(style: MarkerStyle):
         MarkerSymbolEnum.CIRCLE: circle,
         MarkerSymbolEnum.CIRCLE_CROSS: circle_cross,
         MarkerSymbolEnum.CIRCLE_CROSSHAIR: circle_crosshair,
+        MarkerSymbolEnum.POINT: circle,
     }.get(style.symbol)()
 
 
