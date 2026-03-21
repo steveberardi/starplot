@@ -21,8 +21,14 @@ from starplot.models.constellation import from_tuple
 from starplot.profile import profile
 from starplot.styles import LineStyle, LabelStyle
 from starplot.styles.helpers import use_style
-from starplot.geometry import is_wrapped_polygon, line_segment, split_line_at_meridian
+from starplot.geometry import (
+    is_wrapped_polygon,
+    line_segment,
+    split_line_at_meridian,
+    split_line_at_x,
+)
 from starplot.plotters.text import CollisionHandler
+
 
 class ConstellationPlotterMixinSVG:
     @profile
@@ -110,17 +116,17 @@ class ConstellationPlotterMixinSVG:
                 if x1 == x2 and y1 == y2:
                     continue
 
-                if x1 - x2 > 60:
-                    x2 += 360
-                elif x2 - x1 > 60:
-                    x1 += 360
-
                 if not inbounds and (
                     self._in_bounds_xy(x1, y1) or self._in_bounds_xy(x2, y2)
                 ):
                     inbounds = True
                 elif not inbounds:
                     continue
+
+                if x1 - x2 > 60:
+                    x2 += 360
+                elif x2 - x1 > 60:
+                    x1 += 360
 
                 xy_lines = []
 
@@ -131,10 +137,17 @@ class ConstellationPlotterMixinSVG:
                 else:
                     xy_lines = [[(x1, y1), (x2, y2)]]
 
+                # Doing this on the line function now
+                # if self.canvas.projection.edge_x is not None:
+                #     edge_x = self.canvas.projection.edge_x
+                #     newlines = []
+                #     for line in xy_lines:
+                #         result = split_line_at_x(line, edge_x, offset=0.00001)
+                #         newlines.extend(result)
+                #     xy_lines = newlines
 
                 display_lines = [
-                    [self.canvas._to_display(*p) for p in line]
-                    for line in xy_lines
+                    [self.canvas._to_display(*p) for p in line] for line in xy_lines
                 ]
 
                 lines.extend(xy_lines)
@@ -159,7 +172,6 @@ class ConstellationPlotterMixinSVG:
 
             if inbounds:
                 self._objects.constellations.append(c)
-
 
         for coords in lines:
             self.canvas.line(

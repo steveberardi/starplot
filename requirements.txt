@@ -12,7 +12,9 @@ pyarrow==21.0.0
 pyogrio==0.10.0
 rtree==1.4.1
 requests==2.31.0
-duckdb==1.4.4
+duckdb==1.5.0
 ibis-framework[duckdb,geospatial]==11.0.0
 astropy-healpix==1.1.2
 sqlglot==28.9.0
+cairosvg==2.9.0
+resvg-py

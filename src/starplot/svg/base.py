@@ -112,6 +112,12 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
 
         self.scale *= 1.28
 
+        self.debug = StarplotSettings.debug or bool(kwargs.get("debug"))
+        self.debug_text = StarplotSettings.debug or bool(kwargs.get("debug_text"))
+        self.log_level = logging.DEBUG if self.debug else logging.ERROR
+        self.logger = LOGGER
+        self.logger.setLevel(self.log_level)
+
         self.canvas = Canvas(
             resolution=resolution,
             style=self.style,
@@ -124,6 +130,7 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
             suppress_warnings=suppress_warnings,
             logger=LOGGER,
         )
+        self.projection = projection
 
         self._background_clip_path = None
         self._legend = None
@@ -153,12 +160,6 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
         self.ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
         self.earth = self.ephemeris["earth"]
-
-        self.debug = StarplotSettings.debug or bool(kwargs.get("debug"))
-        self.debug_text = StarplotSettings.debug or bool(kwargs.get("debug_text"))
-        self.log_level = logging.DEBUG if self.debug else logging.ERROR
-        self.logger = LOGGER
-        self.logger.setLevel(self.log_level)
 
         self._objects = models.ObjectList()
         self._labeled_stars = []
@@ -484,7 +485,6 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
     def _polygon(self, points: list, style: PolygonStyle, **kwargs):
         points = self._prepare_coords_many(points)
         self.canvas.polygon(points, style)
-
 
     @use_style(PolygonStyle)
     def polygon(
@@ -862,7 +862,6 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
         """
 
         label = translate(label, self.language)
-        coords = [(ra * 15, dec) for ra, dec in ecliptic.RA_DECS if self.in_bounds(ra * 15, dec)]
         coords = [(ra * 15, dec) for ra, dec in ecliptic.RA_DECS]
 
         self.canvas.line(
@@ -935,15 +934,13 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
 
         gid = kwargs.get("gid") or "line"
 
-        self.ax.plot(
-            x,
-            y,
-            clip_on=True,
-            clip_path=self._background_clip_path,
-            dash_capstyle=style.line.dash_capstyle,
-            gid=gid,
-            **style.line.matplot_kwargs(self.scale),
-            **self._plot_kwargs(),
+        self.canvas.line(
+            style=style,
+            label=label,
+            num_labels=num_labels,
+            collision_handler=collision_handler,
+            coordinates=coords,
+            # gid="celestial-equator",
         )
 
         if not label:

@@ -1,4 +1,5 @@
 import numpy as np
+from pathlib import Path
 from shapely import Polygon, LineString
 
 from pyproj import CRS, Transformer
@@ -74,7 +75,7 @@ class Canvas:
         crs: CRS = None,
         debug: bool = False,
         precision: int = 4,
-        logger = None,
+        logger=None,
         *args,
         **kwargs,
     ):
@@ -110,13 +111,23 @@ class Canvas:
             return x.astype(int), y.astype(int)
         return np.round(x, self.precision), np.round(y, self.precision)
 
-    def _init_bounds(self):
-        self.projected_bounds = self.tx.transform_bounds(*self.bounds)
-        self.minx, self.miny, self.maxx, self.maxy = self.projected_bounds
-        left, bottom, right, top = self.projected_bounds
+    def _is_global(self):
+        return abs(self.bounds[0] - self.bounds[2]) >= 360
 
-        span_x = abs(right - left)
-        span_y = abs(top - bottom)
+    def _init_bounds(self):
+        # if self._is_global():
+        #     self.minx, _, self.maxx, _ = self.projection.bounds
+        #     _, self.miny, _, self.maxy = self.tx.transform_bounds(*self.bounds)
+        # else:
+        #     self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(*self.bounds)
+
+        self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
+            *self.bounds
+        )
+        self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
+
+        span_x = abs(self.maxx - self.minx)
+        span_y = abs(self.maxy - self.miny)
 
         if span_x > span_y:
             ratio = span_x / span_y
@@ -127,10 +138,14 @@ class Canvas:
             self.height = self.resolution
             self.width = self.height / ratio
 
-        # TODO : de-project projected bounds back to EPSG-4326 (for extent mask etc)
+        self.bounds = self.tx.transform_bounds(
+            *self.projected_bounds, direction="INVERSE"
+        )
 
         self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
-        self.logger.debug(f"Size = {self.height} x {self.width}")
+        self.logger.debug(f"Bounds = {self.bounds}")
+        self.logger.debug(f"Extent (X) = {int(self.minx)} >> {int(self.maxx)}")
+        self.logger.debug(f"Size (h X w) = {int(self.height)} x {self.width}")
 
     def _register_symbol(self, symbol_id: str, value: str):
         if symbol_id in self.symbol_ids:
@@ -166,7 +181,8 @@ class Canvas:
             (
                 style.zorder,
                 symbols.use(symbol_id, x, y, size, size, css),
-            ) for x, y, size in list(zip(dx, dy, sizes))
+            )
+            for x, y, size in list(zip(dx, dy, sizes))
         ]
         self.elements.extend(elements)
 
@@ -178,23 +194,29 @@ class Canvas:
         num_labels: int = 2,
         collision_handler: CollisionHandler = None,
     ) -> None:
-        arr = np.array(coordinates)
-        xs, ys = arr[:, 0], arr[:, 1]
-        dx, dy = self._to_display(xs, ys)
-        dxy = list(zip(dx, dy))
-
-        points = " ".join([f"{x},{y}" for x, y in dxy])
-
-        if isinstance(style, LineStyle):
-            attrs = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
-            z = style.zorder
+        if self.projection.edge_x is not None:
+            lines = _geometry.split_line_at_x(
+                coordinates, self.projection.edge_x, offset=0.00001
+            )
         else:
-            attrs = " ".join([f'{k}="{v}"' for k, v in style.line.css().items()])
-            z= style.line.zorder
+            lines = [coordinates]
 
-        self.elements.append(
-            (z, f'<polyline points="{points}" {attrs} />')
-        )
+        for line in lines:
+            arr = np.array(line)
+            xs, ys = arr[:, 0], arr[:, 1]
+            dx, dy = self._to_display(xs, ys)
+            dxy = list(zip(dx, dy))
+
+            points = " ".join([f"{x},{y}" for x, y in dxy])
+
+            if isinstance(style, LineStyle):
+                attrs = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
+                z = style.zorder
+            else:
+                attrs = " ".join([f'{k}="{v}"' for k, v in style.line.css().items()])
+                z = style.line.zorder
+
+            self.elements.append((z, f'<polyline points="{points}" {attrs} />'))
 
     def polygon(
         self, coordinates: list[tuple[float, float]], style: PolygonStyle
@@ -204,10 +226,7 @@ class Canvas:
         dx, dy = self._to_display(xs, ys)
         dxy = list(zip(dx, dy))
 
-        print(dxy[0], dxy[-1], dxy[-2])
-
         points = " ".join([f"{x},{y}" for x, y in dxy])
-
         attrs = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
 
         self.elements.append((style.zorder, f'<polygon points="{points}" {attrs} />'))
@@ -229,23 +248,47 @@ class Canvas:
 
     def _background(self):
         self.elements.append(
-            (-1_000_000, f'<rect x="-100" y="-100" height="{self.height+200}" width="{self.width+200}" fill="{self.style.background_color.as_hex()}" />')
+            (
+                -1_000_000,
+                f'<rect x="-100" y="-100" height="{self.height+200}" width="{self.width+200}" fill="{self.style.background_color.as_hex()}" />',
+            )
         )
 
-    def export(self, filename):
+    def render(self) -> str:
+        """Renders the canvas to an SVG string"""
+        result = f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}" viewBox="0 0 {self.width} {self.height}">'
+
+        if self.symbols:
+            result += "\n\n<defs>\n"
+            for symbol in self.symbols:
+                result += f"{symbol}\n"
+            result += "</defs>\n\n"
+
+        sorted_by_z = sorted(self.elements, key=lambda e: e[0])
+
+        elements = [e for _, e in sorted_by_z]
+
+        result += "\n".join(elements) + "</svg>"
+
+        return result
+
+    def export(self, filename: str | Path) -> None:
+        """
+        Exports the SVG to an SVG or PNG file. Type is inferred by filename.
+        """
+        if filename.endswith("png"):
+            from resvg_py import svg_to_bytes
+
+            # import cairosvg
+            # cairosvg.svg2png(self.render(), write_to=filename)
+            # return
+
+            png_bytes = svg_to_bytes(svg_string=self.render())
+
+            with open(filename, "wb") as f:
+                f.write(png_bytes)
+
+            return
+
         with open(filename, "w", buffering=1024 * 1024) as outfile:
-            outfile.write(
-                f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}" viewBox="0 0 {self.width} {self.height}">'
-            )
-
-            if self.symbols:
-                outfile.write("\n\n<defs>\n")
-                for symbol in self.symbols:
-                    outfile.write(f"{symbol}\n")
-                outfile.write("</defs>\n\n")
-
-            sorted_by_z = sorted(self.elements, key=lambda e: e[0])
-            for _, e in sorted_by_z:
-                outfile.write(e + "\n")
-
-            outfile.write("</svg>")
+            outfile.write(self.render())

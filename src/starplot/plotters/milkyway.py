@@ -46,6 +46,6 @@ class MilkyWayPlotterMixin:
 
         for p in polygons:
             self.polygon(
-                geometry=p.buffer(0.001),
+                geometry=p.buffer(-0.00001),
                 style=style,
             )

@@ -1,9 +1,35 @@
 from abc import ABC
 from functools import cached_property
 
+import numpy as np
 from cartopy import crs as ccrs
-from pyproj import CRS, Transformer
+from pyproj import CRS, Proj
 from pydantic import BaseModel, Field
+
+
+def get_projection_bounds(projection: Proj, central_lon=0, n=100_000):
+    min_lon = central_lon - 180
+    max_lon = central_lon + 180
+
+    lons = np.linspace(min_lon, max_lon, n)
+    lats = np.linspace(-90, 90, n)
+
+    top_x, top_y = projection.transform(lons, np.full(n, 90))
+    bottom_x, bottom_y = projection.transform(lons, np.full(n, -90))
+    left_x, left_y = projection.transform(np.full(n, min_lon), lats)
+    right_x, right_y = projection.transform(np.full(n, max_lon), lats)
+
+    all_x = np.concatenate([top_x, bottom_x, left_x, right_x])
+    all_y = np.concatenate([top_y, bottom_y, left_y, right_y])
+
+    valid = np.isfinite(all_x) & np.isfinite(all_y)
+
+    return (
+        all_x[valid].min(),
+        all_y[valid].min(),
+        all_x[valid].max(),
+        all_y[valid].max(),
+    )
 
 
 class CenterRA(BaseModel, ABC):
@@ -49,6 +75,14 @@ class ProjectionBase(BaseModel, ABC):
         c = self._ccrs(**kwargs)
         c.threshold = self.threshold
         return c
+
+    @property
+    def edge_x(self) -> float | None:
+        return None
+
+    @property
+    def bounds(self):
+        return get_projection_bounds(Proj(self._crs))
 
 
 class AutoProjection:
@@ -121,8 +155,15 @@ class Miller(ProjectionBase, CenterRA):
     @property
     def _crs(self):
         return CRS.from_proj4(
-            f"+proj=mill +lat_0=0 +lon_0={self.center_ra} +x_0=0 +y_0=0 +R=6371000 +units=m"
+            f"+proj=mill +lat_0=0 +lon_0={360 - self.center_ra} +x_0=0 +y_0=0 +R=6378137 +units=m"
         )
+
+    @property
+    def edge_x(self) -> float | None:
+        if self.center_ra < 180:
+            return self.center_ra + 180
+
+        return self.center_ra - 180
 
 
 class Mercator(ProjectionBase, CenterRA):
@@ -148,6 +189,12 @@ class Mollweide(ProjectionBase, CenterRA):
 
     _ccrs = ccrs.Mollweide
 
+    @property
+    def _crs(self):
+        return CRS.from_proj4(
+            f"+proj=moll +lon_0={360 - self.center_ra} +R=6378137 +units=m"
+        )
+
 
 class Equidistant(ProjectionBase, CenterRADEC):
     """Shows accurate distances from the center position. Often used for planispheres."""
@@ -163,7 +210,7 @@ class StereoNorth(ProjectionBase, CenterRA):
     @property
     def _crs(self):
         return CRS.from_proj4(
-            f"+proj=stere +lat_0=90 +lon_0={self.center_ra} +x_0=0 +y_0=0 +R=6371000 +units=m"
+            f"+proj=stere +lat_0=90 +lon_0={360 - self.center_ra}  +R=6378137 +units=m"
         )
 
 

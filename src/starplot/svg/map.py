@@ -30,6 +30,7 @@ from starplot.styles import (
     GradientDirection,
     extensions,
 )
+from starplot.profile import profile
 from starplot.styles.helpers import use_style
 from starplot.svg.base import BasePlot
 from starplot.utils import lon_to_ra, ra_to_lon
@@ -94,7 +95,6 @@ class MapPlot(
         *args,
         **kwargs,
     ) -> "MapPlot":
-        
         observer = observer or Observer.at_epoch(2000)
         style = style or PlotStyle().extend(extensions.MAP)
 
@@ -104,7 +104,7 @@ class MapPlot(
             raise ValueError("dec_min must be less than dec_max")
         if dec_min < -90 or dec_max > 90:
             raise ValueError("Declination out of range (must be -90...90)")
-        
+
         self.ra_min = ra_min
         self.ra_max = ra_max
         self.dec_min = dec_min
@@ -138,13 +138,10 @@ class MapPlot(
         )
 
         self.canvas._background()
-        
+
         self.logger.debug("Creating MapPlot...")
 
-        # self._init_plot()
-
-    def _plot_kwargs(self) -> dict:
-        return dict(transform=self._crs)
+        self._adjust_radec_minmax()
 
     @cache
     def in_bounds(self, ra: float, dec: float) -> bool:
@@ -176,34 +173,21 @@ class MapPlot(
         if self._is_global_extent():
             return
 
-        # adjust declination to match extent
-        extent = self.ax.get_extent(crs=self._plate_carree)
-        self.dec_min = extent[2]
-        self.dec_max = extent[3]
+        minx, self.dec_min, maxx, self.dec_max = self.canvas.bounds
 
-        # adjust the RA min/max if the DEC bounds is near the poles
-        if (
-            isinstance(self.projection, StereoNorth)
-            or isinstance(self.projection, StereoSouth)
-        ) and (self.dec_max > 80 or self.dec_min < -80):
+        minx += 360
+        maxx += 360
+
+        # adjust the X min/max if the Y bounds is near the poles
+        if (isinstance(self.projection, (StereoNorth, StereoSouth))) and (
+            self.dec_max > 80 or self.dec_min < -80
+        ):
             self.ra_min = 0
             self.ra_max = 360
 
-        elif self.ra_max < 360:
-            # adjust right ascension to match extent
-            ra_min = extent[1] * -1
-            ra_max = extent[0] * -1
-
-            if ra_min < 0 or ra_max < 0:
-                ra_min += 360
-                ra_max += 360
-
-            self.ra_min = ra_min
-            self.ra_max = ra_max
-
         else:
-            self.ra_min = lon_to_ra(extent[1]) * 15
-            self.ra_max = lon_to_ra(extent[0]) * 15 + 360
+            self.ra_min = minx
+            self.ra_max = maxx
 
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
@@ -318,6 +302,7 @@ class MapPlot(
             x, y = self._prepare_coords(ra.hours * 15, dec.degrees)
             self._text(x, y, labels[i], **text_kwargs)
 
+    @profile
     @use_style(PathStyle, "gridlines")
     def gridlines(
         self,
@@ -358,23 +343,28 @@ class MapPlot(
         def dec_formatter(x, pos) -> str:
             return dec_formatter_fn(x)
 
-        ra_locations = ra_locations or [x for x in range(0, 360, 15)]
-        dec_locations = dec_locations or [d for d in range(-80, 90, 10)]
+        ra_locations = ra_locations or [
+            x for x in range(0, 360, 15) if self.ra_min <= x <= self.ra_max
+        ]
+        dec_locations = dec_locations or [
+            y for y in range(-80, 90, 10) if self.dec_min <= y <= self.dec_max
+        ]
 
-        line_style_kwargs = style.line.matplot_kwargs(self.scale)
-        gridlines = self.ax.gridlines(
-            draw_labels=labels,
-            x_inline=False,
-            y_inline=False,
-            rotate_labels=False,
-            xpadding=12,
-            ypadding=12,
-            clip_on=True,
-            clip_path=self._background_clip_path,
-            gid="gridlines",
-            **line_style_kwargs,
-        )
-        gridlines.set_zorder(style.line.zorder)
+        for ra in ra_locations:
+            coords = geometry.line_segment((ra, self.dec_min), (ra, self.dec_max), 0.5)
+            self.line(
+                coordinates=coords,
+                style=style,
+            )
+
+        for dec in dec_locations:
+            coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
+            self.line(
+                coordinates=coords,
+                style=style,
+            )
+
+        return
 
         if labels:
             self._axis_labels = True
@@ -382,18 +372,6 @@ class MapPlot(
         label_style_kwargs = style.label.matplot_kwargs(self.scale)
         label_style_kwargs.pop("va")
         label_style_kwargs.pop("ha")
-
-        if self.dec_max > 75 or self.dec_min < -75:
-            # if the extent is near the poles, then plot the RA gridlines again
-            # because cartopy does not extend lines to poles
-            for ra in ra_locations:
-                self.ax.plot(
-                    (ra, ra),
-                    (-90, 90),
-                    gid="gridlines",
-                    **line_style_kwargs,
-                    **self._plot_kwargs(),
-                )
 
         gridlines.xlocator = FixedLocator([ra_to_lon(r / 15) for r in ra_locations])
         gridlines.xformatter = FuncFormatter(ra_formatter)
@@ -429,16 +407,6 @@ class MapPlot(
             top=True,
             right=True,
         )
-
-    def _init_plot(self):
-
-        self._set_extent()
-        self._adjust_radec_minmax()
-
-        self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
-
-        self._fit_to_ax()
-        self._plot_background_clip_path()
 
     def _plot_background_clip_path(self):
         if self.style.has_gradient_background():

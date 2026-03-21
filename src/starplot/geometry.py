@@ -245,7 +245,10 @@ def split_line_at_meridian(p1, p2, meridian=360):
 
     # Two segments on either side
     seg1 = [(x1, y1), (359.9999999, y_cross)]
-    seg2 = [(0.0000001, y_cross), (x2 - 360, y2)]  # or -meridian depending on convention
+    seg2 = [
+        (0.0000001, y_cross),
+        (x2 - 360, y2),
+    ]  # or -meridian depending on convention
 
     return seg1, seg2
 
@@ -290,6 +293,48 @@ def is_wrapped_polygon(polygon: Polygon) -> bool:
 def line_segment(start, end, step) -> list[tuple[float, float]]:
     """Returns coordinates on the line from start to end at the specified step-size"""
     return LineString([start, end]).segmentize(step).coords
+
+
+def split_line_at_x(
+    coords: list[tuple[float, float]],
+    split_x: float,
+    offset: float | None = 0.000001,
+) -> list[list[tuple]]:
+    """
+    Split a list of (x, y) coords at a specific x value.
+    Returns a list of segments (each a list of (x, y) tuples).
+
+    If offset is provided, the split points are nudged away from split_x on each side.
+    """
+    segments = []
+    current = [coords[0]]
+
+    for i in range(1, len(coords)):
+        x1, y1 = current[-1]
+        x2, y2 = coords[i]
+
+        if (x1 <= split_x <= x2) or (x2 <= split_x <= x1):
+            t = (split_x - x1) / (x2 - x1)
+            y_cross = y1 + t * (y2 - y1)
+
+            if offset is not None:
+                # Nudge each end away from split_x
+                end_x = split_x - offset if x1 <= split_x else split_x + offset
+                start_x = split_x + offset if x1 <= split_x else split_x - offset
+            else:
+                end_x = split_x
+                start_x = split_x
+
+            current.append((end_x, y_cross))
+            segments.append(current)
+            current = [(start_x, y_cross), (x2, y2)]
+        else:
+            current.append((x2, y2))
+
+    if len(current) >= 2:
+        segments.append(current)
+
+    return segments
 
 
 class BaseGeometry:

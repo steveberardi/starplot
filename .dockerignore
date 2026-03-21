@@ -13,6 +13,15 @@ hip_main.dat
 hip8.dat
 
 temp*
+temp/
+.tmp/
+.ruff_cache/
+.pytest_cache/
+
+*.parquet
+*.bsp
+
+build/
 
 # test generated data
 tests/data/actual*.png

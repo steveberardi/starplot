@@ -85,12 +85,12 @@ class StarPlotterMixinSVG:
         style = style or self.style.star
 
         self.canvas.markers(
-            np.array(ras), 
-            np.array(decs), 
+            np.array(ras),
+            np.array(decs),
             style=style.marker,
             sizes=sizes,
         )
-        
+
         # plotted = self.ax.scatter(
         #     ras,
         #     decs,
@@ -102,7 +102,6 @@ class StarPlotterMixinSVG:
         #     alpha=alphas,
         #     gid="stars",
         # )
-
 
     def _star_labels(
         self,
@@ -344,7 +343,6 @@ class StarPlotterMixinSVG:
         if stars_to_index:
             self._stars_rtree = rtree.index.Index(stars_to_index)
 
-        
         self._star_labels(
             star_objects,
             sizes,
