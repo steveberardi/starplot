@@ -226,24 +226,32 @@ class Canvas:
 
         self.elements.append((style.zorder, f'<polygon points="{points}" {attrs} />'))
 
+    def text(self, x, y, value: str, style: LabelStyle, angle: float = 0) -> float:
+        # TODO : handle this
+        dx, dy = self._to_display(x, y)
 
-    # @abstractmethod
-    # def text(self) -> float:
-    #     ...
+        attrs = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
 
-    # @abstractmethod
-    # def gridlines(self) -> float:
-    #     ...
+        if angle:
+            attrs += f' transform="rotate({angle}, {dx}, {dy})"'
 
-    # @abstractmethod
-    # def legend(self) -> float:
-    #     ...
+        self.elements.append(
+            (style.zorder, f'<text x="{dx}" y="{dy}" {attrs} >{value}</text>')
+        )
 
     def _background(self):
         self.elements.append(
             (
                 -1_000_000,
                 f'<rect x="-100" y="-100" height="{self.height+200}" width="{self.width+200}" fill="{self.style.background_color.as_hex()}" />',
+            )
+        )
+
+    def _rectangle(self, x, y, height, width, color, stroke_width=1):
+        self.elements.append(
+            (
+                1_000_000,
+                f'<rect x="{x}" y="{y}" height="{height}" width="{width}" fill="none" stroke="{color}" stroke-width="{stroke_width}" />',
             )
         )
 

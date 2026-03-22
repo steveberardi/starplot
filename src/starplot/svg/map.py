@@ -32,6 +32,7 @@ from starplot.profile import profile
 from starplot.styles.helpers import use_style
 from starplot.svg.base import BasePlot
 from starplot.svg.dsos import DsoPlotterMixin
+from starplot.svg.text import TextPlotterMixin
 from starplot.utils import lon_to_ra, ra_to_lon
 
 
@@ -41,6 +42,7 @@ class MapPlot(
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
     ConstellationPlotterMixinSVG,
+    TextPlotterMixin,
     # LegendPlotterMixin,
     # GradientBackgroundMixin,
     # ArrowPlotterMixin,

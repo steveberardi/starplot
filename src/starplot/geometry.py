@@ -315,7 +315,7 @@ def split_line_at_x(
         x1, y1 = current[-1]
         x2, y2 = coords[i]
 
-        if (x1 <= split_x <= x2) or (x2 <= split_x <= x1):
+        if ((x1 <= split_x <= x2) or (x2 <= split_x <= x1)) and x1 != x2:
             t = (split_x - x1) / (x2 - x1)
             y_cross = y1 + t * (y2 - y1)
 

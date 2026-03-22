@@ -640,7 +640,7 @@ class LabelStyle(BaseStyle):
     font_name: Optional[str] = "Inter"
     """Name of the font to use"""
 
-    font_family: Optional[str] = None
+    font_family: Optional[str] = "sans-serif"
     """Font family (e.g. 'monospace', 'sans-serif', 'serif', etc)"""
 
     line_spacing: Optional[float] = None
@@ -676,6 +676,23 @@ class LabelStyle(BaseStyle):
 
     zorder: int = ZOrderEnum.LAYER_4
     """Zorder of the label"""
+
+    def css(self) -> dict:
+        attrs = {
+            "font-size": self.font_size,
+            "font-family": f"{self.font_name}, {self.font_family}",
+            "font-weight": FontWeightEnum(self.font_weight).value,
+            "font-style": FontStyleEnum(self.font_style).value,
+            "fill": self.font_color.as_hex(),
+            "fill-opacity": self.font_alpha,
+        }
+        if self.border_width and self.border_color:
+            attrs["stroke"] = self.border_color.as_hex()
+            attrs["stroke-width"] = self.border_width
+            attrs["stroke-opacity"] = self.font_alpha
+            attrs["paint-order"] = "stroke fill"
+
+        return attrs
 
     def matplot_kwargs(self, scale: float = 1.0) -> dict:
         style = dict(

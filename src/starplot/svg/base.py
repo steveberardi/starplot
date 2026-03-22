@@ -49,7 +49,7 @@ LOGGER.addHandler(LOG_HANDLER)
 DEFAULT_RESOLUTION = 4096
 
 
-class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
+class BasePlot(StarPlotterMixinSVG, ABC):
     _background_clip_path = None
     _clip_path_polygon: Polygon = None  # clip path in display coordinates
     _coordinate_system = CoordinateSystem.RA_DEC
@@ -277,7 +277,7 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
             style=style.marker,
             # gid=gid or "marker",
         )
-        
+
         # Add to spatial index
         display_x, display_y = self.canvas._to_display(x, y)
         if display_x > 0 and display_y > 0:
@@ -293,7 +293,7 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
             self._markers_rtree.insert(0, bbox, None)
 
         return
-    
+
         # Plot label
         if label:
             label_style = style.label
@@ -853,7 +853,7 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
         self,
         style: PathStyle = None,
         label: str = "ECLIPTIC",
-        num_labels: int = 1,
+        num_labels: int = 2,
         collision_handler: CollisionHandler = None,
     ):
         """Plots the ecliptic
@@ -868,7 +868,7 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
         label = translate(label, self.language)
         coords = [(ra * 15, dec) for ra, dec in ecliptic.RA_DECS]
 
-        self.canvas.line(
+        self.line(
             style=style,
             label=label.upper(),
             num_labels=num_labels,
@@ -882,7 +882,7 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
         self,
         style: PathStyle = None,
         label: str = "CELESTIAL EQUATOR",
-        num_labels: int = 1,
+        num_labels: int = 2,
         collision_handler: CollisionHandler = None,
     ):
         """
@@ -896,7 +896,7 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
         """
         label = translate(label, self.language)
         coords = [(ra, 0) for ra in range(0, 361)]
-        self.canvas.line(
+        self.line(
             style=style,
             label=label.upper(),
             num_labels=num_labels,
@@ -938,6 +938,8 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
 
         gid = kwargs.get("gid") or "line"
 
+        collision_handler = collision_handler or self.path_label_handler
+
         self.canvas.line(
             style=style,
             label=label,
@@ -947,29 +949,52 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
             # gid="celestial-equator",
         )
 
-        if not label:
-            return
+        if label:
+            arr = np.array(coordinates)
+            xs, ys = arr[:, 0], arr[:, 1]
+            self._text_line(
+                xs,
+                ys,
+                text=label,
+                style=style.label,
+                num_labels=num_labels,
+                collision_handler=collision_handler,
+            )
 
-        prepared_coords = [
-            (x, y) for x, y in prepared_coords if self._in_bounds_xy(x, y)
-        ]
+        # if not label:
+        #     return
 
-        if not prepared_coords:
-            return
+        # prepared_coords = [
+        #     (x, y) for x, y in prepared_coords if self._in_bounds_xy(x, y)
+        # ]
 
-        x, y = zip(*prepared_coords)
+        # if not prepared_coords:
+        #     return
 
-        collision_handler = collision_handler or self.path_label_handler
+        # x, y = zip(*prepared_coords)
 
-        self._text_line(
-            x,
-            y,
-            label,
-            num_labels=num_labels,
-            collision_handler=collision_handler,
-            min_spacing=0.65,
-            **style.label.matplot_kwargs(self.scale),
-            **self._plot_kwargs(),
-            clip_path=self._background_clip_path,
-            gid=gid,
+        # collision_handler = collision_handler or self.path_label_handler
+
+        # self._text_line(
+        #     x,
+        #     y,
+        #     label,
+        #     num_labels=num_labels,
+        #     collision_handler=collision_handler,
+        #     min_spacing=0.65,
+        #     **style.label.matplot_kwargs(self.scale),
+        #     **self._plot_kwargs(),
+        #     clip_path=self._background_clip_path,
+        #     gid=gid,
+        # )
+
+    def _debug_bbox(self, bbox, color, width=1):
+        x0, y0, x1, y1 = bbox
+        self.canvas._rectangle(
+            x=x0,
+            y=y0,
+            height=y1 - y0,
+            width=x1 - x0,
+            color=color,
+            stroke_width=width,
         )

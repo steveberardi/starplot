@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 from starplot.constants import PROJ_R
 
+
 def get_projection_bounds(projection: Proj, central_lon=0, n=100_000):
     min_lon = central_lon - 180
     max_lon = central_lon + 180

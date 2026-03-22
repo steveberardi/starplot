@@ -11,7 +11,6 @@ from starplot.styles import MarkerSymbolEnum
 """
 
 
-
 def circle_cross(x, y, size, css):
     r = round(size / 2, 4)
     return (

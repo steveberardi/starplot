@@ -19,7 +19,6 @@ from starplot.plotters.text import CollisionHandler
 
 
 class DsoPlotterMixin:
-
     def messier(self, **kwargs):
         """
         Plots Messier objects
@@ -226,11 +225,15 @@ class DsoPlotterMixin:
 
             if _true_size and d.size is not None:
                 if "Polygon" == str(d.geometry.geom_type):
-                    self.polygon(geometry=d.geometry, style=style.marker.to_polygon_style())
+                    self.polygon(
+                        geometry=d.geometry, style=style.marker.to_polygon_style()
+                    )
 
                 elif "MultiPolygon" == str(d.geometry.geom_type):
                     for polygon in d.geometry.geoms:
-                        self.polygon(geometry=polygon, style=style.marker.to_polygon_style())
+                        self.polygon(
+                            geometry=polygon, style=style.marker.to_polygon_style()
+                        )
                 elif maj_ax:
                     # if object has a major axis then plot its actual extent
                     maj_ax_degrees = (maj_ax / 60) / 2
