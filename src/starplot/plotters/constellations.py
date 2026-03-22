@@ -244,15 +244,14 @@ class ConstellationPlotterMixinSVG:
             else:
                 raise ValueError("Unrecognized coordinate system")
 
-        line_collection = LineCollection(
-            border_lines,
-            **style.matplot_line_collection_kwargs(self.scale),
-            transform=self._crs,
-            clip_on=True,
-            clip_path=self._background_clip_path,
-            gid="constellations-border",
-        )
-        self.ax.add_collection(line_collection)
+        for coords in border_lines:
+            self.canvas.line(
+                style=style,
+                label=None,
+                num_labels=0,
+                collision_handler=None,
+                coordinates=coords,
+            )
 
     @profile
     @use_style(LabelStyle, "constellation_labels")
