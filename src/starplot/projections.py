@@ -6,6 +6,7 @@ from cartopy import crs as ccrs
 from pyproj import CRS, Proj
 from pydantic import BaseModel, Field
 
+from starplot.constants import PROJ_R
 
 def get_projection_bounds(projection: Proj, central_lon=0, n=100_000):
     min_lon = central_lon - 180
@@ -155,7 +156,7 @@ class Miller(ProjectionBase, CenterRA):
     @property
     def _crs(self):
         return CRS.from_proj4(
-            f"+proj=mill +lat_0=0 +lon_0={360 - self.center_ra} +x_0=0 +y_0=0 +R=6378137 +units=m"
+            f"+proj=mill +lat_0=0 +lon_0={360 - self.center_ra} +x_0=0 +y_0=0 +R={PROJ_R} +units=m"
         )
 
     @property
@@ -192,7 +193,7 @@ class Mollweide(ProjectionBase, CenterRA):
     @property
     def _crs(self):
         return CRS.from_proj4(
-            f"+proj=moll +lon_0={360 - self.center_ra} +R=6378137 +units=m"
+            f"+proj=moll +lon_0={360 - self.center_ra} +R={PROJ_R} +units=m"
         )
 
 
@@ -210,7 +211,7 @@ class StereoNorth(ProjectionBase, CenterRA):
     @property
     def _crs(self):
         return CRS.from_proj4(
-            f"+proj=stere +lat_0=90 +lon_0={360 - self.center_ra}  +R=6378137 +units=m"
+            f"+proj=stere +lat_0=90 +lon_0={360 - self.center_ra}  +R={PROJ_R} +units=m"
         )
 
 

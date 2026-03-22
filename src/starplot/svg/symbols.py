@@ -1,4 +1,4 @@
-from starplot.styles import MarkerStyle, MarkerSymbolEnum
+from starplot.styles import MarkerSymbolEnum
 
 """
 (0,0)          (100,0)
@@ -11,48 +11,40 @@ from starplot.styles import MarkerStyle, MarkerSymbolEnum
 """
 
 
-def get(style: MarkerStyle):
-    return {
-        MarkerSymbolEnum.CIRCLE: circle,
-        MarkerSymbolEnum.CIRCLE_CROSS: circle_cross,
-        MarkerSymbolEnum.CIRCLE_CROSSHAIR: circle_crosshair,
-        MarkerSymbolEnum.POINT: circle,
-    }.get(style.symbol)()
 
-
-def circle_cross():
-    symbol_id = "symbol-circle-cross"
-
-    return symbol_id, (
-        f'<symbol id="{symbol_id}" viewBox="-1 -1 2 2" overflow="visible">'
-        '\t<circle cx="0" cy="0" r="1" />'
-        '\t<line x1="-1" y1="0" x2="1" y2="0"/>'
-        '\t<line x1="0" y1="-1" x2="0" y2="1"/>'
-        "</symbol>"
+def circle_cross(x, y, size, css):
+    r = round(size / 2, 4)
+    return (
+        f"\t<g {css}>\n"
+        f'\t\t<circle cx="{x}" cy="{y}" r="{r}" />\n'
+        f'\t\t<line x1="{x - r}" y1="{y}" x2="{x + r}" y2="{y}"/>\n'
+        f'\t\t<line x1="{x}" y1="{y + r}" x2="{x}"  y2="{y - r}"/>\n'
+        "\t</g>\n"
     )
 
 
-def circle_crosshair():
-    symbol_id = "symbol-circle-crosshair"
-
-    return symbol_id, (
-        f'<symbol id="{symbol_id}" viewBox="0 0 100 100" overflow="visible">'
-        '<circle cx="50" cy="50" r="25" />'
-        '<line x1="50" y1="25" x2="50" y2="0"/>'
-        '<line x1="75" y1="50" x2="100" y2="50"/>'
-        '<line x1="50" y1="75" x2="50" y2="100"/>'
-        '<line x1="25" y1="50" x2="0"  y2="50"/>'
-        "</symbol>"
+def circle_crosshair(x, y, size, css):
+    r = size / 2
+    n = round(1.75 * r, 4)
+    return (
+        f"\t<g {css}>\n"
+        f'\t\t<circle cx="{x}" cy="{y}" r="{r}" />\n'
+        f'\t\t<line x1="{x}" y1="{y-r}" x2="{x}" y2="{y - n}"/>\n'
+        f'\t\t<line x1="{x + r}" y1="{y}" x2="{x + n}" y2="{y}"/>\n'
+        f'\t\t<line x1="{x}" y1="{y + r}" x2="{x}" y2="{y + n}"/>\n'
+        f'\t\t<line x1="{x - r}" y1="{y}" x2="{x - n}"  y2="{y}"/>\n'
+        "\t</g>\n"
     )
 
 
-def circle():
-    symbol_id = "symbol-circle"
-    return symbol_id, (
-        f'\t<symbol id="{symbol_id}" viewBox="0 0 100 100" overflow="visible">\n'
-        '\t\t<circle cx="50" cy="50" r="50" />\n'
-        "\t</symbol>\n"
-    )
+def circle(x, y, size, css):
+    return f'\t<circle cx="{x}" cy="{y}" r="{size/2}" {css} />\n'
+
+
+def ellipse(x, y, size, css):
+    rx = round(size * 0.5, 4)
+    ry = round(size * 0.3, 4)
+    return f'\t<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" transform="rotate(-20, {x}, {y})" {css} />\n'
 
 
 def use(id, cx, cy, height, width, attrs, css_class=""):
@@ -60,3 +52,16 @@ def use(id, cx, cy, height, width, attrs, css_class=""):
     y = cy - height / 2
 
     return f'<use href="#{id}" x="{x}" y="{y}" width="{width}" height="{height}" {attrs} class="{css_class}"/>'
+
+
+SYMBOL_FUNCTIONS = {
+    MarkerSymbolEnum.POINT: circle,
+    MarkerSymbolEnum.CIRCLE: circle,
+    MarkerSymbolEnum.CIRCLE_CROSS: circle_cross,
+    MarkerSymbolEnum.CIRCLE_CROSSHAIR: circle_crosshair,
+    MarkerSymbolEnum.ELLIPSE: ellipse,
+}
+
+
+def create(x, y, size, symbol: MarkerSymbolEnum, css: str = ""):
+    return SYMBOL_FUNCTIONS.get(symbol)(x, y, size, css)

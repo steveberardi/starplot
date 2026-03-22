@@ -7,6 +7,8 @@ import numpy as np
 from shapely import union_all
 from shapely.geometry import Point, Polygon, LineString
 
+from starplot.constants import PROJ_R
+
 GLOBAL_EXTENT = Polygon(
     [
         [0, -90],
@@ -17,7 +19,7 @@ GLOBAL_EXTENT = Polygon(
     ]
 )
 
-GEOD = pyproj.Geod("+a=6378137 +f=0.0", sphere=True)
+GEOD = pyproj.Geod(f"+a={PROJ_R} +f=0.0", sphere=True)
 
 
 def distance_m(distance_degrees: float, lat: float = 0, lon: float = 0):

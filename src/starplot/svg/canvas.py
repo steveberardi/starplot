@@ -2,6 +2,7 @@ import numpy as np
 from pathlib import Path
 from shapely import Polygon, LineString
 
+
 from pyproj import CRS, Transformer
 
 from starplot.coordinates import CoordinateSystem
@@ -55,7 +56,7 @@ class Canvas:
     height: int = None
     width: int = None
 
-    precision: int = 4
+    precision: int
 
     symbols: set = set()
     symbol_ids = set()
@@ -74,7 +75,7 @@ class Canvas:
         invert_y: bool = False,
         crs: CRS = None,
         debug: bool = False,
-        precision: int = 4,
+        precision: int = 2,
         logger=None,
         *args,
         **kwargs,
@@ -156,35 +157,29 @@ class Canvas:
     def marker(self, x, y, style: MarkerStyle) -> None:
         dx, dy = self._to_display(x, y)
 
-        symbol_id, value = symbols.get(style)
-        self._register_symbol(symbol_id, value)
-
-        # this can be bottleneck, need to cache
         css = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
 
-        self.elements.append(
-            (style.zorder, symbols.use(symbol_id, dx, dy, style.size, style.size, css))
-        )
+        marker_str = symbols.create(dx, dy, style.size * self.scale, style.symbol, css)
+        self.elements.append((style.zorder, marker_str))
 
-    def markers(self, x, y, style: MarkerStyle, sizes=None) -> None:
+    def markers(self, x, y, style: MarkerStyle, gid: str = None, sizes=None) -> None:
         dx, dy = self._to_display(x, y)
 
-        symbol_id, value = symbols.get(style)
-        self._register_symbol(symbol_id, value)
-
-        # this can be bottleneck, need to cache
         css = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
 
+        gid = gid or "markers"
         sizes = sizes or []
 
-        elements = [
-            (
-                style.zorder,
-                symbols.use(symbol_id, x, y, size, size, css),
-            )
-            for x, y, size in list(zip(dx, dy, sizes))
-        ]
-        self.elements.extend(elements)
+        elements = "\n".join(
+            [
+                symbols.create(x, y, size * self.scale, style.symbol, "")
+                for x, y, size in list(zip(dx, dy, sizes))
+            ]
+        )
+
+        group = f'<g id="{gid}" {css}>\n{elements}</g>\n'
+
+        self.elements.append((style.zorder, group))
 
     def line(
         self,
@@ -231,8 +226,6 @@ class Canvas:
 
         self.elements.append((style.zorder, f'<polygon points="{points}" {attrs} />'))
 
-    def ellipse(self) -> float:
-        ...
 
     # @abstractmethod
     # def text(self) -> float:
@@ -254,7 +247,7 @@ class Canvas:
             )
         )
 
-    def render(self) -> str:
+    def render(self, pretty: bool = False) -> str:
         """Renders the canvas to an SVG string"""
         result = f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}" viewBox="0 0 {self.width} {self.height}">'
 
@@ -265,14 +258,17 @@ class Canvas:
             result += "</defs>\n\n"
 
         sorted_by_z = sorted(self.elements, key=lambda e: e[0])
-
         elements = [e for _, e in sorted_by_z]
-
         result += "\n".join(elements) + "</svg>"
+
+        if pretty:
+            import xml.dom.minidom
+
+            result = xml.dom.minidom.parseString(result).toprettyxml(indent="  ")
 
         return result
 
-    def export(self, filename: str | Path) -> None:
+    def export(self, filename: str | Path, pretty: bool = False) -> None:
         """
         Exports the SVG to an SVG or PNG file. Type is inferred by filename.
         """
@@ -291,4 +287,4 @@ class Canvas:
             return
 
         with open(filename, "w", buffering=1024 * 1024) as outfile:
-            outfile.write(self.render())
+            outfile.write(self.render(pretty=pretty))

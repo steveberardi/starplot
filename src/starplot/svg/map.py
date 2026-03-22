@@ -14,8 +14,6 @@ from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.plotters import (
     ConstellationPlotterMixinSVG,
-    StarPlotterMixin,
-    DsoPlotterMixin,
     MilkyWayPlotterMixin,
     LegendPlotterMixin,
     GradientBackgroundMixin,
@@ -33,13 +31,14 @@ from starplot.styles import (
 from starplot.profile import profile
 from starplot.styles.helpers import use_style
 from starplot.svg.base import BasePlot
+from starplot.svg.dsos import DsoPlotterMixin
 from starplot.utils import lon_to_ra, ra_to_lon
 
 
 class MapPlot(
     BasePlot,
     ExtentMaskMixin,
-    # DsoPlotterMixin,
+    DsoPlotterMixin,
     MilkyWayPlotterMixin,
     ConstellationPlotterMixinSVG,
     # LegendPlotterMixin,

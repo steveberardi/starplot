@@ -191,6 +191,7 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
         #     self.ax.add_patch(patch)
 
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
+        return
         if label is not None and label not in self._legend_handles:
             s = style.matplot_kwargs()
             s["markersize"] = self.style.legend.symbol_size * self.scale
@@ -271,16 +272,16 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
         x, y = self._prepare_coords(ra, dec)
 
         self.canvas.marker(
-            (x, y),
-            style=style,
-            gid=gid or "marker",
+            x,
+            y,
+            style=style.marker,
+            # gid=gid or "marker",
         )
-
+        
         # Add to spatial index
-        data_xy = self._proj.transform_point(x, y, self._crs)
-        display_x, display_y = self.ax.transData.transform(data_xy)
+        display_x, display_y = self.canvas._to_display(x, y)
         if display_x > 0 and display_y > 0:
-            radius = style_kwargs.get("s", 1) ** 0.5 / 5
+            radius = style.marker.size * self.scale
             bbox = np.array(
                 (
                     display_x - radius,
@@ -291,6 +292,8 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
             )
             self._markers_rtree.insert(0, bbox, None)
 
+        return
+    
         # Plot label
         if label:
             label_style = style.label
@@ -548,14 +551,15 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
             width_degrees,
             angle,
         )
+        polygon = polygon.segmentize(0.1)
         points = list(zip(*polygon.exterior.coords.xy))
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
-        if legend_label is not None:
-            self._add_legend_handle_marker(
-                legend_label,
-                style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
-            )
+        # if legend_label is not None:
+        #     self._add_legend_handle_marker(
+        #         legend_label,
+        #         style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
+        #     )
 
     @use_style(PolygonStyle)
     def ellipse(
@@ -597,11 +601,11 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
         points = list(zip(*polygon.exterior.coords.xy))
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
-        if legend_label is not None:
-            self._add_legend_handle_marker(
-                legend_label,
-                style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE),
-            )
+        # if legend_label is not None:
+        #     self._add_legend_handle_marker(
+        #         legend_label,
+        #         style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE),
+        #     )
 
     @use_style(PolygonStyle)
     def circle(
@@ -632,11 +636,11 @@ class BasePlot(DebugPlotterMixin, StarPlotterMixinSVG, ABC):
             gid=kwargs.get("gid") or "polygon",
         )
 
-        if legend_label is not None:
-            self._add_legend_handle_marker(
-                legend_label,
-                style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE),
-            )
+        # if legend_label is not None:
+        #     self._add_legend_handle_marker(
+        #         legend_label,
+        #         style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE),
+        #     )
 
     @use_style(ObjectStyle, "moon")
     def moon(

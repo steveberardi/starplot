@@ -387,7 +387,7 @@ class MarkerStyle(BaseStyle):
             if ls_css:
                 attrs["stroke-dasharray"] = ls_css
         elif self.line_style:
-            attrs["stroke-dasharray"] = ",".join(self.line_style)
+            attrs["stroke-dasharray"] = ",".join([str(n) for n in self.line_style[1]])
 
         attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
 
@@ -535,7 +535,7 @@ class PolygonStyle(BaseStyle):
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
-    zorder: int = -1
+    zorder: int = 100
     """Zorder of the polygon"""
 
     def css(self) -> dict:
@@ -551,7 +551,7 @@ class PolygonStyle(BaseStyle):
             if ls_css:
                 attrs["stroke-dasharray"] = ls_css
         elif self.line_style:
-            attrs["stroke-dasharray"] = ",".join(self.line_style)
+            attrs["stroke-dasharray"] = ",".join([str(n) for n in self.line_style[1]])
 
         # attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
 
