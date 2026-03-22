@@ -2,11 +2,8 @@ import math
 from typing import Callable
 from functools import cache
 
-from matplotlib import patches, ticker
-from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import Polygon
 from skyfield.api import wgs84
-import numpy as np
 
 from starplot.coordinates import CoordinateSystem
 from starplot import geometry
@@ -365,90 +362,51 @@ class MapPlot(
                 style=style,
             )
 
+        # TODO : labels, tick marks
+
         return
 
-        if labels:
-            self._axis_labels = True
-
-        label_style_kwargs = style.label.matplot_kwargs(self.scale)
-        label_style_kwargs.pop("va")
-        label_style_kwargs.pop("ha")
-
-        gridlines.xlocator = FixedLocator([ra_to_lon(r / 15) for r in ra_locations])
-        gridlines.xformatter = FuncFormatter(ra_formatter)
-        gridlines.xlabel_style = label_style_kwargs
-
-        gridlines.ylocator = FixedLocator(dec_locations)
-        gridlines.yformatter = FuncFormatter(dec_formatter)
-        gridlines.ylabel_style = label_style_kwargs
-
-        if tick_marks:
-            self._tick_marks(style, ra_tick_locations, dec_tick_locations)
-
-    def _tick_marks(self, style, ra_tick_locations=None, dec_tick_locations=None):
-        def in_axes(ra):
-            return self.in_bounds(ra, (self.dec_max + self.dec_min) / 2)
-
-        xticks = ra_tick_locations or [x for x in np.arange(0, 360, 1.875)]
-        yticks = dec_tick_locations or [x for x in np.arange(-90, 90, 1)]
-
-        inbound_xticks = [ra_to_lon(ra / 15) for ra in xticks if in_axes(ra)]
-        self.ax.set_xticks(inbound_xticks, crs=self._plate_carree)
-        self.ax.xaxis.set_major_formatter(ticker.NullFormatter())
-
-        inbound_yticks = [y for y in yticks if y < self.dec_max and y > self.dec_min]
-        self.ax.set_yticks(inbound_yticks, crs=self._plate_carree)
-        self.ax.yaxis.set_major_formatter(ticker.NullFormatter())
-
-        self.ax.tick_params(
-            which="major",
-            width=1,
-            length=8,
-            color=style.label.font_color.as_hex(),
-            top=True,
-            right=True,
-        )
 
     def _plot_background_clip_path(self):
+        # TODO
+
         if self.style.has_gradient_background():
             background_color = "#ffffff00"
             self._plot_gradient_background(self.style.background_color)
         else:
             background_color = self.style.background_color.as_hex()
 
-        def to_axes(points):
-            ax_points = []
+        # def to_axes(points):
+        #     ax_points = []
 
-            for ra, dec in points:
-                x, y = self._proj.transform_point(ra, dec, self._crs)
-                data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-                x_axes, y_axes = data_to_axes.transform((x, y))
-                ax_points.append([x_axes, y_axes])
-            return ax_points
+        #     for ra, dec in points:
+        #         x, y = self._proj.transform_point(ra, dec, self._crs)
+        #         data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
+        #         x_axes, y_axes = data_to_axes.transform((x, y))
+        #         ax_points.append([x_axes, y_axes])
+        #     return ax_points
 
-        if self.clip_path is not None:
-            points = list(zip(*self.clip_path.exterior.coords.xy))
-            self._background_clip_path = patches.Polygon(
-                to_axes(points),
-                facecolor=background_color,
-                fill=True,
-                zorder=-2_000,
-                transform=self.ax.transAxes,
-            )
-        else:
-            # draw patch in axes coords, which are easier to work with
-            # in cases like this cause they go from 0...1 in all plots
-            self._background_clip_path = patches.Rectangle(
-                (0, 0),
-                width=1,
-                height=1,
-                facecolor=background_color,
-                linewidth=0,
-                fill=True,
-                zorder=-2_000,
-                transform=self.ax.transAxes,
-            )
+        # if self.clip_path is not None:
+        #     points = list(zip(*self.clip_path.exterior.coords.xy))
+        #     self._background_clip_path = patches.Polygon(
+        #         to_axes(points),
+        #         facecolor=background_color,
+        #         fill=True,
+        #         zorder=-2_000,
+        #         transform=self.ax.transAxes,
+        #     )
+        # else:
+        #     # draw patch in axes coords, which are easier to work with
+        #     # in cases like this cause they go from 0...1 in all plots
+        #     self._background_clip_path = patches.Rectangle(
+        #         (0, 0),
+        #         width=1,
+        #         height=1,
+        #         facecolor=background_color,
+        #         linewidth=0,
+        #         fill=True,
+        #         zorder=-2_000,
+        #         transform=self.ax.transAxes,
+        #     )
 
-        self.ax.set_facecolor(background_color)
-        self.ax.add_patch(self._background_clip_path)
         self._update_clip_path_polygon()

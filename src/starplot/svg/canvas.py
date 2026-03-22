@@ -239,6 +239,17 @@ class Canvas:
             (style.zorder, f'<text x="{dx}" y="{dy}" {attrs} >{value}</text>')
         )
 
+    def _text_display(self, dx, dy, value: str, style: LabelStyle, angle: float = 0) -> float:
+
+        attrs = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
+
+        if angle:
+            attrs += f' transform="rotate({angle}, {dx}, {dy})"'
+
+        self.elements.append(
+            (style.zorder, f'<text x="{dx}" y="{dy}" {attrs} >{value}</text>')
+        )
+
     def _background(self):
         self.elements.append(
             (

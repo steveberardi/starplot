@@ -4,8 +4,7 @@ import logging
 
 import rtree
 import numpy as np
-from matplotlib import patches
-from matplotlib.lines import Line2D
+
 from shapely import Polygon, LineString
 
 from starplot.coordinates import CoordinateSystem
@@ -27,13 +26,11 @@ from starplot.styles import (
     PathStyle,
     PolygonStyle,
     GradientDirection,
-    fonts,
     AnchorPointEnum,
 )
 from starplot.projections import ProjectionBase
 from starplot.plotters import StarPlotterMixinSVG
-from starplot.plotters.debug import DebugPlotterMixin
-from starplot.plotters.text import TextPlotterMixin, CollisionHandler
+from starplot.svg.text import CollisionHandler
 from starplot.styles.helpers import use_style
 from starplot.profile import profile
 from starplot.svg.canvas import Canvas
@@ -178,31 +175,11 @@ class BasePlot(StarPlotterMixinSVG, ABC):
         coords = self._background_clip_path.get_verts()
         self._clip_path_polygon = Polygon(coords).buffer(-1 * buffer)
 
-        # if self.debug_text:
-        #     patch = patches.Polygon(
-        #         Polygon(coords).buffer(-1 * buffer).exterior.coords,
-        #         fill=False,
-        #         facecolor="none",
-        #         edgecolor="red",
-        #         linewidth=4,
-        #         zorder=5_000,
-        #         transform=None,
-        #     )
-        #     self.ax.add_patch(patch)
 
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
+        # TODO
         return
-        if label is not None and label not in self._legend_handles:
-            s = style.matplot_kwargs()
-            s["markersize"] = self.style.legend.symbol_size * self.scale
-            self._legend_handles[label] = Line2D(
-                [],
-                [],
-                **s,
-                **self._plot_kwargs(),
-                linestyle="None",
-                label=label,
-            )
+
 
     @property
     def magnitude_range(self) -> tuple[float, float]:

@@ -5,7 +5,6 @@ import numpy as np
 import rtree
 from shapely import Point, box
 from shapely.errors import GEOSException
-from matplotlib.text import Annotation
 
 from starplot.config import settings as StarplotSettings, SvgTextType
 from starplot.styles import AnchorPointEnum, LabelStyle
@@ -143,70 +142,6 @@ def next_best_position(
     return possible[0][1]
 
 
-def find_smooth_sections(
-    coordinates, min_length=2, curvature_threshold=0.1
-) -> list[tuple[int, int, float]]:
-    """
-    Find smooth sections of a (i.e. where curvature is low).
-
-    Args:
-        coordinates: line coordinates
-        min_length: minimum number of points for a smooth section
-        curvature_threshold: maximum curvature to consider "smooth"
-
-    Returns:
-        List of (start_idx, end_idx, smoothness_score) tuples
-    """
-
-    x, y = coordinates[:, 0], coordinates[:, 1]
-
-    if len(x) < 3:
-        return [(0, len(x) - 1, 1.0)]
-
-    # First derivative
-    dx = np.diff(x)
-    dy = np.diff(y)
-
-    # Second derivative (change in slope)
-    ddx = np.diff(dx)
-    ddy = np.diff(dy)
-
-    # Curvature approximation
-    curvature = np.abs(ddx) + np.abs(ddy)
-
-    # Normalize by typical scale
-    curvature = curvature / (np.median(curvature) + 1e-10)
-
-    # Find smooth regions
-    is_smooth = curvature < curvature_threshold
-
-    # Find contiguous smooth sections with scores
-    smooth_sections = []
-    start = None
-
-    for i in range(len(is_smooth)):
-        if is_smooth[i] and start is None:
-            start = i
-        elif not is_smooth[i] and start is not None:
-            if i - start >= min_length:
-                # Calculate smoothness score (inverse of average curvature)
-                section_curvature = curvature[start:i]
-                smoothness_score = 1.0 / (np.mean(section_curvature) + 1e-10)
-                smooth_sections.append((start, i, smoothness_score))
-            start = None
-
-    # Check last section
-    if start is not None and len(is_smooth) - start >= min_length:
-        section_curvature = curvature[start:]
-        smoothness_score = 1.0 / (np.mean(section_curvature) + 1e-10)
-        smooth_sections.append((start, len(is_smooth), smoothness_score))
-
-    # Sort by smoothness score (descending)
-    smooth_sections.sort(key=lambda s: s[2], reverse=True)
-
-    return smooth_sections if smooth_sections else [(0, len(x) - 1, 1.0)]
-
-
 def rotate_bbox(bbox, angle, cx=None, cy=None):
     """
     Rotate a bounding box by angle_deg degrees around (cx, cy).
@@ -298,6 +233,7 @@ class TextPlotterMixin:
         return False
 
     def _is_clipped_box(self, bbox: BBox) -> bool:
+        # TODO
         return False
         return not self._clip_path_polygon.contains(box(*bbox))
 
@@ -315,7 +251,7 @@ class TextPlotterMixin:
 
         return tuple(int(p) for p in result)
 
-    def _add_label_to_rtree(self, label: Annotation, bbox: BBox = None) -> None:
+    def _add_label_to_rtree(self, label: str, bbox: BBox) -> None:
         """
         Adds a label to the R-Tree, which is a spatial index for all plotted labels and used for collision detection.
 
@@ -323,9 +259,8 @@ class TextPlotterMixin:
 
         Args:
             label: Annotation instance returned from matplotlib's annotate() function
-            bbox: Tuple of integers representing bounding box (xmin, ymin, xmax, ymax) -- in display coordinates. If None, then bounding box will be obtained from label instance.
+            bbox: Tuple of integers representing bounding box (xmin, ymin, xmax, ymax) -- in display coordinates.
         """
-        bbox = bbox or self._get_label_bbox(label)
 
         if self.debug_text:
             self._debug_bbox(bbox, color="white", width=1.5)
@@ -377,19 +312,6 @@ class TextPlotterMixin:
 
         return True
 
-    def _text(self, x, y, text, **kwargs) -> Annotation:
-        """Plots text at (x, y)"""
-        label = self.ax.annotate(
-            text,
-            (x, y),
-            **kwargs,
-            **self._plot_kwargs(),
-        )
-        if kwargs.get("clip_on"):
-            label.set_clip_on(True)
-            label.set_clip_path(self._background_clip_path)
-        return label
-
     def _text_point(
         self,
         ra: float,
@@ -397,7 +319,8 @@ class TextPlotterMixin:
         text: str,
         collision_handler: CollisionHandler,
         **kwargs,
-    ) -> Annotation | None:
+    ) -> None:
+        # TODO
         if not text:
             return None
 
@@ -516,8 +439,7 @@ class TextPlotterMixin:
         style: LabelStyle,
         area,
         collision_handler: CollisionHandler,
-        **kwargs,
-    ) -> Annotation | None:
+    ) -> None:
         padding = 0
         max_distance = 2_000
         distance_step_size = 2
@@ -640,7 +562,6 @@ class TextPlotterMixin:
         collision_handler: CollisionHandler = None,
         min_spacing=None,
         curvature_threshold=0.8,
-        **kwargs,
     ) -> None:
         """
         Plots text labels along a line:
@@ -675,23 +596,6 @@ class TextPlotterMixin:
         if min_spacing is None:
             min_spacing = 1.0 / (num_labels + 1)
 
-        min_distance = int(min_spacing * num_positions)
-        smooth_sections = find_smooth_sections(
-            display_xy, min_length=2, curvature_threshold=curvature_threshold
-        )
-
-        smooth_positions = []
-        for section_start, section_end, _ in smooth_sections:
-            section_center = (section_start + section_end) // 2
-
-            too_close = False
-            for pos in smooth_positions:
-                if abs(section_center - pos) < min_distance:
-                    too_close = True
-                    break
-
-            if not too_close:
-                smooth_positions.append(section_center)
 
         def get_angle(x0, y0, x1, y1):
             # calculate angle in display coordinates
@@ -708,7 +612,7 @@ class TextPlotterMixin:
             return angle
 
         offset = num_positions // 20  # offset from start/end of line
-        positions = [p for p in range(num_positions) if p not in smooth_positions]
+        positions = [p for p in range(num_positions)]
         positions = positions[offset : -1 * offset]
         attempts = 0
         plotted_positions = set()
@@ -720,12 +624,6 @@ class TextPlotterMixin:
         ):
             attempts += 1
 
-            # if smooth_positions:
-            #     pos = smooth_positions.pop()
-            # else:
-            #     pos = next_best_position(
-            #         plotted_positions, positions, num_labels, num_positions
-            #     )
             pos = next_best_position(
                 plotted_positions, positions, num_labels, num_positions
             )
@@ -764,7 +662,7 @@ class TextPlotterMixin:
             is_final_attempt = attempts == collision_handler.attempts
 
             if is_open or (collision_handler.plot_on_fail and is_final_attempt):
-                self.canvas.text(x0, y0, value=text, style=style, angle=angle)
+                self.canvas._text_display(x0, y0, value=text, style=style, angle=angle)
                 self._add_label_to_rtree(text, bbox=bbox)
                 plotted_positions.add(pos)
                 if self.debug_text and text:
@@ -807,7 +705,7 @@ class TextPlotterMixin:
             style.offset_y = 0
 
         if kwargs.get("area"):
-            label = self._text_area(
+            self._text_area(
                 ra,
                 dec,
                 text,
@@ -816,7 +714,7 @@ class TextPlotterMixin:
                 collision_handler=collision_handler,
             )
         else:
-            label = self._text_point(
+            self._text_point(
                 ra,
                 dec,
                 text,
@@ -831,9 +729,3 @@ class TextPlotterMixin:
                 **kwargs,
             )
 
-        if self.debug_text and label:
-            """Plots RED box around actual position of label"""
-            bbox = self._get_label_bbox(label)
-            self._debug_bbox(bbox, color="red", width=1)
-
-        return label
