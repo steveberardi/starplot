@@ -13,6 +13,7 @@ from starplot.geometry import (
     random_point_in_polygon_at_distance,
     union_at_zero,
 )
+from starplot.svg.canvas import CoordinateSystem
 
 """
 Long term strategy:
@@ -356,18 +357,34 @@ class TextPlotterMixin:
             # BOTTOM_RIGHT = "bottom right"
             # BOTTOM_CENTER = "bottom center"
 
-            if anchor in [AnchorPointEnum.BOTTOM_RIGHT, AnchorPointEnum.RIGHT_CENTER, AnchorPointEnum.TOP_RIGHT]:
+            if anchor in [
+                AnchorPointEnum.BOTTOM_RIGHT,
+                AnchorPointEnum.RIGHT_CENTER,
+                AnchorPointEnum.TOP_RIGHT,
+            ]:
                 x0 = display_x + offset_x
 
-            elif anchor in [AnchorPointEnum.BOTTOM_LEFT, AnchorPointEnum.LEFT_CENTER, AnchorPointEnum.TOP_LEFT]:
+            elif anchor in [
+                AnchorPointEnum.BOTTOM_LEFT,
+                AnchorPointEnum.LEFT_CENTER,
+                AnchorPointEnum.TOP_LEFT,
+            ]:
                 x0 = display_x - width - offset_x
             else:
                 x0 = display_x
 
-            if anchor in [AnchorPointEnum.TOP_RIGHT, AnchorPointEnum.TOP_CENTER, AnchorPointEnum.TOP_LEFT]:
+            if anchor in [
+                AnchorPointEnum.TOP_RIGHT,
+                AnchorPointEnum.TOP_CENTER,
+                AnchorPointEnum.TOP_LEFT,
+            ]:
                 y0 = display_y - height - offset_y
 
-            elif anchor in [AnchorPointEnum.BOTTOM_RIGHT, AnchorPointEnum.BOTTOM_CENTER, AnchorPointEnum.BOTTOM_LEFT]:
+            elif anchor in [
+                AnchorPointEnum.BOTTOM_RIGHT,
+                AnchorPointEnum.BOTTOM_CENTER,
+                AnchorPointEnum.BOTTOM_LEFT,
+            ]:
                 # In SVG, the origin is top left corner
                 y0 = display_y + height + offset_y
             else:
@@ -375,7 +392,6 @@ class TextPlotterMixin:
 
             offset_x = round_away_from_zero(offset_x)
             offset_y = round_away_from_zero(offset_y)
-
 
             bbox = create_bbox(x0, y0, height=height, width=width)
 
@@ -392,7 +408,14 @@ class TextPlotterMixin:
             )
 
             if is_open or (collision_handler.plot_on_fail and is_final_attempt):
-                self.canvas._text_display(x0, y0, value=text, style=style, angle=0)
+                self.canvas.text(
+                    x0,
+                    y0,
+                    value=text,
+                    style=style,
+                    angle=0,
+                    cs=CoordinateSystem.DISPLAY,
+                )
                 self._add_label_to_rtree(text, bbox=bbox)
                 return
 
@@ -632,7 +655,14 @@ class TextPlotterMixin:
             is_final_attempt = attempts == collision_handler.attempts
 
             if is_open or (collision_handler.plot_on_fail and is_final_attempt):
-                self.canvas._text_display(x0, y0, value=text, style=style, angle=angle)
+                self.canvas.text(
+                    x0,
+                    y0,
+                    value=text,
+                    style=style,
+                    angle=angle,
+                    cs=CoordinateSystem.DISPLAY,
+                )
                 self._add_label_to_rtree(text, bbox=bbox)
                 plotted_positions.add(pos)
                 if self.debug_text and text:
@@ -691,4 +721,3 @@ class TextPlotterMixin:
                 style=style,
                 collision_handler=collision_handler,
             )
-

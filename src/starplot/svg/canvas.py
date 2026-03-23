@@ -1,11 +1,10 @@
-import numpy as np
+from enum import Enum
 from pathlib import Path
+
+import numpy as np
+from pyproj import CRS, Transformer
 from shapely import Polygon, LineString
 
-
-from pyproj import CRS, Transformer
-
-from starplot import models, warnings
 from starplot import geometry as _geometry
 from starplot.config import settings as StarplotSettings, SvgTextType
 from starplot.styles import (
@@ -83,8 +82,6 @@ class Canvas:
         debug: bool = False,
         precision: int = 2,
         logger=None,
-        *args,
-        **kwargs,
     ):
         self.crs = crs or CRS_WNU
         self.resolution = resolution
@@ -110,8 +107,21 @@ class Canvas:
         px, py = self.tx.transform(x, y)
         return normalize(px, self.minx, self.maxx), normalize(py, self.miny, self.maxy)
 
-    def _to_display(self, x, y):
-        ax, ay = self._to_axes(x, y)
+    def _to_display(self, x, y, cs: CoordinateSystem = CoordinateSystem.DATA):
+        if cs == CoordinateSystem.DISPLAY:
+            return x, y
+
+        if cs == CoordinateSystem.AXES:
+            ax, ay = x, y
+        elif cs == CoordinateSystem.DATA:
+            ax, ay = self._to_axes(x, y)
+        elif cs == CoordinateSystem.PROJECTED:
+            ax, ay = normalize(x, self.minx, self.maxx), normalize(
+                y, self.miny, self.maxy
+            )
+        else:
+            raise ValueError(f"Unrecognized coordinate system: {cs}")
+
         x = ax * self.width
         y = (1 - ay) * self.height
         if self.precision == 0:
@@ -232,21 +242,17 @@ class Canvas:
 
         self.elements.append((style.zorder, f'<polygon points="{points}" {attrs} />'))
 
-    def text(self, x, y, value: str, style: LabelStyle, angle: float = 0) -> float:
-        # TODO : handle this
-        dx, dy = self._to_display(x, y)
-
-        attrs = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
-
-        if angle:
-            attrs += f' transform="rotate({angle}, {dx}, {dy})"'
-
-        self.elements.append(
-            (style.zorder, f'<text x="{dx}" y="{dy}" {attrs} >{value}</text>')
-        )
-
-    def _text_display(self, dx, dy, value: str, style: LabelStyle, angle: float = 0) -> float:
-
+    def text(
+        self,
+        x,
+        y,
+        value: str,
+        style: LabelStyle,
+        angle: float = 0,
+        cs: CoordinateSystem = CoordinateSystem.DATA,
+    ) -> float:
+        """Plots text, with an optional rotation angle."""
+        dx, dy = self._to_display(x, y, cs)
         attrs = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
 
         if angle:

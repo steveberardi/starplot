@@ -366,7 +366,6 @@ class MapPlot(
 
         return
 
-
     def _plot_background_clip_path(self):
         # TODO
 

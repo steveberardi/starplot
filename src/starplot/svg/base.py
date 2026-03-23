@@ -124,7 +124,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
             clip_path=None,
             invert_x=invert_x,
             invert_y=invert_y,
-            suppress_warnings=suppress_warnings,
+            # suppress_warnings=suppress_warnings,
             logger=LOGGER,
         )
         self.projection = projection
@@ -175,11 +175,9 @@ class BasePlot(StarPlotterMixinSVG, ABC):
         coords = self._background_clip_path.get_verts()
         self._clip_path_polygon = Polygon(coords).buffer(-1 * buffer)
 
-
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
         # TODO
         return
-
 
     @property
     def magnitude_range(self) -> tuple[float, float]:
@@ -270,6 +268,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
             self._markers_rtree.insert(0, bbox, None)
 
         return
+        # TODO : handle label
 
         # Plot label
         if label:
@@ -911,7 +910,6 @@ class BasePlot(StarPlotterMixinSVG, ABC):
 
         coords = geometry.coords if geometry is not None else coordinates
         prepared_coords = [self._prepare_coords(*p) for p in coords]
-        x, y = zip(*prepared_coords)
 
         gid = kwargs.get("gid") or "line"
 
@@ -922,12 +920,12 @@ class BasePlot(StarPlotterMixinSVG, ABC):
             label=label,
             num_labels=num_labels,
             collision_handler=collision_handler,
-            coordinates=coords,
+            coordinates=prepared_coords,
             # gid="celestial-equator",
         )
 
         if label:
-            arr = np.array(coordinates)
+            arr = np.array(prepared_coords)
             xs, ys = arr[:, 0], arr[:, 1]
             self._text_line(
                 xs,
@@ -937,33 +935,6 @@ class BasePlot(StarPlotterMixinSVG, ABC):
                 num_labels=num_labels,
                 collision_handler=collision_handler,
             )
-
-        # if not label:
-        #     return
-
-        # prepared_coords = [
-        #     (x, y) for x, y in prepared_coords if self._in_bounds_xy(x, y)
-        # ]
-
-        # if not prepared_coords:
-        #     return
-
-        # x, y = zip(*prepared_coords)
-
-        # collision_handler = collision_handler or self.path_label_handler
-
-        # self._text_line(
-        #     x,
-        #     y,
-        #     label,
-        #     num_labels=num_labels,
-        #     collision_handler=collision_handler,
-        #     min_spacing=0.65,
-        #     **style.label.matplot_kwargs(self.scale),
-        #     **self._plot_kwargs(),
-        #     clip_path=self._background_clip_path,
-        #     gid=gid,
-        # )
 
     def _debug_bbox(self, bbox, color, width=1):
         x0, y0, x1, y1 = bbox
