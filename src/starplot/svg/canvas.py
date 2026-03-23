@@ -5,7 +5,6 @@ from shapely import Polygon, LineString
 
 from pyproj import CRS, Transformer
 
-from starplot.coordinates import CoordinateSystem
 from starplot import models, warnings
 from starplot import geometry as _geometry
 from starplot.config import settings as StarplotSettings, SvgTextType
@@ -27,6 +26,13 @@ from starplot.svg import symbols
 
 
 CRS_WNU = CRS.from_proj4("+proj=latlon +ellps=sphere +axis=wnu +a=6378137")
+
+
+class CoordinateSystem(str, Enum):
+    DATA = "data"
+    PROJECTED = "projected"
+    AXES = "axes"
+    DISPLAY = "display"
 
 
 def normalize(value, min_val, max_val):
@@ -123,7 +129,7 @@ class Canvas:
         #     self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(*self.bounds)
 
         self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
-            *self.bounds
+            *self.bounds, densify_pts=100
         )
         self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
 

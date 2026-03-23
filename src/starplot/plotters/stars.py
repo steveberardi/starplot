@@ -132,11 +132,7 @@ class StarPlotterMixinSVG:
                     label,
                     s.ra,
                     s.dec,
-                    style=style.label.offset_from_marker(
-                        marker_symbol=style.marker.symbol,
-                        marker_size=star_sizes[i],
-                        scale=self.scale,
-                    ),
+                    style=style.label,
                     collision_handler=collision_handler,
                     gid="stars-label-name",
                 )
@@ -153,11 +149,7 @@ class StarPlotterMixinSVG:
                 bayer_desig,
                 ra,
                 dec,
-                style=self.style.bayer_labels.offset_from_marker(
-                    marker_symbol=style.marker.symbol,
-                    marker_size=star_size,
-                    scale=self.scale,
-                ),
+                style=style.label,
                 collision_handler=collision_handler,
                 gid="stars-label-bayer",
             )
@@ -167,11 +159,7 @@ class StarPlotterMixinSVG:
                 flamsteed_num,
                 ra,
                 dec,
-                style=self.style.flamsteed_labels.offset_from_marker(
-                    marker_symbol=style.marker.symbol,
-                    marker_size=star_size,
-                    scale=self.scale,
-                ),
+                style=style.label,
                 collision_handler=collision_handler,
                 gid="stars-label-flamsteed",
             )
@@ -325,7 +313,6 @@ class StarPlotterMixinSVG:
             style=style,
         )
 
-        return
         _legend_label = translate(legend_label, self.language) or legend_label
         self._add_legend_handle_marker(_legend_label, style.marker)
 

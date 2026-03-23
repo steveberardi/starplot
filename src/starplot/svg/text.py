@@ -317,94 +317,67 @@ class TextPlotterMixin:
         ra: float,
         dec: float,
         text: str,
+        style: LabelStyle,
         collision_handler: CollisionHandler,
-        **kwargs,
     ) -> None:
         # TODO
+
         if not text:
             return None
 
         x, y = self._prepare_coords(ra, dec)
 
-        if StarplotSettings.svg_text_type == SvgTextType.PATH:
-            kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
-
-        original_va = kwargs.pop("va", None)
-        original_ha = kwargs.pop("ha", None)
-        original_offset_x, original_offset_y = kwargs.pop("xytext", (0, 0))
-
         attempts = 0
         height = 0
         width = 0
 
-        data_xy = self._proj.transform_point(x, y, self._crs)
-        display_x, display_y = self.ax.transData.transform(data_xy)
+        display_x, display_y = self.canvas._to_display(x, y)
 
-        anchors = [(original_va, original_ha)]
-        for a in collision_handler.anchor_fallbacks:
-            d = AnchorPointEnum.from_str(a).as_matplot()
-            anchors.append((d["va"], d["ha"]))
+        height, width = get_text_hw(
+            text=text, font_size=style.font_size, font_weight=style.font_weight
+        )
 
-        for va, ha in anchors:
+        anchors = [
+            style.anchor_point,
+            *collision_handler.anchor_fallbacks,
+        ]
+
+        for anchor in anchors:
             attempts += 1
-            offset_x, offset_y = original_offset_x, original_offset_y
-            if original_ha != ha and ha != "center":
-                offset_x *= -1
+            offset_x, offset_y = style.offset_x, style.offset_y
 
-            if original_va != va:
-                offset_y *= -1
+            # CENTER = "center"
+            # LEFT_CENTER = "left center"
+            # RIGHT_CENTER = "right center"
+            # TOP_LEFT = "top left"
+            # TOP_RIGHT = "top right"
+            # TOP_CENTER = "top center"
+            # BOTTOM_LEFT = "bottom left"
+            # BOTTOM_RIGHT = "bottom right"
+            # BOTTOM_CENTER = "bottom center"
 
-            if ha == "center":
-                offset_x = 0
-                # offset_y *= 2
+            if anchor in [AnchorPointEnum.BOTTOM_RIGHT, AnchorPointEnum.RIGHT_CENTER, AnchorPointEnum.TOP_RIGHT]:
+                x0 = display_x + offset_x
 
-            # if va == "center":
-            #     offset_x *= 2
+            elif anchor in [AnchorPointEnum.BOTTOM_LEFT, AnchorPointEnum.LEFT_CENTER, AnchorPointEnum.TOP_LEFT]:
+                x0 = display_x - width - offset_x
+            else:
+                x0 = display_x
+
+            if anchor in [AnchorPointEnum.TOP_RIGHT, AnchorPointEnum.TOP_CENTER, AnchorPointEnum.TOP_LEFT]:
+                y0 = display_y - height - offset_y
+
+            elif anchor in [AnchorPointEnum.BOTTOM_RIGHT, AnchorPointEnum.BOTTOM_CENTER, AnchorPointEnum.BOTTOM_LEFT]:
+                # In SVG, the origin is top left corner
+                y0 = display_y + height + offset_y
+            else:
+                y0 = display_y
 
             offset_x = round_away_from_zero(offset_x)
             offset_y = round_away_from_zero(offset_y)
 
-            if height and width:
-                offset_x_px = abs(offset_x * (self.dpi / 72))
-                offset_y_px = abs(offset_y * (self.dpi / 72))
 
-                if ha == "left":
-                    x0 = int(display_x + offset_x_px)
-                    x1 = int(display_x + offset_x_px + width)
-                elif ha == "right":
-                    x0 = int(display_x - offset_x_px - width)
-                    x1 = int(display_x - offset_x_px)
-                else:
-                    x0 = int(display_x - offset_x_px - width / 2)
-                    x1 = int(display_x + offset_x_px + width / 2)
-
-                if va == "bottom":
-                    # TOP
-                    y0 = int(display_y + offset_y_px)
-                    y1 = int(display_y + offset_y_px + height)
-                elif va == "top":
-                    # BOTTOM
-                    y0 = int(display_y - offset_y_px - height)
-                    y1 = int(display_y - offset_y_px)
-                else:
-                    # CENTER
-                    y0 = int(display_y - height / 2) + offset_y
-                    y1 = int(display_y + height / 2) + offset_y
-
-                bbox = (x0, y0, x1, y1)
-                label = None
-
-            else:
-                label = self._text(
-                    x, y, text, va=va, ha=ha, xytext=(offset_x, offset_y), **kwargs
-                )
-                bbox = self._get_label_bbox(label)
-
-                if bbox is None:
-                    continue
-
-                height = bbox[3] - bbox[1]
-                width = bbox[2] - bbox[0]
+            bbox = create_bbox(x0, y0, height=height, width=width)
 
             is_open = self._is_open_space(
                 bbox,
@@ -419,17 +392,12 @@ class TextPlotterMixin:
             )
 
             if is_open or (collision_handler.plot_on_fail and is_final_attempt):
-                label = label or self._text(
-                    x, y, text, va=va, ha=ha, xytext=(offset_x, offset_y), **kwargs
-                )
-                self._add_label_to_rtree(label, bbox=bbox)
-                return label
-
-            if label is not None:
-                label.remove()
+                self.canvas._text_display(x0, y0, value=text, style=style, angle=0)
+                self._add_label_to_rtree(text, bbox=bbox)
+                return
 
             if is_final_attempt:
-                return None
+                return
 
     def _text_area(
         self,
@@ -591,11 +559,11 @@ class TextPlotterMixin:
         dy = dy[order]
         display_xy = np.column_stack([dx, dy])
 
+        display_xy = [(x, y) for x, y in display_xy if x >= 0 and y >= 0]
         num_positions = len(display_xy)
 
         if min_spacing is None:
             min_spacing = 1.0 / (num_labels + 1)
-
 
         def get_angle(x0, y0, x1, y1):
             # calculate angle in display coordinates
@@ -611,7 +579,7 @@ class TextPlotterMixin:
 
             return angle
 
-        offset = num_positions // 20  # offset from start/end of line
+        offset = num_positions // 25  # offset from start/end of line
         positions = [p for p in range(num_positions)]
         positions = positions[offset : -1 * offset]
         attempts = 0
@@ -632,9 +600,11 @@ class TextPlotterMixin:
             if pos in positions:
                 positions.remove(pos)
 
-            pos = max(0, min(pos, num_positions - 2))
+            # TODO : make adjustment here or account for distance between display coords
+            pos = max(0, min(pos, num_positions - 10))
             x0, y0 = display_xy[pos]
-            x1, y1 = display_xy[pos + 1]
+            x1, y1 = display_xy[pos + 5]
+
             y0 += height / 3  # center baseline hack
             y1 += height / 3
             angle = get_angle(
@@ -699,10 +669,10 @@ class TextPlotterMixin:
         collision_handler = collision_handler or self.point_label_handler
 
         if style.offset_x == "auto":
-            style.offset_x = 0
+            style.offset_x = 4
 
         if style.offset_y == "auto":
-            style.offset_y = 0
+            style.offset_y = 4
 
         if kwargs.get("area"):
             self._text_area(
@@ -718,14 +688,7 @@ class TextPlotterMixin:
                 ra,
                 dec,
                 text,
-                **style.matplot_kwargs(self.scale),
+                style=style,
                 collision_handler=collision_handler,
-                xycoords="data",
-                xytext=(
-                    style.offset_x * self.scale,
-                    style.offset_y * self.scale,
-                ),
-                textcoords="offset points",
-                **kwargs,
             )
 
