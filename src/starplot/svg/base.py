@@ -5,6 +5,7 @@ import logging
 import rtree
 import numpy as np
 
+from shapely.geometry import box
 from shapely import Polygon, LineString
 
 from starplot.coordinates import CoordinateSystem
@@ -127,6 +128,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
             # suppress_warnings=suppress_warnings,
             logger=LOGGER,
         )
+        self._update_clip_path_polygon()
         self.projection = projection
 
         self._background_clip_path = None
@@ -171,9 +173,8 @@ class BasePlot(StarPlotterMixinSVG, ABC):
         return coordinates
 
     def _update_clip_path_polygon(self, buffer=8):
-        self.fig.draw_without_rendering()
-        coords = self._background_clip_path.get_verts()
-        self._clip_path_polygon = Polygon(coords).buffer(-1 * buffer)
+        rectangle = box(0, 0, self.canvas.width, self.canvas.height)
+        self._clip_path_polygon = rectangle.buffer(-1 * buffer)
 
     def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
         # TODO

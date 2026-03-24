@@ -250,16 +250,20 @@ class Canvas:
         style: LabelStyle,
         angle: float = 0,
         cs: CoordinateSystem = CoordinateSystem.DATA,
+        attrs: dict = None,
     ) -> float:
         """Plots text, with an optional rotation angle."""
         dx, dy = self._to_display(x, y, cs)
-        attrs = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
+        attrs_rendered = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
 
         if angle:
-            attrs += f' transform="rotate({angle}, {dx}, {dy})"'
+            attrs_rendered += f' transform="rotate({angle}, {dx}, {dy})"'
+
+        if attrs:
+            attrs_rendered += " " + " ".join([f'{k}="{v}"' for k, v in attrs.items()])
 
         self.elements.append(
-            (style.zorder, f'<text x="{dx}" y="{dy}" {attrs} >{value}</text>')
+            (style.zorder, f'<text x="{dx}" y="{dy}" {attrs_rendered} >{value}</text>')
         )
 
     def _background(self):

@@ -149,7 +149,7 @@ class StarPlotterMixinSVG:
                 bayer_desig,
                 ra,
                 dec,
-                style=style.label,
+                style=self.style.bayer_labels,
                 collision_handler=collision_handler,
                 gid="stars-label-bayer",
             )
@@ -159,7 +159,7 @@ class StarPlotterMixinSVG:
                 flamsteed_num,
                 ra,
                 dec,
-                style=style.label,
+                style=self.style.flamsteed_labels,
                 collision_handler=collision_handler,
                 gid="stars-label-flamsteed",
             )

@@ -186,7 +186,7 @@ def rotate_bbox(bbox, angle, cx=None, cy=None):
 
 
 def get_text_hw(text, font_size: int, font_weight: int = 400) -> tuple[float, float]:
-    char_width = font_size * (0.8 if font_weight >= 500 else 0.6)
+    char_width = font_size * (0.7 if font_weight >= 500 else 0.5)
     width = len(text) * char_width
     height = font_size
     return height, width
@@ -195,9 +195,9 @@ def get_text_hw(text, font_size: int, font_weight: int = 400) -> tuple[float, fl
 def create_bbox(x, y, height, width) -> BBox:
     return [
         x,
-        y,
+        y - height,
         x + width,
-        y + height,
+        y,
     ]
 
 
@@ -234,8 +234,13 @@ class TextPlotterMixin:
         return False
 
     def _is_clipped_box(self, bbox: BBox) -> bool:
-        # TODO
-        return False
+        xmin, ymin, xmax, ymax = bbox
+        return (
+            xmin < 0
+            or ymin < 0
+            or xmax > self.canvas.width
+            or ymax > self.canvas.height
+        )
         return not self._clip_path_polygon.contains(box(*bbox))
 
     def _get_label_bbox(self, center, label, style) -> BBox:
@@ -321,8 +326,6 @@ class TextPlotterMixin:
         style: LabelStyle,
         collision_handler: CollisionHandler,
     ) -> None:
-        # TODO
-
         if not text:
             return None
 
@@ -356,6 +359,9 @@ class TextPlotterMixin:
             # BOTTOM_LEFT = "bottom left"
             # BOTTOM_RIGHT = "bottom right"
             # BOTTOM_CENTER = "bottom center"
+            attrs = None
+
+            # TODO : this anchor stuff should be backend-agnostic, move to canvas
 
             if anchor in [
                 AnchorPointEnum.BOTTOM_RIGHT,
@@ -369,7 +375,8 @@ class TextPlotterMixin:
                 AnchorPointEnum.LEFT_CENTER,
                 AnchorPointEnum.TOP_LEFT,
             ]:
-                x0 = display_x - width - offset_x
+                x0 = display_x - offset_x
+                attrs = {"text-anchor": "end"}
             else:
                 x0 = display_x
 
@@ -378,7 +385,7 @@ class TextPlotterMixin:
                 AnchorPointEnum.TOP_CENTER,
                 AnchorPointEnum.TOP_LEFT,
             ]:
-                y0 = display_y - height - offset_y
+                y0 = display_y - offset_y
 
             elif anchor in [
                 AnchorPointEnum.BOTTOM_RIGHT,
@@ -393,7 +400,16 @@ class TextPlotterMixin:
             offset_x = round_away_from_zero(offset_x)
             offset_y = round_away_from_zero(offset_y)
 
-            bbox = create_bbox(x0, y0, height=height, width=width)
+            if anchor in [
+                AnchorPointEnum.TOP_LEFT,
+                AnchorPointEnum.LEFT_CENTER,
+                AnchorPointEnum.BOTTOM_LEFT,
+            ]:
+                attrs = {"text-anchor": "end"}
+                # y0 = display_y - offset_y - height
+                bbox = create_bbox(x0 - width - 2, y0 + 4, height=height, width=width)
+            else:
+                bbox = create_bbox(x0 - 2, y0 + 4, height=height, width=width)
 
             is_open = self._is_open_space(
                 bbox,
@@ -415,6 +431,7 @@ class TextPlotterMixin:
                     style=style,
                     angle=0,
                     cs=CoordinateSystem.DISPLAY,
+                    attrs=attrs,
                 )
                 self._add_label_to_rtree(text, bbox=bbox)
                 return
@@ -708,7 +725,7 @@ class TextPlotterMixin:
             self._text_area(
                 ra,
                 dec,
-                text,
+                str(text),
                 style=style,
                 area=kwargs.pop("area"),
                 collision_handler=collision_handler,
@@ -717,7 +734,7 @@ class TextPlotterMixin:
             self._text_point(
                 ra,
                 dec,
-                text,
+                str(text),
                 style=style,
                 collision_handler=collision_handler,
             )
