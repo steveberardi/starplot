@@ -13,6 +13,141 @@ from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line
 
 
+class ArrowPlotterMixinSVG:
+    @profile
+    @use_style(ArrowStyle, "arrow")
+    def arrow(
+        self,
+        origin: tuple[float, float] = None,
+        target: tuple[float, float] = None,
+        style: ArrowStyle = None,
+        scale: float = 0.99,
+        length: float = 5,
+        max_attempts: int = 100,
+    ):
+        """
+        Plots an arrow from one point to another if you specify both `origin` and `target`. If you only specify a `target`, then the arrow will serve as a "pointer" to that target.
+
+        Args:
+            origin: Starting point (ra, dec)
+            target: Target of the arrow (ra, dec)
+            style: Style of the arrow
+            scale: Scaling factor for the arrow, to make it offset from the origin/target
+            length: If you only specify a target, then this will be the length of the arrow (in degrees). This value is ignored if you're plotting an arrow from one point to another.
+            max_attempts: If you only specify a target, then this will be the max number of attempts for plotting the arrow without colliding with labels. Arrow will be plotted on the final attempt.
+
+        """
+
+        target = self._prepare_coords(*target)
+        x0, y0 = None, None
+        x1, y1 = target
+
+        if origin:
+            origin = self._prepare_coords(*origin)
+            x0, y0 = origin
+
+        def create_arrow(dx, dy):
+            # angle to rotate head
+            angle_radians = np.atan2(dy[1] - dy[0], dx[1] - dx[0])
+            angle_degrees = np.degrees(angle_radians)
+
+            line_x = [
+                (1 - scale) * dx[1] + scale * dx[0],
+                (1 - scale) * dx[0] + scale * dx[1],
+            ]
+            line_y = [
+                (1 - scale) * dy[1] + scale * dy[0],
+                (1 - scale) * dy[0] + scale * dy[1],
+            ]
+
+            arrow_x = line_x[-1]
+            arrow_y = line_y[-1]
+
+            body_width = style.body_width * self.scale
+            head_width = style.head_width * self.scale
+            head_height = style.head_height * self.scale
+
+            arrow_line = LineString(list(zip(line_x, line_y)))
+            arrow_body = arrow_line.buffer(body_width, **style.shapely_kwargs())
+
+            arrow_head = Polygon(
+                [
+                    (arrow_x, arrow_y),
+                    (arrow_x + head_width, arrow_y - head_height),
+                    (arrow_x - head_width, arrow_y - head_height),
+                    (arrow_x, arrow_y),
+                ]
+            )
+
+            arrow_head = affinity.rotate(
+                arrow_head,
+                angle_degrees + 270,
+                origin=(arrow_x, arrow_y),
+            )
+
+            result = ops.split(arrow_line, arrow_head)
+            arrow_body = result.geoms[0].buffer(body_width, **style.shapely_kwargs())
+            return arrow_body.union(arrow_head.buffer(0.0001, **style.shapely_kwargs()))
+
+        if origin and target:
+            dx, dy = self.canvas._to_display(x=np.array([x0, x1]), y=np.array([y0, y1]))
+            arrow_polygon = create_arrow(dx, dy)
+
+        elif target:
+            arrow_polygon = None
+            attempts = 0
+            padding = 8
+            polygon = circle(
+                center=target,
+                diameter_degrees=length * 2,
+                num_pts=200,
+            )
+
+            origins = list(zip(*polygon.exterior.coords.xy))
+
+            while arrow_polygon is None and attempts < max_attempts:
+                attempts += 1
+                origin = random.choice(origins)
+                x0, y0 = origin
+
+                display_points = self.canvas._to_display(
+                    x=np.array([x0, x1]), y=np.array([y0, y1])
+                )
+
+                if len(display_points) < 2:
+                    continue
+
+                points_arrow = points_on_line(display_points[0], display_points[1], 25)
+
+                # check if arrow body collides with any labels
+                collides_with_label = False
+                for x, y in points_arrow:
+                    bbox = (
+                        x - padding,
+                        y - padding,
+                        x + padding,
+                        y + padding,
+                    )
+                    if self._is_label_collision(bbox):
+                        collides_with_label = True
+                        break
+
+                # if arrow body does not collide with labels, we can create polygon and exit loop
+                if not collides_with_label or attempts == max_attempts:
+                    arrow_polygon = create_arrow(*display_points)
+
+        else:
+            raise ValueError(
+                "To plot an arrow you must specify a target or a target and origin."
+            )
+
+        self.canvas.polygon(
+            coordinates=list(zip(*arrow_polygon.exterior.coords.xy)),
+            style=style,
+            cs="display",
+        )
+
+
 class ArrowPlotterMixin:
     def _to_axes(self, points):
         ax_points = []

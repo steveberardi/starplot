@@ -937,6 +937,15 @@ class BasePlot(StarPlotterMixinSVG, ABC):
                 collision_handler=collision_handler,
             )
 
+    def tissot(self, radius: int = 4):
+        for ra in range(45, 360, 45):
+            for dec in range(-80, 90, 20):
+                self.circle(
+                    center=(ra, dec),
+                    radius_degrees=radius,
+                    style__fill_color="#2e62ae",
+                )
+
     def _debug_bbox(self, bbox, color, width=1):
         x0, y0, x1, y1 = bbox
         self.canvas._rectangle(

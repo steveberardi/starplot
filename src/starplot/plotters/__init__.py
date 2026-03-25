@@ -6,4 +6,4 @@ from .dsos import DsoPlotterMixin
 from .milkyway import MilkyWayPlotterMixin
 from .legend import LegendPlotterMixin
 from .gradients import GradientBackgroundMixin
-from .arrow import ArrowPlotterMixin
+from .arrow import ArrowPlotterMixin, ArrowPlotterMixinSVG

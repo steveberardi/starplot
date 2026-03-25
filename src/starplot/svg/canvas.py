@@ -230,17 +230,26 @@ class Canvas:
             self.elements.append((z, f'<polyline points="{points}" {attrs} />'))
 
     def polygon(
-        self, coordinates: list[tuple[float, float]], style: PolygonStyle
+        self,
+        coordinates: list[tuple[float, float]],
+        style: PolygonStyle,
+        cs: CoordinateSystem = CoordinateSystem.DATA,
+        attrs: dict = None,
     ) -> float:
         arr = np.array(coordinates)
         xs, ys = arr[:, 0], arr[:, 1]
-        dx, dy = self._to_display(xs, ys)
+        dx, dy = self._to_display(xs, ys, cs)
         dxy = list(zip(dx, dy))
 
         points = " ".join([f"{x},{y}" for x, y in dxy])
-        attrs = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
+        attrs_rendered = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
 
-        self.elements.append((style.zorder, f'<polygon points="{points}" {attrs} />'))
+        if attrs:
+            attrs_rendered += " " + " ".join([f'{k}="{v}"' for k, v in attrs.items()])
+
+        self.elements.append(
+            (style.zorder, f'<polygon points="{points}" {attrs_rendered} />')
+        )
 
     def text(
         self,

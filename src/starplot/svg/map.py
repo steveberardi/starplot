@@ -14,7 +14,7 @@ from starplot.plotters import (
     MilkyWayPlotterMixin,
     LegendPlotterMixin,
     GradientBackgroundMixin,
-    ArrowPlotterMixin,
+    ArrowPlotterMixinSVG,
 )
 from starplot.plotters.text import CollisionHandler
 from starplot.projections import StereoNorth, StereoSouth, ProjectionBase
@@ -40,6 +40,7 @@ class MapPlot(
     MilkyWayPlotterMixin,
     ConstellationPlotterMixinSVG,
     TextPlotterMixin,
+    ArrowPlotterMixinSVG,
     # LegendPlotterMixin,
     # GradientBackgroundMixin,
     # ArrowPlotterMixin,
