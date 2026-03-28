@@ -30,7 +30,6 @@ from starplot.styles.helpers import use_style
 from starplot.svg.base import BasePlot
 from starplot.svg.dsos import DsoPlotterMixin
 from starplot.svg.text import TextPlotterMixin
-from starplot.utils import lon_to_ra, ra_to_lon
 
 
 class MapPlot(
@@ -38,12 +37,11 @@ class MapPlot(
     ExtentMaskMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
-    ConstellationPlotterMixinSVG,
     TextPlotterMixin,
+    ConstellationPlotterMixinSVG,
     ArrowPlotterMixinSVG,
     # LegendPlotterMixin,
     # GradientBackgroundMixin,
-    # ArrowPlotterMixin,
 ):
     """Creates a new map plot.
 
@@ -335,12 +333,12 @@ class MapPlot(
         ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
         dec_formatter_fn = dec_formatter_fn or dec_formatter_fn_default
 
-        def ra_formatter(x, pos) -> str:
-            ra = lon_to_ra(x)
-            return ra_formatter_fn(ra)
+        # def ra_formatter(x, pos) -> str:
+        #     ra = lon_to_ra(x)
+        #     return ra_formatter_fn(ra)
 
-        def dec_formatter(x, pos) -> str:
-            return dec_formatter_fn(x)
+        # def dec_formatter(x, pos) -> str:
+        #     return dec_formatter_fn(x)
 
         ra_locations = ra_locations or [
             x for x in range(0, 360, 15) if self.ra_min <= x <= self.ra_max

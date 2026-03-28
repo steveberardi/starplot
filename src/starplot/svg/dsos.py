@@ -262,17 +262,17 @@ class DsoPlotterMixin:
                             angle=angle or 0,
                         )
 
-                # if label and self.in_bounds(ra, dec):
-                #     self.text(
-                #         label,
-                #         ra,
-                #         dec,
-                #         style.label,
-                #         collision_handler=handler,
-                #         gid=f"dso-{d.type}-label",
-                #     )
+                if label and self.in_bounds(ra, dec):
+                    self.text(
+                        label,
+                        ra,
+                        dec,
+                        style.label,
+                        collision_handler=handler,
+                        gid=f"dso-{d.type}-label",
+                    )
 
-                # self._add_legend_handle_marker(legend_label, style.marker)
+                self._add_legend_handle_marker(legend_label, style.marker)
 
             else:
                 # if no major axis, then just plot as a marker

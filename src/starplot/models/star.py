@@ -202,11 +202,15 @@ class Star(CatalogObject, SkyObject):
 
         # return rows
 
-        df = _load_stars(
-            catalog=catalog,
-            filters=where,
-            sql=sql,
-        ).to_pandas()
+        df = (
+            _load_stars(
+                catalog=catalog,
+                filters=where,
+                sql=sql,
+            )
+            .select(Star._fields())
+            .to_pandas()
+        )
 
         return [from_tuple(s) for s in df.itertuples()]
 

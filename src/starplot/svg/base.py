@@ -268,33 +268,27 @@ class BasePlot(StarPlotterMixinSVG, ABC):
             )
             self._markers_rtree.insert(0, bbox, None)
 
-        return
+        # return
         # TODO : handle label
 
         # Plot label
         if label:
-            label_style = style.label
-            if label_style.offset_x == "auto" or label_style.offset_y == "auto":
-                marker_size = ((style.marker.size / self.scale) ** 2) * (
-                    self.scale**2
-                )
+            # if label_style.offset_x == "auto" or label_style.offset_y == "auto":
+            #     marker_size = ((style.marker.size / self.scale) ** 2) * (
+            #         self.scale**2
+            #     )
 
-                label_style = label_style.offset_from_marker(
-                    marker_symbol=style.marker.symbol,
-                    marker_size=marker_size,
-                    scale=self.scale,
-                )
             self.text(
                 label,
                 ra,
                 dec,
-                label_style,
+                style=style.label,
                 collision_handler=collision_handler or self.point_label_handler,
-                gid=kwargs.get("gid_label") or "marker-label",
+                # gid=kwargs.get("gid_label") or "marker-label",
             )
 
-        if legend_label is not None:
-            self._legend_handles[legend_label] = result
+        # if legend_label is not None:
+        #     self._legend_handles[legend_label] = result
 
     @use_style(ObjectStyle, "planets")
     def planets(

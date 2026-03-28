@@ -61,12 +61,22 @@ class Canvas:
     height: int = None
     width: int = None
 
+    figure_height: int = None
+    figure_width: int = None
+
     precision: int
 
-    symbols: set = set()
-    symbol_ids = set()
+    defs: set = set()
+    def_ids = set()
 
     elements: list[tuple[int, str]] = []
+
+    figure_elements: list[tuple[int, str]] = []
+
+    axes_x = 0
+    axes_y = 0
+
+    # TODO : create another list of elements for figure
 
     def __init__(
         self,
@@ -159,16 +169,31 @@ class Canvas:
             *self.projected_bounds, direction="INVERSE"
         )
 
+        self.figure_height = self.height + self.style.figure_padding * 2
+        self.figure_width = self.width + self.style.figure_padding * 2
+        self.axes_x = self.style.figure_padding
+        self.axes_y = self.style.figure_padding
+
+        axes_clip_path = (
+            '<clipPath id="axes-clip-path">'
+            f'<rect x="0" y="0" height="{self.height}" width="{self.width}" />'
+            '</clipPath>'
+        )
+        self._add_def(
+            def_id="axes-clip-path",
+            value=axes_clip_path,
+        )
+    
         self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
         self.logger.debug(f"Bounds = {self.bounds}")
         self.logger.debug(f"Extent (X) = {int(self.minx)} >> {int(self.maxx)}")
         self.logger.debug(f"Size (h X w) = {int(self.height)} x {self.width}")
 
-    def _register_symbol(self, symbol_id: str, value: str):
-        if symbol_id in self.symbol_ids:
+    def _add_def(self, def_id: str, value: str):
+        if def_id in self.def_ids:
             return
-        self.symbols.add(value)
-        self.symbol_ids.add(symbol_id)
+        self.defs.add(value)
+        self.def_ids.add(def_id)
 
     def marker(self, x, y, style: MarkerStyle) -> None:
         dx, dy = self._to_display(x, y)
@@ -235,7 +260,7 @@ class Canvas:
         style: PolygonStyle,
         cs: CoordinateSystem = CoordinateSystem.DATA,
         attrs: dict = None,
-    ) -> float:
+    ) -> None:
         arr = np.array(coordinates)
         xs, ys = arr[:, 0], arr[:, 1]
         dx, dy = self._to_display(xs, ys, cs)
@@ -260,7 +285,7 @@ class Canvas:
         angle: float = 0,
         cs: CoordinateSystem = CoordinateSystem.DATA,
         attrs: dict = None,
-    ) -> float:
+    ) -> None:
         """Plots text, with an optional rotation angle."""
         dx, dy = self._to_display(x, y, cs)
         attrs_rendered = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
@@ -274,6 +299,30 @@ class Canvas:
         self.elements.append(
             (style.zorder, f'<text x="{dx}" y="{dy}" {attrs_rendered} >{value}</text>')
         )
+
+    def title(
+        self,
+        value: str,
+        style: LabelStyle,
+    ) -> None:
+        
+        dx = self.figure_width / 2
+        dy = self.style.figure_padding + style.font_size
+        
+        attrs_rendered = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
+
+        
+        attrs_rendered += f' text-anchor="middle" '
+
+
+        self.figure_elements.append(
+            (style.zorder, f'<text x="{dx}" y="{dy}" {attrs_rendered} >{value}</text>')
+        )
+
+        self.figure_height += self.style.figure_padding + style.font_size
+        self.axes_y += self.style.figure_padding + style.font_size
+        
+    
 
     def _background(self):
         self.elements.append(
@@ -293,17 +342,30 @@ class Canvas:
 
     def render(self, pretty: bool = False) -> str:
         """Renders the canvas to an SVG string"""
-        result = f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}" viewBox="0 0 {self.width} {self.height}">'
 
-        if self.symbols:
-            result += "\n\n<defs>\n"
-            for symbol in self.symbols:
-                result += f"{symbol}\n"
-            result += "</defs>\n\n"
+        result = (
+            f'<svg width="{self.figure_width}" height="{self.figure_height}" '
+            f'xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {self.figure_width} {self.figure_height}">'
+        )
+
+        result += f'<rect x="0" y="0" height="{self.figure_height}" width="{self.figure_width}" fill="{self.style.figure_background_color.as_hex()}" />'
+
+        result += "\n".join([e for _, e in self.figure_elements])
+
+        result += f'<svg x="{self.axes_x}" y="{self.axes_y}" width="{self.width}" height="{self.height}" viewBox="0 0 {self.width} {self.height}">'
+
+        
+        result += "\n\n<defs>\n"
+        for d in self.defs:
+            result += f"{d}\n"
+        result += "</defs>\n\n"
 
         sorted_by_z = sorted(self.elements, key=lambda e: e[0])
         elements = [e for _, e in sorted_by_z]
-        result += "\n".join(elements) + "</svg>"
+        result += '<g id="axes" clip-path="url(#axes-clip-path)">'
+        result += "\n".join(elements)
+        
+        result += "</g></svg></svg>"
 
         if pretty:
             import xml.dom.minidom

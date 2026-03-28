@@ -897,6 +897,9 @@ class PlotStyle(BaseStyle):
 
     figure_background_color: ColorStr = ColorStr("#fff")
 
+    figure_padding: int = 0
+    """Padding between the axes and edge of plot"""
+
     text_border_width: int = 2
     """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `border_width` and `border_color` properties."""
 
