@@ -221,6 +221,12 @@ class StereoSouth(ProjectionBase, CenterRA):
 
     _ccrs = ccrs.SouthPolarStereo
 
+    @property
+    def _crs(self):
+        return CRS.from_proj4(
+            f"+proj=stere +lat_0=-90 +lon_0={360 - self.center_ra}  +R={PROJ_R} +units=m"
+        )
+
 
 class Robinson(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""

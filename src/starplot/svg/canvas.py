@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 from pyproj import CRS, Transformer
 from shapely import Polygon, LineString
+from shapely.ops import transform as _transform_shape
 
 from starplot import geometry as _geometry
 from starplot.config import settings as StarplotSettings, SvgTextType
@@ -39,44 +40,43 @@ def normalize(value, min_val, max_val):
 
 
 class Canvas:
-    resolution: int
+    # resolution: int
 
-    projection: ProjectionBase
+    # projection: ProjectionBase
 
-    tx: Transformer
+    # tx: Transformer
 
-    bounds: tuple[float, float, float, float]
+    # bounds: tuple[float, float, float, float]
     """
     Bounds in data coordinates
-    
-    (left, bottom, right, top)
 
+    (left, bottom, right, top)
     """
 
-    style: PlotStyle
+    # style: PlotStyle
 
     invert_x: bool = False
     invert_y: bool = False
 
-    height: int = None
-    width: int = None
+    height: float = None
+    width: float = None
 
-    figure_height: int = None
-    figure_width: int = None
+    figure_height: float = None
+    figure_width: float = None
 
-    precision: int
+    # precision: int
+    """Number of decimal places for coordinates"""
 
-    defs: set = set()
-    def_ids = set()
+    # defs: set = set()
+    # def_ids = set()
 
-    elements: list[tuple[int, str]] = []
+    # elements: list[tuple[int, str]] = []
 
-    figure_elements: list[tuple[int, str]] = []
+    # figure_elements: list[tuple[int, str]] = []
 
-    axes_x = 0
-    axes_y = 0
-
-    # TODO : create another list of elements for figure
+    # axes_x: float = 0
+    # axes_y: float = 0
+    """Position of axes in figure coordinates"""
 
     def __init__(
         self,
@@ -93,6 +93,14 @@ class Canvas:
         precision: int = 2,
         logger=None,
     ):
+        self.elements = []
+        self.figure_elements = []
+        self.defs = set()
+        self.def_ids = set()
+
+        self.axes_x = 0
+        self.axes_y = 0
+
         self.crs = crs or CRS_WNU
         self.resolution = resolution
         self.projection = projection
@@ -174,16 +182,24 @@ class Canvas:
         self.axes_x = self.style.figure_padding
         self.axes_y = self.style.figure_padding
 
+        if self.clip_path is not None:
+            clip_display = _transform_shape(self._to_display, self.clip_path)
+            dxy = list(clip_display.exterior.coords)
+            points = " ".join([f"{x},{y}" for x, y in dxy])
+            clip_geometry = f'<polygon points="{points}" />'
+        else:
+            clip_geometry = (
+                f'<rect x="0" y="0" height="{self.height}" width="{self.width}" />'
+            )
+
         axes_clip_path = (
-            '<clipPath id="axes-clip-path">'
-            f'<rect x="0" y="0" height="{self.height}" width="{self.width}" />'
-            '</clipPath>'
+            '<clipPath id="axes-clip-path">' f"{clip_geometry}" "</clipPath>"
         )
         self._add_def(
             def_id="axes-clip-path",
             value=axes_clip_path,
         )
-    
+
         self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
         self.logger.debug(f"Bounds = {self.bounds}")
         self.logger.debug(f"Extent (X) = {int(self.minx)} >> {int(self.maxx)}")
@@ -305,15 +321,12 @@ class Canvas:
         value: str,
         style: LabelStyle,
     ) -> None:
-        
         dx = self.figure_width / 2
         dy = self.style.figure_padding + style.font_size
-        
+
         attrs_rendered = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
 
-        
         attrs_rendered += f' text-anchor="middle" '
-
 
         self.figure_elements.append(
             (style.zorder, f'<text x="{dx}" y="{dy}" {attrs_rendered} >{value}</text>')
@@ -321,8 +334,6 @@ class Canvas:
 
         self.figure_height += self.style.figure_padding + style.font_size
         self.axes_y += self.style.figure_padding + style.font_size
-        
-    
 
     def _background(self):
         self.elements.append(
@@ -354,7 +365,6 @@ class Canvas:
 
         result += f'<svg x="{self.axes_x}" y="{self.axes_y}" width="{self.width}" height="{self.height}" viewBox="0 0 {self.width} {self.height}">'
 
-        
         result += "\n\n<defs>\n"
         for d in self.defs:
             result += f"{d}\n"
@@ -364,7 +374,7 @@ class Canvas:
         elements = [e for _, e in sorted_by_z]
         result += '<g id="axes" clip-path="url(#axes-clip-path)">'
         result += "\n".join(elements)
-        
+
         result += "</g></svg></svg>"
 
         if pretty:

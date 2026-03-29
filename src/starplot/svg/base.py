@@ -26,7 +26,6 @@ from starplot.styles import (
     MarkerSymbolEnum,
     PathStyle,
     PolygonStyle,
-    GradientDirection,
     AnchorPointEnum,
 )
 from starplot.projections import ProjectionBase
@@ -48,25 +47,16 @@ DEFAULT_RESOLUTION = 4096
 
 
 class BasePlot(StarPlotterMixinSVG, ABC):
-    _background_clip_path = None
-    _clip_path_polygon: Polygon = None  # clip path in display coordinates
-    _coordinate_system = CoordinateSystem.RA_DEC
-    _gradient_direction: GradientDirection = GradientDirection.LINEAR
+    # _background_clip_path = None
+    # _clip_path_polygon: Polygon = None  # clip path in display coordinates
 
-    canvas: Canvas
-
-    style: PlotStyle
-    """
-    The plot's style.
-    """
-
-    point_label_handler: CollisionHandler
+    # point_label_handler: CollisionHandler
     """Default [collision handler][starplot.CollisionHandler] for point labels."""
 
-    area_label_handler: CollisionHandler
+    # area_label_handler: CollisionHandler
     """Default [collision handler][starplot.CollisionHandler] for area labels."""
 
-    path_label_handler: CollisionHandler
+    # path_label_handler: CollisionHandler
     """Default [collision handler][starplot.CollisionHandler] for path labels."""
 
     def __init__(
@@ -91,6 +81,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
         **kwargs,
     ):
         # super().__init__(*args, **kwargs)
+        self._coordinate_system = CoordinateSystem.RA_DEC
 
         self.labels = []
         self._labels_rtree = rtree.index.Index()
@@ -122,7 +113,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
             scale=self.scale,
             projection=projection,
             bounds=bounds,
-            clip_path=None,
+            clip_path=clip_path,
             invert_x=invert_x,
             invert_y=invert_y,
             # suppress_warnings=suppress_warnings,
