@@ -13,7 +13,7 @@ RUN install -m644 /tmp/fonts/*.ttf /usr/share/fonts/truetype/
 RUN fc-cache -f
 
 RUN pip install uv
-RUN uv pip install --system -r requirements.txt
+RUN uv pip install --system -r pyproject.toml
 RUN uv pip install --system -r requirements-dev.txt
 
 ENV STARPLOT_DATA_PATH=/starplot/data
