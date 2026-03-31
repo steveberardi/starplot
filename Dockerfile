@@ -5,6 +5,10 @@ WORKDIR /starplot
 
 COPY . .
 
+ENV UV_PROJECT_ENVIRONMENT=/usr/local
+ENV STARPLOT_DATA_PATH=/starplot/data
+ENV PYTHONPATH=/starplot/src/
+
 # Install Chinese font
 # Noto Sans SC -> https://fonts.google.com/noto/specimen/Noto+Sans+SC
 RUN mkdir -p /usr/share/fonts/truetype
@@ -13,11 +17,7 @@ RUN install -m644 /tmp/fonts/*.ttf /usr/share/fonts/truetype/
 RUN fc-cache -f
 
 RUN pip install uv
-RUN uv pip install --system -r pyproject.toml
-RUN uv pip install --system -r requirements-dev.txt
-
-ENV STARPLOT_DATA_PATH=/starplot/data
-ENV PYTHONPATH=/starplot/src/
+RUN uv sync --all-groups --all-extras
 
 RUN git config --global --add safe.directory /starplot
 
