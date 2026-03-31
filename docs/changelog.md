@@ -11,7 +11,7 @@
 - [**v0.20.1**]
     - Optimizes coordinate conversions
     - Makes constellation lines straight
-
+- [**v0.20.2**] Restricts Pandas to version `2.2.3` or lower
 
 ## v0.19.x
 [Documentation](https://archives.starplot.dev/0.19.6/)
