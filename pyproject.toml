@@ -21,7 +21,7 @@ keywords = ["astronomy", "stars", "charts", "maps", "constellations", "sky", "pl
 dependencies = [
     "matplotlib >= 3.8.0",
     "numpy >= 1.26.2",
-    "pandas >= 1.4.0",
+    "pandas <= 2.2.3",
     "pydantic >= 2.10.6",
     "shapely >= 2.0.1",
     "skyfield >= 1.41",
@@ -36,7 +36,9 @@ dependencies = [
     "duckdb >= 1.4.4",
     "sqlglot >= 28.9.0",
     "ibis-framework[duckdb,geospatial] >= 11",
-    "astropy-healpix >= 1.1.2"
+    "astropy-healpix >= 1.1.2",
+    "cairosvg>=2.9.0",
+    "resvg-py"
 ]
 
 [project.urls]
@@ -61,3 +63,26 @@ ignore = ["E501"]
 
 [tool.marimo.display]
 theme = "dark"
+
+[dependency-groups]
+dev = [
+    "black==23.3.0",
+    "click==8.2.1",
+    "flit==3.9.0",
+    "griffe==1.15.0",
+    "imagehash==4.3.1",
+    "ipython==7.12.0",
+    "marimo==0.15.2",
+    "mkdocs-glightbox==0.4.0",
+    "mkdocs-macros-plugin==1.3.7",
+    "mkdocs-material==9.7.1",
+    "mkdocstrings==1.0.0",
+    "mkdocstrings-python==2.0.1",
+    "mypy==1.3.0",
+    "pygments==2.19.2",
+    "pytest==7.3.2",
+    "pytest-cov==4.1.0",
+    "rich==13.9.4",
+    "ruff==0.14.10",
+    "snakeviz==2.2.2",
+]
