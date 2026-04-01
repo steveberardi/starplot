@@ -23,6 +23,16 @@ from starplot.styles import (
 from starplot.plotters.text import CollisionHandler
 from starplot.projections import ProjectionBase
 from starplot.svg import symbols
+from starplot.svg.elements import (
+    SVG,
+    Group,
+    Rectangle,
+    ClipPath,
+    Polygon,
+    Polyline,
+    Text,
+    Defs,
+)
 
 
 CRS_WNU = CRS.from_proj4("+proj=latlon +ellps=sphere +axis=wnu +a=6378137")
@@ -40,43 +50,11 @@ def normalize(value, min_val, max_val):
 
 
 class Canvas:
-    # resolution: int
-
-    # projection: ProjectionBase
-
-    # tx: Transformer
-
-    # bounds: tuple[float, float, float, float]
-    """
-    Bounds in data coordinates
-
-    (left, bottom, right, top)
     """
 
-    # style: PlotStyle
-
-    invert_x: bool = False
-    invert_y: bool = False
-
-    height: float = None
-    width: float = None
-
-    figure_height: float = None
-    figure_width: float = None
-
-    # precision: int
-    """Number of decimal places for coordinates"""
-
-    # defs: set = set()
-    # def_ids = set()
-
-    # elements: list[tuple[int, str]] = []
-
-    # figure_elements: list[tuple[int, str]] = []
-
-    # axes_x: float = 0
-    # axes_y: float = 0
-    """Position of axes in figure coordinates"""
+    Args:
+        bounds: Bounds in data coordinates (left, bottom, right, top)
+    """
 
     def __init__(
         self,
@@ -95,7 +73,7 @@ class Canvas:
     ):
         self.elements = []
         self.figure_elements = []
-        self.defs = set()
+        self.defs = []
         self.def_ids = set()
 
         self.axes_x = 0
@@ -185,18 +163,18 @@ class Canvas:
         if self.clip_path is not None:
             clip_display = _transform_shape(self._to_display, self.clip_path)
             dxy = list(clip_display.exterior.coords)
-            points = " ".join([f"{x},{y}" for x, y in dxy])
-            clip_geometry = f'<polygon points="{points}" />'
+            clip_geometry_element = Polygon(points=dxy)
         else:
-            clip_geometry = (
-                f'<rect x="0" y="0" height="{self.height}" width="{self.width}" />'
+            clip_geometry_element = Rectangle(
+                x=0, y=0, height=self.height, width=self.width
             )
 
-        axes_clip_path = (
-            '<clipPath id="axes-clip-path">' f"{clip_geometry}" "</clipPath>"
+        axes_clip_path_id = "axes-clip-path"
+        axes_clip_path = ClipPath(
+            id=axes_clip_path_id, children=[clip_geometry_element]
         )
         self._add_def(
-            def_id="axes-clip-path",
+            def_id=axes_clip_path_id,
             value=axes_clip_path,
         )
 
@@ -208,33 +186,28 @@ class Canvas:
     def _add_def(self, def_id: str, value: str):
         if def_id in self.def_ids:
             return
-        self.defs.add(value)
+        self.defs.append(value)
         self.def_ids.add(def_id)
 
     def marker(self, x, y, style: MarkerStyle) -> None:
         dx, dy = self._to_display(x, y)
 
-        css = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
-
-        marker_str = symbols.create(dx, dy, style.size * self.scale, style.symbol, css)
-        self.elements.append((style.zorder, marker_str))
+        element = symbols.create(
+            dx, dy, style.size * self.scale, style.symbol, style.css()
+        )
+        self.elements.append((style.zorder, element))
 
     def markers(self, x, y, style: MarkerStyle, gid: str = None, sizes=None) -> None:
         dx, dy = self._to_display(x, y)
-
-        css = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
-
         gid = gid or "markers"
         sizes = sizes or []
 
-        elements = "\n".join(
-            [
-                symbols.create(x, y, size * self.scale, style.symbol, "")
-                for x, y, size in list(zip(dx, dy, sizes))
-            ]
-        )
+        elements = [
+            symbols.create(x, y, size * self.scale, style.symbol, None)
+            for x, y, size in list(zip(dx, dy, sizes))
+        ]
 
-        group = f'<g id="{gid}" {css}>\n{elements}</g>\n'
+        group = Group(id=gid, attrs=style.css(), children=elements)
 
         self.elements.append((style.zorder, group))
 
@@ -259,16 +232,15 @@ class Canvas:
             dx, dy = self._to_display(xs, ys)
             dxy = list(zip(dx, dy))
 
-            points = " ".join([f"{x},{y}" for x, y in dxy])
-
             if isinstance(style, LineStyle):
-                attrs = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
+                attrs = style.css()
                 z = style.zorder
             else:
-                attrs = " ".join([f'{k}="{v}"' for k, v in style.line.css().items()])
+                attrs = style.line.css()
                 z = style.line.zorder
 
-            self.elements.append((z, f'<polyline points="{points}" {attrs} />'))
+            element = Polyline(points=dxy, attrs=attrs)
+            self.elements.append((z, element))
 
     def polygon(
         self,
@@ -281,16 +253,10 @@ class Canvas:
         xs, ys = arr[:, 0], arr[:, 1]
         dx, dy = self._to_display(xs, ys, cs)
         dxy = list(zip(dx, dy))
+        attrs = attrs or {}
+        _attrs = {**style.css(), **attrs}
 
-        points = " ".join([f"{x},{y}" for x, y in dxy])
-        attrs_rendered = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
-
-        if attrs:
-            attrs_rendered += " " + " ".join([f'{k}="{v}"' for k, v in attrs.items()])
-
-        self.elements.append(
-            (style.zorder, f'<polygon points="{points}" {attrs_rendered} />')
-        )
+        self.elements.append((style.zorder, Polygon(points=dxy, attrs=_attrs)))
 
     def text(
         self,
@@ -304,17 +270,13 @@ class Canvas:
     ) -> None:
         """Plots text, with an optional rotation angle."""
         dx, dy = self._to_display(x, y, cs)
-        attrs_rendered = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
+        _attrs = style.css()
 
         if angle:
-            attrs_rendered += f' transform="rotate({angle}, {dx}, {dy})"'
+            _attrs["transform"] = f"rotate({angle}, {dx}, {dy})"
 
-        if attrs:
-            attrs_rendered += " " + " ".join([f'{k}="{v}"' for k, v in attrs.items()])
-
-        self.elements.append(
-            (style.zorder, f'<text x="{dx}" y="{dy}" {attrs_rendered} >{value}</text>')
-        )
+        element = Text(x=dx, y=dy, attrs=_attrs, text=value)
+        self.elements.append((style.zorder, element))
 
     def title(
         self,
@@ -324,13 +286,11 @@ class Canvas:
         dx = self.figure_width / 2
         dy = self.style.figure_padding + style.font_size
 
-        attrs_rendered = " ".join([f'{k}="{v}"' for k, v in style.css().items()])
+        _attrs = {**style.css(), "text-anchor": "middle"}
 
-        attrs_rendered += f' text-anchor="middle" '
+        element = Text(x=dx, y=dy, attrs=_attrs, text=value)
 
-        self.figure_elements.append(
-            (style.zorder, f'<text x="{dx}" y="{dy}" {attrs_rendered} >{value}</text>')
-        )
+        self.figure_elements.append((style.zorder, element))
 
         self.figure_height += self.style.figure_padding + style.font_size
         self.axes_y += self.style.figure_padding + style.font_size
@@ -339,7 +299,15 @@ class Canvas:
         self.elements.append(
             (
                 -1_000_000,
-                f'<rect x="-100" y="-100" height="{self.height+200}" width="{self.width+200}" fill="{self.style.background_color.as_hex()}" />',
+                Rectangle(
+                    x=-100,
+                    y=-100,
+                    height=self.height + 200,
+                    width=self.width + 200,
+                    attrs={
+                        "fill": self.style.background_color.as_hex(),
+                    },
+                ),
             )
         )
 
@@ -347,44 +315,63 @@ class Canvas:
         self.elements.append(
             (
                 1_000_000,
-                f'<rect x="{x}" y="{y}" height="{height}" width="{width}" fill="none" stroke="{color}" stroke-width="{stroke_width}" />',
+                Rectangle(
+                    x=x,
+                    y=y,
+                    height=height,
+                    width=width,
+                    attrs={
+                        "fill": "none",
+                        "stroke": color,
+                        "stroke-width": stroke_width,
+                    },
+                ),
             )
         )
 
-    def render(self, pretty: bool = False) -> str:
+    def render(self) -> str:
         """Renders the canvas to an SVG string"""
 
-        result = (
-            f'<svg width="{self.figure_width}" height="{self.figure_height}" '
-            f'xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {self.figure_width} {self.figure_height}">'
+        sorted_by_z = sorted(self.elements, key=lambda e: e[0])
+        axes_elements = [e for _, e in sorted_by_z]
+        axes_svg = SVG(
+            x=self.axes_x,
+            y=self.axes_y,
+            height=self.height,
+            width=self.width,
+            children=[
+                Defs(children=self.defs),
+                Group(
+                    id="axes",
+                    attrs={
+                        "clip-path": "url(#axes-clip-path)",
+                    },
+                    children=axes_elements,
+                ),
+            ],
         )
 
-        result += f'<rect x="0" y="0" height="{self.figure_height}" width="{self.figure_width}" fill="{self.style.figure_background_color.as_hex()}" />'
+        figure_elements = [
+            e for _, e in sorted(self.figure_elements, key=lambda e: e[0])
+        ]
+        figure_svg = SVG(
+            height=self.figure_height,
+            width=self.figure_width,
+            children=[
+                Rectangle(
+                    x=0,
+                    y=0,
+                    height=self.figure_height,
+                    width=self.figure_width,
+                    attrs={"fill": self.style.figure_background_color.as_hex()},
+                ),
+                *figure_elements,
+                axes_svg,
+            ],
+        )
+        return figure_svg.render()
 
-        result += "\n".join([e for _, e in self.figure_elements])
-
-        result += f'<svg x="{self.axes_x}" y="{self.axes_y}" width="{self.width}" height="{self.height}" viewBox="0 0 {self.width} {self.height}">'
-
-        result += "\n\n<defs>\n"
-        for d in self.defs:
-            result += f"{d}\n"
-        result += "</defs>\n\n"
-
-        sorted_by_z = sorted(self.elements, key=lambda e: e[0])
-        elements = [e for _, e in sorted_by_z]
-        result += '<g id="axes" clip-path="url(#axes-clip-path)">'
-        result += "\n".join(elements)
-
-        result += "</g></svg></svg>"
-
-        if pretty:
-            import xml.dom.minidom
-
-            result = xml.dom.minidom.parseString(result).toprettyxml(indent="  ")
-
-        return result
-
-    def export(self, filename: str | Path, pretty: bool = False) -> None:
+    def export(self, filename: str | Path) -> None:
         """
         Exports the SVG to an SVG or PNG file. Type is inferred by filename.
         """
@@ -403,4 +390,4 @@ class Canvas:
             return
 
         with open(filename, "w", buffering=1024 * 1024) as outfile:
-            outfile.write(self.render(pretty=pretty))
+            outfile.write(self.render())

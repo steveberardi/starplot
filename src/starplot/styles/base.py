@@ -56,6 +56,10 @@ class BaseStyle(BaseModel):
             original_value = getattr(self._original, field_name)
             setattr(self, field_name, original_value)
 
+    @property
+    def css_string(self) -> str:
+        return " ".join([f'{k}="{v}"' for k, v in self.css().items()])
+
 
 class GradientDirection(str, Enum):
     LINEAR = "linear"
