@@ -23,7 +23,6 @@ from starplot.styles.markers import (
     circle_dotted_rings,
 )
 
-
 ColorStr = Annotated[
     Color,
     PlainSerializer(
@@ -363,6 +362,9 @@ class MarkerStyle(BaseStyle):
     dash_capstyle: CapStyleEnum = CapStyleEnum.PROJECTING
     """Style of dash endpoints"""
 
+    dash_spacing: float | None = None
+    """SVG ONLY - Spacing for dashes"""
+
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
     """Symbol for marker"""
 
@@ -386,12 +388,16 @@ class MarkerStyle(BaseStyle):
             "stroke-width": self.edge_width,
             "stroke-opacity": self.alpha,
         }
-        if isinstance(self.line_style, str):
-            ls_css = LineStyleEnum(self.line_style).css()
-            if ls_css:
-                attrs["stroke-dasharray"] = ls_css
-        elif self.line_style:
-            attrs["stroke-dasharray"] = ",".join([str(n) for n in self.line_style[1]])
+        if self.dash_spacing:
+            attrs.update(
+                {"pathLength": 100, "stroke-dasharray": f"0 {100/self.dash_spacing}"}
+            )
+        # if isinstance(self.line_style, str):
+        #     ls_css = LineStyleEnum(self.line_style).css()
+        #     if ls_css:
+        #         attrs["stroke-dasharray"] = ls_css
+        # elif self.line_style:
+        #     attrs["stroke-dasharray"] = ",".join([str(n) for n in self.line_style[1]])
 
         attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
 
@@ -1031,6 +1037,8 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.CIRCLE,
             fill=FillStyleEnum.FULL,
             line_style=(0, (1, 2)),
+            dash_spacing=33,
+            dash_capstyle=CapStyleEnum.ROUND,
             edge_width=1.3,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),

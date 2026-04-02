@@ -186,7 +186,7 @@ def rotate_bbox(bbox, angle, cx=None, cy=None):
 
 
 def get_text_hw(text, font_size: int, font_weight: int = 400) -> tuple[float, float]:
-    char_width = font_size * (0.7 if font_weight >= 500 else 0.5)
+    char_width = font_size * (0.65 if font_weight >= 500 else 0.6)
     width = len(text) * char_width
     height = font_size
     return height, width
@@ -318,6 +318,30 @@ class TextPlotterMixin:
 
         return True
 
+    def _offset_from_marker(
+        self, style: LabelStyle, text: str, marker_size: float, scale: float
+    ) -> LabelStyle:
+        if style.offset_x != "auto" and style.offset_y != "auto":
+            return style
+
+        new_style = style.model_copy()
+
+        height, _ = get_text_hw(text, style.font_size, style.font_weight)
+        size = marker_size * scale
+        offset_x = style.offset_x
+        offset_y = style.offset_y
+
+        if offset_x == "auto":
+            offset_x = size / 2 + 3
+
+        if offset_y == "auto":
+            offset_y = size / 2 - height / 2
+
+        new_style.offset_x = offset_x
+        new_style.offset_y = offset_y
+
+        return new_style
+
     def _text_point(
         self,
         ra: float,
@@ -434,6 +458,8 @@ class TextPlotterMixin:
                     attrs=attrs,
                 )
                 self._add_label_to_rtree(text, bbox=bbox)
+                if self.debug_text:
+                    self._debug_bbox(bbox, color="red", width=1)
                 return
 
             if is_final_attempt:

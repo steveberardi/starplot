@@ -215,9 +215,6 @@ class Canvas:
         self,
         coordinates: list[tuple[float, float]] = None,
         style: PathStyle | LineStyle = None,
-        label: str = None,
-        num_labels: int = 2,
-        collision_handler: CollisionHandler = None,
     ) -> None:
         if self.projection.edge_x is not None:
             lines = _geometry.split_line_at_x(
@@ -232,12 +229,8 @@ class Canvas:
             dx, dy = self._to_display(xs, ys)
             dxy = list(zip(dx, dy))
 
-            if isinstance(style, LineStyle):
-                attrs = style.css()
-                z = style.zorder
-            else:
-                attrs = style.line.css()
-                z = style.line.zorder
+            attrs = style.css()
+            z = style.zorder
 
             element = Polyline(points=dxy, attrs=attrs)
             self.elements.append((z, element))
@@ -270,7 +263,9 @@ class Canvas:
     ) -> None:
         """Plots text, with an optional rotation angle."""
         dx, dy = self._to_display(x, y, cs)
-        _attrs = style.css()
+
+        attrs = attrs or {}
+        _attrs = {**style.css(), **attrs}
 
         if angle:
             _attrs["transform"] = f"rotate({angle}, {dx}, {dy})"
@@ -332,8 +327,8 @@ class Canvas:
     def render(self) -> str:
         """Renders the canvas to an SVG string"""
 
-        sorted_by_z = sorted(self.elements, key=lambda e: e[0])
-        axes_elements = [e for _, e in sorted_by_z]
+        axes_sorted_by_z = sorted(self.elements, key=lambda e: e[0])
+        axes_elements = [e for _, e in axes_sorted_by_z]
         axes_svg = SVG(
             x=self.axes_x,
             y=self.axes_y,
@@ -351,9 +346,8 @@ class Canvas:
             ],
         )
 
-        figure_elements = [
-            e for _, e in sorted(self.figure_elements, key=lambda e: e[0])
-        ]
+        figure_sorted_by_z = sorted(self.figure_elements, key=lambda e: e[0])
+        figure_elements = [e for _, e in figure_sorted_by_z]
         figure_svg = SVG(
             height=self.figure_height,
             width=self.figure_width,

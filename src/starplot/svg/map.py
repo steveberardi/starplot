@@ -16,7 +16,8 @@ from starplot.plotters import (
     GradientBackgroundMixin,
     ArrowPlotterMixinSVG,
 )
-from starplot.plotters.text import CollisionHandler
+
+# from starplot.plotters.text import CollisionHandler
 from starplot.projections import StereoNorth, StereoSouth, ProjectionBase
 from starplot.styles import (
     ObjectStyle,
@@ -29,7 +30,7 @@ from starplot.profile import profile
 from starplot.styles.helpers import use_style
 from starplot.svg.base import BasePlot
 from starplot.svg.dsos import DsoPlotterMixin
-from starplot.svg.text import TextPlotterMixin
+from starplot.svg.text import TextPlotterMixin, CollisionHandler
 
 
 class MapPlot(

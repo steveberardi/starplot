@@ -51,8 +51,7 @@ observer = Observer(
 
 style.constellation_lines.width = 2
 style.constellation_borders.width = 1
-style.dso_open_cluster.marker.line_style = (0, (1, 3))
-style.dso_open_cluster.marker.edge_width = 1
+style.dso_open_cluster.marker.edge_width = 1.6
 
 CENTER_RA = 180
 
@@ -97,6 +96,10 @@ c.gridlines()
 m57 = DSO.get(m="57")
 
 c.arrow(target=(m57.ra, m57.dec))
+
+
+# c.point_label_handler.plot_on_fail = True
+# c.point_label_handler.attempts = 1
 
 c.open_clusters(where_true_size=[False])
 

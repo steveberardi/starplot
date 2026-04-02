@@ -248,7 +248,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
         # Add to spatial index
         display_x, display_y = self.canvas._to_display(x, y)
         if display_x > 0 and display_y > 0:
-            radius = style.marker.size * self.scale
+            radius = style.marker.size * self.scale / 2
             bbox = np.array(
                 (
                     display_x - radius,
@@ -258,22 +258,20 @@ class BasePlot(StarPlotterMixinSVG, ABC):
                 )
             )
             self._markers_rtree.insert(0, bbox, None)
+            if self.debug_text:
+                self._debug_bbox(bbox, color="red", width=1)
 
-        # return
-        # TODO : handle label
-
-        # Plot label
         if label:
-            # if label_style.offset_x == "auto" or label_style.offset_y == "auto":
-            #     marker_size = ((style.marker.size / self.scale) ** 2) * (
-            #         self.scale**2
-            #     )
-
             self.text(
                 label,
                 ra,
                 dec,
-                style=style.label,
+                style=self._offset_from_marker(
+                    style=style.label,
+                    text=label,
+                    marker_size=style.marker.size,
+                    scale=self.scale,
+                ),
                 collision_handler=collision_handler or self.point_label_handler,
                 # gid=kwargs.get("gid_label") or "marker-label",
             )
@@ -902,10 +900,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
         collision_handler = collision_handler or self.path_label_handler
 
         self.canvas.line(
-            style=style,
-            label=label,
-            num_labels=num_labels,
-            collision_handler=collision_handler,
+            style=style.line,
             coordinates=prepared_coords,
             # gid="celestial-equator",
         )

@@ -176,9 +176,6 @@ class ConstellationPlotterMixinSVG:
         for coords in lines:
             self.canvas.line(
                 style=style,
-                label=None,
-                num_labels=0,
-                collision_handler=None,
                 coordinates=coords,
             )
             # line_collection = LineCollection(
@@ -247,9 +244,6 @@ class ConstellationPlotterMixinSVG:
         for coords in border_lines:
             self.canvas.line(
                 style=style,
-                label=None,
-                num_labels=0,
-                collision_handler=None,
                 coordinates=coords,
             )
 

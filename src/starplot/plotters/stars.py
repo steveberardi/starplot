@@ -132,7 +132,12 @@ class StarPlotterMixinSVG:
                     label,
                     s.ra,
                     s.dec,
-                    style=style.label,
+                    style=self._offset_from_marker(
+                        style=style.label,
+                        text=label,
+                        marker_size=star_sizes[i],
+                        scale=self.scale,
+                    ),
                     collision_handler=collision_handler,
                     gid="stars-label-name",
                 )
@@ -149,7 +154,12 @@ class StarPlotterMixinSVG:
                 bayer_desig,
                 ra,
                 dec,
-                style=self.style.bayer_labels,
+                style=self._offset_from_marker(
+                    style=self.style.bayer_labels,
+                    text=bayer_desig,
+                    marker_size=star_size,
+                    scale=self.scale,
+                ),
                 collision_handler=collision_handler,
                 gid="stars-label-bayer",
             )
@@ -159,7 +169,12 @@ class StarPlotterMixinSVG:
                 flamsteed_num,
                 ra,
                 dec,
-                style=self.style.flamsteed_labels,
+                style=self._offset_from_marker(
+                    style=self.style.flamsteed_labels,
+                    text=str(flamsteed_num),
+                    marker_size=star_size,
+                    scale=self.scale,
+                ),
                 collision_handler=collision_handler,
                 gid="stars-label-flamsteed",
             )
