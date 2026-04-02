@@ -37,6 +37,7 @@ dependencies = [
     "sqlglot >= 28.9.0",
     "ibis-framework[duckdb,geospatial] >= 11",
     "astropy-healpix >= 1.1.2",
+    "fonttools>=4.62.1",
     "cairosvg>=2.9.0",
     "resvg-py"
 ]

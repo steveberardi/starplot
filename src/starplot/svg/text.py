@@ -332,10 +332,10 @@ class TextPlotterMixin:
         offset_y = style.offset_y
 
         if offset_x == "auto":
-            offset_x = size / 2 + 3
+            offset_x = round(size / 2 + 3, self.canvas.precision)
 
         if offset_y == "auto":
-            offset_y = size / 2 - height / 2
+            offset_y = round(size / 2 - height / 2, self.canvas.precision)
 
         new_style.offset_x = offset_x
         new_style.offset_y = offset_y
