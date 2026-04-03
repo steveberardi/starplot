@@ -136,6 +136,13 @@ class Ellipse(Element):
     rx: float
     ry: float
 
+@dataclass(slots=True, kw_only=True)
+class Path(Element):
+    name = "path"
+    props = ("d",)
+
+    d: str
+
 
 @dataclass(slots=True, kw_only=True)
 class Text(Element):
@@ -144,3 +151,6 @@ class Text(Element):
 
     x: float
     y: float
+
+    def render_as_path(self):
+        pass
