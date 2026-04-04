@@ -380,27 +380,19 @@ class MarkerStyle(BaseStyle):
     zorder: int = ZOrderEnum.LAYER_2
     """Zorder of marker"""
 
-    def css(self) -> dict:
+    def css(self, scale: float = 1) -> dict:
         attrs = {
             "fill": self.color.as_hex() if self.fill != FillStyleEnum.NONE else "none",
             "fill-opacity": 0 if self.fill == FillStyleEnum.NONE else self.alpha,
             "stroke": self.edge_color.as_hex() if self.edge_color else "none",
-            "stroke-width": self.edge_width,
+            "stroke-width": self.edge_width * scale,
             "stroke-opacity": self.alpha,
+            "stroke-linecap": CapStyleEnum(self.dash_capstyle).css(),
         }
         if self.dash_spacing:
             attrs.update(
                 {"pathLength": 100, "stroke-dasharray": f"0 {100/self.dash_spacing}"}
             )
-        # if isinstance(self.line_style, str):
-        #     ls_css = LineStyleEnum(self.line_style).css()
-        #     if ls_css:
-        #         attrs["stroke-dasharray"] = ls_css
-        # elif self.line_style:
-        #     attrs["stroke-dasharray"] = ",".join([str(n) for n in self.line_style[1]])
-
-        attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
-
         return attrs
 
     @property
@@ -475,12 +467,13 @@ class LineStyle(BaseStyle):
     edge_color: Optional[ColorStr] = None
     """Edge color of the line. _If the width or color is falsey then the line will NOT be drawn with an edge._"""
 
-    def css(self) -> dict:
+    def css(self, scale: float = 1) -> dict:
         attrs = {
             "fill": "none",
             "stroke": self.color.as_hex(),
-            "stroke-width": self.width,
+            "stroke-width": self.width * scale,
             "stroke-opacity": self.alpha,
+            "stroke-linecap": CapStyleEnum(self.dash_capstyle).css(),
         }
         if isinstance(self.style, (str, LineStyleEnum)):
             ls_css = LineStyleEnum(self.style).css()
@@ -488,8 +481,6 @@ class LineStyle(BaseStyle):
                 attrs["stroke-dasharray"] = ls_css
         elif self.style:
             attrs["stroke-dasharray"] = ",".join([str(n) for n in self.style[1]])
-
-        attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
 
         return attrs
 

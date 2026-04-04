@@ -1,9 +1,7 @@
 from typing import Callable
 
 import rtree
-from shapely import (
-    MultiPoint,
-)
+from shapely import MultiPoint
 from matplotlib.collections import LineCollection
 from ibis import _
 
@@ -25,7 +23,6 @@ from starplot.geometry import (
     is_wrapped_polygon,
     line_segment,
     split_line_at_meridian,
-    split_line_at_x,
 )
 from starplot.plotters.text import CollisionHandler
 
@@ -137,15 +134,6 @@ class ConstellationPlotterMixinSVG:
                 else:
                     xy_lines = [[(x1, y1), (x2, y2)]]
 
-                # Doing this on the line function now
-                # if self.canvas.projection.edge_x is not None:
-                #     edge_x = self.canvas.projection.edge_x
-                #     newlines = []
-                #     for line in xy_lines:
-                #         result = split_line_at_x(line, edge_x, offset=0.00001)
-                #         newlines.extend(result)
-                #     xy_lines = newlines
-
                 display_lines = [
                     [self.canvas._to_display(*p) for p in line] for line in xy_lines
                 ]
@@ -178,14 +166,6 @@ class ConstellationPlotterMixinSVG:
                 style=style,
                 coordinates=coords,
             )
-            # line_collection = LineCollection(
-            #     lines,
-            #     clip_on=True,
-            #     clip_path=self._background_clip_path,
-            #     gid="constellations-line",
-            #     **style.matplot_line_collection_kwargs(self.scale),
-            # )
-            # self.ax.add_collection(line_collection)
 
         if self._constellations_rtree.get_size() == 0:
             self._constellations_rtree = rtree.index.Index(

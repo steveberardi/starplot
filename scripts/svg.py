@@ -58,16 +58,16 @@ CENTER_RA = 180
 cas = Constellation.get(iau_id="cas")
 
 c = MapPlot(
-    ra_min=18 * 15,
-    ra_max=26 * 15,
-    dec_min=10,
-    dec_max=60,
+    # ra_min=18 * 15,
+    # ra_max=26 * 15,
+    # dec_min=10,
+    # dec_max=60,
     # projection=Miller(center_ra=CENTER_RA),
-    projection=StereoNorth(center_ra=19 * 15),
-    # projection=Mollweide(),
+    # projection=StereoNorth(center_ra=19 * 15),
+    projection=Mollweide(),
     style=style,
     resolution=4000,
-    scale=0.98,
+    scale=0.46,
     debug=True,
     # debug_text=True,
     # clip_path=Polygon(cas.border.coords),
@@ -79,6 +79,7 @@ c.constellation_borders()
 
 c.stars(
     where=[_.magnitude < 6],
+    where_labels=[_.magnitude < 5],
     # catalog=BIG_SKY,
     bayer_labels=True,
     flamsteed_labels=True,
@@ -130,7 +131,7 @@ c.title("Hello World!!", style__border_color="black", style__border_width=400)
 
 
 c.export("temp/orion.svg")
-c.export("temp/orion.png")
+# c.export("temp/orion.png")
 
 
 elapsed = time.perf_counter() - start

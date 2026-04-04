@@ -21,7 +21,7 @@ from starplot.styles import (
     AnchorPointEnum,
 )
 from starplot.plotters.text import CollisionHandler
-from starplot.projections import ProjectionBase
+from starplot.projections import ProjectionBase, latlon_bounds_to_projection
 from starplot.svg import symbols
 from starplot.svg.elements import (
     SVG,
@@ -125,7 +125,10 @@ class Canvas:
         return np.round(x, self.precision), np.round(y, self.precision)
 
     def _is_global(self):
-        return abs(self.bounds[0] - self.bounds[2]) >= 360
+        return (
+            abs(self.bounds[0] - self.bounds[2]) >= 360
+            and abs(self.bounds[1] - self.bounds[3]) >= 180
+        )
 
     def _init_bounds(self):
         # if self._is_global():
@@ -134,9 +137,17 @@ class Canvas:
         # else:
         #     self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(*self.bounds)
 
-        self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
-            *self.bounds, densify_pts=100
-        )
+        if self._is_global():
+            self.minx, self.miny, self.maxx, self.maxy = self.projection.bounds
+        else:
+            self.minx, self.miny, self.maxx, self.maxy = latlon_bounds_to_projection(
+                *self.bounds,
+                target_crs=self.projection._crs,
+            )
+
+        # self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
+        #     *self.bounds, densify_pts=100
+        # )
         self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
 
         span_x = abs(self.maxx - self.minx)
@@ -181,6 +192,7 @@ class Canvas:
         self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
         self.logger.debug(f"Bounds = {self.bounds}")
         self.logger.debug(f"Extent (X) = {int(self.minx)} >> {int(self.maxx)}")
+        self.logger.debug(f"Extent (Y) = {int(self.miny)} >> {int(self.maxy)}")
         self.logger.debug(f"Size (h X w) = {int(self.height)} x {self.width}")
 
     def _add_def(self, def_id: str, value: str):
@@ -193,7 +205,7 @@ class Canvas:
         dx, dy = self._to_display(x, y)
 
         element = symbols.create(
-            dx, dy, style.size * self.scale, style.symbol, style.css()
+            dx, dy, style.size * self.scale, style.symbol, style.css(self.scale)
         )
         self.elements.append((style.zorder, element))
 
@@ -207,9 +219,12 @@ class Canvas:
             for x, y, size in list(zip(dx, dy, sizes))
         ]
 
-        group = Group(id=gid, attrs=style.css(), children=elements)
-
-        self.elements.append((style.zorder, group))
+        self.elements.append(
+            (
+                style.zorder,
+                Group(id=gid, attrs=style.css(self.scale), children=elements),
+            )
+        )
 
     def line(
         self,
@@ -229,11 +244,8 @@ class Canvas:
             dx, dy = self._to_display(xs, ys)
             dxy = list(zip(dx, dy))
 
-            attrs = style.css()
-            z = style.zorder
-
-            element = Polyline(points=dxy, attrs=attrs)
-            self.elements.append((z, element))
+            attrs = style.css(self.scale)
+            self.elements.append((style.zorder, Polyline(points=dxy, attrs=attrs)))
 
     def polygon(
         self,
@@ -270,8 +282,7 @@ class Canvas:
         if angle:
             _attrs["transform"] = f"rotate({angle}, {dx}, {dy})"
 
-        element = Text(x=dx, y=dy, attrs=_attrs, text=value)
-        self.elements.append((style.zorder, element))
+        self.elements.append((style.zorder, Text(x=dx, y=dy, attrs=_attrs, text=value)))
 
     def title(
         self,
@@ -363,7 +374,7 @@ class Canvas:
                 axes_svg,
             ],
         )
-        return figure_svg.render(text_as_path=True)
+        return figure_svg.render(text_as_path=False)
 
     def export(self, filename: str | Path) -> None:
         """

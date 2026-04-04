@@ -3,7 +3,7 @@ from functools import cached_property
 
 import numpy as np
 from cartopy import crs as ccrs
-from pyproj import CRS, Proj
+from pyproj import CRS, Proj, Transformer
 from pydantic import BaseModel, Field
 
 from starplot.constants import PROJ_R
@@ -34,6 +34,54 @@ def get_projection_bounds(projection: Proj, central_lon=0, n=100_000):
     )
 
 
+def latlon_bounds_to_projection(
+    lon_min: float,
+    lat_min: float,
+    lon_max: float,
+    lat_max: float,
+    target_crs: str | CRS,
+    densify_edges: bool = True,
+    densify_pts: int = 21,
+) -> tuple[float, float, float, float]:
+    """
+    Convert a lat/lon bounding box to a target projection.
+
+    Args:
+        lat_min, lat_max: Latitude range in degrees
+        lon_min, lon_max: Longitude range in degrees
+        target_crs: Any pyproj-accepted CRS string (EPSG code, PROJ string, WKT)
+        densify_edges: Sample points along each edge (important for curved projections)
+        densify_pts: Number of points per edge when densifying
+
+    Returns:
+        Bounds in the target projection's native units
+    """
+    transformer = Transformer.from_crs("EPSG:4326", target_crs, always_xy=True)
+
+    if densify_edges:
+        # Sample along all 4 edges to catch curved projection boundaries
+        top = [(lon, lat_max) for lon in np.linspace(lon_min, lon_max, densify_pts)]
+        bottom = [(lon, lat_min) for lon in np.linspace(lon_min, lon_max, densify_pts)]
+        left = [(lon_min, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
+        right = [(lon_max, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
+        corners = top + bottom + left + right
+        lons, lats = zip(*corners)
+    else:
+        # Just the 4 corners
+        lons = [lon_min, lon_max, lon_min, lon_max]
+        lats = [lat_min, lat_min, lat_max, lat_max]
+
+    xs, ys = transformer.transform(lons, lats)
+
+    # Filter out inf values (points that don't project)
+    valid = [(x, y) for x, y in zip(xs, ys) if abs(x) < 1e15 and abs(y) < 1e15]
+    if not valid:
+        raise ValueError("No valid projected points — check your CRS and bounds")
+
+    xs_v, ys_v = zip(*valid)
+    return min(xs_v), min(ys_v), max(xs_v), max(ys_v)
+
+
 class CenterRA(BaseModel, ABC):
     center_ra: float = Field(default=180, ge=0, le=360)
     """Central right ascension"""
@@ -57,6 +105,8 @@ class ProjectionBase(BaseModel, ABC):
     threshold: int = 1000
 
     _ccrs = None
+
+    proj_def_base: str = None
 
     class Config:
         arbitrary_types_allowed = True
@@ -84,6 +134,13 @@ class ProjectionBase(BaseModel, ABC):
 
     @property
     def bounds(self):
+        return latlon_bounds_to_projection(
+            -180,
+            -90,
+            180,
+            90,
+            target_crs=CRS.from_proj4(self.proj_def_base),
+        )
         return get_projection_bounds(Proj(self._crs))
 
 
@@ -154,6 +211,8 @@ class Miller(ProjectionBase, CenterRA):
 
     _ccrs = ccrs.Miller
 
+    proj_def_base: str = f"+proj=mill +R={PROJ_R} +units=m"
+
     @property
     def _crs(self):
         return CRS.from_proj4(
@@ -190,6 +249,8 @@ class Mollweide(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
 
     _ccrs = ccrs.Mollweide
+
+    proj_def_base: str = f"+proj=moll +R={PROJ_R} +units=m"
 
     @property
     def _crs(self):

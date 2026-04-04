@@ -739,6 +739,8 @@ class TextPlotterMixin:
 
         style = style.model_copy()  # need a copy because we possibly mutate it below
 
+        style.font_size *= self.scale
+
         collision_handler = collision_handler or self.point_label_handler
 
         if style.offset_x == "auto":
