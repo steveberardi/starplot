@@ -613,6 +613,8 @@ class TextPlotterMixin:
             curvature_threshold: threshold for determining smooth sections
 
         """
+        style = style.model_copy()  # need a copy because we possibly mutate it below
+        style.font_size *= self.scale
 
         dx, dy = self.canvas._to_display(x, y)
         height, width = get_text_hw(
@@ -738,7 +740,6 @@ class TextPlotterMixin:
             return
 
         style = style.model_copy()  # need a copy because we possibly mutate it below
-
         style.font_size *= self.scale
 
         collision_handler = collision_handler or self.point_label_handler

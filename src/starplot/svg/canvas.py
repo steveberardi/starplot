@@ -335,7 +335,7 @@ class Canvas:
             )
         )
 
-    def render(self) -> str:
+    def render(self, text_as_path: bool = False) -> str:
         """Renders the canvas to an SVG string"""
 
         axes_sorted_by_z = sorted(self.elements, key=lambda e: e[0])
@@ -374,16 +374,16 @@ class Canvas:
                 axes_svg,
             ],
         )
-        return figure_svg.render(text_as_path=False)
+        return figure_svg.render(text_as_path=text_as_path)
 
-    def export(self, filename: str | Path) -> None:
+    def export(self, filename: str | Path, text_as_path: bool = False) -> None:
         """
         Exports the SVG to an SVG or PNG file. Type is inferred by filename.
         """
         if filename.endswith("png"):
             import cairosvg
 
-            cairosvg.svg2png(self.render(), write_to=filename)
+            cairosvg.svg2png(self.render(text_as_path=text_as_path), write_to=filename)
             return
 
             # from resvg_py import svg_to_bytes
@@ -396,4 +396,4 @@ class Canvas:
             return
 
         with open(filename, "w", buffering=1024 * 1024) as outfile:
-            outfile.write(self.render())
+            outfile.write(self.render(text_as_path=text_as_path))

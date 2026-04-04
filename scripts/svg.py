@@ -27,7 +27,9 @@ from starplot.styles import (
 )
 from starplot.svg import MapPlot
 
+from starplot.config import settings as StarplotSettings
 
+StarplotSettings.svg_text_type = "element"
 start = time.perf_counter()
 
 dt = datetime(2023, 12, 16, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
@@ -131,7 +133,7 @@ c.title("Hello World!!", style__border_color="black", style__border_width=400)
 
 
 c.export("temp/orion.svg")
-# c.export("temp/orion.png")
+c.export("temp/orion.png")
 
 
 elapsed = time.perf_counter() - start

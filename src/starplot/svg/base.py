@@ -205,8 +205,9 @@ class BasePlot(StarPlotterMixinSVG, ABC):
             filename: Filename of exported file (the format will be inferred from the extension)
 
         """
+        text_as_path = StarplotSettings.svg_text_type == "path"
         self.logger.debug("Exporting...")
-        self.canvas.export(filename)
+        self.canvas.export(filename, text_as_path=text_as_path)
 
     @use_style(ObjectStyle)
     def marker(
