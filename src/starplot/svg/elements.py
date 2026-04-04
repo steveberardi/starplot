@@ -1,6 +1,10 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
 
+from fontTools.pens.svgPathPen import SVGPathPen
+
+from starplot.svg.fonts import find_font
+
 
 @dataclass(slots=True, kw_only=True)
 class Element:
@@ -8,37 +12,12 @@ class Element:
     props: ClassVar[tuple[str]] = ()
 
     id: str | None = None
-    text: str | None = None
 
     attrs: dict = field(default_factory=dict)
     children: list["Element"] = field(default_factory=list)
 
-    def render(self, indent: int = 0) -> str:
-        pad = "  " * indent
-
-        attrs = {}
-        if self.id is not None:
-            attrs["id"] = self.id
-
-        for p in self.props:
-            if hasattr(self, f"render_{p}"):
-                attrs[p] = getattr(self, f"render_{p}")()
-            elif getattr(self, p) is not None:
-                attrs[p] = str(getattr(self, p))
-
-        if self.attrs:
-            attrs.update(self.attrs)
-        attr_str = "".join(f' {k}="{v}"' for k, v in attrs.items())
-
-        if not self.children and not self.text:
-            return f"{pad}<{self.name}{attr_str} />"
-
-        inner = self.text or ""
-        children_str = "\n".join(c.render(indent + 1) for c in self.children)
-        if children_str:
-            inner = f"\n{children_str}\n{pad}"
-
-        return f"{pad}<{self.name}{attr_str}>{inner}</{self.name}>"
+    def render(self, indent: int = 0, text_as_path: bool = False) -> str:
+        return render(self, indent, text_as_path)
 
 
 @dataclass(slots=True, kw_only=True)
@@ -136,6 +115,7 @@ class Ellipse(Element):
     rx: float
     ry: float
 
+
 @dataclass(slots=True, kw_only=True)
 class Path(Element):
     name = "path"
@@ -151,6 +131,118 @@ class Text(Element):
 
     x: float
     y: float
+    text: str
 
     def render_as_path(self):
-        pass
+        """
+
+        TODO:
+            - anchor points
+        """
+        font_family = self.attrs["font-family"].split(",")[0]
+        font_weight = int(self.attrs["font-weight"])
+        is_italic = self.attrs["font-style"] == "italic"
+        font = find_font(family=font_family, weight=font_weight, italic=is_italic)
+
+        x, y = self.x, self.y
+        font_size = int(self.attrs["font-size"])
+        glyf = font.getGlyphSet()
+        cmap = font.getBestCmap()
+        hmtx = font["hmtx"].metrics
+        units_per_em = font["head"].unitsPerEm
+        scale = font_size / units_per_em
+
+        # Calculate total width first
+        total_width = (
+            sum(hmtx[cmap[ord(c)]][0] for c in self.text if ord(c) in cmap) * scale
+        )
+
+        anchor = self.attrs.get("text-anchor")
+        if anchor == "end":
+            x -= total_width
+        elif anchor == "middle":
+            x -= total_width / 2
+
+        paths = []
+        cursor_x = x
+        line_height = font_size * 1.13
+
+        for char in self.text:
+            if char == "\n":
+                cursor_x = x
+                y += line_height
+                continue
+
+            codepoint = ord(char)
+            glyph_name = cmap.get(codepoint)
+            if not glyph_name:
+                continue
+
+            glyph = glyf[glyph_name]
+            pen = SVGPathPen(glyf)
+            glyph.draw(pen)
+
+            pen_commands = pen.getCommands()
+
+            if pen_commands:
+                # SVG y-axis is flipped vs font coordinates
+                paths.append(
+                    Path(
+                        attrs={
+                            "transform": f"translate({cursor_x},{y}) scale({scale},{-scale})"
+                        },
+                        d=pen_commands,
+                    )
+                )
+
+            cursor_x += hmtx[glyph_name][0] * scale
+
+        group_attrs = {
+            "fill": self.attrs.get("fill") or "#000",
+            "fill-opacity": self.attrs.get("fill-opacity") or "1.0",
+        }
+
+        if self.attrs.get("stroke"):
+            group_attrs["stroke"] = self.attrs.get("stroke")
+            group_attrs["stroke-width"] = self.attrs.get("stroke-width")
+            group_attrs["stroke-opacity"] = self.attrs.get("stroke-opacity")
+            group_attrs["paint-order"] = "stroke fill"
+
+        g = Group(id=self.id, children=paths, attrs=group_attrs)
+
+        return g.render()
+
+
+def render(element: Element, indent: int = 0, text_as_path: bool = False) -> str:
+    pad = "  " * indent
+
+    attrs = {}
+    if element.id is not None:
+        attrs["id"] = element.id
+
+    for p in element.props:
+        if hasattr(element, f"render_{p}"):
+            attrs[p] = getattr(element, f"render_{p}")()
+        elif getattr(element, p) is not None:
+            attrs[p] = str(getattr(element, p))
+
+    if element.attrs:
+        attrs.update(element.attrs)
+    attr_str = "".join(f' {k}="{v}"' for k, v in attrs.items())
+
+    if not element.children and not isinstance(element, Text):
+        return f"{pad}<{element.name}{attr_str} />"
+
+    if isinstance(element, Text) and text_as_path:
+        return element.render_as_path()
+
+    elif isinstance(element, Text):
+        inner = element.text
+
+    elif element.children:
+        inner = f"\n{'\n'.join(c.render(indent + 1, text_as_path=text_as_path) for c in element.children)}\n{pad}"
+
+    else:
+        inner = ""
+
+    return f"{pad}<{element.name}{attr_str}>{inner}</{element.name}>"

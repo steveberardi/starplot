@@ -74,6 +74,9 @@ c = MapPlot(
 )
 
 
+c.constellations()
+c.constellation_borders()
+
 c.stars(
     where=[_.magnitude < 6],
     # catalog=BIG_SKY,
@@ -81,8 +84,6 @@ c.stars(
     flamsteed_labels=True,
 )
 
-c.constellations()
-c.constellation_borders()
 c.constellation_labels()
 
 
@@ -112,7 +113,7 @@ c.rectangle(
     style__edge_color="red",
 )
 
-c.title("Hello World!!")
+c.title("Hello World!!", style__border_color="black", style__border_width=400)
 
 # c.circle(
 #     center=(m57.ra, m57.dec + 15),
@@ -129,7 +130,7 @@ c.title("Hello World!!")
 
 
 c.export("temp/orion.svg")
-# c.export("temp/orion.png")
+c.export("temp/orion.png")
 
 
 elapsed = time.perf_counter() - start

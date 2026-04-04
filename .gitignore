@@ -18,6 +18,7 @@ gaia*/
 *.parquet
 
 # Data Folder
+data/fonts/*
 data/build/*
 !data/build/.keep
 

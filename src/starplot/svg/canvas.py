@@ -363,18 +363,19 @@ class Canvas:
                 axes_svg,
             ],
         )
-        return figure_svg.render()
+        return figure_svg.render(text_as_path=True)
 
     def export(self, filename: str | Path) -> None:
         """
         Exports the SVG to an SVG or PNG file. Type is inferred by filename.
         """
         if filename.endswith("png"):
-            from resvg_py import svg_to_bytes
+            import cairosvg
 
-            # import cairosvg
-            # cairosvg.svg2png(self.render(), write_to=filename)
-            # return
+            cairosvg.svg2png(self.render(), write_to=filename)
+            return
+
+            # from resvg_py import svg_to_bytes
 
             png_bytes = svg_to_bytes(svg_string=self.render())
 
