@@ -3,7 +3,7 @@ from pathlib import Path
 
 import numpy as np
 from pyproj import CRS, Transformer
-from shapely import Polygon, LineString
+from shapely import Polygon as ShapelyPolygon, LineString
 from shapely.ops import transform as _transform_shape
 
 from starplot import geometry as _geometry
@@ -98,6 +98,7 @@ class Canvas:
         self.logger = logger
 
         self._init_bounds()
+        self._init_clip_path_background()
 
     def _to_axes(self, x, y):
         px, py = self.tx.transform(x, y)
@@ -131,24 +132,23 @@ class Canvas:
         )
 
     def _init_bounds(self):
-        # if self._is_global():
-        #     self.minx, _, self.maxx, _ = self.projection.bounds
-        #     _, self.miny, _, self.maxy = self.tx.transform_bounds(*self.bounds)
-        # else:
-        #     self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(*self.bounds)
-
-        if self._is_global():
-            self.minx, self.miny, self.maxx, self.maxy = self.projection.bounds
+        if self._is_global() or self.projection.global_only:
+            self.minx, self.miny, self.maxx, self.maxy = self.projection.global_bounds
+            self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
+            self.bounds = 0.0000001, -90, 359.999999, 90
         else:
             self.minx, self.miny, self.maxx, self.maxy = latlon_bounds_to_projection(
                 *self.bounds,
                 target_crs=self.projection._crs,
             )
+            self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
+            self.bounds = self.tx.transform_bounds(
+                *self.projected_bounds, direction="INVERSE"
+            )
 
         # self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
         #     *self.bounds, densify_pts=100
         # )
-        self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
 
         span_x = abs(self.maxx - self.minx)
         span_y = abs(self.maxy - self.miny)
@@ -162,38 +162,67 @@ class Canvas:
             self.height = self.resolution
             self.width = self.height / ratio
 
-        self.bounds = self.tx.transform_bounds(
-            *self.projected_bounds, direction="INVERSE"
-        )
-
         self.figure_height = self.height + self.style.figure_padding * 2
         self.figure_width = self.width + self.style.figure_padding * 2
         self.axes_x = self.style.figure_padding
         self.axes_y = self.style.figure_padding
-
-        if self.clip_path is not None:
-            clip_display = _transform_shape(self._to_display, self.clip_path)
-            dxy = list(clip_display.exterior.coords)
-            clip_geometry_element = Polygon(points=dxy)
-        else:
-            clip_geometry_element = Rectangle(
-                x=0, y=0, height=self.height, width=self.width
-            )
-
-        axes_clip_path_id = "axes-clip-path"
-        axes_clip_path = ClipPath(
-            id=axes_clip_path_id, children=[clip_geometry_element]
-        )
-        self._add_def(
-            def_id=axes_clip_path_id,
-            value=axes_clip_path,
-        )
 
         self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
         self.logger.debug(f"Bounds = {self.bounds}")
         self.logger.debug(f"Extent (X) = {int(self.minx)} >> {int(self.maxx)}")
         self.logger.debug(f"Extent (Y) = {int(self.miny)} >> {int(self.maxy)}")
         self.logger.debug(f"Size (h X w) = {int(self.height)} x {self.width}")
+
+    def _init_clip_path_background(self):
+        if self.clip_path is not None:
+            self.clip_path_display = _transform_shape(self._to_display, self.clip_path)
+        else:
+            self._clip_path_from_bounds()
+
+        if self.style.has_gradient_background():
+            pass
+            # TODO : gradient backgrounds
+
+        dxy = list(self.clip_path_display.exterior.coords)
+        self.background_element = Polygon(
+            id="axes-background",
+            points=dxy,
+            attrs={
+                "fill": self.style.background_color.as_hex(),
+            },
+        )
+        self.elements.append(
+            (
+                -1_000_000,
+                self.background_element,
+            )
+        )
+
+        axes_clip_path_id = "axes-clip-path"
+        axes_clip_path = ClipPath(
+            id=axes_clip_path_id, children=[self.background_element]
+        )
+        self._add_def(
+            def_id=axes_clip_path_id,
+            value=axes_clip_path,
+        )
+
+    def _clip_path_from_bounds(self):
+        x0, y0, x1, y1 = self.bounds
+        coords = _geometry.extent_polygon(x0, x1, y0, y1, n=1_000)
+        xs, ys = coords[:, 0], coords[:, 1]
+
+        dx, dy = self._to_display(xs, ys)
+        dxy = list(zip(dx, dy))
+
+        coords = np.array(dxy)
+        diffs = np.diff(coords, axis=0)                        # (N-1, 2) step vectors
+        distances = np.hypot(diffs[:, 0], diffs[:, 1])        # (N-1,) euclidean distances
+        keep = np.concatenate([[True], distances >= 1])  # always keep first point
+        dxy = coords[keep]
+        dxy = list(dxy)
+
+        self.clip_path_display = ShapelyPolygon(dxy)
 
     def _add_def(self, def_id: str, value: str):
         if def_id in self.def_ids:
@@ -300,22 +329,31 @@ class Canvas:
 
         self.figure_height += self.style.figure_padding + style.font_size
         self.axes_y += self.style.figure_padding + style.font_size
+    
+    
 
     def _background(self):
+
+        
+        if self.style.has_gradient_background():
+            pass
+            # TODO : gradient backgrounds
+
+        dxy = list(self.clip_path_display.exterior.coords)
+        self.background_element = Polygon(
+            id="axes-background",
+            points=dxy,
+            attrs={
+                "fill": self.style.background_color.as_hex(),
+            },
+        )
         self.elements.append(
             (
                 -1_000_000,
-                Rectangle(
-                    x=-100,
-                    y=-100,
-                    height=self.height + 200,
-                    width=self.width + 200,
-                    attrs={
-                        "fill": self.style.background_color.as_hex(),
-                    },
-                ),
+                self.background_element,
             )
         )
+
 
     def _rectangle(self, x, y, height, width, color, stroke_width=1):
         self.elements.append(

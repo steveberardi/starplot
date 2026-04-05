@@ -107,6 +107,7 @@ class ProjectionBase(BaseModel, ABC):
     _ccrs = None
 
     proj_def_base: str = None
+    global_only: bool = False
 
     class Config:
         arbitrary_types_allowed = True
@@ -133,7 +134,7 @@ class ProjectionBase(BaseModel, ABC):
         return None
 
     @property
-    def bounds(self):
+    def global_bounds(self):
         return latlon_bounds_to_projection(
             -180,
             -90,
@@ -141,7 +142,6 @@ class ProjectionBase(BaseModel, ABC):
             90,
             target_crs=CRS.from_proj4(self.proj_def_base),
         )
-        return get_projection_bounds(Proj(self._crs))
 
 
 class AutoProjection:
@@ -251,6 +251,7 @@ class Mollweide(ProjectionBase, CenterRA):
     _ccrs = ccrs.Mollweide
 
     proj_def_base: str = f"+proj=moll +R={PROJ_R} +units=m"
+    global_only: bool = True
 
     @property
     def _crs(self):
@@ -294,6 +295,8 @@ class Robinson(ProjectionBase, CenterRA):
 
     _ccrs = ccrs.Robinson
 
+    global_only: bool = True
+
 
 class LambertAzEqArea(ProjectionBase, CenterRADEC):
     """Lambert Azimuthal Equal-Area projection - accurately shows area, but distorts angles."""
@@ -305,6 +308,15 @@ class Orthographic(ProjectionBase, CenterRADEC):
     """Shows the celestial sphere as a 3D-looking globe. Objects near the edges will be distorted."""
 
     _ccrs = ccrs.Orthographic
+
+    proj_def_base: str = f"+proj=ortho +R={PROJ_R} +units=m"
+    global_only: bool = True
+
+    @property
+    def _crs(self):
+        return CRS.from_proj4(
+            f"+proj=ortho +lat_0={self.center_dec} +lon_0={360 - self.center_ra}  +R={PROJ_R} +units=m"
+        )
 
 
 class Stereographic(ProjectionBase, CenterRADEC):

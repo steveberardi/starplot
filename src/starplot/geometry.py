@@ -339,6 +339,31 @@ def split_line_at_x(
     return segments
 
 
+def extent_polygon(
+    min_x: float,
+    max_x: float,
+    min_y: float,
+    max_y: float,
+    n: int = 100,
+) -> np.ndarray:
+    """
+    Build a polygon around an extent by sampling n points along each edge.
+    Returns an (4n, 2) array of (x, y) coordinates in order:
+    bottom → right → top → left
+    """
+    xs_bottom = np.linspace(min_x, max_x, n)
+    xs_top    = np.linspace(max_x, min_x, n)  # reversed to close polygon CCW
+    ys_left   = np.linspace(min_y, max_y, n)
+    ys_right  = np.linspace(max_y, min_y, n)  # reversed
+
+    bottom = np.column_stack([xs_bottom, np.full(n, min_y)])
+    right  = np.column_stack([np.full(n, max_x), ys_left])
+    top    = np.column_stack([xs_top,    np.full(n, max_y)])
+    left   = np.column_stack([np.full(n, min_x), ys_right])
+
+    return np.vstack([bottom, right, top, left])
+
+
 class BaseGeometry:
 
     """

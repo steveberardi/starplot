@@ -132,8 +132,6 @@ class MapPlot(
             **kwargs,
         )
 
-        self.canvas._background()
-
         self.logger.debug("Creating MapPlot...")
 
         self._adjust_radec_minmax()
@@ -170,8 +168,9 @@ class MapPlot(
 
         minx, self.dec_min, maxx, self.dec_max = self.canvas.bounds
 
-        minx += 360
-        maxx += 360
+        if minx < 0 or maxx < 0:
+            minx += 360
+            maxx += 360
 
         # adjust the X min/max if the Y bounds is near the poles
         if (isinstance(self.projection, (StereoNorth, StereoSouth))) and (
@@ -362,47 +361,3 @@ class MapPlot(
         # TODO : labels, tick marks
 
         return
-
-    def _plot_background_clip_path(self):
-        # TODO
-
-        if self.style.has_gradient_background():
-            background_color = "#ffffff00"
-            self._plot_gradient_background(self.style.background_color)
-        else:
-            background_color = self.style.background_color.as_hex()
-
-        # def to_axes(points):
-        #     ax_points = []
-
-        #     for ra, dec in points:
-        #         x, y = self._proj.transform_point(ra, dec, self._crs)
-        #         data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-        #         x_axes, y_axes = data_to_axes.transform((x, y))
-        #         ax_points.append([x_axes, y_axes])
-        #     return ax_points
-
-        # if self.clip_path is not None:
-        #     points = list(zip(*self.clip_path.exterior.coords.xy))
-        #     self._background_clip_path = patches.Polygon(
-        #         to_axes(points),
-        #         facecolor=background_color,
-        #         fill=True,
-        #         zorder=-2_000,
-        #         transform=self.ax.transAxes,
-        #     )
-        # else:
-        #     # draw patch in axes coords, which are easier to work with
-        #     # in cases like this cause they go from 0...1 in all plots
-        #     self._background_clip_path = patches.Rectangle(
-        #         (0, 0),
-        #         width=1,
-        #         height=1,
-        #         facecolor=background_color,
-        #         linewidth=0,
-        #         fill=True,
-        #         zorder=-2_000,
-        #         transform=self.ax.transAxes,
-        #     )
-
-        self._update_clip_path_polygon()

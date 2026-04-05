@@ -200,7 +200,6 @@ def create_bbox(x, y, height, width) -> BBox:
         y,
     ]
 
-
 class TextPlotterMixin:
     def __init__(self, *args, **kwargs):
         self._labels_rtree = rtree.index.Index()
@@ -225,37 +224,14 @@ class TextPlotterMixin:
         return len(ix) > 0
 
     def _is_clipped(self, points) -> bool:
-        p = self._clip_path_polygon
-
         for x, y in points:
-            if not p.contains(Point(x, y)):
+            if not self.canvas.clip_path_display.contains(Point(x, y)):
                 return True
 
         return False
 
     def _is_clipped_box(self, bbox: BBox) -> bool:
-        xmin, ymin, xmax, ymax = bbox
-        return (
-            xmin < 0
-            or ymin < 0
-            or xmax > self.canvas.width
-            or ymax > self.canvas.height
-        )
-        return not self._clip_path_polygon.contains(box(*bbox))
-
-    def _get_label_bbox(self, center, label, style) -> BBox:
-        # self.fig.draw_without_rendering() # maybe dont need this line after all?
-        extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-        result = (
-            extent.xmin,
-            extent.ymin,
-            extent.xmax,
-            extent.ymax,
-        )
-        if any([np.isnan(p) for p in result]):
-            return None
-
-        return tuple(int(p) for p in result)
+        return not self.canvas.clip_path_display.contains(box(*bbox))
 
     def _add_label_to_rtree(self, label: str, bbox: BBox) -> None:
         """

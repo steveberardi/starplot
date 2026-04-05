@@ -14,6 +14,7 @@ from starplot import (
     Miller,
     Mollweide,
     StereoNorth,
+    Orthographic,
     _,
 )
 from starplot.styles import (
@@ -30,6 +31,7 @@ from starplot.svg import MapPlot
 from starplot.config import settings as StarplotSettings
 
 StarplotSettings.svg_text_type = "element"
+
 start = time.perf_counter()
 
 dt = datetime(2023, 12, 16, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
@@ -60,16 +62,17 @@ CENTER_RA = 180
 cas = Constellation.get(iau_id="cas")
 
 c = MapPlot(
-    # ra_min=18 * 15,
-    # ra_max=26 * 15,
-    # dec_min=10,
-    # dec_max=60,
+    ra_min=18 * 15,
+    ra_max=26 * 15,
+    dec_min=10,
+    dec_max=60,
     # projection=Miller(center_ra=CENTER_RA),
-    # projection=StereoNorth(center_ra=19 * 15),
-    projection=Mollweide(),
+    projection=StereoNorth(center_ra=0.0001 * 15),
+    # projection=Mollweide(),
+    # projection=Orthographic(),
     style=style,
     resolution=4000,
-    scale=0.46,
+    scale=0.38,
     debug=True,
     # debug_text=True,
     # clip_path=Polygon(cas.border.coords),
@@ -116,7 +119,11 @@ c.rectangle(
     style__edge_color="red",
 )
 
-c.title("Hello World!!", style__border_color="black", style__border_width=400)
+c.title(
+    "Hello World!!", 
+    # style__border_color="black", 
+    # style__border_width=400,
+)
 
 # c.circle(
 #     center=(m57.ra, m57.dec + 15),
@@ -133,7 +140,7 @@ c.title("Hello World!!", style__border_color="black", style__border_width=400)
 
 
 c.export("temp/orion.svg")
-c.export("temp/orion.png")
+# c.export("temp/orion.png")
 
 
 elapsed = time.perf_counter() - start
