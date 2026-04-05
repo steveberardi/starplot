@@ -22,7 +22,7 @@ from starplot.styles import (
 )
 from starplot.plotters.text import CollisionHandler
 from starplot.projections import ProjectionBase, latlon_bounds_to_projection
-from starplot.svg import symbols
+from starplot.svg import symbols, png
 from starplot.svg.elements import (
     SVG,
     Group,
@@ -362,24 +362,6 @@ class Canvas:
         self.figure_height += self.style.figure_padding + style.font_size
         self.axes_y += self.style.figure_padding + style.font_size
 
-    def _rectangle(self, x, y, height, width, color, stroke_width=1):
-        self.elements.append(
-            (
-                1_000_000,
-                Rectangle(
-                    x=x,
-                    y=y,
-                    height=height,
-                    width=width,
-                    attrs={
-                        "fill": "none",
-                        "stroke": color,
-                        "stroke-width": stroke_width,
-                    },
-                ),
-            )
-        )
-
     def render(self, text_as_path: bool = False) -> str:
         """Renders the canvas to an SVG string"""
 
@@ -426,18 +408,7 @@ class Canvas:
         Exports the SVG to an SVG or PNG file. Type is inferred by filename.
         """
         if filename.endswith("png"):
-            import cairosvg
-
-            cairosvg.svg2png(self.render(text_as_path=text_as_path), write_to=filename)
-            return
-
-            # from resvg_py import svg_to_bytes
-
-            png_bytes = svg_to_bytes(svg_string=self.render())
-
-            with open(filename, "wb") as f:
-                f.write(png_bytes)
-
+            png.export_png_cairo(filename=filename, svg_source=self.render(text_as_path=True))
             return
 
         with open(filename, "w", buffering=1024 * 1024) as outfile:

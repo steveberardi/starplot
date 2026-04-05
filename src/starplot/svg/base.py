@@ -8,8 +8,7 @@ import numpy as np
 from shapely.geometry import box
 from shapely import Polygon, LineString
 
-from starplot.coordinates import CoordinateSystem
-from starplot import models, warnings
+from starplot import models
 from starplot import geometry as _geometry
 from starplot.config import settings as StarplotSettings, SvgTextType
 from starplot.data import load, ecliptic
@@ -33,7 +32,7 @@ from starplot.plotters import StarPlotterMixinSVG
 from starplot.svg.text import CollisionHandler
 from starplot.styles.helpers import use_style
 from starplot.profile import profile
-from starplot.svg.canvas import Canvas
+from starplot.svg.canvas import Canvas, CoordinateSystem
 
 LOGGER = logging.getLogger("starplot-svg")
 LOG_HANDLER = logging.StreamHandler()
@@ -80,9 +79,6 @@ class BasePlot(StarPlotterMixinSVG, ABC):
         *args,
         **kwargs,
     ):
-        # super().__init__(*args, **kwargs)
-        self._coordinate_system = CoordinateSystem.RA_DEC
-
         self.labels = []
         self._labels_rtree = rtree.index.Index()
         self._constellations_rtree = rtree.index.Index()
@@ -928,12 +924,28 @@ class BasePlot(StarPlotterMixinSVG, ABC):
                 )
 
     def _debug_bbox(self, bbox, color, width=1):
-        x0, y0, x1, y1 = bbox
-        self.canvas._rectangle(
-            x=x0,
-            y=y0,
-            height=y1 - y0,
-            width=x1 - x0,
-            color=color,
-            stroke_width=width,
+        """
+        Draws an unfilled box, used for debugging text collision handling
+
+        Args:
+            bbox: Bounding box (min_x, min_y, max_x, max_y) in display coordinates
+            color: Stroke color
+            width: Stroke width
+        """
+        min_x, min_y, max_x, max_y = bbox
+        self.canvas.polygon(
+            coordinates=[
+                (min_x, min_y),
+                (max_x, min_y),
+                (max_x, max_y),
+                (min_x, max_y),
+                (min_x, min_y),
+            ],
+            style=PolygonStyle(
+                fill_color=None,
+                edge_color=color,
+                edge_width=width
+            ),
+            cs=CoordinateSystem.DISPLAY,
         )
+

@@ -210,16 +210,9 @@ class ConstellationPlotterMixinSVG:
                 ls = ls.segmentize(1)
 
             xy = [c for c in ls.coords]
+            coords = [self._prepare_coords(*p) for p in xy]
+            border_lines.append(coords)
 
-            if self._coordinate_system == CoordinateSystem.RA_DEC:
-                border_lines.append(xy)
-
-            elif self._coordinate_system == CoordinateSystem.AZ_ALT:
-                coords = [self._prepare_coords(*p) for p in xy]
-                border_lines.append(coords)
-
-            else:
-                raise ValueError("Unrecognized coordinate system")
 
         for coords in border_lines:
             self.canvas.line(

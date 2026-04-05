@@ -75,7 +75,7 @@ c = MapPlot(
     resolution=4000,
     scale=0.78,
     debug=True,
-    # debug_text=True,
+    debug_text=True,
     # clip_path=Polygon(cas.border.coords),
 )
 
