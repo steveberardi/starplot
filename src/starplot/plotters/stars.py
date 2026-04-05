@@ -282,9 +282,9 @@ class StarPlotterMixinSVG:
             alpha = alpha_fn(obj)
             color = color_fn(obj) or style.marker.color.as_hex()
 
-            if obj.magnitude < 5:
+            if size > 10:
                 rtree_id += 1
-                radius = size**0.5 / 5
+                radius = size * self.scale / 2.5
                 bbox = np.array(
                     (
                         display_x - radius,

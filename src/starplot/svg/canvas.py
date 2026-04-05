@@ -32,6 +32,9 @@ from starplot.svg.elements import (
     Polyline,
     Text,
     Defs,
+    LinearGradient,
+    RadialGradient,
+    Stop,
 )
 
 
@@ -180,15 +183,44 @@ class Canvas:
             self._clip_path_from_bounds()
 
         if self.style.has_gradient_background():
-            pass
-            # TODO : gradient backgrounds
+            gradient_id = "axes-background-gradient"
+            stops = [
+                Stop(offset=offset, attrs={"stop-color": color})
+                for offset, color in self.style.background_color
+            ]
+
+            if self.style.background_gradient_direction == GradientDirection.RADIAL:
+                gradient = RadialGradient(
+                    id=gradient_id,
+                    cx=0.5,
+                    cy=0.5,
+                    r=0.5,
+                    children=stops,
+                )
+            else:
+                gradient = LinearGradient(
+                    id=gradient_id,
+                    x1=0,
+                    y1=1,
+                    x2=0,
+                    y2=0,
+                    children=stops,
+                )
+
+            self._add_def(
+                def_id=gradient_id,
+                value=gradient,
+            )
+            fill = f"url(#{gradient_id})"
+        else:
+            fill = self.style.background_color.as_hex()
 
         dxy = list(self.clip_path_display.exterior.coords)
         self.background_element = Polygon(
             id="axes-background",
             points=dxy,
             attrs={
-                "fill": self.style.background_color.as_hex(),
+                "fill": fill,
             },
         )
         self.elements.append(
@@ -216,8 +248,8 @@ class Canvas:
         dxy = list(zip(dx, dy))
 
         coords = np.array(dxy)
-        diffs = np.diff(coords, axis=0)                        # (N-1, 2) step vectors
-        distances = np.hypot(diffs[:, 0], diffs[:, 1])        # (N-1,) euclidean distances
+        diffs = np.diff(coords, axis=0)  # (N-1, 2) step vectors
+        distances = np.hypot(diffs[:, 0], diffs[:, 1])  # (N-1,) euclidean distances
         keep = np.concatenate([[True], distances >= 1])  # always keep first point
         dxy = coords[keep]
         dxy = list(dxy)
@@ -329,31 +361,6 @@ class Canvas:
 
         self.figure_height += self.style.figure_padding + style.font_size
         self.axes_y += self.style.figure_padding + style.font_size
-    
-    
-
-    def _background(self):
-
-        
-        if self.style.has_gradient_background():
-            pass
-            # TODO : gradient backgrounds
-
-        dxy = list(self.clip_path_display.exterior.coords)
-        self.background_element = Polygon(
-            id="axes-background",
-            points=dxy,
-            attrs={
-                "fill": self.style.background_color.as_hex(),
-            },
-        )
-        self.elements.append(
-            (
-                -1_000_000,
-                self.background_element,
-            )
-        )
-
 
     def _rectangle(self, x, y, height, width, color, stroke_width=1):
         self.elements.append(

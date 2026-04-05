@@ -338,10 +338,10 @@ class MapPlot(
         #     return dec_formatter_fn(x)
 
         ra_locations = ra_locations or [
-            x for x in range(0, 360, 15) if self.ra_min <= x <= self.ra_max
+            x for x in range(0, 360, 15)  # if self.ra_min <= x <= self.ra_max
         ]
         dec_locations = dec_locations or [
-            y for y in range(-80, 90, 10) if self.dec_min <= y <= self.dec_max
+            y for y in range(-80, 90, 10)  # if self.dec_min <= y <= self.dec_max
         ]
 
         for ra in ra_locations:

@@ -213,6 +213,47 @@ class Text(Element):
         return g.render()
 
 
+@dataclass(slots=True, kw_only=True)
+class Stop(Element):
+    name = "stop"
+    props = ("offset",)
+
+    offset: float
+
+    def render_offset(self):
+        return f"{int(self.offset * 100)}%"
+
+
+@dataclass(slots=True, kw_only=True)
+class LinearGradient(Element):
+    name = "linearGradient"
+    props = ("x1", "y1", "x2", "y2")
+
+    x1: float
+    x2: float
+    y1: float
+    y2: float
+
+
+@dataclass(slots=True, kw_only=True)
+class RadialGradient(Element):
+    name = "radialGradient"
+    props = ("cx", "cy", "r")
+
+    cx: float
+    cy: float
+    r: float
+
+    def render_cx(self):
+        return f"{int(self.cx * 100)}%"
+
+    def render_cy(self):
+        return f"{int(self.cy * 100)}%"
+
+    def render_r(self):
+        return f"{int(self.r * 100)}%"
+
+
 def render(element: Element, indent: int = 0, text_as_path: bool = False) -> str:
     pad = "  " * indent
 

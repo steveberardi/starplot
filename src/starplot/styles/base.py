@@ -896,6 +896,8 @@ class PlotStyle(BaseStyle):
     **Gradient backgrounds are not yet supported for optic plots that use a camera.**
     """
 
+    background_gradient_direction: GradientDirection = GradientDirection.RADIAL
+
     figure_background_color: ColorStr = ColorStr("#fff")
 
     figure_padding: int = 0

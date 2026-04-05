@@ -37,9 +37,9 @@ start = time.perf_counter()
 dt = datetime(2023, 12, 16, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 
 style = PlotStyle().extend(
-    # extensions.BLUE_NIGHT,
-    extensions.BLUE_MEDIUM,
-    # extensions.GRADIENT_TRUE_NIGHT,
+    extensions.BLUE_NIGHT,
+    # extensions.BLUE_MEDIUM,
+    extensions.GRADIENT_ASTRONOMICAL_TWILIGHT,
     extensions.MAP,
     {
         "arrow": {"body_width": 10, "head_width": 30, "head_height": 40},
@@ -56,6 +56,7 @@ observer = Observer(
 style.constellation_lines.width = 2
 style.constellation_borders.width = 1
 style.dso_open_cluster.marker.edge_width = 1.6
+style.background_gradient_direction = "linear"
 
 CENTER_RA = 180
 
@@ -66,13 +67,13 @@ c = MapPlot(
     ra_max=26 * 15,
     dec_min=10,
     dec_max=60,
-    # projection=Miller(center_ra=CENTER_RA),
+    # projection=Miller(center_ra=0.00001),
     projection=StereoNorth(center_ra=0.0001 * 15),
     # projection=Mollweide(),
     # projection=Orthographic(),
     style=style,
     resolution=4000,
-    scale=0.38,
+    scale=0.78,
     debug=True,
     # debug_text=True,
     # clip_path=Polygon(cas.border.coords),
@@ -120,8 +121,8 @@ c.rectangle(
 )
 
 c.title(
-    "Hello World!!", 
-    # style__border_color="black", 
+    "Hello World!!",
+    # style__border_color="black",
     # style__border_width=400,
 )
 
@@ -140,7 +141,7 @@ c.title(
 
 
 c.export("temp/orion.svg")
-# c.export("temp/orion.png")
+c.export("temp/orion.png")
 
 
 elapsed = time.perf_counter() - start

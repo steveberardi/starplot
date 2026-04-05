@@ -200,6 +200,7 @@ def create_bbox(x, y, height, width) -> BBox:
         y,
     ]
 
+
 class TextPlotterMixin:
     def __init__(self, *args, **kwargs):
         self._labels_rtree = rtree.index.Index()

@@ -352,14 +352,14 @@ def extent_polygon(
     bottom → right → top → left
     """
     xs_bottom = np.linspace(min_x, max_x, n)
-    xs_top    = np.linspace(max_x, min_x, n)  # reversed to close polygon CCW
-    ys_left   = np.linspace(min_y, max_y, n)
-    ys_right  = np.linspace(max_y, min_y, n)  # reversed
+    xs_top = np.linspace(max_x, min_x, n)  # reversed to close polygon CCW
+    ys_left = np.linspace(min_y, max_y, n)
+    ys_right = np.linspace(max_y, min_y, n)  # reversed
 
     bottom = np.column_stack([xs_bottom, np.full(n, min_y)])
-    right  = np.column_stack([np.full(n, max_x), ys_left])
-    top    = np.column_stack([xs_top,    np.full(n, max_y)])
-    left   = np.column_stack([np.full(n, min_x), ys_right])
+    right = np.column_stack([np.full(n, max_x), ys_left])
+    top = np.column_stack([xs_top, np.full(n, max_y)])
+    left = np.column_stack([np.full(n, min_x), ys_right])
 
     return np.vstack([bottom, right, top, left])
 
