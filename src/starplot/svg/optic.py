@@ -42,7 +42,6 @@ TODO:
 """
 
 
-
 class OpticPlot(
     BasePlot,
     ExtentMaskMixin,
@@ -115,8 +114,7 @@ class OpticPlot(
 
         projection = EquidistantOptic(center_ra=self.pos_az, center_dec=self.pos_alt)
         clip_path = self.optic.polygon(self.pos_az, self.pos_alt)
-        
-        
+
         points = list(zip(*clip_path.exterior.coords.xy))
         print(self.pos_az, self.pos_alt)
 
@@ -143,14 +141,13 @@ class OpticPlot(
             **kwargs,
         )
 
-
         self.logger.debug("Creating OpticPlot...")
 
         if self.optic.true_fov > self.FIELD_OF_VIEW_MAX:
             raise ValueError(
                 f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX}). Tip: Use horizon or map plots for wider fields of view."
             )
-        
+
         self._adjust_radec_minmax()
         self._plot_border()
 
@@ -274,7 +271,6 @@ class OpticPlot(
         )
         return df
 
-
     @use_style(LabelStyle, "info_text")
     def info(self, style: LabelStyle = None):
         """
@@ -347,8 +343,5 @@ class OpticPlot(
                 fill_color=None,
                 edge_color=self.style.border_bg_color.as_hex(),
                 edge_width=40,
-            )
+            ),
         )
-
-
-

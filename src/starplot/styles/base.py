@@ -164,9 +164,6 @@ class MarkerSymbolEnum(str, Enum):
     CIRCLE_DOT = "circle_dot"
     """\u29BF"""
 
-    CIRCLE_DOTTED_EDGE = "circle_dotted_edge"
-    """\u25CC"""
-
     CIRCLE_DOTTED_RINGS = "circle_dotted_rings"
 
     CIRCLE_LINE = "circle_line"
@@ -200,7 +197,6 @@ class MarkerSymbolEnum(str, Enum):
             MarkerSymbolEnum.CIRCLE_CROSS: circle_cross(),
             MarkerSymbolEnum.CIRCLE_CROSSHAIR: circle_crosshair(),
             MarkerSymbolEnum.CIRCLE_DOT: circle_dot(),
-            MarkerSymbolEnum.CIRCLE_DOTTED_EDGE: "$\u25CC$",
             MarkerSymbolEnum.CIRCLE_DOTTED_RINGS: circle_dotted_rings(),
             MarkerSymbolEnum.CIRCLE_LINE: circle_line(),
             MarkerSymbolEnum.COMET: "$\u2604$",

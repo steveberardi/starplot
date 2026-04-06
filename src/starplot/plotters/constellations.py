@@ -213,7 +213,6 @@ class ConstellationPlotterMixinSVG:
             coords = [self._prepare_coords(*p) for p in xy]
             border_lines.append(coords)
 
-
         for coords in border_lines:
             self.canvas.line(
                 style=style,

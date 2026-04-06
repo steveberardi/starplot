@@ -943,11 +943,6 @@ class BasePlot(StarPlotterMixinSVG, ABC):
                 (min_x, max_y),
                 (min_x, min_y),
             ],
-            style=PolygonStyle(
-                fill_color=None,
-                edge_color=color,
-                edge_width=width
-            ),
+            style=PolygonStyle(fill_color=None, edge_color=color, edge_width=width),
             cs=CoordinateSystem.DISPLAY,
         )
-

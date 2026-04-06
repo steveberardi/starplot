@@ -75,7 +75,7 @@ c = MapPlot(
     resolution=4000,
     scale=0.78,
     debug=True,
-    debug_text=True,
+    # debug_text=True,
     # clip_path=Polygon(cas.border.coords),
 )
 
@@ -103,6 +103,8 @@ c.gridlines()
 
 m57 = DSO.get(m="57")
 
+m31 = DSO.get(m="31")
+
 c.arrow(target=(m57.ra, m57.dec))
 
 
@@ -124,6 +126,17 @@ c.title(
     "Hello World!!",
     # style__border_color="black",
     # style__border_width=400,
+)
+
+c.marker(
+    ra=m31.ra,
+    dec=m31.dec,
+    style__marker__fill="full",
+    style__marker__color="red",
+    style__marker__edge_color="white",
+    style__marker__edge_width=6,
+    style__marker__symbol="circle",
+    style__marker__size=80,
 )
 
 # c.circle(

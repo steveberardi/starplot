@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 def export_png_cairo(filename: str | Path, svg_source: str):
     import cairosvg
 
@@ -13,4 +14,3 @@ def export_png_resvg(filename: str | Path, svg_source: str):
 
     with open(filename, "wb") as f:
         f.write(png_bytes)
-

@@ -408,7 +408,9 @@ class Canvas:
         Exports the SVG to an SVG or PNG file. Type is inferred by filename.
         """
         if filename.endswith("png"):
-            png.export_png_cairo(filename=filename, svg_source=self.render(text_as_path=True))
+            png.export_png_cairo(
+                filename=filename, svg_source=self.render(text_as_path=True)
+            )
             return
 
         with open(filename, "w", buffering=1024 * 1024) as outfile:
