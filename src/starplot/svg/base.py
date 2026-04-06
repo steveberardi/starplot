@@ -76,6 +76,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
         invert_x: bool = False,
         invert_y: bool = False,
         clip_path=None,
+        crs=None,
         *args,
         **kwargs,
     ):
@@ -114,6 +115,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
             invert_y=invert_y,
             # suppress_warnings=suppress_warnings,
             logger=LOGGER,
+            crs=crs,
         )
         self._update_clip_path_polygon()
         self.projection = projection

@@ -12,7 +12,6 @@ from starplot.plotters import (
     ConstellationPlotterMixinSVG,
     MilkyWayPlotterMixin,
     LegendPlotterMixin,
-    GradientBackgroundMixin,
     ArrowPlotterMixinSVG,
 )
 
@@ -41,7 +40,6 @@ class MapPlot(
     ConstellationPlotterMixinSVG,
     ArrowPlotterMixinSVG,
     # LegendPlotterMixin,
-    # GradientBackgroundMixin,
 ):
     """Creates a new map plot.
 

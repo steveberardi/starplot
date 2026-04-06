@@ -265,6 +265,24 @@ class Equidistant(ProjectionBase, CenterRADEC):
 
     _ccrs = ccrs.AzimuthalEquidistant
 
+    @property
+    def _crs(self):
+        return CRS.from_proj4(
+            f"+proj=aeqd +lat_0={self.center_dec} +lon_0={360 - self.center_ra} +R={PROJ_R} +units=m"
+        )
+
+
+class EquidistantOptic(ProjectionBase, CenterRADEC):
+    """Shows accurate distances from the center position. Often used for planispheres."""
+
+    _ccrs = ccrs.AzimuthalEquidistant
+
+    @property
+    def _crs(self):
+        return CRS.from_proj4(
+            f"+proj=aeqd +lat_0={self.center_dec} +lon_0={self.center_ra} +R={PROJ_R} +units=m"
+        )
+
 
 class StereoNorth(ProjectionBase, CenterRA):
     """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""

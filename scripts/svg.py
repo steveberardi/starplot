@@ -141,7 +141,7 @@ c.title(
 
 
 c.export("temp/orion.svg")
-c.export("temp/orion.png")
+# c.export("temp/orion.png")
 
 
 elapsed = time.perf_counter() - start
