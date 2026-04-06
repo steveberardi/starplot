@@ -214,8 +214,8 @@ class OpticPlot(
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        x, y = self._proj.transform_point(az, alt, self._crs)
-        return self.optic.in_bounds(x, y, scale)
+        x_axes, y_axes = self.canvas._to_axes(az, alt)
+        return 0 <= x_axes <= 1 and 0 <= y_axes <= 1
 
     def _calc_position(self):
         self.observe = self.observer.observe(self.ephemeris_name)
