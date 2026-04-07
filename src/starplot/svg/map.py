@@ -15,7 +15,6 @@ from starplot.plotters import (
     ArrowPlotterMixinSVG,
 )
 
-# from starplot.plotters.text import CollisionHandler
 from starplot.projections import StereoNorth, StereoSouth, ProjectionBase
 from starplot.styles import (
     ObjectStyle,

@@ -13,6 +13,9 @@ from starplot.utils import in_circle
 class Optic(BaseModel, ABC):
     """Abstract class for defining Optics."""
 
+    invert_x: bool = False
+    invert_y: bool = False
+
     def __str__(self):
         return "Optic"
 
@@ -150,6 +153,8 @@ class Refractor(Scope):
 
     """
 
+    invert_x: bool = True
+
     @property
     def label(self):
         return "Refractor"
@@ -175,6 +180,9 @@ class Reflector(Scope):
         Reflector: A new instance of a Reflector optic
 
     """
+
+    invert_x: bool = True
+    invert_y: bool = True
 
     @property
     def label(self):
@@ -240,7 +248,7 @@ class Binoculars(Optic):
     def polygon(self, center_x, center_y):
         return geometry.circle(
             center=(center_x, center_y),
-            diameter_degrees=self.radius * 2,
+            diameter_degrees=self.true_fov,
             num_pts=200,
         )
 
@@ -353,8 +361,8 @@ class Camera(Optic):
     def polygon(self, center_x, center_y):
         return geometry.rectangle(
             center=(center_x, center_y),
-            height_degrees=self.radius_y * 2,
-            width_degrees=self.radius_x * 2,
+            height_degrees=self.true_fov_y,
+            width_degrees=self.true_fov_x,
             angle=self.rotation,
         )
 

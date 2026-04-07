@@ -321,6 +321,19 @@ class LambertAzEqArea(ProjectionBase, CenterRADEC):
 
     _ccrs = ccrs.LambertAzimuthalEqualArea
 
+    @property
+    def _crs(self):
+        return CRS.from_proj4(
+            f"+proj=laea +lat_0={self.center_dec} +lon_0={self.center_ra}  +R={PROJ_R} +units=m"
+        )
+    
+    @property
+    def get_crs(self, invert_x: bool = False):
+        lon0 = 360 - self.center_ra if invert_x else self.center_ra
+        return CRS.from_proj4(
+            f"+proj=laea +lat_0={self.center_dec} +lon_0={lon0}  +R={PROJ_R} +units=m"
+        )
+
 
 class Orthographic(ProjectionBase, CenterRADEC):
     """Shows the celestial sphere as a 3D-looking globe. Objects near the edges will be distorted."""

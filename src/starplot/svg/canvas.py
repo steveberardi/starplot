@@ -7,7 +7,6 @@ from shapely import Polygon as ShapelyPolygon, LineString
 from shapely.ops import transform as _transform_shape
 
 from starplot import geometry as _geometry
-from starplot.config import settings as StarplotSettings, SvgTextType
 from starplot.styles import (
     PlotStyle,
     MarkerStyle,
@@ -20,7 +19,6 @@ from starplot.styles import (
     GradientDirection,
     AnchorPointEnum,
 )
-from starplot.plotters.text import CollisionHandler
 from starplot.projections import ProjectionBase, latlon_bounds_to_projection
 from starplot.svg import symbols, png
 from starplot.svg.elements import (
@@ -126,6 +124,13 @@ class Canvas:
         y = (1 - ay) * self.height
         if self.precision == 0:
             return x.astype(int), y.astype(int)
+
+        if self.invert_x:
+            x = self.width - x
+
+        if self.invert_y:
+            y = self.height - y
+        
         return np.round(x, self.precision), np.round(y, self.precision)
 
     def _is_global(self):
@@ -326,8 +331,8 @@ class Canvas:
 
     def text(
         self,
-        x,
-        y,
+        x: float,
+        y: float,
         value: str,
         style: LabelStyle,
         angle: float = 0,
@@ -338,7 +343,7 @@ class Canvas:
         dx, dy = self._to_display(x, y, cs)
 
         attrs = attrs or {}
-        _attrs = {**style.css(), **attrs}
+        _attrs = {**style.css(self.scale), **attrs}
 
         if angle:
             _attrs["transform"] = f"rotate({angle}, {dx}, {dy})"
@@ -353,7 +358,7 @@ class Canvas:
         dx = self.figure_width / 2
         dy = self.style.figure_padding + style.font_size
 
-        _attrs = {**style.css(), "text-anchor": "middle"}
+        _attrs = {**style.css(self.scale), "text-anchor": "middle"}
 
         element = Text(x=dx, y=dy, attrs=_attrs, text=value)
 

@@ -46,9 +46,6 @@ DEFAULT_RESOLUTION = 4096
 
 
 class BasePlot(StarPlotterMixinSVG, ABC):
-    # _background_clip_path = None
-    # _clip_path_polygon: Polygon = None  # clip path in display coordinates
-
     # point_label_handler: CollisionHandler
     """Default [collision handler][starplot.CollisionHandler] for point labels."""
 
@@ -203,7 +200,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
             filename: Filename of exported file (the format will be inferred from the extension)
 
         """
-        text_as_path = StarplotSettings.svg_text_type == "path"
+        text_as_path = StarplotSettings.svg_text_type == SvgTextType.PATH
         self.logger.debug("Exporting...")
         self.canvas.export(filename, text_as_path=text_as_path)
 

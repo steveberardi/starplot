@@ -93,15 +93,8 @@ def find_font(family: str, weight: int, italic: bool) -> TTFont:
 
     if not font_path:
         font_path = font_index.get((family.lower(), 400, italic))
-    font = TTFont(font_path)
 
-    # glyf = font.getGlyphSet()
-    # cmap = font.getBestCmap()
-
-    # units_per_em = font["head"].unitsPerEm
-
-    # return glyf, cmap, units_per_em
-    return font
+    return TTFont(font_path)
 
 
 def text_to_svg_path(
@@ -182,7 +175,9 @@ def download_fonts():
 
         download_path = path / props["url"].split("/")[-1]
         download(
-            url=props["url"], download_path=download_path, description=f"Font ({font})"
+            url=props["url"],
+            download_path=download_path,
+            description=f"Font ({font})",
         )
 
         extract_files = props.get("extract_files")

@@ -115,11 +115,6 @@ class OpticPlot(
         projection = EquidistantOptic(center_ra=self.pos_az, center_dec=self.pos_alt)
         clip_path = self.optic.polygon(self.pos_az, self.pos_alt)
 
-        points = list(zip(*clip_path.exterior.coords.xy))
-        print(self.pos_az, self.pos_alt)
-
-        print(optic.true_fov)
-
         super().__init__(
             observer,
             ephemeris,
@@ -133,8 +128,8 @@ class OpticPlot(
             suppress_warnings=suppress_warnings,
             projection=projection,
             bounds=clip_path.bounds,
-            invert_x=False,
-            invert_y=False,
+            invert_x=optic.invert_x,
+            invert_y=optic.invert_y,
             clip_path=clip_path,
             crs=CRS.from_proj4("+proj=latlon +ellps=sphere +a=6378137"),
             *args,

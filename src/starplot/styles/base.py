@@ -674,9 +674,9 @@ class LabelStyle(BaseStyle):
     zorder: int = ZOrderEnum.LAYER_4
     """Zorder of the label"""
 
-    def css(self) -> dict:
+    def css(self, scale: float = 1.0) -> dict:
         attrs = {
-            "font-size": self.font_size,
+            "font-size": self.font_size * scale,
             "font-family": f"{self.font_name}, {self.font_family}",
             "font-weight": FontWeightEnum(self.font_weight).value,
             "font-style": FontStyleEnum(self.font_style).value,
@@ -685,7 +685,7 @@ class LabelStyle(BaseStyle):
         }
         if self.border_width and self.border_color:
             attrs["stroke"] = self.border_color.as_hex()
-            attrs["stroke-width"] = self.border_width
+            attrs["stroke-width"] = self.border_width * scale
             attrs["stroke-opacity"] = self.font_alpha
             attrs["paint-order"] = "stroke fill"
 
