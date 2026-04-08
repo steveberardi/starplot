@@ -161,12 +161,36 @@ def plus(x: float, y: float, size: float, attrs: dict):
 
 
 def comet(
-    x: float,
-    y: float,
+    cx: float,
+    cy: float,
     size: float,
     attrs: dict,
+    steps: int = 100
 ):
-    # TODO
+    head_r    = size * 0.172
+    tail_len  = size * 0.7
+    tail_angle = math.radians(45)
+
+    tip = (
+        cx + math.cos(tail_angle) * tail_len,
+        cy - math.sin(tail_angle) * tail_len,
+    )
+
+    # Where the tail edges meet the head circle (±90° from tail axis)
+    a_upper = tail_angle + math.radians(90)   # 135°
+    a_lower = tail_angle - math.radians(90)   # 315°
+
+    def on_circle(angle):
+        return (cx + math.cos(angle) * head_r,
+                cy - math.sin(angle) * head_r)
+
+    end = a_lower
+    if end <= a_upper:
+        end += math.pi * 2
+
+    arc = [on_circle(a_upper + (end - a_upper) * i / steps) for i in range(steps + 1)]
+
+    points = [tip, on_circle(a_upper)] + arc + [on_circle(a_lower), tip]
     return Polygon(points=points, attrs=attrs)
 
 
@@ -182,7 +206,7 @@ SYMBOL_FUNCTIONS = {
     MarkerSymbolEnum.DIAMOND: diamond,
     MarkerSymbolEnum.STAR_4: star_4,
     MarkerSymbolEnum.PLUS: plus,
-    # MarkerSymbolEnum.COMET: comet,
+    MarkerSymbolEnum.COMET: comet,
 }
 
 

@@ -381,7 +381,7 @@ class MarkerStyle(BaseStyle):
             "fill": self.color.as_hex() if self.fill != FillStyleEnum.NONE else "none",
             "fill-opacity": 0 if self.fill == FillStyleEnum.NONE else self.alpha,
             "stroke": self.edge_color.as_hex() if self.edge_color else "none",
-            "stroke-width": self.edge_width * scale,
+            "stroke-width": round(self.edge_width * scale, 2),
             "stroke-opacity": self.alpha,
             "stroke-linecap": CapStyleEnum(self.dash_capstyle).css(),
         }
@@ -467,7 +467,7 @@ class LineStyle(BaseStyle):
         attrs = {
             "fill": "none",
             "stroke": self.color.as_hex(),
-            "stroke-width": self.width * scale,
+            "stroke-width": round(self.width * scale, 2),
             "stroke-opacity": self.alpha,
             "stroke-linecap": CapStyleEnum(self.dash_capstyle).css(),
         }
@@ -535,12 +535,12 @@ class PolygonStyle(BaseStyle):
     zorder: int = 100
     """Zorder of the polygon"""
 
-    def css(self) -> dict:
+    def css(self, scale: float = 1.0) -> dict:
         attrs = {
             "fill": self.fill_color.as_hex() if self.fill_color else "none",
             "fill-opacity": self.alpha if self.fill_color else 0,
             "stroke": self.edge_color.as_hex() if self.edge_color else "none",
-            "stroke-width": self.edge_width,
+            "stroke-width": round(self.edge_width * scale, 2),
             "stroke-opacity": self.alpha,
         }
         if isinstance(self.line_style, str):
@@ -676,7 +676,7 @@ class LabelStyle(BaseStyle):
 
     def css(self, scale: float = 1.0) -> dict:
         attrs = {
-            "font-size": self.font_size * scale,
+            "font-size": round(self.font_size * scale, 2),
             "font-family": f"{self.font_name}, {self.font_family}",
             "font-weight": FontWeightEnum(self.font_weight).value,
             "font-style": FontStyleEnum(self.font_style).value,
@@ -685,7 +685,7 @@ class LabelStyle(BaseStyle):
         }
         if self.border_width and self.border_color:
             attrs["stroke"] = self.border_color.as_hex()
-            attrs["stroke-width"] = self.border_width * scale
+            attrs["stroke-width"] = round(self.border_width * scale, 2)
             attrs["stroke-opacity"] = self.font_alpha
             attrs["paint-order"] = "stroke fill"
 

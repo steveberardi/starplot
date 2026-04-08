@@ -39,7 +39,7 @@ dt = datetime(2023, 12, 16, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 style = PlotStyle().extend(
     extensions.BLUE_NIGHT,
     # extensions.BLUE_MEDIUM,
-    extensions.GRADIENT_ASTRONOMICAL_TWILIGHT,
+    # extensions.GRADIENT_ASTRONOMICAL_TWILIGHT,
     extensions.MAP,
     {
         "arrow": {"body_width": 10, "head_width": 30, "head_height": 40},
@@ -132,11 +132,11 @@ c.marker(
     ra=m31.ra,
     dec=m31.dec,
     style__marker__fill="full",
-    style__marker__color="red",
-    style__marker__edge_color="white",
-    style__marker__edge_width=6,
-    style__marker__symbol="circle",
-    style__marker__size=80,
+    style__marker__color="hsl(195deg 100% 24%)",
+    style__marker__edge_color="hsl(195deg 100% 64%)",
+    style__marker__edge_width=2,
+    style__marker__symbol="comet",
+    style__marker__size=50,
 )
 
 # c.circle(

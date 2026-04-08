@@ -325,7 +325,7 @@ class Canvas:
         dx, dy = self._to_display(xs, ys, cs)
         dxy = list(zip(dx, dy))
         attrs = attrs or {}
-        _attrs = {**style.css(), **attrs}
+        _attrs = {**style.css(self.scale), **attrs}
 
         self.elements.append((style.zorder, Polygon(points=dxy, attrs=_attrs)))
 

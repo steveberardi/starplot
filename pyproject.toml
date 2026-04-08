@@ -41,6 +41,7 @@ dependencies = [
     "cairosvg>=2.9.0",
     "resvg-py"
 ]
+requires-python = ">=3.10,<=3.13"
 
 [project.urls]
 Home = "https://starplot.dev"

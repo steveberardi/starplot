@@ -9,30 +9,6 @@ from pydantic import BaseModel, Field
 from starplot.constants import PROJ_R
 
 
-def get_projection_bounds(projection: Proj, central_lon=0, n=100_000):
-    min_lon = central_lon - 180
-    max_lon = central_lon + 180
-
-    lons = np.linspace(min_lon, max_lon, n)
-    lats = np.linspace(-90, 90, n)
-
-    top_x, top_y = projection.transform(lons, np.full(n, 90))
-    bottom_x, bottom_y = projection.transform(lons, np.full(n, -90))
-    left_x, left_y = projection.transform(np.full(n, min_lon), lats)
-    right_x, right_y = projection.transform(np.full(n, max_lon), lats)
-
-    all_x = np.concatenate([top_x, bottom_x, left_x, right_x])
-    all_y = np.concatenate([top_y, bottom_y, left_y, right_y])
-
-    valid = np.isfinite(all_x) & np.isfinite(all_y)
-
-    return (
-        all_x[valid].min(),
-        all_y[valid].min(),
-        all_x[valid].max(),
-        all_y[valid].max(),
-    )
-
 
 def latlon_bounds_to_projection(
     lon_min: float,
@@ -108,6 +84,9 @@ class ProjectionBase(BaseModel, ABC):
 
     proj_def_base: str = None
     global_only: bool = False
+
+    name: str = None
+    r: int | None = PROJ_R
 
     class Config:
         arbitrary_types_allowed = True
@@ -210,6 +189,8 @@ class Miller(ProjectionBase, CenterRA):
     """Similar to Mercator: good for declinations between -70 and 70, but distorts objects near the poles"""
 
     _ccrs = ccrs.Miller
+
+    name = "mill"
 
     proj_def_base: str = f"+proj=mill +R={PROJ_R} +units=m"
 
