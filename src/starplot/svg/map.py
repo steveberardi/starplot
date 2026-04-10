@@ -15,7 +15,12 @@ from starplot.plotters import (
     ArrowPlotterMixinSVG,
 )
 
-from starplot.projections import StereoNorth, StereoSouth, ProjectionBase
+from starplot.projections import (
+    StereoNorth,
+    StereoSouth,
+    ProjectionBase,
+    CoordinateReferenceSystem,
+)
 from starplot.styles import (
     ObjectStyle,
     PlotStyle,
@@ -124,6 +129,7 @@ class MapPlot(
             invert_x=False,
             invert_y=False,
             clip_path=clip_path,
+            crs=CoordinateReferenceSystem.WNU,
             *args,
             **kwargs,
         )

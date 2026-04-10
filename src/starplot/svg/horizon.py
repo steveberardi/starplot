@@ -9,11 +9,10 @@ from matplotlib import pyplot as plt, patches
 from matplotlib.ticker import FixedLocator, FuncFormatter
 from skyfield.api import Star as SkyfieldStar
 from shapely import Polygon, MultiPolygon
-from pyproj import CRS, Proj, Transformer
 
 from starplot import geometry
 from starplot.coordinates import CoordinateSystem
-from starplot.projections import LambertAzEqArea
+from starplot.projections import LambertAzEqArea, CoordinateReferenceSystem
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.plotters.text import CollisionHandler
@@ -141,12 +140,12 @@ class HorizonPlot(
             invert_x=False,
             invert_y=False,
             clip_path=None,
-            crs=CRS.from_proj4("+proj=latlon +ellps=sphere +a=6378137"),
+            crs=CoordinateReferenceSystem.ENU,
             *args,
             **kwargs,
         )
         self.logger.debug("Creating HorizonPlot...")
-        
+
         self.altaz_mask = self._extent_mask_altaz()
         self.logger.debug(f"Extent = AZ ({self.az}) ALT ({self.alt})")
 
@@ -391,14 +390,9 @@ class HorizonPlot(
 
         def alt_formatter(x, pos) -> str:
             return alt_formatter_fn(x)
-        
 
-        x_locations = az_locations or [
-            x for x in range(0, 360, 15)
-        ]
-        y_locations = alt_locations or [
-            y for y in range(-80, 90, 10)
-        ]
+        x_locations = az_locations or [x for x in range(0, 360, 15)]
+        y_locations = alt_locations or [y for y in range(-80, 90, 10)]
 
         for x in x_locations:
             coords = geometry.line_segment((x, 0), (x, 90), 0.5)
@@ -417,7 +411,6 @@ class HorizonPlot(
         # TODO : labels, tick marks
 
         return
-    
 
         x_locations = az_locations or [x for x in range(0, 360, 15)]
         x_locations = [x - 180 for x in x_locations]

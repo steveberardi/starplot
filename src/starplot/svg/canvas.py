@@ -2,7 +2,6 @@ from enum import Enum
 from pathlib import Path
 
 import numpy as np
-from pyproj import CRS, Transformer
 from shapely import Polygon as ShapelyPolygon, LineString
 from shapely.ops import transform as _transform_shape
 
@@ -19,7 +18,11 @@ from starplot.styles import (
     GradientDirection,
     AnchorPointEnum,
 )
-from starplot.projections import ProjectionBase, latlon_bounds_to_projection
+from starplot.projections import (
+    ProjectionBase,
+    latlon_bounds_to_projection,
+    CoordinateReferenceSystem,
+)
 from starplot.svg import symbols, png
 from starplot.svg.elements import (
     SVG,
@@ -34,9 +37,6 @@ from starplot.svg.elements import (
     RadialGradient,
     Stop,
 )
-
-
-CRS_WNU = CRS.from_proj4("+proj=latlon +ellps=sphere +axis=wnu +a=6378137")
 
 
 class CoordinateSystem(str, Enum):
@@ -67,7 +67,7 @@ class Canvas:
         clip_path=None,
         invert_x: bool = False,
         invert_y: bool = False,
-        crs: CRS = None,
+        crs: CoordinateReferenceSystem = None,
         debug: bool = False,
         precision: int = 2,
         logger=None,
@@ -80,7 +80,7 @@ class Canvas:
         self.axes_x = 0
         self.axes_y = 0
 
-        self.crs = crs or CRS_WNU
+        self.crs = crs or CoordinateReferenceSystem.ENU
         self.resolution = resolution
         self.projection = projection
         self.bounds = bounds
@@ -94,7 +94,7 @@ class Canvas:
         self.invert_x = invert_x
         self.invert_y = invert_y
 
-        self.tx = Transformer.from_crs(self.crs, self.projection._crs, always_xy=True)
+        self.tx = self.projection.get_transformer(source_crs=self.crs)
 
         self.logger = logger
 
@@ -130,7 +130,7 @@ class Canvas:
 
         if self.invert_y:
             y = self.height - y
-        
+
         return np.round(x, self.precision), np.round(y, self.precision)
 
     def _is_global(self):
@@ -147,7 +147,7 @@ class Canvas:
         else:
             self.minx, self.miny, self.maxx, self.maxy = latlon_bounds_to_projection(
                 *self.bounds,
-                target_crs=self.projection._crs,
+                target_crs=self.projection.get_crs(source_crs=self.crs),
             )
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
             self.bounds = self.tx.transform_bounds(

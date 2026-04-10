@@ -27,7 +27,7 @@ from starplot.styles import (
     PolygonStyle,
     AnchorPointEnum,
 )
-from starplot.projections import ProjectionBase
+from starplot.projections import ProjectionBase, CoordinateReferenceSystem
 from starplot.plotters import StarPlotterMixinSVG
 from starplot.svg.text import CollisionHandler
 from starplot.styles.helpers import use_style
@@ -73,7 +73,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
         invert_x: bool = False,
         invert_y: bool = False,
         clip_path=None,
-        crs=None,
+        crs: CoordinateReferenceSystem = None,
         *args,
         **kwargs,
     ):

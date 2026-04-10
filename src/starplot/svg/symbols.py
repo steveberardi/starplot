@@ -160,15 +160,9 @@ def plus(x: float, y: float, size: float, attrs: dict):
     return Polygon(points=points, attrs=attrs)
 
 
-def comet(
-    cx: float,
-    cy: float,
-    size: float,
-    attrs: dict,
-    steps: int = 100
-):
-    head_r    = size * 0.172
-    tail_len  = size * 0.7
+def comet(cx: float, cy: float, size: float, attrs: dict, steps: int = 100):
+    head_r = size * 0.172
+    tail_len = size * 0.7
     tail_angle = math.radians(45)
 
     tip = (
@@ -177,12 +171,11 @@ def comet(
     )
 
     # Where the tail edges meet the head circle (±90° from tail axis)
-    a_upper = tail_angle + math.radians(90)   # 135°
-    a_lower = tail_angle - math.radians(90)   # 315°
+    a_upper = tail_angle + math.radians(90)  # 135°
+    a_lower = tail_angle - math.radians(90)  # 315°
 
     def on_circle(angle):
-        return (cx + math.cos(angle) * head_r,
-                cy - math.sin(angle) * head_r)
+        return (cx + math.cos(angle) * head_r, cy - math.sin(angle) * head_r)
 
     end = a_lower
     if end <= a_upper:

@@ -1,5 +1,7 @@
 from abc import ABC
-from functools import cached_property
+from enum import Enum
+from functools import cached_property, cache
+from typing import ClassVar
 
 import numpy as np
 from cartopy import crs as ccrs
@@ -8,6 +10,10 @@ from pydantic import BaseModel, Field
 
 from starplot.constants import PROJ_R
 
+
+class CoordinateReferenceSystem(str, Enum):
+    ENU = "+proj=latlon +ellps=sphere +a=6378137"
+    WNU = "+proj=latlon +ellps=sphere +axis=wnu +a=6378137"
 
 
 def latlon_bounds_to_projection(
@@ -85,8 +91,9 @@ class ProjectionBase(BaseModel, ABC):
     proj_def_base: str = None
     global_only: bool = False
 
-    name: str = None
+    name: ClassVar[str] = None
     r: int | None = PROJ_R
+    units: str = "m"
 
     class Config:
         arbitrary_types_allowed = True
@@ -121,6 +128,30 @@ class ProjectionBase(BaseModel, ABC):
             90,
             target_crs=CRS.from_proj4(self.proj_def_base),
         )
+
+    def get_transformer(
+        self, source_crs: CoordinateReferenceSystem = None
+    ) -> Transformer:
+        src = CRS.from_proj4(source_crs.value)
+        return Transformer.from_crs(src, self.get_crs(source_crs), always_xy=True)
+
+    def get_crs(self, source_crs: CoordinateReferenceSystem = None) -> CRS:
+        params = {
+            "proj": self.name,
+            "R": self.r,
+            "units": self.units,
+        }
+
+        if hasattr(self, "center_ra"):
+            if source_crs == CoordinateReferenceSystem.WNU:
+                params["lon_0"] = 360 - self.center_ra
+            else:
+                params["lon_0"] = self.center_ra
+
+        if hasattr(self, "center_dec"):
+            params["lat_0"] = self.center_dec
+
+        return CRS.from_dict(params)
 
 
 class AutoProjection:
@@ -190,15 +221,9 @@ class Miller(ProjectionBase, CenterRA):
 
     _ccrs = ccrs.Miller
 
-    name = "mill"
+    name: ClassVar[str] = "mill"
 
     proj_def_base: str = f"+proj=mill +R={PROJ_R} +units=m"
-
-    @property
-    def _crs(self):
-        return CRS.from_proj4(
-            f"+proj=mill +lat_0=0 +lon_0={360 - self.center_ra} +x_0=0 +y_0=0 +R={PROJ_R} +units=m"
-        )
 
     @property
     def edge_x(self) -> float | None:
@@ -234,11 +259,7 @@ class Mollweide(ProjectionBase, CenterRA):
     proj_def_base: str = f"+proj=moll +R={PROJ_R} +units=m"
     global_only: bool = True
 
-    @property
-    def _crs(self):
-        return CRS.from_proj4(
-            f"+proj=moll +lon_0={360 - self.center_ra} +R={PROJ_R} +units=m"
-        )
+    name: ClassVar[str] = "moll"
 
 
 class Equidistant(ProjectionBase, CenterRADEC):
@@ -246,23 +267,7 @@ class Equidistant(ProjectionBase, CenterRADEC):
 
     _ccrs = ccrs.AzimuthalEquidistant
 
-    @property
-    def _crs(self):
-        return CRS.from_proj4(
-            f"+proj=aeqd +lat_0={self.center_dec} +lon_0={360 - self.center_ra} +R={PROJ_R} +units=m"
-        )
-
-
-class EquidistantOptic(ProjectionBase, CenterRADEC):
-    """Shows accurate distances from the center position. Often used for planispheres."""
-
-    _ccrs = ccrs.AzimuthalEquidistant
-
-    @property
-    def _crs(self):
-        return CRS.from_proj4(
-            f"+proj=aeqd +lat_0={self.center_dec} +lon_0={self.center_ra} +R={PROJ_R} +units=m"
-        )
+    name: ClassVar[str] = "aeqd"
 
 
 class StereoNorth(ProjectionBase, CenterRA):
@@ -270,11 +275,8 @@ class StereoNorth(ProjectionBase, CenterRA):
 
     _ccrs = ccrs.NorthPolarStereo
 
-    @property
-    def _crs(self):
-        return CRS.from_proj4(
-            f"+proj=stere +lat_0=90 +lon_0={360 - self.center_ra}  +R={PROJ_R} +units=m"
-        )
+    name: ClassVar[str] = "stere"
+    center_dec: float = 90
 
 
 class StereoSouth(ProjectionBase, CenterRA):
@@ -282,11 +284,8 @@ class StereoSouth(ProjectionBase, CenterRA):
 
     _ccrs = ccrs.SouthPolarStereo
 
-    @property
-    def _crs(self):
-        return CRS.from_proj4(
-            f"+proj=stere +lat_0=-90 +lon_0={360 - self.center_ra}  +R={PROJ_R} +units=m"
-        )
+    name: ClassVar[str] = "stere"
+    center_dec: float = -90
 
 
 class Robinson(ProjectionBase, CenterRA):
@@ -302,18 +301,7 @@ class LambertAzEqArea(ProjectionBase, CenterRADEC):
 
     _ccrs = ccrs.LambertAzimuthalEqualArea
 
-    @property
-    def _crs(self):
-        return CRS.from_proj4(
-            f"+proj=laea +lat_0={self.center_dec} +lon_0={self.center_ra}  +R={PROJ_R} +units=m"
-        )
-    
-    @property
-    def get_crs(self, invert_x: bool = False):
-        lon0 = 360 - self.center_ra if invert_x else self.center_ra
-        return CRS.from_proj4(
-            f"+proj=laea +lat_0={self.center_dec} +lon_0={lon0}  +R={PROJ_R} +units=m"
-        )
+    name: ClassVar[str] = "laea"
 
 
 class Orthographic(ProjectionBase, CenterRADEC):
@@ -324,14 +312,12 @@ class Orthographic(ProjectionBase, CenterRADEC):
     proj_def_base: str = f"+proj=ortho +R={PROJ_R} +units=m"
     global_only: bool = True
 
-    @property
-    def _crs(self):
-        return CRS.from_proj4(
-            f"+proj=ortho +lat_0={self.center_dec} +lon_0={360 - self.center_ra}  +R={PROJ_R} +units=m"
-        )
+    name: ClassVar[str] = "ortho"
 
 
 class Stereographic(ProjectionBase, CenterRADEC):
     """Similar to the North/South Stereographic projection, but allows custom central declination"""
 
     _ccrs = ccrs.Stereographic
+
+    name: ClassVar[str] = "stere"

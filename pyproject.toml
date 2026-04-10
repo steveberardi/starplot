@@ -30,7 +30,6 @@ dependencies = [
     "pillow >= 10.0.0",
     "PyYAML >= 6.0.1",
     "pyarrow >= 14.0.2",
-    "pyogrio >= 0.10.0",
     "rtree >= 1.2.0",
     "requests >= 2.31.0",
     "duckdb >= 1.4.4",

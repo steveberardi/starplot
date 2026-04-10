@@ -12,7 +12,7 @@ from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star, Optic, Camera
 from starplot.models.observer import Observer
-from starplot.projections import EquidistantOptic
+from starplot.projections import CoordinateReferenceSystem, Equidistant
 from starplot.styles import (
     PlotStyle,
     ObjectStyle,
@@ -112,7 +112,7 @@ class OpticPlot(
 
         self._calc_position()
 
-        projection = EquidistantOptic(center_ra=self.pos_az, center_dec=self.pos_alt)
+        projection = Equidistant(center_ra=self.pos_az, center_dec=self.pos_alt)
         clip_path = self.optic.polygon(self.pos_az, self.pos_alt)
 
         super().__init__(
@@ -131,7 +131,7 @@ class OpticPlot(
             invert_x=optic.invert_x,
             invert_y=optic.invert_y,
             clip_path=clip_path,
-            crs=CRS.from_proj4("+proj=latlon +ellps=sphere +a=6378137"),
+            crs=CoordinateReferenceSystem.ENU,
             *args,
             **kwargs,
         )

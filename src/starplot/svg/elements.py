@@ -281,7 +281,9 @@ def render(element: Element, indent: int = 0, text_as_path: bool = False) -> str
         inner = element.text
 
     elif element.children:
-        children = '\n'.join(c.render(indent + 1, text_as_path=text_as_path) for c in element.children)
+        children = "\n".join(
+            c.render(indent + 1, text_as_path=text_as_path) for c in element.children
+        )
         inner = f"\n{children}\n{pad}"
 
     else:
