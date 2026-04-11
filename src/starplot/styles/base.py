@@ -93,7 +93,7 @@ class FontWeightEnum(int, Enum):
 
     THIN = 100
     EXTRA_LIGHT = 200
-    LIGHT = 300  # matplotlib's font dict doesn't have 300?
+    LIGHT = 300
     NORMAL = 400
     MEDIUM = 500
     SEMI_BOLD = 600
