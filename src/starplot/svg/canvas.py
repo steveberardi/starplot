@@ -157,6 +157,7 @@ class Canvas:
         else:
             self.minx, self.miny, self.maxx, self.maxy = latlon_bounds_to_projection(
                 *self.bounds,
+                source_crs=self.crs,
                 target_crs=self.projection.get_crs(source_crs=self.crs),
             )
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy

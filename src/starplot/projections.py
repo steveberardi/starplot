@@ -22,6 +22,7 @@ def latlon_bounds_to_projection(
     lon_max: float,
     lat_max: float,
     target_crs: str | CRS,
+    source_crs: str = CoordinateReferenceSystem.ENU,
     densify_edges: bool = True,
     densify_pts: int = 21,
 ) -> tuple[float, float, float, float]:
@@ -38,7 +39,8 @@ def latlon_bounds_to_projection(
     Returns:
         Bounds in the target projection's native units
     """
-    transformer = Transformer.from_crs("EPSG:4326", target_crs, always_xy=True)
+    crs = CRS.from_proj4(source_crs.value)
+    transformer = Transformer.from_crs(crs, target_crs, always_xy=True)
 
     if densify_edges:
         # Sample along all 4 edges to catch curved projection boundaries

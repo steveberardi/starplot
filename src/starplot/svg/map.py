@@ -326,7 +326,7 @@ class MapPlot(
             dec_tick_locations: List of Declination locations for the tick marks (in degrees, -90...90)
         """
 
-        ra_formatter_fn_default = lambda r: f"{math.floor(r)}h"  # noqa: E731
+        ra_formatter_fn_default = lambda r: f"{math.floor(r/15)}h"  # noqa: E731
         dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
 
         ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
@@ -351,6 +351,8 @@ class MapPlot(
             self.line(
                 coordinates=coords,
                 style=style,
+                label=ra_formatter_fn(ra),
+                num_labels=2,
             )
 
         for dec in dec_locations:
@@ -358,6 +360,8 @@ class MapPlot(
             self.line(
                 coordinates=coords,
                 style=style,
+                label=dec_formatter_fn(dec),
+                num_labels=4,
             )
 
         # TODO : labels, tick marks

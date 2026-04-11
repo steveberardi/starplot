@@ -63,12 +63,12 @@ CENTER_RA = 180
 cas = Constellation.get(iau_id="cas")
 
 c = MapPlot(
-    ra_min=19.5 * 15,
-    ra_max=21 * 15,
-    dec_min=50,
-    dec_max=70,
-    # projection=Miller(center_ra=18 * 15),
-    projection=StereoNorth(center_ra=20 * 15),
+    ra_min=18 * 15,
+    ra_max=23 * 15,
+    dec_min=10,
+    dec_max=60,
+    projection=Miller(center_ra=20 * 15),
+    # projection=StereoNorth(center_ra=20 * 15),
     # projection=Mollweide(),
     # projection=Orthographic(),
     style=style,

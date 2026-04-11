@@ -26,10 +26,10 @@ from starplot.styles import (
 from starplot.svg.base import BasePlot
 from starplot.svg.dsos import DsoPlotterMixin
 from starplot.svg.text import TextPlotterMixin, CollisionHandler
+from starplot.svg.legend import LegendPlotterMixin
 from starplot.plotters import (
     ConstellationPlotterMixinSVG,
     MilkyWayPlotterMixin,
-    LegendPlotterMixin,
     ArrowPlotterMixinSVG,
 )
 
@@ -51,7 +51,7 @@ class HorizonPlot(
     ConstellationPlotterMixinSVG,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
-    # LegendPlotterMixin,
+    LegendPlotterMixin,
     ArrowPlotterMixinSVG,
     TextPlotterMixin,
 ):

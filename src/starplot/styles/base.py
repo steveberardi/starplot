@@ -1170,9 +1170,10 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_2,
         ),
         label=LabelStyle(
-            font_size=24,
+            font_size=18,
             font_color="#000",
             font_alpha=1,
+            font_weight=FontWeightEnum.LIGHT,
             anchor_point=AnchorPointEnum.BOTTOM_CENTER,
             zorder=ZOrderEnum.LAYER_5 + 1000,
         ),
