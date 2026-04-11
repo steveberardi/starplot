@@ -27,8 +27,8 @@ def circle_cross(x, y, size, attrs):
 
 
 def circle_crosshair(x, y, size, attrs):
-    r = round(size / 2, 4)
-    n = round(1.75 * r, 4)
+    r = round(size / 4, 4)
+    n = round(2 * r, 4)
 
     return Group(
         attrs=attrs,

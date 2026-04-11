@@ -77,11 +77,13 @@ class BasePlot(StarPlotterMixinSVG, ABC):
         *args,
         **kwargs,
     ):
+        super().__init__()
+
         self.labels = []
-        self._labels_rtree = rtree.index.Index()
-        self._constellations_rtree = rtree.index.Index()
-        self._stars_rtree = rtree.index.Index()
-        self._markers_rtree = rtree.index.Index()
+        # self._labels_rtree = rtree.index.Index()
+        # self._constellations_rtree = rtree.index.Index()
+        # self._stars_rtree = rtree.index.Index()
+        # self._markers_rtree = rtree.index.Index()
 
         self.language = StarplotSettings.language
 
@@ -161,10 +163,6 @@ class BasePlot(StarPlotterMixinSVG, ABC):
     def _update_clip_path_polygon(self, buffer=8):
         rectangle = box(0, 0, self.canvas.width, self.canvas.height)
         self._clip_path_polygon = rectangle.buffer(-1 * buffer)
-
-    def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
-        # TODO
-        return
 
     @property
     def magnitude_range(self) -> tuple[float, float]:
@@ -272,8 +270,8 @@ class BasePlot(StarPlotterMixinSVG, ABC):
                 # gid=kwargs.get("gid_label") or "marker-label",
             )
 
-        # if legend_label is not None:
-        #     self._legend_handles[legend_label] = result
+        if legend_label is not None:
+            self._add_legend_handle_marker(legend_label, style.marker)
 
     @use_style(ObjectStyle, "planets")
     def planets(

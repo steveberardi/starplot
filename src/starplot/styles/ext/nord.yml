@@ -155,4 +155,7 @@ bayer_labels:
 legend:
   background_color: '#515e76'
   background_alpha: 1.0
-  font_color: '#d5e0f5'
+  labels:
+    font_color: '#d5e0f5'
+  title:
+    font_color: '#d5e0f5'

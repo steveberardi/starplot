@@ -203,6 +203,8 @@ def create_bbox(x, y, height, width) -> BBox:
 
 class TextPlotterMixin:
     def __init__(self, *args, **kwargs):
+        super().__init__()
+
         self._labels_rtree = rtree.index.Index()
         self._constellations_rtree = rtree.index.Index()
         self._stars_rtree = rtree.index.Index()

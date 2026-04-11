@@ -13,7 +13,10 @@ title:
 
 legend:
   background_color: 'rgb(46, 61, 74)'
-  font_color: 'rgb(244, 233, 203)'
+  labels:
+    font_color: 'rgb(244, 233, 203)'
+  title:
+    font_color: 'rgb(244, 233, 203)'
 
 celestial_equator:
   label:

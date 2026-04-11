@@ -11,7 +11,6 @@ from starplot.models.observer import Observer
 from starplot.plotters import (
     ConstellationPlotterMixinSVG,
     MilkyWayPlotterMixin,
-    LegendPlotterMixin,
     ArrowPlotterMixinSVG,
 )
 
@@ -33,6 +32,7 @@ from starplot.styles.helpers import use_style
 from starplot.svg.base import BasePlot
 from starplot.svg.dsos import DsoPlotterMixin
 from starplot.svg.text import TextPlotterMixin, CollisionHandler
+from starplot.svg.legend import LegendPlotterMixin
 
 
 class MapPlot(
@@ -43,7 +43,7 @@ class MapPlot(
     TextPlotterMixin,
     ConstellationPlotterMixinSVG,
     ArrowPlotterMixinSVG,
-    # LegendPlotterMixin,
+    LegendPlotterMixin,
 ):
     """Creates a new map plot.
 

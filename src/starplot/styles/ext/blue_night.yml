@@ -13,7 +13,11 @@ title:
 legend:
   background_color: hsl(210, 29%, 20%)
   background_alpha: 1.0
-  font_color: hsl(210, 29%, 94%)
+  border_color: hsl(210, 29%, 60%)
+  labels:
+    font_color: hsl(210, 29%, 94%)
+  title:
+    font_color: hsl(210, 29%, 94%)
 
 info_text:
   font_color: hsl(210, 29%, 94%)

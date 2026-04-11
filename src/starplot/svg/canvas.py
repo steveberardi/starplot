@@ -17,6 +17,8 @@ from starplot.styles import (
     PolygonStyle,
     GradientDirection,
     AnchorPointEnum,
+    LegendLocationEnum,
+    LegendStyle,
 )
 from starplot.projections import (
     ProjectionBase,
@@ -50,6 +52,13 @@ def normalize(value, min_val, max_val):
     return (value - min_val) / (max_val - min_val)
 
 
+def get_text_hw(text, font_size: int, font_weight: int = 400) -> tuple[float, float]:
+    char_width = font_size * (0.65 if font_weight >= 500 else 0.6)
+    width = len(text) * char_width
+    height = font_size
+    return height, width
+
+
 class Canvas:
     """
 
@@ -76,6 +85,7 @@ class Canvas:
         self.figure_elements = []
         self.defs = []
         self.def_ids = set()
+        self.legend_element = None
 
         self.axes_x = 0
         self.axes_y = 0
@@ -367,6 +377,124 @@ class Canvas:
         self.figure_height += self.style.figure_padding + style.font_size
         self.axes_y += self.style.figure_padding + style.font_size
 
+    def legend(
+        self,
+        style: LegendStyle,
+        handles: dict,
+        title: str = "Legend",
+    ) -> None:
+        figure_x, figure_y = 20, 20
+        x = style.padding_x
+        y = style.padding_y
+        height = style.padding_y * 2
+        width = style.padding_x * 2
+        handle_elements = []
+
+        h, w = get_text_hw(
+            title,
+            font_size=style.title.font_size * self.scale,
+            font_weight=style.title.font_weight,
+        )
+        y += h
+        title_element = Text(x=x, y=y, text=title, attrs=style.title.css(self.scale))
+
+        height += h * 2 + style.label_padding
+        width = max(width, w * 1.4)
+        y += h + style.label_padding
+
+        for label, marker_style in handles.items():
+            marker_element = symbols.create(
+                x + style.symbol_size / 2,
+                y,
+                style.symbol_size * self.scale,
+                marker_style.symbol,
+                marker_style.css(self.scale),
+            )
+
+            y += style.symbol_size / 2
+            label_x = x + style.symbol_size * self.scale + style.symbol_padding
+            label_attrs = style.labels.css(self.scale)
+            label_element = Text(x=label_x, y=y, text=label, attrs=label_attrs)
+
+            handle_elements.append(
+                Group(
+                    children=[marker_element, label_element],
+                )
+            )
+
+            h, w = get_text_hw(
+                label,
+                font_size=style.labels.font_size * self.scale,
+                font_weight=style.labels.font_weight,
+            )
+            height += max(style.symbol_size * self.scale, h) + style.label_padding
+            width = max(width, w * 1.4)
+            y += h + style.label_padding
+
+        height += style.label_padding * 2
+
+        background_element = Rectangle(
+            x=0,
+            y=0,
+            height=height,
+            width=width,
+            attrs={
+                "fill": style.background_color.as_hex(),
+                "stroke": style.border_color.as_hex(),
+                "stroke-width": style.border_width,
+                "rx": style.border_radius,
+            },
+        )
+
+        loc = style.location
+
+        if loc == LegendLocationEnum.INSIDE_TOP_LEFT:
+            figure_x = self.axes_x + style.margin_x
+            figure_y = self.axes_y + style.margin_y
+        elif loc == LegendLocationEnum.INSIDE_TOP_RIGHT:
+            figure_x = self.axes_x + self.width - width - style.margin_x
+            figure_y = self.axes_y + style.margin_y
+        elif loc == LegendLocationEnum.INSIDE_BOTTOM_LEFT:
+            figure_x = self.axes_x + style.margin_x
+            figure_y = self.axes_y + self.height - height - style.margin_y
+        elif loc == LegendLocationEnum.INSIDE_BOTTOM_RIGHT:
+            figure_x = self.axes_x + self.width - width - style.margin_x
+            figure_y = self.axes_y + self.height - height - style.margin_y
+        elif loc == LegendLocationEnum.OUTSIDE_TOP_LEFT:
+            self.axes_x += width + style.margin_x
+            figure_x = self.axes_x - width - style.margin_x
+            figure_y = self.axes_y + style.margin_y
+            self.figure_width += width
+        elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_LEFT:
+            self.axes_x += width + style.margin_x
+            figure_x = self.axes_x - width - style.margin_x
+            figure_y = self.axes_y + self.height - height - style.margin_y
+            self.figure_width += width
+        elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT:
+            figure_x = self.axes_x + self.width + style.margin_x
+            figure_y = self.axes_y + self.height - height - style.margin_y
+            self.figure_width += width
+        elif loc == LegendLocationEnum.OUTSIDE_TOP_RIGHT:
+            figure_x = self.axes_x + self.width + style.margin_x
+            figure_y = self.axes_y + style.margin_y
+            self.figure_width += width
+
+        # TODO : refactor sizing figure and axes x/y to handle multiple calls to legend()
+
+        self.figure_elements.append(
+            (
+                style.zorder,
+                Group(
+                    children=[
+                        background_element,
+                        title_element,
+                        *handle_elements,
+                    ],
+                    attrs={"transform": f"translate({figure_x}, {figure_y})"},
+                ),
+            )
+        )
+
     def render(self, text_as_path: bool = False) -> str:
         """Renders the canvas to an SVG string"""
 
@@ -402,8 +530,8 @@ class Canvas:
                     width=self.figure_width,
                     attrs={"fill": self.style.figure_background_color.as_hex()},
                 ),
-                *figure_elements,
                 axes_svg,
+                *figure_elements,
             ],
         )
         return figure_svg.render(text_as_path=text_as_path)

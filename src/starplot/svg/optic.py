@@ -28,7 +28,7 @@ from starplot.utils import azimuth_to_string
 from starplot.svg.base import BasePlot
 from starplot.svg.dsos import DsoPlotterMixin
 from starplot.svg.text import TextPlotterMixin, CollisionHandler
-
+from starplot.svg.legend import LegendPlotterMixin
 
 """
 
@@ -48,7 +48,7 @@ class OpticPlot(
     # StarPlotterMixin,
     DsoPlotterMixin,
     TextPlotterMixin,
-    # LegendPlotterMixin,
+    LegendPlotterMixin,
 ):
     """Creates a new optic plot.
 

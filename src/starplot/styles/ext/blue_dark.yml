@@ -160,4 +160,7 @@ sun:
 legend:
   background_color: hsl(209, 50%, 26%)
   background_alpha: 1.0
-  font_color: hsl(209, 50%, 88%)
+  labels:
+    font_color: hsl(209, 50%, 88%)
+  title:
+    font_color: hsl(209, 50%, 88%)

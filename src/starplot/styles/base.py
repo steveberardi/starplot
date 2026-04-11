@@ -93,7 +93,7 @@ class FontWeightEnum(int, Enum):
 
     THIN = 100
     EXTRA_LIGHT = 200
-    # LIGHT = 300   # matplotlib's font dict doesn't have 300?
+    LIGHT = 300  # matplotlib's font dict doesn't have 300?
     NORMAL = 400
     MEDIUM = 500
     SEMI_BOLD = 600
@@ -241,22 +241,17 @@ class JoinStyleEnum(str, Enum):
 
 
 class LegendLocationEnum(str, Enum):
-    """Options for the location of the map legend"""
+    """Options for the location of the map legend, relative to the axes"""
 
-    INSIDE_TOP = "upper center"
-    INSIDE_TOP_LEFT = "upper left"
-    INSIDE_TOP_RIGHT = "upper right"
-    INSIDE_BOTTOM = "lower center"
-    INSIDE_BOTTOM_RIGHT = "lower right"
-    INSIDE_BOTTOM_LEFT = "lower left"
+    INSIDE_TOP_LEFT = "inside top left"
+    INSIDE_TOP_RIGHT = "inside top right"
+    INSIDE_BOTTOM_RIGHT = "inside bottom right"
+    INSIDE_BOTTOM_LEFT = "inside bottom left"
 
-    # OUTSIDE_TOP = "outside upper center"
-    # OUTSIDE_BOTTOM = "outside lower center"
-
-    OUTSIDE_TOP_LEFT = "outside left upper"
-    OUTSIDE_TOP_RIGHT = "outside right upper"
-    OUTSIDE_BOTTOM_RIGHT = "outside right lower"
-    OUTSIDE_BOTTOM_LEFT = "outside left lower"
+    OUTSIDE_TOP_LEFT = "outside top left"
+    OUTSIDE_TOP_RIGHT = "outside top right"
+    OUTSIDE_BOTTOM_RIGHT = "outside bottom right"
+    OUTSIDE_BOTTOM_LEFT = "outside bottom left"
 
 
 class AnchorPointEnum(str, Enum):
@@ -769,12 +764,9 @@ class PathStyle(BaseStyle):
 
 
 class LegendStyle(BaseStyle):
-    """Defines the style for the map legend. *Only applies to map plots.*"""
+    """Defines the style for the map legend."""
 
-    alignment: AlignmentEnum = AlignmentEnum.LEFT
-    """Alignment for the legend's title and entries"""
-
-    location: LegendLocationEnum = LegendLocationEnum.INSIDE_BOTTOM_RIGHT
+    location: LegendLocationEnum = LegendLocationEnum.INSIDE_TOP_RIGHT
     """Location of the legend, relative to the map area (inside or outside)"""
 
     background_color: ColorStr = ColorStr("#fff")
@@ -783,85 +775,50 @@ class LegendStyle(BaseStyle):
     background_alpha: float = 1.0
     """Background's alpha (transparency)"""
 
-    padding: float = 0
-    """Padding on the outside of the legend. Negative numbers are supported."""
-
-    padding_x: float = 0
-    """Padding (in pixels) between the _outside_ of the legend and the map in the X axis. Negative numbers are supported."""
-
-    padding_y: float = 0
-    """Padding (in pixels) between the _outside_ of the legend and the map in the Y axis. Negative numbers are supported."""
-
-    expand: bool = False
-    """If True, the legend will be expanded to fit the full width of the map"""
-
-    num_columns: int = 8
-    """Number of columns in the legend"""
-
-    label_padding: float = 1.6
-    """Padding between legend labels"""
-
-    symbol_size: int = 34
-    """Size of symbols in the legend, in points"""
-
-    symbol_padding: float = 0.2
-    """Padding between each symbol and its label"""
+    border_radius: float = 8.0
+    """Border radius of legend box"""
 
     border_color: ColorStr = ColorStr("#c5c5c5")
     """Border color of the legend box"""
 
-    border_padding: float = 1.28
-    """Padding between legend entries and the legend border"""
-
-    font_name: str = "Inter"
-    """Font name for legend labels"""
-
-    font_size: int = 23
-    """Font size of the legend labels, in points"""
-
-    font_weight: FontWeightEnum = FontWeightEnum.NORMAL
-    """Font weight of the legend labels"""
-
-    font_color: ColorStr = ColorStr("#000")
-    """Font color for legend labels"""
-
-    title_font_size: int = 36
-    """Font size of the legend title"""
-
-    title_font_weight: FontWeightEnum = FontWeightEnum.BOLD
-    """Font weight of the legend title"""
-
-    title_font_name: str = "Inter"
-    """Name of the font to use for the title. Comma-separated list."""
+    border_width: float = 1
+    """Border's width, in pixels"""
 
     zorder: int = ZOrderEnum.LAYER_5
     """Zorder of the legend"""
 
-    def matplot_kwargs(self, scale: float = 1.0) -> dict:
-        return dict(
-            loc=self.location,
-            ncols=self.num_columns,
-            framealpha=self.background_alpha,
-            prop={
-                "family": self.font_name,
-                "weight": FontWeightEnum(self.font_weight).as_matplot(),
-                "size": self.font_size * scale,
-            },
-            labelcolor=self.font_color.as_hex(),
-            borderpad=self.border_padding,
-            labelspacing=self.label_padding,
-            handletextpad=self.symbol_padding,
-            mode="expand" if self.expand else None,
-            facecolor=self.background_color.as_hex(),
-            title_fontproperties=dict(
-                weight=FontWeightEnum(self.title_font_weight).as_matplot(),
-                size=self.title_font_size,
-                family=self.title_font_name.split(","),
-            ),
-            alignment=self.alignment,
-            edgecolor=self.border_color.as_hex(),
-            borderaxespad=self.padding,
-        )
+    margin_x: float = 20
+    """Horizontal margin (empty space) between legend and its anchor position."""
+
+    margin_y: float = 20
+    """Vertical margin (empty space) between legend and its anchor position."""
+
+    padding_x: float = 40
+    """Padding (in pixels) between the _outside_ of the legend and the map in the X axis. Negative numbers are supported."""
+
+    padding_y: float = 20
+    """Padding (in pixels) between the _outside_ of the legend and the map in the Y axis. Negative numbers are supported."""
+
+    title: LabelStyle = LabelStyle(
+        font_size=54,
+        font_weight=FontWeightEnum.BOLD,
+    )
+    """Style for the legend's labels (see [LabelStyle][starplot.styles.LabelStyle])"""
+
+    label_padding: float = 24
+    """Padding between legend labels"""
+
+    labels: LabelStyle = LabelStyle(
+        font_size=28,
+        font_weight=FontWeightEnum.NORMAL,
+    )
+    """Style for the legend's labels (see [LabelStyle][starplot.styles.LabelStyle])"""
+
+    symbol_size: int = 28
+    """Size of symbols in the legend, in pixels"""
+
+    symbol_padding: float = 20
+    """Padding between each symbol and its label"""
 
 
 class PlotStyle(BaseStyle):

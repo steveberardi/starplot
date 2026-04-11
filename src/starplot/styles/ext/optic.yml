@@ -11,7 +11,7 @@ planets:
   marker:
     size: 30
 legend:
-  location: "lower center"
+  location: "outside bottom right"
 ecliptic:
   label:
     font_size: 27

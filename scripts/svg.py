@@ -63,17 +63,17 @@ CENTER_RA = 180
 cas = Constellation.get(iau_id="cas")
 
 c = MapPlot(
-    ra_min=18 * 15,
-    ra_max=26 * 15,
-    dec_min=10,
-    dec_max=60,
-    # projection=Miller(center_ra=0.00001),
-    projection=StereoNorth(center_ra=0.0001 * 15),
+    ra_min=19.5 * 15,
+    ra_max=21 * 15,
+    dec_min=50,
+    dec_max=70,
+    # projection=Miller(center_ra=18 * 15),
+    projection=StereoNorth(center_ra=20 * 15),
     # projection=Mollweide(),
     # projection=Orthographic(),
     style=style,
-    resolution=4000,
-    scale=0.78,
+    resolution=3000,
+    scale=0.95,
     debug=True,
     # debug_text=True,
     # clip_path=Polygon(cas.border.coords),
@@ -105,7 +105,7 @@ m57 = DSO.get(m="57")
 
 m31 = DSO.get(m="31")
 
-c.arrow(target=(m57.ra, m57.dec))
+# c.arrow(target=(m57.ra, m57.dec))
 
 
 # c.point_label_handler.plot_on_fail = True
@@ -114,6 +114,9 @@ c.arrow(target=(m57.ra, m57.dec))
 c.open_clusters(where_true_size=[False])
 
 c.globular_clusters(where_true_size=[False])
+c.galaxies(where=[_.magnitude < 9], where_true_size=[False])
+c.nebula(where_true_size=[False])
+
 
 c.rectangle(
     center=(m57.ra, m57.dec),
@@ -122,11 +125,11 @@ c.rectangle(
     style__edge_color="red",
 )
 
-c.title(
-    "Hello World!!",
-    # style__border_color="black",
-    # style__border_width=400,
-)
+# c.title(
+#     "Hello World!!",
+#     # style__border_color="black",
+#     # style__border_width=400,
+# )
 
 c.marker(
     ra=m31.ra,
@@ -138,6 +141,8 @@ c.marker(
     style__marker__symbol="comet",
     style__marker__size=50,
 )
+
+c.legend(style__location="inside top right")
 
 # c.circle(
 #     center=(m57.ra, m57.dec + 15),

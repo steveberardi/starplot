@@ -173,3 +173,7 @@ dso_duplicate: *DSO
 
 legend:
   background_color: hsl(48, 50%, 98%)
+  labels:
+    font_color: hsl(60, 3%, 24%)
+  title:
+    font_color: hsl(60, 3%, 24%)
