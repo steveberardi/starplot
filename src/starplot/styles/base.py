@@ -800,7 +800,7 @@ class LegendStyle(BaseStyle):
     """Padding (in pixels) between the _outside_ of the legend and the map in the Y axis. Negative numbers are supported."""
 
     title: LabelStyle = LabelStyle(
-        font_size=54,
+        font_size=42,
         font_weight=FontWeightEnum.BOLD,
     )
     """Style for the legend's labels (see [LabelStyle][starplot.styles.LabelStyle])"""

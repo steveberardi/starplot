@@ -380,59 +380,87 @@ class Canvas:
 
     def legend(
         self,
+        sections: list[tuple[str, dict]],
         style: LegendStyle,
-        handles: dict,
-        title: str = "Legend",
     ) -> None:
-        figure_x, figure_y = 20, 20
+        """
+        Plots a legend with one or more sections
+
+        Args:
+            sections: List of sections for the legend, in the format (title, handles)
+            style: Styling properties for the legend (applies to all sections)
+        """
+        figure_x, figure_y = 0, 0
         x = style.padding_x
         y = style.padding_y
         height = style.padding_y * 2
         width = style.padding_x * 2
-        handle_elements = []
+        sections_elements = []
+        title_element = None
+        adjustments = {}
 
-        h, w = get_text_hw(
-            title,
-            font_size=style.title.font_size * self.scale,
-            font_weight=style.title.font_weight,
-        )
-        y += h
-        title_element = Text(x=x, y=y, text=title, attrs=style.title.css(self.scale))
+        if self.legend_element:
+            for attr, value in self._legend_adjustments.items():
+                current = getattr(self, attr)
+                setattr(self, attr, current - value)
 
-        height += h * 2 + style.label_padding
-        width = max(width, w * 1.4)
-        y += h + style.label_padding
-
-        for label, marker_style in handles.items():
-            marker_element = symbols.create(
-                x + style.symbol_size / 2,
-                y,
-                style.symbol_size * self.scale,
-                marker_style.symbol,
-                marker_style.css(self.scale),
-            )
-
-            y += style.symbol_size / 2
-            label_x = x + style.symbol_size * self.scale + style.symbol_padding
-            label_attrs = style.labels.css(self.scale)
-            label_element = Text(x=label_x, y=y, text=label, attrs=label_attrs)
-
-            handle_elements.append(
-                Group(
-                    children=[marker_element, label_element],
+        for i, value in enumerate(sections):
+            title, handles = value
+            if title:
+                h, w = get_text_hw(
+                    title,
+                    font_size=style.title.font_size * self.scale,
+                    font_weight=style.title.font_weight,
                 )
-            )
+                y += h
+                title_element = Text(
+                    x=x, y=y, text=title, attrs=style.title.css(self.scale)
+                )
+                sections_elements.append(title_element)
+                height += h * 2 + style.label_padding
+                width = max(width, w * 1.12)
+                y += h + style.label_padding / 2
+            else:
+                y += style.label_padding / 2
 
-            h, w = get_text_hw(
-                label,
-                font_size=style.labels.font_size * self.scale,
-                font_weight=style.labels.font_weight,
-            )
-            height += max(style.symbol_size * self.scale, h) + style.label_padding
-            width = max(width, w * 1.4)
-            y += h + style.label_padding
+            for label, config in handles.items():
+                marker_style, size = config
+                marker_size = size or style.symbol_size
+                marker_element = symbols.create(
+                    x + style.symbol_size / 2,
+                    y,
+                    marker_size * self.scale,
+                    marker_style.symbol,
+                    marker_style.css(self.scale),
+                )
 
-        height += style.label_padding * 2
+                y += style.symbol_size / 2
+                label_x = x + style.symbol_size * self.scale + style.symbol_padding
+                label_attrs = style.labels.css(self.scale)
+                label_element = Text(x=label_x, y=y, text=label, attrs=label_attrs)
+
+                sections_elements.append(
+                    Group(
+                        children=[marker_element, label_element],
+                    )
+                )
+
+                h, w = get_text_hw(
+                    label,
+                    font_size=style.labels.font_size * self.scale,
+                    font_weight=style.labels.font_weight,
+                )
+                height += (
+                    max(marker_size * self.scale, style.symbol_size * self.scale, h)
+                    + style.label_padding
+                )
+                width = max(width, w * 1.3)
+                y += h + style.label_padding
+
+            if i < len(sections) - 1:
+                height += style.label_padding * 2.5
+            else:
+                height += style.label_padding
 
         background_element = Rectangle(
             x=0,
@@ -466,35 +494,32 @@ class Canvas:
             figure_x = self.axes_x - width - style.margin_x
             figure_y = self.axes_y + style.margin_y
             self.figure_width += width
+            adjustments = {"axes_x": width + style.margin_x, "figure_width": width}
         elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_LEFT:
             self.axes_x += width + style.margin_x
             figure_x = self.axes_x - width - style.margin_x
             figure_y = self.axes_y + self.height - height - style.margin_y
             self.figure_width += width
+            adjustments = {"axes_x": width + style.margin_x, "figure_width": width}
         elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT:
             figure_x = self.axes_x + self.width + style.margin_x
             figure_y = self.axes_y + self.height - height - style.margin_y
             self.figure_width += width
+            adjustments = {"figure_width": width}
         elif loc == LegendLocationEnum.OUTSIDE_TOP_RIGHT:
             figure_x = self.axes_x + self.width + style.margin_x
             figure_y = self.axes_y + style.margin_y
             self.figure_width += width
+            adjustments = {"figure_width": width}
 
-        # TODO : refactor sizing figure and axes x/y to handle multiple calls to legend()
-
-        self.figure_elements.append(
-            (
-                style.zorder,
-                Group(
-                    children=[
-                        background_element,
-                        title_element,
-                        *handle_elements,
-                    ],
-                    attrs={"transform": f"translate({figure_x}, {figure_y})"},
-                ),
-            )
+        self.legend_element = (
+            style.zorder,
+            Group(
+                children=[background_element, *sections_elements],
+                attrs={"transform": f"translate({figure_x}, {figure_y})"},
+            ),
         )
+        self._legend_adjustments = adjustments
 
     def render(self, text_as_path: bool = False) -> str:
         """Renders the canvas to an SVG string"""
@@ -518,7 +543,9 @@ class Canvas:
             ],
         )
 
-        figure_sorted_by_z = sorted(self.figure_elements, key=lambda e: e[0])
+        figure_sorted_by_z = sorted(
+            self.figure_elements + [self.legend_element], key=lambda e: e[0]
+        )
         figure_elements = [e for _, e in figure_sorted_by_z]
         figure_svg = SVG(
             height=self.figure_height,

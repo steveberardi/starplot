@@ -65,10 +65,10 @@ cas = Constellation.get(iau_id="cas")
 c = MapPlot(
     ra_min=18 * 15,
     ra_max=23 * 15,
-    dec_min=10,
-    dec_max=60,
-    projection=Miller(center_ra=20 * 15),
-    # projection=StereoNorth(center_ra=20 * 15),
+    dec_min=40,
+    dec_max=90,
+    # projection=Miller(center_ra=20 * 15),
+    projection=StereoNorth(center_ra=20 * 15),
     # projection=Mollweide(),
     # projection=Orthographic(),
     style=style,
@@ -115,7 +115,7 @@ c.open_clusters(where_true_size=[False])
 
 c.globular_clusters(where_true_size=[False])
 c.galaxies(where=[_.magnitude < 9], where_true_size=[False])
-c.nebula(where_true_size=[False])
+c.nebula(where_true_size=[_.size > 0.01])
 
 
 c.rectangle(
@@ -125,11 +125,11 @@ c.rectangle(
     style__edge_color="red",
 )
 
-# c.title(
-#     "Hello World!!",
-#     # style__border_color="black",
-#     # style__border_width=400,
-# )
+c.title(
+    "Hello World!!",
+    # style__border_color="black",
+    # style__border_width=400,
+)
 
 c.marker(
     ra=m31.ra,
@@ -142,7 +142,21 @@ c.marker(
     style__marker__size=50,
 )
 
-c.legend(style__location="inside top right")
+c.legend(
+    style__location="outside top right",
+    style__margin_y=0,
+)
+
+c.legend(
+    style__location="outside bottom right",
+    style__margin_y=0,
+    magnitude_scale=True,
+)
+c.legend(
+    style__location="inside top right",
+    # style__margin_y=0,
+    magnitude_scale=True,
+)
 
 # c.circle(
 #     center=(m57.ra, m57.dec + 15),

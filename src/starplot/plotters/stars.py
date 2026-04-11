@@ -233,6 +233,8 @@ class StarPlotterMixinSVG:
         alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
         color_fn = color_fn or (lambda d: color_hex)
 
+        self._last_used_size_fn = size_fn
+
         handler = collision_handler or self.point_label_handler
         where = where or []
         where_labels = where_labels or []

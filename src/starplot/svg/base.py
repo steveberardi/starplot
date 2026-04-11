@@ -150,6 +150,7 @@ class BasePlot(StarPlotterMixinSVG, ABC):
 
         self._objects = models.ObjectList()
         self._labeled_stars = []
+        self._last_used_size_fn = None
 
     def _plot_kwargs(self) -> dict:
         return {}
