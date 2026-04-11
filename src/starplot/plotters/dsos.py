@@ -19,13 +19,6 @@ from starplot.plotters.text import CollisionHandler
 
 
 class DsoPlotterMixin:
-    def _plot_dso_polygon(self, polygon, style):
-        coords = list(zip(*polygon.exterior.coords.xy))
-        # close the polygon - for some reason matplotlib needs the coord twice
-        coords.append(coords[0])
-        coords.append(coords[0])
-        self._polygon(coords, style.marker.to_polygon_style(), closed=False)
-
     def messier(self, **kwargs):
         """
         Plots Messier objects
@@ -232,11 +225,15 @@ class DsoPlotterMixin:
 
             if _true_size and d.size is not None:
                 if "Polygon" == str(d.geometry.geom_type):
-                    self._plot_dso_polygon(d.geometry, style)
+                    self.polygon(
+                        geometry=d.geometry, style=style.marker.to_polygon_style()
+                    )
 
                 elif "MultiPolygon" == str(d.geometry.geom_type):
                     for polygon in d.geometry.geoms:
-                        self._plot_dso_polygon(polygon, style)
+                        self.polygon(
+                            geometry=polygon, style=style.marker.to_polygon_style()
+                        )
                 elif maj_ax:
                     # if object has a major axis then plot its actual extent
                     maj_ax_degrees = (maj_ax / 60) / 2
@@ -287,8 +284,8 @@ class DsoPlotterMixin:
                     legend_label=legend_label,
                     collision_handler=handler,
                     # skip_bounds_check=True,
-                    gid_marker=f"dso-{d.type}-marker",
-                    gid_label=f"dso-{d.type}-label",
+                    # gid_marker=f"dso-{d.type}-marker",
+                    # gid_label=f"dso-{d.type}-label",
                 )
 
             self._objects.dsos.append(_dso)

@@ -5,31 +5,31 @@ from typing import Callable
 
 import pandas as pd
 
-from cartopy import crs as ccrs
-from matplotlib import pyplot as plt, patches
-from matplotlib.ticker import FixedLocator, FuncFormatter
 from skyfield.api import Star as SkyfieldStar
 from shapely import Polygon, MultiPolygon
+
+from starplot import geometry
 from starplot.coordinates import CoordinateSystem
-from starplot.plots.base import BasePlot, DPI
+from starplot.projections import LambertAzEqArea, CoordinateReferenceSystem
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
-from starplot.plotters import (
-    ConstellationPlotterMixin,
-    StarPlotterMixin,
-    DsoPlotterMixin,
-    MilkyWayPlotterMixin,
-    GradientBackgroundMixin,
-    LegendPlotterMixin,
-    ArrowPlotterMixin,
-)
-from starplot.plotters.text import CollisionHandler
+
 from starplot.styles import (
     PlotStyle,
     extensions,
     use_style,
     PathStyle,
     GradientDirection,
+)
+from starplot.plots.base import BasePlot
+from starplot.plotters.text import CollisionHandler
+from starplot.plotters import (
+    ConstellationPlotterMixin,
+    MilkyWayPlotterMixin,
+    ArrowPlotterMixin,
+    DsoPlotterMixin,
+    TextPlotterMixin,
+    LegendPlotterMixin,
 )
 
 DEFAULT_HORIZON_LABELS = {
@@ -47,14 +47,12 @@ DEFAULT_HORIZON_LABELS = {
 class HorizonPlot(
     BasePlot,
     ExtentMaskMixin,
-    # HorizonExtentMaskMixin,
     ConstellationPlotterMixin,
-    StarPlotterMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
-    GradientBackgroundMixin,
     LegendPlotterMixin,
     ArrowPlotterMixin,
+    TextPlotterMixin,
 ):
     """Creates a new horizon plot.
 
@@ -102,6 +100,29 @@ class HorizonPlot(
         observer = observer or Observer()
         style = style or PlotStyle().extend(extensions.MAP)
 
+        if azimuth[0] >= azimuth[1]:
+            raise ValueError("Azimuth min must be less than max")
+        if azimuth[1] - azimuth[0] > 180:
+            raise ValueError("Azimuth range cannot be greater than 180 degrees")
+
+        if altitude[0] >= altitude[1]:
+            raise ValueError("Altitude min must be less than max")
+        if altitude[1] - altitude[0] > 90:
+            raise ValueError("Altitude range cannot be greater than 90 degrees")
+
+        self.alt = altitude
+        self.az = azimuth
+        self._alt = altitude
+        self._az = azimuth
+        self.center_alt = sum(altitude) / 2
+        self.center_az = sum(azimuth) / 2
+
+        if self.center_az > 360:
+            self.center_az -= 360
+
+        projection = LambertAzEqArea(center_ra=self.center_az, center_dec=0)
+        bounds = [azimuth[0], altitude[0], azimuth[1], altitude[1]]
+
         super().__init__(
             observer,
             ephemeris,
@@ -113,39 +134,16 @@ class HorizonPlot(
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
+            projection=projection,
+            bounds=bounds,
+            invert_x=False,
+            invert_y=False,
+            clip_path=None,
+            crs=CoordinateReferenceSystem.ENU,
             *args,
             **kwargs,
         )
-
-        if azimuth[0] >= azimuth[1]:
-            raise ValueError("Azimuth min must be less than max")
-        if azimuth[1] - azimuth[0] > 180:
-            raise ValueError("Azimuth range cannot be greater than 180 degrees")
-
-        if altitude[0] >= altitude[1]:
-            raise ValueError("Altitude min must be less than max")
-        if altitude[1] - altitude[0] > 90:
-            raise ValueError("Altitude range cannot be greater than 90 degrees")
-
         self.logger.debug("Creating HorizonPlot...")
-        self.alt = altitude
-        self.az = azimuth
-        self._alt = altitude
-        self._az = azimuth
-        self.center_alt = sum(altitude) / 2
-        self.center_az = sum(azimuth) / 2
-
-        self._geodetic = ccrs.Geodetic()
-        self._plate_carree = ccrs.PlateCarree()
-        self._crs = ccrs.CRS(
-            proj4_params=[
-                ("proj", "latlong"),
-                ("a", "6378137"),
-            ],
-            globe=ccrs.Globe(ellipse="sphere", flattening=0),
-        )
-
-        self._init_plot()
 
         self.altaz_mask = self._extent_mask_altaz()
         self.logger.debug(f"Extent = AZ ({self.az}) ALT ({self.alt})")
@@ -207,9 +205,6 @@ class HorizonPlot(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
 
-    def _plot_kwargs(self) -> dict:
-        return dict(transform=self._crs)
-
     @cache
     def in_bounds(self, ra, dec) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
@@ -234,15 +229,11 @@ class HorizonPlot(
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        # return self.altaz_mask.contains(Point(az, alt))
-        x, y = self._to_ax(az, alt)
-        return 0 <= x <= 1 and 0 <= y <= 1
+        ax, ay = self.canvas._to_axes(az, alt)
+        return 0 <= ax <= 1 and 0 <= ay <= 1
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_altaz(y, x)  # alt = y, az = x
-
-    def _polygon(self, points, style, **kwargs):
-        super()._polygon(points, style, transform=self._crs, **kwargs)
 
     @cache
     def _extent_mask_altaz(self):
@@ -251,21 +242,21 @@ class HorizonPlot(
 
         If the extent crosses North cardinal direction, then a MultiPolygon will be returned
         """
-        extent = list(self.ax.get_extent(crs=self._plate_carree))
+        extent = self.canvas.bounds
         alt_min, alt_max = extent[2], extent[3]
         az_min, az_max = extent[0], extent[1]
 
-        az_ul, _ = self._ax_to_azalt(0, 1)
-        az_ur, _ = self._ax_to_azalt(1, 1)
+        # az_ul, _ = self._ax_to_azalt(0, 1)
+        # az_ur, _ = self._ax_to_azalt(1, 1)
 
-        if az_ul < 0:
-            az_ul += 360
+        # if az_ul < 0:
+        #     az_ul += 360
 
-        if az_ur < 0:
-            az_ur += 360
+        # if az_ur < 0:
+        #     az_ur += 360
 
-        az_min = min(self.az[0], self.az[1], az_ul, az_ur)
-        az_max = max(self.az[0], self.az[1], az_ul, az_ur)
+        # az_min = min(self.az[0], self.az[1], az_ul, az_ur)
+        # az_max = max(self.az[0], self.az[1], az_ul, az_ur)
 
         if az_min < 0:
             az_min += 360
@@ -400,6 +391,27 @@ class HorizonPlot(
             return alt_formatter_fn(x)
 
         x_locations = az_locations or [x for x in range(0, 360, 15)]
+        y_locations = alt_locations or [y for y in range(-80, 90, 10)]
+
+        for x in x_locations:
+            coords = geometry.line_segment((x, 0), (x, 90), 0.5)
+            self.canvas.line(
+                coordinates=coords,
+                style=style.line,
+            )
+
+        for y in y_locations:
+            coords = geometry.line_segment((0.00001, y), (359.99999, y), 0.5)
+            self.canvas.line(
+                coordinates=coords,
+                style=style.line,
+            )
+
+        # TODO : labels, tick marks
+
+        return
+
+        x_locations = az_locations or [x for x in range(0, 360, 15)]
         x_locations = [x - 180 for x in x_locations]
         y_locations = alt_locations or [d for d in range(-90, 90, 10)]
 
@@ -489,55 +501,3 @@ class HorizonPlot(
         x_projected, y_projected = trans.transform((x, y))  # axes to data
         az, alt = self._crs.transform_point(x_projected, y_projected, self._proj)
         return float(az), float(alt)
-
-    def _plot_background_clip_path(self):
-        if self.style.has_gradient_background():
-            background_color = "#ffffff00"
-            self._plot_gradient_background(self.style.background_color)
-        else:
-            background_color = self.style.background_color.as_hex()
-
-        self._background_clip_path = patches.Rectangle(
-            (0, 0),
-            width=1,
-            height=1,
-            facecolor=background_color,
-            linewidth=0,
-            fill=True,
-            zorder=-3_000,
-            transform=self.ax.transAxes,
-        )
-        self.ax.set_facecolor(background_color)
-
-        self.ax.add_patch(self._background_clip_path)
-        self._update_clip_path_polygon()
-
-    def _init_plot(self):
-        self._proj = ccrs.LambertAzimuthalEqualArea(
-            central_longitude=sum(self.az) / 2,
-            central_latitude=0,
-        )
-        self._proj.threshold = 100
-        self.fig = plt.figure(
-            figsize=(self.figure_size, self.figure_size),
-            facecolor=self.style.figure_background_color.as_hex(),
-            # layout="constrained",
-            dpi=DPI,
-        )
-        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
-        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
-
-        self.ax.xaxis.set_visible(False)
-        self.ax.yaxis.set_visible(False)
-        self.ax.axis("off")
-
-        bounds = [
-            self.az[0],
-            self.az[1],
-            self.alt[0],
-            self.alt[1],
-        ]
-
-        self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
-        self._fit_to_ax()
-        self._plot_background_clip_path()

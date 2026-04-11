@@ -7,6 +7,7 @@ from shapely import Polygon
 
 from starplot.data.catalogs import BIG_SKY
 from starplot import (
+    MapPlot,
     Star,
     DSO,
     Observer,
@@ -26,7 +27,6 @@ from starplot.styles import (
     PolygonStyle,
     LabelStyle,
 )
-from starplot.svg import MapPlot
 
 from starplot.config import settings as StarplotSettings
 
@@ -84,7 +84,7 @@ c.constellations()
 c.constellation_borders()
 
 c.stars(
-    where=[_.magnitude < 6],
+    where=[_.magnitude < 8],
     where_labels=[_.magnitude < 5],
     # catalog=BIG_SKY,
     bayer_labels=True,

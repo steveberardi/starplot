@@ -543,8 +543,11 @@ class Canvas:
             ],
         )
 
+        elements = self.figure_elements
+        if self.legend_element:
+            elements.append(self.legend_element)
         figure_sorted_by_z = sorted(
-            self.figure_elements + [self.legend_element], key=lambda e: e[0]
+            elements, key=lambda e: e[0]
         )
         figure_elements = [e for _, e in figure_sorted_by_z]
         figure_svg = SVG(

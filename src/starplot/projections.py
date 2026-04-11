@@ -4,7 +4,6 @@ from functools import cached_property, cache
 from typing import ClassVar
 
 import numpy as np
-from cartopy import crs as ccrs
 from pyproj import CRS, Proj, Transformer
 from pydantic import BaseModel, Field
 
@@ -88,8 +87,6 @@ class Azimuth(BaseModel, ABC):
 class ProjectionBase(BaseModel, ABC):
     threshold: int = 1000
 
-    _ccrs = None
-
     proj_def_base: str = None
     global_only: bool = False
 
@@ -99,23 +96,6 @@ class ProjectionBase(BaseModel, ABC):
 
     class Config:
         arbitrary_types_allowed = True
-
-    @cached_property
-    def crs(self):
-        kwargs = {}
-
-        if hasattr(self, "center_ra"):
-            kwargs["central_longitude"] = -1 * self.center_ra
-
-        if hasattr(self, "center_dec"):
-            kwargs["central_latitude"] = self.center_dec
-
-        if hasattr(self, "azimuth"):
-            kwargs["azimuth"] = self.azimuth
-
-        c = self._ccrs(**kwargs)
-        c.threshold = self.threshold
-        return c
 
     @property
     def edge_x(self) -> float | None:
@@ -195,33 +175,31 @@ class AutoProjection:
     ) -> bool:
         return ra_min == 0 and ra_max == 360 and dec_min == -90 and dec_max == 90
 
-    def crs(self, ra_min: float, ra_max: float, dec_min: float, dec_max: float):
-        central_longitude = -1 * (ra_min + ra_max) / 2
+    # def crs(self, ra_min: float, ra_max: float, dec_min: float, dec_max: float):
+    #     central_longitude = -1 * (ra_min + ra_max) / 2
 
-        if self._is_global(ra_min, ra_max, dec_min, dec_max):
-            c = ccrs.Mollweide(central_longitude=central_longitude)
+    #     if self._is_global(ra_min, ra_max, dec_min, dec_max):
+    #         c = ccrs.Mollweide(central_longitude=central_longitude)
 
-        elif dec_max < 75 and dec_min > -75:
-            c = ccrs.Miller(central_longitude=central_longitude)
+    #     elif dec_max < 75 and dec_min > -75:
+    #         c = ccrs.Miller(central_longitude=central_longitude)
 
-        elif dec_max > 75 and dec_min >= 0:
-            c = ccrs.NorthPolarStereo(central_longitude=central_longitude)
+    #     elif dec_max > 75 and dec_min >= 0:
+    #         c = ccrs.NorthPolarStereo(central_longitude=central_longitude)
 
-        elif dec_max <= 0 and dec_min < -75:
-            c = ccrs.SouthPolarStereo(central_longitude=central_longitude)
+    #     elif dec_max <= 0 and dec_min < -75:
+    #         c = ccrs.SouthPolarStereo(central_longitude=central_longitude)
 
-        else:
-            c = ccrs.Miller(central_longitude=central_longitude)
+    #     else:
+    #         c = ccrs.Miller(central_longitude=central_longitude)
 
-        c.threshold = 1_000
+    #     c.threshold = 1_000
 
-        return c
+    #     return c
 
 
 class Miller(ProjectionBase, CenterRA):
     """Similar to Mercator: good for declinations between -70 and 70, but distorts objects near the poles"""
-
-    _ccrs = ccrs.Miller
 
     name: ClassVar[str] = "mill"
 
@@ -238,25 +216,21 @@ class Miller(ProjectionBase, CenterRA):
 class Mercator(ProjectionBase, CenterRA):
     """Good for declinations between -70 and 70, but distorts objects near the poles"""
 
-    _ccrs = ccrs.Mercator
-
+    pass
 
 class PlateCarree(ProjectionBase, CenterRA):
     """An equirectangular projection"""
 
-    _ccrs = ccrs.PlateCarree
-
+    pass
 
 class ObliqueMercator(ProjectionBase, CenterRADEC, Azimuth):
     """Oblique Mercator projection"""
 
-    _ccrs = ccrs.ObliqueMercator
-
+    pass
 
 class Mollweide(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
 
-    _ccrs = ccrs.Mollweide
 
     proj_def_base: str = f"+proj=moll +R={PROJ_R} +units=m"
     global_only: bool = True
@@ -267,7 +241,6 @@ class Mollweide(ProjectionBase, CenterRA):
 class Equidistant(ProjectionBase, CenterRADEC):
     """Shows accurate distances from the center position. Often used for planispheres."""
 
-    _ccrs = ccrs.AzimuthalEquidistant
 
     name: ClassVar[str] = "aeqd"
 
@@ -275,7 +248,6 @@ class Equidistant(ProjectionBase, CenterRADEC):
 class StereoNorth(ProjectionBase, CenterRA):
     """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""
 
-    _ccrs = ccrs.NorthPolarStereo
 
     name: ClassVar[str] = "stere"
     center_dec: float = 90
@@ -284,8 +256,6 @@ class StereoNorth(ProjectionBase, CenterRA):
 class StereoSouth(ProjectionBase, CenterRA):
     """Good for objects near the south celestial pole, but distorts objects near the mid declinations"""
 
-    _ccrs = ccrs.SouthPolarStereo
-
     name: ClassVar[str] = "stere"
     center_dec: float = -90
 
@@ -293,23 +263,17 @@ class StereoSouth(ProjectionBase, CenterRA):
 class Robinson(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
 
-    _ccrs = ccrs.Robinson
-
     global_only: bool = True
 
 
 class LambertAzEqArea(ProjectionBase, CenterRADEC):
     """Lambert Azimuthal Equal-Area projection - accurately shows area, but distorts angles."""
 
-    _ccrs = ccrs.LambertAzimuthalEqualArea
-
     name: ClassVar[str] = "laea"
 
 
 class Orthographic(ProjectionBase, CenterRADEC):
     """Shows the celestial sphere as a 3D-looking globe. Objects near the edges will be distorted."""
-
-    _ccrs = ccrs.Orthographic
 
     proj_def_base: str = f"+proj=ortho +R={PROJ_R} +units=m"
     global_only: bool = True
@@ -319,7 +283,5 @@ class Orthographic(ProjectionBase, CenterRADEC):
 
 class Stereographic(ProjectionBase, CenterRADEC):
     """Similar to the North/South Stereographic projection, but allows custom central declination"""
-
-    _ccrs = ccrs.Stereographic
 
     name: ClassVar[str] = "stere"

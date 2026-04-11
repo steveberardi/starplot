@@ -3,7 +3,6 @@ import math
 from abc import ABC, abstractmethod
 
 import pyproj
-from matplotlib import patches
 from pydantic import BaseModel, computed_field
 
 from starplot import geometry
@@ -33,10 +32,6 @@ class Optic(BaseModel, ABC):
     @abstractmethod
     def label(self):
         return "Abstract Optic"
-
-    @abstractmethod
-    def patch(self, center_x, center_y) -> patches.Patch:
-        pass
 
     @abstractmethod
     def polygon(self, center_x, center_y):
@@ -115,14 +110,6 @@ class Scope(Optic):
     @property
     def label(self):
         return "Scope"
-
-    def patch(self, center_x, center_y, **kwargs):
-        padding = kwargs.pop("padding", 0)
-        return patches.Circle(
-            (center_x, center_y),
-            radius=self.radius + padding,
-            **kwargs,
-        )
 
     def polygon(self, center_x, center_y):
         return geometry.circle(
@@ -237,14 +224,6 @@ class Binoculars(Optic):
     def label(self):
         return "Binoculars"
 
-    def patch(self, center_x, center_y, **kwargs):
-        padding = kwargs.pop("padding", 0)
-        return patches.Circle(
-            (center_x, center_y),
-            radius=self.radius + padding,
-            **kwargs,
-        )
-
     def polygon(self, center_x, center_y):
         return geometry.circle(
             center=(center_x, center_y),
@@ -344,19 +323,6 @@ class Camera(Optic):
     @property
     def label(self):
         return "Camera"
-
-    def patch(self, center_x, center_y, **kwargs):
-        padding = kwargs.pop("padding", 0)
-        x = center_x - self.radius_x - padding
-        y = center_y - self.radius_y - padding
-        return patches.Rectangle(
-            (x, y),
-            self.radius_x * 2 + padding,
-            self.radius_y * 2 + padding,
-            angle=self.rotation,
-            rotation_point="center",
-            **kwargs,
-        )
 
     def polygon(self, center_x, center_y):
         return geometry.rectangle(

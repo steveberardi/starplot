@@ -2,14 +2,14 @@
 
 """Star charts and maps of the sky"""
 
-__version__ = "0.20.2"
+__version__ = "0.21.0"
 
 from .plots import (
     MapPlot,
     HorizonPlot,
     OpticPlot,
-    ZenithPlot,
-    GalaxyPlot,
+    # ZenithPlot,
+    # GalaxyPlot,
 )
 from .models import (
     DSO,

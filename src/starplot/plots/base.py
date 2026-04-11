@@ -1,18 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Union, Optional
 import logging
-import time
 
 import numpy as np
-from matplotlib import patches
-from matplotlib import pyplot as plt, patheffects
-from matplotlib.axes import Axes
-from matplotlib.figure import Figure
-from matplotlib.lines import Line2D
+
+from shapely.geometry import box
 from shapely import Polygon, LineString
 
-from starplot.coordinates import CoordinateSystem
-from starplot import models, warnings
+from starplot import models
 from starplot import geometry as _geometry
 from starplot.config import settings as StarplotSettings, SvgTextType
 from starplot.data import load, ecliptic
@@ -29,16 +24,16 @@ from starplot.styles import (
     MarkerSymbolEnum,
     PathStyle,
     PolygonStyle,
-    GradientDirection,
-    fonts,
     AnchorPointEnum,
 )
-from starplot.plotters.debug import DebugPlotterMixin
-from starplot.plotters.text import TextPlotterMixin, CollisionHandler
+from starplot.projections import ProjectionBase, CoordinateReferenceSystem
+from starplot.plotters import StarPlotterMixin
+from starplot.plotters.text import CollisionHandler
 from starplot.styles.helpers import use_style
 from starplot.profile import profile
+from starplot.svg.canvas import Canvas, CoordinateSystem
 
-LOGGER = logging.getLogger("starplot")
+LOGGER = logging.getLogger("starplot-svg")
 LOG_HANDLER = logging.StreamHandler()
 LOG_FORMATTER = logging.Formatter(
     "\033[1;34m%(name)s\033[0m:[%(levelname)s]: %(message)s"
@@ -48,47 +43,21 @@ LOGGER.addHandler(LOG_HANDLER)
 
 DEFAULT_RESOLUTION = 4096
 
-DPI = 100
 
-
-class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
-    _background_clip_path = None
-    _clip_path_polygon: Polygon = None  # clip path in display coordinates
-    _coordinate_system = CoordinateSystem.RA_DEC
-    _gradient_direction: GradientDirection = GradientDirection.LINEAR
-
-    _start_time: int = None
-
-    ax: Axes
-    """
-    The underlying [Matplotlib axes](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes) that everything is plotted on.
-    
-    **Important**: Most Starplot plotting functions also specify a transform based on the plot's projection when plotting things on the Matplotlib Axes instance, so use this property at your own risk!
-    """
-
-    fig: Figure
-    """
-    The underlying [Matplotlib figure](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure) that the axes is drawn on.
-    """
-
-    style: PlotStyle
-    """
-    The plot's style.
-    """
-
-    point_label_handler: CollisionHandler
+class BasePlot(StarPlotterMixin, ABC):
+    # point_label_handler: CollisionHandler
     """Default [collision handler][starplot.CollisionHandler] for point labels."""
 
-    area_label_handler: CollisionHandler
+    # area_label_handler: CollisionHandler
     """Default [collision handler][starplot.CollisionHandler] for area labels."""
 
-    path_label_handler: CollisionHandler
+    # path_label_handler: CollisionHandler
     """Default [collision handler][starplot.CollisionHandler] for path labels."""
 
     def __init__(
         self,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
         point_label_handler: CollisionHandler = None,
@@ -97,25 +66,57 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
+        # new for canvas backend
+        projection: ProjectionBase = None,
+        bounds: tuple[float, float, float, float] = None,
+        invert_x: bool = False,
+        invert_y: bool = False,
+        clip_path=None,
+        crs: CoordinateReferenceSystem = None,
         *args,
         **kwargs,
     ):
-        super().__init__(*args, **kwargs)
+        super().__init__()
 
-        if StarplotSettings.svg_text_type == SvgTextType.PATH:
-            plt.rcParams["svg.fonttype"] = "path"
-        else:
-            plt.rcParams["svg.fonttype"] = "none"
-
-        px = 1 / DPI  # pixel in inches
-        self.pixels_per_point = DPI / 72
-        self.dpi = DPI
+        self.labels = []
 
         self.language = StarplotSettings.language
 
         self.style = style or PlotStyle()
-        self.figure_size = resolution * px
         self.resolution = resolution
+
+        self.scale = scale
+        self.autoscale = autoscale
+        if self.autoscale:
+            self.scale = self.resolution / DEFAULT_RESOLUTION
+
+        self.scale *= 1.28
+
+        self.debug = StarplotSettings.debug or bool(kwargs.get("debug"))
+        self.debug_text = StarplotSettings.debug or bool(kwargs.get("debug_text"))
+        self.log_level = logging.DEBUG if self.debug else logging.ERROR
+        self.logger = LOGGER
+        self.logger.setLevel(self.log_level)
+
+        self.canvas = Canvas(
+            resolution=resolution,
+            style=self.style,
+            scale=self.scale,
+            projection=projection,
+            bounds=bounds,
+            clip_path=clip_path,
+            invert_x=invert_x,
+            invert_y=invert_y,
+            # suppress_warnings=suppress_warnings,
+            logger=LOGGER,
+            crs=crs,
+        )
+        self._update_clip_path_polygon()
+        self.projection = projection
+
+        self._background_clip_path = None
+        self._legend = None
+        self._legend_handles = {}
 
         self.point_label_handler = point_label_handler or CollisionHandler(
             attempts=10,
@@ -137,42 +138,14 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             allow_constellation_line_collisions=True
         )
 
-        self.scale = scale
-        self.autoscale = autoscale
-        if self.autoscale:
-            self.scale = self.resolution / DEFAULT_RESOLUTION
-
-        self.scale *= 1.28
-
-        if suppress_warnings:
-            warnings.suppress()
-
         self.observer = observer or Observer()
         self.ephemeris_name = ephemeris
         self.ephemeris = load(ephemeris)
         self.earth = self.ephemeris["earth"]
 
-        self._background_clip_path = None
-
-        self._legend = None
-        self._legend_handles = {}
-
-        self.debug = StarplotSettings.debug or bool(kwargs.get("debug"))
-        self.debug_text = StarplotSettings.debug or bool(kwargs.get("debug_text"))
-        self.log_level = logging.DEBUG if self.debug else logging.ERROR
-        self.logger = LOGGER
-        self.logger.setLevel(self.log_level)
-
-        self._start_time = time.perf_counter()
-
-        self.text_border = patheffects.withStroke(
-            linewidth=self.style.text_border_width * self.scale,
-            foreground=self.style.text_border_color.as_hex(),
-        )
-
         self._objects = models.ObjectList()
         self._labeled_stars = []
-        fonts.load()
+        self._last_used_size_fn = None
 
     def _plot_kwargs(self) -> dict:
         return {}
@@ -184,42 +157,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         return coordinates
 
     def _update_clip_path_polygon(self, buffer=8):
-        self.fig.draw_without_rendering()
-        coords = self._background_clip_path.get_verts()
-        self._clip_path_polygon = Polygon(coords).buffer(-1 * buffer)
-
-        # if self.debug_text:
-        #     patch = patches.Polygon(
-        #         Polygon(coords).buffer(-1 * buffer).exterior.coords,
-        #         fill=False,
-        #         facecolor="none",
-        #         edgecolor="red",
-        #         linewidth=4,
-        #         zorder=5_000,
-        #         transform=None,
-        #     )
-        #     self.ax.add_patch(patch)
-
-    def _add_legend_handle_marker(self, label: str, style: MarkerStyle):
-        if label is not None and label not in self._legend_handles:
-            s = style.matplot_kwargs()
-            s["markersize"] = self.style.legend.symbol_size * self.scale
-            self._legend_handles[label] = Line2D(
-                [],
-                [],
-                **s,
-                **self._plot_kwargs(),
-                linestyle="None",
-                label=label,
-            )
-
-    def _fit_to_ax(self) -> None:
-        self.fig.draw_without_rendering()
-        bbox = self.ax.get_window_extent().transformed(
-            self.fig.dpi_scale_trans.inverted()
-        )
-        width, height = bbox.width, bbox.height
-        self.fig.set_size_inches(width, height)
+        rectangle = box(0, 0, self.canvas.width, self.canvas.height)
+        self._clip_path_polygon = rectangle.buffer(-1 * buffer)
 
     @property
     def magnitude_range(self) -> tuple[float, float]:
@@ -245,36 +184,19 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             text: Title text to plot
             style: Styling of the title. If None, then the plot's style (specified when creating the plot) will be used
         """
-        style_kwargs = style.matplot_kwargs(self.scale)
-        style_kwargs.pop("linespacing", None)
-        style_kwargs["pad"] = style.line_spacing
-        self.ax.set_title(text, **style_kwargs)
-
-    def close_fig(self) -> None:
-        """Closes the underlying matplotlib figure."""
-        if self.fig:
-            plt.close(self.fig)
+        self.canvas.title(text, style)
 
     @profile
-    def export(self, filename: str, padding: float = 0, **kwargs):
+    def export(self, filename: str):
         """Exports the plot to an image file.
 
         Args:
             filename: Filename of exported file (the format will be inferred from the extension)
-            padding: Padding (in inches) around the image
-            **kwargs: Any keyword arguments to pass through to matplotlib's `savefig` method
 
         """
+        text_as_path = StarplotSettings.svg_text_type == SvgTextType.PATH
         self.logger.debug("Exporting...")
-        self.fig.savefig(
-            filename,
-            bbox_inches="tight",
-            pad_inches=padding * self.scale,
-            dpi=DPI,
-            **kwargs,
-        )
-        elapsed = time.perf_counter() - self._start_time
-        self.logger.debug(f"Elapsed: {elapsed:.5f}s")
+        self.canvas.export(filename, text_as_path=text_as_path)
 
     @use_style(ObjectStyle)
     def marker(
@@ -286,7 +208,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         legend_label: str = None,
         skip_bounds_check: bool = False,
         collision_handler: CollisionHandler = None,
-        **kwargs,
+        gid: str = None,
     ) -> None:
         """Plots a marker
 
@@ -304,24 +226,19 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         if not skip_bounds_check and not self.in_bounds(ra, dec):
             return
 
-        # Plot marker
         x, y = self._prepare_coords(ra, dec)
-        style_kwargs = style.marker.matplot_scatter_kwargs(self.scale)
-        result = self.ax.scatter(
+
+        self.canvas.marker(
             x,
             y,
-            **style_kwargs,
-            **self._plot_kwargs(),
-            clip_on=True,
-            clip_path=self._background_clip_path,
-            gid=kwargs.get("gid_marker") or "marker",
+            style=style.marker,
+            # gid=gid or "marker",
         )
 
         # Add to spatial index
-        data_xy = self._proj.transform_point(x, y, self._crs)
-        display_x, display_y = self.ax.transData.transform(data_xy)
+        display_x, display_y = self.canvas._to_display(x, y)
         if display_x > 0 and display_y > 0:
-            radius = style_kwargs.get("s", 1) ** 0.5 / 5
+            radius = style.marker.size * self.scale / 2
             bbox = np.array(
                 (
                     display_x - radius,
@@ -331,31 +248,26 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
                 )
             )
             self._markers_rtree.insert(0, bbox, None)
+            if self.debug_text:
+                self._debug_bbox(bbox, color="red", width=1)
 
-        # Plot label
         if label:
-            label_style = style.label
-            if label_style.offset_x == "auto" or label_style.offset_y == "auto":
-                marker_size = ((style.marker.size / self.scale) ** 2) * (
-                    self.scale**2
-                )
-
-                label_style = label_style.offset_from_marker(
-                    marker_symbol=style.marker.symbol,
-                    marker_size=marker_size,
-                    scale=self.scale,
-                )
             self.text(
                 label,
                 ra,
                 dec,
-                label_style,
+                style=self._offset_from_marker(
+                    style=style.label,
+                    text=label,
+                    marker_size=style.marker.size,
+                    scale=self.scale,
+                ),
                 collision_handler=collision_handler or self.point_label_handler,
-                gid=kwargs.get("gid_label") or "marker-label",
+                # gid=kwargs.get("gid_label") or "marker-label",
             )
 
         if legend_label is not None:
-            self._legend_handles[legend_label] = result
+            self._add_legend_handle_marker(legend_label, style.marker)
 
     @use_style(ObjectStyle, "planets")
     def planets(
@@ -524,20 +436,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         raise NotImplementedError
 
     def _polygon(self, points: list, style: PolygonStyle, **kwargs):
-        # points = [self._prepare_coords(*p) for p in points]
         points = self._prepare_coords_many(points)
-        patch = patches.Polygon(
-            points,
-            # closed=False, # needs to be false for circles at poles?
-            **style.matplot_kwargs(self.scale),
-            **kwargs,
-            # clip_on=True,
-            # clip_path=self._background_clip_path,
-        )
-        self.ax.add_patch(patch)
-        # Need to set clip path AFTER adding patch
-        patch.set_clip_on(True)
-        patch.set_clip_path(self._background_clip_path)
+        self.canvas.polygon(points, style)
 
     @use_style(PolygonStyle)
     def polygon(
@@ -601,14 +501,15 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             width_degrees,
             angle,
         )
+        polygon = polygon.segmentize(0.1)
         points = list(zip(*polygon.exterior.coords.xy))
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
-        if legend_label is not None:
-            self._add_legend_handle_marker(
-                legend_label,
-                style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
-            )
+        # if legend_label is not None:
+        #     self._add_legend_handle_marker(
+        #         legend_label,
+        #         style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
+        #     )
 
     @use_style(PolygonStyle)
     def ellipse(
@@ -650,11 +551,11 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         points = list(zip(*polygon.exterior.coords.xy))
         self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
 
-        if legend_label is not None:
-            self._add_legend_handle_marker(
-                legend_label,
-                style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE),
-            )
+        # if legend_label is not None:
+        #     self._add_legend_handle_marker(
+        #         legend_label,
+        #         style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE),
+        #     )
 
     @use_style(PolygonStyle)
     def circle(
@@ -685,11 +586,11 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             gid=kwargs.get("gid") or "polygon",
         )
 
-        if legend_label is not None:
-            self._add_legend_handle_marker(
-                legend_label,
-                style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE),
-            )
+        # if legend_label is not None:
+        #     self._add_legend_handle_marker(
+        #         legend_label,
+        #         style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE),
+        #     )
 
     @use_style(ObjectStyle, "moon")
     def moon(
@@ -902,7 +803,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self,
         style: PathStyle = None,
         label: str = "ECLIPTIC",
-        num_labels: int = 1,
+        num_labels: int = 2,
         collision_handler: CollisionHandler = None,
     ):
         """Plots the ecliptic
@@ -913,19 +814,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             num_labels: Max number of labels to plot along the line
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the plot's `path_label_handler` will be used.
         """
-        x = []
-        y = []
-        inbounds = []
 
         label = translate(label, self.language)
-
-        for ra, dec in ecliptic.RA_DECS:
-            x0, y0 = self._prepare_coords(ra * 15, dec)
-            x.append(x0)
-            y.append(y0)
-            if self.in_bounds(ra * 15, dec):
-                inbounds.append((ra * 15, dec))
-
         coords = [(ra * 15, dec) for ra, dec in ecliptic.RA_DECS]
 
         self.line(
@@ -942,7 +832,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self,
         style: PathStyle = None,
         label: str = "CELESTIAL EQUATOR",
-        num_labels: int = 1,
+        num_labels: int = 2,
         collision_handler: CollisionHandler = None,
     ):
         """
@@ -962,7 +852,7 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
             num_labels=num_labels,
             collision_handler=collision_handler,
             coordinates=coords,
-            gid="celestial-equator",
+            # gid="celestial-equator",
         )
 
     @use_style(PathStyle)
@@ -994,44 +884,56 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
 
         coords = geometry.coords if geometry is not None else coordinates
         prepared_coords = [self._prepare_coords(*p) for p in coords]
-        x, y = zip(*prepared_coords)
 
         gid = kwargs.get("gid") or "line"
 
-        self.ax.plot(
-            x,
-            y,
-            clip_on=True,
-            clip_path=self._background_clip_path,
-            dash_capstyle=style.line.dash_capstyle,
-            gid=gid,
-            **style.line.matplot_kwargs(self.scale),
-            **self._plot_kwargs(),
-        )
-
-        if not label:
-            return
-
-        prepared_coords = [
-            (x, y) for x, y in prepared_coords if self._in_bounds_xy(x, y)
-        ]
-
-        if not prepared_coords:
-            return
-
-        x, y = zip(*prepared_coords)
-
         collision_handler = collision_handler or self.path_label_handler
 
-        self._text_line(
-            x,
-            y,
-            label,
-            num_labels=num_labels,
-            collision_handler=collision_handler,
-            min_spacing=0.65,
-            **style.label.matplot_kwargs(self.scale),
-            **self._plot_kwargs(),
-            clip_path=self._background_clip_path,
-            gid=gid,
+        self.canvas.line(
+            style=style.line,
+            coordinates=prepared_coords,
+            # gid="celestial-equator",
+        )
+
+        if label:
+            arr = np.array(prepared_coords)
+            xs, ys = arr[:, 0], arr[:, 1]
+            self._text_line(
+                xs,
+                ys,
+                text=label,
+                style=style.label,
+                num_labels=num_labels,
+                collision_handler=collision_handler,
+            )
+
+    def tissot(self, radius: int = 4):
+        for ra in range(45, 360, 45):
+            for dec in range(-80, 90, 20):
+                self.circle(
+                    center=(ra, dec),
+                    radius_degrees=radius,
+                    style__fill_color="#2e62ae",
+                )
+
+    def _debug_bbox(self, bbox, color, width=1):
+        """
+        Draws an unfilled box, used for debugging text collision handling
+
+        Args:
+            bbox: Bounding box (min_x, min_y, max_x, max_y) in display coordinates
+            color: Stroke color
+            width: Stroke width
+        """
+        min_x, min_y, max_x, max_y = bbox
+        self.canvas.polygon(
+            coordinates=[
+                (min_x, min_y),
+                (max_x, min_y),
+                (max_x, max_y),
+                (min_x, max_y),
+                (min_x, min_y),
+            ],
+            style=PolygonStyle(fill_color=None, edge_color=color, edge_width=width),
+            cs=CoordinateSystem.DISPLAY,
         )

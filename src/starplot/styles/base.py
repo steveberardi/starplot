@@ -5,23 +5,13 @@ from pathlib import Path
 from typing import Optional, Union
 
 import yaml
-
 from pydantic import BaseModel
 from pydantic.color import Color
 from pydantic.functional_serializers import PlainSerializer
-from matplotlib import patheffects
 from typing_extensions import Annotated
 
 from starplot.models.dso import DsoType
 from starplot.styles.helpers import merge_dict
-from starplot.styles.markers import (
-    ellipse,
-    circle_cross,
-    circle_crosshair,
-    circle_line,
-    circle_dot,
-    circle_dotted_rings,
-)
 
 ColorStr = Annotated[
     Color,
@@ -475,34 +465,6 @@ class LineStyle(BaseStyle):
 
         return attrs
 
-    def matplot_kwargs(self, scale: float = 1.0) -> dict:
-        line_width = self.width * scale
-
-        result = dict(
-            color=self.color.as_hex(),
-            linestyle=self.style,
-            linewidth=line_width,
-            # dash_capstyle=self.dash_capstyle,
-            alpha=self.alpha,
-            zorder=self.zorder,
-        )
-
-        if self.edge_width and self.edge_color:
-            result["path_effects"] = [
-                patheffects.withStroke(
-                    linewidth=line_width + 2 * self.edge_width * scale,
-                    foreground=self.edge_color.as_hex(),
-                )
-            ]
-
-        return result
-
-    def matplot_line_collection_kwargs(self, scale: float = 1.0) -> dict:
-        plot_kwargs = self.matplot_kwargs(scale)
-        plot_kwargs["linewidths"] = plot_kwargs.pop("linewidth")
-        plot_kwargs["colors"] = plot_kwargs.pop("color")
-        return plot_kwargs
-
 
 class PolygonStyle(BaseStyle):
     """
@@ -686,61 +648,6 @@ class LabelStyle(BaseStyle):
 
         return attrs
 
-    def matplot_kwargs(self, scale: float = 1.0) -> dict:
-        style = dict(
-            color=self.font_color.as_hex(),
-            fontsize=self.font_size * scale,
-            fontstyle=self.font_style,
-            fontname=self.font_name,
-            weight=FontWeightEnum(self.font_weight).as_matplot(),
-            alpha=self.font_alpha,
-            zorder=self.zorder,
-        )
-
-        if self.font_family:
-            style["family"] = self.font_family
-        if self.line_spacing:
-            style["linespacing"] = self.line_spacing
-
-        if self.border_width != 0 and self.border_color is not None:
-            style["path_effects"] = [
-                patheffects.withStroke(
-                    linewidth=self.border_width * scale,
-                    foreground=self.border_color.as_hex(),
-                )
-            ]
-
-        style.update(AnchorPointEnum(self.anchor_point).as_matplot())
-
-        return style
-
-    def offset_from_marker(self, marker_symbol, marker_size, scale: float = 1.0):
-        """Handles auto offsets from marker"""
-
-        if self.offset_x != "auto" or self.offset_y != "auto":
-            return self
-
-        new_style = self.model_copy()
-
-        x_direction = -1 if new_style.anchor_point.endswith("left") else 1
-        y_direction = -1 if new_style.anchor_point.startswith("bottom") else 1
-
-        offset = (marker_size**0.5 / 2) / scale
-
-        # matplotlib seems to use marker size differently depending on symbol (for scatter)
-        # it is NOT strictly the area of the bounding box of the marker
-        if marker_symbol in [MarkerSymbolEnum.POINT]:
-            offset /= PI
-
-        elif marker_symbol != MarkerSymbolEnum.SQUARE:
-            offset /= SQR_2
-            offset *= scale
-
-        offset += 0.65
-        new_style.offset_x = offset * float(x_direction)
-        new_style.offset_y = offset * float(y_direction)
-
-        return new_style
 
 
 class ObjectStyle(BaseStyle):
