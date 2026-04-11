@@ -37,8 +37,8 @@ start = time.perf_counter()
 dt = datetime(2023, 12, 16, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 
 style = PlotStyle().extend(
-    extensions.BLUE_NIGHT,
-    # extensions.BLUE_MEDIUM,
+    # extensions.BLUE_NIGHT,
+    extensions.BLUE_MEDIUM,
     # extensions.GRADIENT_ASTRONOMICAL_TWILIGHT,
     extensions.MAP,
     {
