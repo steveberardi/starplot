@@ -2,6 +2,7 @@ import time
 
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from pprint import pprint
 
 from shapely import Polygon
 
@@ -15,7 +16,9 @@ from starplot import (
     Miller,
     Mollweide,
     StereoNorth,
+    Equidistant,
     Orthographic,
+    Stereographic,
     _,
 )
 from starplot.styles import (
@@ -60,20 +63,20 @@ style.background_gradient_direction = "linear"
 
 CENTER_RA = 180
 
-cas = Constellation.get(iau_id="cas")
+# cas = Constellation.get(iau_id="cas")
 
 c = MapPlot(
-    ra_min=18 * 15,
-    ra_max=23 * 15,
-    dec_min=40,
+    ra_min=0 * 15,
+    ra_max=24 * 15,
+    dec_min=-50,
     dec_max=90,
-    # projection=Miller(center_ra=20 * 15),
-    projection=StereoNorth(center_ra=20 * 15),
+    # projection=Miller(center_ra=23/2 * 15),
+    # projection=Equidistant(center_ra=12 * 15, center_dec=35),
     # projection=Mollweide(),
-    # projection=Orthographic(),
+    projection=Stereographic(center_ra=6*15, center_dec=45),
     style=style,
     resolution=3000,
-    scale=0.87,
+    scale=0.8,
     debug=True,
     # debug_text=True,
     # clip_path=Polygon(cas.border.coords),
@@ -84,32 +87,32 @@ c.constellations()
 c.constellation_borders()
 
 c.stars(
-    where=[_.magnitude < 8],
-    where_labels=[_.magnitude < 5],
+    where=[_.magnitude < 6],
+    where_labels=[_.magnitude < 4],
     # catalog=BIG_SKY,
     bayer_labels=True,
     flamsteed_labels=True,
 )
 
 c.constellation_labels()
-
-
 c.ecliptic()
 c.celestial_equator()
 c.milky_way()
 
+# print(c._extent_mask().bounds)
+
 c.gridlines()
 
 
-m57 = DSO.get(m="57")
+# m57 = DSO.get(m="57")
 
-m31 = DSO.get(m="31")
+# m31 = DSO.get(m="31")
 
-# c.arrow(target=(m57.ra, m57.dec))
+# # c.arrow(target=(m57.ra, m57.dec))
 
 
-# c.point_label_handler.plot_on_fail = True
-# c.point_label_handler.attempts = 1
+# # c.point_label_handler.plot_on_fail = True
+# # c.point_label_handler.attempts = 1
 
 c.open_clusters(where_true_size=[False])
 
@@ -118,58 +121,46 @@ c.galaxies(where=[_.magnitude < 9], where_true_size=[False])
 c.nebula(where_true_size=[_.size > 0.01])
 
 
-c.rectangle(
-    center=(m57.ra, m57.dec),
-    height_degrees=6,
-    width_degrees=8,
-    style__edge_color="red",
-)
+# c.rectangle(
+#     center=(m57.ra, m57.dec),
+#     height_degrees=6,
+#     width_degrees=8,
+#     style__edge_color="red",
+# )
 
-c.title(
-    "Hello World!!",
-    # style__border_color="black",
-    # style__border_width=400,
-)
+# c.title(
+#     "Hello World!!",
+#     # style__border_color="black",
+#     # style__border_width=400,
+# )
 
-c.marker(
-    ra=m31.ra,
-    dec=m31.dec,
-    style__marker__fill="full",
-    style__marker__color="hsl(195deg 100% 24%)",
-    style__marker__edge_color="hsl(195deg 100% 64%)",
-    style__marker__edge_width=2,
-    style__marker__symbol="comet",
-    style__marker__size=50,
-)
+# c.marker(
+#     ra=m31.ra,
+#     dec=m31.dec,
+#     style__marker__fill="full",
+#     style__marker__color="hsl(195deg 100% 24%)",
+#     style__marker__edge_color="hsl(195deg 100% 64%)",
+#     style__marker__edge_width=2,
+#     style__marker__symbol="comet",
+#     style__marker__size=50,
+# )
 
+# c.legend(
+#     style__location="outside top right",
+#     style__margin_y=0,
+# )
+
+# c.legend(
+#     style__location="outside bottom right",
+#     style__margin_y=0,
+#     magnitude_scale=True,
+# )
 c.legend(
     style__location="outside top right",
-    style__margin_y=0,
-)
-
-c.legend(
-    style__location="outside bottom right",
-    style__margin_y=0,
-    magnitude_scale=True,
-)
-c.legend(
-    style__location="inside top right",
     # style__margin_y=0,
     magnitude_scale=True,
 )
 
-# c.circle(
-#     center=(m57.ra, m57.dec + 15),
-#     radius_degrees=6,
-#     style__edge_color="yellow",
-# )
-
-# c.tissot()
-
-
-# print(
-#     c.canvas.tx.transform_bounds(*c.canvas.projected_bounds, direction='INVERSE')
-# )
 
 
 c.export("temp/orion.svg")

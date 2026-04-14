@@ -11,8 +11,8 @@ from starplot.constants import PROJ_R
 
 
 class CoordinateReferenceSystem(str, Enum):
-    ENU = "+proj=latlon +ellps=sphere +a=6378137"
-    WNU = "+proj=latlon +ellps=sphere +axis=wnu +a=6378137"
+    ENU = f"+proj=longlat +ellps=sphere +R={PROJ_R}"
+    WNU = f"+proj=longlat +ellps=sphere +axis=wnu +R={PROJ_R}"
 
 
 def latlon_bounds_to_projection(
@@ -21,7 +21,7 @@ def latlon_bounds_to_projection(
     lon_max: float,
     lat_max: float,
     target_crs: str | CRS,
-    source_crs: str = CoordinateReferenceSystem.ENU,
+    source_crs: CRS,
     densify_edges: bool = True,
     densify_pts: int = 21,
 ) -> tuple[float, float, float, float]:
@@ -38,8 +38,7 @@ def latlon_bounds_to_projection(
     Returns:
         Bounds in the target projection's native units
     """
-    crs = CRS.from_proj4(source_crs.value)
-    transformer = Transformer.from_crs(crs, target_crs, always_xy=True)
+    transformer = Transformer.from_crs(source_crs, target_crs, always_xy=True)
 
     if densify_edges:
         # Sample along all 4 edges to catch curved projection boundaries
@@ -47,8 +46,16 @@ def latlon_bounds_to_projection(
         bottom = [(lon, lat_min) for lon in np.linspace(lon_min, lon_max, densify_pts)]
         left = [(lon_min, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
         right = [(lon_max, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
-        corners = top + bottom + left + right
+
+        # Interior grid to catch extremes on curved projections
+        interior_lons = np.linspace(lon_min, lon_max, densify_pts)
+        interior_lats = np.linspace(lat_min, lat_max, densify_pts)
+        glon, glat = np.meshgrid(interior_lons, interior_lats)
+        interior = list(zip(glon.ravel(), glat.ravel()))
+
+        corners = top + bottom + left + right + interior
         lons, lats = zip(*corners)
+
     else:
         # Just the 4 corners
         lons = [lon_min, lon_max, lon_min, lon_max]
@@ -108,16 +115,16 @@ class ProjectionBase(BaseModel, ABC):
             -90,
             180,
             90,
+            source_crs=CRS.from_proj4(CoordinateReferenceSystem.ENU.value),
             target_crs=CRS.from_proj4(self.proj_def_base),
         )
 
     def get_transformer(
-        self, source_crs: CoordinateReferenceSystem = None
+        self, source_crs: CRS
     ) -> Transformer:
-        src = CRS.from_proj4(source_crs.value)
-        return Transformer.from_crs(src, self.get_crs(source_crs), always_xy=True)
+        return Transformer.from_crs(source_crs, self.get_crs(source_crs), always_xy=True)
 
-    def get_crs(self, source_crs: CoordinateReferenceSystem = None) -> CRS:
+    def get_crs(self, source_crs: CRS) -> CRS:
         params = {
             "proj": self.name,
             "R": self.r,
@@ -125,7 +132,8 @@ class ProjectionBase(BaseModel, ABC):
         }
 
         if hasattr(self, "center_ra"):
-            if source_crs == CoordinateReferenceSystem.WNU:
+            axis_props = [(a.abbrev, a.direction) for a in source_crs.axis_info]
+            if ("lon", "west") in axis_props:
                 params["lon_0"] = 360 - self.center_ra
             else:
                 params["lon_0"] = self.center_ra
@@ -243,6 +251,7 @@ class Equidistant(ProjectionBase, CenterRADEC):
 
 
     name: ClassVar[str] = "aeqd"
+    proj_def_base: str = f"+proj=aeqd +R={PROJ_R} +units=m"
 
 
 class StereoNorth(ProjectionBase, CenterRA):
@@ -285,3 +294,5 @@ class Stereographic(ProjectionBase, CenterRADEC):
     """Similar to the North/South Stereographic projection, but allows custom central declination"""
 
     name: ClassVar[str] = "stere"
+    proj_def_base: str = f"+proj=stere +R={PROJ_R} +units=m"
+    

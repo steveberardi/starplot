@@ -24,14 +24,13 @@ celestial_equator:
     border_color: hsl(208, 23%, 12%)
   line:
     color: hsl(220, 72%, 52%)
-    alpha: 1
+
 ecliptic:
   label:
     font_color: hsl(4, 78%, 54%)
     border_color: hsl(208, 23%, 12%)
   line:
     color: hsl(4, 78%, 52%)
-    alpha: 1
 
 horizon:
   line:

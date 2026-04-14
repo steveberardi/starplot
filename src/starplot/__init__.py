@@ -8,7 +8,7 @@ from .plots import (
     MapPlot,
     HorizonPlot,
     OpticPlot,
-    # ZenithPlot,
+    ZenithPlot,
     # GalaxyPlot,
 )
 from .models import (

@@ -38,8 +38,6 @@ ecliptic:
     border_color: hsl(218, 88%, 99%)
   line:
     color: hsl(359, 98%, 49%)
-    alpha: 1
-    style: [0, [0.14, 2]]
 
 # Constellations
 constellation_labels:

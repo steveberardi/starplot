@@ -33,7 +33,7 @@ from starplot.styles.helpers import use_style
 from starplot.profile import profile
 from starplot.svg.canvas import Canvas, CoordinateSystem
 
-LOGGER = logging.getLogger("starplot-svg")
+LOGGER = logging.getLogger("starplot")
 LOG_HANDLER = logging.StreamHandler()
 LOG_FORMATTER = logging.Formatter(
     "\033[1;34m%(name)s\033[0m:[%(levelname)s]: %(message)s"

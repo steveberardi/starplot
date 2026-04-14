@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 from shapely import Polygon as ShapelyPolygon, LineString
 from shapely.ops import transform as _transform_shape
+from pyproj import CRS
 
 from starplot import geometry as _geometry
 from starplot.styles import (
@@ -90,7 +91,7 @@ class Canvas:
         self.axes_x = 0
         self.axes_y = 0
 
-        self.crs = crs or CoordinateReferenceSystem.ENU
+        self.crs = CRS.from_proj4(crs.value or CoordinateReferenceSystem.ENU.value)
         self.resolution = resolution
         self.projection = projection
         self.bounds = bounds
@@ -155,19 +156,26 @@ class Canvas:
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
             self.bounds = 0.0000001, -90, 359.999999, 90
         else:
+            if self.bounds[0] == 0:
+                self.bounds[0] = 0.00001
+            if self.bounds[2] == 0:
+                self.bounds[0] = 360 - 0.00001
+
             self.minx, self.miny, self.maxx, self.maxy = latlon_bounds_to_projection(
                 *self.bounds,
                 source_crs=self.crs,
                 target_crs=self.projection.get_crs(source_crs=self.crs),
             )
+            # print("original: ", self.bounds)
+            # self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
+            #     *self.bounds, densify_pts=100
+            # )
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
             self.bounds = self.tx.transform_bounds(
                 *self.projected_bounds, direction="INVERSE"
             )
+            # print("new: ", self.bounds)
 
-        # self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
-        #     *self.bounds, densify_pts=100
-        # )
 
         span_x = abs(self.maxx - self.minx)
         span_y = abs(self.maxy - self.miny)

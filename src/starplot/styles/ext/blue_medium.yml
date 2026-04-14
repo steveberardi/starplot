@@ -41,8 +41,6 @@ ecliptic:
   line:
     color: hsl(207, 75%, 48%)
     alpha: 1
-    style: [2, [2, 2]]
-    dash_capstyle: butt
 
 planets:
   marker:

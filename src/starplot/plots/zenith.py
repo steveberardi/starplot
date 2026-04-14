@@ -1,11 +1,14 @@
 import numpy as np
-from matplotlib import path, patches
 
+
+from skyfield.api import wgs84
+
+from starplot import geometry
 from starplot.coordinates import CoordinateSystem
 from starplot.data.translations import translate
 from starplot.plots.map import MapPlot
 from starplot.models.observer import Observer
-from starplot.projections import Stereographic
+from starplot.projections import Stereographic, Equidistant
 from starplot.styles import (
     LabelStyle,
     PlotStyle,
@@ -62,26 +65,43 @@ class ZenithPlot(MapPlot):
         )
         style = style or PlotStyle().extend(extensions.MAP)
 
+        geographic = wgs84.latlon(
+            latitude_degrees=observer.lat, longitude_degrees=observer.lon
+        )
+        obs = geographic.at(observer.timescale)
+        zenith = obs.from_altaz(alt_degrees=90, az_degrees=0)
+        ra, dec, _ = zenith.radec()
+
+        clip_path = geometry.ellipse(
+            center=(ra.hours * 15, dec.degrees),
+            height_degrees=180,
+            width_degrees=180,
+            num_pts=200,
+        )
+
         super().__init__(
             projection,
             0,
             360,
-            -90,
+            -60,
             90,
-            observer,
-            ephemeris,
-            style,
-            resolution,
+            observer=observer,
+            ephemeris=ephemeris,
+            style=style,
+            resolution=resolution,
             point_label_handler=point_label_handler,
             area_label_handler=area_label_handler,
             path_label_handler=path_label_handler,
-            clip_path=None,
+            clip_path=clip_path,
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
             *args,
             **kwargs,
         )
+
+        
+
 
     @use_style(PathStyle, "horizon")
     def horizon(
@@ -171,28 +191,6 @@ class ZenithPlot(MapPlot):
             transform=self.ax.transAxes,
             **style.matplot_kwargs(self.scale),
         )
-
-    def _plot_background_clip_path(self):
-        if self.style.has_gradient_background():
-            background_color = "#ffffff00"
-            self._plot_gradient_background(self.style.background_color)
-        else:
-            background_color = self.style.background_color.as_hex()
-
-        self._background_clip_path = patches.Circle(
-            (0.50, 0.50),
-            radius=0.45,
-            fill=True,
-            facecolor=background_color,
-            # edgecolor=self.style.border_line_color.as_hex(),
-            linewidth=0,
-            zorder=-2_000,
-            transform=self.ax.transAxes,
-        )
-        self.ax.set_facecolor(background_color)
-
-        self.ax.add_patch(self._background_clip_path)
-        self._update_clip_path_polygon(buffer=20)
 
     def _prepare_star_coords(self, df, limit_by_altaz=False):
         # TODO : reconcile this commented code
