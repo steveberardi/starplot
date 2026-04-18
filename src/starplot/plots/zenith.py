@@ -58,28 +58,18 @@ class ZenithPlot(MapPlot):
         *args,
         **kwargs,
     ) -> "ZenithPlot":
-        observer = observer or Observer()
+        observer = observer or Observer()        
+        style = style or PlotStyle().extend(extensions.MAP)
 
-        projection = Stereographic(
+        projection = Equidistant(
             center_ra=observer.lst,
             center_dec=observer.lat,
         )
-        
-        style = style or PlotStyle().extend(extensions.MAP)
 
-        geographic = wgs84.latlon(
-            latitude_degrees=observer.lat, longitude_degrees=observer.lon
-        )
-        obs = geographic.at(observer.timescale)
-        zenith = obs.from_altaz(alt_degrees=90, az_degrees=0)
-        ra, dec, _ = zenith.radec()
-
-        print(observer.lst)
         clip_path = geometry.circle(
             center=(observer.lst, observer.lat),
             diameter_degrees=180,
-            # width_degrees=180,
-            # num_pts=100,
+            num_pts=400,
         )
         print(clip_path.bounds)
 

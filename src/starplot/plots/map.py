@@ -415,8 +415,8 @@ class MapPlot(
             self.line(
                 coordinates=coords,
                 style=style,
-                label=ra_formatter_fn(ra),
-                num_labels=2,
+                # label=ra_formatter_fn(ra),
+                # num_labels=2,
             )
 
         for dec in dec_locations:
@@ -424,8 +424,8 @@ class MapPlot(
             self.line(
                 coordinates=coords,
                 style=style,
-                label=dec_formatter_fn(dec),
-                num_labels=4,
+                # label=dec_formatter_fn(dec),
+                # num_labels=4,
             )
 
         # TODO : labels, tick marks
