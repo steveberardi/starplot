@@ -59,10 +59,12 @@ class ZenithPlot(MapPlot):
         **kwargs,
     ) -> "ZenithPlot":
         observer = observer or Observer()
+
         projection = Stereographic(
             center_ra=observer.lst,
             center_dec=observer.lat,
         )
+        
         style = style or PlotStyle().extend(extensions.MAP)
 
         geographic = wgs84.latlon(
@@ -72,12 +74,14 @@ class ZenithPlot(MapPlot):
         zenith = obs.from_altaz(alt_degrees=90, az_degrees=0)
         ra, dec, _ = zenith.radec()
 
-        clip_path = geometry.ellipse(
-            center=(ra.hours * 15, dec.degrees),
-            height_degrees=180,
-            width_degrees=180,
-            num_pts=200,
+        print(observer.lst)
+        clip_path = geometry.circle(
+            center=(observer.lst, observer.lat),
+            diameter_degrees=180,
+            # width_degrees=180,
+            # num_pts=100,
         )
+        print(clip_path.bounds)
 
         super().__init__(
             projection,

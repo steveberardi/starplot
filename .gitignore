@@ -1,6 +1,8 @@
 # scratchpad for local development
 scripts/scratchpad.py
 
+.claude/
+
 # astronomy data
 *.bsp
 CometEls.txt

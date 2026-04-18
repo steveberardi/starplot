@@ -63,23 +63,25 @@ style.background_gradient_direction = "linear"
 
 CENTER_RA = 180
 
-# cas = Constellation.get(iau_id="cas")
+cas = Constellation.get(iau_id="cas")
 
 c = MapPlot(
     ra_min=0 * 15,
     ra_max=24 * 15,
-    dec_min=-50,
+    dec_min=-30,
     dec_max=90,
     # projection=Miller(center_ra=23/2 * 15),
     # projection=Equidistant(center_ra=12 * 15, center_dec=35),
     # projection=Mollweide(),
-    projection=Stereographic(center_ra=6*15, center_dec=45),
+    # projection=Equidistant(center_ra=observer.lst, center_dec=45),
+    # projection=Stereographic(center_ra=12*15, center_dec=45),
+    projection=StereoNorth(),
     style=style,
     resolution=3000,
-    scale=0.8,
+    scale=0.6,
     debug=True,
     # debug_text=True,
-    # clip_path=Polygon(cas.border.coords),
+    clip_path=Polygon(cas.border.coords),
 )
 
 
@@ -157,7 +159,8 @@ c.nebula(where_true_size=[_.size > 0.01])
 # )
 c.legend(
     style__location="outside top right",
-    # style__margin_y=0,
+    style__margin_y=0,
+    style__margin_x=40,
     magnitude_scale=True,
 )
 

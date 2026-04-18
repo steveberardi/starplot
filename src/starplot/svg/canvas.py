@@ -52,6 +52,19 @@ class CoordinateSystem(str, Enum):
 def normalize(value, min_val, max_val):
     return (value - min_val) / (max_val - min_val)
 
+def lerp(start: float, end: float, t: float) -> float:
+    """
+    Linear interpolation between two numbers.
+    
+    Args:
+        start: The starting value
+        end: The ending value
+        t: The interpolation factor (0.0 = start, 1.0 = end)
+    
+    Returns:
+        The interpolated value between start and end
+    """
+    return start + (end - start) * t
 
 def get_text_hw(text, font_size: int, font_weight: int = 400) -> tuple[float, float]:
     char_width = font_size * (0.65 if font_weight >= 500 else 0.6)
@@ -94,6 +107,7 @@ class Canvas:
         self.crs = CRS.from_proj4(crs.value or CoordinateReferenceSystem.ENU.value)
         self.resolution = resolution
         self.projection = projection
+            
         self.bounds = bounds
         self.style = style
         self.scale = scale
@@ -155,6 +169,19 @@ class Canvas:
             self.minx, self.miny, self.maxx, self.maxy = self.projection.global_bounds
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
             self.bounds = 0.0000001, -90, 359.999999, 90
+        elif self.clip_path:
+            self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
+                *self.clip_path.bounds, densify_pts=1_000
+            )
+            # self.minx, self.miny, self.maxx, self.maxy = latlon_bounds_to_projection(
+            #     *self.bounds,
+            #     source_crs=self.crs,
+            #     target_crs=self.projection.get_crs(source_crs=self.crs),
+            # )
+            self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
+            self.bounds = self.tx.transform_bounds(
+                *self.projected_bounds, direction="INVERSE"
+            )
         else:
             if self.bounds[0] == 0:
                 self.bounds[0] = 0.00001
@@ -189,22 +216,66 @@ class Canvas:
             self.height = self.resolution
             self.width = self.height / ratio
 
-        self.figure_height = self.height + self.style.figure_padding * 2
-        self.figure_width = self.width + self.style.figure_padding * 2
-        self.axes_x = self.style.figure_padding
-        self.axes_y = self.style.figure_padding
-
+        self._refresh_figure_dimensions()
         self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
         self.logger.debug(f"Bounds = {self.bounds}")
         self.logger.debug(f"Extent (X) = {int(self.minx)} >> {int(self.maxx)}")
         self.logger.debug(f"Extent (Y) = {int(self.miny)} >> {int(self.maxy)}")
         self.logger.debug(f"Size (h X w) = {int(self.height)} x {self.width}")
 
+    def _refresh_figure_dimensions(self):
+        self.figure_height = self.height + self.style.figure_padding * 2
+        self.figure_width = self.width + self.style.figure_padding * 2
+        self.axes_x = self.style.figure_padding
+        self.axes_y = self.style.figure_padding
+
     def _init_clip_path_background(self):
+        """
+        TODO:
+        - display bounds based on user provided min/max ranges OR clip path
+        - query bounds based on transformation bounds
+        
+        """
         if self.clip_path is not None:
             self.clip_path_display = _transform_shape(self._to_display, self.clip_path)
+            dx0, dy0, dx1, dy1 = self.clip_path_display.bounds
+
+            # TODO : update bounds based on clip path
+            # need tx from display >> projected
+
+            ax0 = dx0 / self.width
+            ax1 = dx1 / self.width
+            ay0 = dy0 / self.height
+            ay1 = dy1 / self.height
+
+            # print(ay0, ay1, self.miny, self.maxy)
+
+            self.minx = lerp(self.minx, self.maxx, ax0)
+            self.maxx = lerp(self.minx, self.maxx, ax1)
+            # self.miny = lerp(self.miny, self.maxy, ay0)
+            # self.maxy = lerp(self.miny, self.maxy, ay1)
+            
+            self.miny = lerp(self.maxy, self.miny, ay1)
+            self.maxy = lerp(self.maxy, self.miny, ay0)
+            
+            # print(ay0, ay1, self.miny, self.maxy)
+
+            self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
+            self.bounds = self.tx.transform_bounds(
+                *self.projected_bounds, direction="INVERSE"
+            )
+
+            self.width = dx1 - dx0
+            self.height = dy1 - dy0
+            self._refresh_figure_dimensions()
         else:
-            self._clip_path_from_bounds()
+            # self._clip_path_from_bounds()
+            self.clip_path_display = ShapelyPolygon([
+                (0, 0),
+                (self.width, 0),
+                (self.width, self.height),
+                (0, self.height),
+            ])
 
         if self.style.has_gradient_background():
             gradient_id = "axes-background-gradient"
@@ -501,23 +572,23 @@ class Canvas:
             self.axes_x += width + style.margin_x
             figure_x = self.axes_x - width - style.margin_x
             figure_y = self.axes_y + style.margin_y
-            self.figure_width += width
+            self.figure_width += width + style.margin_x
             adjustments = {"axes_x": width + style.margin_x, "figure_width": width}
         elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_LEFT:
             self.axes_x += width + style.margin_x
             figure_x = self.axes_x - width - style.margin_x
             figure_y = self.axes_y + self.height - height - style.margin_y
-            self.figure_width += width
+            self.figure_width += width + style.margin_x
             adjustments = {"axes_x": width + style.margin_x, "figure_width": width}
         elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT:
             figure_x = self.axes_x + self.width + style.margin_x
             figure_y = self.axes_y + self.height - height - style.margin_y
-            self.figure_width += width
+            self.figure_width += width + style.margin_x
             adjustments = {"figure_width": width}
         elif loc == LegendLocationEnum.OUTSIDE_TOP_RIGHT:
             figure_x = self.axes_x + self.width + style.margin_x
             figure_y = self.axes_y + style.margin_y
-            self.figure_width += width
+            self.figure_width += width + style.margin_x
             adjustments = {"figure_width": width}
 
         self.legend_element = (
