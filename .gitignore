@@ -23,6 +23,7 @@ gaia*/
 data/fonts/*
 data/build/*
 !data/build/.keep
+data/fonts/*
 
 # Big Sky Catalog
 # we ignore this because of its size (50+ MB)
