@@ -51,36 +51,8 @@ DPI = 100
 
 
 class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
-    _background_clip_path = None
-    _clip_path_polygon: Polygon = None  # clip path in display coordinates
     _coordinate_system = CoordinateSystem.RA_DEC
     _gradient_direction: GradientDirection = GradientDirection.LINEAR
-
-    ax: Axes
-    """
-    The underlying [Matplotlib axes](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes) that everything is plotted on.
-    
-    **Important**: Most Starplot plotting functions also specify a transform based on the plot's projection when plotting things on the Matplotlib Axes instance, so use this property at your own risk!
-    """
-
-    fig: Figure
-    """
-    The underlying [Matplotlib figure](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure) that the axes is drawn on.
-    """
-
-    style: PlotStyle
-    """
-    The plot's style.
-    """
-
-    point_label_handler: CollisionHandler
-    """Default [collision handler][starplot.CollisionHandler] for point labels."""
-
-    area_label_handler: CollisionHandler
-    """Default [collision handler][starplot.CollisionHandler] for area labels."""
-
-    path_label_handler: CollisionHandler
-    """Default [collision handler][starplot.CollisionHandler] for path labels."""
 
     def __init__(
         self,
@@ -99,6 +71,20 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
     ):
         super().__init__(*args, **kwargs)
 
+        self._clip_path_polygon: Polygon = None  # clip path in display coordinates
+
+        self.ax: Axes = None
+        """
+        The underlying [Matplotlib axes](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes) that everything is plotted on.
+        
+        **Important**: Most Starplot plotting functions also specify a transform based on the plot's projection when plotting things on the Matplotlib Axes instance, so use this property at your own risk!
+        """
+
+        self.fig: Figure = None
+        """
+        The underlying [Matplotlib figure](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure) that the axes is drawn on.
+        """
+
         if StarplotSettings.svg_text_type == SvgTextType.PATH:
             plt.rcParams["svg.fonttype"] = "path"
         else:
@@ -111,6 +97,8 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
         self.language = StarplotSettings.language
 
         self.style = style or PlotStyle()
+        """The plot's style."""
+
         self.figure_size = resolution * px
         self.resolution = resolution
 
@@ -127,12 +115,17 @@ class BasePlot(DebugPlotterMixin, TextPlotterMixin, ABC):
                 AnchorPointEnum.LEFT_CENTER,
             ],
         )
+        """Default [collision handler][starplot.CollisionHandler] for point labels."""
+
         self.area_label_handler = area_label_handler or CollisionHandler(
             allow_constellation_line_collisions=True
         )
+        """Default [collision handler][starplot.CollisionHandler] for area labels."""
+
         self.path_label_handler = path_label_handler or CollisionHandler(
             allow_constellation_line_collisions=True
         )
+        """Default [collision handler][starplot.CollisionHandler] for path labels."""
 
         self.scale = scale
         self.autoscale = autoscale

@@ -72,6 +72,11 @@ def test_marker_no_label():
     p.marker(ra=150, dec=0, style__marker__color="blue")
 
 
+def test_text_no_style_kwarg():
+    p = MapPlot(projection=Mercator())
+    p.text(ra=100, dec=0, text="hello")
+
+
 def test_plots_at_astrometric():
     """Asserts that map plots plot astrometric positions, NOT apparent"""
 
