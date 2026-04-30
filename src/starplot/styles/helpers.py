@@ -1,3 +1,4 @@
+import inspect
 import json
 
 from functools import wraps
@@ -22,9 +23,13 @@ def merge_dict(dict_1: dict, dict_2: dict) -> None:
 
 def use_style(style_class, style_attr: str = None):
     def decorator(func):
+        params = list(inspect.signature(func).parameters.keys())
+        style_pos = params.index("style") if "style" in params else -1
+
         @wraps(func)
         def wrapper(*args, **kwargs):
-            style = kwargs.get("style")
+            style_in_positional = 0 <= style_pos < len(args)
+            style = args[style_pos] if style_in_positional else kwargs.get("style")
             style_kwargs = {
                 kw: value for kw, value in kwargs.items() if kw.startswith("style__")
             }
@@ -77,6 +82,9 @@ def use_style(style_class, style_attr: str = None):
             elif style is None and style_attr is not None:
                 # if no style overrides and there's a base style, then just pass the base style
                 kwargs["style"] = getattr(args[0].style, style_attr, None)
+
+            elif style is None and not style_in_positional:
+                kwargs["style"] = style_class()
 
             return func(*args, **kwargs)
 
