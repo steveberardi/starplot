@@ -83,6 +83,8 @@ class BasePlot(StarPlotterMixin, ABC):
         self.language = StarplotSettings.language
 
         self.style = style or PlotStyle()
+        """The plot's style."""
+
         self.resolution = resolution
 
         self.scale = scale
@@ -131,12 +133,17 @@ class BasePlot(StarPlotterMixin, ABC):
                 AnchorPointEnum.LEFT_CENTER,
             ],
         )
+        """Default [collision handler][starplot.CollisionHandler] for point labels."""
+
         self.area_label_handler = area_label_handler or CollisionHandler(
             allow_constellation_line_collisions=True
         )
+        """Default [collision handler][starplot.CollisionHandler] for area labels."""
+
         self.path_label_handler = path_label_handler or CollisionHandler(
             allow_constellation_line_collisions=True
         )
+        """Default [collision handler][starplot.CollisionHandler] for path labels."""
 
         self.observer = observer or Observer()
         self.ephemeris_name = ephemeris
