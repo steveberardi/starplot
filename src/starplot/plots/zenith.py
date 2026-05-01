@@ -58,7 +58,7 @@ class ZenithPlot(MapPlot):
         *args,
         **kwargs,
     ) -> "ZenithPlot":
-        observer = observer or Observer()        
+        observer = observer or Observer()
         style = style or PlotStyle().extend(extensions.MAP)
 
         projection = Equidistant(
@@ -93,9 +93,6 @@ class ZenithPlot(MapPlot):
             *args,
             **kwargs,
         )
-
-        
-
 
     @use_style(PathStyle, "horizon")
     def horizon(

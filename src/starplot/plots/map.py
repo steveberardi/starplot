@@ -180,15 +180,12 @@ class MapPlot(
         # crs_dst = CRS.from_proj4(CoordinateReferenceSystem.ENU.value)
         # transformer = Transformer.from_crs(crs_src, crs_dst, always_xy=True)
 
-
         # # transform a point
         # minx, _ = transformer.transform(minx, 0)
         # maxx, _ = transformer.transform(maxx, 0)
 
-        
         # ra_min = lon_to_ra(minx) * 15
         # ra_max = lon_to_ra(maxx) * 15
-
 
         # print(minx, maxx)
         # print("************************")
@@ -214,7 +211,7 @@ class MapPlot(
         #     maxx -= 360
 
         # minx = 0
-        
+
         # self.ra_min = 120
         # self.ra_max = 360
         # return
@@ -224,9 +221,9 @@ class MapPlot(
         # 75 -> 345
 
         # adjust the X min/max if the Y bounds is near the poles
-        if (isinstance(self.projection, (Stereographic, StereoNorth, StereoSouth))) and (
-            self.dec_max > 80 or self.dec_min < -80
-        ):
+        if (
+            isinstance(self.projection, (Stereographic, StereoNorth, StereoSouth))
+        ) and (self.dec_max > 80 or self.dec_min < -80):
             self.ra_min = 0
             self.ra_max = 360
 

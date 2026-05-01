@@ -165,7 +165,6 @@ c.legend(
 )
 
 
-
 c.export("temp/orion.svg")
 # c.export("temp/orion.png")
 

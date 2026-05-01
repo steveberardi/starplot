@@ -52,19 +52,21 @@ class CoordinateSystem(str, Enum):
 def normalize(value, min_val, max_val):
     return (value - min_val) / (max_val - min_val)
 
+
 def lerp(start: float, end: float, t: float) -> float:
     """
     Linear interpolation between two numbers.
-    
+
     Args:
         start: The starting value
         end: The ending value
         t: The interpolation factor (0.0 = start, 1.0 = end)
-    
+
     Returns:
         The interpolated value between start and end
     """
     return start + (end - start) * t
+
 
 def get_text_hw(text, font_size: int, font_weight: int = 400) -> tuple[float, float]:
     char_width = font_size * (0.65 if font_weight >= 500 else 0.6)
@@ -107,7 +109,7 @@ class Canvas:
         self.crs = CRS.from_proj4(crs.value or CoordinateReferenceSystem.ENU.value)
         self.resolution = resolution
         self.projection = projection
-            
+
         self.bounds = bounds
         self.style = style
         self.scale = scale
@@ -203,7 +205,6 @@ class Canvas:
             )
             # print("new: ", self.bounds)
 
-
         span_x = abs(self.maxx - self.minx)
         span_y = abs(self.maxy - self.miny)
 
@@ -234,7 +235,7 @@ class Canvas:
         TODO:
         - display bounds based on user provided min/max ranges OR clip path
         - query bounds based on transformation bounds
-        
+
         """
         if self.clip_path is not None:
             self.clip_path_display = _transform_shape(self._to_display, self.clip_path)
@@ -258,7 +259,7 @@ class Canvas:
 
             self.miny = lerp(self.maxy, self.miny, ay1)
             self.maxy = lerp(self.maxy, self.miny, ay0)
-            
+
             # print(ay0, ay1, self.miny, self.maxy)
 
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
@@ -271,12 +272,14 @@ class Canvas:
             self._refresh_figure_dimensions()
         else:
             # self._clip_path_from_bounds()
-            self.clip_path_display = ShapelyPolygon([
-                (0, 0),
-                (self.width, 0),
-                (self.width, self.height),
-                (0, self.height),
-            ])
+            self.clip_path_display = ShapelyPolygon(
+                [
+                    (0, 0),
+                    (self.width, 0),
+                    (self.width, self.height),
+                    (0, self.height),
+                ]
+            )
 
         if self.style.has_gradient_background():
             gradient_id = "axes-background-gradient"
@@ -626,9 +629,7 @@ class Canvas:
         elements = self.figure_elements
         if self.legend_element:
             elements.append(self.legend_element)
-        figure_sorted_by_z = sorted(
-            elements, key=lambda e: e[0]
-        )
+        figure_sorted_by_z = sorted(elements, key=lambda e: e[0])
         figure_elements = [e for _, e in figure_sorted_by_z]
         figure_svg = SVG(
             height=self.figure_height,

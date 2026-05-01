@@ -145,4 +145,3 @@ class ArrowPlotterMixin:
             style=style,
             cs="display",
         )
-

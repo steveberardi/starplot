@@ -277,4 +277,3 @@ class ConstellationPlotterMixin:
                 collision_handler=collision_handler,
                 gid="constellations-label-name",
             )
-

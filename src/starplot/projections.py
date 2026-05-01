@@ -119,10 +119,10 @@ class ProjectionBase(BaseModel, ABC):
             target_crs=CRS.from_proj4(self.proj_def_base),
         )
 
-    def get_transformer(
-        self, source_crs: CRS
-    ) -> Transformer:
-        return Transformer.from_crs(source_crs, self.get_crs(source_crs), always_xy=True)
+    def get_transformer(self, source_crs: CRS) -> Transformer:
+        return Transformer.from_crs(
+            source_crs, self.get_crs(source_crs), always_xy=True
+        )
 
     def get_crs(self, source_crs: CRS) -> CRS:
         params = {
@@ -226,19 +226,21 @@ class Mercator(ProjectionBase, CenterRA):
 
     pass
 
+
 class PlateCarree(ProjectionBase, CenterRA):
     """An equirectangular projection"""
 
     pass
+
 
 class ObliqueMercator(ProjectionBase, CenterRADEC, Azimuth):
     """Oblique Mercator projection"""
 
     pass
 
+
 class Mollweide(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
-
 
     proj_def_base: str = f"+proj=moll +R={PROJ_R} +units=m"
     global_only: bool = True
@@ -249,14 +251,12 @@ class Mollweide(ProjectionBase, CenterRA):
 class Equidistant(ProjectionBase, CenterRADEC):
     """Shows accurate distances from the center position. Often used for planispheres."""
 
-
     name: ClassVar[str] = "aeqd"
     proj_def_base: str = f"+proj=aeqd +R={PROJ_R} +units=m"
 
 
 class StereoNorth(ProjectionBase, CenterRA):
     """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""
-
 
     name: ClassVar[str] = "stere"
     center_dec: float = 90
@@ -295,4 +295,3 @@ class Stereographic(ProjectionBase, CenterRADEC):
 
     name: ClassVar[str] = "stere"
     proj_def_base: str = f"+proj=stere +R={PROJ_R} +units=m"
-    

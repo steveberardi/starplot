@@ -346,4 +346,3 @@ class StarPlotterMixin:
             label_fn,
             handler,
         )
-

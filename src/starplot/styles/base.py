@@ -649,7 +649,6 @@ class LabelStyle(BaseStyle):
         return attrs
 
 
-
 class ObjectStyle(BaseStyle):
     """Defines the style for a sky object (e.g. star, DSO)"""
 
