@@ -87,6 +87,9 @@ build-doc-data:
 version:
 	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"
 
+install:
+	uv sync --all-groups --all-extras
+
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------

@@ -84,4 +84,5 @@ dev = [
     "rich==13.9.4",
     "ruff==0.14.10",
     "snakeviz==2.2.2",
+    "pyinstrument==5.1.2",
 ]
