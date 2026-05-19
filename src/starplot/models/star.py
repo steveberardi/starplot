@@ -87,13 +87,14 @@ class Star(CatalogObject, SkyObject):
             if self.flamsteed is not None and np.isfinite(self.flamsteed)
             else None
         )
+        self.ccdm = self.ccdm if isinstance(self.ccdm, str) else None
 
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
 
     @property
     def is_primary(self) -> bool:
-        return not bool(self.ccdm) or self.ccdm.startswith("A")
+        return self.ccdm is None or self.ccdm.startswith("A")
 
     @classmethod
     def all(cls, catalog: Catalog = BIG_SKY_MAG11) -> Iterator["Star"]:
