@@ -87,6 +87,8 @@ class Star(CatalogObject, SkyObject):
             if self.flamsteed is not None and np.isfinite(self.flamsteed)
             else None
         )
+        if not isinstance(self.ccdm, str):
+            self.ccdm = None
 
     def __repr__(self) -> str:
         return f"Star(hip={self.hip}, tyc={self.tyc}, magnitude={self.magnitude}, ra={self.ra}, dec={self.dec})"
