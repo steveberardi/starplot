@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
 import pytest
+from shapely import Point
 
 from starplot import _, DSO, Star, Constellation, Sun, Moon, Planet, Observer
 
@@ -46,6 +47,10 @@ class TestStar:
 
         for star in m45_stars:
             assert star.geometry.intersects(m45.geometry)
+
+    def test_star_is_primary_handles_int(self):
+        s = Star(ra=1, dec=1, pk=1, geometry=Point(1, 1), ccdm=1, magnitude=2)
+        assert s.is_primary
 
 
 class TestConstellation:
