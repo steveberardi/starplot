@@ -241,28 +241,21 @@ class Canvas:
             self.clip_path_display = _transform_shape(self._to_display, self.clip_path)
             dx0, dy0, dx1, dy1 = self.clip_path_display.bounds
 
-            # # TODO : update bounds based on clip path
-            # # need tx from display >> projected
-
             ax0 = dx0 / self.width
             ax1 = dx1 / self.width
             ay0 = dy0 / self.height
             ay1 = dy1 / self.height
 
-            print(ax0, ax1, self.minx)
+            # print(ax0, ax1, self.minx)
             # print(ay0, ay1, self.miny, self.maxy)
 
             minx, maxx = self.minx, self.maxx
             self.minx = lerp(minx, maxx, ax0)
             self.maxx = lerp(minx, maxx, ax1)
-            # self.miny = lerp(self.miny, self.maxy, ay0)
-            # self.maxy = lerp(self.miny, self.maxy, ay1)
 
             maxy, miny = self.maxy, self.miny
             self.miny = lerp(maxy, miny, ay1)
             self.maxy = lerp(maxy, miny, ay0)
-
-            # print(ay0, ay1, self.miny, self.maxy)
 
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
             self.bounds = self.tx.transform_bounds(

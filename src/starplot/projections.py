@@ -262,6 +262,8 @@ class StereoNorth(ProjectionBase, CenterRA):
     name: ClassVar[str] = "stere"
     center_dec: float = 90
 
+    proj_def_base: str = f"+proj=stere +lat_0=90 +R={PROJ_R} +units=m"
+
 
 class StereoSouth(ProjectionBase, CenterRA):
     """Good for objects near the south celestial pole, but distorts objects near the mid declinations"""
