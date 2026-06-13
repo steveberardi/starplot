@@ -63,7 +63,7 @@ style.background_gradient_direction = "linear"
 
 CENTER_RA = 180
 
-cas = Constellation.get(iau_id="cas")
+cas = Constellation.get(iau_id="her")
 
 c = MapPlot(
     ra_min=0 * 15,
@@ -74,11 +74,11 @@ c = MapPlot(
     # projection=Equidistant(center_ra=12 * 15, center_dec=35),
     # projection=Mollweide(),
     # projection=Equidistant(center_ra=observer.lst, center_dec=45),
-    # projection=Stereographic(center_ra=12*15, center_dec=45),
-    projection=StereoNorth(),
+    projection=Stereographic(center_ra=12*15, center_dec=45),
+    # projection=StereoNorth(),
     style=style,
     resolution=3000,
-    scale=0.6,
+    scale=0.74,
     debug=True,
     # debug_text=True,
     clip_path=Polygon(cas.border.coords),

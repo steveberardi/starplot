@@ -37,7 +37,7 @@ class Settings:
 
     svg_text_type: SvgTextType = field(
         default_factory=lambda: os.environ.get(
-            "STARPLOT_SVG_TEXT_TYPE", SvgTextType.PATH
+            "STARPLOT_SVG_TEXT_TYPE", SvgTextType.ELEMENT
         )
     )
     """

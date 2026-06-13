@@ -129,6 +129,7 @@ class ProjectionBase(BaseModel, ABC):
             "proj": self.name,
             "R": self.r,
             "units": self.units,
+            "over": None,
         }
 
         if hasattr(self, "center_ra"):
