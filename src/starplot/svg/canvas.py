@@ -252,13 +252,15 @@ class Canvas:
             print(ax0, ax1, self.minx)
             # print(ay0, ay1, self.miny, self.maxy)
 
-            self.minx = lerp(self.minx, self.maxx, ax0)
-            self.maxx = lerp(self.minx, self.maxx, ax1)
+            minx, maxx = self.minx, self.maxx
+            self.minx = lerp(minx, maxx, ax0)
+            self.maxx = lerp(minx, maxx, ax1)
             # self.miny = lerp(self.miny, self.maxy, ay0)
             # self.maxy = lerp(self.miny, self.maxy, ay1)
 
-            self.miny = lerp(self.maxy, self.miny, ay1)
-            self.maxy = lerp(self.maxy, self.miny, ay0)
+            maxy, miny = self.maxy, self.miny
+            self.miny = lerp(maxy, miny, ay1)
+            self.maxy = lerp(maxy, miny, ay0)
 
             # print(ay0, ay1, self.miny, self.maxy)
 

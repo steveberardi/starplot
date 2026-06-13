@@ -77,7 +77,7 @@ class ZenithPlot(MapPlot):
             projection,
             0,
             360,
-            -60,
+            -90,
             90,
             observer=observer,
             ephemeris=ephemeris,
