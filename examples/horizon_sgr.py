@@ -36,4 +36,4 @@ p.constellation_labels()
 p.horizon(labels={180: "SOUTH"})
 p.gridlines()
 
-p.export("horizon_sgr.png", padding=0.5)
+p.export("horizon_sgr.png")

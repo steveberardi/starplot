@@ -37,4 +37,4 @@ op.sun(
     label=None,
 )
 
-op.export("optic_solar_eclipse.png", padding=0.1, transparent=True)
+op.export("optic_solar_eclipse.png")

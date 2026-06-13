@@ -70,4 +70,4 @@ p.marker(
 )
 p.constellation_labels()
 
-p.export("star_chart_detail.png", transparent=True, padding=0.1)
+p.export("star_chart_detail.png")

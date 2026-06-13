@@ -26,4 +26,4 @@ p.stars(
     style__label__font_size=14,
     style__label__font_weight=400,
 )
-p.export("map_big_dipper.png", transparent=True)
+p.export("map_big_dipper.png")

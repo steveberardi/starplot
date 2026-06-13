@@ -281,6 +281,10 @@ class OpticPlot(
         Args:
             style: If `None`, then the plot's style for info text will be used
         """
+
+        return
+
+        # TODO
         self.ax.set_xlim(-1.22 * self.optic.xlim, 1.22 * self.optic.xlim)
         self.ax.set_ylim(-1.1 * self.optic.ylim, 1.1 * self.optic.ylim)
         self.optic.transform(

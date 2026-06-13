@@ -43,4 +43,4 @@ p.galaxies(
     ],
     where_true_size=[False],
 )
-p.export("map_virgo_cluster.png", padding=0.8)
+p.export("map_virgo_cluster.png")

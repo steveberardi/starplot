@@ -40,4 +40,4 @@ p.stars(
     color_fn=color_by_bv,
 )
 p.info()
-p.export("optic_m45.png", padding=0.1, transparent=True)
+p.export("optic_m45.png")

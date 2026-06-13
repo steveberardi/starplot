@@ -167,11 +167,8 @@ class Canvas:
         )
 
     def _init_bounds(self):
-        if self._is_global() or self.projection.global_only:
-            self.minx, self.miny, self.maxx, self.maxy = self.projection.global_bounds
-            self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
-            self.bounds = 0.0000001, -90, 359.999999, 90
-        elif self.clip_path:
+        
+        if self.clip_path:
             self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
                 *self.clip_path.bounds, densify_pts=1_000
             )
@@ -184,6 +181,10 @@ class Canvas:
             self.bounds = self.tx.transform_bounds(
                 *self.projected_bounds, direction="INVERSE"
             )
+        elif self._is_global() or self.projection.global_only:
+            self.minx, self.miny, self.maxx, self.maxy = self.projection.global_bounds
+            self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
+            self.bounds = 0.0000001, -90, 359.999999, 90
         else:
             if self.bounds[0] == 0:
                 self.bounds[0] = 0.00001
@@ -268,6 +269,7 @@ class Canvas:
 
             # we changed the figure dimensions so we have to re-calculate clip path display coords
             self.clip_path_display = _transform_shape(self._to_display, self.clip_path)
+            self.logger.debug(f"Adjusted Size (h X w) = {int(self.height)} x {self.width}")
         else:
             # self._clip_path_from_bounds()
             self.clip_path_display = ShapelyPolygon(

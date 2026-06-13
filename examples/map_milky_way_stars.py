@@ -26,7 +26,7 @@ p.stars(
     catalog=BIG_SKY,
     style__marker__edge_color="#fff",
 )
-p.export("map_milky_way_stars.png", padding=0.1, transparent=True)
+p.export("map_milky_way_stars.png")
 
 # apply a median filter to increase contrast
 with Image.open("map_milky_way_stars.png") as img:

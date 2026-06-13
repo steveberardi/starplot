@@ -38,4 +38,4 @@ p.constellation_labels()
 p.milky_way()
 p.ecliptic()
 
-p.export("map_orion.png", padding=0.3, transparent=True)
+p.export("map_orion.png")

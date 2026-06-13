@@ -113,6 +113,8 @@ class ZenithPlot(MapPlot):
         """
         For zenith projections, we plot the horizon as a patch to make a more perfect circle
         """
+        return
+        # TODO
         style_kwargs = style.line.matplot_kwargs(self.scale)
         style_kwargs["clip_on"] = False
         style_kwargs["edgecolor"] = style_kwargs.pop("color")

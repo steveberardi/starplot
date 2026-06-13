@@ -26,4 +26,4 @@ p.constellations()
 p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 2.4])
 p.constellation_labels()
 
-p.export("star_chart_basic.png", transparent=True, padding=0.1)
+p.export("star_chart_basic.png")

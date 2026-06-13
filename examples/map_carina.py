@@ -78,18 +78,14 @@ p.galaxies(
 p.constellation_labels()
 
 p.legend(
-    style__alignment="left",
-    style__location="outside right upper",
+    style__location="outside top right",
     style__padding_x=-20,
-    style__num_columns=1,
 )
 p.star_magnitude_scale(
-    style__alignment="left",
-    style__num_columns=1,
     add_to_legend=True,
     start=0,
     stop=9,
     step=1,
 )
 
-p.export("map_carina.png", padding=0.5)
+p.export("map_carina.png")

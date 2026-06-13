@@ -33,4 +33,4 @@ op.planets(
 )
 op.stars(where=[_.magnitude < 12])
 
-op.export("optic_moon_saturn.png", padding=0.1, transparent=True)
+op.export("optic_moon_saturn.png")

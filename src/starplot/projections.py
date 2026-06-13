@@ -117,6 +117,7 @@ class ProjectionBase(BaseModel, ABC):
             90,
             source_crs=CRS.from_proj4(CoordinateReferenceSystem.ENU.value),
             target_crs=CRS.from_proj4(self.proj_def_base),
+            densify_pts=100
         )
 
     def get_transformer(self, source_crs: CRS) -> Transformer:

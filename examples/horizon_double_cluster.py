@@ -73,4 +73,4 @@ p.horizon()
 p.style.gridlines.line.width = 2
 p.gridlines()
 
-p.export("horizon_double_cluster.png", padding=0.25)
+p.export("horizon_double_cluster.png")

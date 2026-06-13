@@ -49,4 +49,4 @@ p.gridlines(
     dec_locations=[d for d in range(0, 90, 5)],
 )
 
-p.export("map_cas.png", padding=0.5)
+p.export("map_cas.png")

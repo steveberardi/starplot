@@ -315,6 +315,10 @@ class HorizonPlot(
             style: Style of the horizon path. If None, then the plot's style definition will be used.
             labels: Dictionary that maps azimuth values (0...360) to their cardinal direction labels (e.g. "N"). Default is to label each 45deg direction (e.g. "N", "NE", "E", etc)
         """
+        return
+    
+
+        # TODO
         patch_y = -0.11 * self.scale
         bottom = patches.Polygon(
             [

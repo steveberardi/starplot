@@ -44,4 +44,4 @@ p.messier(
 p.constellation_labels()
 p.horizon(labels={180: "SOUTH"})
 
-p.export("horizon_gradient.png", padding=0.1)
+p.export("horizon_gradient.png")
