@@ -79,7 +79,7 @@ p.constellation_labels()
 
 p.legend(
     style__location="outside top right",
-    style__padding_x=-20,
+    # style__padding_x=0,
 )
 
 p.export("map_carina.png")

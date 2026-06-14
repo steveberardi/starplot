@@ -22,7 +22,6 @@ def latlon_bounds_to_projection(
     lat_max: float,
     target_crs: str | CRS,
     source_crs: CRS,
-    densify_edges: bool = True,
     densify_pts: int = 21,
 ) -> tuple[float, float, float, float]:
     """
@@ -244,6 +243,13 @@ class Mollweide(ProjectionBase, CenterRA):
     curved: bool = True
 
     name: ClassVar[str] = "moll"
+
+    def global_clip_path(self):
+        p0 = [(self.center_ra + 179.999999999, lat-90) for lat in range(181)]
+        p1 = [(self.center_ra - 179.999999999, lat-90) for lat in range(181)]
+        return p0 + p1
+        
+
 
 
 class Equidistant(ProjectionBase, CenterRADEC):

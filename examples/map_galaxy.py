@@ -62,4 +62,4 @@ p.legend()
 
 p.title("Open Clusters Around the Milky Way", style__font_size=86)
 
-p.export("map_galaxy.png", padding=1)
+p.export("map_galaxy.png")

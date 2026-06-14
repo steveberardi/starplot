@@ -5,14 +5,11 @@ import pandas as pd
 import numpy as np
 import astropy.units as u
 from astropy.coordinates import SkyCoord
-from cartopy import crs as ccrs
-from matplotlib import pyplot as plt, patches
-from matplotlib.ticker import FixedLocator, FuncFormatter
 from skyfield.api import Star as SkyfieldStar
 from skyfield.framelib import galactic_frame
 
 from starplot.coordinates import CoordinateSystem
-from starplot.plots.base import BasePlot, DPI
+from starplot.plots.base import BasePlot
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.plotters import (
@@ -20,9 +17,9 @@ from starplot.plotters import (
     StarPlotterMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
-    GradientBackgroundMixin,
     LegendPlotterMixin,
     ArrowPlotterMixin,
+    TextPlotterMixin,
 )
 from starplot.plotters.text import CollisionHandler
 from starplot.styles import (
@@ -32,6 +29,7 @@ from starplot.styles import (
     PathStyle,
     GradientDirection,
 )
+from starplot.projections import Mollweide, Miller, CoordinateReferenceSystem
 from starplot.profile import profile
 
 
@@ -43,8 +41,8 @@ class GalaxyPlot(
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
     LegendPlotterMixin,
-    GradientBackgroundMixin,
     ArrowPlotterMixin,
+    TextPlotterMixin,
 ):
     """Creates a new galaxy plot.
 
@@ -88,6 +86,15 @@ class GalaxyPlot(
         observer = observer or Observer.at_epoch(2000)
         style = style or PlotStyle().extend(extensions.MAP)
 
+        projection = Mollweide(center_ra=center_lon)
+
+        bounds = [
+            0,
+            -90,
+            360,
+            90,
+        ]
+
         super().__init__(
             observer,
             ephemeris,
@@ -99,25 +106,19 @@ class GalaxyPlot(
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
+            projection=projection,
+            bounds=bounds,
+            invert_x=False,
+            invert_y=False,
+            clip_path=None,
+            crs=CoordinateReferenceSystem.WNU,
             *args,
             **kwargs,
         )
 
         self.center_lon = center_lon
         self.logger.debug("Creating GalaxyPlot...")
-        self._geodetic = ccrs.Geodetic()
-        self._plate_carree = ccrs.PlateCarree()
-
-        self._crs = ccrs.CRS(
-            proj4_params=[
-                ("proj", "latlong"),
-                ("axis", "wnu"),  # invert
-                ("a", "6378137"),
-            ],
-            globe=ccrs.Globe(ellipse="sphere", flattening=0),
-        )
-
-        self._init_plot()
+        
         self._calc_position()
 
     def _prepare_coords(self, ra, dec) -> (float, float):
@@ -152,8 +153,6 @@ class GalaxyPlot(
         df["x"], df["y"] = (lon.degrees, lat.degrees)
         return df
 
-    def _plot_kwargs(self) -> dict:
-        return dict(transform=self._crs)
 
     @cache
     def in_bounds(self, ra, dec) -> bool:
@@ -179,16 +178,12 @@ class GalaxyPlot(
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        x, y = self._proj.transform_point(lon, lat, self._crs)
-        data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-        x_axes, y_axes = data_to_axes.transform((x, y))
+        x_axes, y_axes = self.canvas._to_axes(lon, lat)
         return 0 <= x_axes <= 1 and 0 <= y_axes <= 1
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_lonlat(x, y)
 
-    def _polygon(self, points, style, **kwargs):
-        super()._polygon(points, style, transform=self._crs, **kwargs)
 
     def _calc_position(self):
         self.location = self.ephemeris["earth"]
@@ -265,6 +260,10 @@ class GalaxyPlot(
             show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
             tick_step: Step size for tick marks
         """
+        return
+    
+        # TODO
+
         lon_formatter_fn_default = lambda lon: f"{round(lon)}\u00b0 "  # noqa: E731
         lat_formatter_fn_default = lambda lat: f"{round(lat)}\u00b0 "  # noqa: E731
 
@@ -314,59 +313,3 @@ class GalaxyPlot(
         )
         gridlines.set_zorder(style.line.zorder)
 
-    @cache
-    def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
-        """Converts az/alt to axes coordinates"""
-        x, y = self._proj.transform_point(az, alt, self._crs)
-        data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-        x_axes, y_axes = data_to_axes.transform((x, y))
-        return x_axes, y_axes
-
-    @cache
-    def _ax_to_azalt(self, x: float, y: float) -> tuple[float, float]:
-        trans = self.ax.transAxes + self.ax.transData.inverted()
-        x_projected, y_projected = trans.transform((x, y))  # axes to data
-        az, alt = self._crs.transform_point(x_projected, y_projected, self._proj)
-        return float(az), float(alt)
-
-    def _plot_background_clip_path(self):
-        if self.style.has_gradient_background():
-            background_color = "#ffffff00"
-            self._plot_gradient_background(self.style.background_color)
-        else:
-            background_color = self.style.background_color.as_hex()
-
-        self._background_clip_path = patches.Rectangle(
-            (0, 0),
-            width=1,
-            height=1,
-            facecolor=background_color,
-            linewidth=0,
-            fill=True,
-            zorder=-3_000,
-            transform=self.ax.transAxes,
-        )
-        self.ax.set_facecolor(background_color)
-
-        self.ax.add_patch(self._background_clip_path)
-        self._update_clip_path_polygon()
-
-    def _init_plot(self):
-        self._proj = ccrs.Mollweide(central_longitude=self.center_lon)
-        self._proj.threshold = 100
-        self.fig = plt.figure(
-            figsize=(self.figure_size, self.figure_size),
-            facecolor=self.style.figure_background_color.as_hex(),
-            dpi=DPI,
-        )
-        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
-        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
-
-        self.ax.xaxis.set_visible(False)
-        self.ax.yaxis.set_visible(False)
-        self.ax.axis("off")
-
-        self.ax.set_global()
-
-        self._fit_to_ax()
-        self._plot_background_clip_path()

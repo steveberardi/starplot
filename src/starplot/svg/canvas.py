@@ -271,7 +271,17 @@ class Canvas:
             self.clip_path_display = _transform_shape(self._to_display, self.clip_path)
             self.logger.debug(f"Adjusted Size (h X w) = {int(self.height)} x {self.width}")
         elif self.projection.curved:
-            self._clip_path_from_bounds()
+
+
+            xs, ys = zip(*self.projection.global_clip_path())
+            # breakpoint()
+            dx, dy = self._to_display(np.array(xs), np.array(ys))
+            dxy = list(zip(dx, dy))
+
+            self.clip_path_display = ShapelyPolygon(dxy)
+        #     pass
+            # self._clip_path_from_bounds()
+            # TODO : fix this function above
         else:
             self.clip_path_display = ShapelyPolygon(
                 [
@@ -341,7 +351,7 @@ class Canvas:
 
     def _clip_path_from_bounds(self):
         x0, y0, x1, y1 = self.bounds
-        coords = _geometry.extent_polygon(x0, x1, y0, y1, n=1_000)
+        coords = _geometry.extent_polygon(x0, x1, y0, y1, n=100)
         xs, ys = coords[:, 0], coords[:, 1]
 
         dx, dy = self._to_display(xs, ys)
