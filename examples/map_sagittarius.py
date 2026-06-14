@@ -2,7 +2,7 @@ from starplot import MapPlot, Miller, callables, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.ANTIQUE,
+    # extensions.ANTIQUE,
     extensions.MAP,
 )
 p = MapPlot(
@@ -13,14 +13,13 @@ p = MapPlot(
     dec_max=-3,
     style=style,
     resolution=4000,
-    autoscale=True,
+    # autoscale=True,
 )
 p.constellations()
 p.constellation_borders()
 
 p.stars(
     where=[_.magnitude <= 3],
-    size_fn=lambda d: callables.size_by_magnitude(d) * 2,  # make them 2x bigger
     style__marker__symbol="star_8",
     style__label__offset_x=8,
     style__label__offset_y=-8,

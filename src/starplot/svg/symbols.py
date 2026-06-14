@@ -121,24 +121,27 @@ def diamond(
     return Polygon(points=points, attrs=attrs)
 
 
-def star_4(
-    x: float,
-    y: float,
-    size: float,
-    attrs: dict,
-):
-    points = []
-    for i in range(8):
-        angle = math.radians(-90 + i * 45)
-        r = size / 2 if i % 2 == 0 else size / 5
-        points.append(
-            (
-                x + r * math.cos(angle),
-                y + r * math.sin(angle),
+def create_star_function(num_points: int):
+    """Returns a function to create a star with specified number of points"""
+    def _star(
+        x: float,
+        y: float,
+        size: float,
+        attrs: dict,
+    ):
+        points = []
+        for i in range(num_points * 2):
+            angle = math.radians(-90 + i * (180 / num_points))
+            r = size / 2 if i % 2 == 0 else size / 5
+            points.append(
+                (
+                    x + r * math.cos(angle),
+                    y + r * math.sin(angle),
+                )
             )
-        )
-    return Polygon(points=points, attrs=attrs)
-
+        return Polygon(points=points, attrs=attrs)
+    return _star
+    
 
 def plus(x: float, y: float, size: float, attrs: dict):
     t = 6
@@ -197,7 +200,9 @@ SYMBOL_FUNCTIONS = {
     MarkerSymbolEnum.SQUARE: square,
     MarkerSymbolEnum.TRIANGLE: triangle,
     MarkerSymbolEnum.DIAMOND: diamond,
-    MarkerSymbolEnum.STAR_4: star_4,
+    MarkerSymbolEnum.STAR: create_star_function(num_points=5),
+    MarkerSymbolEnum.STAR_4: create_star_function(num_points=4),
+    MarkerSymbolEnum.STAR_8: create_star_function(num_points=8),
     MarkerSymbolEnum.PLUS: plus,
     MarkerSymbolEnum.COMET: comet,
 }

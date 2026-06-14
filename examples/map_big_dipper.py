@@ -2,7 +2,7 @@ from starplot import MapPlot, StereoNorth, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.BLUE_DARK, extensions.MAP, {"background_color": "#193561"}
+    extensions.BLUE_DARK, extensions.MAP, {"background_color": "#1B2A4A"}
 )
 
 p = MapPlot(
@@ -20,10 +20,10 @@ p.stars(
         _.dec > 45,
         _.dec < 64,
     ],
-    size_fn=lambda s: 2600,  # make stars a constant size
+    size_fn=lambda s: 58,  # make stars a constant size
     style__marker__symbol="star",
-    style__marker__color="hsl(59, 100%, 53%)",
-    style__label__font_size=14,
-    style__label__font_weight=400,
+    style__marker__color="hsl(59, 100%, 51%)",
+    style__label__font_size=16,
+    style__label__font_weight=500,
 )
 p.export("map_big_dipper.png")

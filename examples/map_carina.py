@@ -81,11 +81,5 @@ p.legend(
     style__location="outside top right",
     style__padding_x=-20,
 )
-p.star_magnitude_scale(
-    add_to_legend=True,
-    start=0,
-    stop=9,
-    step=1,
-)
 
 p.export("map_carina.png")
