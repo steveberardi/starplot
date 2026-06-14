@@ -270,8 +270,9 @@ class Canvas:
             # we changed the figure dimensions so we have to re-calculate clip path display coords
             self.clip_path_display = _transform_shape(self._to_display, self.clip_path)
             self.logger.debug(f"Adjusted Size (h X w) = {int(self.height)} x {self.width}")
+        elif self.projection.curved:
+            self._clip_path_from_bounds()
         else:
-            # self._clip_path_from_bounds()
             self.clip_path_display = ShapelyPolygon(
                 [
                     (0, 0),

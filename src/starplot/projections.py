@@ -40,26 +40,20 @@ def latlon_bounds_to_projection(
     """
     transformer = Transformer.from_crs(source_crs, target_crs, always_xy=True)
 
-    if densify_edges:
-        # Sample along all 4 edges to catch curved projection boundaries
-        top = [(lon, lat_max) for lon in np.linspace(lon_min, lon_max, densify_pts)]
-        bottom = [(lon, lat_min) for lon in np.linspace(lon_min, lon_max, densify_pts)]
-        left = [(lon_min, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
-        right = [(lon_max, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
+    # Sample along all 4 edges to catch curved projection boundaries
+    top = [(lon, lat_max) for lon in np.linspace(lon_min, lon_max, densify_pts)]
+    bottom = [(lon, lat_min) for lon in np.linspace(lon_min, lon_max, densify_pts)]
+    left = [(lon_min, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
+    right = [(lon_max, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
 
-        # Interior grid to catch extremes on curved projections
-        interior_lons = np.linspace(lon_min, lon_max, densify_pts)
-        interior_lats = np.linspace(lat_min, lat_max, densify_pts)
-        glon, glat = np.meshgrid(interior_lons, interior_lats)
-        interior = list(zip(glon.ravel(), glat.ravel()))
+    # Interior grid to catch extremes on curved projections
+    interior_lons = np.linspace(lon_min, lon_max, densify_pts)
+    interior_lats = np.linspace(lat_min, lat_max, densify_pts)
+    glon, glat = np.meshgrid(interior_lons, interior_lats)
+    interior = list(zip(glon.ravel(), glat.ravel()))
 
-        corners = top + bottom + left + right + interior
-        lons, lats = zip(*corners)
-
-    else:
-        # Just the 4 corners
-        lons = [lon_min, lon_max, lon_min, lon_max]
-        lats = [lat_min, lat_min, lat_max, lat_max]
+    corners = top + bottom + left + right + interior
+    lons, lats = zip(*corners)
 
     xs, ys = transformer.transform(lons, lats)
 
@@ -96,6 +90,7 @@ class ProjectionBase(BaseModel, ABC):
 
     proj_def_base: str = None
     global_only: bool = False
+    curved: bool = False
 
     name: ClassVar[str] = None
     r: int | None = PROJ_R
@@ -117,7 +112,7 @@ class ProjectionBase(BaseModel, ABC):
             90,
             source_crs=CRS.from_proj4(CoordinateReferenceSystem.ENU.value),
             target_crs=CRS.from_proj4(self.proj_def_base),
-            densify_pts=100
+            densify_pts=90
         )
 
     def get_transformer(self, source_crs: CRS) -> Transformer:
@@ -130,7 +125,7 @@ class ProjectionBase(BaseModel, ABC):
             "proj": self.name,
             "R": self.r,
             "units": self.units,
-            "over": None,
+            # "over": None, # this creates problem with mollweide projection
         }
 
         if hasattr(self, "center_ra"):
@@ -246,6 +241,7 @@ class Mollweide(ProjectionBase, CenterRA):
 
     proj_def_base: str = f"+proj=moll +R={PROJ_R} +units=m"
     global_only: bool = True
+    curved: bool = True
 
     name: ClassVar[str] = "moll"
 
@@ -277,6 +273,7 @@ class Robinson(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
 
     global_only: bool = True
+    curved: bool = True
 
 
 class LambertAzEqArea(ProjectionBase, CenterRADEC):
@@ -290,6 +287,7 @@ class Orthographic(ProjectionBase, CenterRADEC):
 
     proj_def_base: str = f"+proj=ortho +R={PROJ_R} +units=m"
     global_only: bool = True
+    curved: bool = True
 
     name: ClassVar[str] = "ortho"
 
