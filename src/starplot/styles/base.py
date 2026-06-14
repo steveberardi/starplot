@@ -91,20 +91,6 @@ class FontWeightEnum(int, Enum):
     EXTRA_BOLD = 800
     HEAVY = 900
 
-    def as_matplot(self) -> str:
-        """Returns the font weight as a matplotlib string, which avoids a bug with integer font weights and rendering text as elements in SVG."""
-        return {
-            FontWeightEnum.THIN: "ultralight",
-            FontWeightEnum.EXTRA_LIGHT: "light",  # matplotlib maps 'light' to 200, which is really extra light
-            # FontWeightEnum.LIGHT: "light",
-            FontWeightEnum.NORMAL: "normal",
-            FontWeightEnum.MEDIUM: "medium",
-            FontWeightEnum.SEMI_BOLD: "semibold",
-            FontWeightEnum.BOLD: "bold",
-            FontWeightEnum.EXTRA_BOLD: "extra bold",
-            FontWeightEnum.HEAVY: "black",
-        }[self.value]
-
 
 class FontStyleEnum(str, Enum):
     NORMAL = "normal"
@@ -171,30 +157,6 @@ class MarkerSymbolEnum(str, Enum):
     ELLIPSE = "ellipse"
     """\u2B2D"""
 
-    def as_matplot(self) -> str:
-        """Returns the matplotlib value of this marker"""
-        return {
-            MarkerSymbolEnum.POINT: ".",
-            MarkerSymbolEnum.CIRCLE: "o",
-            MarkerSymbolEnum.SQUARE: "s",
-            MarkerSymbolEnum.PLUS: "P",
-            MarkerSymbolEnum.SQUARE_STRIPES_DIAGONAL: "$\u25A8$",
-            MarkerSymbolEnum.STAR: "*",
-            MarkerSymbolEnum.SUN: "$\u263C$",
-            MarkerSymbolEnum.DIAMOND: "D",
-            MarkerSymbolEnum.TRIANGLE: "^",
-            MarkerSymbolEnum.CIRCLE_PLUS: "$\u2295$",
-            MarkerSymbolEnum.CIRCLE_CROSS: circle_cross(),
-            MarkerSymbolEnum.CIRCLE_CROSSHAIR: circle_crosshair(),
-            MarkerSymbolEnum.CIRCLE_DOT: circle_dot(),
-            MarkerSymbolEnum.CIRCLE_DOTTED_RINGS: circle_dotted_rings(),
-            MarkerSymbolEnum.CIRCLE_LINE: circle_line(),
-            MarkerSymbolEnum.COMET: "$\u2604$",
-            MarkerSymbolEnum.STAR_4: "$\u2726$",
-            MarkerSymbolEnum.STAR_8: "$\u2734$",
-            MarkerSymbolEnum.ELLIPSE: ellipse(),
-        }[self.value]
-
 
 class LineStyleEnum(str, Enum):
     SOLID = "solid"
@@ -256,39 +218,6 @@ class AnchorPointEnum(str, Enum):
     BOTTOM_LEFT = "bottom left"
     BOTTOM_RIGHT = "bottom right"
     BOTTOM_CENTER = "bottom center"
-
-    def as_matplot(self) -> dict:
-        style = {}
-        # the values below look wrong, but they're inverted because the map coords are inverted
-        if self.value == AnchorPointEnum.BOTTOM_LEFT:
-            style["va"] = "top"
-            style["ha"] = "right"
-        elif self.value == AnchorPointEnum.BOTTOM_RIGHT:
-            style["va"] = "top"
-            style["ha"] = "left"
-        elif self.value == AnchorPointEnum.BOTTOM_CENTER:
-            style["va"] = "top"
-            style["ha"] = "center"
-        elif self.value == AnchorPointEnum.TOP_LEFT:
-            style["va"] = "bottom"
-            style["ha"] = "right"
-        elif self.value == AnchorPointEnum.TOP_RIGHT:
-            style["va"] = "bottom"
-            style["ha"] = "left"
-        elif self.value == AnchorPointEnum.TOP_CENTER:
-            style["va"] = "bottom"
-            style["ha"] = "center"
-        elif self.value == AnchorPointEnum.CENTER:
-            style["va"] = "center"
-            style["ha"] = "center"
-        elif self.value == AnchorPointEnum.LEFT_CENTER:
-            style["va"] = "center"
-            style["ha"] = "right"
-        elif self.value == AnchorPointEnum.RIGHT_CENTER:
-            style["va"] = "center"
-            style["ha"] = "left"
-
-        return style
 
     @staticmethod
     def from_str(value: str) -> "AnchorPointEnum":
@@ -375,38 +304,6 @@ class MarkerStyle(BaseStyle):
                 {"pathLength": 100, "stroke-dasharray": f"0 {100/self.dash_spacing}"}
             )
         return attrs
-
-    @property
-    def symbol_matplot(self) -> str:
-        return MarkerSymbolEnum(self.symbol).as_matplot()
-
-    def matplot_kwargs(self, scale: float = 1.0) -> dict:
-        return dict(
-            color=self.color.as_hex() if self.color else "none",
-            markeredgecolor=self.edge_color.as_hex() if self.edge_color else "none",
-            marker=MarkerSymbolEnum(self.symbol).as_matplot(),
-            markersize=self.size * scale,
-            fillstyle=self.fill,
-            alpha=self.alpha,
-            zorder=self.zorder,
-        )
-
-    def matplot_scatter_kwargs(self, scale: float = 1.0) -> dict:
-        plot_kwargs = self.matplot_kwargs(scale)
-        plot_kwargs["edgecolors"] = plot_kwargs.pop("markeredgecolor")
-
-        # matplotlib's plot() function takes the marker size in points diameter
-        # and the scatter() function takes it in points squared
-        plot_kwargs["s"] = ((plot_kwargs.pop("markersize") / scale) ** 2) * (scale**2)
-
-        plot_kwargs["c"] = plot_kwargs.pop("color")
-        plot_kwargs["linewidths"] = self.edge_width * scale
-        plot_kwargs["linestyle"] = self.line_style
-        plot_kwargs["capstyle"] = self.dash_capstyle
-
-        plot_kwargs.pop("fillstyle")
-
-        return plot_kwargs
 
     def to_polygon_style(self):
         return PolygonStyle(
@@ -510,22 +407,6 @@ class PolygonStyle(BaseStyle):
         # attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
 
         return attrs
-
-    def matplot_kwargs(self, scale: float = 1.0) -> dict:
-        styles = dict(
-            edgecolor=self.edge_color.as_hex() if self.edge_color else "none",
-            facecolor=self.fill_color.as_hex() if self.fill_color else "none",
-            fill=True if self.fill_color or self.color else False,
-            linewidth=self.edge_width * scale,
-            linestyle=self.line_style,
-            alpha=self.alpha,
-            zorder=self.zorder,
-            capstyle="round",
-        )
-        if self.color:
-            styles["color"] = self.color.as_hex()
-
-        return styles
 
     def to_marker_style(self, symbol: MarkerSymbolEnum):
         color = self.color.as_hex() if self.color else None
