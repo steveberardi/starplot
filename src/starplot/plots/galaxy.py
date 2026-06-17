@@ -8,6 +8,7 @@ from astropy.coordinates import SkyCoord
 from skyfield.api import Star as SkyfieldStar
 from skyfield.framelib import galactic_frame
 
+from starplot import geometry
 from starplot.coordinates import CoordinateSystem
 from starplot.plots.base import BasePlot
 from starplot.mixins import ExtentMaskMixin
@@ -260,9 +261,43 @@ class GalaxyPlot(
             show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
             tick_step: Step size for tick marks
         """
-        return
     
-        # TODO
+        lon_formatter_fn_default = lambda r: f"{math.floor(r/15)}h"  # noqa: E731
+        lat_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
+
+        _lon_formatter_fn = lon_formatter_fn or lon_formatter_fn_default
+        _lat_formatter_fn = lat_formatter_fn or lat_formatter_fn_default
+
+        x_locations = lon_locations or [
+            x for x in range(0, 360, 15)  # if self.ra_min <= x <= self.ra_max
+        ]
+        y_locations = lat_locations or [
+            y for y in range(-80, 90, 10)  # if self.dec_min <= y <= self.dec_max
+        ]
+
+        for x in x_locations:
+            coords = geometry.line_segment((x, -90), (x, 90), 0.5)
+            self.line(
+                coordinates=coords,
+                style=style,
+                # label=ra_formatter_fn(ra),
+                # num_labels=2,
+                skip_prepare=True,
+            )
+
+        for y in y_locations:
+            coords = geometry.line_segment((0.00001, y), (359.99999, y), 0.5)
+            self.line(
+                coordinates=coords,
+                style=style,
+                # label=dec_formatter_fn(dec),
+                # num_labels=4,
+                skip_prepare=True,
+            )
+
+        # TODO : labels, tick marks
+
+        return
 
         lon_formatter_fn_default = lambda lon: f"{round(lon)}\u00b0 "  # noqa: E731
         lat_formatter_fn_default = lambda lat: f"{round(lat)}\u00b0 "  # noqa: E731

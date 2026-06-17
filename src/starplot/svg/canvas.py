@@ -406,6 +406,9 @@ class Canvas:
             lines = _geometry.split_line_at_x(
                 coordinates, self.projection.edge_x, offset=0.00001
             )
+            # from pprint import pprint
+            # pprint(lines[0])
+            # pprint(lines)
         else:
             lines = [coordinates]
 

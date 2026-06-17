@@ -890,7 +890,11 @@ class BasePlot(StarPlotterMixin, ABC):
             raise ValueError("Must pass coordinates or geometry when plotting lines.")
 
         coords = geometry.coords if geometry is not None else coordinates
-        prepared_coords = [self._prepare_coords(*p) for p in coords]
+
+        if kwargs.get("skip_prepare"):
+            prepared_coords = coords
+        else:
+            prepared_coords = [self._prepare_coords(*p) for p in coords]
 
         gid = kwargs.get("gid") or "line"
 

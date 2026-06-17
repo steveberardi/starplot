@@ -8,7 +8,6 @@ from skyfield.api import wgs84
 from starplot import geometry
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
-
 from starplot.projections import (
     StereoNorth,
     StereoSouth,
