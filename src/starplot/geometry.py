@@ -296,6 +296,73 @@ def line_segment(start, end, step) -> list[tuple[float, float]]:
     """Returns coordinates on the line from start to end at the specified step-size"""
     return LineString([start, end]).segmentize(step).coords
 
+def split_at_antimeridian(
+    coords: list[tuple[float, float]],
+    antimeridian: float = 360,
+    offset: float | None = 0.000001,
+) -> list[list[tuple[float, float]]]:
+    """
+    Split a line of (x, y) coords at the antimeridian wrap point.
+
+    If consecutive points cross from near `antimeridian` to near 0 (or vice
+    versa), the line is split into separate segments at the boundary,
+    interpolating the y value at the crossing point.
+
+    Args:
+        coords: List of (x, y) coordinate tuples
+        antimeridian: The x-value representing the wrap boundary (e.g. 360
+            for degrees, or 2*pi for radians)
+        offset: Small offset applied so split segments don't land exactly on
+            the boundary (avoids ambiguity at x=0/antimeridian)
+
+    Returns:
+        List of coordinate-list segments
+    """
+    if not coords:
+        return []
+
+    offset = offset or 0.0
+    half = antimeridian / 2
+    segments: list[list[tuple[float, float]]] = [[coords[0]]]
+
+    for (x0, y0), (x1, y1) in zip(coords, coords[1:]):
+        dx = x1 - x0
+
+        if dx > half:
+            # e.g. x0=1, x1=350 (antimeridian=360): went 1 -> 0 -> antimeridian -> 350 (decreasing)
+            wrapped = True
+            going_up = False
+        elif dx < -half:
+            # e.g. x0=340, x1=1 (antimeridian=360): went 340 -> antimeridian -> 0 -> 1 (increasing)
+            wrapped = True
+            going_up = True
+        else:
+            wrapped = False
+
+        if not wrapped:
+            segments[-1].append((x1, y1))
+            continue
+
+        if going_up:
+            # crossing from x0 up to antimeridian, then continuing from 0 up to x1
+            dist_to_edge = antimeridian - x0
+            total_dist = dist_to_edge + x1
+            frac = dist_to_edge / total_dist if total_dist != 0 else 0
+            y_cross = y0 + frac * (y1 - y0)
+
+            segments[-1].append((antimeridian - offset, y_cross))
+            segments.append([(0 + offset, y_cross), (x1, y1)])
+        else:
+            # crossing from x0 down to 0, then continuing from antimeridian down to x1
+            dist_to_edge = x0
+            total_dist = dist_to_edge + (antimeridian - x1)
+            frac = dist_to_edge / total_dist if total_dist != 0 else 0
+            y_cross = y0 + frac * (y1 - y0)
+
+            segments[-1].append((0 + offset, y_cross))
+            segments.append([(antimeridian - offset, y_cross), (x1, y1)])
+
+    return segments
 
 def split_line_at_x(
     coords: list[tuple[float, float]],

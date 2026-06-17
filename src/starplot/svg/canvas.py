@@ -403,12 +403,17 @@ class Canvas:
         style: PathStyle | LineStyle = None,
     ) -> None:
         if self.projection.edge_x is not None:
-            lines = _geometry.split_line_at_x(
-                coordinates, self.projection.edge_x, offset=0.00001
+            # split at antimeridian AND edge_x
+            lines = []
+            lines_antimeridian = _geometry.split_at_antimeridian(
+                coordinates, offset=0.01,
             )
-            # from pprint import pprint
-            # pprint(lines[0])
-            # pprint(lines)
+            for line in lines_antimeridian:
+                lines_edge_x = _geometry.split_line_at_x(
+                    line, self.projection.edge_x, offset=0.001
+                )
+                lines.extend(lines_edge_x)
+
         else:
             lines = [coordinates]
 
