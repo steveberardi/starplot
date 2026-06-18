@@ -206,6 +206,15 @@ class Canvas:
             )
             # print("new: ", self.bounds)
 
+        self._refresh_figure_dimensions()
+
+        self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
+        self.logger.debug(f"Bounds = {self.bounds}")
+        self.logger.debug(f"Extent (X) = {int(self.minx)} >> {int(self.maxx)}")
+        self.logger.debug(f"Extent (Y) = {int(self.miny)} >> {int(self.maxy)}")
+        self.logger.debug(f"Size (h X w) = {int(self.height)} x {self.width}")
+
+    def _refresh_figure_dimensions(self):
         span_x = abs(self.maxx - self.minx)
         span_y = abs(self.maxy - self.miny)
 
@@ -218,14 +227,6 @@ class Canvas:
             self.height = self.resolution
             self.width = self.height / ratio
 
-        self._refresh_figure_dimensions()
-        self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
-        self.logger.debug(f"Bounds = {self.bounds}")
-        self.logger.debug(f"Extent (X) = {int(self.minx)} >> {int(self.maxx)}")
-        self.logger.debug(f"Extent (Y) = {int(self.miny)} >> {int(self.maxy)}")
-        self.logger.debug(f"Size (h X w) = {int(self.height)} x {self.width}")
-
-    def _refresh_figure_dimensions(self):
         self.figure_height = self.height + self.style.figure_padding * 2
         self.figure_width = self.width + self.style.figure_padding * 2
         self.axes_x = self.style.figure_padding
@@ -247,9 +248,6 @@ class Canvas:
             ay0 = dy0 / self.height
             ay1 = dy1 / self.height
 
-            # print(ax0, ax1, self.minx)
-            # print(ay0, ay1, self.miny, self.maxy)
-
             minx, maxx = self.minx, self.maxx
             self.minx = lerp(minx, maxx, ax0)
             self.maxx = lerp(minx, maxx, ax1)
@@ -263,23 +261,19 @@ class Canvas:
                 *self.projected_bounds, direction="INVERSE"
             )
 
-            self.width = dx1 - dx0
-            self.height = dy1 - dy0
             self._refresh_figure_dimensions()
 
             # we changed the figure dimensions so we have to re-calculate clip path display coords
             self.clip_path_display = _transform_shape(self._to_display, self.clip_path)
             self.logger.debug(f"Adjusted Size (h X w) = {int(self.height)} x {self.width}")
+
         elif self.projection.curved:
-
-
             xs, ys = zip(*self.projection.global_clip_path())
-            # breakpoint()
             dx, dy = self._to_display(np.array(xs), np.array(ys))
             dxy = list(zip(dx, dy))
 
             self.clip_path_display = ShapelyPolygon(dxy)
-        #     pass
+            #     pass
             # self._clip_path_from_bounds()
             # TODO : fix this function above
         else:
@@ -406,11 +400,11 @@ class Canvas:
             # split at antimeridian AND edge_x
             lines = []
             lines_antimeridian = _geometry.split_at_antimeridian(
-                coordinates, offset=0.01,
+                coordinates, offset=0.0001,
             )
             for line in lines_antimeridian:
                 lines_edge_x = _geometry.split_line_at_x(
-                    line, self.projection.edge_x, offset=0.001
+                    line, self.projection.edge_x, offset=0.0001
                 )
                 lines.extend(lines_edge_x)
 
@@ -433,14 +427,38 @@ class Canvas:
         cs: CoordinateSystem = CoordinateSystem.DATA,
         attrs: dict = None,
     ) -> None:
-        arr = np.array(coordinates)
-        xs, ys = arr[:, 0], arr[:, 1]
-        dx, dy = self._to_display(xs, ys, cs)
-        dxy = list(zip(dx, dy))
-        attrs = attrs or {}
-        _attrs = {**style.css(self.scale), **attrs}
+        
+        """
+        TODO : better split for polygons and lines
 
-        self.elements.append((style.zorder, Polygon(points=dxy, attrs=_attrs)))
+        1. Split list of coords at antimeridian and edge_x
+        2. For each list from the split, convert to display coords
+        3. Combine lists (in order)
+        4. Plot as one polygon or line
+
+        ^^ wont work for wrapping
+        """
+
+        polygons = []
+        polygons_am = _geometry.split_at_antimeridian(coordinates, offset=0.01)
+
+        for p in polygons_am:
+            lines_edge_x = _geometry.split_line_at_x(
+                p, self.projection.edge_x, offset=0.01
+            )
+            polygons.extend(lines_edge_x)
+
+        # polygons = polygons[-3:-2]
+        # print(len(polygons))
+        for polygon_coords in polygons:
+            arr = np.array(polygon_coords)
+            xs, ys = arr[:, 0], arr[:, 1]
+            dx, dy = self._to_display(xs, ys, cs)
+            dxy = list(zip(dx, dy))
+            attrs = attrs or {}
+            _attrs = {**style.css(self.scale), **attrs}
+
+            self.elements.append((style.zorder, Polygon(points=dxy, attrs=_attrs)))
 
     def text(
         self,

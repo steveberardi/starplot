@@ -608,10 +608,39 @@ class LegendStyle(BaseStyle):
     """Padding between each symbol and its label"""
 
 
+class TitleStyle(LabelStyle):
+    padding_bottom: float = 20
+    """Padding between bottom of title and the axes"""
+
+
+class FigureStyle(BaseStyle):
+    background_color: ColorStr = ColorStr("#fff")
+
+    padding: int = 0
+    """Padding between the axes and edge of figure"""
+
+
+class AxesStyle(BaseStyle):
+    """Styling for the axes of the plot, which is where the map is plotted."""
+
+    background_color: ColorStr = ColorStr("#fff")
+    """Background color of the axes"""
+
+    background_gradient_direction: GradientDirection = GradientDirection.RADIAL
+    """Direction of the background gradient (if applicable)"""
+
+
+
 class PlotStyle(BaseStyle):
     """
     Defines the styling for a plot
     """
+
+    axes: AxesStyle = AxesStyle()
+
+
+    figure: FigureStyle = FigureStyle()
+    
 
     background_color: list[tuple[float, str]] | ColorStr = ColorStr("#fff")
     """

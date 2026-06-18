@@ -61,7 +61,7 @@ class ZenithPlot(MapPlot):
         observer = observer or Observer()
         style = style or PlotStyle().extend(extensions.MAP)
 
-        projection = Equidistant(
+        projection = Stereographic(
             center_ra=observer.lst,
             center_dec=observer.lat,
         )
@@ -71,7 +71,6 @@ class ZenithPlot(MapPlot):
             diameter_degrees=180,
             num_pts=400,
         )
-        print(clip_path.bounds)
 
         super().__init__(
             projection,
