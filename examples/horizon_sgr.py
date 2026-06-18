@@ -6,7 +6,7 @@ from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
     extensions.BLUE_MEDIUM,
-    extensions.MAP,
+    extensions.HORIZON,
 )
 
 dt = datetime(2024, 8, 30, 21, 0, 0, 0, tzinfo=ZoneInfo("US/Pacific"))

@@ -6,7 +6,7 @@ from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
     extensions.BLUE_GOLD,
-    extensions.MAP,
+    extensions.HORIZON,
     extensions.GRADIENT_PRE_DAWN,
 )
 
@@ -23,8 +23,8 @@ p = HorizonPlot(
     azimuth=(135, 225),
     observer=observer,
     style=style,
-    resolution=3200,
-    scale=0.9,
+    resolution=2800,
+    scale=1,
 )
 
 p.constellations()

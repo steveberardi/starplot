@@ -15,7 +15,7 @@ from starplot import (
 
 style = PlotStyle().extend(
     style_extensions.BLUE_NIGHT,
-    style_extensions.MAP,
+    style_extensions.HORIZON,
     style_extensions.GRADIENT_ASTRONOMICAL_TWILIGHT,
 )
 
