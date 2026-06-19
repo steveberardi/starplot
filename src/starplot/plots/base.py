@@ -216,6 +216,8 @@ class BasePlot(StarPlotterMixin, ABC):
         skip_bounds_check: bool = False,
         collision_handler: CollisionHandler = None,
         gid: str = None,
+        gid_marker: str = None,
+        gid_label: str = None,
     ) -> None:
         """Plots a marker
 

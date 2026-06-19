@@ -76,6 +76,7 @@ class CenterRA(BaseModel, ABC):
 
         return self.center_ra - 180
 
+
 class CenterDEC(BaseModel, ABC):
     center_dec: float = Field(default=0, ge=-90, le=90)
     """Central declination"""
@@ -117,7 +118,7 @@ class ProjectionBase(BaseModel, ABC):
             90,
             source_crs=CRS.from_proj4(CoordinateReferenceSystem.ENU.value),
             target_crs=CRS.from_proj4(self.proj_def_base),
-            densify_pts=90
+            densify_pts=90,
         )
 
     def get_transformer(self, source_crs: CRS) -> Transformer:
@@ -226,13 +227,15 @@ class Miller(ProjectionBase, CenterRA):
 class Mercator(ProjectionBase, CenterRA):
     """Good for declinations between -70 and 70, but distorts objects near the poles"""
 
-    pass
+    name: ClassVar[str] = "merc"
+    proj_def_base: str = f"+proj=merc +R={PROJ_R} +units=m"
 
 
 class PlateCarree(ProjectionBase, CenterRA):
     """An equirectangular projection"""
 
-    pass
+    name: ClassVar[str] = "eqc"
+    proj_def_base: str = f"+proj=eqc +R={PROJ_R} +units=m"
 
 
 class ObliqueMercator(ProjectionBase, CenterRADEC, Azimuth):
@@ -251,11 +254,9 @@ class Mollweide(ProjectionBase, CenterRA):
     name: ClassVar[str] = "moll"
 
     def global_clip_path(self):
-        p0 = [(self.center_ra + 179.999999999, lat-90) for lat in range(181)]
-        p1 = [(self.center_ra - 179.999999999, lat-90) for lat in range(181)]
+        p0 = [(self.center_ra + 179.999999999, lat - 90) for lat in range(181)]
+        p1 = [(self.center_ra - 179.999999999, lat - 90) for lat in range(181)]
         return p0 + p1
-        
-
 
 
 class Equidistant(ProjectionBase, CenterRADEC):

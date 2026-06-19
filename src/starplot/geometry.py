@@ -296,6 +296,7 @@ def line_segment(start, end, step) -> list[tuple[float, float]]:
     """Returns coordinates on the line from start to end at the specified step-size"""
     return LineString([start, end]).segmentize(step).coords
 
+
 def split_at_antimeridian(
     coords: list[tuple[float, float]],
     antimeridian: float = 360,
@@ -363,6 +364,7 @@ def split_at_antimeridian(
             segments.append([(antimeridian - offset, y_cross), (x1, y1)])
 
     return segments
+
 
 def split_line_at_x(
     coords: list[tuple[float, float]],

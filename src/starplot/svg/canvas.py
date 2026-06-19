@@ -167,7 +167,6 @@ class Canvas:
         )
 
     def _init_bounds(self):
-        
         if self.clip_path:
             self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
                 *self.clip_path.bounds, densify_pts=1_000
@@ -227,10 +226,10 @@ class Canvas:
             self.height = self.resolution
             self.width = self.height / ratio
 
-        self.figure_height = self.height + self.style.figure_padding * 2
-        self.figure_width = self.width + self.style.figure_padding * 2
-        self.axes_x = self.style.figure_padding
-        self.axes_y = self.style.figure_padding
+        self.figure_height = self.height + self.style.figure.padding * 2
+        self.figure_width = self.width + self.style.figure.padding * 2
+        self.axes_x = self.style.figure.padding
+        self.axes_y = self.style.figure.padding
 
     def _init_clip_path_background(self):
         """
@@ -265,7 +264,9 @@ class Canvas:
 
             # we changed the figure dimensions so we have to re-calculate clip path display coords
             self.clip_path_display = _transform_shape(self._to_display, self.clip_path)
-            self.logger.debug(f"Adjusted Size (h X w) = {int(self.height)} x {self.width}")
+            self.logger.debug(
+                f"Adjusted Size (h X w) = {int(self.height)} x {self.width}"
+            )
 
         elif self.projection.curved:
             xs, ys = zip(*self.projection.global_clip_path())
@@ -286,14 +287,17 @@ class Canvas:
                 ]
             )
 
-        if self.style.has_gradient_background():
+        if self.style.axes.has_gradient_background():
             gradient_id = "axes-background-gradient"
             stops = [
                 Stop(offset=offset, attrs={"stop-color": color})
-                for offset, color in self.style.background_color
+                for offset, color in self.style.axes.background_color
             ]
 
-            if self.style.background_gradient_direction == GradientDirection.RADIAL:
+            if (
+                self.style.axes.background_gradient_direction
+                == GradientDirection.RADIAL
+            ):
                 gradient = RadialGradient(
                     id=gradient_id,
                     cx=0.5,
@@ -317,7 +321,7 @@ class Canvas:
             )
             fill = f"url(#{gradient_id})"
         else:
-            fill = self.style.background_color.as_hex()
+            fill = self.style.axes.background_color.as_hex()
 
         dxy = list(self.clip_path_display.exterior.coords)
         self.background_element = Polygon(
@@ -400,7 +404,8 @@ class Canvas:
             # split at antimeridian AND edge_x
             lines = []
             lines_antimeridian = _geometry.split_at_antimeridian(
-                coordinates, offset=0.0001,
+                coordinates,
+                offset=0.0001,
             )
             for line in lines_antimeridian:
                 lines_edge_x = _geometry.split_line_at_x(
@@ -427,7 +432,6 @@ class Canvas:
         cs: CoordinateSystem = CoordinateSystem.DATA,
         attrs: dict = None,
     ) -> None:
-        
         """
         TODO : better split for polygons and lines
 
@@ -487,7 +491,7 @@ class Canvas:
         style: LabelStyle,
     ) -> None:
         dx = self.figure_width / 2
-        dy = self.style.figure_padding + style.font_size
+        dy = self.style.figure.padding + style.font_size
 
         _attrs = {**style.css(self.scale), "text-anchor": "middle"}
 
@@ -495,8 +499,8 @@ class Canvas:
 
         self.figure_elements.append((style.zorder, element))
 
-        self.figure_height += self.style.figure_padding + style.font_size
-        self.axes_y += self.style.figure_padding + style.font_size
+        self.figure_height += self.style.figure.padding + style.font_size
+        self.axes_y += self.style.figure.padding + style.font_size
 
     def legend(
         self,
@@ -677,7 +681,7 @@ class Canvas:
                     y=0,
                     height=self.figure_height,
                     width=self.figure_width,
-                    attrs={"fill": self.style.figure_background_color.as_hex()},
+                    attrs={"fill": self.style.figure.background_color.as_hex()},
                 ),
                 axes_svg,
                 *figure_elements,

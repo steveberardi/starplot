@@ -623,28 +623,9 @@ class FigureStyle(BaseStyle):
 class AxesStyle(BaseStyle):
     """Styling for the axes of the plot, which is where the map is plotted."""
 
-    background_color: ColorStr = ColorStr("#fff")
-    """Background color of the axes"""
-
-    background_gradient_direction: GradientDirection = GradientDirection.RADIAL
-    """Direction of the background gradient (if applicable)"""
-
-
-
-class PlotStyle(BaseStyle):
-    """
-    Defines the styling for a plot
-    """
-
-    axes: AxesStyle = AxesStyle()
-
-
-    figure: FigureStyle = FigureStyle()
-    
-
     background_color: list[tuple[float, str]] | ColorStr = ColorStr("#fff")
     """
-    Background color of the map region.
+    Background color of the axes.
 
     This can either be a single color (e.g. `#7abfff`) or a list that defines a gradient.
 
@@ -661,16 +642,34 @@ class PlotStyle(BaseStyle):
     ```
 
     There are a few predefined gradients available as [style extensions](/reference-styling/#style-extensions).
-
-    **Gradient backgrounds are not yet supported for optic plots that use a camera.**
     """
 
     background_gradient_direction: GradientDirection = GradientDirection.RADIAL
+    """Direction of the background gradient (if applicable)"""
 
-    figure_background_color: ColorStr = ColorStr("#fff")
+    def has_gradient_background(self):
+        return isinstance(self.background_color, list)
 
-    figure_padding: int = 0
-    """Padding between the axes and edge of plot"""
+
+class PlotStyle(BaseStyle):
+    """
+    Defines the styling for a plot
+    """
+
+    axes: AxesStyle = AxesStyle()
+    """Styling for the axes of the plot, which is where the map is plotted."""
+
+    figure: FigureStyle = FigureStyle()
+    """
+    Styling for the figure of the plot, which is the surrounding region outside the axes. 
+    
+    This area can include:
+    
+    - Title of the plot
+    - Legend (if plotted 'outside')
+    - Padding between the axes (map region) and edge of image
+    
+    """
 
     text_border_width: int = 2
     """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `border_width` and `border_color` properties."""

@@ -119,7 +119,7 @@ class GalaxyPlot(
 
         self.center_lon = center_lon
         self.logger.debug("Creating GalaxyPlot...")
-        
+
         self._calc_position()
 
     def _prepare_coords(self, ra, dec) -> (float, float):
@@ -154,7 +154,6 @@ class GalaxyPlot(
         df["x"], df["y"] = (lon.degrees, lat.degrees)
         return df
 
-
     @cache
     def in_bounds(self, ra, dec) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
@@ -184,7 +183,6 @@ class GalaxyPlot(
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_lonlat(x, y)
-
 
     def _calc_position(self):
         self.location = self.ephemeris["earth"]
@@ -261,7 +259,7 @@ class GalaxyPlot(
             show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
             tick_step: Step size for tick marks
         """
-    
+
         lon_formatter_fn_default = lambda r: f"{math.floor(r/15)}h"  # noqa: E731
         lat_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
 
@@ -347,4 +345,3 @@ class GalaxyPlot(
             **line_style_kwargs,
         )
         gridlines.set_zorder(style.line.zorder)
-

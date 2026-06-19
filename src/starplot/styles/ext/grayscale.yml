@@ -1,4 +1,6 @@
-background_color: '#fff'
+
+axes:
+  background_color: '#fff'
 
 text_border_color: '#fff'
 

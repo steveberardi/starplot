@@ -2,7 +2,8 @@
 # https://www.nature.com/articles/nmeth.1618
 # via https://davidmathlogic.com/colorblind
 
-background_color: '#fff'
+axes:
+  background_color: '#fff'
 
 text_border_color: '#fff'
 

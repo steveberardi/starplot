@@ -59,7 +59,7 @@ observer = Observer(
 style.constellation_lines.width = 2
 style.constellation_borders.width = 1
 style.dso_open_cluster.marker.edge_width = 1.6
-style.background_gradient_direction = "linear"
+style.axes.background_gradient_direction = "linear"
 
 CENTER_RA = 180
 
@@ -72,7 +72,7 @@ c = MapPlot(
     dec_max=90,
     # projection=Miller(center_ra=23/2 * 15),
     # projection=Equidistant(center_ra=12 * 15, center_dec=35),
-    projection=Mollweide(center_ra=12*15),
+    projection=Mollweide(center_ra=12 * 15),
     # projection=Equidistant(center_ra=observer.lst, center_dec=45),
     # projection=Stereographic(center_ra=12*15, center_dec=0),
     # projection=StereoNorth(),

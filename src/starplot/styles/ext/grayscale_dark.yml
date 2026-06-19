@@ -1,5 +1,9 @@
-background_color: hsl(136, 0%, 10%)
-figure_background_color: hsl(136, 0%, 100%)
+
+axes:
+  background_color: hsl(136, 0%, 10%)
+
+figure:
+  background_color: hsl(136, 0%, 100%)
 
 text_border_color: hsl(136, 0%, 10%)
 

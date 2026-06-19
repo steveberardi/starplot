@@ -6,8 +6,11 @@
 # green - hsl(71, 58%, 76%)
 # red - hsl(26, 93%, 82%)
 
-background_color: hsl(48, 80%, 96%)
-figure_background_color: hsl(60, 9%, 29%)
+axes:
+  background_color: hsl(48, 80%, 96%)
+
+figure:
+  background_color: hsl(60, 9%, 29%)
 
 text_border_color: hsl(48, 80%, 96%)
 
