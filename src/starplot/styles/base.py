@@ -684,14 +684,15 @@ class PlotStyle(BaseStyle):
     border_bg_color: ColorStr = ColorStr("#fff")
 
     # Title
-    title: LabelStyle = LabelStyle(
+    title: TitleStyle = TitleStyle(
         font_size=70,
         font_weight=FontWeightEnum.BOLD,
         zorder=ZOrderEnum.LAYER_5,
         line_spacing=150,
         anchor_point=AnchorPointEnum.BOTTOM_CENTER,
+        padding_bottom=24,
     )
-    """Styling for info text (only applies to zenith and optic plots)"""
+    """Styling for the title of the plot"""
 
     # Info text
     info_text: LabelStyle = LabelStyle(

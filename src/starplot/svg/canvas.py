@@ -491,7 +491,7 @@ class Canvas:
         style: LabelStyle,
     ) -> None:
         dx = self.figure_width / 2
-        dy = self.style.figure.padding + style.font_size
+        dy = self.style.figure.padding - style.padding_bottom + style.font_size
 
         _attrs = {**style.css(self.scale), "text-anchor": "middle"}
 
@@ -499,8 +499,12 @@ class Canvas:
 
         self.figure_elements.append((style.zorder, element))
 
-        self.figure_height += self.style.figure.padding + style.font_size
-        self.axes_y += self.style.figure.padding + style.font_size
+        self.figure_height += (
+            self.style.figure.padding + style.font_size + style.padding_bottom
+        )
+        self.axes_y += (
+            self.style.figure.padding + style.font_size + style.padding_bottom
+        )
 
     def legend(
         self,

@@ -21,6 +21,7 @@ from starplot.styles import (
     MarkerStyle,
     ObjectStyle,
     LabelStyle,
+    TitleStyle,
     MarkerSymbolEnum,
     PathStyle,
     PolygonStyle,
@@ -182,8 +183,8 @@ class BasePlot(StarPlotterMixin, ABC):
         """
         return self._objects
 
-    @use_style(LabelStyle, "title")
-    def title(self, text: str, style: LabelStyle = None):
+    @use_style(TitleStyle, "title")
+    def title(self, text: str, style: TitleStyle = None):
         """
         Plots a title at the top of the plot
 
