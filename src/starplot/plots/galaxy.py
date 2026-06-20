@@ -66,7 +66,6 @@ class GalaxyPlot(
     """
 
     _coordinate_system = CoordinateSystem.RA_DEC
-    _gradient_direction = GradientDirection.MOLLWEIDE
 
     def __init__(
         self,

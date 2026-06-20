@@ -76,7 +76,6 @@ class HorizonPlot(
     """
 
     _coordinate_system = CoordinateSystem.AZ_ALT
-    _gradient_direction = GradientDirection.LINEAR
 
     FIELD_OF_VIEW_MAX = 9.0
 

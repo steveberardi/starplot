@@ -41,7 +41,6 @@ class ZenithPlot(MapPlot):
     """
 
     _coordinate_system = CoordinateSystem.RA_DEC
-    _gradient_direction = GradientDirection.RADIAL
 
     def __init__(
         self,
