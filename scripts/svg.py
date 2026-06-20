@@ -37,7 +37,7 @@ StarplotSettings.svg_text_type = "element"
 
 start = time.perf_counter()
 
-dt = datetime(2023, 12, 16, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
+dt = datetime(2026, 6, 20, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 
 style = PlotStyle().extend(
     # extensions.BLUE_NIGHT,
@@ -46,7 +46,7 @@ style = PlotStyle().extend(
     extensions.MAP,
     {
         "arrow": {"body_width": 10, "head_width": 30, "head_height": 40},
-        "figure_padding": 60,
+        "figure": {"padding": 60},
     },
 )
 
@@ -70,16 +70,17 @@ c = MapPlot(
     ra_max=24 * 15,
     dec_min=-90,
     dec_max=90,
-    # projection=Miller(center_ra=23/2 * 15),
+    projection=Mollweide(),
     # projection=Equidistant(center_ra=12 * 15, center_dec=35),
-    projection=Mollweide(center_ra=12 * 15),
+    # projection=Mollweide(center_ra=12 * 15),
     # projection=Equidistant(center_ra=observer.lst, center_dec=45),
-    # projection=Stereographic(center_ra=12*15, center_dec=0),
+    # projection=Stereographic(center_ra=12*15, center_dec=33),
     # projection=StereoNorth(),
     style=style,
     resolution=4000,
     scale=0.73,
     debug=True,
+    observer=observer,
     # debug_text=True,
     # clip_path=Polygon(cas.border.coords),
 )
@@ -164,6 +165,7 @@ c.legend(
     magnitude_scale=True,
 )
 
+c.horizon()
 
 c.export("temp/orion.svg")
 # c.export("temp/orion.png")

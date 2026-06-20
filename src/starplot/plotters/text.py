@@ -414,6 +414,12 @@ class TextPlotterMixin:
             else:
                 bbox = create_bbox(x0 - 2, y0 + 4, height=height, width=width)
 
+            if anchor == AnchorPointEnum.CENTER:
+                attrs = {
+                    "text-anchor": "middle",
+                    "dominant-baseline": "central",
+                }
+
             is_open = self._is_open_space(
                 bbox,
                 padding=0,

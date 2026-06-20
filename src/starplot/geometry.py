@@ -377,6 +377,9 @@ def split_line_at_x(
 
     If offset is provided, the split points are nudged away from split_x on each side.
     """
+    if not coords:
+        return []
+
     segments = []
     current = [coords[0]]
 

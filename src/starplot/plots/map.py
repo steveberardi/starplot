@@ -309,27 +309,19 @@ class MapPlot(
             center=(ra.hours * 15, dec.degrees),
             height_degrees=180,
             width_degrees=180,
-            num_pts=100,
+            num_pts=200,
         )
-        points = list(zip(*polygon.exterior.coords.xy))
-        x = []
-        y = []
+        coords = list(zip(*polygon.exterior.coords.xy))
 
-        for ra, dec in points:
-            x0, y0 = self._prepare_coords(ra, dec)
-            x.append(x0)
-            y.append(y0)
+        normalized = []
+        for ra, dec in coords:
+            if ra > 360:
+                ra -= 360
+            normalized.append((ra, dec))
 
-        style_kwargs = {}
-        style_kwargs["clip_on"] = True
-        style_kwargs["clip_path"] = self._background_clip_path
-        self.ax.plot(
-            x,
-            y,
-            dash_capstyle=style.line.dash_capstyle,
-            **style.line.matplot_kwargs(self.scale),
-            **style_kwargs,
-            **self._plot_kwargs(),
+        self.line(
+            coordinates=normalized,
+            style=style,
         )
 
         if not labels:
@@ -342,21 +334,23 @@ class MapPlot(
 
         cardinal_directions = [north, east, south, west]
 
-        text_kwargs = dict(
-            **style.label.matplot_kwargs(self.scale),
-            xytext=(
-                style.label.offset_x * self.scale,
-                style.label.offset_y * self.scale,
-            ),
-            textcoords="offset points",
-            path_effects=[],
-            clip_on=True,
+        handler = CollisionHandler(
+            allow_clipped=True,
+            allow_label_collisions=True,
+            allow_marker_collisions=True,
+            allow_constellation_line_collisions=True,
+            plot_on_fail=True,
+            attempts=1,
         )
-
         for i, position in enumerate(cardinal_directions):
             ra, dec, _ = position.radec()
-            x, y = self._prepare_coords(ra.hours * 15, dec.degrees)
-            self._text(x, y, labels[i], **text_kwargs)
+            self.text(
+                text=labels[i],
+                ra=ra.hours * 15,
+                dec=dec.degrees,
+                style=style.label,
+                collision_handler=handler,
+            )
 
     @profile
     @use_style(PathStyle, "gridlines")

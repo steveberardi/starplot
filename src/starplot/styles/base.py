@@ -1062,18 +1062,18 @@ class PlotStyle(BaseStyle):
     horizon: PathStyle = PathStyle(
         line=LineStyle(
             color="#fff",
-            width=80,
+            width=60,
             edge_width=4,
             edge_color="#000",
             style=LineStyleEnum.SOLID,
-            dash_capstyle=CapStyleEnum.BUTT,
+            dash_capstyle=CapStyleEnum.ROUND,
             alpha=1,
             zorder=ZOrderEnum.LAYER_5,
         ),
         label=LabelStyle(
             anchor_point=AnchorPointEnum.CENTER,
             font_color="#000",
-            font_size=64,
+            font_size=38,
             font_weight=FontWeightEnum.BOLD,
             zorder=ZOrderEnum.LAYER_5,
         ),

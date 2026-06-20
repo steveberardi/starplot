@@ -444,13 +444,16 @@ class Canvas:
         """
 
         polygons = []
-        polygons_am = _geometry.split_at_antimeridian(coordinates, offset=0.01)
+        # polygons_am = _geometry.split_at_antimeridian(coordinates, offset=0.01)
 
-        for p in polygons_am:
-            lines_edge_x = _geometry.split_line_at_x(
-                p, self.projection.edge_x, offset=0.01
-            )
-            polygons.extend(lines_edge_x)
+        # for p in polygons_am:
+
+        lines_edge_x = _geometry.split_line_at_x(
+            coordinates, self.projection.edge_x, offset=0.01
+        )
+        polygons.extend(lines_edge_x)
+        if len(polygons) > 1:
+            print(len(polygons))
 
         # polygons = polygons[-3:-2]
         # print(len(polygons))
