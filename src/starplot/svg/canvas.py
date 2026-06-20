@@ -4,6 +4,8 @@ from pathlib import Path
 import numpy as np
 from shapely import Polygon as ShapelyPolygon, LineString
 from shapely.ops import transform as _transform_shape
+from shapely.affinity import translate as _translate_shape
+
 from pyproj import CRS
 
 from starplot import geometry as _geometry
@@ -47,6 +49,7 @@ class CoordinateSystem(str, Enum):
     PROJECTED = "projected"
     AXES = "axes"
     DISPLAY = "display"
+    FIGURE_DISPLAY = "figure_display"
 
 
 def normalize(value, min_val, max_val):
@@ -478,6 +481,19 @@ class Canvas:
         attrs: dict = None,
     ) -> None:
         """Plots text, with an optional rotation angle."""
+
+        if cs == CoordinateSystem.FIGURE_DISPLAY:
+            attrs = attrs or {}
+            _attrs = {**style.css(self.scale), **attrs}
+
+            if angle:
+                _attrs["transform"] = f"rotate({angle}, {x}, {y})"
+
+            self.figure_elements.append(
+                (style.zorder, Text(x=x, y=y, attrs=_attrs, text=value))
+            )
+            return
+
         dx, dy = self._to_display(x, y, cs)
 
         attrs = attrs or {}
@@ -549,7 +565,7 @@ class Canvas:
                 )
                 sections_elements.append(title_element)
                 height += h * 2 + style.label_padding
-                width = max(width, w * 1.12)
+                width = max(width, w * 1.5)
                 y += h + style.label_padding / 2
             else:
                 y += style.label_padding / 2
@@ -651,6 +667,26 @@ class Canvas:
             ),
         )
         self._legend_adjustments = adjustments
+
+    def _clip_path_border(self, style: LineStyle) -> ShapelyPolygon:
+        """
+        Creates a border around the axes clip path. The border is plotted as a figure line element.
+        """
+
+        border = self.clip_path_display.buffer(style.width / 2)
+        offset = style.width + self.style.figure.padding
+        border = _translate_shape(border, xoff=offset, yoff=offset)
+        coords = list(zip(*border.exterior.coords.xy))
+        attrs = style.css(self.scale)
+        self.figure_elements.append(
+            (style.zorder, Polyline(points=coords, attrs=attrs))
+        )
+
+        self.figure_height += style.width * 2
+        self.figure_width += style.width * 2
+        self.axes_y += style.width
+        self.axes_x += style.width
+        return border
 
     def render(self, text_as_path: bool = False) -> str:
         """Renders the canvas to an SVG string"""

@@ -100,7 +100,7 @@ class ZenithPlot(MapPlot):
         labels: list = ["N", "E", "S", "W"],
     ):
         """
-        Draws a [great circle](https://en.wikipedia.org/wiki/Great_circle) representing the horizon for the given `lat`, `lon` at time `dt` (so you must define these when creating the plot to use this function)
+        Plots the horizon for the observer of the plot
 
         Args:
             style: Style of the horizon path. If None, then the plot's style definition will be used.
@@ -109,46 +109,32 @@ class ZenithPlot(MapPlot):
         if self.observer is None:
             raise ValueError("observer is required for plotting the horizon")
 
-        """
-        For zenith projections, we plot the horizon as a patch to make a more perfect circle
-        """
-        return
-        # TODO
-        style_kwargs = style.line.matplot_kwargs(self.scale)
-        style_kwargs["clip_on"] = False
-        style_kwargs["edgecolor"] = style_kwargs.pop("color")
-        patch = patches.Circle(
-            (0.50, 0.50),
-            radius=0.454,
-            facecolor=None,
-            fill=False,
-            transform=self.ax.transAxes,
-            **style_kwargs,
-        )
-        self.ax.add_patch(patch)
-        self._background_clip_path = patch
-        self._update_clip_path_polygon(
-            buffer=style.line.width / 2 + 2 * style.line.edge_width + 40
-        )
+        border = self.canvas._clip_path_border(style.line)
 
         if not labels:
             return
 
-        labels = [translate(label, self.language) for label in labels]
+        minx, miny, maxx, maxy = border.bounds
 
-        label_ax_coords = [
-            (0.5, 0.95),  # north
-            (0.045, 0.5),  # east
-            (0.5, 0.045),  # south
-            (0.954, 0.5),  # west
+        cardinal_direction_positions = [
+            ((maxx + minx) / 2, miny),
+            (minx, (maxy + miny) / 2),
+            ((maxx + minx) / 2, maxy),
+            (maxx, (maxy + miny) / 2),
         ]
-        for label, coords in zip(labels, label_ax_coords):
-            self.ax.annotate(
-                label,
-                coords,
-                xycoords=self.ax.transAxes,
-                clip_on=False,
-                **style.label.matplot_kwargs(self.scale),
+
+        for i, pos in enumerate(cardinal_direction_positions):
+            x, y = pos
+            self.canvas.text(
+                x=x,
+                y=y,
+                value=labels[i],
+                style=style.label,
+                attrs={
+                    "text-anchor": "middle",
+                    "dominant-baseline": "central",
+                },
+                cs="figure_display",
             )
 
     def _adjust_radec_minmax(self):
@@ -156,15 +142,6 @@ class ZenithPlot(MapPlot):
         self.ra_max = 360
         self.dec_min = -90
         self.dec_max = 90
-
-    def _set_extent(self):
-        theta = np.linspace(0, 2 * np.pi, 100)
-        center, radius = [0.5, 0.5], 0.45
-        verts = np.vstack([np.sin(theta), np.cos(theta)]).T
-        circle = path.Path(verts * radius + center)
-        extent = self.ax.get_extent(crs=self._proj)
-        self.ax.set_extent((p / 3.548 for p in extent), crs=self._proj)
-        self.ax.set_boundary(circle, transform=self.ax.transAxes)
 
     @use_style(LabelStyle, "info_text")
     def info(self, style: LabelStyle = None):
