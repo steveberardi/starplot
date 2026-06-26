@@ -113,9 +113,6 @@ class MarkerSymbolEnum(str, Enum):
     SQUARE = "square"
     """\u25A0"""
 
-    SQUARE_STRIPES_DIAGONAL = "square_stripes_diagonal"
-    """\u25A8"""
-
     STAR = "star"
     """\u2605"""
 
@@ -128,19 +125,11 @@ class MarkerSymbolEnum(str, Enum):
     TRIANGLE = "triangle"
     """\u23F6"""
 
-    CIRCLE_PLUS = "circle_plus"
-    """\u2295"""
-
     CIRCLE_CROSS = "circle_cross"
     """\u1AA0"""
 
     CIRCLE_CROSSHAIR = "circle_crosshair"
     """No preview available, but this is the standard symbol for planetary nebulae"""
-
-    CIRCLE_DOT = "circle_dot"
-    """\u29BF"""
-
-    CIRCLE_DOTTED_RINGS = "circle_dotted_rings"
 
     CIRCLE_LINE = "circle_line"
     """\u29B5  the standard symbol for double stars"""

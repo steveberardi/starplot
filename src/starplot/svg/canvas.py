@@ -510,9 +510,9 @@ class Canvas:
         style: LabelStyle,
     ) -> None:
         dx = self.figure_width / 2
-        dy = self.style.figure.padding - style.padding_bottom + style.font_size
+        dy = self.style.figure.padding + style.font_size
 
-        _attrs = {**style.css(self.scale), "text-anchor": "middle"}
+        _attrs = {**style.css(self.scale), "text-anchor": "middle", "dominant-baseline": "central"}
 
         element = Text(x=dx, y=dy, attrs=_attrs, text=value)
 
@@ -673,13 +673,50 @@ class Canvas:
         Creates a border around the axes clip path. The border is plotted as a figure line element.
         """
 
+        # TODO : make figure elements handle various plotting orders better
+        """
+        Figure Elements
+        
+        - Title
+        - Legend
+        - Clip path border
+            - Clip path border labels (cardinal directions)
+            - Lat/lon labels
+        - Data tables
+        - Axes
+
+        Make all figure elements inside a Group and use translate()
+
+        To plot figure elements:
+
+        1. Find height/width of all figure elements
+        2. Render each element, setting x/y with translate()
+
+        
+        Create private "adjustments" log, but don't apply until render-time. Then for all figure elements, change translation
+        This creates an "additive" plotting expectation (e.g. you can never remove elements)
+
+        Create classes:
+
+        FigureElement
+            - height
+            - width
+        
+        Transform
+        
+        """
+
         border = self.clip_path_display.buffer(style.width / 2)
-        offset = style.width + self.style.figure.padding
-        border = _translate_shape(border, xoff=offset, yoff=offset)
+        border = _translate_shape(border, xoff=style.width, yoff=style.width)
         coords = list(zip(*border.exterior.coords.xy))
         attrs = style.css(self.scale)
         self.figure_elements.append(
-            (style.zorder, Polyline(points=coords, attrs=attrs))
+            (style.zorder, 
+             
+             Group(
+                children=[Polyline(points=coords, attrs=attrs)],
+                attrs={"transform": f"translate({self.axes_x}, {self.axes_y })"},
+            ))
         )
 
         self.figure_height += style.width * 2

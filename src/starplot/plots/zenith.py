@@ -132,6 +132,7 @@ class ZenithPlot(MapPlot):
                 attrs={
                     "text-anchor": "middle",
                     "dominant-baseline": "central",
+                    "transform": f"translate({self.canvas.axes_x - style.line.width}, {self.canvas.axes_y - style.line.width})"
                 },
                 cs="figure_display",
             )
