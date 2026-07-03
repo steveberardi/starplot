@@ -12,15 +12,11 @@ from starplot import geometry as _geometry
 from starplot.styles import (
     PlotStyle,
     MarkerStyle,
-    ObjectStyle,
     LabelStyle,
-    MarkerSymbolEnum,
     PathStyle,
     LineStyle,
     PolygonStyle,
     GradientDirection,
-    AnchorPointEnum,
-    LegendLocationEnum,
     LegendStyle,
 )
 from starplot.projections import (
@@ -29,16 +25,14 @@ from starplot.projections import (
     CoordinateReferenceSystem,
 )
 from starplot.svg import symbols, png
-from starplot.svg.layout import Layout
+from starplot.svg.layout import Layout, Region, LegendRegion
 from starplot.svg.elements import (
-    SVG,
     Group,
     Rectangle,
     ClipPath,
     Polygon,
     Polyline,
     Text,
-    Defs,
     LinearGradient,
     RadialGradient,
     Stop,
@@ -101,14 +95,6 @@ class Canvas:
         precision: int = 2,
         logger=None,
     ):
-        # following will be replaced by layout class
-        self.elements = []
-        self.defs = []
-        self.figure_elements = []
-        self.legend_element = None
-        self.axes_x = 0
-        self.axes_y = 0
-
         self.layout = Layout()
         self.crs = CRS.from_proj4(crs.value or CoordinateReferenceSystem.ENU.value)
         self.resolution = resolution
@@ -225,15 +211,16 @@ class Canvas:
             ratio = span_x / span_y
             self.width = self.resolution
             self.height = self.width / ratio
+
+            self.layout.axes.width = self.resolution
+            self.layout.axes.height = self.layout.axes.width / ratio
         else:
             ratio = span_y / span_x
             self.height = self.resolution
             self.width = self.height / ratio
 
-        self.figure_height = self.height + self.style.figure.padding * 2
-        self.figure_width = self.width + self.style.figure.padding * 2
-        self.axes_x = self.style.figure.padding
-        self.axes_y = self.style.figure.padding
+            self.layout.axes.height = self.resolution
+            self.layout.axes.width = self.layout.axes.height / ratio
 
     def _init_clip_path_background(self):
         """
@@ -320,6 +307,7 @@ class Canvas:
                 )
 
             self.defs.append(gradient)
+            self.layout.axes.defs.append(gradient)
             fill = f"url(#{gradient_id})"
         else:
             fill = self.style.axes.background_color.as_hex()
@@ -332,20 +320,20 @@ class Canvas:
                 "fill": fill,
             },
         )
-        self.elements.append(
+        self.layout.axes.elements.append(
             (
                 -1_000_000,
                 self.background_element,
             )
         )
-
         axes_clip_path_id = "axes-clip-path"
         axes_clip_path = ClipPath(
             id=axes_clip_path_id, children=[self.background_element]
         )
-        self.defs.append(axes_clip_path)
+        self.layout.axes.defs.append(axes_clip_path)
 
     def _clip_path_from_bounds(self):
+        """DEPRECATED"""
         x0, y0, x1, y1 = self.bounds
         coords = _geometry.extent_polygon(x0, x1, y0, y1, n=100)
         xs, ys = coords[:, 0], coords[:, 1]
@@ -364,11 +352,10 @@ class Canvas:
 
     def marker(self, x, y, style: MarkerStyle) -> None:
         dx, dy = self._to_display(x, y)
-
         element = symbols.create(
             dx, dy, style.size * self.scale, style.symbol, style.css(self.scale)
         )
-        self.elements.append((style.zorder, element))
+        self.layout.axes.elements.append((style.zorder, element))
 
     def markers(self, x, y, style: MarkerStyle, gid: str = None, sizes=None) -> None:
         dx, dy = self._to_display(x, y)
@@ -379,8 +366,7 @@ class Canvas:
             symbols.create(x, y, size * self.scale, style.symbol, None)
             for x, y, size in list(zip(dx, dy, sizes))
         ]
-
-        self.elements.append(
+        self.layout.axes.elements.append(
             (
                 style.zorder,
                 Group(id=gid, attrs=style.css(self.scale), children=elements),
@@ -415,7 +401,9 @@ class Canvas:
             dxy = list(zip(dx, dy))
 
             attrs = style.css(self.scale)
-            self.elements.append((style.zorder, Polyline(points=dxy, attrs=attrs)))
+            self.layout.axes.elements.append(
+                (style.zorder, Polyline(points=dxy, attrs=attrs))
+            )
 
     def polygon(
         self,
@@ -438,17 +426,11 @@ class Canvas:
         polygons = []
         # polygons_am = _geometry.split_at_antimeridian(coordinates, offset=0.01)
 
-        # for p in polygons_am:
-
         lines_edge_x = _geometry.split_line_at_x(
             coordinates, self.projection.edge_x, offset=0.01
         )
         polygons.extend(lines_edge_x)
-        if len(polygons) > 1:
-            print(len(polygons))
 
-        # polygons = polygons[-3:-2]
-        # print(len(polygons))
         for polygon_coords in polygons:
             arr = np.array(polygon_coords)
             xs, ys = arr[:, 0], arr[:, 1]
@@ -457,7 +439,9 @@ class Canvas:
             attrs = attrs or {}
             _attrs = {**style.css(self.scale), **attrs}
 
-            self.elements.append((style.zorder, Polygon(points=dxy, attrs=_attrs)))
+            self.layout.axes.elements.append(
+                (style.zorder, Polygon(points=dxy, attrs=_attrs))
+            )
 
     def text(
         self,
@@ -471,18 +455,6 @@ class Canvas:
     ) -> None:
         """Plots text, with an optional rotation angle."""
 
-        if cs == CoordinateSystem.FIGURE_DISPLAY:
-            attrs = attrs or {}
-            _attrs = {**style.css(self.scale), **attrs}
-
-            if angle:
-                _attrs["transform"] = f"rotate({angle}, {x}, {y})"
-
-            self.figure_elements.append(
-                (style.zorder, Text(x=x, y=y, attrs=_attrs, text=value))
-            )
-            return
-
         dx, dy = self._to_display(x, y, cs)
 
         attrs = attrs or {}
@@ -491,27 +463,34 @@ class Canvas:
         if angle:
             _attrs["transform"] = f"rotate({angle}, {dx}, {dy})"
 
-        self.elements.append((style.zorder, Text(x=dx, y=dy, attrs=_attrs, text=value)))
+        self.layout.axes.elements.append(
+            (style.zorder, Text(x=dx, y=dy, attrs=_attrs, text=value))
+        )
 
     def title(
         self,
         value: str,
         style: LabelStyle,
     ) -> None:
-        dx = self.figure_width / 2
-        dy = self.style.figure.padding + style.font_size
-
-        _attrs = {**style.css(self.scale), "text-anchor": "middle", "dominant-baseline": "central"}
-
-        element = Text(x=dx, y=dy, attrs=_attrs, text=value)
-
-        self.figure_elements.append((style.zorder, element))
-
-        self.figure_height += (
-            self.style.figure.padding + style.font_size + style.padding_bottom
-        )
-        self.axes_y += (
-            self.style.figure.padding + style.font_size + style.padding_bottom
+        _attrs = {
+            **style.css(self.scale),
+            "text-anchor": "middle",
+            "dominant-baseline": "central",
+        }
+        self.layout.title = Region(
+            elements=[
+                (
+                    style.zorder,
+                    Text(
+                        x=(self.layout.axes.width + self.style.figure.padding * 2) / 2,
+                        y=0,
+                        attrs=_attrs,
+                        text=value,
+                    ),
+                )
+            ],
+            height=style.font_size + style.padding_bottom,
+            width=self.layout.axes.width,
         )
 
     def legend(
@@ -526,19 +505,12 @@ class Canvas:
             sections: List of sections for the legend, in the format (title, handles)
             style: Styling properties for the legend (applies to all sections)
         """
-        figure_x, figure_y = 0, 0
         x = style.padding_x
         y = style.padding_y
         height = style.padding_y * 2
         width = style.padding_x * 2
         sections_elements = []
         title_element = None
-        adjustments = {}
-
-        if self.legend_element:
-            for attr, value in self._legend_adjustments.items():
-                current = getattr(self, attr)
-                setattr(self, attr, current - value)
 
         for i, value in enumerate(sections):
             title, handles = value
@@ -611,152 +583,50 @@ class Canvas:
             },
         )
 
-        loc = style.location
-
-        if loc == LegendLocationEnum.INSIDE_TOP_LEFT:
-            figure_x = self.axes_x + style.margin_x
-            figure_y = self.axes_y + style.margin_y
-        elif loc == LegendLocationEnum.INSIDE_TOP_RIGHT:
-            figure_x = self.axes_x + self.width - width - style.margin_x
-            figure_y = self.axes_y + style.margin_y
-        elif loc == LegendLocationEnum.INSIDE_BOTTOM_LEFT:
-            figure_x = self.axes_x + style.margin_x
-            figure_y = self.axes_y + self.height - height - style.margin_y
-        elif loc == LegendLocationEnum.INSIDE_BOTTOM_RIGHT:
-            figure_x = self.axes_x + self.width - width - style.margin_x
-            figure_y = self.axes_y + self.height - height - style.margin_y
-        elif loc == LegendLocationEnum.OUTSIDE_TOP_LEFT:
-            self.axes_x += width + style.margin_x
-            figure_x = self.axes_x - width - style.margin_x
-            figure_y = self.axes_y + style.margin_y
-            self.figure_width += width + style.margin_x
-            adjustments = {"axes_x": width + style.margin_x, "figure_width": width}
-        elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_LEFT:
-            self.axes_x += width + style.margin_x
-            figure_x = self.axes_x - width - style.margin_x
-            figure_y = self.axes_y + self.height - height - style.margin_y
-            self.figure_width += width + style.margin_x
-            adjustments = {"axes_x": width + style.margin_x, "figure_width": width}
-        elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT:
-            figure_x = self.axes_x + self.width + style.margin_x
-            figure_y = self.axes_y + self.height - height - style.margin_y
-            self.figure_width += width + style.margin_x
-            adjustments = {"figure_width": width}
-        elif loc == LegendLocationEnum.OUTSIDE_TOP_RIGHT:
-            figure_x = self.axes_x + self.width + style.margin_x
-            figure_y = self.axes_y + style.margin_y
-            self.figure_width += width + style.margin_x
-            adjustments = {"figure_width": width}
-
-        self.legend_element = (
-            style.zorder,
-            Group(
-                children=[background_element, *sections_elements],
-                attrs={"transform": f"translate({figure_x}, {figure_y})"},
-            ),
+        self.layout.legend = LegendRegion(
+            elements=[
+                (0, background_element),
+                *[(1, e) for e in sections_elements],
+            ],
+            height=height,
+            width=width,
+            location=style.location,
+            margin_x=style.margin_x,
+            margin_y=style.margin_y,
         )
-        self._legend_adjustments = adjustments
 
     def _clip_path_border(self, style: LineStyle) -> ShapelyPolygon:
         """
         Creates a border around the axes clip path. The border is plotted as a figure line element.
-        """
 
-        # TODO : make figure elements handle various plotting orders better
-        """
-        Figure Elements
-        
-        - Title
-        - Legend
-        - Clip path border
-            - Clip path border labels (cardinal directions)
-            - Lat/lon labels
-        - Data tables
-        - Axes
+        should take list of coordinates for labels:
 
-        Make all figure elements inside a Group and use translate()
+        [
+            ([(x1,y1), (x2,y2)], "north"),
+            ([(x1,y1), (x2,y2)], "10"),
+        ]
 
-        To plot figure elements:
+        coordinates are lines to intersect with border. Label plotted at intersection point
 
-        1. Find height/width of all figure elements
-        2. Render each element, setting x/y with translate()
 
-        
-        Create private "adjustments" log, but don't apply until render-time. Then for all figure elements, change translation
-        This creates an "additive" plotting expectation (e.g. you can never remove elements)
-
-        Create classes:
-
-        FigureElement
-            - height
-            - width
-        
-        Transform
-        
         """
 
         border = self.clip_path_display.buffer(style.width / 2)
         border = _translate_shape(border, xoff=style.width, yoff=style.width)
         coords = list(zip(*border.exterior.coords.xy))
         attrs = style.css(self.scale)
-        self.figure_elements.append(
-            (style.zorder, 
-             
-             Group(
-                children=[Polyline(points=coords, attrs=attrs)],
-                attrs={"transform": f"translate({self.axes_x}, {self.axes_y })"},
-            ))
+
+        self.layout.axes_border = Region(
+            elements=[(style.zorder, Polyline(points=coords, attrs=attrs))],
+            height=self.layout.axes.height + style.width * 2,
+            width=self.layout.axes.width + style.width * 2,
         )
 
-        self.figure_height += style.width * 2
-        self.figure_width += style.width * 2
-        self.axes_y += style.width
-        self.axes_x += style.width
         return border
 
     def render(self, text_as_path: bool = False) -> str:
         """Renders the canvas to an SVG string"""
-
-        axes_sorted_by_z = sorted(self.elements, key=lambda e: e[0])
-        axes_elements = [e for _, e in axes_sorted_by_z]
-        axes_svg = SVG(
-            x=self.axes_x,
-            y=self.axes_y,
-            height=self.height,
-            width=self.width,
-            children=[
-                Defs(children=self.defs),
-                Group(
-                    id="axes",
-                    attrs={
-                        "clip-path": "url(#axes-clip-path)",
-                    },
-                    children=axes_elements,
-                ),
-            ],
-        )
-
-        elements = self.figure_elements
-        if self.legend_element:
-            elements.append(self.legend_element)
-        figure_sorted_by_z = sorted(elements, key=lambda e: e[0])
-        figure_elements = [e for _, e in figure_sorted_by_z]
-        figure_svg = SVG(
-            height=self.figure_height,
-            width=self.figure_width,
-            children=[
-                Rectangle(
-                    x=0,
-                    y=0,
-                    height=self.figure_height,
-                    width=self.figure_width,
-                    attrs={"fill": self.style.figure.background_color.as_hex()},
-                ),
-                axes_svg,
-                *figure_elements,
-            ],
-        )
-        return figure_svg.render(text_as_path=text_as_path)
+        return self.layout.render(self.style, text_as_path)
 
     def export(self, filename: str | Path, text_as_path: bool = False) -> None:
         """

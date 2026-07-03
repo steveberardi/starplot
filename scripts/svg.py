@@ -164,6 +164,12 @@ c.legend(
     style__margin_x=40,
     magnitude_scale=True,
 )
+c.legend(
+    style__location="outside top left",
+    style__margin_y=0,
+    style__margin_x=40,
+    magnitude_scale=True,
+)
 
 c.horizon()
 
