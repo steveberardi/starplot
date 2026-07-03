@@ -595,11 +595,11 @@ class Canvas:
             margin_y=style.margin_y,
         )
 
-    def _clip_path_border(self, style: LineStyle) -> ShapelyPolygon:
+    def _clip_path_border(self, style: PathStyle, labels: list = None) -> ShapelyPolygon:
         """
         Creates a border around the axes clip path. The border is plotted as a figure line element.
 
-        should take list of coordinates for labels:
+        labels:
 
         [
             ([(x1,y1), (x2,y2)], "north"),
@@ -611,15 +611,36 @@ class Canvas:
 
         """
 
-        border = self.clip_path_display.buffer(style.width / 2)
-        border = _translate_shape(border, xoff=style.width, yoff=style.width)
+        border = self.clip_path_display.buffer(style.line.width / 2)
+        border = _translate_shape(border, xoff=style.line.width, yoff=style.line.width)
         coords = list(zip(*border.exterior.coords.xy))
-        attrs = style.css(self.scale)
+        attrs = style.line.css(self.scale)
+
+
+        label_elements = []
+        if labels:
+            for p0, p1, text in labels:
+                # 1. convert coordinates to display
+                # 2. find intersection of line with border
+                # 3. add text element at intersection
+
+                element = Text(
+                    x=x, 
+                    y=y, 
+                    text=text, 
+                    attrs={
+                        **style.label.css(self.scale),
+                        "text-anchor": "middle",
+                        "dominant-baseline": "central",
+                    }
+                )
+
+
 
         self.layout.axes_border = Region(
-            elements=[(style.zorder, Polyline(points=coords, attrs=attrs))],
-            height=self.layout.axes.height + style.width * 2,
-            width=self.layout.axes.width + style.width * 2,
+            elements=[(style.line.zorder, Polyline(points=coords, attrs=attrs)), *label_elements],
+            height=self.layout.axes.height + style.line.width * 2,
+            width=self.layout.axes.width + style.line.width * 2,
         )
 
         return border
