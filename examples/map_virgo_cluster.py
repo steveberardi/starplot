@@ -5,7 +5,10 @@ style = PlotStyle().extend(
     extensions.BLUE_MEDIUM,
     extensions.MAP,
     {
-        "figure_background_color": "hsl(330, 44%, 20%)",
+        "figure": {
+            "background_color": "hsl(330, 44%, 20%)",
+            "padding": 40,
+        },
         "dso_galaxy": {
             "label": {
                 "font_color": "hsl(330, 44%, 14%)",

@@ -29,6 +29,7 @@ from starplot.projections import (
     CoordinateReferenceSystem,
 )
 from starplot.svg import symbols, png
+from starplot.svg.layout import Layout
 from starplot.svg.elements import (
     SVG,
     Group,
@@ -100,15 +101,15 @@ class Canvas:
         precision: int = 2,
         logger=None,
     ):
+        # following will be replaced by layout class
         self.elements = []
-        self.figure_elements = []
         self.defs = []
-        self.def_ids = set()
+        self.figure_elements = []
         self.legend_element = None
-
         self.axes_x = 0
         self.axes_y = 0
 
+        self.layout = Layout()
         self.crs = CRS.from_proj4(crs.value or CoordinateReferenceSystem.ENU.value)
         self.resolution = resolution
         self.projection = projection
@@ -318,10 +319,7 @@ class Canvas:
                     children=stops,
                 )
 
-            self._add_def(
-                def_id=gradient_id,
-                value=gradient,
-            )
+            self.defs.append(gradient)
             fill = f"url(#{gradient_id})"
         else:
             fill = self.style.axes.background_color.as_hex()
@@ -345,10 +343,7 @@ class Canvas:
         axes_clip_path = ClipPath(
             id=axes_clip_path_id, children=[self.background_element]
         )
-        self._add_def(
-            def_id=axes_clip_path_id,
-            value=axes_clip_path,
-        )
+        self.defs.append(axes_clip_path)
 
     def _clip_path_from_bounds(self):
         x0, y0, x1, y1 = self.bounds
@@ -366,12 +361,6 @@ class Canvas:
         dxy = list(dxy)
 
         self.clip_path_display = ShapelyPolygon(dxy)
-
-    def _add_def(self, def_id: str, value: str):
-        if def_id in self.def_ids:
-            return
-        self.defs.append(value)
-        self.def_ids.add(def_id)
 
     def marker(self, x, y, style: MarkerStyle) -> None:
         dx, dy = self._to_display(x, y)
