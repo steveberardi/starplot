@@ -2,7 +2,7 @@ from enum import Enum
 from pathlib import Path
 
 import numpy as np
-from shapely import Polygon as ShapelyPolygon, LineString
+from shapely import Polygon as ShapelyPolygon, LineString, MultiPoint, Point
 from shapely.ops import transform as _transform_shape
 from shapely.affinity import translate as _translate_shape
 
@@ -595,55 +595,111 @@ class Canvas:
             margin_y=style.margin_y,
         )
 
-    def _clip_path_border(self, style: PathStyle, labels: list = None) -> ShapelyPolygon:
+    def _clip_path_border(self, style: PathStyle, labels: list = None) -> None:
         """
-        Creates a border around the axes clip path. The border is plotted as a figure line element.
+        Creates a border around the axes clip path. The border is plotted as a line element.
 
-        labels:
-
-        [
-            ([(x1,y1), (x2,y2)], "north"),
-            ([(x1,y1), (x2,y2)], "10"),
-        ]
-
-        coordinates are lines to intersect with border. Label plotted at intersection point
-
+        Args:
+            style: Style of border line
+            labels: List of 2-tuples where the first item is a list of coordinates for a line that intersects the border,
+                    and the second item is a string label for that intersection.
 
         """
+        label_elements = []
 
         border = self.clip_path_display.buffer(style.line.width / 2)
-        border = _translate_shape(border, xoff=style.line.width, yoff=style.line.width)
+
+        bx1, by1, bx2, by2 = border.bounds
+        cx1, cy1, cx2, cy2 = self.clip_path_display.bounds
+        xoff = (bx2 - bx1) - (cx2 - cx1)
+        yoff = (by2 - by1) - (cy2 - cy1)
+
+        border = _translate_shape(border, xoff=xoff, yoff=yoff)
         coords = list(zip(*border.exterior.coords.xy))
+        border_line = LineString(coords)
         attrs = style.line.css(self.scale)
 
-
-        label_elements = []
-        if labels:
-            for p0, p1, text in labels:
-                # 1. convert coordinates to display
-                # 2. find intersection of line with border
-                # 3. add text element at intersection
-
-                element = Text(
-                    x=x, 
-                    y=y, 
-                    text=text, 
-                    attrs={
-                        **style.label.css(self.scale),
-                        "text-anchor": "middle",
-                        "dominant-baseline": "central",
-                    }
+        if self.debug:
+            label_elements.append(
+                (
+                    10_000_000_000,
+                    Polyline(
+                        points=list(zip(*self.clip_path_display.exterior.coords.xy)),
+                        attrs=LineStyle(color="red", width=4, zorder=1_000_000).css(
+                            self.scale
+                        ),
+                    ),
                 )
+            )
+            label_elements.append(
+                (
+                    10_000_000_000,
+                    Polyline(
+                        points=list(zip(*border.exterior.coords.xy)),
+                        attrs=LineStyle(color="#1effff", width=2, zorder=1_000_000).css(
+                            self.scale
+                        ),
+                    ),
+                )
+            )
 
+        if labels:
+            # 1. convert coordinates to display
+            # 2. find intersection of line with border
+            # 3. add text element at intersection
 
+            for xy, text in labels:
+                arr = np.array(xy)
+                xs, ys = arr[:, 0], arr[:, 1]
+                dx, dy = self._to_display(xs, ys)
+                dxy = list(zip(dx, dy))
+
+                # only works for clip paths that have offsets exactly equal to the line width for border
+                dxy = [(x + xoff, y + yoff) for x, y in dxy]
+
+                labeled_line = LineString(dxy)
+
+                if self.debug:
+                    label_elements.append(
+                        (
+                            10_000_000_000,
+                            Polyline(
+                                points=dxy,
+                                attrs=LineStyle(
+                                    color="#ff5aff", width=2, zorder=1_000_000
+                                ).css(self.scale),
+                            ),
+                        )
+                    )
+
+                border_intersection = labeled_line.intersection(border_line)
+
+                if isinstance(border_intersection, Point):
+                    border_intersection = MultiPoint([border_intersection])
+                elif not isinstance(border_intersection, MultiPoint):
+                    continue
+
+                for ix in border_intersection.geoms:
+                    element = Text(
+                        x=ix.x,
+                        y=ix.y,
+                        text=text,
+                        attrs={
+                            **style.label.css(self.scale),
+                            "text-anchor": "middle",
+                            "dominant-baseline": "central",
+                        },
+                    )
+                    label_elements.append((style.line.zorder + 10, element))
 
         self.layout.axes_border = Region(
-            elements=[(style.line.zorder, Polyline(points=coords, attrs=attrs)), *label_elements],
+            elements=[
+                (style.line.zorder, Polyline(points=coords, attrs=attrs)),
+                *label_elements,
+            ],
             height=self.layout.axes.height + style.line.width * 2,
             width=self.layout.axes.width + style.line.width * 2,
         )
-
-        return border
 
     def render(self, text_as_path: bool = False) -> str:
         """Renders the canvas to an SVG string"""

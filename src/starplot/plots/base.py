@@ -113,6 +113,7 @@ class BasePlot(StarPlotterMixin, ABC):
             # suppress_warnings=suppress_warnings,
             logger=LOGGER,
             crs=crs,
+            debug=self.debug,
         )
         self._update_clip_path_polygon()
         self.projection = projection

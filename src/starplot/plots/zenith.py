@@ -108,32 +108,16 @@ class ZenithPlot(MapPlot):
         if self.observer is None:
             raise ValueError("observer is required for plotting the horizon")
 
-        border = self.canvas._clip_path_border(style.line)
+        _labels = []
+        if labels:
+            _labels = [
+                ([self.observer.radec(0, alt) for alt in range(-5, 6, 5)], labels[0]),
+                ([self.observer.radec(90, alt) for alt in range(-5, 6, 5)], labels[1]),
+                ([self.observer.radec(180, alt) for alt in range(-5, 6, 5)], labels[2]),
+                ([self.observer.radec(270, alt) for alt in range(-5, 6, 5)], labels[3]),
+            ]
 
-        if not labels:
-            return
-
-        minx, miny, maxx, maxy = border.bounds
-
-        cardinal_direction_positions = [
-            ((maxx + minx) / 2, miny),
-            (minx, (maxy + miny) / 2),
-            ((maxx + minx) / 2, maxy),
-            (maxx, (maxy + miny) / 2),
-        ]
-
-        for i, pos in enumerate(cardinal_direction_positions):
-            x, y = pos
-            self.canvas.text(
-                x=x,
-                y=y,
-                value=labels[i],
-                style=style.label,
-                attrs={
-                    "text-anchor": "middle",
-                    "dominant-baseline": "central",
-                },
-            )
+        self.canvas._clip_path_border(style, labels=_labels)
 
     def _adjust_radec_minmax(self):
         self.ra_min = 0

@@ -418,6 +418,13 @@ class MapPlot(
                 # num_labels=4,
             )
 
-        # TODO : labels, tick marks
+        if not labels:
+            return
 
-        return
+        _labels = []
+
+        for dec in dec_locations:
+            coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 1)
+            _labels.append((coords, str(dec)))
+
+        self.canvas._clip_path_border(self.style.horizon, labels=_labels)

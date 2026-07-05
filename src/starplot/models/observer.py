@@ -123,3 +123,11 @@ class Observer(BaseModel):
             )
         )
         return pos_az.degrees, pos_alt.degrees
+
+    def radec(
+        self, az: float, alt: float, ephemeris: str = "de421.bsp"
+    ) -> tuple[float, float]:
+        observer = self.position(ephemeris).at(self.timescale)
+        p = observer.from_altaz(alt_degrees=alt, az_degrees=az)
+        ra, dec, _ = p.radec()
+        return ra.hours * 15, dec.degrees

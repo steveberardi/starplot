@@ -104,7 +104,7 @@ c.milky_way()
 
 # print(c._extent_mask().bounds)
 
-# c.gridlines()
+c.gridlines()
 
 
 # m57 = DSO.get(m="57")
