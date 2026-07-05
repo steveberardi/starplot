@@ -1,8 +1,3 @@
-import numpy as np
-
-
-from skyfield.api import wgs84
-
 from starplot import geometry
 from starplot.coordinates import CoordinateSystem
 from starplot.data.translations import translate
@@ -18,6 +13,7 @@ from starplot.styles import (
 )
 from starplot.styles.helpers import use_style
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
 
 
 class ZenithPlot(MapPlot):
@@ -92,6 +88,7 @@ class ZenithPlot(MapPlot):
             **kwargs,
         )
 
+    @profile
     @use_style(PathStyle, "horizon")
     def horizon(
         self,
@@ -111,10 +108,26 @@ class ZenithPlot(MapPlot):
         _labels = []
         if labels:
             _labels = [
-                ([self.observer.radec(0, alt) for alt in range(-5, 6, 5)], labels[0]),
-                ([self.observer.radec(90, alt) for alt in range(-5, 6, 5)], labels[1]),
-                ([self.observer.radec(180, alt) for alt in range(-5, 6, 5)], labels[2]),
-                ([self.observer.radec(270, alt) for alt in range(-5, 6, 5)], labels[3]),
+                (
+                    [self.observer.radec(0, alt) for alt in range(-5, 6, 5)],
+                    labels[0],
+                    ("top",),
+                ),
+                (
+                    [self.observer.radec(90, alt) for alt in range(-5, 6, 5)],
+                    labels[1],
+                    ("left",),
+                ),
+                (
+                    [self.observer.radec(180, alt) for alt in range(-5, 6, 5)],
+                    labels[2],
+                    ("bottom",),
+                ),
+                (
+                    [self.observer.radec(270, alt) for alt in range(-5, 6, 5)],
+                    labels[3],
+                    ("right",),
+                ),
             ]
 
         self.canvas._clip_path_border(style, labels=_labels)

@@ -19,10 +19,8 @@ from starplot.styles import (
     ObjectStyle,
     PlotStyle,
     PathStyle,
-    GradientDirection,
     extensions,
 )
-from starplot.utils import lon_to_ra
 from starplot.profile import profile
 from starplot.styles.helpers import use_style
 from starplot.plots.base import BasePlot
@@ -282,6 +280,7 @@ class MapPlot(
             legend_label=legend_label,
         )
 
+    @profile
     @use_style(PathStyle, "horizon")
     def horizon(
         self,
@@ -411,7 +410,7 @@ class MapPlot(
                 # num_labels=2,
             )
             if labels:
-                _labels.append((coords, ra_formatter_fn(ra)))
+                _labels.append((coords, ra_formatter_fn(ra), ("top", "bottom")))
 
         for dec in dec_locations:
             coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
@@ -422,7 +421,7 @@ class MapPlot(
                 # num_labels=4,
             )
             if labels:
-                _labels.append((coords, dec_formatter_fn(dec)))
+                _labels.append((coords, dec_formatter_fn(dec), ("left", "right")))
 
         if not labels:
             return

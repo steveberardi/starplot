@@ -605,6 +605,7 @@ class Canvas:
                     and the second item is a string label for that intersection.
 
         TODO : add way to restrict label points to only top/bottom or left/right
+                Maybe -> make clip path border labels a separate function?
         """
         label_elements = []
 
@@ -649,13 +650,11 @@ class Canvas:
             # 2. find intersection of line with border
             # 3. add text element at intersection
 
-            for xy, text in labels:
+            for xy, text, locations in labels:
                 arr = np.array(xy)
                 xs, ys = arr[:, 0], arr[:, 1]
                 dx, dy = self._to_display(xs, ys)
                 dxy = list(zip(dx, dy))
-
-                # only works for clip paths that have offsets exactly equal to the line width for border
                 dxy = [(x + xoff, y + yoff) for x, y in dxy]
 
                 labeled_line = LineString(dxy)
@@ -681,6 +680,16 @@ class Canvas:
                     continue
 
                 for ix in border_intersection.geoms:
+                    if locations and any(
+                        (
+                            ix.y - yoff <= cy1 and "top" not in locations,
+                            ix.y + yoff >= cy2 and "bottom" not in locations,
+                            ix.x - xoff <= cx1 and "left" not in locations,
+                            ix.x + xoff >= cx2 and "right" not in locations,
+                        )
+                    ):
+                        continue
+
                     element = Text(
                         x=ix.x,
                         y=ix.y,
@@ -693,13 +702,15 @@ class Canvas:
                     )
                     label_elements.append((style.line.zorder + 10, element))
 
+        border = self.clip_path_display.buffer(style.line.width)
+        bx1, by1, bx2, by2 = border.bounds
         self.layout.axes_border = Region(
             elements=[
                 (style.line.zorder, Polyline(points=coords, attrs=attrs)),
                 *label_elements,
             ],
-            height=self.layout.axes.height + style.line.width * 2,
-            width=self.layout.axes.width + style.line.width * 2,
+            height=(by2 - by1),
+            width=(bx2 - bx1),
         )
 
     def render(self, text_as_path: bool = False) -> str:
