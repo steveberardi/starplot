@@ -604,6 +604,7 @@ class Canvas:
             labels: List of 2-tuples where the first item is a list of coordinates for a line that intersects the border,
                     and the second item is a string label for that intersection.
 
+        TODO : add way to restrict label points to only top/bottom or left/right
         """
         label_elements = []
 

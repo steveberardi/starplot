@@ -380,6 +380,8 @@ class MapPlot(
             dec_tick_locations: List of Declination locations for the tick marks (in degrees, -90...90)
         """
 
+        _labels = []
+
         ra_formatter_fn_default = lambda r: f"{math.floor(r/15)}h"  # noqa: E731
         dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
 
@@ -401,13 +403,15 @@ class MapPlot(
         ]
 
         for ra in ra_locations:
-            coords = geometry.line_segment((ra, self.dec_min), (ra, self.dec_max), 0.5)
+            coords = geometry.line_segment((ra, -89.99999), (ra, 89.99999999), 0.5)
             self.line(
                 coordinates=coords,
                 style=style,
                 # label=ra_formatter_fn(ra),
                 # num_labels=2,
             )
+            if labels:
+                _labels.append((coords, ra_formatter_fn(ra)))
 
         for dec in dec_locations:
             coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
@@ -417,14 +421,10 @@ class MapPlot(
                 # label=dec_formatter_fn(dec),
                 # num_labels=4,
             )
+            if labels:
+                _labels.append((coords, dec_formatter_fn(dec)))
 
         if not labels:
             return
-
-        _labels = []
-
-        for dec in dec_locations:
-            coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 1)
-            _labels.append((coords, str(dec)))
 
         self.canvas._clip_path_border(self.style.horizon, labels=_labels)
