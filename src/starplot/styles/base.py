@@ -270,7 +270,7 @@ class MarkerStyle(BaseStyle):
     size: float = 22
     """Size of marker in points"""
 
-    fill: FillStyleEnum = FillStyleEnum.NONE
+    fill: FillStyleEnum = FillStyleEnum.FULL
     """Fill style of marker"""
 
     alpha: float = 1.0

@@ -306,7 +306,6 @@ class Canvas:
                     children=stops,
                 )
 
-            self.defs.append(gradient)
             self.layout.axes.defs.append(gradient)
             fill = f"url(#{gradient_id})"
         else:
@@ -604,6 +603,7 @@ class Canvas:
             labels: List of 2-tuples where the first item is a list of coordinates for a line that intersects the border,
                     and the second item is a string label for that intersection.
 
+        TODO: handle border size based on gridline labels
         """
         label_elements = []
 

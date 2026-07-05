@@ -20,7 +20,7 @@ p = MapPlot(
 p.gridlines(
     ra_locations=[d for d in range(8 * 15, 14 * 15, 5)],
     dec_locations=[d for d in range(-50, -80, -2)],
-    ra_formatter_fn=lambda ra: f"{round(ra * 15)}\u00B0",
+    ra_formatter_fn=lambda ra: f"{ra}\u00B0",
 )
 p.constellations()
 p.constellation_borders()
