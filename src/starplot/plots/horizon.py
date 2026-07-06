@@ -19,7 +19,6 @@ from starplot.styles import (
     extensions,
     use_style,
     PathStyle,
-    GradientDirection,
 )
 from starplot.plots.base import BasePlot
 from starplot.plotters.text import CollisionHandler
@@ -355,12 +354,11 @@ class HorizonPlot(
     def gridlines(
         self,
         style: PathStyle = None,
-        show_labels: list = ["left", "right", "bottom"],
+        labels: bool = True,
         az_locations: list[float] = None,
         alt_locations: list[float] = None,
         az_formatter_fn: Callable[[float], str] = None,
         alt_formatter_fn: Callable[[float], str] = None,
-        divider_line: bool = True,
         show_ticks: bool = True,
         tick_step: int = 5,
     ):
@@ -369,38 +367,41 @@ class HorizonPlot(
 
         Args:
             style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
-            show_labels: List of locations where labels should be shown (options: "left", "right", "top", "bottom")
+            labels: If True, then labels for each gridline will be plotted on the outside of the axes.
             az_locations: List of azimuth locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees
             alt_locations: List of altitude locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
             az_formatter_fn: Callable for creating labels of azimuth gridlines
             alt_formatter_fn: Callable for creating labels of altitude gridlines
-            divider_line: If True, then a divider line will be plotted below the azimuth labels on the bottom of the plot (this is helpful when also plotting the horizon)
             show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
             tick_step: Step size for tick marks
         """
-        az_formatter_fn_default = lambda az: f"{round(az)}\u00b0 "  # noqa: E731
-        alt_formatter_fn_default = lambda alt: f"{round(alt)}\u00b0 "  # noqa: E731
+        _labels = []
+
+        def az_formatter_fn_default(az):
+            cardinal_directions = {
+                0: "NORTH",
+                90: "EAST",
+                180: "SOUTH",
+                270: "WEST",
+            }
+            return cardinal_directions.get(az) or f"{round(az)}\u00b0"
+
+        alt_formatter_fn_default = lambda alt: f"{round(alt)}\u00b0"  # noqa: E731
 
         az_formatter_fn = az_formatter_fn or az_formatter_fn_default
         alt_formatter_fn = alt_formatter_fn or alt_formatter_fn_default
-
-        def az_formatter(x, pos) -> str:
-            if x < 0:
-                x += 360
-            return az_formatter_fn(x)
-
-        def alt_formatter(x, pos) -> str:
-            return alt_formatter_fn(x)
 
         x_locations = az_locations or [x for x in range(0, 360, 15)]
         y_locations = alt_locations or [y for y in range(-80, 90, 10)]
 
         for x in x_locations:
-            coords = geometry.line_segment((x, 0), (x, 90), 0.5)
+            coords = geometry.line_segment((x, -20), (x, 90), 0.5)
             self.canvas.line(
                 coordinates=coords,
                 style=style.line,
             )
+            if labels:
+                _labels.append((coords, az_formatter_fn(x), ("bottom",)))
 
         for y in y_locations:
             coords = geometry.line_segment((0.00001, y), (359.99999, y), 0.5)
@@ -409,85 +410,13 @@ class HorizonPlot(
                 style=style.line,
             )
 
-        # TODO : labels, tick marks
+            if labels:
+                _labels.append((coords, alt_formatter_fn(y), ("left", "right")))
 
-        return
-
-        x_locations = az_locations or [x for x in range(0, 360, 15)]
-        x_locations = [x - 180 for x in x_locations]
-        y_locations = alt_locations or [d for d in range(-90, 90, 10)]
-
-        label_style_kwargs = style.label.matplot_kwargs(self.scale)
-        label_style_kwargs.pop("va")
-        label_style_kwargs.pop("ha")
-
-        line_style_kwargs = style.line.matplot_kwargs(self.scale)
-        gridlines = self.ax.gridlines(
-            draw_labels=show_labels,
-            x_inline=False,
-            y_inline=False,
-            rotate_labels=False,
-            xpadding=12,
-            ypadding=12,
-            gid="gridlines",
-            xlocs=FixedLocator(x_locations),
-            xformatter=FuncFormatter(az_formatter),
-            xlabel_style=label_style_kwargs,
-            ylocs=FixedLocator(y_locations),
-            ylabel_style=label_style_kwargs,
-            yformatter=FuncFormatter(alt_formatter),
-            **line_style_kwargs,
-        )
-        gridlines.set_zorder(style.line.zorder)
-
-        if show_labels:
-            self._axis_labels = True
-
-        # gridlines.xlocator = FixedLocator(x_locations)
-        # gridlines.xformatter = FuncFormatter(az_formatter)
-        # gridlines.xlabel_style = label_style_kwargs
-
-        # gridlines.ylocator = FixedLocator(y_locations)
-        # gridlines.yformatter = FuncFormatter(alt_formatter)
-        # gridlines.ylabel_style = label_style_kwargs
-        # print(gridlines.label_artists)
-        # for label in gridlines.label_artists:
-        #     label.set_zorder(style.label.zorder)
-
-        if divider_line:
-            self.ax.plot(
-                [0, 1],
-                [-0.04 * self.scale, -0.04 * self.scale],
-                lw=1,
-                color=style.label.font_color.as_hex(),
-                clip_on=False,
-                transform=self.ax.transAxes,
-            )
-
-        if not show_ticks or len(x_locations) < 2:
+        if not labels:
             return
 
-        # sort x locations so we iterate in order
-        x_locations_sorted = sorted(x_locations)
-        for i, az in enumerate(x_locations_sorted[1:], start=1):
-            prev_az = x_locations_sorted[i - 1]
-
-            # start at az label location + tick step cause we only want ticks between labels
-            for az_tick in range(prev_az + tick_step, az, tick_step):
-                a = int(az_tick)
-                if a >= 360:
-                    a -= 360
-                x, _ = self._to_ax(a, self.alt[0])
-
-                if x <= 0.03 or x >= 0.97 or math.isnan(x):
-                    continue
-
-                self.ax.annotate(
-                    "|",
-                    (x, -0.011 * self.scale),
-                    xycoords=self.ax.transAxes,
-                    **style.label.matplot_kwargs(self.scale / 2),
-                )
+        self.canvas._clip_path_border(self.style.horizon, labels=_labels)
 
     @cache
     def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
