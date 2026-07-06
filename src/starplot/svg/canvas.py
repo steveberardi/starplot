@@ -607,7 +607,7 @@ class Canvas:
         label_elements = []
 
         def text_width(text, font_size, font_weight):
-            char_width = font_size * (0.75 if font_weight >= 500 else 0.76)
+            char_width = font_size * (0.75 if font_weight >= 500 else 0.7)
             return len(text) * char_width
         
         if width_from_labels:

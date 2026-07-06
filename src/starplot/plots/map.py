@@ -20,6 +20,7 @@ from starplot.styles import (
     PlotStyle,
     PathStyle,
     extensions,
+    LineStyle,
 )
 from starplot.profile import profile
 from starplot.styles.helpers import use_style
@@ -419,4 +420,6 @@ class MapPlot(
         if not labels:
             return
 
-        self.canvas._clip_path_border(self.style.horizon, labels=_labels)
+        border_style = PathStyle(line=LineStyle(color=None), label=style.label)
+        self.canvas._clip_path_border(border_style, labels=_labels, width_from_labels=True)
+
