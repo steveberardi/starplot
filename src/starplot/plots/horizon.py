@@ -245,18 +245,6 @@ class HorizonPlot(
         alt_min, alt_max = extent[2], extent[3]
         az_min, az_max = extent[0], extent[1]
 
-        # az_ul, _ = self._ax_to_azalt(0, 1)
-        # az_ur, _ = self._ax_to_azalt(1, 1)
-
-        # if az_ul < 0:
-        #     az_ul += 360
-
-        # if az_ur < 0:
-        #     az_ur += 360
-
-        # az_min = min(self.az[0], self.az[1], az_ul, az_ur)
-        # az_max = max(self.az[0], self.az[1], az_ul, az_ur)
-
         if az_min < 0:
             az_min += 360
         if az_max < 0:
@@ -419,18 +407,3 @@ class HorizonPlot(
 
         border_style = PathStyle(line=LineStyle(color=None), label=style.label)
         self.canvas._clip_path_border(border_style, labels=_labels, width_from_labels=True)
-
-    @cache
-    def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
-        """Converts az/alt to axes coordinates"""
-        x, y = self._proj.transform_point(az, alt, self._crs)
-        data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-        x_axes, y_axes = data_to_axes.transform((x, y))
-        return x_axes, y_axes
-
-    @cache
-    def _ax_to_azalt(self, x: float, y: float) -> tuple[float, float]:
-        trans = self.ax.transAxes + self.ax.transData.inverted()
-        x_projected, y_projected = trans.transform((x, y))  # axes to data
-        az, alt = self._crs.transform_point(x_projected, y_projected, self._proj)
-        return float(az), float(alt)
