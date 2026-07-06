@@ -19,6 +19,7 @@ from starplot.styles import (
     extensions,
     use_style,
     PathStyle,
+    LineStyle,
 )
 from starplot.plots.base import BasePlot
 from starplot.plotters.text import CollisionHandler
@@ -416,7 +417,8 @@ class HorizonPlot(
         if not labels:
             return
 
-        self.canvas._clip_path_border(self.style.horizon, labels=_labels)
+        border_style = PathStyle(line=LineStyle(color=None), label=style.label)
+        self.canvas._clip_path_border(border_style, labels=_labels, width_from_labels=True)
 
     @cache
     def _to_ax(self, az: float, alt: float) -> tuple[float, float]:

@@ -594,7 +594,7 @@ class Canvas:
             margin_y=style.margin_y,
         )
 
-    def _clip_path_border(self, style: PathStyle, labels: list = None) -> None:
+    def _clip_path_border(self, style: PathStyle, labels: list = None, width_from_labels: bool = False) -> None:
         """
         Creates a border around the axes clip path. The border is plotted as a line element.
 
@@ -603,11 +603,21 @@ class Canvas:
             labels: List of 2-tuples where the first item is a list of coordinates for a line that intersects the border,
                     and the second item is a string label for that intersection.
 
-        TODO: handle border size based on gridline labels
         """
         label_elements = []
 
-        border = self.clip_path_display.buffer(style.line.width / 2)
+        def text_width(text, font_size, font_weight):
+            char_width = font_size * (0.75 if font_weight >= 500 else 0.76)
+            return len(text) * char_width
+        
+        if width_from_labels:
+            text_widths = [text_width(label, style.label.font_size * self.scale, style.label.font_weight) for _, label, _ in labels]
+            border_width = max(text_widths)
+        else:
+            border_width = style.line.width
+
+        # buffer is width / 2 because line is drawn at center of coordinates
+        border = self.clip_path_display.buffer(border_width / 2)
 
         bx1, by1, bx2, by2 = border.bounds
         cx1, cy1, cx2, cy2 = self.clip_path_display.bounds
@@ -686,6 +696,7 @@ class Canvas:
                             ix.x + xoff >= cx2 and "right" not in locations,
                         )
                     ):
+                        # print(text, locations)
                         continue
 
                     element = Text(
@@ -700,7 +711,7 @@ class Canvas:
                     )
                     label_elements.append((style.line.zorder + 10, element))
 
-        border = self.clip_path_display.buffer(style.line.width)
+        border = self.clip_path_display.buffer(border_width)
         bx1, by1, bx2, by2 = border.bounds
         self.layout.axes_border = Region(
             elements=[

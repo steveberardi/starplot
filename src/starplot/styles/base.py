@@ -313,7 +313,7 @@ class LineStyle(BaseStyle):
     width: float = 4
     """Width of line in points"""
 
-    color: ColorStr = ColorStr("#000")
+    color: Optional[ColorStr] = ColorStr("#000")
     """Color of the line. Can be a hex, rgb, hsl, or word string."""
 
     style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
@@ -337,7 +337,7 @@ class LineStyle(BaseStyle):
     def css(self, scale: float = 1) -> dict:
         attrs = {
             "fill": "none",
-            "stroke": self.color.as_hex(),
+            "stroke": self.color.as_hex() if self.color else "none",
             "stroke-width": round(self.width * scale, 2),
             "stroke-opacity": self.alpha,
             "stroke-linecap": CapStyleEnum(self.dash_capstyle).css(),
@@ -977,7 +977,7 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_2,
         ),
         label=LabelStyle(
-            font_size=18,
+            font_size=28,
             font_color="#000",
             font_alpha=1,
             font_weight=FontWeightEnum.LIGHT,
