@@ -1,5 +1,5 @@
 import math
-
+import random
 from functools import cache
 from typing import Callable
 
@@ -20,6 +20,7 @@ from starplot.styles import (
     use_style,
     PathStyle,
     LineStyle,
+    PolygonStyle,
 )
 from starplot.plots.base import BasePlot
 from starplot.plotters.text import CollisionHandler
@@ -42,6 +43,87 @@ DEFAULT_HORIZON_LABELS = {
     270: "W",
     315: "NW",
 }
+
+
+def generate_horizon_polygon(
+    max_altitude: float,
+    min_altitude: float = 0.0,
+    azimuth_start: float = 0.0,
+    azimuth_end: float = 360.0,
+    num_points: int = 360,
+    num_octaves: int = 4,
+    seed: int | None = None,
+) -> list[tuple[float, float]]:
+    """
+    Generate a list of (azimuth, altitude) coordinates representing a smooth,
+    randomly generated horizon polygon over a specified azimuth range.
+
+    The horizon line spans from azimuth_start to azimuth_end, with altitude
+    values smoothly varying between min_altitude and max_altitude (like
+    rolling hills). The polygon is closed by dropping down to 0 altitude at
+    both ends, so it can be used as a fillable shape from the ground up.
+
+    Args:
+        max_altitude: Maximum altitude (degrees) the horizon line can reach.
+        min_altitude: Minimum altitude (degrees) the horizon line can dip to.
+        azimuth_start: Starting azimuth (degrees) for the horizon range.
+        azimuth_end: Ending azimuth (degrees) for the horizon range.
+        num_points: Number of points to sample along the horizon line (higher = smoother).
+        num_octaves: Number of sine wave layers to sum for the noise (higher = more detail/bumpiness).
+        seed: Optional random seed for reproducibility.
+
+    Returns:
+        List of (azimuth, altitude) tuples forming a closed polygon.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    if azimuth_end <= azimuth_start:
+        raise ValueError("azimuth_end must be greater than azimuth_start")
+
+    if min_altitude >= max_altitude:
+        raise ValueError("min_altitude must be less than max_altitude")
+
+    azimuth_span = azimuth_end - azimuth_start
+    altitude_span = max_altitude - min_altitude
+
+    # Generate random parameters for each "octave" of sine waves.
+    # Frequencies are based on the full 360-degree circle so the noise
+    # pattern is consistent regardless of which azimuth slice is requested.
+    octaves = []
+    for i in range(num_octaves):
+        frequency = i + 1  # number of full cycles around 360 degrees
+        amplitude = 1.0 / (i + 1)  # higher frequencies contribute less
+        phase = random.uniform(0, 2 * math.pi)
+        octaves.append((frequency, amplitude, phase))
+
+    # Sample the noise function across the requested azimuth range.
+    raw_values = []
+    for i in range(num_points):
+        azimuth = azimuth_start + (i / (num_points - 1)) * azimuth_span
+        value = 0.0
+        for frequency, amplitude, phase in octaves:
+            angle_rad = math.radians(azimuth) * frequency
+            value += amplitude * math.sin(angle_rad + phase)
+        raw_values.append(value)
+
+    # Normalize raw noise values to range [min_altitude, max_altitude]
+    min_val = min(raw_values)
+    max_val = max(raw_values)
+    value_range = max_val - min_val if max_val != min_val else 1.0
+
+    horizon_line = []
+    for i in range(num_points):
+        azimuth = azimuth_start + (i / (num_points - 1)) * azimuth_span
+        normalized = (raw_values[i] - min_val) / value_range  # 0 to 1
+        altitude = min_altitude + normalized * altitude_span
+        horizon_line.append((azimuth, altitude))
+
+    # Close the polygon: horizon line, then drop to 0 at azimuth_end,
+    # then back to 0 at azimuth_start, closing the shape.
+    polygon_coords = horizon_line + [(azimuth_end, 0.0), (azimuth_start, 0.0)]
+
+    return polygon_coords
 
 
 class HorizonPlot(
@@ -253,8 +335,8 @@ class HorizonPlot(
         if az_min >= az_max:
             az_max += 360
 
-        self.az = (az_min, az_max)
-        self.alt = (alt_min, alt_max)
+        # self.az = (az_min, az_max)
+        # self.alt = (alt_min, alt_max)
 
         if az_max <= 360:
             coords = [
@@ -292,8 +374,9 @@ class HorizonPlot(
     @use_style(PathStyle, "horizon")
     def horizon(
         self,
+        min_altitude: float = 2,
+        max_altitude: float = 8,
         style: PathStyle = None,
-        labels: dict[int, str] = DEFAULT_HORIZON_LABELS,
     ):
         """
         Plots rectangle for horizon that shows cardinal directions and azimuth labels.
@@ -302,42 +385,19 @@ class HorizonPlot(
             style: Style of the horizon path. If None, then the plot's style definition will be used.
             labels: Dictionary that maps azimuth values (0...360) to their cardinal direction labels (e.g. "N"). Default is to label each 45deg direction (e.g. "N", "NE", "E", etc)
         """
-        return
 
-        # TODO
-        patch_y = -0.11 * self.scale
-        bottom = patches.Polygon(
-            [
-                (0, -0.04 * self.scale),
-                (1, -0.04 * self.scale),
-                (1, patch_y),
-                (0, patch_y),
-                (0, -0.04 * self.scale),
-            ],
-            color=style.line.color.as_hex(),
-            transform=self.ax.transAxes,
-            clip_on=False,
+        coords = generate_horizon_polygon(
+            min_altitude=min_altitude,
+            max_altitude=max_altitude,
+            azimuth_start=self.az[0] - 5,
+            azimuth_end=self.az[1] + 5,
+            num_octaves=23,
         )
-        self.ax.add_patch(bottom)
 
-        for az, label in labels.items():
-            az = int(az)
-            x, _ = self._to_ax(az, self.alt[0])
-            if x <= 0.03 or x >= 0.97 or math.isnan(x):
-                continue
-
-            self.ax.annotate(
-                label,
-                (x, patch_y + 0.027),
-                xycoords=self.ax.transAxes,
-                xytext=(
-                    style.label.offset_x * self.scale,
-                    style.label.offset_y * self.scale,
-                ),
-                textcoords="offset points",
-                **style.label.matplot_kwargs(self.scale),
-                clip_on=False,
-            )
+        self.canvas.polygon(
+            coordinates=coords,
+            style=PolygonStyle(fill_color="hsl(20deg 33% 21%)"),
+        )
 
     @use_style(PathStyle, "gridlines")
     def gridlines(
@@ -406,4 +466,6 @@ class HorizonPlot(
             return
 
         border_style = PathStyle(line=LineStyle(color=None), label=style.label)
-        self.canvas._clip_path_border(border_style, labels=_labels, width_from_labels=True)
+        self.canvas._clip_path_border(
+            border_style, labels=_labels, width_from_labels=True
+        )

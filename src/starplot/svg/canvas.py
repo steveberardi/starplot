@@ -594,7 +594,9 @@ class Canvas:
             margin_y=style.margin_y,
         )
 
-    def _clip_path_border(self, style: PathStyle, labels: list = None, width_from_labels: bool = False) -> None:
+    def _clip_path_border(
+        self, style: PathStyle, labels: list = None, width_from_labels: bool = False
+    ) -> None:
         """
         Creates a border around the axes clip path. The border is plotted as a line element.
 
@@ -609,9 +611,14 @@ class Canvas:
         def text_width(text, font_size, font_weight):
             char_width = font_size * (0.75 if font_weight >= 500 else 0.7)
             return len(text) * char_width
-        
+
         if width_from_labels:
-            text_widths = [text_width(label, style.label.font_size * self.scale, style.label.font_weight) for _, label, _ in labels]
+            text_widths = [
+                text_width(
+                    label, style.label.font_size * self.scale, style.label.font_weight
+                )
+                for _, label, _ in labels
+            ]
             border_width = max(text_widths)
         else:
             border_width = style.line.width
@@ -630,11 +637,12 @@ class Canvas:
         attrs = style.line.css(self.scale)
 
         if self.debug:
+            clip_path = _translate_shape(self.clip_path_display, xoff=xoff, yoff=yoff)
             label_elements.append(
                 (
                     10_000_000_000,
                     Polyline(
-                        points=list(zip(*self.clip_path_display.exterior.coords.xy)),
+                        points=list(zip(*clip_path.exterior.coords.xy)),
                         attrs=LineStyle(color="red", width=4, zorder=1_000_000).css(
                             self.scale
                         ),
@@ -690,13 +698,12 @@ class Canvas:
                 for ix in border_intersection.geoms:
                     if locations and any(
                         (
-                            ix.y - yoff <= cy1 and "top" not in locations,
-                            ix.y + yoff >= cy2 and "bottom" not in locations,
-                            ix.x - xoff <= cx1 and "left" not in locations,
-                            ix.x + xoff >= cx2 and "right" not in locations,
+                            ix.y < cy1 + yoff and "top" not in locations,
+                            ix.y > cy2 + yoff and "bottom" not in locations,
+                            ix.x < cx1 + xoff and "left" not in locations,
+                            ix.x > cx2 + xoff and "right" not in locations,
                         )
                     ):
-                        # print(text, locations)
                         continue
 
                     element = Text(

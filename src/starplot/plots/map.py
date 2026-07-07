@@ -421,5 +421,6 @@ class MapPlot(
             return
 
         border_style = PathStyle(line=LineStyle(color=None), label=style.label)
-        self.canvas._clip_path_border(border_style, labels=_labels, width_from_labels=True)
-
+        self.canvas._clip_path_border(
+            border_style, labels=_labels, width_from_labels=True
+        )
