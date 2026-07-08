@@ -115,9 +115,13 @@ class Layout:
 
         axes_border_x = axes_x
         axes_border_y = axes_y
-        if not self.axes_border.is_empty:    
-            axes_x += (self.axes_border.width - self.axes.width) / 2
-            axes_y += (self.axes_border.height - self.axes.height) / 2
+        border_width_x = 0
+        border_width_y = 0
+        if not self.axes_border.is_empty:
+            border_width_x = (self.axes_border.width - self.axes.width) / 2
+            border_width_y = (self.axes_border.height - self.axes.height) / 2
+            axes_x += border_width_x
+            axes_y += border_width_y
 
         elements = []
         if not self.title.is_empty:
@@ -133,27 +137,27 @@ class Layout:
             legend_y = 0
             loc = self.legend.location
             if loc == LegendLocationEnum.INSIDE_TOP_LEFT:
-                legend_x = axes_border_x + self.legend.margin_x
-                legend_y = axes_border_y + self.legend.margin_y
+                legend_x = axes_x + self.legend.margin_x
+                legend_y = axes_y + self.legend.margin_y
             elif loc == LegendLocationEnum.INSIDE_TOP_RIGHT:
                 legend_x = (
-                    axes_border_x + self.axes.width - self.legend.width - self.legend.margin_x
+                    axes_x + self.axes.width - self.legend.width - self.legend.margin_x
                 )
-                legend_y = axes_border_y + self.legend.margin_y
+                legend_y = axes_y + self.legend.margin_y
             elif loc == LegendLocationEnum.INSIDE_BOTTOM_LEFT:
-                legend_x = axes_border_x + style.margin_x
+                legend_x = axes_x + style.margin_x
                 legend_y = (
-                    axes_border_y
+                    axes_y
                     + self.axes.height
                     - self.legend.height
                     - self.legend.margin_y
                 )
             elif loc == LegendLocationEnum.INSIDE_BOTTOM_RIGHT:
                 legend_x = (
-                    axes_border_x + self.axes.width - self.legend.width - self.legend.margin_x
+                    axes_x + self.axes.width - self.legend.width - self.legend.margin_x
                 )
                 legend_y = (
-                    axes_border_y
+                    axes_y
                     + self.axes.height
                     - self.legend.height
                     - self.legend.margin_y
@@ -170,15 +174,20 @@ class Layout:
                     - self.legend.margin_y
                 )
             elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT:
-                legend_x = axes_border_x + self.axes.width + self.legend.margin_x
+                legend_x = (
+                    axes_x + self.axes.width + border_width_x + self.legend.margin_x
+                )
                 legend_y = (
                     axes_border_y
                     + self.axes.height
+                    + border_width_y
                     - self.legend.height
                     - self.legend.margin_y
                 )
             elif loc == LegendLocationEnum.OUTSIDE_TOP_RIGHT:
-                legend_x = axes_border_x + self.axes.width + self.legend.margin_x
+                legend_x = (
+                    axes_x + self.axes.width + border_width_x + self.legend.margin_x
+                )
                 legend_y = axes_border_y + self.legend.margin_y
             elements.append(self.legend.render(x=legend_x, y=legend_y))
 
