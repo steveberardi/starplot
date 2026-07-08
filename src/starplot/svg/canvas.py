@@ -607,6 +607,7 @@ class Canvas:
 
         """
         label_elements = []
+        label_height = style.label.font_size * self.scale
 
         def text_width(text, font_size, font_weight):
             char_width = font_size * (0.75 if font_weight >= 500 else 0.7)
@@ -674,6 +675,9 @@ class Canvas:
                 dxy = [(x + xoff, y + yoff) for x, y in dxy]
 
                 labeled_line = LineString(dxy)
+                label_width = text_width(
+                    text, style.label.font_size * self.scale, style.label.font_weight
+                )
 
                 if self.debug:
                     label_elements.append(
@@ -698,10 +702,14 @@ class Canvas:
                 for ix in border_intersection.geoms:
                     if locations and any(
                         (
-                            ix.y < cy1 + yoff and "top" not in locations,
-                            ix.y > cy2 + yoff and "bottom" not in locations,
-                            ix.x < cx1 + xoff and "left" not in locations,
-                            ix.x > cx2 + xoff and "right" not in locations,
+                            ix.y - label_height / 2 < cy1 + yoff
+                            and "top" not in locations,
+                            ix.y + label_height / 2 > cy2 + yoff
+                            and "bottom" not in locations,
+                            ix.x - label_width / 2 < cx1 + xoff
+                            and "left" not in locations,
+                            ix.x + label_width / 2 > cx2 + xoff
+                            and "right" not in locations,
                         )
                     ):
                         continue
