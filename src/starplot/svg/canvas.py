@@ -263,11 +263,8 @@ class Canvas:
             xs, ys = zip(*self.projection.global_clip_path())
             dx, dy = self._to_display(np.array(xs), np.array(ys))
             dxy = list(zip(dx, dy))
+            self.clip_path_display = MultiPoint(dxy).convex_hull
 
-            self.clip_path_display = ShapelyPolygon(dxy)
-            #     pass
-            # self._clip_path_from_bounds()
-            # TODO : fix this function above
         else:
             self.clip_path_display = ShapelyPolygon(
                 [
@@ -330,24 +327,6 @@ class Canvas:
             id=axes_clip_path_id, children=[self.background_element]
         )
         self.layout.axes.defs.append(axes_clip_path)
-
-    def _clip_path_from_bounds(self):
-        """DEPRECATED"""
-        x0, y0, x1, y1 = self.bounds
-        coords = _geometry.extent_polygon(x0, x1, y0, y1, n=100)
-        xs, ys = coords[:, 0], coords[:, 1]
-
-        dx, dy = self._to_display(xs, ys)
-        dxy = list(zip(dx, dy))
-
-        coords = np.array(dxy)
-        diffs = np.diff(coords, axis=0)  # (N-1, 2) step vectors
-        distances = np.hypot(diffs[:, 0], diffs[:, 1])  # (N-1,) euclidean distances
-        keep = np.concatenate([[True], distances >= 1])  # always keep first point
-        dxy = coords[keep]
-        dxy = list(dxy)
-
-        self.clip_path_display = ShapelyPolygon(dxy)
 
     def marker(self, x, y, style: MarkerStyle) -> None:
         dx, dy = self._to_display(x, y)

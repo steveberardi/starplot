@@ -171,7 +171,7 @@ c.legend(
     magnitude_scale=True,
 )
 
-c.horizon()
+# c.horizon()
 
 c.export("temp/orion.svg")
 # c.export("temp/orion.png")
