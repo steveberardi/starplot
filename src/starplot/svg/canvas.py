@@ -151,7 +151,7 @@ class Canvas:
         return np.round(x, self.precision), np.round(y, self.precision)
 
     def _is_global(self):
-        return (
+        return self.projection.global_only or (
             abs(self.bounds[0] - self.bounds[2]) >= 360
             and abs(self.bounds[1] - self.bounds[3]) >= 180
         )
@@ -170,7 +170,7 @@ class Canvas:
             self.bounds = self.tx.transform_bounds(
                 *self.projected_bounds, direction="INVERSE"
             )
-        elif self._is_global() or self.projection.global_only:
+        elif self._is_global():
             self.minx, self.miny, self.maxx, self.maxy = self.projection.global_bounds
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
             self.bounds = 0.0000001, -90, 359.999999, 90
@@ -652,6 +652,9 @@ class Canvas:
                 dx, dy = self._to_display(xs, ys)
                 dxy = list(zip(dx, dy))
                 dxy = [(x + xoff, y + yoff) for x, y in dxy]
+
+                if self._is_global():
+                    dxy = _geometry.extend_line(dxy, distance=border_width * 2)
 
                 labeled_line = LineString(dxy)
                 label_width = text_width(

@@ -297,6 +297,26 @@ def line_segment(start, end, step) -> list[tuple[float, float]]:
     return LineString([start, end]).segmentize(step).coords
 
 
+def extend_line(
+    coords: list[tuple[float, float]], distance: float
+) -> list[tuple[float, float]]:
+    """
+    Extends a line by specific distance
+
+    For Cartesian/planar coordinates only (e.g. display coordinates).
+    """
+
+    def extended_point(p1, p2, d):
+        dx, dy = p2[0] - p1[0], p2[1] - p1[1]
+        length = np.hypot(dx, dy)
+        return (p2[0] + dx / length * d, p2[1] + dy / length * d)
+
+    new_start = extended_point(coords[1], coords[0], distance)
+    new_end = extended_point(coords[-2], coords[-1], distance)
+
+    return [new_start] + coords[1:-1] + [new_end]
+
+
 def split_at_antimeridian(
     coords: list[tuple[float, float]],
     antimeridian: float = 360,
