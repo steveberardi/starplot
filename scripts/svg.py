@@ -171,7 +171,8 @@ c.legend(
     magnitude_scale=True,
 )
 
-# c.horizon()
+c.horizon()
+c.title("Look at me")
 
 c.export("temp/orion.svg")
 # c.export("temp/orion.png")
