@@ -2,6 +2,8 @@ from enum import Enum
 from pathlib import Path
 
 import numpy as np
+from shapely import concave_hull
+
 from shapely import Polygon as ShapelyPolygon, LineString, MultiPoint, Point
 from shapely.ops import transform as _transform_shape
 from shapely.affinity import translate as _translate_shape
@@ -161,11 +163,6 @@ class Canvas:
             self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
                 *self.clip_path.bounds, densify_pts=1_000
             )
-            # self.minx, self.miny, self.maxx, self.maxy = latlon_bounds_to_projection(
-            #     *self.bounds,
-            #     source_crs=self.crs,
-            #     target_crs=self.projection.get_crs(source_crs=self.crs),
-            # )
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
             self.bounds = self.tx.transform_bounds(
                 *self.projected_bounds, direction="INVERSE"
@@ -176,24 +173,21 @@ class Canvas:
             self.bounds = 0.0000001, -90, 359.999999, 90
         else:
             if self.bounds[0] == 0:
-                self.bounds[0] = 0.00001
-            if self.bounds[2] == 0:
-                self.bounds[0] = 360 - 0.00001
+                self.bounds[0] = 0.00000001
+            
+            if self.bounds[2] == 360:
+                self.bounds[2] = 359.9999999
 
             self.minx, self.miny, self.maxx, self.maxy = latlon_bounds_to_projection(
                 *self.bounds,
                 source_crs=self.crs,
                 target_crs=self.projection.get_crs(source_crs=self.crs),
             )
-            # print("original: ", self.bounds)
-            # self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
-            #     *self.bounds, densify_pts=100
-            # )
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
             self.bounds = self.tx.transform_bounds(
                 *self.projected_bounds, direction="INVERSE"
             )
-            # print("new: ", self.bounds)
+
 
         self._refresh_figure_dimensions()
 
@@ -414,6 +408,10 @@ class Canvas:
             xs, ys = arr[:, 0], arr[:, 1]
             dx, dy = self._to_display(xs, ys, cs)
             dxy = list(zip(dx, dy))
+
+            # concave = concave_hull(MultiPoint(dxy), ratio=0.3)
+            # list(zip(*concave.exterior.coords.xy))
+
             attrs = attrs or {}
             _attrs = {**style.css(self.scale), **attrs}
 
