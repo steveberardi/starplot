@@ -154,8 +154,8 @@ class Canvas:
 
     def _is_global(self):
         return self.projection.global_only or (
-            abs(self.bounds[0] - self.bounds[2]) >= 360
-            and abs(self.bounds[1] - self.bounds[3]) >= 180
+            abs(self.bounds[0] - self.bounds[2]) >= 359
+            and abs(self.bounds[1] - self.bounds[3]) >= 179
         )
 
     def _init_bounds(self):
@@ -173,10 +173,10 @@ class Canvas:
             self.bounds = 0.0000001, -90, 359.999999, 90
         else:
             if self.bounds[0] == 0:
-                self.bounds[0] = 0.00000001
+                self.bounds[0] = 0.0000001
             
             if self.bounds[2] == 360:
-                self.bounds[2] = 359.9999999
+                self.bounds[2] = 359.999999
 
             self.minx, self.miny, self.maxx, self.maxy = latlon_bounds_to_projection(
                 *self.bounds,
@@ -602,6 +602,7 @@ class Canvas:
             border_width = style.line.width
 
         # buffer is width / 2 because line is drawn at center of coordinates
+        # in other words, half of the width is on the inside and half the width on outside of coordinates
         border = self.clip_path_display.buffer(border_width / 2)
 
         bx1, by1, bx2, by2 = border.bounds
@@ -650,9 +651,7 @@ class Canvas:
                 dx, dy = self._to_display(xs, ys)
                 dxy = list(zip(dx, dy))
                 dxy = [(x + xoff, y + yoff) for x, y in dxy]
-
-                if self._is_global():
-                    dxy = _geometry.extend_line(dxy, distance=border_width * 2)
+                dxy = _geometry.extend_line(dxy, distance=border_width * 2)
 
                 labeled_line = LineString(dxy)
                 label_width = text_width(
