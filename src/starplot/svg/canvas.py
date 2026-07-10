@@ -257,7 +257,7 @@ class Canvas:
             xs, ys = zip(*self.projection.global_clip_path())
             dx, dy = self._to_display(np.array(xs), np.array(ys))
             dxy = list(zip(dx, dy))
-            self.clip_path_display = MultiPoint(dxy).convex_hull
+            self.clip_path_display = concave_hull(MultiPoint(dxy), ratio=0.3)
 
         else:
             self.clip_path_display = ShapelyPolygon(
