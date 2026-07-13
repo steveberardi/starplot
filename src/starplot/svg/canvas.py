@@ -387,30 +387,92 @@ class Canvas:
         """
         TODO : better split for polygons and lines
 
-        1. Split list of coords at antimeridian and edge_x
-        2. For each list from the split, convert to display coords
-        3. Combine lists (in order)
-        4. Plot as one polygon or line
+        if polygon crosses edge_x:
+            keep as two separate polygons when plotted
 
-        ^^ wont work for wrapping
+        for each polygon:
+            if polygon crosses antimeridian AND antimeridian != edge_x:
+                convert to display all coordinates
+                get concave hull (of display coords)
+                plot coordinates of hull
+
+            else:
+                plot as is
         """
 
-        polygons = []
-        # polygons_am = _geometry.split_at_antimeridian(coordinates, offset=0.01)
+        p = ShapelyPolygon(coordinates)
 
-        lines_edge_x = _geometry.split_line_at_x(
-            coordinates, self.projection.edge_x, offset=0.01
-        )
-        polygons.extend(lines_edge_x)
+        if self.projection.wraps:
+            polygons_split = _geometry.split_at_x(geometry=p, wrap_x=self.projection.edge_x)
+        else:
+            polygons_split = [p]
+        
+        
+        polygons = [list(zip(*ps.exterior.coords.xy)) for ps in polygons_split]
+
+        # polygons = []
+        # for ps in polygons_split:
+        #     coords = list(zip(*ps.exterior.coords.xy))
+        #     new_coords = []
+        #     for x, y in coords:
+        #         if x == 0:
+        #             new_coords.append((0.00001, y))
+        #         elif x == 360:
+        #             new_coords.append((359.99999, y))
+        #         else:
+        #             new_coords.append((x, y))
+        #     polygons.append(new_coords)
 
         for polygon_coords in polygons:
+            if not polygon_coords:
+                continue
             arr = np.array(polygon_coords)
             xs, ys = arr[:, 0], arr[:, 1]
             dx, dy = self._to_display(xs, ys, cs)
             dxy = list(zip(dx, dy))
 
-            # concave = concave_hull(MultiPoint(dxy), ratio=0.3)
-            # list(zip(*concave.exterior.coords.xy))
+            attrs = attrs or {}
+            _attrs = {**style.css(self.scale), **attrs}
+
+            self.layout.axes.elements.append(
+                (style.zorder, Polygon(points=dxy, attrs=_attrs))
+            )
+
+    def polygons(
+        self,
+        geometries: list[ShapelyPolygon],
+        style: PolygonStyle,
+        cs: CoordinateSystem = CoordinateSystem.DATA,
+        attrs: dict = None,
+    ) -> None:
+
+
+        polygons = []
+
+        for g in geometries:
+
+            if self.projection.wraps:
+                polygons_split = _geometry.split_at_x(geometry=g, wrap_x=self.projection.edge_x)
+            else:
+                polygons_split = [g]
+            
+            for p in polygons_split:
+                polygons.append(
+                    _transform_shape(self._to_display, p)
+                )
+                
+
+        from shapely.ops import unary_union
+
+        union = unary_union(polygons)
+
+        if union.geom_type == "MultiPolygon":
+            union = union.geoms
+        else:
+            union = [union]
+            
+        for polygon in union:
+            dxy = list(zip(*polygon.exterior.coords.xy))
 
             attrs = attrs or {}
             _attrs = {**style.css(self.scale), **attrs}

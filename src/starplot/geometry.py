@@ -6,6 +6,8 @@ import numpy as np
 
 from shapely import union_all
 from shapely.geometry import Point, Polygon, LineString
+from shapely.ops import split as split_geometry
+from shapely.affinity import translate as translate_geometry
 
 from starplot.constants import PROJ_R
 
@@ -234,6 +236,132 @@ def split_polygon_at_zero(polygon: Polygon) -> list[Polygon]:
         return [polygon_1, Polygon(list(zip(p2_new_ra, p2_dec)))]
 
     return [polygon]
+
+
+import numpy as np
+
+from shapely.geometry import Polygon, LineString
+from shapely.ops import split
+from shapely import union_all
+
+MERIDIAN = LineString([(360, 90), (360, -90)])
+
+
+def split_polygon_with_line(polygon, line=MERIDIAN):
+    """Split a polygon with a line."""
+    if not polygon.intersects(line):
+        return [polygon]
+
+    result = split(polygon, line)
+
+    polygons = []
+    for geom in result.geoms:
+        if geom.geom_type == "Polygon":
+            polygons.append(geom)
+        elif geom.geom_type == "MultiPolygon":
+            polygons.extend(list(geom.geoms))
+
+    return polygons if polygons else [polygon]
+
+
+def normalize_to_360(polygon: Polygon) -> Polygon:
+    """
+    If the provided polygon has coordinates with large jumps from < 100 to > 300,
+    then it likely crosses the 0-point. This function will add 360 to all X coords
+    under 100 and return the result.
+    """
+
+    ra, dec = [p for p in polygon.exterior.coords.xy]
+
+    if min(ra) < 100 and max(ra) > 300:
+        new_ra = [r + 360 if r < 100 else r for r in ra]
+        return Polygon(list(zip(new_ra, dec)))
+
+    return polygon
+
+
+def restrict_to_360(polygon: Polygon) -> Polygon:
+    """
+    If the polygon has a max RA over 360, then subtract 360 from all RA coordinates.
+    """
+    ra, dec = [p for p in polygon.exterior.coords.xy]
+
+    if max(ra) > 360:
+        new_ra = [r - 360 for r in ra]
+        return Polygon(list(zip(new_ra, dec)))
+
+    return polygon
+
+
+def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Polygon]:
+    """
+
+    Splits a geometry at the specified wrap point.
+
+
+    TODO:
+        - Support for polygon OR line
+        - Handle multi geometry intersections
+        - Support for configurable wrap_x point
+
+    Args:
+        polygon: Polygon that possibly needs splitting
+
+    Returns:
+        List of polygons
+    """
+    # if isinstance(geometry, LineString):
+    #     geometry_class = LineString
+    #     x, y = [p for p in geometry.coords.xy]
+        
+
+    # if isinstance(geometry, Polygon):
+    #     geometry_class = Polygon
+    #     x, y = [p for p in geometry.exterior.coords.xy]
+    
+
+    """
+    
+    360 = 90, 300
+    200 = 260, 140
+    100 = 
+
+    needs split if there's an x coord that's more than 60 distance on each side of wrap_x
+
+    1. Extend 360 -> 0 wrapped jumps
+    2. Split at wrap_x
+    3. Restrict to 360
+
+    * use geometry functions from constellation builder, restric needs work
+    
+    """
+
+    geom = normalize_to_360(geometry)
+
+    if wrap_x == 0:
+        wrap_x = 360
+
+    line = LineString([(wrap_x, 90), (wrap_x, -90)])
+    result = split_polygon_with_line(geom, line=line)
+
+    geoms = []
+    for g in result:
+        new_coords = []
+        _x, _ = [p for p in g.exterior.coords.xy]
+        x_max = max(_x)
+
+        for x, y in list(zip(*g.exterior.coords.xy)):
+            new_x = x
+            if x == wrap_x and x_max > wrap_x:
+                new_x += 0.000001
+            elif x == wrap_x and x_max == wrap_x:
+                new_x -= 0.000001
+            
+            new_coords.append((new_x,y))
+        
+        geoms.append(Polygon(new_coords))
+        
+    return geoms
 
 
 def split_line_at_meridian(p1, p2, meridian=360):

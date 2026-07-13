@@ -97,6 +97,7 @@ class ProjectionBase(BaseModel, ABC):
     proj_def_base: str = None
     global_only: bool = False
     curved: bool = False
+    wraps: bool = False
 
     name: ClassVar[str] = None
     r: int | None = PROJ_R
@@ -216,6 +217,8 @@ class Miller(ProjectionBase, CenterRA):
 
     proj_def_base: str = f"+proj=mill +R={PROJ_R} +units=m"
 
+    wraps: bool = True
+
     @property
     def edge_x(self) -> float | None:
         if self.center_ra < 180:
@@ -230,6 +233,8 @@ class Mercator(ProjectionBase, CenterRA):
     name: ClassVar[str] = "merc"
     proj_def_base: str = f"+proj=merc +R={PROJ_R} +units=m"
 
+    wraps: bool = True
+
 
 class PlateCarree(ProjectionBase, CenterRA):
     """An equirectangular projection"""
@@ -237,9 +242,13 @@ class PlateCarree(ProjectionBase, CenterRA):
     name: ClassVar[str] = "eqc"
     proj_def_base: str = f"+proj=eqc +R={PROJ_R} +units=m"
 
+    wraps: bool = True
+
 
 class ObliqueMercator(ProjectionBase, CenterRADEC, Azimuth):
     """Oblique Mercator projection"""
+
+    wraps: bool = True
 
     pass
 
@@ -250,6 +259,7 @@ class Mollweide(ProjectionBase, CenterRA):
     proj_def_base: str = f"+proj=moll +R={PROJ_R} +units=m"
     global_only: bool = True
     curved: bool = True
+    wraps: bool = True
 
     name: ClassVar[str] = "moll"
 
@@ -287,6 +297,7 @@ class Robinson(ProjectionBase, CenterRA):
 
     global_only: bool = True
     curved: bool = True
+    wraps: bool = True
 
 
 class LambertAzEqArea(ProjectionBase, CenterRADEC):

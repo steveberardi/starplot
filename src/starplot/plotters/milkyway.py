@@ -6,7 +6,7 @@ from starplot.data import db
 from starplot.data.catalogs import Catalog, MILKY_WAY
 from starplot.styles import PolygonStyle
 from starplot.styles.helpers import use_style
-from starplot.geometry import split_polygon_at_zero
+from starplot.geometry import split_polygon_at_zero, normalize_to_360
 from starplot.profile import profile
 from starplot.models.milky_way import from_tuple
 
