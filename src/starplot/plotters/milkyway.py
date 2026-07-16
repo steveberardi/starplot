@@ -6,7 +6,7 @@ from starplot.data import db
 from starplot.data.catalogs import Catalog, MILKY_WAY
 from starplot.styles import PolygonStyle
 from starplot.styles.helpers import use_style
-from starplot.geometry import split_polygon_at_zero, normalize_to_360
+from starplot.geometry import split_polygon_at_zero, normalize_to_360, split_at_x
 from starplot.profile import profile
 from starplot.models.milky_way import from_tuple
 
@@ -36,6 +36,8 @@ class MilkyWayPlotterMixin:
         polygons = []
         for milky_way in milky_ways:
             polygons.extend(split_polygon_at_zero(milky_way.geometry))
+            # polygons.extend(split_at_x(geometry=milky_way.geometry, wrap_x=360))
+            # polygons.append(milky_way.geometry)
 
         mw_union = unary_union(polygons)
 
@@ -46,6 +48,6 @@ class MilkyWayPlotterMixin:
 
         for p in polygons:
             self.polygon(
-                geometry=p.buffer(-0.00001),
+                geometry=p.buffer(-0.001),
                 style=style,
             )

@@ -117,11 +117,11 @@ c.gridlines()
 # # c.point_label_handler.plot_on_fail = True
 # # c.point_label_handler.attempts = 1
 
-c.open_clusters(where_true_size=[False])
+# c.open_clusters(where_true_size=[False])
 
-c.globular_clusters(where_true_size=[False])
-c.galaxies(where=[_.magnitude < 9], where_true_size=[False])
-c.nebula(where_true_size=[_.size > 0.01])
+# c.globular_clusters(where_true_size=[False])
+# c.galaxies(where=[_.magnitude < 9], where_true_size=[False])
+# c.nebula(where_true_size=[_.size > 0.01])
 
 
 # c.rectangle(
@@ -171,7 +171,7 @@ c.legend(
     magnitude_scale=True,
 )
 
-c.horizon()
+# c.horizon()
 c.title("Look at me")
 
 c.export("temp/orion.svg")

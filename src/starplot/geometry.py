@@ -336,6 +336,18 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
     
     """
 
+    # TODO : check if NEEDS splitting -- only needs it if consecutive coords cross wrap_x
+
+    needs_splitting = False
+    coords = list(zip(*geometry.exterior.coords.xy))
+    for i, xy in enumerate(coords[1:]):
+        if coords[i-1][0] < wrap_x < xy[0] or xy[0] < wrap_x < coords[i-1][0]:
+            needs_splitting = True
+            break
+    
+    if not needs_splitting:
+        return [geometry]
+
     geom = normalize_to_360(geometry)
 
     if wrap_x == 0:
@@ -357,6 +369,9 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
             elif x == wrap_x and x_max == wrap_x:
                 new_x -= 0.000001
             
+            if new_x > 360:
+                new_x -= 360
+                
             new_coords.append((new_x,y))
         
         geoms.append(Polygon(new_coords))

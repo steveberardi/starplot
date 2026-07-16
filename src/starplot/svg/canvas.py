@@ -407,9 +407,12 @@ class Canvas:
         else:
             polygons_split = [p]
         
-        
-        polygons = [list(zip(*ps.exterior.coords.xy)) for ps in polygons_split]
+        # polygons_split = _geometry.split_at_x(geometry=p, wrap_x=self.projection.edge_x)
+        # problem with zenith = display coords in stereo too big polygon
 
+        # polygons = [list(zip(*ps.exterior.coords.xy)) for ps in fff]
+
+        polygons = polygons_split
         # polygons = []
         # for ps in polygons_split:
         #     coords = list(zip(*ps.exterior.coords.xy))
@@ -421,15 +424,29 @@ class Canvas:
         #             new_coords.append((359.99999, y))
         #         else:
         #             new_coords.append((x, y))
-        #     polygons.append(new_coords)
+        #     polygons.append(ShapelyPolygon(new_coords))
 
-        for polygon_coords in polygons:
+
+        # polygons = [p]
+        for p in polygons:
+            polygon_coords =  list(zip(*p.exterior.coords.xy))
             if not polygon_coords:
                 continue
             arr = np.array(polygon_coords)
             xs, ys = arr[:, 0], arr[:, 1]
             dx, dy = self._to_display(xs, ys, cs)
             dxy = list(zip(dx, dy))
+
+            # b = box(0, 0, self.layout.axes.width, self.layout.axes.height)
+            # ix = ShapelyPolygon(dxy).intersection(b)
+
+            # if ix.geom_type == "GeometryCollection":
+            #     print(len(ix.geoms))
+            #     return
+            # dxy =  list(zip(*ix.exterior.coords.xy))
+
+
+            # dxy = [(x, y) for x, y in dxy if x > 0 and y > 0]
 
             attrs = attrs or {}
             _attrs = {**style.css(self.scale), **attrs}
@@ -462,9 +479,9 @@ class Canvas:
                 )
                 
 
-        from shapely.ops import unary_union
+        from shapely import union_all
 
-        union = unary_union(polygons)
+        union = union_all(polygons)
 
         if union.geom_type == "MultiPolygon":
             union = union.geoms

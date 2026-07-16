@@ -60,7 +60,7 @@ marimo:
 	$(DOCKER_RUN) "marimo edit scripts/marimo.py --no-token  --host 0.0.0.0 --port 9009"
 
 examples:
-	$(DOCKER_RUN) "cd examples && rm -f *.png && rm -f *.jpg && python examples.py"
+	cd examples && rm -f *.png && rm -f *.jpg && uv run examples.py
 
 tutorial:
 	$(DOCKER_RUN) "cd tutorial && python build.py"
