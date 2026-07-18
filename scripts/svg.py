@@ -103,7 +103,6 @@ c.celestial_equator()
 c.milky_way()
 
 
-
 c.gridlines()
 
 

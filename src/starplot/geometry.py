@@ -313,12 +313,10 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
     # if isinstance(geometry, LineString):
     #     geometry_class = LineString
     #     x, y = [p for p in geometry.coords.xy]
-        
 
     # if isinstance(geometry, Polygon):
     #     geometry_class = Polygon
     #     x, y = [p for p in geometry.exterior.coords.xy]
-    
 
     """
     
@@ -345,7 +343,7 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
 
     for i, xy in enumerate(coords[1:]):
         x, y = xy
-        prev_x = coords[i-1][0]
+        prev_x = coords[i - 1][0]
         if prev_x < wrap_x < x or x < wrap_x < prev_x:
             needs_splitting = True
         if abs(prev_x - x) > 180:
@@ -376,11 +374,11 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
                 new_x += 0.000001
             elif new_x == wrap_x and x_max == wrap_x:
                 new_x -= 0.000001
-            
-            new_coords.append((new_x,y))
-        
+
+            new_coords.append((new_x, y))
+
         geoms.append(Polygon(new_coords))
-        
+
     return geoms
 
 

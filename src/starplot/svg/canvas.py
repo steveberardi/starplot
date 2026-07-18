@@ -174,7 +174,7 @@ class Canvas:
         else:
             if self.bounds[0] == 0:
                 self.bounds[0] = 0.0000001
-            
+
             if self.bounds[2] == 360:
                 self.bounds[2] = 359.999999
 
@@ -187,7 +187,6 @@ class Canvas:
             self.bounds = self.tx.transform_bounds(
                 *self.projected_bounds, direction="INVERSE"
             )
-
 
         self._refresh_figure_dimensions()
 
@@ -403,10 +402,12 @@ class Canvas:
         p = ShapelyPolygon(coordinates)
 
         if self.projection.wraps:
-            polygons_split = _geometry.split_at_x(geometry=p, wrap_x=self.projection.edge_x)
+            polygons_split = _geometry.split_at_x(
+                geometry=p, wrap_x=self.projection.edge_x
+            )
         else:
             polygons_split = [p]
-        
+
         # polygons_split = _geometry.split_at_x(geometry=p, wrap_x=self.projection.edge_x)
         # problem with zenith = display coords in stereo too big polygon
 
@@ -426,10 +427,9 @@ class Canvas:
         #             new_coords.append((x, y))
         #     polygons.append(ShapelyPolygon(new_coords))
 
-
         # polygons = [p]
         for p in polygons:
-            polygon_coords =  list(zip(*p.exterior.coords.xy))
+            polygon_coords = list(zip(*p.exterior.coords.xy))
             if not polygon_coords:
                 continue
             arr = np.array(polygon_coords)
@@ -447,7 +447,6 @@ class Canvas:
             # dxy =  list(zip(*ix.geoms[0].exterior.coords.xy))
             # dxy = [(x, y) for x, y in dxy if x > 0 and y > 0]
 
-
             attrs = attrs or {}
             _attrs = {**style.css(self.scale), **attrs}
 
@@ -462,22 +461,18 @@ class Canvas:
         cs: CoordinateSystem = CoordinateSystem.DATA,
         attrs: dict = None,
     ) -> None:
-
-
         polygons = []
 
         for g in geometries:
-
             if self.projection.wraps:
-                polygons_split = _geometry.split_at_x(geometry=g, wrap_x=self.projection.edge_x)
+                polygons_split = _geometry.split_at_x(
+                    geometry=g, wrap_x=self.projection.edge_x
+                )
             else:
                 polygons_split = [g]
-            
+
             for p in polygons_split:
-                polygons.append(
-                    _transform_shape(self._to_display, p)
-                )
-                
+                polygons.append(_transform_shape(self._to_display, p))
 
         from shapely import union_all
 
@@ -487,7 +482,7 @@ class Canvas:
             union = union.geoms
         else:
             union = [union]
-            
+
         for polygon in union:
             dxy = list(zip(*polygon.exterior.coords.xy))
 
