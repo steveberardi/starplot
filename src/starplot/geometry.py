@@ -340,6 +340,9 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
     needs_normalize = False
     coords = list(zip(*geometry.exterior.coords.xy))
 
+    if wrap_x == 0:
+        wrap_x = 360
+
     for i, xy in enumerate(coords[1:]):
         x, y = xy
         prev_x = coords[i-1][0]
@@ -347,15 +350,14 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
             needs_splitting = True
         if abs(prev_x - x) > 180:
             needs_normalize = True
+            if wrap_x == 360:
+                needs_splitting = True
 
     if not needs_splitting:
         return [geometry]
 
     if needs_normalize:
         geometry = normalize_to_360(geometry)
-
-    if wrap_x == 0:
-        wrap_x = 360
 
     line = LineString([(wrap_x, 90), (wrap_x, -90)])
     result = split_polygon_with_line(geometry, line=line)
@@ -368,14 +370,13 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
 
         for x, y in list(zip(*g.exterior.coords.xy)):
             new_x = x
-            if x == wrap_x and x_max > wrap_x:
-                new_x += 0.000001
-            elif x == wrap_x and x_max == wrap_x:
-                new_x -= 0.000001
-            
             if new_x > 360:
                 new_x -= 360
-                
+            if new_x == wrap_x and x_max > wrap_x:
+                new_x += 0.000001
+            elif new_x == wrap_x and x_max == wrap_x:
+                new_x -= 0.000001
+            
             new_coords.append((new_x,y))
         
         geoms.append(Polygon(new_coords))

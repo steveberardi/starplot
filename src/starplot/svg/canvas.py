@@ -437,15 +437,14 @@ class Canvas:
             dx, dy = self._to_display(xs, ys, cs)
             dxy = list(zip(dx, dy))
 
-            # b = box(0, 0, self.layout.axes.width, self.layout.axes.height)
+            # from shapely import box
+            # b = box(-1000, -1000, self.layout.axes.width, self.layout.axes.height)
             # ix = ShapelyPolygon(dxy).intersection(b)
-
+            # print(len(ix.geoms))
             # if ix.geom_type == "GeometryCollection":
             #     print(len(ix.geoms))
             #     return
-            # dxy =  list(zip(*ix.exterior.coords.xy))
-
-
+            # dxy =  list(zip(*ix.geoms[0].exterior.coords.xy))
             # dxy = [(x, y) for x, y in dxy if x > 0 and y > 0]
 
 

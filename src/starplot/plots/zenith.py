@@ -8,7 +8,6 @@ from starplot.styles import (
     LabelStyle,
     PlotStyle,
     PathStyle,
-    GradientDirection,
     extensions,
 )
 from starplot.styles.helpers import use_style
@@ -133,10 +132,11 @@ class ZenithPlot(MapPlot):
         self.canvas._clip_path_border(style, labels=_labels)
 
     def _adjust_radec_minmax(self):
+        _, dec_min, _, dec_max = self.canvas.bounds
         self.ra_min = 0
         self.ra_max = 360
-        self.dec_min = -90
-        self.dec_max = 90
+        self.dec_min = dec_min - 1
+        self.dec_max = dec_max + 1
 
     @use_style(LabelStyle, "info_text")
     def info(self, style: LabelStyle = None):

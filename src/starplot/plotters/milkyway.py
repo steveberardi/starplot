@@ -1,12 +1,11 @@
-from shapely.ops import unary_union
-
 from ibis import _
+from shapely import box, union_all, MultiPolygon
 
 from starplot.data import db
 from starplot.data.catalogs import Catalog, MILKY_WAY
 from starplot.styles import PolygonStyle
 from starplot.styles.helpers import use_style
-from starplot.geometry import split_polygon_at_zero, normalize_to_360, split_at_x
+from starplot.geometry import split_polygon_at_zero
 from starplot.profile import profile
 from starplot.models.milky_way import from_tuple
 
@@ -36,18 +35,27 @@ class MilkyWayPlotterMixin:
         polygons = []
         for milky_way in milky_ways:
             polygons.extend(split_polygon_at_zero(milky_way.geometry))
-            # polygons.extend(split_at_x(geometry=milky_way.geometry, wrap_x=360))
-            # polygons.append(milky_way.geometry)
 
-        mw_union = unary_union(polygons)
+        mw_union = union_all(polygons)
 
-        if mw_union.geom_type == "MultiPolygon":
+        if isinstance(mw_union, MultiPolygon):
             polygons = mw_union.geoms
         else:
             polygons = [mw_union]
 
+
         for p in polygons:
-            self.polygon(
-                geometry=p.buffer(-0.001),
-                style=style,
-            )
+            bounds = box(0, self.dec_min, 360, self.dec_max)
+            p = p.intersection(bounds)
+
+            if isinstance(p, MultiPolygon):
+                for pp in p.geoms:
+                    self.polygon(
+                        geometry=pp.buffer(-0.001),
+                        style=style,
+                    )
+            else:
+                self.polygon(
+                    geometry=p.buffer(-0.001),
+                    style=style,
+                )
