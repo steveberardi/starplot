@@ -70,7 +70,7 @@ c = MapPlot(
     ra_max=24 * 15,
     dec_min=-90,
     dec_max=90,
-    projection=Mollweide(),
+    projection=Mollweide(center_ra=20),
     # projection=Equidistant(center_ra=12 * 15, center_dec=35),
     # projection=Mollweide(center_ra=12 * 15),
     # projection=Equidistant(center_ra=observer.lst, center_dec=45),
@@ -79,7 +79,7 @@ c = MapPlot(
     style=style,
     resolution=4000,
     scale=0.73,
-    # debug=True,
+    debug=True,
     observer=observer,
     # debug_text=True,
     # clip_path=Polygon(cas.border.coords),
@@ -102,7 +102,7 @@ c.ecliptic()
 c.celestial_equator()
 c.milky_way()
 
-# print(c._extent_mask().bounds)
+
 
 c.gridlines()
 

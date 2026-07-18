@@ -448,6 +448,7 @@ class Canvas:
 
             # dxy = [(x, y) for x, y in dxy if x > 0 and y > 0]
 
+
             attrs = attrs or {}
             _attrs = {**style.css(self.scale), **attrs}
 
