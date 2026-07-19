@@ -324,8 +324,8 @@ class HorizonPlot(
         If the extent crosses North cardinal direction, then a MultiPolygon will be returned
         """
         extent = self.canvas.bounds
-        alt_min, alt_max = extent[2], extent[3]
-        az_min, az_max = extent[0], extent[1]
+        alt_min, alt_max = extent[1], extent[3]
+        az_min, az_max = extent[0], extent[2]
 
         if az_min < 0:
             az_min += 360
