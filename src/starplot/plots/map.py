@@ -240,7 +240,7 @@ class MapPlot(
         # else:
         #     self.ra_min = lon_to_ra(maxx) * 15
         #     self.ra_max = lon_to_ra(minx) * 15 + 360
-        else:
+        elif minx < maxx:
             self.ra_min = minx
             self.ra_max = maxx
 

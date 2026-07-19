@@ -114,6 +114,7 @@ class Canvas:
         self.invert_y = invert_y
 
         self.tx = self.projection.get_transformer(source_crs=self.crs)
+        # self.txb = self.projection.get_transformer(source_crs=self.crs, ignored_params=[""])
 
         self.logger = logger
 
@@ -159,6 +160,13 @@ class Canvas:
         )
 
     def _init_bounds(self):
+        """
+        Calculates true bounds from user-bounds, which can change slightly as a result of the map projection used.
+
+        For example, supplying a bounding-box bounds for a stereographic projection will require growing the bounds a little.
+        
+        This function also handles snapping a bounds to a clip path, if the user supplied one.
+        """
         if self.clip_path:
             self.minx, self.miny, self.maxx, self.maxy = self.tx.transform_bounds(
                 *self.clip_path.bounds, densify_pts=1_000

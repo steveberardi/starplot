@@ -122,18 +122,19 @@ class ProjectionBase(BaseModel, ABC):
             densify_pts=90,
         )
 
-    def get_transformer(self, source_crs: CRS) -> Transformer:
+    def get_transformer(self, source_crs: CRS, ignored_params: list[str] | None = None) -> Transformer:
         return Transformer.from_crs(
-            source_crs, self.get_crs(source_crs), always_xy=True
+            source_crs, self.get_crs(source_crs, ignored_params=ignored_params), always_xy=True
         )
 
-    def get_crs(self, source_crs: CRS) -> CRS:
+    def get_crs(self, source_crs: CRS, ignored_params: list[str] | None = None) -> CRS:
         params = {
             "proj": self.name,
             "R": self.r,
             "units": self.units,
             # "over": None, # this creates problem with mollweide projection
         }
+        ignored_params = ignored_params or []
 
         if hasattr(self, "center_ra"):
             axis_props = [(a.abbrev, a.direction) for a in source_crs.axis_info]
@@ -145,7 +146,8 @@ class ProjectionBase(BaseModel, ABC):
         if hasattr(self, "center_dec"):
             params["lat_0"] = self.center_dec
 
-        return CRS.from_dict(params)
+        
+        return CRS.from_dict({k: v for k, v in params.items() if k not in ignored_params})
 
 
 class AutoProjection:
