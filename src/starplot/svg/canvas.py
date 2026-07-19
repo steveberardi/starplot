@@ -164,7 +164,7 @@ class Canvas:
         Calculates true bounds from user-bounds, which can change slightly as a result of the map projection used.
 
         For example, supplying a bounding-box bounds for a stereographic projection will require growing the bounds a little.
-        
+
         This function also handles snapping a bounds to a clip path, if the user supplied one.
         """
         if self.clip_path:
@@ -359,7 +359,6 @@ class Canvas:
         coordinates: list[tuple[float, float]] = None,
         style: PathStyle | LineStyle = None,
     ) -> None:
-        
         lines_split = []
         if self.projection.wraps:
             # split at antimeridian AND edge_x
@@ -386,7 +385,7 @@ class Canvas:
         #     lines_split = [geom]
 
         for line in lines_split:
-            coords = line #list(zip(*line.coords.xy))
+            coords = line  # list(zip(*line.coords.xy))
             arr = np.array(coords)
             xs, ys = arr[:, 0], arr[:, 1]
             dx, dy = self._to_display(xs, ys)
@@ -784,6 +783,9 @@ class Canvas:
             png.export_png_cairo(
                 filename=filename, svg_source=self.render(text_as_path=True)
             )
+            # png.export_png_resvg(
+            #     filename=filename, svg_source=self.render(text_as_path=True)
+            # )
             return
 
         with open(filename, "w", buffering=1024 * 1024) as outfile:

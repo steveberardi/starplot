@@ -40,7 +40,9 @@ def latlon_bounds_to_projection(
     Returns:
         Bounds in the target projection's native units
     """
-    transformer = transformer or Transformer.from_crs(source_crs, target_crs, always_xy=True)
+    transformer = transformer or Transformer.from_crs(
+        source_crs, target_crs, always_xy=True
+    )
 
     # Sample along all 4 edges to catch curved projection boundaries
     top = [(lon, lat_max) for lon in np.linspace(lon_min, lon_max, densify_pts)]
@@ -57,7 +59,7 @@ def latlon_bounds_to_projection(
         glon, glat = np.meshgrid(interior_lons, interior_lats)
         interior = list(zip(glon.ravel(), glat.ravel()))
         corners += interior
-    
+
     lons, lats = zip(*corners)
 
     xs, ys = transformer.transform(lons, lats)
@@ -128,9 +130,13 @@ class ProjectionBase(BaseModel, ABC):
             densify_pts=90,
         )
 
-    def get_transformer(self, source_crs: CRS, ignored_params: list[str] | None = None) -> Transformer:
+    def get_transformer(
+        self, source_crs: CRS, ignored_params: list[str] | None = None
+    ) -> Transformer:
         return Transformer.from_crs(
-            source_crs, self.get_crs(source_crs, ignored_params=ignored_params), always_xy=True
+            source_crs,
+            self.get_crs(source_crs, ignored_params=ignored_params),
+            always_xy=True,
         )
 
     def get_crs(self, source_crs: CRS, ignored_params: list[str] | None = None) -> CRS:
@@ -152,8 +158,9 @@ class ProjectionBase(BaseModel, ABC):
         if hasattr(self, "center_dec"):
             params["lat_0"] = self.center_dec
 
-        
-        return CRS.from_dict({k: v for k, v in params.items() if k not in ignored_params})
+        return CRS.from_dict(
+            {k: v for k, v in params.items() if k not in ignored_params}
+        )
 
 
 class AutoProjection:

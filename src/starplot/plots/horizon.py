@@ -453,6 +453,8 @@ class HorizonPlot(
                 _labels.append((coords, az_formatter_fn(x), ("bottom",)))
 
         for y in y_locations:
+            if not self.canvas.bounds[1] < y < self.canvas.bounds[3]:
+                continue
             coords = geometry.line_segment((0.00001, y), (359.99999, y), 0.5)
             self.canvas.line(
                 coordinates=coords,

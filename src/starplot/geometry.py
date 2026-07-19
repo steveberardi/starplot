@@ -243,8 +243,6 @@ def split_polygon_at_zero(polygon: Polygon) -> list[Polygon]:
     return [polygon]
 
 
-
-
 MERIDIAN = LineString([(360, 90), (360, -90)])
 
 
@@ -279,6 +277,7 @@ def normalize_to_360(polygon: Polygon) -> Polygon:
         return Polygon(list(zip(new_ra, dec)))
 
     return polygon
+
 
 def fix_wrap(coords: list[tuple[float, float]]) -> list[tuple[float, float]]:
     arr = np.array(coords, dtype=float)
@@ -389,7 +388,10 @@ def split_at_x1(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Pol
 
     return geoms
 
-def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Polygon] | list[LineString]:
+
+def split_at_x(
+    geometry: Polygon | LineString, wrap_x: float = 360
+) -> list[Polygon] | list[LineString]:
     """
 
     Splits a geometry at the specified wrap point.
@@ -410,7 +412,6 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
     if isinstance(geometry, Polygon):
         geometry_class = Polygon
         coords = list(zip(*geometry.exterior.coords.xy))
-
 
     needs_splitting = False
     needs_normalize = False
@@ -436,7 +437,7 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
 
     line = LineString([(wrap_x, 90), (wrap_x, -90)])
     result = split_geometry_with_line(
-        geometry=geometry_class(coords), 
+        geometry=geometry_class(coords),
         line=line,
     )
 
@@ -466,6 +467,7 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
         geoms.append(geometry_class(new_coords))
 
     return geoms
+
 
 def split_line_at_meridian(p1, p2, meridian=360):
     """Split a line that crosses the meridian into two segments."""
