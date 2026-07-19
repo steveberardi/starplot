@@ -9,6 +9,11 @@ from shapely.geometry import Point, Polygon, LineString
 from shapely.ops import split as split_geometry
 from shapely.affinity import translate as translate_geometry
 
+
+from shapely.geometry import Polygon, MultiPolygon, LineString, MultiLineString
+from shapely.ops import split
+from shapely import union_all
+
 from starplot.constants import PROJ_R
 
 GLOBAL_EXTENT = Polygon(
@@ -238,30 +243,26 @@ def split_polygon_at_zero(polygon: Polygon) -> list[Polygon]:
     return [polygon]
 
 
-import numpy as np
 
-from shapely.geometry import Polygon, LineString
-from shapely.ops import split
-from shapely import union_all
 
 MERIDIAN = LineString([(360, 90), (360, -90)])
 
 
-def split_polygon_with_line(polygon, line=MERIDIAN):
-    """Split a polygon with a line."""
-    if not polygon.intersects(line):
-        return [polygon]
+def split_geometry_with_line(geometry, line=MERIDIAN):
+    """Split a geometry with a line."""
+    if not geometry.intersects(line):
+        return [geometry]
 
-    result = split(polygon, line)
+    result = split(geometry, line)
 
-    polygons = []
+    geoms = []
     for geom in result.geoms:
-        if geom.geom_type == "Polygon":
-            polygons.append(geom)
-        elif geom.geom_type == "MultiPolygon":
-            polygons.extend(list(geom.geoms))
+        if isinstance(geom, (Polygon, LineString)):
+            geoms.append(geom)
+        elif isinstance(geom, (MultiPolygon, MultiLineString)):
+            geoms.extend(list(geom.geoms))
 
-    return polygons if polygons else [polygon]
+    return geoms or [geometry]
 
 
 def normalize_to_360(polygon: Polygon) -> Polygon:
@@ -279,6 +280,13 @@ def normalize_to_360(polygon: Polygon) -> Polygon:
 
     return polygon
 
+def fix_wrap(coords: list[tuple[float, float]]) -> list[tuple[float, float]]:
+    arr = np.array(coords, dtype=float)
+    x = arr[:, 0]
+    if (x < 100).any() and (x > 300).any():
+        x[x < 100] += 360
+    return list(map(tuple, arr))
+
 
 def restrict_to_360(polygon: Polygon) -> Polygon:
     """
@@ -293,7 +301,7 @@ def restrict_to_360(polygon: Polygon) -> Polygon:
     return polygon
 
 
-def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Polygon]:
+def split_at_x1(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Polygon]:
     """
 
     Splits a geometry at the specified wrap point.
@@ -381,6 +389,83 @@ def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Poly
 
     return geoms
 
+def split_at_x(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Polygon] | list[LineString]:
+    """
+
+    Splits a geometry at the specified wrap point.
+
+    Also nudges X values exactly at the wrap point to be away from it.
+
+    Args:
+        geometry: Polygon or LineString that possibly needs splitting
+        wrap_x: The X value where the geometry should be split (i.e. where it 'wraps')
+
+    Returns:
+        List of polygons or line strings
+    """
+    if isinstance(geometry, LineString):
+        geometry_class = LineString
+        coords = list(zip(*geometry.coords.xy))
+
+    if isinstance(geometry, Polygon):
+        geometry_class = Polygon
+        coords = list(zip(*geometry.exterior.coords.xy))
+
+
+    needs_splitting = False
+    needs_normalize = False
+
+    if wrap_x == 0:
+        wrap_x = 360
+
+    for i, xy in enumerate(coords[1:]):
+        x, y = xy
+        prev_x = coords[i - 1][0]
+        if prev_x < wrap_x < x or x < wrap_x < prev_x:
+            needs_splitting = True
+        if abs(prev_x - x) > 180:
+            needs_normalize = True
+            if wrap_x == 360:
+                needs_splitting = True
+
+    if not needs_splitting:
+        return [geometry]
+
+    if needs_normalize:
+        coords = fix_wrap(coords)
+
+    line = LineString([(wrap_x, 90), (wrap_x, -90)])
+    result = split_geometry_with_line(
+        geometry=geometry_class(coords), 
+        line=line,
+    )
+
+    geoms = []
+    for g in result:
+        new_coords = []
+
+        if geometry_class is Polygon:
+            g_coords = g.exterior.coords.xy
+        elif geometry_class is LineString:
+            g_coords = g.coords.xy
+
+        _x, _ = [p for p in g_coords]
+        x_max = max(_x)
+
+        for x, y in list(zip(*g_coords)):
+            new_x = x
+            if new_x > 360:
+                new_x -= 360
+            if new_x == wrap_x and x_max > wrap_x:
+                new_x += 0.000001
+            elif new_x == wrap_x and x_max == wrap_x:
+                new_x -= 0.000001
+
+            new_coords.append((new_x, y))
+
+        geoms.append(geometry_class(new_coords))
+
+    return geoms
 
 def split_line_at_meridian(p1, p2, meridian=360):
     """Split a line that crosses the meridian into two segments."""
@@ -552,6 +637,11 @@ def split_line_at_x(
     for i in range(1, len(coords)):
         x1, y1 = current[-1]
         x2, y2 = coords[i]
+
+        if x1 == split_x:
+            x1 += offset
+        if x2 == split_x:
+            x2 += offset
 
         if ((x1 <= split_x <= x2) or (x2 <= split_x <= x1)) and x1 != x2:
             t = (split_x - x1) / (x2 - x1)

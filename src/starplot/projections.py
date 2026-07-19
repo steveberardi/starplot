@@ -22,7 +22,9 @@ def latlon_bounds_to_projection(
     lat_max: float,
     target_crs: str | CRS,
     source_crs: CRS,
-    densify_pts: int = 21,
+    densify_pts: int = 2_000,
+    curved: bool = False,
+    transformer: Transformer = None,
 ) -> tuple[float, float, float, float]:
     """
     Convert a lat/lon bounding box to a target projection.
@@ -33,11 +35,12 @@ def latlon_bounds_to_projection(
         target_crs: Any pyproj-accepted CRS string (EPSG code, PROJ string, WKT)
         densify_edges: Sample points along each edge (important for curved projections)
         densify_pts: Number of points per edge when densifying
+        curved: Set to True for curved projections (e.g. Mollweide) to also sample interior points
 
     Returns:
         Bounds in the target projection's native units
     """
-    transformer = Transformer.from_crs(source_crs, target_crs, always_xy=True)
+    transformer = transformer or Transformer.from_crs(source_crs, target_crs, always_xy=True)
 
     # Sample along all 4 edges to catch curved projection boundaries
     top = [(lon, lat_max) for lon in np.linspace(lon_min, lon_max, densify_pts)]
@@ -45,13 +48,16 @@ def latlon_bounds_to_projection(
     left = [(lon_min, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
     right = [(lon_max, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
 
-    # Interior grid to catch extremes on curved projections
-    interior_lons = np.linspace(lon_min, lon_max, densify_pts)
-    interior_lats = np.linspace(lat_min, lat_max, densify_pts)
-    glon, glat = np.meshgrid(interior_lons, interior_lats)
-    interior = list(zip(glon.ravel(), glat.ravel()))
+    corners = top + bottom + left + right
 
-    corners = top + bottom + left + right + interior
+    if curved:
+        # Interior grid to catch extremes on curved projections
+        interior_lons = np.linspace(lon_min, lon_max, densify_pts)
+        interior_lats = np.linspace(lat_min, lat_max, densify_pts)
+        glon, glat = np.meshgrid(interior_lons, interior_lats)
+        interior = list(zip(glon.ravel(), glat.ravel()))
+        corners += interior
+    
     lons, lats = zip(*corners)
 
     xs, ys = transformer.transform(lons, lats)

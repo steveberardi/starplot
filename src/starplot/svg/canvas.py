@@ -190,6 +190,8 @@ class Canvas:
                 *self.bounds,
                 source_crs=self.crs,
                 target_crs=self.projection.get_crs(source_crs=self.crs),
+                curved=self.projection.curved,
+                transformer=self.tx,
             )
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
             self.bounds = self.tx.transform_bounds(
@@ -357,24 +359,35 @@ class Canvas:
         coordinates: list[tuple[float, float]] = None,
         style: PathStyle | LineStyle = None,
     ) -> None:
-        if self.projection.edge_x is not None:
+        
+        lines_split = []
+        if self.projection.wraps:
             # split at antimeridian AND edge_x
-            lines = []
             lines_antimeridian = _geometry.split_at_antimeridian(
                 coordinates,
                 offset=0.0001,
             )
             for line in lines_antimeridian:
                 lines_edge_x = _geometry.split_line_at_x(
-                    line, self.projection.edge_x, offset=0.0001
+                    line, self.projection.edge_x, offset=0.001
                 )
-                lines.extend(lines_edge_x)
+                lines_split.extend(lines_edge_x)
 
         else:
-            lines = [coordinates]
+            lines_split = [coordinates]
 
-        for line in lines:
-            arr = np.array(line)
+        # geom = LineString(coordinates)
+
+        # if self.projection.wraps:
+        #     lines_split = _geometry.split_at_x(
+        #         geometry=geom, wrap_x=self.projection.edge_x
+        #     )
+        # else:
+        #     lines_split = [geom]
+
+        for line in lines_split:
+            coords = line #list(zip(*line.coords.xy))
+            arr = np.array(coords)
             xs, ys = arr[:, 0], arr[:, 1]
             dx, dy = self._to_display(xs, ys)
             dxy = list(zip(dx, dy))
