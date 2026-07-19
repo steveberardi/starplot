@@ -462,45 +462,6 @@ class Canvas:
                 (style.zorder, Polygon(points=dxy, attrs=_attrs))
             )
 
-    def polygons(
-        self,
-        geometries: list[ShapelyPolygon],
-        style: PolygonStyle,
-        cs: CoordinateSystem = CoordinateSystem.DATA,
-        attrs: dict = None,
-    ) -> None:
-        polygons = []
-
-        for g in geometries:
-            if self.projection.wraps:
-                polygons_split = _geometry.split_at_x(
-                    geometry=g, wrap_x=self.projection.edge_x
-                )
-            else:
-                polygons_split = [g]
-
-            for p in polygons_split:
-                polygons.append(_transform_shape(self._to_display, p))
-
-        from shapely import union_all
-
-        union = union_all(polygons)
-
-        if union.geom_type == "MultiPolygon":
-            union = union.geoms
-        else:
-            union = [union]
-
-        for polygon in union:
-            dxy = list(zip(*polygon.exterior.coords.xy))
-
-            attrs = attrs or {}
-            _attrs = {**style.css(self.scale), **attrs}
-
-            self.layout.axes.elements.append(
-                (style.zorder, Polygon(points=dxy, attrs=_attrs))
-            )
-
     def text(
         self,
         x: float,
