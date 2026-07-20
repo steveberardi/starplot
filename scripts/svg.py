@@ -70,7 +70,7 @@ c = MapPlot(
     ra_max=24 * 15,
     dec_min=-90,
     dec_max=90,
-    projection=Mollweide(center_ra=20),
+    projection=Mollweide(center_ra=18),
     # projection=Equidistant(center_ra=12 * 15, center_dec=35),
     # projection=Mollweide(center_ra=12 * 15),
     # projection=Equidistant(center_ra=observer.lst, center_dec=45),
@@ -159,12 +159,6 @@ c.gridlines()
 # )
 c.legend(
     style__location="outside top right",
-    style__margin_y=0,
-    style__margin_x=40,
-    magnitude_scale=True,
-)
-c.legend(
-    style__location="outside top left",
     style__margin_y=0,
     style__margin_x=40,
     magnitude_scale=True,
