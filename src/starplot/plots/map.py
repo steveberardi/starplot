@@ -6,6 +6,7 @@ from shapely import Polygon
 from skyfield.api import wgs84
 
 from starplot import geometry
+from starplot.data.translations import translate
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.projections import (
@@ -327,6 +328,8 @@ class MapPlot(
         if not labels:
             return
 
+        labels = [translate(label, self.language) for label in labels]
+
         north = observer.from_altaz(alt_degrees=0, az_degrees=0)
         east = observer.from_altaz(alt_degrees=0, az_degrees=90)
         south = observer.from_altaz(alt_degrees=0, az_degrees=180)
@@ -407,12 +410,13 @@ class MapPlot(
                 _labels.append((coords, ra_formatter_fn(ra), ("top", "bottom")))
 
         for dec in dec_locations:
-            if self.projection.edge_x in [0, 360]:
-                coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
-            else:
-                minx = self.projection.edge_x + 0.00001
-                maxx = self.projection.edge_x - 0.00001
-                coords = geometry.line_segment((minx, dec), (maxx, dec), 0.5)
+            # if self.projection.edge_x in [0, 360]:
+            #     coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
+            # else:
+            #     minx = self.projection.edge_x + 0.00001
+            #     maxx = self.projection.edge_x - 0.00001
+            #     coords = geometry.line_segment((minx, dec), (maxx, dec), 0.5)
+            coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
             self.line(
                 coordinates=coords,
                 style=style,

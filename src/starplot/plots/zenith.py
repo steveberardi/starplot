@@ -3,9 +3,8 @@ from starplot.coordinates import CoordinateSystem
 from starplot.data.translations import translate
 from starplot.plots.map import MapPlot
 from starplot.models.observer import Observer
-from starplot.projections import Stereographic, Equidistant
+from starplot.projections import Stereographic
 from starplot.styles import (
-    LabelStyle,
     PlotStyle,
     PathStyle,
     extensions,
@@ -106,6 +105,7 @@ class ZenithPlot(MapPlot):
 
         _labels = []
         if labels:
+            labels = [translate(label, self.language) for label in labels]
             _labels = [
                 (
                     [self.observer.radec(0, alt) for alt in range(-5, 6, 5)],
@@ -137,24 +137,6 @@ class ZenithPlot(MapPlot):
         self.ra_max = 360
         self.dec_min = dec_min - 1
         self.dec_max = dec_max + 1
-
-    @use_style(LabelStyle, "info_text")
-    def info(self, style: LabelStyle = None):
-        """
-        Plots info text in the lower left corner, including date/time and lat/lon.
-
-        Args:
-            style: Styling of the info text. If None, then the plot's style definition will be used.
-        """
-        dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        info = f"{str(self.observer.lat)}, {str(self.observer.lon)}\n{dt_str}"
-        self.ax.text(
-            0.05,
-            0.05,
-            info,
-            transform=self.ax.transAxes,
-            **style.matplot_kwargs(self.scale),
-        )
 
     def _prepare_star_coords(self, df, limit_by_altaz=False):
         # TODO : reconcile this commented code

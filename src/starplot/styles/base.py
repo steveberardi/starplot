@@ -939,9 +939,10 @@ class PlotStyle(BaseStyle):
 
     constellation_borders: LineStyle = LineStyle(
         color="#000",
-        width=1.5,
-        style=LineStyleEnum.DASHED,
-        alpha=0.4,
+        width=1.8,
+        # style=LineStyleEnum.DASHED,
+        style=(0, (5, 5)),
+        alpha=0.5,
         zorder=ZOrderEnum.LAYER_3,
     )
     """Styling for constellation borders"""
@@ -973,14 +974,14 @@ class PlotStyle(BaseStyle):
             color="#888",
             width=1,
             style=LineStyleEnum.SOLID,
-            alpha=0.8,
+            alpha=0.6,
             zorder=ZOrderEnum.LAYER_2,
         ),
         label=LabelStyle(
             font_size=28,
             font_color="#000",
             font_alpha=1,
-            font_weight=FontWeightEnum.LIGHT,
+            font_weight=FontWeightEnum.NORMAL,
             anchor_point=AnchorPointEnum.BOTTOM_CENTER,
             zorder=ZOrderEnum.LAYER_5 + 1000,
         ),
