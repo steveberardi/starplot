@@ -76,4 +76,4 @@ p.horizon()
 
 p.constellation_labels()  # Plot the constellation labels last for best placement
 
-p.export("tutorial_03.png", transparent=True)
+p.export("tutorial_03.png")

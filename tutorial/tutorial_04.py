@@ -6,9 +6,7 @@ style = PlotStyle().extend(
     extensions.MAP,
     {
         "legend": {
-            "location": "lower right",  # show legend inside map
-            "num_columns": 3,
-            "background_alpha": 1,
+            "location": "inside bottom right",  # show legend inside map
         },
     },
 )
@@ -48,4 +46,4 @@ p.legend()  # add a legend
 
 p.constellation_labels()  # Plot the constellation labels last for best placement
 
-p.export("tutorial_04.png", padding=0.2, transparent=True)
+p.export("tutorial_04.png")

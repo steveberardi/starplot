@@ -37,4 +37,4 @@ p.stars(
     color_fn=callables.color_by_bv,  # <-- here's where we specify the callable
 )
 
-p.export("tutorial_08.png", padding=0)
+p.export("tutorial_08.png")

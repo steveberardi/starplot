@@ -22,4 +22,4 @@ p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 3])
 p.horizon()
 p.constellation_labels()  # Plot the constellation labels last to avoid collisions
 
-p.export("tutorial_02.png", transparent=True)
+p.export("tutorial_02.png")

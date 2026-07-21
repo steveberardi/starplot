@@ -63,7 +63,8 @@ examples:
 	cd examples && rm -f *.png && rm -f *.jpg && uv run examples.py
 
 tutorial:
-	$(DOCKER_RUN) "cd tutorial && python build.py"
+# 	$(DOCKER_RUN) "cd tutorial && python build.py"
+	cd tutorial && uv run build.py
 
 profile: DR_ARGS=-it -p 8081:8081
 profile:

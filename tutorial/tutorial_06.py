@@ -56,4 +56,4 @@ p.ecliptic()
 p.milky_way()
 p.constellation_labels()
 
-p.export("tutorial_06.png", padding=0.08)
+p.export("tutorial_06.png")

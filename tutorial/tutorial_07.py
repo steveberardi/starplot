@@ -38,4 +38,4 @@ p.planets(
     style__label__font_size=56,
     style__marker__color="#fcdb72",
 )
-p.export("tutorial_07.png", padding=0)
+p.export("tutorial_07.png")

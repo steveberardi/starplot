@@ -6,7 +6,6 @@ from shapely import Polygon
 from skyfield.api import wgs84
 
 from starplot import geometry
-from starplot.data.translations import translate
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.projections import (
@@ -328,6 +327,8 @@ class MapPlot(
         if not labels:
             return
 
+        from starplot.data.translations import translate
+        
         labels = [translate(label, self.language) for label in labels]
 
         north = observer.from_altaz(alt_degrees=0, az_degrees=0)

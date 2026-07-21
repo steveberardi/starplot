@@ -426,6 +426,8 @@ class HorizonPlot(
         """
         _labels = []
 
+        from starplot.data.translations import translate
+
         def az_formatter_fn_default(az):
             cardinal_directions = {
                 0: "NORTH",
@@ -433,7 +435,8 @@ class HorizonPlot(
                 180: "SOUTH",
                 270: "WEST",
             }
-            return cardinal_directions.get(az) or f"{round(az)}\u00b0"
+            label = translate(cardinal_directions.get(az), self.language)
+            return label or f"{round(az)}\u00b0"
 
         alt_formatter_fn_default = lambda alt: f"{round(alt)}\u00b0"  # noqa: E731
 
