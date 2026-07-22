@@ -328,7 +328,7 @@ class MapPlot(
             return
 
         from starplot.data.translations import translate
-        
+
         labels = [translate(label, self.language) for label in labels]
 
         north = observer.from_altaz(alt_degrees=0, az_degrees=0)

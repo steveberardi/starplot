@@ -338,15 +338,39 @@ class Canvas:
         )
         self.layout.axes.elements.append((style.zorder, element))
 
-    def markers(self, x, y, style: MarkerStyle, gid: str = None, sizes=None) -> None:
+    def markers(
+        self,
+        x,
+        y,
+        style: MarkerStyle,
+        gid: str = None,
+        sizes: list[float] = None,
+        colors: list[str] = None,
+        alphas: list[float] = None,
+    ) -> None:
         dx, dy = self._to_display(x, y)
         gid = gid or "markers"
-        sizes = sizes or []
+        count = len(x)
+        sizes = sizes or [style.size] * count
+        colors = colors or [style.color] * count
+        alphas = alphas or [style.alpha] * count
+        elements = []
 
-        elements = [
-            symbols.create(x, y, size * self.scale, style.symbol, None)
-            for x, y, size in list(zip(dx, dy, sizes))
-        ]
+        for x, y, size, color, alpha in list(zip(dx, dy, sizes, colors, alphas)):
+            attrs = {}
+
+            if color:
+                attrs["fill"] = color
+
+            if alpha:
+                attrs["fill-opacity"] = alpha
+
+            element = symbols.create(
+                x, y, size=size * self.scale, symbol=style.symbol, attrs=attrs
+            )
+
+            elements.append(element)
+
         self.layout.axes.elements.append(
             (
                 style.zorder,

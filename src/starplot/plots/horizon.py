@@ -436,7 +436,7 @@ class HorizonPlot(
                 270: "WEST",
             }
             label = translate(cardinal_directions.get(az), self.language)
-            return label or f"{round(az)}\u00b0"
+            return label.upper() if label else f"{round(az)}\u00b0"
 
         alt_formatter_fn_default = lambda alt: f"{round(alt)}\u00b0"  # noqa: E731
 

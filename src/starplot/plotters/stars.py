@@ -88,8 +88,10 @@ class StarPlotterMixin:
             np.array(ras),
             np.array(decs),
             style=style.marker,
-            sizes=sizes,
             gid="stars",
+            sizes=sizes,
+            colors=colors,
+            alphas=alphas,
         )
 
     def _star_labels(
