@@ -139,7 +139,7 @@ dso_open_cluster: &DSO-OC
     alpha: 0.9
     color: hsl(62, 58%, 42%)
     edge_color: hsl(58, 100%, 64%)
-    edge_width: 1
+    edge_width: 1.5
   label:
     font_color: hsl(58, 98%, 58%)
 dso_association_stars: *DSO-OC

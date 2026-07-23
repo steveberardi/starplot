@@ -445,6 +445,9 @@ class Canvas:
 
         p = ShapelyPolygon(coordinates)
 
+        # from pprint import pprint
+        # pprint(coordinates)
+
         if self.projection.wraps:
             polygons_split = _geometry.split_at_x(
                 geometry=p, wrap_x=self.projection.edge_x
@@ -470,7 +473,7 @@ class Canvas:
         #         else:
         #             new_coords.append((x, y))
         #     polygons.append(ShapelyPolygon(new_coords))
-
+        # print(self.projection.edge_x)
         # polygons = [p]
         for p in polygons:
             polygon_coords = list(zip(*p.exterior.coords.xy))
@@ -481,6 +484,10 @@ class Canvas:
             dx, dy = self._to_display(xs, ys, cs)
             dxy = list(zip(dx, dy))
 
+
+            # dxy = list(zip(dx, dy))
+            # hull = concave_hull(MultiPoint(dxy), ratio=0.3)
+            # dxy = list(zip(*hull.exterior.coords.xy))
             # from shapely import box
             # b = box(-1000, -1000, self.layout.axes.width, self.layout.axes.height)
             # ix = ShapelyPolygon(dxy).intersection(b)
@@ -490,6 +497,8 @@ class Canvas:
             #     return
             # dxy =  list(zip(*ix.geoms[0].exterior.coords.xy))
             # dxy = [(x, y) for x, y in dxy if x > 0 and y > 0]
+            # from pprint import pprint
+            # pprint(polygon_coords)
 
             attrs = attrs or {}
             _attrs = {**style.css(self.scale), **attrs}
