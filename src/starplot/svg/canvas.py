@@ -783,12 +783,12 @@ class Canvas:
 
                     element = Text(
                         x=ix.x,
-                        y=ix.y,
+                        y=ix.y + style.label.font_size * self.scale / 2.75,
                         text=text,
                         attrs={
                             **style.label.css(self.scale),
                             "text-anchor": "middle",
-                            "dominant-baseline": "central",
+                            # "dominant-baseline": "central",
                         },
                     )
                     label_elements.append((style.line.zorder + 10, element))
