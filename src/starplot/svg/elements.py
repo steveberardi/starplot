@@ -133,11 +133,9 @@ class Text(Element):
     y: float
     text: str
 
-    def render_as_path(self):
+    def render_as_path(self) -> str:
         """
-
-        TODO:
-            - anchor points
+        Renders the text as a set of <path> elements instead of <text>
         """
         font_family = self.attrs["font-family"].split(",")[0]
         font_weight = int(self.attrs["font-weight"])
@@ -213,7 +211,9 @@ class Text(Element):
                 "paint-order": "stroke fill",
                 "transform": transform,
             }
-            stroke_group = Group(id=f"{self.id}-stroke", children=paths, attrs=stroke_attrs)
+            stroke_group = Group(
+                id=f"{self.id}-stroke", children=paths, attrs=stroke_attrs
+            )
             fill_group = Group(id=f"{self.id}-fill", children=paths, attrs=group_attrs)
 
             # group_attrs["stroke"] = self.attrs.get("stroke")
@@ -225,7 +225,6 @@ class Text(Element):
 
         else:
             g = Group(id=self.id, children=paths, attrs=group_attrs)
-
 
         return g.render()
 

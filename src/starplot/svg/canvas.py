@@ -484,7 +484,6 @@ class Canvas:
             dx, dy = self._to_display(xs, ys, cs)
             dxy = list(zip(dx, dy))
 
-
             # dxy = list(zip(dx, dy))
             # hull = concave_hull(MultiPoint(dxy), ratio=0.3)
             # dxy = list(zip(*hull.exterior.coords.xy))
@@ -788,7 +787,7 @@ class Canvas:
                         attrs={
                             **style.label.css(self.scale),
                             "text-anchor": "middle",
-                            # "dominant-baseline": "central",
+                            # "dominant-baseline": "central", # not supported in cairo svg
                         },
                     )
                     label_elements.append((style.line.zorder + 10, element))
