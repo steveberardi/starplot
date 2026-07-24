@@ -126,7 +126,7 @@ class Layout:
         elements = []
         if not self.title.is_empty:
             elements.append(
-                self.title.render(x=style.figure.padding, y=style.figure.padding)
+                self.title.render(x=0, y=style.figure.padding)
             )
 
         if not self.axes_border.is_empty:

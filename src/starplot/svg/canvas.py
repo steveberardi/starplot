@@ -475,8 +475,10 @@ class Canvas:
         #     polygons.append(ShapelyPolygon(new_coords))
         # print(self.projection.edge_x)
         # polygons = [p]
+        # print("***")
         for p in polygons:
             polygon_coords = list(zip(*p.exterior.coords.xy))
+            # pprint(polygon_coords)
             if not polygon_coords:
                 continue
             arr = np.array(polygon_coords)
@@ -538,7 +540,7 @@ class Canvas:
         _attrs = {
             **style.css(self.scale),
             "text-anchor": "middle",
-            "dominant-baseline": "central",
+            # "dominant-baseline": "central",
         }
         self.layout.title = Region(
             elements=[
@@ -546,13 +548,13 @@ class Canvas:
                     style.zorder,
                     Text(
                         x=(self.layout.axes.width + self.style.figure.padding * 2) / 2,
-                        y=0,
+                        y=style.font_size * self.scale - style.padding_bottom,
                         attrs=_attrs,
                         text=value,
                     ),
                 )
             ],
-            height=style.font_size + style.padding_bottom,
+            height=style.font_size * self.scale + style.padding_bottom,
             width=self.layout.axes.width,
         )
 

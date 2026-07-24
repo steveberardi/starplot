@@ -435,6 +435,11 @@ def split_at_x(
     if needs_normalize:
         coords = fix_wrap(coords)
 
+    # from pprint import pprint
+    # print("---")
+    # pprint(coords)
+    # print("---")
+
     line = LineString([(wrap_x, 90), (wrap_x, -90)])
     result = split_geometry_with_line(
         geometry=geometry_class(coords),
