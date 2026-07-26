@@ -414,13 +414,13 @@ class PolygonStyle(BaseStyle):
 
 
 class ArrowStyle(PolygonStyle):
-    body_width: float = 24
+    body_width: float = 10
     """Width of the arrow's body, in pixels"""
 
-    head_width: float = 60
+    head_width: float = 30
     """Width of the arrow's head, in pixels"""
 
-    head_height: float = 100
+    head_height: float = 70
     """Height of the arrow's head, in pixels"""
 
     cap_style: CapStyleEnum = CapStyleEnum.BUTT

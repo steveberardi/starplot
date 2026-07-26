@@ -29,10 +29,10 @@ build:
 	$(DOCKER_BUILD_PYTHON)
 
 lint:
-	$(DOCKER_RUN) "ruff check src/ tests/ hash_checks/ $(ARGS)"
+	uv run ruff check src/ tests/ hash_checks/ $(ARGS)
 
 format:
-	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)"
+	uv run black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)
 
 test:
 	$(DOCKER_RUN) "python -m pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html ."
