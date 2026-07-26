@@ -603,7 +603,7 @@ class TitleStyle(LabelStyle):
 
 
 class FigureStyle(BaseStyle):
-    background_color: ColorStr = ColorStr("#fff")
+    background_color: ColorStr | None = ColorStr("#fff")
 
     padding: int = 0
     """Padding between the axes and edge of figure"""
@@ -612,7 +612,7 @@ class FigureStyle(BaseStyle):
 class AxesStyle(BaseStyle):
     """Styling for the axes of the plot, which is where the map is plotted."""
 
-    background_color: list[tuple[float, str]] | ColorStr = ColorStr("#fff")
+    background_color: list[tuple[float, str]] | ColorStr | None = ColorStr("#fff")
     """
     Background color of the axes.
 

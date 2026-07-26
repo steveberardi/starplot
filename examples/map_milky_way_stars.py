@@ -7,6 +7,7 @@ from starplot.styles import PlotStyle, extensions
 style = PlotStyle().extend(
     extensions.GRAYSCALE_DARK,
     extensions.MAP,
+    extensions.FIGURE_TRANSPARENT,
 )
 
 p = MapPlot(

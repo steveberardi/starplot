@@ -6,6 +6,7 @@ from starplot.styles import PlotStyle, extensions
 style = PlotStyle().extend(
     extensions.BLUE_NIGHT,
     extensions.MAP,
+    extensions.FIGURE_TRANSPARENT,
 )
 canis_major = Constellation.get(name="Canis Major")
 p = MapPlot(

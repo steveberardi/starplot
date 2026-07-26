@@ -189,19 +189,23 @@ class Layout:
                 legend_y = axes_border_y + self.legend.margin_y
             elements.append(self.legend.render(x=legend_x, y=legend_y))
 
-        figure_svg = SVG(
-            height=height,
-            width=width,
-            children=[
+        figure_elements = []
+
+        if style.figure.background_color is not None:
+            figure_elements.append(
                 Rectangle(
                     x=0,
                     y=0,
                     height=height,
                     width=width,
                     attrs={"fill": style.figure.background_color.as_hex()},
-                ),
-                self.axes.render(x=axes_x, y=axes_y),
-                *elements,
-            ],
+                )
+            )
+
+        figure_elements.extend([self.axes.render(x=axes_x, y=axes_y), *elements])
+        figure_svg = SVG(
+            height=height,
+            width=width,
+            children=figure_elements,
         )
         return figure_svg.render(text_as_path=text_as_path)

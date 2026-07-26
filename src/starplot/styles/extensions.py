@@ -31,6 +31,12 @@ CB_WONG = load("cb_wong.yml")
 COLOR_PRINT = load("color_print.yml")
 PUBLICATION = load("publication.yml")
 
+FIGURE_TRANSPARENT = {
+    "figure": {
+        "background_color": None
+    },
+}
+
 GRADIENT_DAYLIGHT = {
     "axes": {
         "background_color": [

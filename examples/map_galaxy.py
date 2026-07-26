@@ -5,6 +5,11 @@ from starplot.styles import PlotStyle, extensions
 style = PlotStyle().extend(
     extensions.BLUE_NIGHT,
     extensions.MAP,
+    {
+        "figure": {
+            "padding": 60,
+        }
+    }
 )
 
 p = GalaxyPlot(

@@ -310,9 +310,18 @@ class StereoSouth(ProjectionBase, CenterRA):
 class Robinson(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
 
+    name: ClassVar[str] = "robin"
+
+    proj_def_base: str = f"+proj=robin +R={PROJ_R} +units=m"
+
     global_only: bool = True
     curved: bool = True
     wraps: bool = True
+
+    def global_clip_path(self):
+        p0 = [(self.center_ra + 179.999999999, lat - 90) for lat in range(181)]
+        p1 = [(self.center_ra - 179.999999999, lat - 90) for lat in range(181)]
+        return p0 + p1
 
 
 class LambertAzEqArea(ProjectionBase, CenterRADEC):
@@ -329,6 +338,11 @@ class Orthographic(ProjectionBase, CenterRADEC):
     curved: bool = True
 
     name: ClassVar[str] = "ortho"
+
+    def global_clip_path(self):
+        p0 = [(self.center_ra + 179.999999999, lat - 90) for lat in range(181)]
+        p1 = [(self.center_ra - 179.999999999, lat - 90) for lat in range(181)]
+        return p0 + p1
 
 
 class Stereographic(ProjectionBase, CenterRADEC):

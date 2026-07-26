@@ -18,3 +18,5 @@ ecliptic:
 celestial_equator:
   label:
     font_size: 27
+figure:
+  background_color: null
