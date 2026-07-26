@@ -280,10 +280,21 @@ def normalize_to_360(polygon: Polygon) -> Polygon:
 
 
 def fix_wrap(coords: list[tuple[float, float]]) -> list[tuple[float, float]]:
+    """
+    Unwraps X coordinates that jump by more than 180 degrees between consecutive
+    points (e.g. 359 -> 1), by adding/subtracting 360 as needed to keep the sequence
+    continuous. This is needed for rings that legitimately span the full 0-360 range
+    (e.g. the Milky Way polygon in galactic coordinates).
+
+    Args:
+        coords: List of coordinate tuples (x, y) 
+    
+    Returns:
+        List of unwrapped coordinate tuples
+    """
     arr = np.array(coords, dtype=float)
     x = arr[:, 0]
-    if (x < 100).any() and (x > 300).any():
-        x[x < 100] += 360
+    arr[:, 0] = np.degrees(np.unwrap(np.radians(x)))
     return list(map(tuple, arr))
 
 
