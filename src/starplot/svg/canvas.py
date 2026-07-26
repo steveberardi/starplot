@@ -474,6 +474,40 @@ class Canvas:
         #             new_coords.append((x, y))
         #     polygons.append(ShapelyPolygon(new_coords))
         # print(self.projection.edge_x)
+
+        # self.marker(
+        #     179,
+        #     0,
+        #     MarkerStyle(
+        #         color="red",
+        #         edge_width=8,
+        #         size=120,
+        #         zorder=10_000,
+        #         symbol="circle_cross",
+        #     ),
+        # )
+        # self.marker(
+        #     0,
+        #     0,
+        #     MarkerStyle(
+        #         color="blue",
+        #         edge_width=8,
+        #         size=120,
+        #         zorder=10_000,
+        #         symbol="circle_cross",
+        #     ),
+        # )
+        # self.marker(
+        #     181,
+        #     0,
+        #     MarkerStyle(
+        #         color="green",
+        #         edge_width=8,
+        #         size=120,
+        #         zorder=10_000,
+        #         symbol="circle_cross",
+        #     ),
+        # )
         # polygons = [p]
         # print("***")
         for p in polygons:

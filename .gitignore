@@ -33,6 +33,7 @@ bigsky*.parquet
 hash_checks/data/*.png
 hash_checks/results.html
 
+plots/
 .tmp/
 temp*
 temp.py
