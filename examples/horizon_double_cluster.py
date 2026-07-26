@@ -66,7 +66,6 @@ p.arrow(
     target=(double_cluster.ra, double_cluster.dec),
     scale=0.92,
     style__zorder=0,
-    style__head_width=100,
 )
 
 p.horizon()
