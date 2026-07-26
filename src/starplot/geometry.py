@@ -279,22 +279,36 @@ def normalize_to_360(polygon: Polygon) -> Polygon:
     return polygon
 
 
-def fix_wrap(coords: list[tuple[float, float]]) -> list[tuple[float, float]]:
+def fix_wrap(
+    coords: list[tuple[float, float]], wrap_x: float = 360
+) -> list[tuple[float, float]]:
     """
     Unwraps X coordinates that jump by more than 180 degrees between consecutive
     points (e.g. 359 -> 1), by adding/subtracting 360 as needed to keep the sequence
     continuous. This is needed for rings that legitimately span the full 0-360 range
     (e.g. the Milky Way polygon in galactic coordinates).
 
+    The unwrapped result is then shifted by a multiple of 360 (if needed) so that it
+    straddles wrap_x, since callers rely on splitting the ring with a vertical line at
+    exactly x=wrap_x.
+
     Args:
-        coords: List of coordinate tuples (x, y) 
-    
+        coords: List of coordinate tuples (x, y)
+        wrap_x: The X value the result should straddle, so it can be split there
+
     Returns:
         List of unwrapped coordinate tuples
     """
     arr = np.array(coords, dtype=float)
     x = arr[:, 0]
-    arr[:, 0] = np.degrees(np.unwrap(np.radians(x)))
+    unwrapped = np.degrees(np.unwrap(np.radians(x)))
+
+    if unwrapped.max() < wrap_x:
+        unwrapped += 360 * np.ceil((wrap_x - unwrapped.max()) / 360)
+    elif unwrapped.min() > wrap_x:
+        unwrapped -= 360 * np.ceil((unwrapped.min() - wrap_x) / 360)
+
+    arr[:, 0] = unwrapped
     return list(map(tuple, arr))
 
 
@@ -444,7 +458,7 @@ def split_at_x(
         return [geometry]
 
     if needs_normalize:
-        coords = fix_wrap(coords)
+        coords = fix_wrap(coords, wrap_x)
 
     # from pprint import pprint
     # print("---")

@@ -1,8 +1,6 @@
 from starplot import _, GalaxyPlot, DSO
 from starplot.styles import PlotStyle, extensions
-from starplot.callables import size_by_magnitude_factory
 
-_sizer = size_by_magnitude_factory(6, 0.03, 12)
 
 style = PlotStyle().extend(
     extensions.BLUE_NIGHT,
@@ -25,7 +23,7 @@ p.milky_way()
 p.stars(
     where=[_.magnitude < 7],
     where_labels=[False],
-    size_fn=_sizer,
+    size_fn=lambda star: 8 - star.magnitude,
     style__marker__edge_color="#c5c5c5",
 )
 
