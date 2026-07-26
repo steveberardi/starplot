@@ -280,23 +280,30 @@ class Canvas:
 
         if self.style.axes.has_gradient_background():
             gradient_id = "axes-background-gradient"
-            stops = [
-                Stop(offset=offset, attrs={"stop-color": color})
-                for offset, color in self.style.axes.background_color
-            ]
-
             if (
                 self.style.axes.background_gradient_direction
                 == GradientDirection.RADIAL
             ):
+                radial_stops = list(
+                    reversed(
+                        [
+                            Stop(offset=1 - offset, attrs={"stop-color": color})
+                            for offset, color in self.style.axes.background_color
+                        ]
+                    )
+                )
                 gradient = RadialGradient(
                     id=gradient_id,
                     cx=0.5,
                     cy=0.5,
                     r=0.5,
-                    children=stops,
+                    children=radial_stops,
                 )
             else:
+                stops = [
+                    Stop(offset=offset, attrs={"stop-color": color})
+                    for offset, color in self.style.axes.background_color
+                ]
                 gradient = LinearGradient(
                     id=gradient_id,
                     x1=0,

@@ -15,8 +15,8 @@ observer = Observer(
 p = ZenithPlot(
     observer=observer,
     style=PlotStyle().extend(
-        extensions.BLUE_GOLD,
-        extensions.GRADIENT_PRE_DAWN,
+        extensions.BLUE_NIGHT,
+        extensions.GRADIENT_TRUE_NIGHT,
     ),
     resolution=3600,
     autoscale=True,

@@ -21,6 +21,10 @@
     border-radius: 12px !important;
 }
 
+.md-header__title {
+    font-weight: 600;
+}
+
 .doc-heading {
     display: flex;
     align-items: center;
