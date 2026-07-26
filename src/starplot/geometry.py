@@ -325,95 +325,6 @@ def restrict_to_360(polygon: Polygon) -> Polygon:
     return polygon
 
 
-def split_at_x1(geometry: Polygon | LineString, wrap_x: float = 360) -> list[Polygon]:
-    """
-
-    Splits a geometry at the specified wrap point.
-
-
-    TODO:
-        - Support for polygon OR line
-        - Handle multi geometry intersections
-        - Support for configurable wrap_x point
-
-    Args:
-        polygon: Polygon that possibly needs splitting
-
-    Returns:
-        List of polygons
-    """
-    # if isinstance(geometry, LineString):
-    #     geometry_class = LineString
-    #     x, y = [p for p in geometry.coords.xy]
-
-    # if isinstance(geometry, Polygon):
-    #     geometry_class = Polygon
-    #     x, y = [p for p in geometry.exterior.coords.xy]
-
-    """
-    
-    360 = 90, 300
-    200 = 260, 140
-    100 = 
-
-    needs split if there's an x coord that's more than 60 distance on each side of wrap_x
-
-    1. Extend 360 -> 0 wrapped jumps
-    2. Split at wrap_x
-    3. Restrict to 360
-
-    * use geometry functions from constellation builder, restric needs work
-    
-    """
-
-    needs_splitting = False
-    needs_normalize = False
-    coords = list(zip(*geometry.exterior.coords.xy))
-
-    if wrap_x == 0:
-        wrap_x = 360
-
-    for i, xy in enumerate(coords[1:]):
-        x, y = xy
-        prev_x = coords[i - 1][0]
-        if prev_x < wrap_x < x or x < wrap_x < prev_x:
-            needs_splitting = True
-        if abs(prev_x - x) > 180:
-            needs_normalize = True
-            if wrap_x == 360:
-                needs_splitting = True
-
-    if not needs_splitting:
-        return [geometry]
-
-    if needs_normalize:
-        geometry = normalize_to_360(geometry)
-
-    line = LineString([(wrap_x, 90), (wrap_x, -90)])
-    result = split_polygon_with_line(geometry, line=line)
-
-    geoms = []
-    for g in result:
-        new_coords = []
-        _x, _ = [p for p in g.exterior.coords.xy]
-        x_max = max(_x)
-
-        for x, y in list(zip(*g.exterior.coords.xy)):
-            new_x = x
-            if new_x > 360:
-                new_x -= 360
-            if new_x == wrap_x and x_max > wrap_x:
-                new_x += 0.000001
-            elif new_x == wrap_x and x_max == wrap_x:
-                new_x -= 0.000001
-
-            new_coords.append((new_x, y))
-
-        geoms.append(Polygon(new_coords))
-
-    return geoms
-
-
 def split_at_x(
     geometry: Polygon | LineString, wrap_x: float = 360
 ) -> list[Polygon] | list[LineString]:
@@ -459,11 +370,6 @@ def split_at_x(
 
     if needs_normalize:
         coords = fix_wrap(coords, wrap_x)
-
-    # from pprint import pprint
-    # print("---")
-    # pprint(coords)
-    # print("---")
 
     line = LineString([(wrap_x, 90), (wrap_x, -90)])
     result = split_geometry_with_line(
