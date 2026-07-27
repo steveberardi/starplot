@@ -1,3 +1,4 @@
+# Selecting Objects
 
 When plotting [stars][starplot.MapPlot.stars], [constellations][starplot.MapPlot.constellations], or [deep sky objects (DSOs)][starplot.MapPlot.dsos], you can select exactly which objects to plot by using expressions that reference fields on the object's model. Only the objects that satisfy ALL the conditions will be plotted.
 

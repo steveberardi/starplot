@@ -1,3 +1,5 @@
+# Settings
+
 Starplot has a few global settings:
 
 - Data path

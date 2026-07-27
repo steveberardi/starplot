@@ -1,6 +1,6 @@
+# Positions
 
 Starplot can plot objects in two types of positions: astrometric and apparent.
-
 
 ### Astrometric Position
 

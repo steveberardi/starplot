@@ -1,3 +1,4 @@
+# Tutorial
 
 This tutorial walks you through the features of Starplot, starting with the most simple stuff and then moving into some of the more advanced features. If you're new to Starplot, this is a great place to start!
 

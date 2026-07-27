@@ -1,3 +1,6 @@
+## v0.21.x
+- Replaces the plotting backend (matplotlib + cartopy) with an SVG-first backend
+
 ## v0.20.x
 
 - Adds a `GalaxyPlot` for plotting in galactic coordinates

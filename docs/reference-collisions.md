@@ -1,3 +1,5 @@
+# Label Collision Handling
+
 One of the biggest contributors to the visual quality of a map is labeling, which includes choosing carefully _what_ to label and also choosing good _positions_ for those labels. Obviously, you don't want labels to collide with each other, but there's also a few more subtle things to consider when labeling points and areas on a map. Starplot has a `CollisionHandler` to control some of these things.
 
 When you create a plot, you can specify the default collision handler for three different types of labels:

@@ -1,4 +1,4 @@
-<h1>MapPlot</h1>
+# MapPlot
 
 **Map plots are general-purpose maps of the sky.** They support a variety of [projections](#projections) (including a few perspective based projections that help show what the sky looks like at a particular time and place).
 

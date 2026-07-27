@@ -43,9 +43,9 @@
         </a>
     </li>
     <li>
-        <a href="/examples/optic-solar-eclipse/">
-            <img src="/images/examples/optic_solar_eclipse-sm.png" alt="Total Solar Eclipse 2024" class="off-glb" loading="lazy"/>
-            <p class="example-card-title">Total Solar Eclipse 2024</p>
+        <a href="/examples/map-galaxy/">
+            <img src="/images/examples/map_galaxy-sm.png" alt="Open Clusters around the Milky Way" class="off-glb" loading="lazy"/>
+            <p class="example-card-title">Galaxy Plot</p>
         </a>
     </li>
     <li>
@@ -67,15 +67,27 @@
         </a>
     </li>
     <li>
+        <a href="/examples/map-big-dipper/">
+            <img src="/images/examples/map_big_dipper-sm.png" alt="Map of the Big Dipper" class="off-glb" loading="lazy"/>
+            <p class="example-card-title">The Big Dipper</p>
+        </a>
+    </li>
+    <!-- <li>
         <a href="/examples/map-orthographic/">
             <img src="/images/examples/map_orthographic-sm.png" alt="Orthographic Map" class="off-glb" loading="lazy"/>
             <p class="example-card-title">Orthographic Map</p>
         </a>
-    </li>
+    </li> -->
     <li>
         <a href="/examples/optic-iss-transit/">
             <img src="/images/examples/optic_iss_transit-sm.png" alt="ISS Moon Transit" class="off-glb" loading="lazy"/>
             <p class="example-card-title">ISS Moon Transit</p>
+        </a>
+    </li>
+    <li>
+        <a href="/examples/optic-solar-eclipse/">
+            <img src="/images/examples/optic_solar_eclipse-sm.png" alt="Total Solar Eclipse 2024" class="off-glb" loading="lazy"/>
+            <p class="example-card-title">Total Solar Eclipse 2024</p>
         </a>
     </li>
     <li>
@@ -84,24 +96,12 @@
             <p class="example-card-title">Star Chart in French</p>
         </a>
     </li>
-    <li>
-        <a href="/examples/map-big-dipper/">
-            <img src="/images/examples/map_big_dipper-sm.png" alt="Map of the Big Dipper" class="off-glb" loading="lazy"/>
-            <p class="example-card-title">The Big Dipper</p>
-        </a>
-    </li>
     <!-- <li>
         <a href="/examples/map-sagittarius/">
             <img src="/images/examples/map_sagittarius-sm.png" alt="Map of Sagittarius" class="off-glb" loading="lazy"/>
             <p class="example-card-title">Map of Sagittarius</p>
         </a>
     </li> -->
-    <li>
-        <a href="/examples/map-galaxy/">
-            <img src="/images/examples/map_galaxy-sm.png" alt="Open Clusters around the Milky Way" class="off-glb" loading="lazy"/>
-            <p class="example-card-title">Galaxy Plot</p>
-        </a>
-    </li>
     <li>
         <a href="/examples/map-canis-major/">
             <img src="/images/examples/map_canis_major-sm.png" alt="Map of the Constellation Canis Major" class="off-glb" loading="lazy"/>
@@ -114,12 +114,12 @@
             <p class="example-card-title">Map of Cassiopeia</p>
         </a>
     </li>
-    <li>
+    <!-- <li>
         <a href="/examples/map-custom-marker/">
             <img src="/images/examples/galaxy_custom_marker-sm.png" alt="Custom Markers for Galaxies" class="off-glb" loading="lazy"/>
             <p class="example-card-title">Custom Markers for Galaxies</p>
         </a>
-    </li>
+    </li> -->
     <li>
         <a href="/examples/map-virgo-cluster/">
             <img src="/images/examples/map_virgo_cluster-sm.png" alt="Map of the Virgo Galaxy Cluster" class="off-glb" loading="lazy"/>
