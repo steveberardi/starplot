@@ -13,6 +13,10 @@
     font-weight: 600;
 }
 
+.md-typeset a {
+    text-decoration: none;
+}
+
 .md-content {
     max-width: 900px;
 }
