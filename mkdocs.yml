@@ -87,10 +87,9 @@ plugins:
             show_symbol_type_toc: true
             signature_crossrefs: true
             line_length: 80
-  - macros:
-      include_dir: .
-  - glightbox:
-      zoomable: false
+  # - macros:
+  #     include_dir: .
+
 
 markdown_extensions:
   - admonition
@@ -108,4 +107,4 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  # - zensical.extensions.glightbox
+  - zensical.extensions.glightbox

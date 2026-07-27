@@ -1,0 +1,141 @@
+# ============================================================================
+# zensical.toml
+#
+# TOML translation of mkdocs.yml, for use with the `zensical` CLI.
+# mkdocs.yml is left untouched and remains the source of truth for mkdocs;
+# keep the two in sync manually if either one changes.
+# ============================================================================
+
+[project]
+site_name = "Starplot"
+site_url = "https://starplot.dev"
+repo_url = "https://github.com/steveberardi/starplot"
+
+nav = [
+  { "Overview" = "index.md" },
+  { "Installation" = "installation.md" },
+  { "Examples" = "examples.md" },
+  { "Tutorial" = "tutorial.md" },
+  { "Reference" = [
+      { "MapPlot" = "reference-mapplot.md" },
+      { "ZenithPlot" = "reference-zenithplot.md" },
+      { "HorizonPlot" = "reference-horizonplot.md" },
+      { "OpticPlot" = "reference-opticplot.md" },
+      { "GalaxyPlot" = "reference-galaxyplot.md" },
+      { "Models" = "reference-models.md" },
+      { "Selecting Objects" = "reference-selecting-objects.md" },
+      { "Styling" = "reference-styling.md" },
+      { "Callables" = "reference-callables.md" },
+      { "Collision Handling" = "reference-collisions.md" },
+      { "Positions" = "reference-positions.md" },
+      { "Data Catalogs" = [
+          { "Overview" = "data/overview.md" },
+          { "Stars" = "data/stars.md" },
+          { "Constellations" = "data/constellations.md" },
+          { "Deep Sky Objects" = "data/dsos.md" },
+          { "Building" = "data/building.md" },
+      ]},
+      { "Object Names" = [
+          { "Stars" = "object-names/stars.md" },
+          { "Constellations" = "object-names/constellations.md" },
+          { "Deep Sky Objects" = "object-names/dsos.md" },
+      ]},
+      { "Localization" = "reference-localization.md" },
+      { "Settings" = "reference-settings.md" },
+  ]},
+  { "Data Sources" = "data-sources.md" },
+  { "Showcase" = "showcase.md" },
+  { "License" = "license.md" },
+  { "Changelog" = "changelog.md" },
+  { "Coming Soon" = "coming-soon.md" },
+  { "About" = "about.md" },
+]
+
+# The path provided should be relative to "docs_dir", same as mkdocs.yml's
+# extra_css.
+extra_css = ["css/extra.css"]
+
+# mkdocs.yml also sets `exclude_docs: custom/` to keep the theme override
+# template out of the docs_dir/nav validation. Zensical doesn't have an
+# equivalent setting yet, so there's nothing to port here.
+
+# ----------------------------------------------------------------------------
+# Theme
+# ----------------------------------------------------------------------------
+[project.theme]
+# Relative to the project root, same convention as mkdocs.yml.
+custom_dir = "docs/custom/"
+
+# mkdocs.yml's `theme.logo`/`theme.favicon` are relative to docs_dir already,
+# same convention as Zensical.
+logo = "images/logo.svg"
+favicon = "images/favicon.png"
+
+features = [
+    "content.code.copy",
+    "toc.integrate",
+    "navigation.footer",
+    "navigation.indexes",
+]
+
+[[project.theme.palette]]
+scheme = "default"
+primary = "custom"
+accent = "blue"
+toggle.icon = "material/brightness-7"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+scheme = "slate"
+primary = "custom"
+accent = "indigo"
+toggle.icon = "material/brightness-4"
+toggle.name = "Switch to light mode"
+
+# ----------------------------------------------------------------------------
+# Plugins
+# ----------------------------------------------------------------------------
+[project.plugins.search]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+show_source = false
+show_bases = false
+annotations_path = "brief"
+separate_signature = true
+show_signature_annotations = true
+show_symbol_type_heading = true
+# show_symbol_type_toc = true
+signature_crossrefs = true
+line_length = 80
+
+# [project.plugins.macros]
+# include_dir = "."
+
+# glightbox plugin is disabled in mkdocs.yml in favor of the
+# zensical.extensions.glightbox markdown extension below, so it's
+# intentionally left out here too.
+
+# ----------------------------------------------------------------------------
+# Markdown extensions
+# ----------------------------------------------------------------------------
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.md_in_html]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.tables]
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.snippets]
+[project.markdown_extensions.pymdownx.superfences]
+[project.markdown_extensions.pymdownx.details]
+
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+
+[project.markdown_extensions.pymdownx.emoji]
+emoji_index = "zensical.extensions.emoji.twemoji"
+emoji_generator = "zensical.extensions.emoji.to_svg"
+
+[project.markdown_extensions.zensical.extensions.glightbox]
