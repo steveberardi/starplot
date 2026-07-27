@@ -90,6 +90,11 @@ code.doc-symbol {
     border-left: 1px solid rgb(201, 201, 201);
 }
 
+h2.doc-heading, h3.doc-heading {
+    border-top-left-radius: 0.4rem;
+    border-top-right-radius: 0.4rem;
+}
+
 [data-md-color-scheme=default] {
     --doc-symbol-class-bg-color: hsl(209, 74%, 90%);
 
@@ -104,6 +109,10 @@ code.doc-symbol {
     .doc-class h2.doc-heading {
         color: #fff;
         background-color:hsl(209, 53%, 37%);
+    }
+
+    a code.doc-symbol-class, code.doc-symbol-class {
+        color: rgb(207, 233, 255);
     }
 }
 [data-md-color-scheme=slate] {
@@ -168,7 +177,8 @@ code.doc-symbol {
     display: none;
 }
 .doc-object .doc-attribute .doc-heading {
-    margin-top: 0;
+    border-top-left-radius: 0.4rem;
+    border-top-right-radius: 0.4rem;
 }
 .doc-object.doc-attribute h3.doc-heading span:nth-child(3) {
     color:hsl(209, 53%, 37%);
@@ -180,6 +190,13 @@ code.doc-symbol {
 .doc-object .doc-attribute .doc-contents {
     margin-bottom: 0;
     padding-bottom: 1rem;
+}
+
+.md-typeset pre>code {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0.4rem;
+    border-bottom-right-radius: 0.4rem;
 }
 
 code.raw {
@@ -309,7 +326,7 @@ code.raw {
 .md-typeset .star > .admonition-title,
 .md-typeset .star > summary {
     color: var(--md-primary-fg-color--dark);
-    background-color: var(--md-primary-bg-color--light);
+    /* background-color: var(--md-primary-bg-color--light); */
 }
 .md-typeset .star > .admonition-title::before,
 .md-typeset .star > summary::before {
