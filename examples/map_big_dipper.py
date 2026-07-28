@@ -6,7 +6,7 @@ style = PlotStyle().extend(
     extensions.MAP,
     {
         "axes": {
-            "background_color": "#1B2A4A",
+            "background_color": "#174567",
         }
     },
 )

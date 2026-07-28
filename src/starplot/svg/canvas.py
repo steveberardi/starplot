@@ -729,7 +729,7 @@ class Canvas:
             ]
             border_width = max(text_widths)
         else:
-            border_width = style.line.width
+            border_width = style.line.width * self.scale
 
         # buffer is width / 2 because line is drawn at center of coordinates
         # in other words, half of the width is on the inside and half the width on outside of coordinates

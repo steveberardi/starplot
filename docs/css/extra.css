@@ -21,6 +21,24 @@
     max-width: 900px;
 }
 
+.md-header {
+    background-color: #174567;
+    color: #fff;
+}
+
+.md-search__button {
+    background-color: hsl(206, 50%, 84%);
+
+    &:hover {
+        background-color: hsl(206, 50%, 94%);
+    }
+}
+.doc-label code {
+    color: hsl(206, 63%, 15%);
+    background-color: hsl(206, 63%, 85%);
+    font-size: 0.9em;
+}
+
 .md-button {
     border-radius: 12px !important;
 }
@@ -36,10 +54,6 @@
 
 .doc-heading span {
     margin-left: 8px;
-}
-
-.doc-heading code {
-    font-weight: 600;
 }
 
 code.doc-symbol {
@@ -196,7 +210,7 @@ h2.doc-heading, h3.doc-heading {
     padding-bottom: 1rem;
 }
 
-.md-typeset pre>code {
+.doc-signature pre>code {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     border-bottom-left-radius: 0.4rem;
@@ -476,6 +490,7 @@ td[data-column-id=bayer] {
         border-radius: 8px !important;
         background-color: hsl(209, 53%, 86%);
         font-size: 1em;
+        color: hsl(209, 53%, 26%);
 
         &:hover {
             color: hsl(209, 53%, 96%) !important;
