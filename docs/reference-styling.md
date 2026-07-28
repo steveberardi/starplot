@@ -6,7 +6,7 @@ Starplot has a styling framework that lets you fully customize the appearance of
 - [Creating a Style](#creating-a-style)
 - [Extending a Style](#extending-a-style)
 - [Overriding a Style at plot time](#overriding-styles-when-plotting)
-- [Built-in Style Extensions](#built-in-style-extensions)
+- [Built-in Style Extensions](#style-extensions)
 - [Code Reference](#code-reference)
 
 

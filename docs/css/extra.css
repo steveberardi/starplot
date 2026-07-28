@@ -173,24 +173,12 @@ h2.doc-heading, h3.doc-heading {
     margin-top: 0;
 }
 
-.doc-contents.first {
-    /* border-top: 2px solid rgba(200, 200, 200, 0.6);
-    margin-left: 1rem;
-    padding-left: 1rem;
-    border-left: 1px solid rgb(150, 150, 150); */
-}
-
 .doc-function .doc-contents {
     margin-left: 1rem;
     padding-left: 1rem;
     border-left: 1px solid rgb(201, 201, 201);
 }
-/* 
-.doc-object .doc-attribute {
-    margin-left: 1rem;
-    padding-left: 1rem;
-    border-left: 1px solid rgb(201, 201, 201);
-} */
+
 .doc-object .doc-attribute .doc-label {
     display: none;
 }

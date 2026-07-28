@@ -1,11 +1,3 @@
-# ============================================================================
-# zensical.toml
-#
-# TOML translation of mkdocs.yml, for use with the `zensical` CLI.
-# mkdocs.yml is left untouched and remains the source of truth for mkdocs;
-# keep the two in sync manually if either one changes.
-# ============================================================================
-
 [project]
 site_name = "Starplot"
 site_url = "https://starplot.dev"
@@ -51,8 +43,6 @@ nav = [
   { "About" = "about.md" },
 ]
 
-# The path provided should be relative to "docs_dir", same as mkdocs.yml's
-# extra_css.
 extra_css = ["css/extra.css"]
 
 # mkdocs.yml also sets `exclude_docs: custom/` to keep the theme override
@@ -63,14 +53,9 @@ extra_css = ["css/extra.css"]
 # Theme
 # ----------------------------------------------------------------------------
 [project.theme]
-# Relative to the project root, same convention as mkdocs.yml.
 custom_dir = "docs/custom/"
-
-# mkdocs.yml's `theme.logo`/`theme.favicon` are relative to docs_dir already,
-# same convention as Zensical.
 logo = "images/logo.svg"
 favicon = "images/favicon.png"
-
 features = [
     "content.code.copy",
     "toc.integrate",
@@ -110,10 +95,6 @@ line_length = 80
 
 # [project.plugins.macros]
 # include_dir = "."
-
-# glightbox plugin is disabled in mkdocs.yml in favor of the
-# zensical.extensions.glightbox markdown extension below, so it's
-# intentionally left out here too.
 
 # ----------------------------------------------------------------------------
 # Markdown extensions
