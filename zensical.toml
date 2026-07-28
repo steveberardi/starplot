@@ -61,6 +61,7 @@ features = [
     "toc.integrate",
     "navigation.footer",
     "navigation.indexes",
+    # "search.highlight"
 ]
 
 [[project.theme.palette]]

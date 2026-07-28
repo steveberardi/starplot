@@ -48,7 +48,6 @@ TODO:
 class OpticPlot(
     BasePlot,
     ExtentMaskMixin,
-    # StarPlotterMixin,
     DsoPlotterMixin,
     TextPlotterMixin,
     LegendPlotterMixin,
@@ -182,9 +181,6 @@ class OpticPlot(
         )
 
         return list(zip(df["x"], df["y"]))
-
-    def _plot_kwargs(self) -> dict:
-        return dict(transform=self._crs)
 
     def in_bounds(self, ra, dec) -> bool:
         """Determine if a coordinate is within the bounds of the plot.

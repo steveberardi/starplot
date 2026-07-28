@@ -156,9 +156,6 @@ class BasePlot(StarPlotterMixin, ABC):
         self._labeled_stars = []
         self._last_used_size_fn = None
 
-    def _plot_kwargs(self) -> dict:
-        return {}
-
     def _prepare_coords(self, ra, dec) -> tuple[float, float]:
         return ra, dec
 
