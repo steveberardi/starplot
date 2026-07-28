@@ -35,7 +35,7 @@ format:
 	uv run black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)
 
 test:
-	$(DOCKER_RUN) "python -m pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html ."
+	uv run pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html tests/
 
 check-hashes:
 	$(DOCKER_RUN) "python hash_checks/hashio.py check"

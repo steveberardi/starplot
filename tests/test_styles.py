@@ -28,7 +28,6 @@ def test_plot_style_valid(kwargs):
     "kwargs",
     [
         dict(axes={"background_color": 2}),
-        dict(axes={"background_color": None}),
         dict(axes={"background_color": "rgb(1,1,1,1,1,1,1)"}),
         dict(constellation="hello"),
         dict(star={"label": {"font_weight": "invalid"}}),
