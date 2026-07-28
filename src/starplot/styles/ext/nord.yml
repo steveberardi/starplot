@@ -130,7 +130,6 @@ planets:
   marker:
     alpha: 0.8
     color: '#D99CCF'
-    fill: full
 
 star:
   label:

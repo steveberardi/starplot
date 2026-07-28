@@ -98,7 +98,6 @@ planets:
   marker:
     symbol: circle
     alpha: 0.68
-    fill: full
     color: hsl(26, 93%, 82%)
     edge_color: hsl(26, 93%, 52%)
   label:

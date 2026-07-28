@@ -41,7 +41,6 @@ planets:
   marker:
     alpha: 0.4
     color: '#f89d00'
-    fill: full
 milky_way:
   alpha: 0.1
   color: '#2b89ed'

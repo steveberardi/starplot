@@ -28,24 +28,20 @@ dso_double_star:
 dso_galaxy:
   marker:
     color: null
-    fill: none
     alpha: 1
     symbol: ellipse
 dso_nebula:
   marker:
     color: '#c8c8c8'
-    fill: full
     alpha: 1
 dso_planetary_nebula:
   marker:
     color: null
-    fill: none
     alpha: 1
 dso_open_cluster:
   marker:
     color: null
     edge_color: '#000'
-    fill: none
     alpha: 1
 
 
@@ -73,7 +69,6 @@ milky_way:
 planets:
   marker:
     color: '#000'
-    fill: left
 sun:
   marker:
     color: '#000'

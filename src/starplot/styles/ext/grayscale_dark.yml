@@ -71,7 +71,6 @@ dso_galaxy:
     color: 'hsl(136, 0%, 97%)'
     alpha: 0.8
     symbol: diamond
-    fill: top
 dso_nebula:
   label:
     font_color: hsl(136, 0%, 97%)
@@ -89,14 +88,12 @@ dso_open_cluster:
     font_color: hsl(136, 0%, 97%)
   marker:
     edge_color: 'hsl(136, 0%, 97%)'
-    fill: none
     alpha: 0.8
 dso_association_stars:
   label:
     font_color: hsl(136, 0%, 97%)
   marker:
     edge_color: 'hsl(136, 0%, 97%)'
-    fill: none
     alpha: 0.8
 
 
@@ -128,7 +125,6 @@ planets:
     font_color: hsl(136, 0%, 97%)
   marker:
     color: hsl(136, 0%, 97%)
-    fill: bottom
     edge_color: hsl(136, 0%, 97%)
 moon:
   label:

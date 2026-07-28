@@ -140,7 +140,6 @@ planets:
   marker:
     alpha: 0.8
     color: hsl(209, 20%, 78%)
-    fill: full
 moon:
   label:
     font_color: '#f2f2f2'

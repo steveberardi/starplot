@@ -49,7 +49,6 @@ planets:
   marker:
     alpha: 1
     color: hsl(37, 78%, 80%)
-    fill: full
 milky_way:
   fill_color: 'hsl(203, 60%, 84%)'
   edge_width: 0

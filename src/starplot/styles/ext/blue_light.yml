@@ -117,7 +117,6 @@ planets:
   marker:
     alpha: 0.4
     color: '#f89d00'
-    fill: full
 
 legend:
   background_color: '#fff'

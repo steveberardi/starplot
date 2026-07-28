@@ -88,7 +88,6 @@ planets:
   marker:
     alpha: 1
     color: hsl(284, 80%, 80%)
-    fill: full
 sun:
   marker:
     color: '#ffd22e'

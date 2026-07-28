@@ -56,28 +56,6 @@ class GradientDirection(str, Enum):
     MOLLWEIDE = "mollweide"
 
 
-class FillStyleEnum(str, Enum):
-    """Constants that represent the possible fill styles for markers."""
-
-    FULL = "full"
-    """Fill the marker completely"""
-
-    LEFT = "left"
-    """Fill the left half of the marker"""
-
-    RIGHT = "right"
-    """Fill the right half of the marker"""
-
-    BOTTOM = "bottom"
-    """Fill the bottom half"""
-
-    TOP = "top"
-    """Fill the top half"""
-
-    NONE = "none"
-    """Do not fill the marker. It'll still have an edge, but the inside will be transparent."""
-
-
 class FontWeightEnum(int, Enum):
     """Options for font weight."""
 
@@ -270,9 +248,6 @@ class MarkerStyle(BaseStyle):
     size: float = 22
     """Size of marker in points"""
 
-    fill: FillStyleEnum = FillStyleEnum.FULL
-    """Fill style of marker"""
-
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
@@ -281,8 +256,8 @@ class MarkerStyle(BaseStyle):
 
     def css(self, scale: float = 1) -> dict:
         attrs = {
-            "fill": self.color.as_hex() if self.fill != FillStyleEnum.NONE else "none",
-            "fill-opacity": 0 if self.fill == FillStyleEnum.NONE else self.alpha,
+            "fill": self.color.as_hex(),
+            "fill-opacity": self.alpha,
             "stroke": self.edge_color.as_hex() if self.edge_color else "none",
             "stroke-width": round(self.edge_width * scale, 2),
             "stroke-opacity": self.alpha,
@@ -360,9 +335,6 @@ class PolygonStyle(BaseStyle):
     edge_width: float = 1
     """Width of the polygon's edge in points"""
 
-    color: Optional[ColorStr] = None
-    """If specified, this will be the fill color AND edge color of the polygon"""
-
     edge_color: Optional[ColorStr] = None
     """Edge color of the polygon"""
 
@@ -370,7 +342,7 @@ class PolygonStyle(BaseStyle):
     """Fill color of the polygon"""
 
     line_style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
-    """Edge line style. Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
+    """Edge line style. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/)."""
 
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
@@ -398,13 +370,10 @@ class PolygonStyle(BaseStyle):
         return attrs
 
     def to_marker_style(self, symbol: MarkerSymbolEnum):
-        color = self.color.as_hex() if self.color else None
         fill_color = self.fill_color.as_hex() if self.fill_color else None
-        fill_style = FillStyleEnum.FULL if color or fill_color else FillStyleEnum.NONE
         return MarkerStyle(
             symbol=symbol,
-            color=color or fill_color,
-            fill=fill_style,
+            color=fill_color,
             edge_color=self.edge_color.as_hex() if self.edge_color else None,
             edge_width=self.edge_width,
             alpha=self.alpha,
@@ -696,7 +665,6 @@ class PlotStyle(BaseStyle):
     # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            fill=FillStyleEnum.FULL,
             zorder=ZOrderEnum.LAYER_3 + 1,
             size=40,
             edge_color=None,
@@ -736,7 +704,6 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
             size=28,
-            fill=FillStyleEnum.LEFT,
             zorder=ZOrderEnum.LAYER_3,
             alpha=1,
         ),
@@ -753,7 +720,6 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
             size=50,
-            fill=FillStyleEnum.FULL,
             color="#c8c8c8",
             alpha=1,
             zorder=ZOrderEnum.LAYER_4,
@@ -771,7 +737,6 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SUN,
             size=80,
-            fill=FillStyleEnum.FULL,
             color="#000",
             zorder=ZOrderEnum.LAYER_4 - 100,
         ),
@@ -786,7 +751,6 @@ class PlotStyle(BaseStyle):
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            fill=FillStyleEnum.FULL,
             line_style=(0, (1, 2)),
             dash_spacing=28,
             dash_capstyle=CapStyleEnum.ROUND,
@@ -800,7 +764,6 @@ class PlotStyle(BaseStyle):
     dso_association_stars: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            fill=FillStyleEnum.FULL,
             line_style=(0, (1, 2)),
             dash_spacing=28,
             dash_capstyle=CapStyleEnum.ROUND,
@@ -814,7 +777,6 @@ class PlotStyle(BaseStyle):
     dso_globular_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE_CROSS,
-            fill=FillStyleEnum.FULL,
             color="#555",
             alpha=0.8,
             edge_width=1.2,
@@ -827,7 +789,6 @@ class PlotStyle(BaseStyle):
     dso_galaxy: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.ELLIPSE,
-            fill=FillStyleEnum.FULL,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
@@ -837,7 +798,6 @@ class PlotStyle(BaseStyle):
     dso_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            fill=FillStyleEnum.FULL,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
@@ -847,7 +807,6 @@ class PlotStyle(BaseStyle):
     dso_planetary_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE_CROSSHAIR,
-            fill=FillStyleEnum.FULL,
             edge_width=1.6,
             size=26,
             zorder=ZOrderEnum.LAYER_3 - 1,
@@ -859,7 +818,6 @@ class PlotStyle(BaseStyle):
     dso_double_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE_LINE,
-            fill=FillStyleEnum.TOP,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x=1, offset_y=-1),
@@ -869,7 +827,6 @@ class PlotStyle(BaseStyle):
     dso_dark_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            fill=FillStyleEnum.TOP,
             color="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
@@ -880,7 +837,6 @@ class PlotStyle(BaseStyle):
     dso_supernova_remnant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            fill=FillStyleEnum.TOP,
             color="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
@@ -891,7 +847,6 @@ class PlotStyle(BaseStyle):
     dso_nova_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            fill=FillStyleEnum.TOP,
             color="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
@@ -902,7 +857,6 @@ class PlotStyle(BaseStyle):
     dso_nonexistant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            fill=FillStyleEnum.TOP,
             color="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
@@ -913,7 +867,6 @@ class PlotStyle(BaseStyle):
     dso_unknown: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            fill=FillStyleEnum.TOP,
             color="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
@@ -924,7 +877,6 @@ class PlotStyle(BaseStyle):
     dso_duplicate: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            fill=FillStyleEnum.TOP,
             color="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
@@ -1074,7 +1026,6 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.TRIANGLE,
             size=24,
-            fill=FillStyleEnum.FULL,
             color="#000",
             alpha=0.8,
         ),

@@ -189,4 +189,3 @@ planets:
   marker:
     alpha: 1
     color: hsl(37, 80%, 56%)
-    fill: full
