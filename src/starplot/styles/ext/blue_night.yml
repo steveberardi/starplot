@@ -128,7 +128,7 @@ dso_galaxy:
 dso_nebula: &DSO-NEB
   marker:
     alpha: 1
-    color: hsl(160, 13%, 37%)
+    color: hsl(160, 15%, 44%)
     edge_color: hsl(119, 100%, 95%)
   label:
     font_color: hsl(119, 95%, 90%)
@@ -137,9 +137,9 @@ dso_planetary_nebula: *DSO-NEB
 dso_open_cluster: &DSO-OC
   marker:
     alpha: 0.9
-    color: hsl(62, 58%, 42%)
-    edge_color: hsl(58, 100%, 64%)
-    edge_width: 1.5
+    color: hsl(62, 72%, 43%)
+    edge_color: hsl(58, 100%, 68%)
+    edge_width: 1.75
   label:
     font_color: hsl(58, 98%, 58%)
 dso_association_stars: *DSO-OC
