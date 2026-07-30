@@ -18,6 +18,7 @@ p = ZenithPlot(
     observer=observer,
     style=PlotStyle().extend(  # add a style to the plot
         extensions.BLUE_MEDIUM,
+        extensions.FIGURE_TRANSPARENT, # make the figure background transparent
     ),
     resolution=4000,
     scale=0.9,
@@ -58,7 +59,6 @@ p.marker(
         "marker": {
             "size": 80,
             "symbol": "circle",
-            "fill": "full",
             "color": "#ed7eed",
             "edge_color": "#e0c1e0",
             "alpha": 0.8,

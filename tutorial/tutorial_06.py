@@ -13,7 +13,7 @@ p = MapPlot(
     dec_max=-3,
     style=style,
     resolution=3600,
-    scale=0.8,
+    scale=0.9,
 )
 p.constellations()
 p.constellation_borders()
@@ -21,9 +21,9 @@ p.constellation_borders()
 p.stars(
     # select the brightest stars:
     where=[_.magnitude <= 3],
-    # here we make the stars 2x bigger by passing in a custom size function (i.e. a callable)
+    # here we make the stars bigger by passing in a custom size function (i.e. a callable)
     # you'll learn more about this later in the tutorial...
-    size_fn=lambda d: callables.size_by_magnitude(d) * 2,
+    size_fn=lambda star: (20 - star.magnitude) * 5,
     # use an 8-pointed star for bright star markers:
     style__marker__symbol="star_8",
     style__label__offset_x=8,

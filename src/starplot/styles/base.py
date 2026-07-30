@@ -479,7 +479,7 @@ class LabelStyle(BaseStyle):
             "fill": self.font_color.as_hex(),
             "fill-opacity": self.font_alpha,
         }
-        if self.border_width:
+        if self.border_width and self.border_color:
             attrs["stroke"] = self.border_color.as_hex()
             attrs["stroke-width"] = round(self.border_width * scale, 2)
             attrs["stroke-opacity"] = self.font_alpha
