@@ -138,4 +138,4 @@ dso_duplicate: *DSO
 
 legend:
   background_color: '#f1f6ff'
-  border_color: '#c9daf8'
+  border_color: 'hsl(218, 27%, 48%)'

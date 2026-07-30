@@ -96,9 +96,6 @@ class FontStyleEnum(str, Enum):
 class MarkerSymbolEnum(str, Enum):
     """Options for marker symbols"""
 
-    POINT = "point"
-    """\u00B7"""
-
     PLUS = "plus"
     """+"""
 
@@ -259,7 +256,7 @@ class MarkerStyle(BaseStyle):
     dash_spacing: float | None = None
     """SVG ONLY - Spacing for dashes"""
 
-    symbol: MarkerSymbolEnum = MarkerSymbolEnum.POINT
+    symbol: MarkerSymbolEnum = MarkerSymbolEnum.CIRCLE
     """Symbol for marker"""
 
     size: float = 22
@@ -273,13 +270,18 @@ class MarkerStyle(BaseStyle):
 
     def css(self, scale: float = 1) -> dict:
         attrs = {
-            "fill": self.color.as_hex(),
-            "fill-opacity": self.alpha,
             "stroke": self.edge_color.as_hex() if self.edge_color else "none",
             "stroke-width": round(self.edge_width * scale, 2),
             "stroke-opacity": self.alpha,
             "stroke-linecap": CapStyleEnum(self.dash_capstyle).css(),
         }
+        if self.color:
+            attrs.update(
+                {
+                    "fill": self.color.as_hex(),
+                    "fill-opacity": self.alpha,
+                }
+            )
         if self.dash_spacing:
             attrs.update(
                 {"pathLength": 100, "stroke-dasharray": f"0 {100/self.dash_spacing}"}

@@ -193,7 +193,6 @@ def comet(cx: float, cy: float, size: float, attrs: dict, steps: int = 100):
 
 
 SYMBOL_FUNCTIONS = {
-    MarkerSymbolEnum.POINT: circle,
     MarkerSymbolEnum.CIRCLE: circle,
     MarkerSymbolEnum.CIRCLE_CROSS: circle_cross,
     MarkerSymbolEnum.CIRCLE_CROSSHAIR: circle_crosshair,

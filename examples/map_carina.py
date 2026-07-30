@@ -69,17 +69,11 @@ with p.style.dso_nebula as neb:
         label_fn=dso_label,
     )
 
-p.galaxies(
-    where=[mag_filters],
-    label_fn=dso_label,
-    where_true_size=[False],
-)
-
 p.constellation_labels()
 
 p.legend(
-    style__location="outside top right",
-    # style__padding_x=0,
+    style__location="inside bottom right",
+    style__margin_x=20,
 )
 
 p.export("map_carina.png")

@@ -48,7 +48,6 @@ p.marker(
         "marker": {
             "size": 60,
             "symbol": "circle",
-            "fill": "none",
             "color": None,
             "edge_color": "hsl(44, 70%, 73%)",
             "edge_width": 2,
