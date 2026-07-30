@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, AfterValidator
 from pydantic.color import Color
 from pydantic.functional_serializers import PlainSerializer
 from typing_extensions import Annotated
@@ -27,6 +27,22 @@ HERE = Path(__file__).resolve().parent
 PI = 3.141592653589793
 SQR_2 = 1.41421356237
 
+
+def _validate_stops(stops: list[tuple[float, str]]) -> list[tuple[float, str]]:
+    if not stops:
+        raise ValueError("gradient must have at least one stop")
+    if stops[-1][0] != 1.0:
+        raise ValueError("the last stop should always be at 1.0")
+    return stops
+
+GradientStops = Annotated[
+    list[tuple[float, ColorStr]],
+    AfterValidator(_validate_stops),
+    PlainSerializer(
+        lambda stops: [(offset, c.as_hex() if c else None) for offset, c in stops],
+        return_type=list
+    ),
+]
 
 class BaseStyle(BaseModel):
     __hash__ = object.__hash__
@@ -581,7 +597,7 @@ class FigureStyle(BaseStyle):
 class AxesStyle(BaseStyle):
     """Styling for the axes of the plot, which is where the map is plotted."""
 
-    background_color: list[tuple[float, str]] | ColorStr | None = ColorStr("#fff")
+    background_color: GradientStops | ColorStr | None = ColorStr("#fff")
     """
     Background color of the axes.
 
