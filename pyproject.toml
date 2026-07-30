@@ -39,6 +39,7 @@ dependencies = [
     "cairosvg >= 2.9.0",
     "resvg-py",
     "zensical >= 0.0.36",
+    "pydantic-extra-types>=2.11.1",
 ]
 requires-python = ">=3.10,<=3.13"
 
