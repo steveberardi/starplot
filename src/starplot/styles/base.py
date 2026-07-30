@@ -22,12 +22,6 @@ ColorStr = Annotated[
 ]
 
 
-HERE = Path(__file__).resolve().parent
-
-PI = 3.141592653589793
-SQR_2 = 1.41421356237
-
-
 def _validate_stops(stops: list[tuple[float, str]]) -> list[tuple[float, str]]:
     if not stops:
         raise ValueError("gradient must have at least one stop")
@@ -44,6 +38,11 @@ GradientStops = Annotated[
         return_type=list,
     ),
 ]
+
+HERE = Path(__file__).resolve().parent
+
+PI = 3.141592653589793
+SQR_2 = 1.41421356237
 
 
 class BaseStyle(BaseModel):

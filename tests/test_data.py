@@ -9,6 +9,7 @@ from .utils import TEST_DATA_PATH
 
 data_path = str(TEST_DATA_PATH)
 
+
 @mock.patch.dict(os.environ, {"STARPLOT_DATA_PATH": data_path})
 def test_data_path():
     importlib.reload(config)  # must reload this first

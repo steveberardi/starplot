@@ -9,7 +9,7 @@ style = PlotStyle().extend(
         "figure": {
             "padding": 60,
         }
-    }
+    },
 )
 
 p = GalaxyPlot(

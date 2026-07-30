@@ -18,7 +18,7 @@ p = ZenithPlot(
     observer=observer,
     style=PlotStyle().extend(  # add a style to the plot
         extensions.BLUE_MEDIUM,
-        extensions.FIGURE_TRANSPARENT, # make the figure background transparent
+        extensions.FIGURE_TRANSPARENT,  # make the figure background transparent
     ),
     resolution=4000,
     scale=0.9,
