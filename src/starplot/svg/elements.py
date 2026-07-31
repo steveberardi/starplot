@@ -3,6 +3,7 @@ from typing import ClassVar
 
 from fontTools.pens.svgPathPen import SVGPathPen
 
+from starplot.styles.base import GradientType, GradientStops
 from starplot.svg.fonts import find_font
 
 
@@ -268,6 +269,39 @@ class RadialGradient(Element):
 
     def render_r(self):
         return f"{int(self.r * 100)}%"
+
+
+def create_gradient(
+    stops: GradientStops,
+    type: GradientType,
+    id: str,
+) -> LinearGradient | RadialGradient:
+    if type == GradientType.RADIAL.value:
+        return RadialGradient(
+            id=id,
+            cx=0.5,
+            cy=0.5,
+            r=0.5,
+            children=list(
+                reversed(
+                    [
+                        Stop(offset=1 - offset, attrs={"stop-color": color})
+                        for offset, color in stops
+                    ]
+                )
+            ),
+        )
+
+    return LinearGradient(
+        id=id,
+        x1=0,
+        y1=1,
+        x2=0,
+        y2=0,
+        children=[
+            Stop(offset=offset, attrs={"stop-color": color}) for offset, color in stops
+        ],
+    )
 
 
 def render(element: Element, indent: int = 0, text_as_path: bool = False) -> str:

@@ -18,7 +18,7 @@ from starplot.styles import (
     PathStyle,
     LineStyle,
     PolygonStyle,
-    GradientDirection,
+    GradientStops,
     LegendStyle,
 )
 from starplot.projections import (
@@ -38,6 +38,7 @@ from starplot.svg.elements import (
     LinearGradient,
     RadialGradient,
     Stop,
+    create_gradient,
 )
 
 
@@ -109,6 +110,7 @@ class Canvas:
         self.debug = debug
 
         self.clip_path = clip_path
+        self.gradient_counter = 0
 
         self.invert_x = invert_x
         self.invert_y = invert_y
@@ -278,53 +280,23 @@ class Canvas:
                 ]
             )
 
-        if self.style.axes.has_gradient_background():
-            gradient_id = "axes-background-gradient"
-            if (
-                self.style.axes.background_gradient_direction
-                == GradientDirection.RADIAL
-            ):
-                radial_stops = list(
-                    reversed(
-                        [
-                            Stop(offset=1 - offset, attrs={"stop-color": color})
-                            for offset, color in self.style.axes.background_color
-                        ]
-                    )
-                )
-                gradient = RadialGradient(
-                    id=gradient_id,
-                    cx=0.5,
-                    cy=0.5,
-                    r=0.5,
-                    children=radial_stops,
-                )
-            else:
-                stops = [
-                    Stop(offset=offset, attrs={"stop-color": color})
-                    for offset, color in self.style.axes.background_color
-                ]
-                gradient = LinearGradient(
-                    id=gradient_id,
-                    x1=0,
-                    y1=1,
-                    x2=0,
-                    y2=0,
-                    children=stops,
-                )
+        background_attrs = self.style.axes.background.css(self.scale)
 
+        if isinstance(self.style.axes.background.fill_color, list):
+            gradient_id = "axes-background-gradient"
+            gradient = create_gradient(
+                self.style.axes.background.fill_color,
+                self.style.axes.background.gradient_type,
+                gradient_id,
+            )
             self.layout.axes.defs.append(gradient)
-            fill = f"url(#{gradient_id})"
-        else:
-            fill = self.style.axes.background_color.as_hex()
+            background_attrs["fill"] = f"url(#{gradient_id})"
 
         dxy = list(self.clip_path_display.exterior.coords)
         self.background_element = Polygon(
             id="axes-background",
             points=dxy,
-            attrs={
-                "fill": fill,
-            },
+            attrs=background_attrs,
         )
         self.layout.axes.elements.append(
             (
@@ -544,6 +516,17 @@ class Canvas:
 
             attrs = attrs or {}
             _attrs = {**style.css(self.scale), **attrs}
+
+            if isinstance(style.fill_color, list):
+                gradient_id = f"gradient-{self.gradient_counter}"
+                gradient = create_gradient(
+                    style.fill_color,
+                    style.gradient_type,
+                    gradient_id,
+                )
+                self.layout.axes.defs.append(gradient)
+                _attrs["fill"] = f"url(#{gradient_id})"
+                self.gradient_counter += 1
 
             self.layout.axes.elements.append(
                 (style.zorder, Polygon(points=dxy, attrs=_attrs))

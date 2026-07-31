@@ -73,6 +73,11 @@ class GradientDirection(str, Enum):
     MOLLWEIDE = "mollweide"
 
 
+class GradientType(str, Enum):
+    LINEAR = "linear"
+    RADIAL = "radial"
+
+
 class FontWeightEnum(int, Enum):
     """Options for font weight."""
 
@@ -357,8 +362,10 @@ class PolygonStyle(BaseStyle):
     edge_color: Optional[ColorStr] = None
     """Edge color of the polygon"""
 
-    fill_color: Optional[ColorStr] = None
+    fill_color: Optional[ColorStr | GradientStops] = None
     """Fill color of the polygon"""
+
+    gradient_type: GradientType = GradientType.RADIAL
 
     line_style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
     """Edge line style. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/)."""
@@ -600,6 +607,13 @@ class FigureStyle(BaseStyle):
 class AxesStyle(BaseStyle):
     """Styling for the axes of the plot, which is where the map is plotted."""
 
+    # TODO : since this may only have one sub element, maybe just change to:
+    #    PlotStyle.axes_background: PolygonStyle
+
+    background: PolygonStyle = PolygonStyle(
+        edge_width=2, edge_color="#000", fill_color="#fff"
+    )
+
     background_color: GradientStops | ColorStr | None = ColorStr("#fff")
     """
     Background color of the axes.
@@ -621,7 +635,7 @@ class AxesStyle(BaseStyle):
     There are a few predefined gradients available as [style extensions](/reference-styling/#style-extensions).
     """
 
-    background_gradient_direction: GradientDirection = GradientDirection.RADIAL
+    background_gradient_direction: GradientType = GradientType.RADIAL
     """Direction of the background gradient (if applicable)"""
 
     def has_gradient_background(self):
@@ -635,6 +649,10 @@ class PlotStyle(BaseStyle):
 
     axes: AxesStyle = AxesStyle()
     """Styling for the axes of the plot, which is where the map is plotted."""
+
+    axes_background: PolygonStyle = PolygonStyle(
+        edge_width=2, edge_color="#000", fill_color="#fff"
+    )
 
     figure: FigureStyle = FigureStyle()
     """
