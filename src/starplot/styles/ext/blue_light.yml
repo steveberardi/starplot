@@ -1,6 +1,7 @@
 
 axes:
-  background_color: hsl(218, 88%, 99%)
+  background:
+    fill_color: hsl(218, 88%, 99%)
 
 text_border_color: hsl(218, 88%, 99%)
 

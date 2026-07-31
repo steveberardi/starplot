@@ -1,5 +1,9 @@
 # Map Styles
 
+axes:
+  background:
+    gradient_type: radial
+
 constellation_lines:
   width: 3.4
 

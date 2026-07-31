@@ -1,6 +1,7 @@
 
 axes:
-  background_color: hsl(136, 0%, 10%)
+  background:
+    fill_color: hsl(136, 0%, 10%)
 
 figure:
   background_color: hsl(136, 0%, 100%)

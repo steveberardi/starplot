@@ -1,7 +1,8 @@
 # blue_gold
 
 axes:
-  background_color: rgb(46, 61, 74)
+  background:
+    fill_color: rgb(46, 61, 74)
 
 figure:
   background_color: hsl(208, 23%, 13%)

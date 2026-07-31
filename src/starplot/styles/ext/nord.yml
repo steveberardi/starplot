@@ -1,6 +1,7 @@
 
 axes:
-  background_color: '#4c566a'
+  background:
+    fill_color: '#4c566a'
 
 text_border_color: '#4c566a'
 

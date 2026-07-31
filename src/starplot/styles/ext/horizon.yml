@@ -5,4 +5,5 @@ constellation_labels:
   font_weight: 800
 
 axes:
-  background_gradient_direction: linear
+  background:
+    gradient_type: linear

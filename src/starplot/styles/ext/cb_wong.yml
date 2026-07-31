@@ -3,7 +3,8 @@
 # via https://davidmathlogic.com/colorblind
 
 axes:
-  background_color: '#fff'
+  background:
+    fill_color: '#fff'
 
 text_border_color: '#fff'
 

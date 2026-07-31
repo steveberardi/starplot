@@ -1,7 +1,8 @@
 # blue_medium
 
 axes:
-  background_color: hsl(218, 88%, 97%)
+  background:
+    fill_color: hsl(218, 88%, 97%)
 
 figure:
   background_color: hsl(212, 27%, 48%)
