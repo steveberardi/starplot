@@ -237,7 +237,7 @@ class MarkerStyle(BaseStyle):
     Styling properties for markers.
     """
 
-    color: Optional[ColorStr] = ColorStr("#000")
+    color: Optional[ColorStr | GradientStops] = ColorStr("#000")
     """Fill color of marker. Can be a hex, rgb, hsl, or word string."""
 
     edge_color: Optional[ColorStr] = ColorStr("#000")
@@ -268,13 +268,14 @@ class MarkerStyle(BaseStyle):
     """Zorder of marker"""
 
     def css(self, scale: float = 1) -> dict:
+        solid_fill = self.color is not None and not isinstance(self.color, list)
         attrs = {
             "stroke": self.edge_color.as_hex() if self.edge_color else "none",
             "stroke-width": round(self.edge_width * scale, 2),
             "stroke-opacity": self.alpha,
             "stroke-linecap": CapStyleEnum(self.dash_capstyle).css(),
         }
-        if self.color:
+        if solid_fill:
             attrs.update(
                 {
                     "fill": self.color.as_hex(),
@@ -288,9 +289,10 @@ class MarkerStyle(BaseStyle):
         return attrs
 
     def to_polygon_style(self):
+        
         return PolygonStyle(
-            fill_color=self.color.as_hex() if self.color else None,
-            edge_color=self.edge_color.as_hex() if self.edge_color else None,
+            fill_color=self.color,
+            edge_color=self.edge_color,
             edge_width=self.edge_width,
             alpha=self.alpha,
             zorder=self.zorder,

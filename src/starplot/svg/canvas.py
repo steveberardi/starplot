@@ -312,8 +312,22 @@ class Canvas:
 
     def marker(self, x, y, style: MarkerStyle) -> None:
         dx, dy = self._to_display(x, y)
+
+        attrs = style.css(self.scale)
+
+        if isinstance(style.color, list):
+            gradient_id = f"gradient-{self.gradient_counter}"
+            gradient = create_gradient(
+                style.color,
+                style.gradient_type,
+                gradient_id,
+            )
+            self.layout.axes.defs.append(gradient)
+            attrs["fill"] = f"url(#{gradient_id})"
+            self.gradient_counter += 1
+
         element = symbols.create(
-            dx, dy, style.size * self.scale, style.symbol, style.css(self.scale)
+            dx, dy, style.size * self.scale, style.symbol, attrs=attrs
         )
         self.layout.axes.elements.append((style.zorder, element))
 

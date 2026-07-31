@@ -15,7 +15,7 @@ skip = [
     "optic_moon_saturn.py",
     "map_orthographic.py",
     "galaxy_custom_marker.py",
-    # "map_milky_way_stars.py",
+    "map_milky_way_stars.py",
     # "stuff.py",
 ]
 

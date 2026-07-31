@@ -2,7 +2,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from starplot import Moon, Binoculars, Observer
-from starplot.styles import PlotStyle, extensions
+from starplot.styles import PlotStyle, extensions, gradients
 
 # time of partial eclipse. total eclipse started at 15:13:46
 dt = datetime(2024, 4, 8, 14, 45, 0, 0, tzinfo=ZoneInfo("US/Eastern"))
@@ -30,10 +30,11 @@ op.moon(
     true_size=True,
     show_phase=True,
     label=None,
+    style__marker__color=gradients.NEW_MOON,
 )
 op.sun(
     true_size=True,
-    style__marker__color="#ffd22e",
+    style__marker__color=gradients.SUN,
     label=None,
 )
 
