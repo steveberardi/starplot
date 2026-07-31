@@ -67,12 +67,6 @@ class BaseStyle(BaseModel):
         return " ".join([f'{k}="{v}"' for k, v in self.css().items()])
 
 
-class GradientDirection(str, Enum):
-    LINEAR = "linear"
-    RADIAL = "radial"
-    MOLLWEIDE = "mollweide"
-
-
 class GradientType(str, Enum):
     LINEAR = "linear"
     RADIAL = "radial"

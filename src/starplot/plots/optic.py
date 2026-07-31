@@ -18,8 +18,6 @@ from starplot.styles import (
     LabelStyle,
     extensions,
     use_style,
-    ZOrderEnum,
-    GradientDirection,
     PolygonStyle,
 )
 from starplot.utils import azimuth_to_string

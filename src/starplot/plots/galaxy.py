@@ -28,7 +28,6 @@ from starplot.styles import (
     extensions,
     use_style,
     PathStyle,
-    GradientDirection,
 )
 from starplot.projections import Mollweide, Miller, CoordinateReferenceSystem
 from starplot.profile import profile
