@@ -141,8 +141,7 @@ def ellipse(
     for angle_pt in np.arange(start_angle, end_angle + step_size, step_size):
         radians = math.radians(angle_pt)
         radius_a = (height * width) / math.sqrt(
-            height**2 * (math.sin(radians)) ** 2
-            + width**2 * (math.cos(radians)) ** 2
+            height**2 * (math.sin(radians)) ** 2 + width**2 * (math.cos(radians)) ** 2
         )
         lon, lat, _ = GEOD.fwd([ra], [dec], angle + angle_pt, radius_a)
 
@@ -631,7 +630,6 @@ def extent_polygon(
 
 
 class BaseGeometry:
-
     """
     Wrapper around shapely geometries
 

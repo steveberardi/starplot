@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.15.2"
+__generated_with = "0.23.16"
 app = marimo.App(width="columns")
 
 
@@ -25,50 +25,90 @@ def scratchpad():
         StereoNorth,
         StereoSouth,
         LambertAzEqArea,
+        Equidistant,
+        geometry,
     )
-    from starplot.optics import Refractor, Camera
+    from starplot.models.optics import Refractor, Camera
     from starplot.styles import PlotStyle, extensions
 
     start = time.time()
 
+
+    style = PlotStyle().extend(
+        # extensions.BLUE_MEDIUM,
+        extensions.BLUE_NIGHT,
+        # extensions.GRAYSCALE,
+        extensions.MAP,
+        # extensions.FIGURE_TRANSPARENT,
+    )
+
     tz = ZoneInfo("America/Los_Angeles")
-    dt = datetime(2023, 7, 13, 22, 0, tzinfo=tz)  # July 13, 2023 at 10pm PT
+    dt = datetime(2024, 10, 19, 21, 00, tzinfo=tz)
 
     observer = Observer(
-        lat=33.363484,
-        lon=-116.836394,
         dt=dt,
+        lat=32.97,
+        lon=-117.038611,
     )
-
-    p = ZenithPlot(
-        observer=observer,
-        style=PlotStyle().extend(
-            extensions.BLUE_GOLD,
-            extensions.GRADIENT_BOLD_SUNSET,
+    p = MapPlot(
+        projection=Equidistant(
+            # center_ra=observer.lst,
+            center_dec=90,
         ),
-        resolution=3600,
-        autoscale=True,
-        debug=True,
+        dec_min=0,
+        observer=observer,
+        style=style,
+        resolution=4000,
+        scale=0.7,
+        clip_path=geometry.circle(
+            center=(0,90),
+            diameter_degrees=180,
+            num_pts=500,
+        )
     )
-    p.horizon()
+    p.gridlines(
+        labels=False,
+        style__label__font_color="black",
+        style__label__font_size=60,
+    )
     p.constellations()
-    p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 2.1])
-
-    p.galaxies(where=[_.magnitude < 9], true_size=False, labels=None)
-    p.open_clusters(where=[_.magnitude < 9], true_size=False, labels=None)
-
     p.constellation_borders()
+
+    p.stars(
+        where=[_.magnitude < 7], 
+        bayer_labels=True,
+        flamsteed_labels=True,
+        # where_labels=[False]
+    )
+    p.open_clusters(
+        where=[_.magnitude < 12],
+        where_labels=[False],
+        where_true_size=[False],
+    )
+    p.galaxies(
+        where=[_.magnitude < 12],
+        where_labels=[False],
+        where_true_size=[False],
+    )
+    p.nebula(
+        where=[_.magnitude < 12],
+        where_labels=[False],
+        where_true_size=[False],
+    )
+
+    p.constellation_labels()
     p.ecliptic()
     p.celestial_equator()
     p.milky_way()
-    p.constellation_labels()
+
 
     duration = time.time() - start
 
     print(duration)
 
-    p.fig.gca()
-
+    import marimo
+    svg = p.canvas.render()
+    marimo.Html(svg)
     return
 
 

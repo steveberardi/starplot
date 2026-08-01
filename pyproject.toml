@@ -38,7 +38,6 @@ dependencies = [
     "fonttools >= 4.62.1",
     "cairosvg >= 2.9.0",
     "resvg-py",
-    "zensical >= 0.0.36",
     "pydantic-extra-types>=2.11.1",
 ]
 requires-python = ">=3.10,<=3.13"
@@ -68,13 +67,12 @@ theme = "dark"
 
 [dependency-groups]
 dev = [
-    "black==23.3.0",
     "click==8.2.1",
-    "flit==3.9.0",
+    "flit==3.12.0",
     "griffe==1.15.0",
     "imagehash==4.3.1",
     "ipython==7.12.0",
-    "marimo==0.15.2",
+    "marimo==0.23.16",
     "mkdocs-glightbox==0.4.0",
     "mkdocs-macros-plugin==1.3.7",
     "mkdocs-material==9.7.1",
@@ -82,10 +80,11 @@ dev = [
     "mkdocstrings-python==2.0.1",
     "mypy==1.3.0",
     "pygments>=2.19.2",
-    "pytest==7.3.2",
-    "pytest-cov==4.1.0",
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0",
     "rich==13.9.4",
-    "ruff==0.14.10",
+    "ruff==0.16.1",
     "snakeviz==2.2.2",
     "pyinstrument==5.1.2",
+    "zensical >= 0.0.36",
 ]

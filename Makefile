@@ -7,12 +7,6 @@ else
  DR_ARGS=-it --env-file ./.env
 endif
 
-ifeq ($(PROFILE), true)
- SCRATCH_ARGS=-m cProfile -o results.prof
-else
- SCRATCH_ARGS=
-endif
-
 DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 
@@ -32,38 +26,28 @@ lint:
 	uv run ruff check src/ tests/ hash_checks/ $(ARGS)
 
 format:
-	uv run black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)
+	uv run ruff format src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)
 
 test:
 	uv run pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html tests/
 
 check-hashes:
-	$(DOCKER_RUN) "python hash_checks/hashio.py check"
+	uv run python hash_checks/hashio.py check
 
 lock-hashes:
-	$(DOCKER_RUN) "python hash_checks/hashio.py lock"
-
-mypy:
-	$(DOCKER_RUN) "mypy --ignore-missing-imports src/starplot/"
-
-bash:
-	$(DOCKER_RUN) bash
+	uv run python hash_checks/hashio.py lock
 
 shell:
-	$(DOCKER_RUN) ipython
-
-scratchpad:
-	$(DOCKER_RUN) "python $(SCRATCH_ARGS) scripts/scratchpad.py"
+	uv run ipython
 
 marimo: DR_ARGS=-it -p 9009:9009
 marimo:
-	$(DOCKER_RUN) "marimo edit scripts/marimo.py --no-token  --host 0.0.0.0 --port 9009"
+	uv run marimo edit scripts/marimo.py --no-token  --host 0.0.0.0 --port 9009
 
 examples:
 	cd examples && rm -f *.png && rm -f *.jpg && uv run examples.py
 
 tutorial:
-# 	$(DOCKER_RUN) "cd tutorial && python build.py"
 	cd tutorial && uv run build.py
 
 profile: DR_ARGS=-it -p 8081:8081
@@ -73,20 +57,20 @@ profile:
 
 # builds ALL data files and then database:
 db: 
-	@$(DOCKER_RUN) "python data/scripts/db.py"
+	uv run data/scripts/db.py
 
 build-data-clean:
 	mkdir -p data/build
 	rm -rf data/build/*
 
 build-star-designations:
-	@$(DOCKER_RUN) "python data/scripts/star_designations.py"
+	uv run data/scripts/star_designations.py
 
 build-doc-data:
-	@$(DOCKER_RUN) "python data/scripts/docdata.py"
+	uv run data/scripts/docdata.py
 
 version:
-	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"
+	uv run python -c 'import starplot as sp; print(sp.__version__)'
 
 install:
 	uv sync --all-groups --all-extras
@@ -116,15 +100,11 @@ test-3.13:
 
 # ------------------------------------------------------------------
 # Docs
-docs-serve: DR_ARGS=-it -p 8000:8000
 docs-serve:
-	$(DOCKER_RUN) "mkdocs serve -a 0.0.0.0:8000 -q --watch src/"
+	uv run zensical serve
 
 docs-build:
-	$(DOCKER_RUN) "mkdocs build"
-
-docs-publish:
-	$(DOCKER_RUN) "mkdocs gh-deploy --force"
+	uv run zensical build
 
 # ------------------------------------------------------------------
 # PyPi - build & publish
@@ -153,4 +133,4 @@ clean:
 	rm -rf htmlcov
 	rm -f tests/data/*.png
 
-.PHONY: build test shell flit-build flit-publish clean ephemeris scratchpad examples scripts tutorial
+.PHONY: build test shell flit-build flit-publish clean ephemeris examples scripts tutorial

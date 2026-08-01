@@ -3,6 +3,8 @@ scripts/scratchpad.py
 
 .claude/
 
+__marimo__/
+
 # astronomy data
 *.bsp
 CometEls.txt

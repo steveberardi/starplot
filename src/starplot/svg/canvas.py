@@ -141,8 +141,9 @@ class Canvas:
         elif cs == CoordinateSystem.DATA:
             ax, ay = self._to_axes(x, y)
         elif cs == CoordinateSystem.PROJECTED:
-            ax, ay = normalize(x, self.minx, self.maxx), normalize(
-                y, self.miny, self.maxy
+            ax, ay = (
+                normalize(x, self.minx, self.maxx),
+                normalize(y, self.miny, self.maxy),
             )
         else:
             raise ValueError(f"Unrecognized coordinate system: {cs}")

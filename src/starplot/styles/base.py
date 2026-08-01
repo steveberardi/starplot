@@ -99,31 +99,31 @@ class MarkerSymbolEnum(str, Enum):
     """+"""
 
     CIRCLE = "circle"
-    """\u25CF"""
+    """\u25cf"""
 
     SQUARE = "square"
-    """\u25A0"""
+    """\u25a0"""
 
     STAR = "star"
     """\u2605"""
 
     SUN = "sun"
-    """\u263C"""
+    """\u263c"""
 
     DIAMOND = "diamond"
-    """\u25C6"""
+    """\u25c6"""
 
     TRIANGLE = "triangle"
-    """\u23F6"""
+    """\u23f6"""
 
     CIRCLE_CROSS = "circle_cross"
-    """\u1AA0"""
+    """\u1aa0"""
 
     CIRCLE_CROSSHAIR = "circle_crosshair"
     """No preview available, but this is the standard symbol for planetary nebulae"""
 
     CIRCLE_LINE = "circle_line"
-    """\u29B5  the standard symbol for double stars"""
+    """\u29b5  the standard symbol for double stars"""
 
     COMET = "comet"
     """\u2604"""
@@ -135,7 +135,7 @@ class MarkerSymbolEnum(str, Enum):
     """\u2734"""
 
     ELLIPSE = "ellipse"
-    """\u2B2D"""
+    """\u2b2d"""
 
 
 class LineStyleEnum(str, Enum):
@@ -286,7 +286,7 @@ class MarkerStyle(BaseStyle):
             )
         if self.dash_spacing:
             attrs.update(
-                {"pathLength": 100, "stroke-dasharray": f"0 {100/self.dash_spacing}"}
+                {"pathLength": 100, "stroke-dasharray": f"0 {100 / self.dash_spacing}"}
             )
         return attrs
 
