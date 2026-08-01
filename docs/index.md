@@ -4,40 +4,42 @@ title: Star Charts and Maps of the Sky in Python
 
 # Welcome to Starplot
 
-![Python](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge&color=6388b0)
-![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=57a8a8)
-![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=8b63b0)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge&color=88b063)
+![Python](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge&color=6388b0){.rounded}
+![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=57a8a8){.rounded}
+![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=8b63b0){.rounded}
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/steveberardi/starplot/test.yml?style=for-the-badge&color=88b063){.rounded}
+
 
 Starplot is a Python library for creating star charts and maps of the sky
 {.text-subtitle}
 
-- 🗺️ **Maps** - including 10+ customizable projections
+<div class="star-list" markdown>
+- **Maps** - including 10+ customizable projections
 
-- ⭐ **Zenith Charts** - shows the entire sky at a specific time and place
+- **Zenith Charts** - shows the entire sky at a specific time and place
 
-- 🌅 **Horizon Charts** - shows the horizon at a specific time and place
+- **Horizon Charts** - shows the horizon at a specific time and place
 
-- 🔭 **Optic Simulations** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
+- **Optic Simulations** - shows what you'll see through an optic (e.g. telescope) at a specific time and place
 
-- 🌌 **Galactic Charts** - shows a Mollweide projection in galactic coordinates
+- **Galactic Charts** - shows a Mollweide projection in galactic coordinates
 
-- 🪐 **Planets and Deep Sky Objects (DSOs)** - with support for plotting their true extent
+- **Planets and Deep Sky Objects (DSOs)** - with support for plotting their true extent
 
-- ☄️ **Comets and Satellites** - easy trajectory plotting
+- **Comets and Satellites** - easy trajectory plotting
 
-- 🎨 **Custom Styles** - for all objects and with 8+ built-in themes
+- **Custom Styles** - for all objects and with 8+ built-in themes
 
-- 📥 **Export** - png, svg, jpeg
+- **Export** - png, svg
 
-- 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
+- **Data Backend** - powered by DuckDB + Ibis for fast object lookup
 
-- 📓 **Custom Data Catalogs** - with helpers for building and optimizing
+- **Custom Data Catalogs** - with helpers for building and optimizing
 
-- 🧭 **Label Collision Avoidance** - ensuring all labels are readable
+- **Label Collision Avoidance** - ensuring all labels are readable
 
-- 🌐 **Localization** - label translations for Chinese, French, Lithuanian, Persian, and Spanish
-
+- **Localization** - label translations for Chinese, French, Lithuanian, Persian, and Spanish
+</div>
 
 --8<-- "docs/snippets/_newsletter.html"
 
@@ -67,5 +69,4 @@ Starplot is a Python library for creating star charts and maps of the sky
 
 ---
 
-✨ [Check out more examples...](examples.md)
-{.text-subtitle}
+[✨ Check out more examples :material-arrow-right-thick:](examples.md){ .md-button .md-button--primary .text-subtitle .fs-3 }
