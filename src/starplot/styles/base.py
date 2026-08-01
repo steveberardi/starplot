@@ -264,6 +264,8 @@ class MarkerStyle(BaseStyle):
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
+    gradient_type: GradientType = GradientType.RADIAL
+    
     zorder: int = ZOrderEnum.LAYER_2
     """Zorder of marker"""
 

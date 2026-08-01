@@ -315,6 +315,7 @@ class Canvas:
 
         attrs = style.css(self.scale)
 
+        # TODO : make function for this gradient stuff
         if isinstance(style.color, list):
             gradient_id = f"gradient-{self.gradient_counter}"
             gradient = create_gradient(
@@ -338,7 +339,7 @@ class Canvas:
         style: MarkerStyle,
         gid: str = None,
         sizes: list[float] = None,
-        colors: list[str] = None,
+        colors: list[str] | list[list[tuple[float, str]]] = None,
         alphas: list[float] = None,
     ) -> None:
         dx, dy = self._to_display(x, y)
@@ -352,7 +353,17 @@ class Canvas:
         for x, y, size, color, alpha in list(zip(dx, dy, sizes, colors, alphas)):
             attrs = {}
 
-            if color:
+            if isinstance(color, list):
+                gradient_id = f"gradient-{self.gradient_counter}"
+                gradient = create_gradient(
+                    color,
+                    style.gradient_type,
+                    gradient_id,
+                )
+                self.layout.axes.defs.append(gradient)
+                attrs["fill"] = f"url(#{gradient_id})"
+                self.gradient_counter += 1
+            else:
                 attrs["fill"] = color
 
             if alpha:

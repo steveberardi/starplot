@@ -140,6 +140,28 @@ def bv_to_hex_color(bv_index):
     return bv_colors[color_index]
 
 
+def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
+    """Converts a hex color string (e.g. `#ff9523`) to an `(r, g, b)` tuple"""
+    hex_color = hex_color.lstrip("#")
+    return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
+
+
+def lighten_hex_color(hex_color: str, amount: float = 0.3) -> str:
+    """
+    Lightens a hex color by blending it toward white.
+
+    Args:
+        hex_color: Hex color string (e.g. `#ff9523`)
+        amount: Fraction to blend toward white (0 = unchanged, 1 = white)
+
+    Returns:
+        Lightened hex color string
+    """
+    r, g, b = hex_to_rgb(hex_color)
+    r, g, b = (round(c + (255 - c) * amount) for c in (r, g, b))
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+
 def azimuth_to_string(azimuth_degrees: int):
     if azimuth_degrees >= 360:
         azimuth_degrees -= 360

@@ -3,7 +3,7 @@ import math
 from typing import Callable
 
 from starplot.models import Star
-from starplot.utils import bv_to_hex_color
+from starplot.utils import bv_to_hex_color, hex_to_rgb, lighten_hex_color
 
 
 def size_by_magnitude_factory(
@@ -174,3 +174,20 @@ def color_by_bv(star: Star) -> str:
     else:
         bv = star.bv
     return bv_to_hex_color(bv)
+
+
+def color_by_bv_gradient(star: Star) -> list:
+    """
+    Calculates a radial gradient by the object's [B-V index](https://en.wikipedia.org/wiki/Color_index), 
+    meant to resemble how a star looks through binoculars or a telescope: a bright core that gradually fades to fully transparent at the edge.
+
+    Uses the same base color as `color_by_bv`, lightened at the center of the gradient and faded to transparent at the outer edge.
+    """
+    color = color_by_bv(star) or "#ffffff"
+    r, g, b = hex_to_rgb(color)
+
+    return [
+        [0.0, f"rgba({r}, {g}, {b}, 0)"],
+        [0.6, color],
+        [1.0, lighten_hex_color(color, 0.2)],
+    ]
