@@ -321,7 +321,7 @@ class Canvas:
         existing = self.layout.axes.defs.get(gid)
 
         if existing:
-            return existing
+            return existing.url
 
         gradient = create_gradient(stops, type, gid)
         self.layout.axes.defs[gradient.id] = gradient
