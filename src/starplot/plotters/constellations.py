@@ -4,7 +4,6 @@ import rtree
 from shapely import MultiPoint
 from ibis import _
 
-from starplot.coordinates import CoordinateSystem
 from starplot.data import db, constellations as condata
 from starplot.data.catalogs import (
     Catalog,

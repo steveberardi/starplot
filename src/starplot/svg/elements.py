@@ -1,4 +1,3 @@
-import hashlib
 from dataclasses import dataclass, field
 from typing import ClassVar
 
@@ -278,19 +277,14 @@ class RadialGradient(Element):
         return f"{int(self.r * 100)}%"
 
 
-def gradient_hash(stops, length=8) -> str:
-    return hashlib.sha256(repr(stops).encode()).hexdigest()[:length]
-
-
 def create_gradient(
     stops: GradientStops,
     type: GradientType,
     id: str,
 ) -> LinearGradient | RadialGradient:
-    gid = id or gradient_hash(stops)
     if type == GradientType.RADIAL.value:
         return RadialGradient(
-            id=gid,
+            id=id,
             cx=0.5,
             cy=0.5,
             r=0.5,
@@ -305,7 +299,7 @@ def create_gradient(
         )
 
     return LinearGradient(
-        id=gid,
+        id=id,
         x1=0,
         y1=1,
         x2=0,

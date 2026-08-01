@@ -122,7 +122,6 @@ class Canvas:
         self.invert_y = invert_y
 
         self.tx = self.projection.get_transformer(source_crs=self.crs)
-        # self.txb = self.projection.get_transformer(source_crs=self.crs, ignored_params=[""])
 
         self.logger = logger
 
@@ -235,11 +234,9 @@ class Canvas:
 
     def _init_clip_path_background(self):
         """
-        TODO:
-        - display bounds based on user provided min/max ranges OR clip path
-        - query bounds based on transformation bounds
-
+        Initializes the clip path, which is either a user-provided path or simply the background of the axes
         """
+
         if self.clip_path is not None:
             self.clip_path_display = _transform_shape(self._to_display, self.clip_path)
             dx0, dy0, dx1, dy1 = self.clip_path_display.bounds
@@ -439,26 +436,7 @@ class Canvas:
         cs: CoordinateSystem = CoordinateSystem.DATA,
         attrs: dict = None,
     ) -> None:
-        """
-        TODO : better split for polygons and lines
-
-        if polygon crosses edge_x:
-            keep as two separate polygons when plotted
-
-        for each polygon:
-            if polygon crosses antimeridian AND antimeridian != edge_x:
-                convert to display all coordinates
-                get concave hull (of display coords)
-                plot coordinates of hull
-
-            else:
-                plot as is
-        """
-
         p = ShapelyPolygon(coordinates)
-
-        # from pprint import pprint
-        # pprint(coordinates)
 
         if self.projection.wraps:
             polygons_split = _geometry.split_at_x(
@@ -467,85 +445,12 @@ class Canvas:
         else:
             polygons_split = [p]
 
-        # polygons_split = _geometry.split_at_x(geometry=p, wrap_x=self.projection.edge_x)
-        # problem with zenith = display coords in stereo too big polygon
-
-        # polygons = [list(zip(*ps.exterior.coords.xy)) for ps in fff]
-
-        polygons = polygons_split
-        # polygons = []
-        # for ps in polygons_split:
-        #     coords = list(zip(*ps.exterior.coords.xy))
-        #     new_coords = []
-        #     for x, y in coords:
-        #         if x == 0:
-        #             new_coords.append((0.00001, y))
-        #         elif x == 360:
-        #             new_coords.append((359.99999, y))
-        #         else:
-        #             new_coords.append((x, y))
-        #     polygons.append(ShapelyPolygon(new_coords))
-        # print(self.projection.edge_x)
-
-        # self.marker(
-        #     179,
-        #     0,
-        #     MarkerStyle(
-        #         color="red",
-        #         edge_width=8,
-        #         size=120,
-        #         zorder=10_000,
-        #         symbol="circle_cross",
-        #     ),
-        # )
-        # self.marker(
-        #     0,
-        #     0,
-        #     MarkerStyle(
-        #         color="blue",
-        #         edge_width=8,
-        #         size=120,
-        #         zorder=10_000,
-        #         symbol="circle_cross",
-        #     ),
-        # )
-        # self.marker(
-        #     181,
-        #     0,
-        #     MarkerStyle(
-        #         color="green",
-        #         edge_width=8,
-        #         size=120,
-        #         zorder=10_000,
-        #         symbol="circle_cross",
-        #     ),
-        # )
-        # polygons = [p]
-        # print("***")
-        for p in polygons:
+        for p in polygons_split:
             polygon_coords = list(zip(*p.exterior.coords.xy))
-            # pprint(polygon_coords)
-            if not polygon_coords:
-                continue
             arr = np.array(polygon_coords)
             xs, ys = arr[:, 0], arr[:, 1]
             dx, dy = self._to_display(xs, ys, cs)
             dxy = list(zip(dx, dy))
-
-            # dxy = list(zip(dx, dy))
-            # hull = concave_hull(MultiPoint(dxy), ratio=0.3)
-            # dxy = list(zip(*hull.exterior.coords.xy))
-            # from shapely import box
-            # b = box(-1000, -1000, self.layout.axes.width, self.layout.axes.height)
-            # ix = ShapelyPolygon(dxy).intersection(b)
-            # print(len(ix.geoms))
-            # if ix.geom_type == "GeometryCollection":
-            #     print(len(ix.geoms))
-            #     return
-            # dxy =  list(zip(*ix.geoms[0].exterior.coords.xy))
-            # dxy = [(x, y) for x, y in dxy if x > 0 and y > 0]
-            # from pprint import pprint
-            # pprint(polygon_coords)
 
             attrs = attrs or {}
             _attrs = {**style.css(self.scale), **attrs}
