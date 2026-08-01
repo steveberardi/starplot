@@ -1,3 +1,4 @@
+import hashlib
 from enum import Enum
 from pathlib import Path
 
@@ -19,6 +20,7 @@ from starplot.styles import (
     LineStyle,
     PolygonStyle,
     GradientStops,
+    GradientType,
     LegendStyle,
 )
 from starplot.projections import (
@@ -74,6 +76,10 @@ def get_text_hw(text, font_size: int, font_weight: int = 400) -> tuple[float, fl
     width = len(text) * char_width
     height = font_size
     return height, width
+
+
+def gradient_hash(stops, length=8) -> str:
+    return hashlib.sha256(repr(stops).encode()).hexdigest()[:length]
 
 
 class Canvas:
@@ -283,14 +289,11 @@ class Canvas:
         background_attrs = self.style.axes.background.css(self.scale)
 
         if isinstance(self.style.axes.background.fill_color, list):
-            gradient_id = "axes-background-gradient"
-            gradient = create_gradient(
-                self.style.axes.background.fill_color,
-                self.style.axes.background.gradient_type,
-                gradient_id,
+            background_attrs["fill"] = self._get_or_create_gradient(
+                stops=self.style.axes.background.fill_color,
+                type=self.style.axes.background.gradient_type,
+                id="axes-background-gradient",
             )
-            self.layout.axes.defs.append(gradient)
-            background_attrs["fill"] = f"url(#{gradient_id})"
 
         dxy = list(self.clip_path_display.exterior.coords)
         self.background_element = Polygon(
@@ -308,24 +311,34 @@ class Canvas:
         axes_clip_path = ClipPath(
             id=axes_clip_path_id, children=[self.background_element]
         )
-        self.layout.axes.defs.append(axes_clip_path)
+        self.layout.axes.defs[axes_clip_path_id] = axes_clip_path
+
+    def _get_or_create_gradient(
+        self, stops: GradientStops, type: GradientType, id: str = None
+    ) -> str:
+        """
+        Returns URL of gradient element with specified id, or creates and returns it if it doesn't exist.
+        """
+        gid = id or gradient_hash(stops)
+        existing = self.layout.axes.defs.get(gid)
+
+        if existing:
+            return existing
+
+        gradient = create_gradient(stops, type, gid)
+        self.layout.axes.defs[gradient.id] = gradient
+        return gradient.url
 
     def marker(self, x, y, style: MarkerStyle) -> None:
         dx, dy = self._to_display(x, y)
 
         attrs = style.css(self.scale)
 
-        # TODO : make function for this gradient stuff
         if isinstance(style.color, list):
-            gradient_id = f"gradient-{self.gradient_counter}"
-            gradient = create_gradient(
-                style.color,
-                style.gradient_type,
-                gradient_id,
+            attrs["fill"] = self._get_or_create_gradient(
+                stops=style.color,
+                type=style.gradient_type,
             )
-            self.layout.axes.defs.append(gradient)
-            attrs["fill"] = f"url(#{gradient_id})"
-            self.gradient_counter += 1
 
         element = symbols.create(
             dx, dy, style.size * self.scale, style.symbol, attrs=attrs
@@ -354,15 +367,10 @@ class Canvas:
             attrs = {}
 
             if isinstance(color, list):
-                gradient_id = f"gradient-{self.gradient_counter}"
-                gradient = create_gradient(
-                    color,
-                    style.gradient_type,
-                    gradient_id,
+                attrs["fill"] = self._get_or_create_gradient(
+                    stops=color,
+                    type=style.gradient_type,
                 )
-                self.layout.axes.defs.append(gradient)
-                attrs["fill"] = f"url(#{gradient_id})"
-                self.gradient_counter += 1
             else:
                 attrs["fill"] = color
 
@@ -543,15 +551,10 @@ class Canvas:
             _attrs = {**style.css(self.scale), **attrs}
 
             if isinstance(style.fill_color, list):
-                gradient_id = f"gradient-{self.gradient_counter}"
-                gradient = create_gradient(
-                    style.fill_color,
-                    style.gradient_type,
-                    gradient_id,
+                _attrs["fill"] = self._get_or_create_gradient(
+                    stops=style.fill_color,
+                    type=style.gradient_type,
                 )
-                self.layout.axes.defs.append(gradient)
-                _attrs["fill"] = f"url(#{gradient_id})"
-                self.gradient_counter += 1
 
             self.layout.axes.elements.append(
                 (style.zorder, Polygon(points=dxy, attrs=_attrs))

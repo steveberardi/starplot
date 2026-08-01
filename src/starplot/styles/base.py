@@ -265,7 +265,7 @@ class MarkerStyle(BaseStyle):
     """Alpha value (controls transparency)"""
 
     gradient_type: GradientType = GradientType.RADIAL
-    
+
     zorder: int = ZOrderEnum.LAYER_2
     """Zorder of marker"""
 
@@ -291,7 +291,6 @@ class MarkerStyle(BaseStyle):
         return attrs
 
     def to_polygon_style(self):
-        
         return PolygonStyle(
             fill_color=self.color,
             edge_color=self.edge_color,
@@ -375,7 +374,9 @@ class PolygonStyle(BaseStyle):
     """Zorder of the polygon"""
 
     def css(self, scale: float = 1.0) -> dict:
-        solid_fill = self.fill_color is not None and not isinstance(self.fill_color, list)
+        solid_fill = self.fill_color is not None and not isinstance(
+            self.fill_color, list
+        )
         attrs = {
             "fill": self.fill_color.as_hex() if solid_fill else "none",
             "fill-opacity": self.alpha if self.fill_color else 0,
@@ -395,7 +396,9 @@ class PolygonStyle(BaseStyle):
         return attrs
 
     def to_marker_style(self, symbol: MarkerSymbolEnum):
-        solid_fill = self.fill_color is not None and not isinstance(self.fill_color, list)
+        solid_fill = self.fill_color is not None and not isinstance(
+            self.fill_color, list
+        )
         fill_color = self.fill_color.as_hex() if solid_fill else None
         return MarkerStyle(
             symbol=symbol,

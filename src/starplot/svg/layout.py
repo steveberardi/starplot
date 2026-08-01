@@ -33,18 +33,19 @@ class Region:
 
 @dataclass
 class AxesRegion(Region):
-    defs: list = field(default_factory=list)
+    defs: dict[str, Element] = field(default_factory=dict)
 
     def render(self, x, y) -> SVG:
         axes_sorted_by_z = sorted(self.elements, key=lambda e: e[0])
         axes_elements = [e for _, e in axes_sorted_by_z]
         return SVG(
+            id="axes",
             x=x,
             y=y,
             height=self.height,
             width=self.width,
             children=[
-                Defs(children=self.defs),
+                Defs(children=self.defs.values()),
                 Group(
                     id="axes",
                     attrs={
@@ -204,6 +205,7 @@ class Layout:
 
         figure_elements.extend([self.axes.render(x=axes_x, y=axes_y), *elements])
         figure_svg = SVG(
+            id="figure",
             height=height,
             width=width,
             children=figure_elements,

@@ -178,7 +178,7 @@ def color_by_bv(star: Star) -> str:
 
 def color_by_bv_gradient(star: Star) -> list:
     """
-    Calculates a radial gradient by the object's [B-V index](https://en.wikipedia.org/wiki/Color_index), 
+    Calculates a radial gradient by the object's [B-V index](https://en.wikipedia.org/wiki/Color_index),
     meant to resemble how a star looks through binoculars or a telescope: a bright core that gradually fades to fully transparent at the edge.
 
     Uses the same base color as `color_by_bv`, lightened at the center of the gradient and faded to transparent at the outer edge.

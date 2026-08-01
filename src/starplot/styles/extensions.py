@@ -37,75 +37,39 @@ FIGURE_TRANSPARENT = {
 }
 
 GRADIENT_DAYLIGHT = {
-    "axes": {
-        "background": {
-            "fill_color": gradients.DAYLIGHT
-        }
-    },
+    "axes": {"background": {"fill_color": gradients.DAYLIGHT}},
 }
 
 GRADIENT_BOLD_SUNSET = {
-    "axes": {
-        "background": {
-            "fill_color": gradients.BOLD_SUNSET
-        }
-    },
+    "axes": {"background": {"fill_color": gradients.BOLD_SUNSET}},
 }
 
 
 GRADIENT_CIVIL_TWILIGHT = {
-    "axes": {
-        "background": {
-            "fill_color": gradients.CIVIL_TWILIGHT
-        }
-    },
+    "axes": {"background": {"fill_color": gradients.CIVIL_TWILIGHT}},
 }
 
 GRADIENT_NAUTICAL_TWILIGHT = {
-    "axes": {
-        "background": {
-            "fill_color": gradients.NAUTICAL_TWILIGHT
-        }
-    },
+    "axes": {"background": {"fill_color": gradients.NAUTICAL_TWILIGHT}},
 }
 
 GRADIENT_ASTRONOMICAL_TWILIGHT = {
-    "axes": {
-        "background": {
-            "fill_color": gradients.ASTRONOMICAL_TWILIGHT
-        }
-    },
+    "axes": {"background": {"fill_color": gradients.ASTRONOMICAL_TWILIGHT}},
 }
 
 GRADIENT_TRUE_NIGHT = {
-    "axes": {
-        "background": {
-            "fill_color": gradients.TRUE_NIGHT
-        }
-    },
+    "axes": {"background": {"fill_color": gradients.TRUE_NIGHT}},
 }
 
 GRADIENT_PRE_DAWN = {
-    "axes": {
-        "background": {
-            "fill_color": gradients.PRE_DAWN
-        }
-    },
+    "axes": {"background": {"fill_color": gradients.PRE_DAWN}},
 }
 
 GRADIENT_OPTIC_FALLOFF = {
-    "axes": {
-        "background": {
-            "fill_color": gradients.OPTIC_FALLOFF
-        }
-    },
+    "axes": {"background": {"fill_color": gradients.OPTIC_FALLOFF}},
 }
 
 # needs work
 GRADIENT_OPTIC_FALL_IN = {
-    "axes": {
-        "background": {
-            "fill_color": gradients.OPTIC_FALL_IN
-        }
-    },
+    "axes": {"background": {"fill_color": gradients.OPTIC_FALL_IN}},
 }
