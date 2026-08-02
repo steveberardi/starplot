@@ -22,6 +22,7 @@ from starplot.styles import (
     GradientStops,
     GradientType,
     LegendStyle,
+    TableStyle,
 )
 from starplot.projections import (
     ProjectionBase,
@@ -36,6 +37,7 @@ from starplot.svg.elements import (
     ClipPath,
     Polygon,
     Polyline,
+    Line,
     Text,
     LinearGradient,
     RadialGradient,
@@ -616,6 +618,163 @@ class Canvas:
             location=style.location,
             margin_x=style.margin_x,
             margin_y=style.margin_y,
+        )
+
+    def table(
+        self,
+        headers: list[str],
+        rows: list[list],
+        style: TableStyle = None,
+        padding_x: float = 16,
+        padding_y: float = 14,
+    ) -> None:
+        """
+        Plots a table of data with headers.
+
+        The canvas only supports a single table (similar to the legend), so calling
+        this again replaces the previous table instead of adding another one.
+
+        Args:
+            headers: List of column header labels
+            rows: List of rows, where each row is a list of cell values (same length as `headers`). Values are converted to strings.
+            style: Style for the table (header/cell text, border, and top padding). Defaults to a `TableStyle` with sensible defaults.
+            padding_x: Horizontal padding within each cell, in pixels
+            padding_y: Vertical padding within each cell, in pixels
+        """
+        style = style or TableStyle()
+        header_style = style.header
+        cell_style = style.cell
+        border_style = style.border
+        top = style.padding_top
+
+        scale = self.scale
+        header_attrs = header_style.css(scale)
+        cell_attrs = cell_style.css(scale)
+        border_attrs = border_style.css(scale)
+
+        num_cols = len(headers)
+
+        def cell_width(value, style: LabelStyle) -> float:
+            _, w = get_text_hw(
+                str(value),
+                font_size=style.font_size * scale,
+                font_weight=style.font_weight,
+            )
+            return w
+
+        col_widths = [
+            max(
+                cell_width(headers[col], header_style),
+                *[cell_width(row[col], cell_style) for row in rows],
+            )
+            + padding_x * 2
+            for col in range(num_cols)
+        ]
+
+        header_height = header_style.font_size * scale + padding_y * 2
+        row_height = cell_style.font_size * scale + padding_y * 2
+        table_width = sum(col_widths)
+        table_height = header_height + row_height * len(rows)
+
+        def cell_text(value, x: float, row_top: float, row_height: float, style, attrs):
+            y = row_top + row_height / 2 + style.font_size * scale / 2.75
+            return Text(x=x, y=y, text=str(value), attrs=attrs)
+
+        elements = []
+
+        x = 0
+        for col in range(num_cols):
+            elements.append(
+                (
+                    1,
+                    cell_text(
+                        headers[col],
+                        x + padding_x,
+                        top,
+                        header_height,
+                        header_style,
+                        header_attrs,
+                    ),
+                )
+            )
+            if col > 0:
+                elements.append(
+                    (
+                        0,
+                        Line(
+                            x1=x,
+                            y1=top,
+                            x2=x,
+                            y2=top + table_height,
+                            attrs=border_attrs,
+                        ),
+                    )
+                )
+            x += col_widths[col]
+
+        elements.append(
+            (
+                0,
+                Line(
+                    x1=0,
+                    y1=top + header_height,
+                    x2=table_width,
+                    y2=top + header_height,
+                    attrs=border_attrs,
+                ),
+            )
+        )
+
+        y = header_height
+        for row in rows:
+            x = 0
+            for col in range(num_cols):
+                elements.append(
+                    (
+                        1,
+                        cell_text(
+                            row[col],
+                            x + padding_x,
+                            top + y,
+                            row_height,
+                            cell_style,
+                            cell_attrs,
+                        ),
+                    )
+                )
+                x += col_widths[col]
+            y += row_height
+            if y < table_height:
+                elements.append(
+                    (
+                        0,
+                        Line(
+                            x1=0,
+                            y1=top + y,
+                            x2=table_width,
+                            y2=top + y,
+                            attrs=border_attrs,
+                        ),
+                    )
+                )
+
+        elements.append(
+            (
+                0,
+                Rectangle(
+                    x=0,
+                    y=top,
+                    width=table_width,
+                    height=table_height,
+                    attrs=border_attrs,
+                ),
+            )
+        )
+
+        self.layout.table = Region(
+            elements=elements,
+            height=top + table_height,
+            width=table_width,
         )
 
     def _clip_path_border(

@@ -119,9 +119,6 @@ dso_nonexistant: *DSO
 dso_unknown: *DSO
 dso_duplicate: *DSO
 
-info_text:
-  font_color: hsl(209, 53%, 90%)
-
 gridlines:
   label:
     font_alpha: 1

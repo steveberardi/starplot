@@ -19,6 +19,7 @@ from starplot.styles import (
     extensions,
     use_style,
     PolygonStyle,
+    TableStyle,
 )
 from starplot.utils import azimuth_to_string
 
@@ -263,8 +264,8 @@ class OpticPlot(
         )
         return df
 
-    @use_style(LabelStyle, "info_text")
-    def info(self, style: LabelStyle = None):
+    @use_style(LabelStyle, "table")
+    def info(self, style: TableStyle = None):
         """
         Plots a table with info about the plot, including:
 
@@ -275,6 +276,34 @@ class OpticPlot(
         Args:
             style: If `None`, then the plot's style for info text will be used
         """
+
+        dt_str = (
+            self.observer.dt.strftime("%m/%d/%Y @ %H:%M:%S")
+            + " "
+            + self.observer.dt.tzname()
+        )
+
+        headers = [
+            "Target (Alt/Az)",
+            "Target (RA/DEC)",
+            "Observer Lat, Lon",
+            "Observer Date/Time",
+            f"Optic - {self.optic.label}",
+        ]
+        rows = [[
+            f"{self.pos_alt:.0f}\N{DEGREE SIGN} / {self.pos_az:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az)})",
+            f"{(self.ra / 15):.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
+            f"{self.observer.lat:.2f}\N{DEGREE SIGN}, {self.observer.lon:.2f}\N{DEGREE SIGN}",
+            dt_str,
+            str(self.optic),
+        ]]
+
+        self.canvas.table(
+            headers=headers,
+            rows=rows,
+            style=style
+        )
+
 
         return
 

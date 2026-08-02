@@ -33,7 +33,6 @@ def scratchpad():
 
     start = time.time()
 
-
     style = PlotStyle().extend(
         # extensions.BLUE_MEDIUM,
         extensions.BLUE_NIGHT,
@@ -61,10 +60,10 @@ def scratchpad():
         resolution=4000,
         scale=0.7,
         clip_path=geometry.circle(
-            center=(0,90),
+            center=(0, 90),
             diameter_degrees=180,
             num_pts=500,
-        )
+        ),
     )
     p.gridlines(
         labels=False,
@@ -75,7 +74,7 @@ def scratchpad():
     p.constellation_borders()
 
     p.stars(
-        where=[_.magnitude < 7], 
+        where=[_.magnitude < 7],
         bayer_labels=True,
         flamsteed_labels=True,
         # where_labels=[False]
@@ -101,12 +100,12 @@ def scratchpad():
     p.celestial_equator()
     p.milky_way()
 
-
     duration = time.time() - start
 
     print(duration)
 
     import marimo
+
     svg = p.canvas.render()
     marimo.Html(svg)
     return

@@ -27,8 +27,7 @@ zenith:
 
 title:
   font_color: hsl(136, 0%, 0%)
-info_text:
-  font_color: hsl(136, 0%, 0%)
+
 star:
   label:
     font_color: hsl(136, 0%, 78%)

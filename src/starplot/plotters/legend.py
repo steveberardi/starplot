@@ -41,7 +41,7 @@ class LegendPlotterMixin:
         !!! note "Star Magnitude Scale - Limitations"
             - Only supports size functions that determine size based on magnitude
             - Does not automatically determine the magnitude range of the stars you already plotted
-        
+
         Args:
             title: Title of the legend, which will be plotted at the top
             style: Styling of the legend. If None, then the plot's style (specified when creating the plot) will be used

@@ -24,9 +24,6 @@ legend:
   title:
     font_color: hsl(210, 29%, 94%)
 
-info_text:
-  font_color: hsl(210, 29%, 94%)
-
 gridlines:
   label:
     font_alpha: 1

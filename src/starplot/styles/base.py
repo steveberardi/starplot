@@ -279,13 +279,16 @@ class MarkerStyle(BaseStyle):
         }
         if solid_fill:
             attrs["fill"] = self.color.as_hex()
-        
+
         if self.alpha != 1:
             attrs["fill-opacity"] = self.alpha
 
         if self.dash_spacing:
             attrs.update(
-                {"pathLength": 100, "stroke-dasharray": f"0 {round(100 / self.dash_spacing, 4)}"}
+                {
+                    "pathLength": 100,
+                    "stroke-dasharray": f"0 {round(100 / self.dash_spacing, 4)}",
+                }
             )
         return attrs
 
@@ -538,6 +541,22 @@ class PathStyle(BaseStyle):
     """Style for the path's label (see [LabelStyle][starplot.styles.LabelStyle])"""
 
 
+class TableStyle(BaseStyle):
+    """Defines the style for a table of data (see [Canvas.table][starplot.svg.canvas.Canvas.table])"""
+
+    header: LabelStyle = LabelStyle(font_weight=FontWeightEnum.BOLD)
+    """Style for the header row's text (see [LabelStyle][starplot.styles.LabelStyle])"""
+
+    cell: LabelStyle = LabelStyle()
+    """Style for the body cells' text (see [LabelStyle][starplot.styles.LabelStyle])"""
+
+    border: LineStyle = LineStyle(color="#c5c5c5", width=1)
+    """Style for the table's grid lines and outer border (see [LineStyle][starplot.styles.LineStyle])"""
+
+    padding_top: int = 20
+    """Padding above the table, in pixels. Creates space between the axes and the table."""
+
+
 class LegendStyle(BaseStyle):
     """Defines the style for the map legend."""
 
@@ -693,15 +712,23 @@ class PlotStyle(BaseStyle):
     )
     """Styling for the title of the plot"""
 
-    # Info text
-    info_text: LabelStyle = LabelStyle(
-        font_size=30,
-        zorder=ZOrderEnum.LAYER_5,
-        font_family="Inter",
-        line_spacing=1.2,
-        anchor_point=AnchorPointEnum.BOTTOM_CENTER,
+    table: TableStyle = TableStyle(
+        header=LabelStyle(
+            font_size=32,
+            zorder=ZOrderEnum.LAYER_5,
+            font_family="Inter",
+            font_weight=FontWeightEnum.BOLD,
+            anchor_point=AnchorPointEnum.BOTTOM_CENTER,
+        ),
+        cell=LabelStyle(
+            font_size=32,
+            zorder=ZOrderEnum.LAYER_5,
+            font_family="Inter",
+            anchor_point=AnchorPointEnum.BOTTOM_CENTER,
+        ),
+        padding_top=24,
     )
-    """Styling for info text (only applies to zenith and optic plots)"""
+    """Styling for the data table of the plot, which is always plotted below the axes."""
 
     # Stars
     star: ObjectStyle = ObjectStyle(

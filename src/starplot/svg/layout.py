@@ -82,7 +82,7 @@ class Layout:
     axes_footer: Region = field(default_factory=Region)
     title: Region = field(default_factory=Region)
     legend: LegendRegion = field(default_factory=LegendRegion)
-    tables: Region = field(default_factory=Region)
+    table: Region = field(default_factory=Region)
 
     def render(self, style, text_as_path: bool):
         """
@@ -95,7 +95,7 @@ class Layout:
             + self.title.height
             + max(self.axes.height, self.axes_border.height)
             + self.axes_footer.height
-            + self.tables.height
+            + self.table.height
         )
         width = style.figure.padding * 2 + max(self.axes.width, self.axes_border.width)
 
@@ -130,6 +130,14 @@ class Layout:
 
         if not self.axes_border.is_empty:
             elements.append(self.axes_border.render(x=axes_border_x, y=axes_border_y))
+
+        if not self.table.is_empty:
+            table_y = (
+                axes_border_y
+                + max(self.axes.height, self.axes_border.height)
+                + self.axes_footer.height
+            )
+            elements.append(self.table.render(x=axes_border_x, y=table_y))
 
         if not self.legend.is_empty:
             legend_x = 0
