@@ -33,8 +33,8 @@ p.planets(
     # since we're plotting the planets as their "true size"
     # the 'auto' offset won't work (it's not supported yet!)
     # so we manually set the offsets here:
-    style__label__offset_x=50,
-    style__label__offset_y=-20,
+    style__label__offset_x=90,
+    style__label__offset_y=-30,
     style__label__font_size=56,
     style__marker__color="#fcdb72",
 )
