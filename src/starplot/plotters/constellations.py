@@ -123,14 +123,16 @@ class ConstellationPlotterMixin:
                 elif x2 - x1 > 60:
                     x1 += 360
 
-                xy_lines = []
+                # maybe dont need this? canvas line function does it
+                # xy_lines = []
+                # if x2 > 360:
+                #     xy_lines = [*split_line_at_meridian((x1, y1), (x2, y2))]
+                # elif x1 > 360:
+                #     xy_lines = [*split_line_at_meridian((x2, y2), (x1, y1))]
+                # else:
+                #     xy_lines = [[(x1, y1), (x2, y2)]]
 
-                if x2 > 360:
-                    xy_lines = [*split_line_at_meridian((x1, y1), (x2, y2))]
-                elif x1 > 360:
-                    xy_lines = [*split_line_at_meridian((x2, y2), (x1, y1))]
-                else:
-                    xy_lines = [[(x1, y1), (x2, y2)]]
+                xy_lines = [[(x1, y1), (x2, y2)]]
 
                 display_lines = [
                     [self.canvas._to_display(*p) for p in line] for line in xy_lines
