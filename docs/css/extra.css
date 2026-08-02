@@ -126,7 +126,6 @@ h2.doc-heading, h3.doc-heading {
     
     .doc-class h2.doc-heading {
         color: #fff;
-        /* background-color:hsl(209, 53%, 37%); */
         background-color: hsl(206, 53%, 30%);
     }
 
