@@ -1219,6 +1219,3 @@ class PlotStyle(BaseStyle):
                 raise TypeError("Style overrides must be dictionary types.")
             merge_dict(style_dict, a)
         return PlotStyle.parse_obj(style_dict)
-
-    def has_gradient_background(self):
-        return isinstance(self.background_color, list)

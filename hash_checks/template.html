@@ -107,6 +107,10 @@
                             </tr>
 
                         </table>
+                        
+                        {% if values['exception'] %}
+                        <pre>{{ values['exception'] }}</pre>
+                        {% endif %}
 
                         <img src="{{ values['filename'] }}" class="img-result ">
                     </div>

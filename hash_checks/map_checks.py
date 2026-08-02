@@ -147,7 +147,6 @@ def check_map_orion_extra():
             "marker": {
                 "size": 30,
                 "symbol": "square",
-                "fill": "full",
                 "color": "#ff6868",
             },
             "label": {
@@ -182,7 +181,7 @@ def check_map_orion_extra():
     )
 
     mercator_base.legend()
-    mercator_base.export(filename, padding=0.5)
+    mercator_base.export(filename)
     return filename
 
 
@@ -209,7 +208,7 @@ def check_map_coma_berenices_dso_size():
     p.constellations()
     p.constellation_borders()
     p.constellation_labels(collision_handler=HANDLER)
-    p.export(filename, padding=0.5)
+    p.export(filename)
     return filename
 
 
@@ -316,7 +315,7 @@ def check_map_scope_bino_fov():
         optic=binoculars,
     )
     p.title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
-    p.export(filename, padding=0.3)
+    p.export(filename)
     return filename
 
 
@@ -347,7 +346,7 @@ def check_map_custom_stars():
         -5,
         style={"font_size": 20, "offset_x": 40, "offset_y": 100},
     )
-    p.export(filename, padding=0.3)
+    p.export(filename)
     return filename
 
 
@@ -382,7 +381,7 @@ def check_map_wrapping():
     p.constellations()
     p.constellation_labels(collision_handler=HANDLER)
     p.title("Andromeda + nebula + Vega")
-    p.export(filename, padding=0.3)
+    p.export(filename)
     return filename
 
 
@@ -417,36 +416,8 @@ def check_map_mollweide():
     )
     p.milky_way()
     p.gridlines(labels=False)
-    p.export(filename, padding=0.1)
+    p.export(filename)
     return filename
-
-
-# TODO : re-enable this when we solidify the mollweide gradient option
-# def check_map_mollweide_gradient():
-#     filename = DATA_PATH / "map-mollweide-gradient.png"
-#     style_gradient = STYLE.extend({"background_color": "#ffffff00"})
-#     p = MapPlot(
-#         projection=Projection.MOLLWEIDE,
-#         style=style_gradient,
-#         resolution=RESOLUTION,
-#         autoscale=True,
-#         gradient_preset=[
-#             [0.0, "#000000"],
-#             [0.4, "#151e47"],
-#             [0.45, "#2c3675"],
-#             [0.55, "#232c6d"],
-#             [0.6, "#182250"],
-#             [1.0, "#000000"],
-#         ],
-#     )
-#     p.stars(
-#         where=[_.magnitude < 4],
-#         where_labels=[_.magnitude < 1.8],
-#     )
-#     p.constellations()
-#     p.milky_way(style={"alpha": 0.2, "color": "#9C9C9C"})
-#     p.export(filename, padding=0.1)
-#     return filename
 
 
 def check_map_gridlines():
@@ -480,7 +451,7 @@ def check_map_gridlines():
         style__line__alpha=0.2,
     )
 
-    p.export(filename, padding=0.3)
+    p.export(filename)
 
     return filename
 
@@ -513,7 +484,6 @@ def check_map_moon_phase_waxing_crescent():
     )
     filename = DATA_PATH / "map-moon-phase-waxing-crescent.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -554,7 +524,6 @@ def check_map_plot_limit_by_geometry():
 
     filename = DATA_PATH / "map-limit-by-geometry.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -603,7 +572,6 @@ def check_map_plot_custom_clip_path_virgo():
 
     filename = DATA_PATH / "map-custom-clip-path-virgo.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -622,7 +590,6 @@ def check_map_label_callables():
 
     p.polygon(
         geometry=m45.geometry,
-        style__color=None,
         style__fill_color=STYLE.dso_open_cluster.marker.color,
         style__edge_color="red",
         style__edge_width=16,
@@ -638,7 +605,6 @@ def check_map_label_callables():
 
     filename = DATA_PATH / "map-m45-label-callables.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -659,7 +625,6 @@ def check_map_milky_way_multi_polygon():
 
     filename = DATA_PATH / "map-milky-way-multi-polygon.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -687,7 +652,6 @@ def check_map_allow_all_collisions():
     p.dsos(where=[_.magnitude < 10], where_true_size=[False])
     filename = DATA_PATH / "map-allow-all-collisions.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -714,7 +678,6 @@ def check_map_allow_marker_and_line_collisions():
     p.dsos(where=[_.magnitude < 10], where_true_size=[False])
     filename = DATA_PATH / "map-allow-some-collisions.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -779,10 +742,8 @@ def check_map_constellation_clip_path():
 
     p.title(constellation.name, style__line_spacing=80)
 
-    p.ax.set_axis_off()  # hide the axis background that's outside the clip path
-
     filename = DATA_PATH / "map-constellation-clip-path.png"
-    p.export(filename, padding=0.5)
+    p.export(filename)
 
     return filename
 

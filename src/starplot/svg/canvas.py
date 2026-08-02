@@ -803,8 +803,11 @@ class Canvas:
                     label, style.label.font_size * self.scale, style.label.font_weight
                 )
                 for _, label, _ in labels
+                if label
             ]
-            border_width = max(text_widths)
+            border_width = (
+                max(text_widths) if text_widths else style.line.width * self.scale
+            )
         else:
             border_width = style.line.width * self.scale
 
@@ -853,6 +856,8 @@ class Canvas:
             # 3. add text element at intersection
 
             for xy, text, locations in labels:
+                if not text:
+                    continue
                 arr = np.array(xy)
                 xs, ys = arr[:, 0], arr[:, 1]
                 dx, dy = self._to_display(xs, ys)
@@ -931,14 +936,16 @@ class Canvas:
         """
         Exports the SVG to an SVG or PNG file. Type is inferred by filename.
         """
-        if filename.endswith("png"):
+        _filename = str(filename)
+
+        if _filename.endswith("png"):
             png.export_png_cairo(
-                filename=filename, svg_source=self.render(text_as_path=True)
+                filename=_filename, svg_source=self.render(text_as_path=True)
             )
             # png.export_png_resvg(
             #     filename=filename, svg_source=self.render(text_as_path=True)
             # )
             return
 
-        with open(filename, "w", buffering=1024 * 1024) as outfile:
+        with open(_filename, "w", buffering=1024 * 1024) as outfile:
             outfile.write(self.render(text_as_path=text_as_path))

@@ -98,9 +98,6 @@ class OpticPlot(
         observer = observer or Observer()
         style = style or PlotStyle().extend(extensions.OPTIC)
 
-        if isinstance(optic, Camera) and style.has_gradient_background():
-            raise ValueError("Gradient backgrounds are not yet supported for cameras.")
-
         self.ra = ra
         self.dec = dec
         self.raise_on_below_horizon = raise_on_below_horizon

@@ -134,7 +134,7 @@ def check_optic_clipping():
     optic_plot.nebula()
     optic_plot.title("Orion Nebula")
     filename = DATA_PATH / "optic-clipping.png"
-    optic_plot.export(filename, padding=0.4)
+    optic_plot.export(filename)
     return filename
 
 
@@ -252,7 +252,6 @@ def check_optic_m45_camera():
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-camera.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
@@ -276,7 +275,6 @@ def check_optic_camera_rotated():
     optic_plot.info()
     filename = DATA_PATH / "optic-camera-rotated-m45.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
@@ -301,7 +299,6 @@ def check_optic_solar_eclipse_binoculars():
     optic_plot.sun(true_size=True)
     filename = DATA_PATH / "optic-binoculars-eclipse.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
@@ -324,7 +321,6 @@ def check_optic_moon_phase_waxing_crescent():
     )
     filename = DATA_PATH / "optic-moon-phase-waxing-crescent.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
@@ -351,7 +347,6 @@ def check_optic_moon_phase_new():
     )
     filename = DATA_PATH / "optic-moon-phase-new.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
@@ -379,7 +374,6 @@ def check_optic_moon_phase_full():
     )
     filename = DATA_PATH / "optic-moon-phase-full.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
@@ -445,5 +439,4 @@ def check_optic_iss_moon_transit():
 
     filename = DATA_PATH / "optic-iss-moon-transit.png"
     p.export(filename)
-    p.close_fig()
     return filename

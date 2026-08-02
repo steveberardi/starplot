@@ -1,6 +1,7 @@
 import sys
 import inspect
 import time
+import traceback
 import multiprocessing as mp
 
 from pathlib import Path
@@ -68,7 +69,7 @@ class Hashio:
         return str(imagehash.colorhash(img))
 
     def _dhash(self, img) -> str:
-        r, g, b, a = img.split()
+        r, g, b = img.convert("RGB").split()
         hash_red = imagehash.dhash(r)
         hash_green = imagehash.dhash(g)
         hash_blue = imagehash.dhash(b)
@@ -80,13 +81,22 @@ class Hashio:
     def _call_wrapper(self, c):
         func_name = c.__name__[6:]
         console.print(f"{func_name}...")
-        filename = c()
-        img = Image.open(filename)
-        return func_name, {
-            "filename": str(filename),
-            "dhash": self._dhash(img),
-            "phash": self._phash(img),
-        }
+        try:
+            filename = c()
+            img = Image.open(filename)
+            return func_name, {
+                "filename": str(filename),
+                "dhash": self._dhash(img),
+                "phash": self._phash(img),
+                "exception": None,
+            }
+        except:
+            return func_name, {
+                "filename": "EXCEPTION",
+                "dhash": "EXCEPTION",
+                "phash": "EXCEPTION",
+                "exception": traceback.format_exc(),
+            }
 
     def _get_hashes(self) -> dict:
         """Gets hashes for all callables"""
@@ -107,6 +117,11 @@ class Hashio:
 
         console.print("\nChecking hashes...", style="bold")
         for func_name, values in hashes.items():
+            if values["exception"]:
+                failed[func_name] = values
+                console.print(f"{func_name}...EXCEPTION", style="yellow")
+                continue
+
             values["filename"] = Path(values["filename"]).relative_to(HERE)
 
             if func_name not in hashlock:
