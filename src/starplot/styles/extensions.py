@@ -31,6 +31,7 @@ NORD = load("nord.yml")
 CB_WONG = load("cb_wong.yml")
 COLOR_PRINT = load("color_print.yml")
 PUBLICATION = load("publication.yml")
+STARPLOT = load("starplot.yml")
 
 FIGURE_TRANSPARENT = {
     "figure": {"background_color": None},
