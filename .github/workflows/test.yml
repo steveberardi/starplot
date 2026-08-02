@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
-    - name: Build Docker Image
-      run: make build
+    - name: Install dependencies
+      run: make install
     - name: Build sky.db
       run: make db CI=true
     - name: Check Lint

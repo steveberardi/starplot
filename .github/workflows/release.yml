@@ -11,8 +11,8 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Build Docker Image
-      run: make build
+    - name: Install dependencies
+      run: make install
     
     - name: Check Lint
       run: make lint CI=true
