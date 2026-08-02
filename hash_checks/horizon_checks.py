@@ -9,7 +9,7 @@ DATA_PATH = HERE / "data"
 
 STYLE = styles.PlotStyle().extend(
     styles.extensions.BLUE_MEDIUM,
-    styles.extensions.MAP,
+    styles.extensions.HORIZON,
 )
 
 RESOLUTION = 4096
@@ -101,7 +101,7 @@ def check_horizon_gradient_background():
         style=styles.PlotStyle().extend(
             styles.extensions.BLUE_GOLD,
             styles.extensions.GRADIENT_PRE_DAWN,
-            styles.extensions.MAP,
+            styles.extensions.HORIZON,
         ),
         resolution=RESOLUTION,
         scale=1,

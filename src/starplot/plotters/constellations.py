@@ -123,6 +123,7 @@ class ConstellationPlotterMixin:
                 elif x2 - x1 > 60:
                     x1 += 360
 
+                # TODO : move spatial index to canvas? so the line function on canvas does the splitting
                 # maybe dont need this? canvas line function does it
                 # xy_lines = []
                 # if x2 > 360:

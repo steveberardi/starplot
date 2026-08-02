@@ -372,7 +372,7 @@ class PolygonStyle(BaseStyle):
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
 
-    zorder: int = 100
+    zorder: int = ZOrderEnum.LAYER_3
     """Zorder of the polygon"""
 
     def css(self, scale: float = 1.0) -> dict:
