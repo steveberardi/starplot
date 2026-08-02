@@ -32,6 +32,7 @@ test:
 	uv run pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html tests/
 
 check-hashes:
+	rm -f hash_checks/data/*.png
 	uv run python hash_checks/hashio.py check
 
 lock-hashes:
