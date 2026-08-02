@@ -278,15 +278,14 @@ class MarkerStyle(BaseStyle):
             "stroke-linecap": CapStyleEnum(self.dash_capstyle).css(),
         }
         if solid_fill:
-            attrs.update(
-                {
-                    "fill": self.color.as_hex(),
-                    "fill-opacity": self.alpha,
-                }
-            )
+            attrs["fill"] = self.color.as_hex()
+        
+        if self.alpha != 1:
+            attrs["fill-opacity"] = self.alpha
+
         if self.dash_spacing:
             attrs.update(
-                {"pathLength": 100, "stroke-dasharray": f"0 {100 / self.dash_spacing}"}
+                {"pathLength": 100, "stroke-dasharray": f"0 {round(100 / self.dash_spacing, 4)}"}
             )
         return attrs
 
@@ -379,11 +378,13 @@ class PolygonStyle(BaseStyle):
         )
         attrs = {
             "fill": self.fill_color.as_hex() if solid_fill else "none",
-            "fill-opacity": self.alpha if self.fill_color else 0,
             "stroke": self.edge_color.as_hex() if self.edge_color else "none",
             "stroke-width": round(self.edge_width * scale, 2),
-            "stroke-opacity": self.alpha,
         }
+        if self.alpha != 1:
+            attrs["fill-opacity"] = self.alpha
+            attrs["stroke-opacity"] = self.alpha
+
         if isinstance(self.line_style, str):
             ls_css = LineStyleEnum(self.line_style).css()
             if ls_css:

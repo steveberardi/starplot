@@ -372,7 +372,7 @@ class Canvas:
             else:
                 attrs["fill"] = color
 
-            if alpha:
+            if alpha != 1:
                 attrs["fill-opacity"] = alpha
 
             element = symbols.create(
