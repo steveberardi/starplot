@@ -449,6 +449,9 @@ class Canvas:
             polygons_split = [p]
 
         for p in polygons_split:
+            if p.is_empty:
+                continue
+
             polygon_coords = list(zip(*p.exterior.coords.xy))
             arr = np.array(polygon_coords)
             xs, ys = arr[:, 0], arr[:, 1]

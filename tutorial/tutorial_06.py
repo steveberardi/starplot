@@ -1,4 +1,4 @@
-from starplot import MapPlot, Miller, callables, _
+from starplot import MapPlot, Miller, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -23,7 +23,7 @@ p.stars(
     where=[_.magnitude <= 3],
     # here we make the stars bigger by passing in a custom size function (i.e. a callable)
     # you'll learn more about this later in the tutorial...
-    size_fn=lambda star: (20 - star.magnitude) * 5,
+    size_fn=lambda star: (20 - star.magnitude) * 4,
     # use an 8-pointed star for bright star markers:
     style__marker__symbol="star_4",
     style__label__offset_x=8,
