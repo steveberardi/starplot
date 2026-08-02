@@ -274,7 +274,7 @@ class OpticPlot(
         - Optic details (type, magnification, FOV)
 
         Args:
-            style: If `None`, then the plot's style for info text will be used
+            style: If `None`, then the plot's style for tables will be used
         """
 
         dt_str = (
@@ -303,61 +303,6 @@ class OpticPlot(
             rows=rows,
             style=style
         )
-
-
-        return
-
-        # TODO
-        self.ax.set_xlim(-1.22 * self.optic.xlim, 1.22 * self.optic.xlim)
-        self.ax.set_ylim(-1.1 * self.optic.ylim, 1.1 * self.optic.ylim)
-        self.optic.transform(
-            self.ax
-        )  # apply transform again because new xy limits will undo the transform
-
-        dt_str = (
-            self.observer.dt.strftime("%m/%d/%Y @ %H:%M:%S")
-            + " "
-            + self.observer.dt.tzname()
-        )
-        font_size = style.font_size * self.scale
-
-        column_labels = [
-            "Target (Alt/Az)",
-            "Target (RA/DEC)",
-            "Observer Lat, Lon",
-            "Observer Date/Time",
-            f"Optic - {self.optic.label}",
-        ]
-        values = [
-            f"{self.pos_alt:.0f}\N{DEGREE SIGN} / {self.pos_az:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az)})",
-            f"{(self.ra / 15):.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
-            f"{self.observer.lat:.2f}\N{DEGREE SIGN}, {self.observer.lon:.2f}\N{DEGREE SIGN}",
-            dt_str,
-            str(self.optic),
-        ]
-        widths = [0.15, 0.15, 0.2, 0.2, 0.3]
-
-        table = self.ax.table(
-            cellText=[values],
-            cellLoc="center",
-            colWidths=widths,
-            rowLabels=[None],
-            colLabels=column_labels,
-            loc="bottom",
-            edges="vertical",
-        )
-        table.auto_set_font_size(False)
-        table.set_fontsize(style.font_size)
-        table.scale(1, 5)
-
-        # Apply style to all cells
-        for row in [0, 1]:
-            for col in range(len(values)):
-                table[row, col].set_text_props(**style.matplot_kwargs(self.scale))
-
-        # Apply some styles only to the header row
-        for col in range(len(values)):
-            table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.2)
 
     def _plot_border(self):
         optic_polygon = self.optic.polygon(self.pos_az, self.pos_alt)

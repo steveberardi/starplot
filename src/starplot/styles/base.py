@@ -553,8 +553,11 @@ class TableStyle(BaseStyle):
     border: LineStyle = LineStyle(color="#c5c5c5", width=1)
     """Style for the table's grid lines and outer border (see [LineStyle][starplot.styles.LineStyle])"""
 
-    padding_top: int = 20
+    padding_top: int = 40
     """Padding above the table, in pixels. Creates space between the axes and the table."""
+
+    alignment: AlignmentEnum = AlignmentEnum.CENTER
+    """Horizontal alignment of the table, relative to the axes region"""
 
 
 class LegendStyle(BaseStyle):

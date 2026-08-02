@@ -1,7 +1,13 @@
 from dataclasses import dataclass, field
 
 from starplot.svg.elements import Element, Group, SVG, Rectangle, Defs
-from starplot.styles import TitleStyle, LegendStyle, PathStyle, LegendLocationEnum
+from starplot.styles import (
+    TitleStyle,
+    LegendStyle,
+    PathStyle,
+    LegendLocationEnum,
+    AlignmentEnum,
+)
 
 
 @dataclass
@@ -76,13 +82,18 @@ class LegendRegion(Region):
 
 
 @dataclass
+class TableRegion(Region):
+    alignment: AlignmentEnum = AlignmentEnum.CENTER
+
+
+@dataclass
 class Layout:
     axes: AxesRegion = field(default_factory=AxesRegion)
     axes_border: Region = field(default_factory=Region)
     axes_footer: Region = field(default_factory=Region)
     title: Region = field(default_factory=Region)
     legend: LegendRegion = field(default_factory=LegendRegion)
-    table: Region = field(default_factory=Region)
+    table: TableRegion = field(default_factory=TableRegion)
 
     def render(self, style, text_as_path: bool):
         """
@@ -137,7 +148,14 @@ class Layout:
                 + max(self.axes.height, self.axes_border.height)
                 + self.axes_footer.height
             )
-            elements.append(self.table.render(x=axes_border_x, y=table_y))
+            axes_span = max(self.axes.width, self.axes_border.width)
+            if self.table.alignment == AlignmentEnum.RIGHT:
+                table_x = axes_border_x + axes_span - self.table.width
+            elif self.table.alignment == AlignmentEnum.CENTER:
+                table_x = axes_border_x + (axes_span - self.table.width) / 2
+            else:
+                table_x = axes_border_x
+            elements.append(self.table.render(x=table_x, y=table_y))
 
         if not self.legend.is_empty:
             legend_x = 0

@@ -30,7 +30,7 @@ from starplot.projections import (
     CoordinateReferenceSystem,
 )
 from starplot.svg import symbols, png
-from starplot.svg.layout import Layout, Region, LegendRegion
+from starplot.svg.layout import Layout, Region, LegendRegion, TableRegion
 from starplot.svg.elements import (
     Group,
     Rectangle,
@@ -625,8 +625,8 @@ class Canvas:
         headers: list[str],
         rows: list[list],
         style: TableStyle = None,
-        padding_x: float = 16,
-        padding_y: float = 14,
+        padding_x: float = 28,
+        padding_y: float = 20,
     ) -> None:
         """
         Plots a table of data with headers.
@@ -771,10 +771,11 @@ class Canvas:
             )
         )
 
-        self.layout.table = Region(
+        self.layout.table = TableRegion(
             elements=elements,
             height=top + table_height,
             width=table_width,
+            alignment=style.alignment,
         )
 
     def _clip_path_border(
