@@ -24,27 +24,26 @@ This will install the required [spatial extension](https://duckdb.org/docs/stabl
 
 ---
 
-## Troubleshooting
+??? tip "Troubleshooting"
+    
+    **GEOS / GDAL errors on installation** - You may need to build these dependencies from source for your environment. See their websites for details: [GEOS](https://libgeos.org/), [GDAL](https://gdal.org/)
 
-### GEOS / GDAL errors on installation
+    **Segmentation Faults** - If you're seeing "segmentation fault" errors when creating maps, you may have to install [shapely](https://shapely.readthedocs.io/en/stable/index.html) from source for your runtime environment:
+    ```
+    pip install --no-binary :all: shapely
+    ```
+    *Warning: this may take awhile (5+ minutes), because it builds shapely from source.*
 
-If you see any errors related to GEOS and/or GDAL when trying to install Starplot, then you may need to build those dependencies from source for your environment.
+    <h3>Other Issue?</h3>
 
-See their websites for details:
+    Please [open an issue on our GitHub page](https://github.com/steveberardi/starplot/issues) and include the following information: 
 
-- [GEOS](https://libgeos.org/)
-- [GDAL](https://gdal.org/)
+    - Starplot version
+    - Python version
+    - Operating system (and version)
+    - Full stack trace of error
 
-### Segmentation Faults
+    <br/>
 
-If you're seeing "segmentation fault" errors when creating maps, you may have to install [shapely](https://shapely.readthedocs.io/en/stable/index.html) from source for your runtime environment:
-```
-pip install --no-binary :all: shapely
-```
-*Warning: this may take awhile (5+ minutes), because it builds shapely from source.*
-
-### Other Issues
-
-If you experience another problem, then please [open an issue on our GitHub page](https://github.com/steveberardi/starplot/issues) and include the following information: operating system (and version), Python version, Starplot version, and Matplotlib version.
 
 <br/><br/><br/>

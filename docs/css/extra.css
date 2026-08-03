@@ -17,6 +17,10 @@
     text-decoration: none;
 }
 
+.md-typeset h1 {
+    margin-bottom: 1em;
+}
+
 .md-content {
     max-width: 900px;
 }
@@ -606,6 +610,13 @@ td[data-column-id=bayer] {
 }
 
 .star-list {
+    border-radius: 10px;
+    background-color: rgb(232, 242, 251);
+    padding: 24px 16px;
+    h3 {
+        padding-left: 1em;
+        margin-top: 0;
+    }
     li {
         list-style: none;
         position: relative;
@@ -623,3 +634,17 @@ td[data-column-id=bayer] {
     }
 }
 
+.cards.feature-cards {
+    li {
+        align-items: start;
+        background-color: rgb(237, 241, 247);
+    }
+
+    h3 {
+        margin-top: 0;
+    }
+}
+
+.text-end {
+    text-align: end;
+}

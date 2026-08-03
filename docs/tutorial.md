@@ -16,7 +16,7 @@ Here's an overview of what the tutorial covers:
 8. [Using callables](tutorial/08.md)
 9. [Where to go from here](tutorial/09.md)
 
-Estimated time to complete: 30 minutes
+_:octicons-clock-24: Estimated time to complete: 30 minutes_
 
 
 [Let's Begin! :octicons-arrow-right-24:](tutorial/01.md){ .md-button .md-button--primary .text-right }
