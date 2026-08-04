@@ -260,6 +260,7 @@ def check_map_with_planets_gradient():
         style=styles.PlotStyle().extend(
             styles.extensions.BLUE_GOLD,
             styles.extensions.GRADIENT_PRE_DAWN,
+            styles.extensions.MAP,
         ),
         resolution=RESOLUTION,
         autoscale=True,

@@ -2,7 +2,7 @@
 
 axes:
   background:
-    gradient_type: radial
+    gradient_type: linear
 
 constellation_lines:
   width: 3.4

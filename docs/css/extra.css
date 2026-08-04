@@ -75,6 +75,10 @@ code.doc-symbol {
     margin-top: 0 !important;
 }
 
+.ms-1 {
+    margin-left: 4px;
+}
+
 /* Object Class Headings */
 .doc-object.doc-class {
     border-top: 2px solid rgba(200, 200, 200, 0.6);
@@ -609,6 +613,10 @@ td[data-column-id=bayer] {
     font-size: 1.1em !important;
 }
 
+.fs-1 {
+    font-size: 1.5em !important;
+}
+
 .star-list {
     border-radius: 10px;
     background-color: rgb(232, 242, 251);
@@ -648,3 +656,10 @@ td[data-column-id=bayer] {
 .text-end {
     text-align: end;
 }
+
+.title-icon {
+    display: flex;
+    align-items: center;
+    font-size: 1.6em !important;
+}
+

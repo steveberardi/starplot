@@ -1,4 +1,7 @@
 from typing import Callable
+from pathlib import Path
+
+
 
 import pandas as pd
 
@@ -7,6 +10,8 @@ from skyfield.api import Star as SkyfieldStar
 from starplot import callables, geometry
 from starplot.coordinates import CoordinateSystem
 
+from starplot.styles import ObjectStyle, use_style
+from starplot.profile import profile
 from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Star, Optic, Camera
@@ -29,6 +34,7 @@ from starplot.plotters import (
     TextPlotterMixin,
     LegendPlotterMixin,
 )
+from starplot.plotters.stars import size_by_magnitude
 
 from starplot.plotters.text import CollisionHandler
 
@@ -311,4 +317,66 @@ class OpticPlot(
                 edge_color=self.style.border_bg_color.as_hex(),
                 edge_width=40,
             ),
+        )
+
+    @profile
+    @use_style(ObjectStyle, "star")
+    def stars(
+        self,
+        where: list = None,
+        where_labels: list = None,
+        catalog: Catalog | Path | str = BIG_SKY_MAG11,
+        style: ObjectStyle = None,
+        size_fn: Callable[[Star], float] = None,
+        alpha_fn: Callable[[Star], float] = None,
+        color_fn: Callable[[Star], str] = None,
+        label_fn: Callable[[Star], str] = Star.get_label,
+        legend_label: str = "Star",
+        bayer_labels: bool = False,
+        flamsteed_labels: bool = False,
+        sql: str = None,
+        sql_labels: str = None,
+        collision_handler: CollisionHandler = None,
+    ):
+        """
+        Plots stars
+
+        Args:
+            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
+            catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
+            style: If `None`, then the plot's style for stars will be used
+            size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
+            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
+            color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
+            label_fn: Callable for determining the label of each star.
+            legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
+            bayer_labels: If True, then Bayer labels for stars will be plotted.
+            flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
+            sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
+            sql_labels: SQL query for selecting stars that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+        """
+
+        optic_star_multiplier = self.FIELD_OF_VIEW_MAX / self.optic.true_fov
+
+        size_fn_default = lambda s: size_by_magnitude(s) * optic_star_multiplier * 0.5
+        size_fn = size_fn or size_fn_default
+
+
+        super().stars(
+            where=where,
+            where_labels=where_labels,
+            catalog=catalog,
+            style=style,
+            size_fn=size_fn,
+            alpha_fn=alpha_fn,
+            color_fn=color_fn,
+            label_fn=label_fn,
+            legend_label=legend_label,
+            bayer_labels=bayer_labels,
+            flamsteed_labels=flamsteed_labels,
+            sql=sql,
+            sql_labels=sql_labels,
+            collision_handler=collision_handler,
         )
