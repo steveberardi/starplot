@@ -40,8 +40,13 @@ Starplot is a Python library for creating star charts and maps of the sky
 
 </div>
 
----
 
+<div class="dotted-line"></div>
+
+!!! question inline end "Help"
+    - [Open an Issue on GitHub](installation.md)
+    - [Chat on Discord](tutorial.md)
+    - [Email us](examples.md)
 
 <span class="title-icon" markdown>:material-rocket-launch: __Getting Started__{.ms-1}</span>
 
@@ -49,16 +54,21 @@ Starplot is a Python library for creating star charts and maps of the sky
   2. [Tutorial](tutorial.md) - quick 30-minute intro to Starplot
   3. [Examples](examples.md) - examples of more plots and features
 
----
+<br/>
+
+
+
+
+<!-- ---
 
 <span class="title-icon" markdown>:material-comment-question: __Getting Help__{.ms-1}</span>
 
   1. [Open an Issue on GitHub](installation.md)
   2. [Ask on our Discord](tutorial.md)
   3. [Email us](examples.md)
+ -->
 
-
----
+<div class="dotted-line"></div>
 
 --8<-- "docs/snippets/_newsletter.html"
 

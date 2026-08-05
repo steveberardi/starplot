@@ -524,9 +524,9 @@ td[data-column-id=bayer] {
 
 .info-panel {
     padding: 20px 28px;
-    border: 1px solid hsl(209, 43%, 68%);
+    border: 1px solid hsl(209, 43%, 72%);
     border-radius: 10px;
-    box-shadow: 4px 4px 4px rgb(159, 159, 159);
+    /* box-shadow: 4px 4px 4px rgb(159, 159, 159); */
 }
 
 
@@ -543,7 +543,7 @@ td[data-column-id=bayer] {
 }
 
 .mw-660 {
-    max-width: 660px;
+    /* max-width: 660px; */
 }
 
 .filter-blue {
@@ -663,3 +663,7 @@ td[data-column-id=bayer] {
     font-size: 1.6em !important;
 }
 
+.dotted-line {
+    margin: 28px 0px;
+    border-top: 3px dotted #174567;
+}
