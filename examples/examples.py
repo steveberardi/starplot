@@ -69,6 +69,6 @@ if __name__ == "__main__":
 
     # Copy all images to docs directory
     print("Copying images to examples directory...")
-    subprocess.call("cp *.png ../docs/images/examples/", shell=True)
+    subprocess.call("cp *.png *.svg ../docs/images/examples/", shell=True)
 
     print(f"{time.time() - start}")

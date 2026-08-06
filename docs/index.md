@@ -23,7 +23,7 @@ Starplot is a Python library for creating star charts and maps of the sky
 {.text-end }
 
 
-<div class="star-list" >
+<div class="star-list star-panel">
 
   <h3>More Features</h3>
 

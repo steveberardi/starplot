@@ -136,8 +136,8 @@ def create_star_function(num_points: int):
             r = size / 2 if i % 2 == 0 else size / 5
             points.append(
                 (
-                    x + r * math.cos(angle),
-                    y + r * math.sin(angle),
+                    round(x + r * math.cos(angle), 2),
+                    round(y + r * math.sin(angle), 2),
                 )
             )
         return Polygon(points=points, attrs=attrs)

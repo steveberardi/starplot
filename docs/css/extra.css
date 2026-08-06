@@ -613,13 +613,6 @@ td[data-column-id=bayer] {
 }
 
 .star-list {
-    border-radius: 10px;
-    background-color: rgb(232, 242, 251);
-    padding: 24px 16px;
-    h3 {
-        padding-left: 1em;
-        margin-top: 0;
-    }
     li {
         list-style: none;
         position: relative;
@@ -636,6 +629,18 @@ td[data-column-id=bayer] {
         background-size: contain;
     }
 }
+
+.star-panel {
+    border-radius: 10px;
+    background-color: rgb(232, 242, 251);
+    padding: 24px 16px;
+
+    h3 {
+        padding-left: 1em;
+        margin-top: 0;
+    }
+}
+
 
 .cards.feature-cards {
     li {

@@ -45,8 +45,10 @@ scripts/temp/
 
 # Documentation Generated Files
 examples/*.png
+examples/*.svg
 examples/*.jpg
 docs/images/examples/*.png
+docs/images/examples/*.svg
 docs/images/examples/*.jpg
 tutorial/*.png
 docs/images/tutorial/*.png
