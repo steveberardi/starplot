@@ -19,11 +19,11 @@ observer = Observer(
 )
 
 p = HorizonPlot(
-    altitude=(0, 60),
+    altitude=(0, 55),
     azimuth=(135, 225),
     observer=observer,
     style=style,
-    resolution=2800,
+    resolution=3000,
     scale=1,
 )
 
@@ -42,6 +42,6 @@ p.messier(
 )
 
 p.constellation_labels()
-p.horizon()
+# p.horizon()
 
 p.export("horizon_gradient.png")

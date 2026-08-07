@@ -448,7 +448,7 @@ class LabelStyle(BaseStyle):
     Styling properties for a label.
     """
 
-    font_size: float = 15
+    font_size: float = 36
     """Font size of the label, in points"""
 
     font_weight: FontWeightEnum = FontWeightEnum.NORMAL
@@ -640,7 +640,7 @@ class AxesStyle(BaseStyle):
         edge_width=2, edge_color="#000", fill_color="#fff"
     )
 
-    background_color: GradientStops | ColorStr | None = ColorStr("#fff")
+    # background_color: GradientStops | ColorStr | None = ColorStr("#fff")
     """
     Background color of the axes.
 
@@ -676,9 +676,6 @@ class PlotStyle(BaseStyle):
     axes: AxesStyle = AxesStyle()
     """Styling for the axes of the plot, which is where the map is plotted."""
 
-    axes_background: PolygonStyle = PolygonStyle(
-        edge_width=2, edge_color="#000", fill_color="#fff"
-    )
 
     figure: FigureStyle = FigureStyle()
     """
@@ -706,7 +703,7 @@ class PlotStyle(BaseStyle):
 
     # Title
     title: TitleStyle = TitleStyle(
-        font_size=70,
+        font_size=85,
         font_weight=FontWeightEnum.BOLD,
         zorder=ZOrderEnum.LAYER_5,
         line_spacing=150,
@@ -737,11 +734,11 @@ class PlotStyle(BaseStyle):
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             zorder=ZOrderEnum.LAYER_3 + 1,
-            size=40,
+            size=20,
             edge_color=None,
         ),
         label=LabelStyle(
-            font_size=24,
+            font_size=40,
             font_weight=FontWeightEnum.BOLD,
             zorder=ZOrderEnum.LAYER_3 + 2,
             offset_x="auto",
@@ -751,8 +748,8 @@ class PlotStyle(BaseStyle):
     """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
 
     bayer_labels: LabelStyle = LabelStyle(
-        font_size=21,
-        font_weight=FontWeightEnum.EXTRA_LIGHT,
+        font_size=36,
+        font_weight=FontWeightEnum.LIGHT,
         font_name="GFS Didot",
         zorder=ZOrderEnum.LAYER_4,
         anchor_point=AnchorPointEnum.TOP_LEFT,
@@ -762,8 +759,8 @@ class PlotStyle(BaseStyle):
     """Styling for Bayer labels of stars"""
 
     flamsteed_labels: LabelStyle = LabelStyle(
-        font_size=13,
-        font_weight=FontWeightEnum.NORMAL,
+        font_size=26,
+        font_weight=FontWeightEnum.LIGHT,
         zorder=ZOrderEnum.LAYER_4,
         anchor_point=AnchorPointEnum.BOTTOM_LEFT,
         offset_x="auto",
@@ -779,7 +776,7 @@ class PlotStyle(BaseStyle):
             alpha=1,
         ),
         label=LabelStyle(
-            font_size=28,
+            font_size=32,
             font_weight=FontWeightEnum.BOLD,
             offset_x="auto",
             offset_y="auto",
@@ -796,7 +793,7 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_4,
         ),
         label=LabelStyle(
-            font_size=28,
+            font_size=32,
             font_weight=FontWeightEnum.BOLD,
             offset_x="auto",
             offset_y="auto",
@@ -812,7 +809,7 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_4 - 100,
         ),
         label=LabelStyle(
-            font_size=28,
+            font_size=32,
             font_weight=FontWeightEnum.BOLD,
         ),
     )
@@ -962,9 +959,9 @@ class PlotStyle(BaseStyle):
 
     constellation_borders: LineStyle = LineStyle(
         color="#000",
-        width=1.8,
+        width=2.5,
         # style=LineStyleEnum.DASHED,
-        style=(0, (5, 5)),
+        style=(0, (3, 6)),
         alpha=0.5,
         zorder=ZOrderEnum.LAYER_3,
     )

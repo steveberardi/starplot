@@ -667,3 +667,12 @@ td[data-column-id=bayer] {
     margin: 28px 0px;
     border-top: 3px dotted #174567;
 }
+
+
+.square-crop {
+  width: 120px !important;
+  height: 80px !important;
+  object-fit: cover;
+  object-position: center;
+}
+

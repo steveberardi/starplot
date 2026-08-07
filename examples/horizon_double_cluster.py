@@ -38,7 +38,7 @@ p = HorizonPlot(
     observer=observer,
     style=style,
     resolution=4096,
-    scale=1.35,
+    scale=1,
 )
 p.constellations(where=[_.iau_id.isin(["cas", "umi", "per"])])
 p.stars(

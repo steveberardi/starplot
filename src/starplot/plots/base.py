@@ -42,7 +42,7 @@ LOG_FORMATTER = logging.Formatter(
 LOG_HANDLER.setFormatter(LOG_FORMATTER)
 LOGGER.addHandler(LOG_HANDLER)
 
-DEFAULT_RESOLUTION = 4096
+DEFAULT_RESOLUTION = 4000
 
 
 class BasePlot(StarPlotterMixin, ABC):
@@ -60,7 +60,7 @@ class BasePlot(StarPlotterMixin, ABC):
         observer: Observer = None,
         ephemeris: str = "de440s.bsp",
         style: PlotStyle = None,
-        resolution: int = 4096,
+        resolution: int = 4000,
         point_label_handler: CollisionHandler = None,
         area_label_handler: CollisionHandler = None,
         path_label_handler: CollisionHandler = None,
@@ -93,7 +93,7 @@ class BasePlot(StarPlotterMixin, ABC):
         if self.autoscale:
             self.scale = self.resolution / DEFAULT_RESOLUTION
 
-        self.scale *= 1.28
+        # self.scale *= 1.28
 
         self.debug = StarplotSettings.debug or bool(kwargs.get("debug"))
         self.debug_text = StarplotSettings.debug or bool(kwargs.get("debug_text"))

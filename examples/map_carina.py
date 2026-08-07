@@ -2,7 +2,7 @@ from starplot import MapPlot, Equidistant, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.BLUE_MEDIUM,
+    extensions.BLUE_GOLD,
     extensions.MAP,
 )
 
@@ -13,8 +13,8 @@ p = MapPlot(
     dec_min=-70,
     dec_max=-55,
     style=style,
-    resolution=3600,
-    scale=1.4,
+    resolution=3000,
+    scale=1,
 )
 
 p.gridlines(
@@ -42,7 +42,6 @@ mag_filters = (_.magnitude < 11) | (_.magnitude.isnull())
 
 p.open_clusters(
     where=[_.size < 0.2, _.magnitude < 11],
-    where_labels=[False],
     label_fn=dso_label,
     where_true_size=[False],
 )

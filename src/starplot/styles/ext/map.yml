@@ -5,12 +5,12 @@ axes:
     gradient_type: linear
 
 constellation_lines:
-  width: 3.4
+  width: 6
 
 constellation_labels:
-  font_size: 34
+  font_size: 50
   font_weight: 800
 
 star:
   label:
-    font_size: 22
+    font_size: 42

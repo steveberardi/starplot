@@ -18,7 +18,7 @@ p = MapPlot(
     style=style,
     resolution=3400,
     clip_path=Polygon(canis_major.border.coords),
-    scale=1.2,
+    scale=1,
 )
 p.constellations(
     where=[_.iau_id == "cma"],

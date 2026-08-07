@@ -4,11 +4,6 @@ from starplot.styles import PlotStyle, extensions
 style = PlotStyle().extend(
     extensions.BLUE_DARK,
     extensions.MAP,
-    {
-        "axes": {
-            "background_color": "#174567",
-        }
-    },
 )
 
 p = MapPlot(

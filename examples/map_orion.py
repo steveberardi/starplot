@@ -2,7 +2,7 @@ from starplot import MapPlot, Miller, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.BLUE_LIGHT,
+    extensions.BLUE_MEDIUM,
     extensions.MAP,
 )
 
@@ -13,7 +13,7 @@ p = MapPlot(
     dec_min=-15,
     dec_max=25,
     style=style,
-    resolution=4096,
+    resolution=3600,
     autoscale=True,
 )
 p.gridlines()
