@@ -31,7 +31,7 @@ class MarkerStyle(BaseStyle):
     """Edge color of marker. Can be a hex, rgb, hsl, or word string."""
 
     edge_width: float = 1
-    """Edge width of marker, in points. Not available for all marker symbols."""
+    """Edge width of marker, in pixels. Not available for all marker symbols."""
 
     line_style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
     """Edge line style. Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
@@ -46,7 +46,7 @@ class MarkerStyle(BaseStyle):
     """Symbol for marker"""
 
     size: float = 22
-    """Size of marker in points"""
+    """Size of marker in pixels"""
 
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
@@ -96,7 +96,7 @@ class LineStyle(BaseStyle):
     """
 
     width: float = 4
-    """Width of line in points"""
+    """Width of line in pixels"""
 
     color: Optional[ColorStr] = ColorStr("#000")
     """Color of the line. Can be a hex, rgb, hsl, or word string."""
@@ -137,7 +137,7 @@ class PolygonStyle(BaseStyle):
     """
 
     edge_width: float = 1
-    """Width of the polygon's edge in points"""
+    """Width of the polygon's edge in pixels"""
 
     edge_color: Optional[ColorStr] = None
     """Edge color of the polygon"""
@@ -229,8 +229,8 @@ class LabelStyle(BaseStyle):
     Styling properties for a label.
     """
 
-    font_size: float = 36
-    """Font size of the label, in points"""
+    font_size: float = 24
+    """Font size of the label, in pixels"""
 
     font_weight: FontWeightEnum = FontWeightEnum.NORMAL
     """Font weight (e.g. normal, bold, ultra bold, etc)"""
@@ -257,14 +257,14 @@ class LabelStyle(BaseStyle):
     """Anchor point of label"""
 
     border_width: float = 0
-    """Width of border (also known as 'halos') around the text, in points"""
+    """Width of border (also known as 'halos') around the text, in pixels"""
 
     border_color: Optional[ColorStr] = None
     """Color of border (also known as 'halos') around the text"""
 
     offset_x: Union[float, int, str] = 0
     """
-    Horizontal offset of the label, in points. Negative values supported.
+    Horizontal offset of the label, in pixels. Negative values supported.
     
     
     **Auto Mode** (_experimental_): If the label is plotted as part of a marker (e.g. stars, via `marker()`, etc), then you can also
@@ -274,7 +274,7 @@ class LabelStyle(BaseStyle):
 
     offset_y: Union[float, int, str] = 0
     """
-    Vertical offset of the label, in points. Negative values supported.
+    Vertical offset of the label, in pixels. Negative values supported.
     
     **Auto Mode** (_experimental_): If the label is plotted as part of a marker (e.g. stars, via `marker()`, etc), then you can also
     specify the offset as `"auto"` which will calculate the offset automatically based on the marker's size and place

@@ -11,7 +11,7 @@ style = PlotStyle().extend(
 p = GalaxyPlot(
     style=style,
     resolution=2000,
-    scale=0.65,
+    scale=0.4,
 )
 p.gridlines()
 

@@ -4,8 +4,6 @@ title: Star Charts and Maps of the Sky in Python
 
 # Welcome to Starplot
 
-
-
 Starplot is a Python library for creating star charts and maps of the sky
 {.text-subtitle}
 
@@ -26,11 +24,6 @@ Starplot is a Python library for creating star charts and maps of the sky
 <img src="images/examples/star_chart_detail-sm.png" class="square-crop off-glb"> <h3 markdown>[More examples :material-arrow-right:](examples.md)</h3>
 </a>
 </div>
-
-<!-- 
-[More examples :material-arrow-right:](examples.md){ .text-subtitle .fs-3 }
-{.text-end } -->
-
 
 <div class="star-list star-panel">
 
@@ -66,19 +59,9 @@ Starplot is a Python library for creating star charts and maps of the sky
 
 <br/>
 
-<!-- ---
-
-<span class="title-icon" markdown>:material-comment-question: __Getting Help__{.ms-1}</span>
-
-  1. [Open an Issue on GitHub](installation.md)
-  2. [Ask on our Discord](tutorial.md)
-  3. [Email us](examples.md)
- -->
-
 <div class="dotted-line"></div>
 
 --8<-- "docs/snippets/_newsletter.html"
-
 
 ![Python](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge&color=6388b0){.rounded}
 ![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=57a8a8){.rounded}

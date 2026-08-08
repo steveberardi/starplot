@@ -21,10 +21,10 @@ p.stars(
         _.dec > 45,
         _.dec < 64,
     ],
-    size_fn=lambda s: 58,  # make stars a constant size
+    size_fn=lambda s: 64,  # make stars a constant size
     style__marker__symbol="star",
     style__marker__color="hsl(59, 100%, 51%)",
-    style__label__font_size=16,
-    style__label__font_weight=500,
+    style__label__font_size=52,
+    style__label__font_weight=600,
 )
 p.export("map_big_dipper.png")
