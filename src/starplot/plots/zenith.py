@@ -39,7 +39,7 @@ class ZenithPlot(MapPlot):
     def __init__(
         self,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
         point_label_handler: CollisionHandler = None,

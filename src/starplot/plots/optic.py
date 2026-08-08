@@ -1,20 +1,17 @@
 from typing import Callable
 from pathlib import Path
 
-
-
 import pandas as pd
 
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables, geometry
-from starplot.coordinates import CoordinateSystem
 
 from starplot.styles import ObjectStyle, use_style
 from starplot.profile import profile
 from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
 from starplot.mixins import ExtentMaskMixin
-from starplot.models import Star, Optic, Camera
+from starplot.models import Star, Optic
 from starplot.models.observer import Observer
 from starplot.projections import CoordinateReferenceSystem, Equidistant
 from starplot.styles import (
@@ -37,17 +34,6 @@ from starplot.plotters import (
 from starplot.plotters.stars import size_by_magnitude
 
 from starplot.plotters.text import CollisionHandler
-
-"""
-
-TODO:
-
-    - info function
-    - invert x/y
-    - testing
-    - make border plot in figure coordinates
-
-"""
 
 
 class OpticPlot(
@@ -88,7 +74,7 @@ class OpticPlot(
         dec: float,
         optic: Optic,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
         point_label_handler: CollisionHandler = None,

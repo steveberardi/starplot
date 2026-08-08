@@ -6,3 +6,9 @@ GLOBAL_BOUNDS = [
     359.99999999,
     90,
 ]
+
+
+DE_421 = "de421.bsp"
+DE_440S = "de440s.bsp"
+DE_440 = "de440.bsp"
+DE_441 = "de441.bsp"

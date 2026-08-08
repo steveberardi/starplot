@@ -70,7 +70,7 @@ class GalaxyPlot(
         self,
         center_lon: float = 0,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
         point_label_handler: CollisionHandler = None,
