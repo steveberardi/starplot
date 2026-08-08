@@ -935,7 +935,9 @@ class Canvas:
         """Renders the canvas to an SVG string"""
         return self.layout.render(self.style, text_as_path)
 
-    def export(self, filename: str | Path, text_as_path: bool = False, scale: float = 1) -> None:
+    def export(
+        self, filename: str | Path, text_as_path: bool = False, scale: float = 1
+    ) -> None:
         """
         Exports the SVG to an SVG or PNG file. Type is inferred by filename.
         """
@@ -943,7 +945,9 @@ class Canvas:
 
         if _filename.endswith("png"):
             png.export_png_cairo(
-                filename=_filename, svg_source=self.render(text_as_path=True), scale=scale
+                filename=_filename,
+                svg_source=self.render(text_as_path=True),
+                scale=scale,
             )
             # png.export_png_resvg(
             #     filename=filename, svg_source=self.render(text_as_path=True)

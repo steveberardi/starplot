@@ -18,20 +18,20 @@ p = MapPlot(
     resolution=4000,
     scale=0.8,
     clip_path=geometry.circle(
-        center=(0,90),
+        center=(0, 90),
         diameter_degrees=150,
         num_pts=500,
-    )
+    ),
 )
 p.gridlines(labels=False)
 p.constellations()
 p.constellation_borders()
 
 p.stars(
-    where=[_.magnitude < 7], 
+    where=[_.magnitude < 7],
     # bayer_labels=True,
     # flamsteed_labels=True,
-    where_labels=[False]
+    where_labels=[False],
 )
 p.open_clusters(
     where=[_.magnitude < 12],

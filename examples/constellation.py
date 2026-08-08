@@ -1,5 +1,20 @@
-from starplot import MapPlot, Miller, StereoNorth, StereoSouth, Constellation, Star, CollisionHandler, _
-from starplot.styles import PlotStyle, extensions, PolygonStyle, AnchorPointEnum, PathStyle
+from starplot import (
+    MapPlot,
+    Miller,
+    StereoNorth,
+    StereoSouth,
+    Constellation,
+    Star,
+    CollisionHandler,
+    _,
+)
+from starplot.styles import (
+    PlotStyle,
+    extensions,
+    PolygonStyle,
+    AnchorPointEnum,
+    PathStyle,
+)
 
 from shapely import Polygon
 
@@ -30,7 +45,7 @@ if extent[0] < 0:
 
 print(constellation.iau_id)
 
-center_ra = (extent[0] + extent[2]) / 2 
+center_ra = (extent[0] + extent[2]) / 2
 if center_ra < 0:
     center_ra += 360
 elif center_ra > 360:
@@ -52,8 +67,8 @@ p.constellations(where=[_.iau_id == constellation.iau_id])
 
 
 p.stars(
-    where=[_.hip.isin(constellation.star_hip_ids)], 
-    where_labels=[False], 
+    where=[_.hip.isin(constellation.star_hip_ids)],
+    where_labels=[False],
     # size_fn=lambda s: 30,
     style__marker__symbol="star",
     # style__marker__edge_color="#fff",
@@ -61,4 +76,3 @@ p.stars(
 )
 
 p.export(f"{constellation.iau_id}.svg")
-

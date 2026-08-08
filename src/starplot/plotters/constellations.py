@@ -132,7 +132,8 @@ class ConstellationPlotterMixin:
                 xy_lines = [[(x1, y1), (x2, y2)]]
 
                 display_lines = [
-                    [self.canvas._to_display(*p) for p in line] for line in [*split_at_antimeridian([(x1, y1), (x2, y2)])]
+                    [self.canvas._to_display(*p) for p in line]
+                    for line in [*split_at_antimeridian([(x1, y1), (x2, y2)])]
                 ]
 
                 lines.extend(xy_lines)
