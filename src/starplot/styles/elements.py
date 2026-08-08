@@ -40,7 +40,7 @@ class MarkerStyle(BaseStyle):
     """Style of dash endpoints"""
 
     dash_spacing: float | None = None
-    """SVG ONLY - Spacing for dashes"""
+    """Spacing for dashes"""
 
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.CIRCLE
     """Symbol for marker"""
@@ -104,8 +104,8 @@ class LineStyle(BaseStyle):
     style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
     """Style of the line (e.g. solid, dashed, etc). Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
 
-    dash_capstyle: CapStyleEnum = CapStyleEnum.PROJECTING
-    """Style of dash endpoints"""
+    cap_style: CapStyleEnum = CapStyleEnum.PROJECTING
+    """Style of line/dash endpoints"""
 
     alpha: float = 1.0
     """Alpha value (controls transparency)"""
@@ -119,7 +119,7 @@ class LineStyle(BaseStyle):
             "stroke": self.color.as_hex() if self.color else "none",
             "stroke-width": round(self.width * scale, 2),
             "stroke-opacity": self.alpha,
-            "stroke-linecap": CapStyleEnum(self.dash_capstyle).css(),
+            "stroke-linecap": CapStyleEnum(self.cap_style).css(),
         }
         if isinstance(self.style, (str, LineStyleEnum)):
             ls_css = LineStyleEnum(self.style).css()

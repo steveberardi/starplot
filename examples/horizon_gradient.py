@@ -10,25 +10,26 @@ style = PlotStyle().extend(
     extensions.GRADIENT_PRE_DAWN,
 )
 
-dt = datetime(2025, 7, 26, 23, 30, 0, 0, tzinfo=ZoneInfo("Europe/London"))
+dt = datetime(2025, 8, 20, 21, 0, 0, 0, tzinfo=ZoneInfo("Pacific/Honolulu"))
 
 observer = Observer(
-    lat=55.079112,  # Stonehaugh, England
-    lon=-2.327469,
+    lat=19.8222,  # Mauna Kea Observatories
+    lon=-155.4749,
     dt=dt,
 )
 
 p = HorizonPlot(
-    altitude=(0, 55),
-    azimuth=(135, 225),
+    altitude=(0, 60),
+    azimuth=(155, 250),
     observer=observer,
     style=style,
-    resolution=3000,
+    resolution=4000,
     scale=1,
 )
 
 p.constellations()
 p.milky_way()
+p.gridlines()
 
 p.stars(
     where=[_.magnitude < 5],
@@ -42,6 +43,5 @@ p.messier(
 )
 
 p.constellation_labels()
-# p.horizon()
 
 p.export("horizon_gradient.png")
