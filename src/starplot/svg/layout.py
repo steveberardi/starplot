@@ -229,7 +229,12 @@ class Layout:
                 )
             )
 
-        figure_elements.extend([self.axes.render(x=axes_x, y=axes_y), *elements])
+        figure_elements.extend(
+            [
+                self.axes.render(x=axes_x, y=axes_y),
+                *elements,
+            ]
+        )
         figure_svg = SVG(
             id="figure",
             height=height,

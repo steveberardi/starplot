@@ -73,7 +73,6 @@ def lerp(start: float, end: float, t: float) -> float:
     return start + (end - start) * t
 
 
-
 def gradient_hash(stops, length=8) -> str:
     return hashlib.sha256(repr(stops).encode()).hexdigest()[:length]
 
@@ -584,18 +583,19 @@ class Canvas:
                     font_weight=style.labels.font_weight,
                     italic=style.labels.font_style == "italic",
                 )
-                height += (
-                    max(marker_size * self.scale, h)
-                    + style.label_padding
+                height += max(marker_size * self.scale, h) + style.label_padding
+                w += (
+                    marker_size * self.scale
+                    + style.symbol_padding
+                    + style.padding_x * 2
                 )
-                w += marker_size * self.scale + style.symbol_padding + style.padding_x * 2
-                
+
                 width = max(width, w)
 
                 y += h + style.label_padding
 
             if i < len(sections) - 1:
-                height += style.label_padding #* 2.5
+                height += style.label_padding  # * 2.5
             else:
                 height += style.label_padding
 
@@ -800,7 +800,7 @@ class Canvas:
         label_height = style.label.font_size * self.scale
 
         # TODO : use fonts.get_text_hw
-        
+
         def text_width(text, font_size, font_weight):
             char_width = font_size * (0.75 if font_weight >= 500 else 0.7)
             return len(text) * char_width

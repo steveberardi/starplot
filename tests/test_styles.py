@@ -12,9 +12,12 @@ from starplot.styles import PlotStyle, FontWeightEnum, LineStyle, LineStyleEnum
     [
         dict(axes={"background": {"fill_color": "#fff"}}),
         dict(axes={"background": {"fill_color": Color("#ff8e8e")}}),
-        dict(axes={"background": {"fill_color":"rgb(1,2,3)"}}),
+        dict(axes={"background": {"fill_color": "rgb(1,2,3)"}}),
         dict(star={"label": {"font_weight": FontWeightEnum.BOLD}}),
-        dict(axes={"background":{"fill_color": "#fff"}}, constellation_lines={"width": 2}),
+        dict(
+            axes={"background": {"fill_color": "#fff"}},
+            constellation_lines={"width": 2},
+        ),
     ],
 )
 def test_plot_style_valid(kwargs):
