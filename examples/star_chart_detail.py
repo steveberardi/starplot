@@ -16,7 +16,7 @@ p = ZenithPlot(
     observer=observer,
     style=PlotStyle().extend(
         extensions.BLUE_NIGHT,
-        extensions.GRADIENT_TRUE_NIGHT,
+        # extensions.GRADIENT_TRUE_NIGHT,
         extensions.FIGURE_TRANSPARENT,
     ),
     resolution=3600,
@@ -40,6 +40,7 @@ p.open_clusters(
 p.ecliptic()
 p.celestial_equator()
 p.milky_way()
+p.gridlines()
 
 p.marker(
     ra=12.36 * 15,

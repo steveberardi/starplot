@@ -45,7 +45,7 @@ p = MapPlot(
     style=style,
     clip_path=Polygon(constellation.border.coords),
     resolution=800,
-    scale=0.95,
+    scale=1.05,
 )
 
 p.constellations(where=[_.iau_id == constellation.iau_id])
@@ -54,7 +54,10 @@ p.constellations(where=[_.iau_id == constellation.iau_id])
 p.stars(
     where=[_.hip.isin(constellation.star_hip_ids)], 
     where_labels=[False], 
+    # size_fn=lambda s: 30,
     style__marker__symbol="star",
+    # style__marker__edge_color="#fff",
+    style__marker__edge_width=0,
 )
 
 p.export(f"{constellation.iau_id}.svg")

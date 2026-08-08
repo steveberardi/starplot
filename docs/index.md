@@ -17,7 +17,14 @@ Starplot is a Python library for creating star charts and maps of the sky
 - <img src="images/examples/optic_m45.png" width="600"> <h3>Optic Charts</h3> shows what you'll see through an optic (e.g. telescope) at a specific time and place
 - <img src="images/examples/galaxy.png" height="600" width="600"> <h3>Galaxy Charts</h3> shows the entire sky in galactic coordinates
 
-- <img src="images/examples/map_big_dipper-sm.png" class="square-crop"> <img src="images/examples/map_virgo_cluster-sm.png" class="square-crop"> <img src="images/examples/map_carina-sm.png" class="square-crop"> <img src="images/examples/optic_solar_eclipse-sm.png" class="square-crop"> <h3 markdown>[More examples :material-arrow-right:](examples.md)</h3>
+- <a href="/examples/">
+<img src="images/examples/map_big_dipper-sm.png" class="square-crop off-glb"> 
+<img src="images/examples/map_virgo_cluster-sm.png" class="square-crop off-glb"> 
+<img src="images/examples/map_carina-sm.png" class="square-crop off-glb"> 
+<img src="images/examples/optic_solar_eclipse-sm.png" class="square-crop off-glb"> 
+<img src="images/examples/map_milky_way_stars-sm.png" class="square-crop off-glb">
+<img src="images/examples/star_chart_detail-sm.png" class="square-crop off-glb"> <h3 markdown>[More examples :material-arrow-right:](examples.md)</h3>
+</a>
 </div>
 
 <!-- 

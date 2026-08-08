@@ -670,8 +670,8 @@ td[data-column-id=bayer] {
 
 
 .square-crop {
-  width: 120px !important;
-  height: 80px !important;
+  width: 122px !important;
+  height: 100px !important;
   object-fit: cover;
   object-position: center;
 }
