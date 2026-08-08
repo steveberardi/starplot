@@ -404,7 +404,7 @@ code.raw {
 
 .tutorial-top-nav {
     border-bottom: 1px solid hsl(216, 50%, 84%);
-    padding: 10px 14px;
+    padding: 10px 0px;
     margin-bottom: 28px;
     font-weight: 600;
 

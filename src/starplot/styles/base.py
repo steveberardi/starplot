@@ -345,7 +345,7 @@ class LineStyle(BaseStyle):
             if ls_css:
                 attrs["stroke-dasharray"] = ls_css
         elif self.style:
-            attrs["stroke-dasharray"] = ",".join([str(n) for n in self.style[1]])
+            attrs["stroke-dasharray"] = ",".join([str(n) for n in self.style])
 
         return attrs
 
@@ -393,7 +393,7 @@ class PolygonStyle(BaseStyle):
             if ls_css:
                 attrs["stroke-dasharray"] = ls_css
         elif self.line_style:
-            attrs["stroke-dasharray"] = ",".join([str(n) for n in self.line_style[1]])
+            attrs["stroke-dasharray"] = ",".join([str(n) for n in self.line_style])
 
         # attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
 
@@ -819,7 +819,7 @@ class PlotStyle(BaseStyle):
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            line_style=(0, (1, 2)),
+            line_style=(1, 2),
             dash_spacing=28,
             dash_capstyle=CapStyleEnum.ROUND,
             edge_width=2,
@@ -832,7 +832,7 @@ class PlotStyle(BaseStyle):
     dso_association_stars: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            line_style=(0, (1, 2)),
+            line_style=(1, 2),
             dash_spacing=28,
             dash_capstyle=CapStyleEnum.ROUND,
             edge_width=2,
@@ -960,8 +960,7 @@ class PlotStyle(BaseStyle):
     constellation_borders: LineStyle = LineStyle(
         color="#000",
         width=2.5,
-        # style=LineStyleEnum.DASHED,
-        style=(0, (3, 6)),
+        style=(3, 6),
         alpha=0.5,
         zorder=ZOrderEnum.LAYER_3,
     )
@@ -1012,7 +1011,7 @@ class PlotStyle(BaseStyle):
         line=LineStyle(
             color="#777",
             width=3,
-            style=(0, (2, 6)),
+            style=(2, 6),
             dash_capstyle=CapStyleEnum.ROUND,
             alpha=1,
             zorder=ZOrderEnum.LAYER_3 - 1,
@@ -1104,7 +1103,7 @@ class PlotStyle(BaseStyle):
     optic_fov: PolygonStyle = PolygonStyle(
         fill_color=None,
         edge_color="red",
-        line_style=[1, [2, 3]],
+        line_style=(2, 3),
         edge_width=3,
         zorder=-1000,
     )
