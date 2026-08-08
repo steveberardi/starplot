@@ -176,8 +176,8 @@ def check_map_orion_extra():
     mercator_base.arrow(
         origin=(alhena.ra, alhena.dec),
         target=(ain.ra, ain.dec),
-        style__head_width=140,
-        style__body_width=80,
+        style__head_width=50,
+        style__body_width=20,
     )
 
     mercator_base.legend()

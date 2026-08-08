@@ -434,7 +434,12 @@ class Canvas:
     ) -> None:
         p = ShapelyPolygon(coordinates)
 
-        if self.projection.wraps:
+        # Antimeridian wraparound only means something for raw ra/dec (DATA)
+        # coordinates. For already-projected/pixel-space coordinates (e.g.
+        # PROJECTED or DISPLAY, as used for arrows/debug overlays), splitting
+        # at the projection's ra-based edge_x is meaningless and corrupts the
+        # shape whenever it happens to span more than 180 (pixel) units.
+        if self.projection.wraps and cs == CoordinateSystem.DATA:
             polygons_split = _geometry.split_at_x(
                 geometry=p, wrap_x=self.projection.edge_x
             )

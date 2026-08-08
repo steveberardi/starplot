@@ -66,7 +66,18 @@ class ArrowPlotterMixin:
             head_width = style.head_width * self.scale
             head_height = style.head_height * self.scale
 
+            # The line's endpoint is exactly the arrowhead polygon's tip vertex
+            # by construction. ops.split() treats a line that only *touches* a
+            # polygon vertex (rather than cleanly crossing its boundary) as a
+            # degenerate case and raises ValueError, so extend a copy of the
+            # line slightly past the tip -- for the split only -- to force a
+            # proper transversal crossing. arrow_x/arrow_y (the true tip, used
+            # for the arrowhead shape itself) are left untouched.
+            split_line_x = [line_x[0], arrow_x + np.cos(angle_radians)]
+            split_line_y = [line_y[0], arrow_y + np.sin(angle_radians)]
+
             arrow_line = LineString(list(zip(line_x, line_y)))
+            arrow_split_line = LineString(list(zip(split_line_x, split_line_y)))
             arrow_body = arrow_line.buffer(body_width, **style.shapely_kwargs())
 
             arrow_head = Polygon(
@@ -84,7 +95,7 @@ class ArrowPlotterMixin:
                 origin=(arrow_x, arrow_y),
             )
 
-            result = ops.split(arrow_line, arrow_head)
+            result = ops.split(arrow_split_line, arrow_head)
             arrow_body = result.geoms[0].buffer(body_width, **style.shapely_kwargs())
             return arrow_body.union(arrow_head.buffer(0.0001, **style.shapely_kwargs()))
 
