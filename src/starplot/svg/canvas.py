@@ -29,7 +29,7 @@ from starplot.projections import (
     latlon_bounds_to_projection,
     CoordinateReferenceSystem,
 )
-from starplot.svg import symbols, png
+from starplot.svg import symbols, png, fonts
 from starplot.svg.layout import Layout, Region, LegendRegion, TableRegion
 from starplot.svg.elements import (
     Group,
@@ -72,12 +72,6 @@ def lerp(start: float, end: float, t: float) -> float:
     """
     return start + (end - start) * t
 
-
-def get_text_hw(text, font_size: int, font_weight: int = 400) -> tuple[float, float]:
-    char_width = font_size * (0.65 if font_weight >= 500 else 0.6)
-    width = len(text) * char_width
-    height = font_size
-    return height, width
 
 
 def gradient_hash(stops, length=8) -> str:
@@ -543,10 +537,12 @@ class Canvas:
         for i, value in enumerate(sections):
             title, handles = value
             if title:
-                h, w = get_text_hw(
-                    title,
+                h, w, _ = fonts.get_text_hw(
+                    text=title,
+                    font_name=style.title.font_name,
                     font_size=style.title.font_size * self.scale,
                     font_weight=style.title.font_weight,
+                    italic=style.title.font_style == "italic",
                 )
                 y += h
                 title_element = Text(
@@ -581,20 +577,25 @@ class Canvas:
                     )
                 )
 
-                h, w = get_text_hw(
-                    label,
+                h, w, _ = fonts.get_text_hw(
+                    text=label,
+                    font_name=style.labels.font_name,
                     font_size=style.labels.font_size * self.scale,
                     font_weight=style.labels.font_weight,
+                    italic=style.labels.font_style == "italic",
                 )
                 height += (
-                    max(marker_size * self.scale, style.symbol_size * self.scale, h)
+                    max(marker_size * self.scale, h)
                     + style.label_padding
                 )
-                width = max(width, w * 1.3)
+                w += marker_size * self.scale + style.symbol_padding + style.padding_x * 2
+                
+                width = max(width, w)
+                
                 y += h + style.label_padding
 
             if i < len(sections) - 1:
-                height += style.label_padding * 2.5
+                height += style.label_padding #* 2.5
             else:
                 height += style.label_padding
 
@@ -658,10 +659,12 @@ class Canvas:
         num_cols = len(headers)
 
         def cell_width(value, style: LabelStyle) -> float:
-            _, w = get_text_hw(
-                str(value),
+            _, w, _ = fonts.get_text_hw(
+                text=str(value),
+                font_name=style.font_name,
                 font_size=style.font_size * scale,
                 font_weight=style.font_weight,
+                italic=style.font_style == "italic",
             )
             return w
 

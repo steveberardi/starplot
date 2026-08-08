@@ -269,7 +269,6 @@ class BasePlot(StarPlotterMixin, ABC):
                     style=style.label,
                     text=label,
                     marker_size=style.marker.size,
-                    scale=self.scale,
                 ),
                 collision_handler=collision_handler or self.point_label_handler,
                 # gid=kwargs.get("gid_label") or "marker-label",

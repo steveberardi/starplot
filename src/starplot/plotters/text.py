@@ -14,6 +14,7 @@ from starplot.geometry import (
     union_at_zero,
 )
 from starplot.svg.canvas import CoordinateSystem
+from starplot.svg.fonts import get_text_hw
 
 """
 Long term strategy:
@@ -185,13 +186,6 @@ def rotate_bbox(bbox, angle, cx=None, cy=None):
     )
 
 
-def get_text_hw(text, font_size: int, font_weight: int = 400) -> tuple[float, float]:
-    char_width = font_size * (0.65 if font_weight >= 500 else 0.6)
-    width = len(text) * char_width
-    height = font_size
-    return height, width
-
-
 def create_bbox(x, y, height, width) -> BBox:
     return [
         x,
@@ -298,15 +292,22 @@ class TextPlotterMixin:
         return True
 
     def _offset_from_marker(
-        self, style: LabelStyle, text: str, marker_size: float, scale: float
+        self, style: LabelStyle, text: str, marker_size: float
     ) -> LabelStyle:
         if style.offset_x != "auto" and style.offset_y != "auto":
             return style
 
         new_style = style.model_copy()
+        scaled_font_size = style.font_size * self.scale
 
-        height, _ = get_text_hw(text, style.font_size, style.font_weight)
-        size = marker_size * scale
+        height, _, _ = get_text_hw(
+            text=text,
+            font_name=style.font_name,
+            font_size=scaled_font_size,
+            font_weight=style.font_weight,
+            italic=style.font_style == "italic",
+        )
+        size = marker_size * self.scale
         offset_x = style.offset_x
         offset_y = style.offset_y
 
@@ -338,10 +339,18 @@ class TextPlotterMixin:
         height = 0
         width = 0
 
+        scaled_font_size = style.font_size * self.scale
         display_x, display_y = self.canvas._to_display(x, y)
 
-        height, width = get_text_hw(
-            text=text, font_size=style.font_size, font_weight=style.font_weight
+        # canvas.text() applies self.scale again via style.css(scale) when it
+        # renders (style.font_size here was already scaled once by text()), so
+        # the true rendered size is font_size * scale, not just font_size
+        height, width, _ = get_text_hw(
+            text=text,
+            font_name=style.font_name,
+            font_size=scaled_font_size,
+            font_weight=style.font_weight,
+            italic=style.font_style == "italic",
         )
 
         anchors = [
@@ -459,16 +468,25 @@ class TextPlotterMixin:
         area,
         collision_handler: CollisionHandler,
     ) -> None:
-        padding = 0
+        # small visual buffer so labels don't render edge-to-edge with zero gap
+        padding = style.font_size * 0.09
         max_distance = 2_000
         distance_step_size = 2
         attempts = 0
         height = None
         width = None
         bbox = None
+        scaled_font_size = style.font_size * self.scale
 
-        height, width = get_text_hw(
-            text=text, font_size=style.font_size, font_weight=style.font_weight
+        # canvas.text() applies self.scale again via style.css(scale) when it
+        # renders (style.font_size here was already scaled once by text()), so
+        # the true rendered size is font_size * scale, not just font_size
+        height, width, ascent = get_text_hw(
+            text=text,
+            font_name=style.font_name,
+            font_size=scaled_font_size,
+            font_weight=style.font_weight,
+            italic=style.font_style == "italic",
         )
 
         origin = Point(ra, dec)
@@ -542,11 +560,15 @@ class TextPlotterMixin:
 
             if height and width:
                 display_x, display_y = self.canvas._to_display(x, y)
+                # the first line's baseline is drawn AT display_y, and each
+                # additional line is drawn BELOW it -- so only the first line's
+                # ascent extends above display_y; everything else (descent of
+                # the last line, plus any additional lines) extends below it
                 bbox = (
                     display_x,
-                    display_y - height,
+                    display_y - ascent,
                     display_x + width,
-                    display_y,
+                    display_y + (height - ascent),
                 )
 
             is_open = self._is_open_space(
@@ -598,12 +620,15 @@ class TextPlotterMixin:
             curvature_threshold: threshold for determining smooth sections
 
         """
-        style = style.model_copy()  # need a copy because we possibly mutate it below
-        style.font_size *= self.scale
+        scaled_font_size = style.font_size * self.scale
 
         dx, dy = self.canvas._to_display(x, y)
-        height, width = get_text_hw(
-            text=text, font_size=style.font_size, font_weight=style.font_weight
+        height, width, _ = get_text_hw(
+            text=text,
+            font_name=style.font_name,
+            font_size=scaled_font_size,
+            font_weight=style.font_weight,
+            italic=style.font_style == "italic",
         )
 
         # sort coords by display x value
@@ -725,7 +750,6 @@ class TextPlotterMixin:
             return
 
         style = style.model_copy()  # need a copy because we possibly mutate it below
-        style.font_size *= self.scale
 
         collision_handler = collision_handler or self.point_label_handler
 
