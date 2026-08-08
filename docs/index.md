@@ -63,6 +63,10 @@ Starplot is a Python library for creating star charts and maps of the sky
 
 --8<-- "docs/snippets/_newsletter.html"
 
+
+<div class="solid-line"></div>
+
+
 ![Python](https://img.shields.io/pypi/pyversions/starplot?style=for-the-badge&color=6388b0){.rounded}
 ![PyPI](https://img.shields.io/pypi/v/starplot?style=for-the-badge&color=57a8a8){.rounded}
 ![License](https://img.shields.io/github/license/steveberardi/starplot?style=for-the-badge&color=8b63b0){.rounded}

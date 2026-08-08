@@ -8,9 +8,11 @@
 
 However, the Starplot API becomes more stable with each new version. We anticipate that version `1.0.0` is still at least a year away (2027+). The best way to help us get there faster is to [join as a contributor](https://github.com/steveberardi/starplot/blob/main/CONTRIBUTING.md) 😃 help is wanted and very much appreciated!
 
+<div class="dotted-line"></div>
+
 --8<-- "docs/snippets/_newsletter.html"
 
----
+<div class="dotted-line"></div>
 
 ### _Note from the author..._
 

@@ -32,10 +32,12 @@
     </tr>
 </table>
 
-<br/>
+
+<div class="dotted-line"></div>
 
 --8<-- "docs/snippets/_newsletter.html"
 
-<br/>
+<div class="dotted-line"></div>
+
 <br/>
 <br/>
