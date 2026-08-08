@@ -463,11 +463,6 @@ Styling rules tailored for plots that will be imported to design applications
         show_docstring_attributes: true
 
 ---
-::: starplot.styles.FillStyleEnum
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        members: true
 
 ::: starplot.styles.FontStyleEnum
     options:

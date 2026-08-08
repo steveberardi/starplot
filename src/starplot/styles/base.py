@@ -21,5 +21,3 @@ class BaseStyle(BaseModel):
     @property
     def css_string(self) -> str:
         return " ".join([f'{k}="{v}"' for k, v in self.css().items()])
-
-
