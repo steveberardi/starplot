@@ -30,7 +30,7 @@ POWAY = {"lat": 32.97, "lon": -117.038611}
 
 plot_kwargs = dict(
     resolution=2048,
-    autoscale=True,
+    scale=0.8,
 )
 
 observer_dec_16_poway = Observer(

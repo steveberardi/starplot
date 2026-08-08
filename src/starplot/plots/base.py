@@ -193,16 +193,17 @@ class BasePlot(StarPlotterMixin, ABC):
         self.canvas.title(text, style)
 
     @profile
-    def export(self, filename: str):
-        """Exports the plot to an image file.
+    def export(self, filename: str, scale: float=1):
+        """Exports the plot to an image file (SVG or PNG)
 
         Args:
             filename: Filename of exported file (the format will be inferred from the extension)
+            scale: Scaling factor for PNG files (e.g. a value of `2` will make the PNG two times bigger than the resolution of the plot). _Only applies to PNG files_
 
         """
         text_as_path = StarplotSettings.svg_text_type == SvgTextType.PATH
         self.logger.debug("Exporting...")
-        self.canvas.export(filename, text_as_path=text_as_path)
+        self.canvas.export(filename, text_as_path=text_as_path, scale=scale)
 
     @use_style(ObjectStyle)
     def marker(

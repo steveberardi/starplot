@@ -1,10 +1,10 @@
 from pathlib import Path
 
 
-def export_png_cairo(filename: str | Path, svg_source: str):
+def export_png_cairo(filename: str | Path, svg_source: str, scale: float = 1):
     import cairosvg
 
-    cairosvg.svg2png(svg_source, write_to=filename)
+    cairosvg.svg2png(svg_source, write_to=filename, scale=scale)
 
 
 def export_png_resvg(filename: str | Path, svg_source: str):
