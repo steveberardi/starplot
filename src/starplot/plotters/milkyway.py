@@ -44,7 +44,7 @@ class MilkyWayPlotterMixin:
             polygons = [mw_union]
 
         for p in polygons:
-            bounds = box(0, self.dec_min, 360, self.dec_max)
+            bounds = box(0, self.dec_min - 5, 360, self.dec_max + 5)
             p = p.intersection(bounds)
 
             if isinstance(p, MultiPolygon):
