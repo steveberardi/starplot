@@ -21,6 +21,7 @@ from starplot.geometry import (
     is_wrapped_polygon,
     line_segment,
     split_line_at_meridian,
+    split_at_antimeridian,
 )
 from starplot.plotters.text import CollisionHandler
 
@@ -118,11 +119,6 @@ class ConstellationPlotterMixin:
                 elif not inbounds:
                     continue
 
-                if x1 - x2 > 60:
-                    x2 += 360
-                elif x2 - x1 > 60:
-                    x1 += 360
-
                 # TODO : move spatial index to canvas? so the line function on canvas does the splitting
                 # maybe dont need this? canvas line function does it
                 # xy_lines = []
@@ -136,7 +132,7 @@ class ConstellationPlotterMixin:
                 xy_lines = [[(x1, y1), (x2, y2)]]
 
                 display_lines = [
-                    [self.canvas._to_display(*p) for p in line] for line in xy_lines
+                    [self.canvas._to_display(*p) for p in line] for line in [*split_at_antimeridian([(x1, y1), (x2, y2)])]
                 ]
 
                 lines.extend(xy_lines)
