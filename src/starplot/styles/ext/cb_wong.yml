@@ -15,7 +15,6 @@ border_line_color: hsl(0, 0%, 0%)
 horizon:
   line:
     color: hsl(0, 0%, 96%)
-    edge_color: hsl(0, 0%, 0%)
   label:
     font_color: hsl(0, 0%, 0%)
 

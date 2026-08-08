@@ -36,7 +36,6 @@ flamsteed_labels:
 horizon:
   line:
     color: hsl(205, 35%, 85%)
-    edge_color: hsl(205, 50%, 24%)
   label:
     font_color: hsl(205, 62%, 10%)
 

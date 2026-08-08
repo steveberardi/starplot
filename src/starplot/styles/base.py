@@ -326,12 +326,6 @@ class LineStyle(BaseStyle):
     zorder: int = ZOrderEnum.LAYER_2
     """Zorder of the line"""
 
-    edge_width: int = 0
-    """Width of the line's edge in points. _If the width or color is falsey then the line will NOT be drawn with an edge._"""
-
-    edge_color: Optional[ColorStr] = None
-    """Edge color of the line. _If the width or color is falsey then the line will NOT be drawn with an edge._"""
-
     def css(self, scale: float = 1) -> dict:
         attrs = {
             "fill": "none",
@@ -661,11 +655,11 @@ class AxesStyle(BaseStyle):
     There are a few predefined gradients available as [style extensions](/reference-styling/#style-extensions).
     """
 
-    background_gradient_direction: GradientType = GradientType.RADIAL
+    # background_gradient_direction: GradientType = GradientType.RADIAL
     """Direction of the background gradient (if applicable)"""
 
-    def has_gradient_background(self):
-        return isinstance(self.background_color, list)
+    # def has_gradient_background(self):
+    #     return isinstance(self.background_color, list)
 
 
 class PlotStyle(BaseStyle):
@@ -1072,8 +1066,6 @@ class PlotStyle(BaseStyle):
         line=LineStyle(
             color="#fff",
             width=110,
-            edge_width=4,
-            edge_color="#000",
             style=LineStyleEnum.SOLID,
             dash_capstyle=CapStyleEnum.ROUND,
             alpha=1,

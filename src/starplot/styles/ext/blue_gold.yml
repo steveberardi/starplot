@@ -40,7 +40,6 @@ ecliptic:
 horizon:
   line:
     color: hsl(208, 23%, 13%)
-    edge_color: hsl(208, 23%, 14%)
   label:
     font_color: hsl(208, 23%, 84%)
 

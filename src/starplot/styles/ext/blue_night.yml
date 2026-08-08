@@ -43,7 +43,6 @@ zenith:
 horizon:
   line:
     color: hsl(210, 36%, 11%)
-    edge_color: hsl(209, 38%, 50%)
   label:
     font_color: hsl(210, 29%, 94%)
 

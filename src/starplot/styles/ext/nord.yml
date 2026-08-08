@@ -15,7 +15,6 @@ title:
 horizon:
   line:
     color: '#2e3440'
-    edge_color: '#a3be8c'
   label:
     font_color: '#a3be8c'
 

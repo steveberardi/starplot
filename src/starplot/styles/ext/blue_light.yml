@@ -12,7 +12,6 @@ border_line_color: '#2f4358'
 horizon:
   line:
     color: '#b5cbe3'
-    edge_color: '#2f4358'
   label:
     font_color: '#2f4358'
 

@@ -22,7 +22,6 @@ border_line_color: hsl(60, 20%, 53%)
 horizon:
   line:
     color: hsl(60, 3%, 32%)
-    edge_color: hsl(60, 20%, 53%)
   label:
     font_color: hsl(60, 20%, 93%)
 
