@@ -14,7 +14,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Framework :: Matplotlib",
 ]
 dynamic = ["version", "description"]
 keywords = ["astronomy", "stars", "charts", "maps", "constellations", "sky", "plotting"]
@@ -37,8 +36,8 @@ dependencies = [
     "astropy-healpix >= 1.1.2",
     "fonttools >= 4.62.1",
     "cairosvg >= 2.9.0",
-    "resvg-py",
     "pydantic-extra-types>=2.11.1",
+    "resvg-py",
 ]
 requires-python = ">=3.10,<=3.13"
 
