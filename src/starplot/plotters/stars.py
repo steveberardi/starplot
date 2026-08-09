@@ -80,8 +80,8 @@ class StarPlotterMixin:
         style = style or self.style.star
 
         self.canvas.markers(
-            np.array(ras),
-            np.array(decs),
+            xs=np.array(ras),
+            ys=np.array(decs),
             style=style.marker,
             gid="stars",
             sizes=sizes,
@@ -184,19 +184,19 @@ class StarPlotterMixin:
     @use_style(ObjectStyle, "star")
     def stars(
         self,
-        where: list = None,
-        where_labels: list = None,
+        where: list | None = None,
+        where_labels: list | None = None,
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] = size_by_magnitude,
-        alpha_fn: Callable[[Star], float] = None,
-        color_fn: Callable[[Star], str] = None,
+        alpha_fn: Callable[[Star], float] | None = None,
+        color_fn: Callable[[Star], str] | None = None,
         label_fn: Callable[[Star], str] = Star.get_label,
         legend_label: str = "Star",
         bayer_labels: bool = False,
         flamsteed_labels: bool = False,
-        sql: str = None,
-        sql_labels: str = None,
+        sql: str | None = None,
+        sql_labels: str | None = None,
         collision_handler: CollisionHandler = None,
     ):
         """

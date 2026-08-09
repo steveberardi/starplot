@@ -421,7 +421,7 @@ def random_point_in_polygon_at_distance(
     origin_point: Point,
     distance: int,
     max_iterations: int = 100,
-    seed: int = None,
+    seed: int | None = None,
 ) -> Point:
     """Returns a random point inside a polygon, at a specified distance from the origin point"""
     if seed:

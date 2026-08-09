@@ -225,7 +225,7 @@ class Comet(SkyObject):
         return get_comet_at_date_location(comet, observer, ephemeris)
 
     def trajectory(
-        self, date_start: datetime, date_end: datetime, step: timedelta = None
+        self, date_start: datetime, date_end: datetime, step: timedelta | None = None
     ) -> Iterator["Comet"]:
         """
         Iterator for getting a trajectory of the comet.

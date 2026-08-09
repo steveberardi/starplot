@@ -67,7 +67,7 @@ class Constellation(CatalogObject, SkyObject):
 
     @classmethod
     def get(
-        cls, catalog: Catalog = CONSTELLATIONS_IAU, sql: str = None, **kwargs
+        cls, catalog: Catalog = CONSTELLATIONS_IAU, sql: str | None = None, **kwargs
     ) -> "Constellation":
         """
         Get a Constellation, by matching its attributes.
@@ -105,8 +105,8 @@ class Constellation(CatalogObject, SkyObject):
     def find(
         cls,
         catalog: Catalog = CONSTELLATIONS_IAU,
-        where: list = None,
-        sql: str = None,
+        where: list | None = None,
+        sql: str | None = None,
     ) -> list["Constellation"]:
         """
         Find Constellations

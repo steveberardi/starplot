@@ -115,7 +115,7 @@ class Star(CatalogObject, SkyObject):
 
     @classmethod
     def get(
-        cls, catalog: Catalog = BIG_SKY_MAG11, sql: str = None, **kwargs
+        cls, catalog: Catalog = BIG_SKY_MAG11, sql: str | None = None, **kwargs
     ) -> Union["Star", None]:
         """
         Get a Star, by matching its attributes as specified in `**kwargs`
@@ -160,8 +160,8 @@ class Star(CatalogObject, SkyObject):
     def find(
         cls,
         catalog: Catalog = BIG_SKY_MAG11,
-        where: list = None,
-        sql: str = None,
+        where: list | None = None,
+        sql: str | None = None,
     ) -> list["Star"]:
         """
         Find Stars

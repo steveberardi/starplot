@@ -7,7 +7,7 @@ else
  DR_ARGS=-it --env-file ./.env
 endif
 
-DOTENV=--env-file .env
+DOTENV=--env-file $(shell pwd)/.env
 DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 

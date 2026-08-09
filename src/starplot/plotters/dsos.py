@@ -139,14 +139,14 @@ class DsoPlotterMixin:
     @profile
     def dsos(
         self,
-        where: list = None,
-        where_labels: list = None,
-        where_true_size: list = None,
+        where: list | None = None,
+        where_labels: list | None = None,
+        where_true_size: list | None = None,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
-        alpha_fn: Callable[[DSO], float] = None,
+        alpha_fn: Callable[[DSO], float] | None = None,
         label_fn: Callable[[DSO], str] = DSO.get_label,
-        sql: str = None,
-        sql_labels: str = None,
+        sql: str | None = None,
+        sql_labels: str | None = None,
         catalog: Catalog = OPEN_NGC,
         collision_handler: CollisionHandler = None,
     ):

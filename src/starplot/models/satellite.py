@@ -85,7 +85,7 @@ class Satellite(SkyObject):
         )
 
     def trajectory(
-        self, date_start: datetime, date_end: datetime, step: timedelta = None
+        self, date_start: datetime, date_end: datetime, step: timedelta | None = None
     ) -> Iterator["Satellite"]:
         """
         Iterator for getting a trajectory of the satellite.

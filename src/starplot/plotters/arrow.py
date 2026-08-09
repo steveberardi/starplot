@@ -15,8 +15,8 @@ class ArrowPlotterMixin:
     @use_style(ArrowStyle, "arrow")
     def arrow(
         self,
-        origin: tuple[float, float] = None,
-        target: tuple[float, float] = None,
+        origin: tuple[float, float] | None = None,
+        target: tuple[float, float] | None = None,
         style: ArrowStyle = None,
         scale: float = 0.99,
         length: float = 5,

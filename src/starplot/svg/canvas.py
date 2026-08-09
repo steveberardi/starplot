@@ -302,7 +302,7 @@ class Canvas:
         self.layout.axes.defs[axes_clip_path_id] = axes_clip_path
 
     def _get_or_create_gradient(
-        self, stops: GradientStops, type: GradientType, id: str = None
+        self, stops: GradientStops, type: GradientType, id: str | None = None
     ) -> str:
         """
         Returns URL of gradient element with specified id, or creates and returns it if it doesn't exist.
@@ -335,17 +335,17 @@ class Canvas:
 
     def markers(
         self,
-        x,
-        y,
+        xs,
+        ys,
         style: MarkerStyle,
-        gid: str = None,
-        sizes: list[float] = None,
-        colors: list[str] | list[list[tuple[float, str]]] = None,
-        alphas: list[float] = None,
+        gid: str | None = None,
+        sizes: list[float] | None = None,
+        colors: list[str] | list[list[tuple[float, str]]] | None = None,
+        alphas: list[float] | None = None,
     ) -> None:
-        dx, dy = self._to_display(x, y)
+        dx, dy = self._to_display(xs, ys)
         gid = gid or "markers"
-        count = len(x)
+        count = len(xs)
         sizes = sizes or [style.size] * count
         colors = colors or [style.color] * count
         alphas = alphas or [style.alpha] * count
@@ -380,7 +380,7 @@ class Canvas:
 
     def line(
         self,
-        coordinates: list[tuple[float, float]] = None,
+        coordinates: list[tuple[float, float]] | None = None,
         style: PathStyle | LineStyle = None,
     ) -> None:
         lines_split = []
@@ -425,7 +425,7 @@ class Canvas:
         coordinates: list[tuple[float, float]],
         style: PolygonStyle,
         cs: CoordinateSystem = CoordinateSystem.DATA,
-        attrs: dict = None,
+        attrs: dict | None = None,
     ) -> None:
         p = ShapelyPolygon(coordinates)
 
@@ -472,7 +472,7 @@ class Canvas:
         style: LabelStyle,
         angle: float = 0,
         cs: CoordinateSystem = CoordinateSystem.DATA,
-        attrs: dict = None,
+        attrs: dict | None = None,
     ) -> None:
         """Plots text, with an optional rotation angle."""
 
@@ -785,7 +785,10 @@ class Canvas:
         )
 
     def _clip_path_border(
-        self, style: PathStyle, labels: list = None, width_from_labels: bool = False
+        self,
+        style: PathStyle,
+        labels: list | None = None,
+        width_from_labels: bool = False,
     ) -> None:
         """
         Creates a border around the axes clip path. The border is plotted as a line element.

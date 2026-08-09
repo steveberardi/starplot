@@ -268,7 +268,7 @@ class TextPlotterMixin:
             y1 + padding,
         )
 
-        if any([np.isnan(c) for c in (x0, y0, x1, y1)]):
+        if any(np.isnan(c) for c in (x0, y0, x1, y1)):
             return False
 
         if not allow_clipped and self._is_clipped_box(bbox_padded):

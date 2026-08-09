@@ -14,7 +14,7 @@ class BaseStyle(BaseModel):
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        for field_name in self.__pydantic_fields__.keys():
+        for field_name in self.__pydantic_fields__:
             original_value = getattr(self._original, field_name)
             setattr(self, field_name, original_value)
 

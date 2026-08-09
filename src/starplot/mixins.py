@@ -123,7 +123,7 @@ class HorizonExtentMaskMixin:
         """generally working"""
         coords = []
 
-        alt0, alt1 = self._alt
+        # alt0, alt1 = self._alt
         az0, az1 = self._az
 
         for alt in range(0, 90, 5):

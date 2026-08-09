@@ -27,11 +27,11 @@ class LegendPlotterMixin:
         style: LegendStyle = None,
         magnitude_scale: bool = False,
         magnitude_scale_title: str = "Star Magnitude",
-        magnitude_start: float = None,
-        magnitude_stop: float = None,
+        magnitude_start: float | None = None,
+        magnitude_stop: float | None = None,
         magnitude_step: float = 1,
-        magnitude_size_fn: Callable = None,
-        magnitude_label_fn: Callable = None,
+        magnitude_size_fn: Callable | None = None,
+        magnitude_label_fn: Callable | None = None,
     ):
         """
         Plots the legend.

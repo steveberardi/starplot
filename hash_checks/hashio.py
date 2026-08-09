@@ -87,7 +87,7 @@ class Hashio:
                 "phash": self._phash(img),
                 "exception": None,
             }
-        except:
+        except:  # noqa E722
             return func_name, {
                 "filename": "EXCEPTION",
                 "dhash": "EXCEPTION",
@@ -190,6 +190,6 @@ if __name__ == "__main__":
         if failed or new:
             console.print(f"FAILED: {failed}\n", style="bold red")
             console.print(f"NEW   : {new}\n", style="blue")
-            exit(1)
+            sys.exit(1)
     else:
         raise ValueError(f"Unrecognized command: {command}")

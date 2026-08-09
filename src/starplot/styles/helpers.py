@@ -13,14 +13,14 @@ def merge_dict(dict_1: dict, dict_2: dict) -> None:
     Returns:
         None (dict_1 is modified directly)
     """
-    for k in dict_2:
-        if k in dict_1 and isinstance(dict_1[k], dict) and isinstance(dict_2[k], dict):
-            merge_dict(dict_1[k], dict_2[k])
+    for k, v in dict_2.items():
+        if k in dict_1 and isinstance(dict_1[k], dict) and isinstance(v, dict):
+            merge_dict(dict_1[k], v)
         else:
-            dict_1[k] = dict_2[k]
+            dict_1[k] = v
 
 
-def use_style(style_class, style_attr: str = None):
+def use_style(style_class, style_attr: str | None = None):
     def decorator(func):
         params = list(inspect.signature(func).parameters.keys())
         style_pos = params.index("style") if "style" in params else -1

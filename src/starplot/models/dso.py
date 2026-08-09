@@ -174,7 +174,9 @@ class DSO(CatalogObject, SkyObject):
             yield from_tuple(d)
 
     @classmethod
-    def get(cls, catalog: Catalog = OPEN_NGC, sql: str = None, **kwargs) -> "DSO":
+    def get(
+        cls, catalog: Catalog = OPEN_NGC, sql: str | None = None, **kwargs
+    ) -> "DSO":
         """
         Get a DSO, by matching its attributes.
 
@@ -210,7 +212,10 @@ class DSO(CatalogObject, SkyObject):
 
     @classmethod
     def find(
-        cls, catalog: Catalog = OPEN_NGC, where: list = None, sql: str = None
+        cls,
+        catalog: Catalog = OPEN_NGC,
+        where: list | None = None,
+        sql: str | None = None,
     ) -> list["DSO"]:
         """
         Find DSOs

@@ -66,8 +66,8 @@ class ConstellationPlotterMixin:
     def constellations(
         self,
         style: LineStyle = None,
-        where: list = None,
-        sql: str = None,
+        where: list | None = None,
+        sql: str | None = None,
         catalog: Catalog = CONSTELLATIONS_IAU,
     ):
         """Plots the constellation lines **only**. To plot constellation borders and/or labels, see separate functions for them.
