@@ -1,4 +1,5 @@
 import hashlib
+from contextlib import contextmanager
 from enum import Enum
 from pathlib import Path
 
@@ -107,6 +108,7 @@ class Canvas:
 
         self.clip_path = clip_path
         self.gradient_counter = 0
+        self._group_stack: list[list[tuple[float, object]]] = []
 
         self.invert_x = invert_x
         self.invert_y = invert_y
@@ -317,6 +319,48 @@ class Canvas:
         self.layout.axes.defs[gradient.id] = gradient
         return gradient.url
 
+    def _add_element(self, zorder: float, element) -> None:
+        """Appends an element to the currently active group (if any), else directly to the axes."""
+        if self._group_stack:
+            self._group_stack[-1].append((zorder, element))
+        else:
+            self.layout.axes.elements.append((zorder, element))
+
+    @contextmanager
+    def group(
+        self,
+        gid: str | None = None,
+        attrs: dict | None = None,
+        zorder: float | None = None,
+    ):
+        """
+        Groups every element drawn within this context into a single SVG `<g>` element.
+
+        Groups can be nested, in which case the inner group is added as a single element
+        of the outer group.
+
+        Args:
+            gid: `id` attribute for the `<g>` element
+            attrs: Additional attributes for the `<g>` element
+            zorder: Zorder for the group itself (i.e. where it's positioned among its siblings). If `None`, then the lowest zorder of the group's elements will be used.
+        """
+        frame: list[tuple[float, object]] = []
+        self._group_stack.append(frame)
+        try:
+            yield
+        finally:
+            self._group_stack.pop()
+
+        if not frame:
+            return
+
+        frame.sort(key=lambda e: e[0])
+        group_zorder = zorder if zorder is not None else frame[0][0]
+        self._add_element(
+            group_zorder,
+            Group(id=gid, attrs=attrs or {}, children=[e for _, e in frame]),
+        )
+
     def marker(self, x, y, style: MarkerStyle) -> None:
         dx, dy = self._to_display(x, y)
 
@@ -331,7 +375,7 @@ class Canvas:
         element = symbols.create(
             dx, dy, style.size * self.scale, style.symbol, attrs=attrs
         )
-        self.layout.axes.elements.append((style.zorder, element))
+        self._add_element(style.zorder, element)
 
     def markers(
         self,
@@ -371,11 +415,9 @@ class Canvas:
 
             elements.append(element)
 
-        self.layout.axes.elements.append(
-            (
-                style.zorder,
-                Group(id=gid, attrs=style.css(self.scale), children=elements),
-            )
+        self._add_element(
+            style.zorder,
+            Group(id=gid, attrs=style.css(self.scale), children=elements),
         )
 
     def line(
@@ -416,9 +458,7 @@ class Canvas:
             dxy = list(zip(dx, dy))
 
             attrs = style.css(self.scale)
-            self.layout.axes.elements.append(
-                (style.zorder, Polyline(points=dxy, attrs=attrs))
-            )
+            self._add_element(style.zorder, Polyline(points=dxy, attrs=attrs))
 
     def polygon(
         self,
@@ -460,9 +500,7 @@ class Canvas:
                     type=style.gradient_type,
                 )
 
-            self.layout.axes.elements.append(
-                (style.zorder, Polygon(points=dxy, attrs=_attrs))
-            )
+            self._add_element(style.zorder, Polygon(points=dxy, attrs=_attrs))
 
     def text(
         self,
@@ -484,9 +522,7 @@ class Canvas:
         if angle:
             _attrs["transform"] = f"rotate({angle}, {dx}, {dy})"
 
-        self.layout.axes.elements.append(
-            (style.zorder, Text(x=dx, y=dy, attrs=_attrs, text=value))
-        )
+        self._add_element(style.zorder, Text(x=dx, y=dy, attrs=_attrs, text=value))
 
     def title(
         self,
@@ -789,6 +825,7 @@ class Canvas:
         style: PathStyle,
         labels: list | None = None,
         width_from_labels: bool = False,
+        label_gid: str = "border-labels",
     ) -> None:
         """
         Creates a border around the axes clip path. The border is plotted as a line element.
@@ -797,6 +834,7 @@ class Canvas:
             style: Style of border line
             labels: List of 2-tuples where the first item is a list of coordinates for a line that intersects the border,
                     and the second item is a string label for that intersection.
+            label_gid: If given, the label elements are wrapped in a `<g id=label_gid>` instead of being added individually.
 
         """
         label_elements = []
@@ -930,11 +968,19 @@ class Canvas:
 
         border = self.clip_path_display.buffer(border_width)
         bx1, by1, bx2, by2 = border.bounds
+
+        elements = [(style.line.zorder, Polyline(points=coords, attrs=attrs))]
+        if label_elements:
+            label_zorder = max(z for z, _ in label_elements)
+            elements.append(
+                (
+                    label_zorder,
+                    Group(id=label_gid, children=[e for _, e in label_elements]),
+                )
+            )
+
         self.layout.axes_border = Region(
-            elements=[
-                (style.line.zorder, Polyline(points=coords, attrs=attrs)),
-                *label_elements,
-            ],
+            elements=elements,
             height=(by2 - by1),
             width=(bx2 - bx1),
         )

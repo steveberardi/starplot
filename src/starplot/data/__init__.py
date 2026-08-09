@@ -8,7 +8,11 @@ from starplot.config import settings
 
 load = Loader(settings.data_path)  # used for loading ephemeris
 
-from .catalogs import Catalog
+# Must come after `load` is defined: catalogs.py pulls in starplot.models, whose
+# package __init__ imports comet.py, which needs `starplot.data.load` to already
+# exist. isort would otherwise hoist this back above `load` and reintroduce that
+# circular import.
+from .catalogs import Catalog  # noqa: I001
 
 
 HERE = Path(__file__).resolve().parent

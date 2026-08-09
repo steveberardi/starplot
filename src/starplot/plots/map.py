@@ -386,51 +386,57 @@ class MapPlot(
 
         _labels = []
 
-        ra_formatter_fn_default = lambda r: f"{math.floor(r/15)}h"  # noqa: E731
+        ra_formatter_fn_default = lambda r: f"{math.floor(r / 15)}h"  # noqa: E731
         dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
 
         ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
         dec_formatter_fn = dec_formatter_fn or dec_formatter_fn_default
 
         ra_locations = ra_locations or [
-            x for x in range(0, 360, 15)  # if self.ra_min <= x <= self.ra_max
+            x
+            for x in range(0, 360, 15)  # if self.ra_min <= x <= self.ra_max
         ]
         dec_locations = dec_locations or [
-            y for y in range(-80, 90, 10)  # if self.dec_min <= y <= self.dec_max
+            y
+            for y in range(-80, 90, 10)  # if self.dec_min <= y <= self.dec_max
         ]
 
-        for ra in ra_locations:
-            coords = geometry.line_segment((ra, -89.99999), (ra, 89.99999999), 0.5)
-            self.line(
-                coordinates=coords,
-                style=style,
-                # label=ra_formatter_fn(ra),
-                # num_labels=2,
-            )
-            if labels:
-                _labels.append((coords, ra_formatter_fn(ra), ("top", "bottom")))
+        with self.canvas.group(gid="gridlines"):
+            for ra in ra_locations:
+                coords = geometry.line_segment((ra, -89.99999), (ra, 89.99999999), 0.5)
+                self.line(
+                    coordinates=coords,
+                    style=style,
+                    # label=ra_formatter_fn(ra),
+                    # num_labels=2,
+                )
+                if labels:
+                    _labels.append((coords, ra_formatter_fn(ra), ("top", "bottom")))
 
-        for dec in dec_locations:
-            # if self.projection.edge_x in [0, 360]:
-            #     coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
-            # else:
-            #     minx = self.projection.edge_x + 0.00001
-            #     maxx = self.projection.edge_x - 0.00001
-            #     coords = geometry.line_segment((minx, dec), (maxx, dec), 0.5)
-            coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
-            self.line(
-                coordinates=coords,
-                style=style,
-                # label=dec_formatter_fn(dec),
-                # num_labels=4,
-            )
-            if labels:
-                _labels.append((coords, dec_formatter_fn(dec), ("left", "right")))
+            for dec in dec_locations:
+                # if self.projection.edge_x in [0, 360]:
+                #     coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
+                # else:
+                #     minx = self.projection.edge_x + 0.00001
+                #     maxx = self.projection.edge_x - 0.00001
+                #     coords = geometry.line_segment((minx, dec), (maxx, dec), 0.5)
+                coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
+                self.line(
+                    coordinates=coords,
+                    style=style,
+                    # label=dec_formatter_fn(dec),
+                    # num_labels=4,
+                )
+                if labels:
+                    _labels.append((coords, dec_formatter_fn(dec), ("left", "right")))
 
         if not labels:
             return
 
         border_style = PathStyle(line=LineStyle(color=None), label=style.label)
         self.canvas._clip_path_border(
-            border_style, labels=_labels, width_from_labels=True
+            border_style,
+            labels=_labels,
+            width_from_labels=True,
+            label_gid="gridline-labels",
         )

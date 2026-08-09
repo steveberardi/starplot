@@ -193,7 +193,7 @@ class BasePlot(StarPlotterMixin, ABC):
         self.canvas.title(text, style)
 
     @profile
-    def export(self, filename: str, scale: float=1):
+    def export(self, filename: str, scale: float = 1):
         """Exports the plot to an image file (SVG or PNG)
 
         Args:
@@ -302,44 +302,45 @@ class BasePlot(StarPlotterMixin, ABC):
         legend_label = translate(legend_label, self.language)
         handler = collision_handler or self.point_label_handler
 
-        for p in planets:
-            label = labels.get(p.name)
-            label = translate(label, self.language)
+        with self.canvas.group(gid="planets"):
+            for p in planets:
+                label = labels.get(p.name)
+                label = translate(label, self.language)
 
-            if self.in_bounds(p.ra, p.dec):
-                self._objects.planets.append(p)
+                if self.in_bounds(p.ra, p.dec):
+                    self._objects.planets.append(p)
 
-            if true_size:
-                polygon_style = style.marker.to_polygon_style()
-                polygon_style.edge_color = None
-                self.circle(
-                    center=(p.ra, p.dec),
-                    radius_degrees=p.apparent_size / 2,
-                    style=polygon_style,
-                    gid="planet-marker",
-                )
-                self._add_legend_handle_marker(legend_label, style.marker)
-
-                if label:
-                    self.text(
-                        label.upper(),
-                        p.ra,
-                        p.dec,
-                        style.label,
-                        collision_handler=handler,
-                        gid="planet-label",
+                if true_size:
+                    polygon_style = style.marker.to_polygon_style()
+                    polygon_style.edge_color = None
+                    self.circle(
+                        center=(p.ra, p.dec),
+                        radius_degrees=p.apparent_size / 2,
+                        style=polygon_style,
+                        gid="planet-marker",
                     )
-            else:
-                self.marker(
-                    ra=p.ra,
-                    dec=p.dec,
-                    style=style,
-                    label=label.upper() if label else None,
-                    legend_label=legend_label,
-                    collision_handler=handler,
-                    gid_marker="planet-marker",
-                    gid_label="planet-label",
-                )
+                    self._add_legend_handle_marker(legend_label, style.marker)
+
+                    if label:
+                        self.text(
+                            label.upper(),
+                            p.ra,
+                            p.dec,
+                            style.label,
+                            collision_handler=handler,
+                            gid="planet-label",
+                        )
+                else:
+                    self.marker(
+                        ra=p.ra,
+                        dec=p.dec,
+                        style=style,
+                        label=label.upper() if label else None,
+                        legend_label=legend_label,
+                        collision_handler=handler,
+                        gid_marker="planet-marker",
+                        gid_label="planet-label",
+                    )
 
     @use_style(ObjectStyle, "sun")
     def sun(

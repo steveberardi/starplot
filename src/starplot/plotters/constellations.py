@@ -159,11 +159,12 @@ class ConstellationPlotterMixin:
             if inbounds:
                 self._objects.constellations.append(c)
 
-        for coords in lines:
-            self.canvas.line(
-                style=style,
-                coordinates=coords,
-            )
+        with self.canvas.group(gid="constellations"):
+            for coords in lines:
+                self.canvas.line(
+                    style=style,
+                    coordinates=coords,
+                )
 
         if self._constellations_rtree.get_size() == 0:
             self._constellations_rtree = rtree.index.Index(

@@ -43,18 +43,19 @@ class MilkyWayPlotterMixin:
         else:
             polygons = [mw_union]
 
-        for p in polygons:
-            bounds = box(0, self.dec_min - 5, 360, self.dec_max + 5)
-            p = p.intersection(bounds)
+        with self.canvas.group(gid="milky-way"):
+            for p in polygons:
+                bounds = box(0, self.dec_min - 5, 360, self.dec_max + 5)
+                p = p.intersection(bounds)
 
-            if isinstance(p, MultiPolygon):
-                for pp in p.geoms:
+                if isinstance(p, MultiPolygon):
+                    for pp in p.geoms:
+                        self.polygon(
+                            geometry=pp.buffer(-0.001),
+                            style=style,
+                        )
+                else:
                     self.polygon(
-                        geometry=pp.buffer(-0.001),
+                        geometry=p.buffer(-0.001),
                         style=style,
                     )
-            else:
-                self.polygon(
-                    geometry=p.buffer(-0.001),
-                    style=style,
-                )

@@ -330,13 +330,14 @@ class StarPlotterMixin:
         if stars_to_index:
             self._stars_rtree = rtree.index.Index(stars_to_index)
 
-        self._star_labels(
-            star_objects,
-            sizes,
-            label_pks,
-            style,
-            bayer_labels,
-            flamsteed_labels,
-            label_fn,
-            handler,
-        )
+        with self.canvas.group(gid="star-labels"):
+            self._star_labels(
+                star_objects,
+                sizes,
+                label_pks,
+                style,
+                bayer_labels,
+                flamsteed_labels,
+                label_fn,
+                handler,
+            )

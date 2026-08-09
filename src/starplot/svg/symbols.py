@@ -13,9 +13,10 @@ from starplot.svg.elements import Circle, Ellipse, Group, Line, Polygon, Rectang
 (0,100)        (100,100)
 """
 
+PRECISION = 4
 
 def circle_cross(x, y, size, attrs):
-    r = round(size / 2, 4)
+    r = round(size / 2, PRECISION)
     return Group(
         attrs=attrs,
         children=[
@@ -27,8 +28,8 @@ def circle_cross(x, y, size, attrs):
 
 
 def circle_crosshair(x, y, size, attrs):
-    r = round(size / 4, 4)
-    n = round(2 * r, 4)
+    r = round(size / 4, PRECISION)
+    n = round(2 * r, PRECISION)
 
     return Group(
         attrs=attrs,
@@ -43,8 +44,8 @@ def circle_crosshair(x, y, size, attrs):
 
 
 def circle_line(x, y, size, attrs):
-    r = round(size / 2, 4)
-    n = round(1.8 * r, 4)
+    r = round(size / 2, PRECISION)
+    n = round(1.8 * r, PRECISION)
     return Group(
         attrs=attrs,
         children=[
@@ -61,13 +62,13 @@ def circle_line(x, y, size, attrs):
 
 
 def circle(x, y, size, attrs):
-    r = round(size / 2, 4)
+    r = round(size / 2, PRECISION)
     return Circle(cx=x, cy=y, r=r, attrs=attrs)
 
 
 def ellipse(x, y, size, attrs):
-    rx = round(size * 0.5, 4)
-    ry = round(size * 0.3, 4)
+    rx = round(size * 0.5, PRECISION)
+    ry = round(size * 0.3, PRECISION)
     _attrs = {
         "transform": f"rotate(-20, {x}, {y})",
         **attrs,
@@ -78,8 +79,8 @@ def ellipse(x, y, size, attrs):
 def square(x, y, size, attrs):
     r = size / 2
     return Rectangle(
-        x=x - r,
-        y=y - r,
+        x=round(x - r, PRECISION),
+        y=round(y - r, PRECISION),
         height=size,
         width=size,
         attrs=attrs,
@@ -96,8 +97,8 @@ def triangle(
     points = []
     for i in range(3):
         angle = math.radians(-90 + i * 120)
-        xx = round(x + r * math.cos(angle), 4)
-        yy = round(y + r * math.sin(angle), 4)
+        xx = round(x + r * math.cos(angle), PRECISION)
+        yy = round(y + r * math.sin(angle), PRECISION)
         points.append((xx, yy))
 
     return Polygon(points=points, attrs=attrs)
@@ -136,8 +137,8 @@ def create_star_function(num_points: int):
             r = size / 2 if i % 2 == 0 else size / 5
             points.append(
                 (
-                    round(x + r * math.cos(angle), 2),
-                    round(y + r * math.sin(angle), 2),
+                    round(x + r * math.cos(angle), PRECISION),
+                    round(y + r * math.sin(angle), PRECISION),
                 )
             )
         return Polygon(points=points, attrs=attrs)

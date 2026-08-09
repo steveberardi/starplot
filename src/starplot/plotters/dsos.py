@@ -199,12 +199,15 @@ class DsoPlotterMixin:
 
         results_df = dso_results.to_pandas().replace({np.nan: None})
 
+        # Group DSOs by type (preserving first-seen order) so markers/polygons and
+        # labels can each be plotted into one <g> per type, instead of interleaved.
+        dsos_by_type: dict = {}
+
         for d in results_df.itertuples():
             ra = d.ra
             dec = d.dec
             dso_type = ONGC_TYPE_MAP[d.type]
             style = self.style.get_dso_style(dso_type)
-            maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
             legend_label = legend_labels.get(dso_type)
             if legend_label:
                 legend_label = translate(legend_label, self.language) or legend_label
@@ -221,71 +224,112 @@ class DsoPlotterMixin:
             if _dso.pk not in label_pks:
                 label = None
 
-            _true_size = _dso.pk in true_size_pks
-
-            if _true_size and d.size is not None:
-                if "Polygon" == str(d.geometry.geom_type):
-                    self.polygon(
-                        geometry=d.geometry, style=style.marker.to_polygon_style()
-                    )
-
-                elif "MultiPolygon" == str(d.geometry.geom_type):
-                    for polygon in d.geometry.geoms:
-                        self.polygon(
-                            geometry=polygon, style=style.marker.to_polygon_style()
-                        )
-                elif maj_ax:
-                    # if object has a major axis then plot its actual extent
-                    maj_ax_degrees = (maj_ax / 60) / 2
-
-                    if min_ax:
-                        min_ax_degrees = (min_ax / 60) / 2
-                    else:
-                        min_ax_degrees = maj_ax_degrees
-
-                    poly_style = style.marker.to_polygon_style()
-
-                    if style.marker.symbol == MarkerSymbolEnum.SQUARE:
-                        self.rectangle(
-                            (ra, dec),
-                            min_ax_degrees * 2,
-                            maj_ax_degrees * 2,
-                            style=poly_style,
-                            angle=angle or 0,
-                        )
-                    else:
-                        self.ellipse(
-                            (ra, dec),
-                            min_ax_degrees * 2,
-                            maj_ax_degrees * 2,
-                            style=poly_style,
-                            angle=angle or 0,
-                        )
-
-                if label and self.in_bounds(ra, dec):
-                    self.text(
-                        label,
-                        ra,
-                        dec,
-                        style.label,
-                        collision_handler=handler,
-                        gid=f"dso-{d.type}-label",
-                    )
-
-                self._add_legend_handle_marker(legend_label, style.marker)
-
-            else:
-                # if no major axis, then just plot as a marker
-                self.marker(
-                    ra=ra,
-                    dec=dec,
-                    style=style,
-                    label=label,
-                    legend_label=legend_label,
-                    collision_handler=handler,
-                    # skip_bounds_check=True,
-                    # gid_marker=f"dso-{d.type}-marker",
-                    # gid_label=f"dso-{d.type}-label",
-                )
-
+            dsos_by_type.setdefault(dso_type, []).append(
+                {
+                    "d": d,
+                    "ra": ra,
+                    "dec": dec,
+                    "style": style,
+                    "legend_label": legend_label,
+                    "label": label,
+                    "true_size": _dso.pk in true_size_pks,
+                }
+            )
             self._objects.dsos.append(_dso)
+
+        for dso_type, items in dsos_by_type.items():
+            with self.canvas.group(gid=f"dso-{dso_type.value}-markers"):
+                for item in items:
+                    d = item["d"]
+                    ra, dec, style = item["ra"], item["dec"], item["style"]
+                    maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
+
+                    if item["true_size"] and d.size is not None:
+                        if "Polygon" == str(d.geometry.geom_type):
+                            self.polygon(
+                                geometry=d.geometry,
+                                style=style.marker.to_polygon_style(),
+                            )
+
+                        elif "MultiPolygon" == str(d.geometry.geom_type):
+                            for polygon in d.geometry.geoms:
+                                self.polygon(
+                                    geometry=polygon,
+                                    style=style.marker.to_polygon_style(),
+                                )
+                        elif maj_ax:
+                            # if object has a major axis then plot its actual extent
+                            maj_ax_degrees = (maj_ax / 60) / 2
+
+                            if min_ax:
+                                min_ax_degrees = (min_ax / 60) / 2
+                            else:
+                                min_ax_degrees = maj_ax_degrees
+
+                            poly_style = style.marker.to_polygon_style()
+
+                            if style.marker.symbol == MarkerSymbolEnum.SQUARE:
+                                self.rectangle(
+                                    (ra, dec),
+                                    min_ax_degrees * 2,
+                                    maj_ax_degrees * 2,
+                                    style=poly_style,
+                                    angle=angle or 0,
+                                )
+                            else:
+                                self.ellipse(
+                                    (ra, dec),
+                                    min_ax_degrees * 2,
+                                    maj_ax_degrees * 2,
+                                    style=poly_style,
+                                    angle=angle or 0,
+                                )
+
+                        self._add_legend_handle_marker(
+                            item["legend_label"], style.marker
+                        )
+
+                    else:
+                        # if no major axis, then just plot as a marker
+                        self.marker(
+                            ra=ra,
+                            dec=dec,
+                            style=style,
+                            label=None,
+                            legend_label=item["legend_label"],
+                            collision_handler=handler,
+                        )
+
+            with self.canvas.group(gid=f"dso-{dso_type.value}-labels"):
+                for item in items:
+                    label = item["label"]
+                    if not label:
+                        continue
+
+                    d = item["d"]
+                    ra, dec, style = item["ra"], item["dec"], item["style"]
+
+                    if item["true_size"] and d.size is not None:
+                        if self.in_bounds(ra, dec):
+                            self.text(
+                                label,
+                                ra,
+                                dec,
+                                style.label,
+                                collision_handler=handler,
+                                gid=f"dso-{d.type}-label",
+                            )
+                    elif self.in_bounds(ra, dec):
+                        # matches the bounds check `marker()` does before plotting
+                        # its label, since this replicates its label-drawing path
+                        self.text(
+                            label,
+                            ra,
+                            dec,
+                            style=self._offset_from_marker(
+                                style=style.label,
+                                text=label,
+                                marker_size=style.marker.size,
+                            ),
+                            collision_handler=handler,
+                        )
