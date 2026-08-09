@@ -218,8 +218,8 @@ class DsoPlotterMixin:
             if style is None:
                 continue
 
-            _alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
-            style.marker.alpha = _alpha_fn(_dso)
+            if alpha_fn:
+                style.marker.alpha = alpha_fn(_dso)
 
             if _dso.pk not in label_pks:
                 label = None

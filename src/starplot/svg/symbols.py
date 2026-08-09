@@ -15,6 +15,7 @@ from starplot.svg.elements import Circle, Ellipse, Group, Line, Polygon, Rectang
 
 PRECISION = 4
 
+
 def circle_cross(x, y, size, attrs):
     r = round(size / 2, PRECISION)
     return Group(

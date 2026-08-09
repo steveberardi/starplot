@@ -333,7 +333,7 @@ class CreateMapMixin:
             ra_max=ra_max,
             dec_min=dec_min,
             dec_max=dec_max,
-            *args,
+            *args,  # noqa B026
             **kwargs,
         )
         return p
@@ -356,6 +356,6 @@ class CreateOpticMixin:
         return OpticPlot(
             ra=self.ra,
             dec=self.dec,
-            *args,
+            *args,  # noqa B026
             **kwargs,
         )
