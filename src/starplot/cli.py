@@ -1,6 +1,6 @@
 import sys
 
-from starplot.styles import fonts
+from starplot.svg.fonts import download_fonts
 from starplot.config import settings
 from starplot.data import db
 from starplot.data.catalogs import download_all_catalogs
@@ -9,11 +9,13 @@ COMMANDS = ["setup"]
 
 
 def setup(options):
+    print(f"Data path = {settings.data_path}")
+
     print("Installing DuckDB spatial extension...")
     db.connect()  # installs spatial extension as side-effect
 
-    print("Building font cache...")
-    fonts.load()
+    print("Downloading fonts...")
+    download_fonts()
 
     print(f"Downloading data catalogs to: {settings.data_path}")
     download_all_catalogs()

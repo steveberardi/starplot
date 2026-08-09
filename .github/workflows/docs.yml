@@ -18,7 +18,7 @@ jobs:
       run: make build
     
     - name: Build sky.db
-      run: make db CI=true
+      run: make db setup CI=true
 
     - name: Build Examples
       run: make examples

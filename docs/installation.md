@@ -21,6 +21,7 @@ starplot setup
 ```
 
 - Installs the required [spatial extension](https://duckdb.org/docs/stable/core_extensions/spatial/overview.html) for DuckDB
+- Downloads recommended fonts (Inter and GFS Didot)
 - Downloads catalogs for stars, constellations, and deep sky objects
 
 Starplot will do this automatically when you first create a plot, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).

@@ -1,6 +1,3 @@
-# scratchpad for local development
-scripts/scratchpad.py
-
 .claude/
 
 __marimo__/
@@ -15,33 +12,30 @@ duckdb-extensions
 # Sky Object Database
 # ignore this because it's large and created on release
 sky.db
-*.parquet
 gaia*/
 
-# Catalogs
+# Data Catalogs
 *.parquet
+*.csv.gz
 
 # Data Folder
 data/fonts/*
 data/build/*
 !data/build/.keep
-data/fonts/*
 
-# Big Sky Catalog
-# we ignore this because of its size (50+ MB)
-bigsky.*.csv.gz
-bigsky*.parquet
-
+# Hash check results
 hash_checks/data/*.png
 hash_checks/results.html
 
+# local development scripts etc
 plots/
 .tmp/
 temp*
 temp.py
 temp/
-# raw/
 scripts/temp/
+scripts/scratchpad.py
+
 
 # Documentation Generated Files
 examples/*.png

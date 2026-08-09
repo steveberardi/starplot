@@ -7,6 +7,7 @@ else
  DR_ARGS=-it --env-file ./.env
 endif
 
+DOTENV=--env-file .env
 DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
 DOCKER_BUILDER=starplot-builder
 
@@ -23,55 +24,57 @@ build:
 	$(DOCKER_BUILD_PYTHON)
 
 lint:
-	uv run ruff check src/ tests/ hash_checks/ $(ARGS)
+	uv run $(DOTENV) ruff check src/ tests/ hash_checks/ $(ARGS)
 
 format:
-	uv run ruff format src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)
+	uv run $(DOTENV) ruff format src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)
 
 test:
-	uv run pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html tests/
+	uv run $(DOTENV) pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html tests/
 
 check-hashes:
 	rm -f hash_checks/data/*.png
-	uv run python hash_checks/hashio.py check
+	uv run $(DOTENV) python hash_checks/hashio.py check
 
 lock-hashes:
-	uv run python hash_checks/hashio.py lock
+	uv run $(DOTENV) python hash_checks/hashio.py lock
 
 shell:
-	uv run ipython
+	uv run $(DOTENV) ipython
 
 marimo: DR_ARGS=-it -p 9009:9009
 marimo:
-	uv run marimo edit scripts/marimo.py --no-token  --host 0.0.0.0 --port 9009
+	uv run $(DOTENV) marimo edit scripts/marimo.py --no-token  --host 0.0.0.0 --port 9009
 
 examples:
-	cd examples && rm -f *.png && rm -f *.jpg && uv run examples.py
+	cd examples && rm -f *.png && rm -f *.jpg && uv run $(DOTENV) examples.py
 
 tutorial:
-	cd tutorial && uv run build.py
+	cd tutorial && uv run $(DOTENV) build.py
 
 profile: DR_ARGS=-it -p 8081:8081
 profile:
 	$(DOCKER_RUN) "python -m cProfile -o temp/results.prof scripts/scratchpad.py && \
 	snakeviz -s -p 8081 -H 0.0.0.0 temp/results.prof"
 
-# builds ALL data files and then database:
 db: 
-	uv run data/scripts/db.py
+	uv run $(DOTENV) data/scripts/db.py
 
 build-data-clean:
 	mkdir -p data/build
 	rm -rf data/build/*
 
 build-star-designations:
-	uv run data/scripts/star_designations.py
+	uv run $(DOTENV) data/scripts/star_designations.py
 
 build-doc-data:
-	uv run data/scripts/docdata.py
+	uv run $(DOTENV) data/scripts/docdata.py
 
 version:
-	uv run python -c 'import starplot as sp; print(sp.__version__)'
+	uv run $(DOTENV) python -c 'import starplot as sp; print(sp.__version__)'
+
+setup:
+	uv run $(DOTENV) starplot setup
 
 install:
 	uv sync --all-groups --all-extras
@@ -102,18 +105,18 @@ test-3.13:
 # ------------------------------------------------------------------
 # Docs
 docs-serve:
-	uv run zensical serve
+	uv run $(DOTENV) zensical serve
 
 docs-build:
-	uv run zensical build
+	uv run $(DOTENV) zensical build
 
 # ------------------------------------------------------------------
 # PyPi - build & publish
 flit-build:
-	uv run flit build
+	uv run $(DOTENV) flit build
 
 flit-publish:
-	uv run flit publish
+	uv run $(DOTENV) flit publish
 
 flit-install:
 	FLIT_ROOT_INSTALL=1 flit install
@@ -124,7 +127,7 @@ ephemeris:
 	$(DOCKER_RUN) "python -m jplephem excerpt 2025/1/1 2050/1/1 $(DE421_URL) de421sub.bsp"
 
 scripts:
-	$(DOCKER_RUN) "python ./scripts/$(SCRIPT).py"
+	uv run $(DOTENV) python ./scripts/$(SCRIPT).py
 
 clean:
 	rm -rf __pycache__

@@ -18,7 +18,7 @@ jobs:
     - name: Install dependencies
       run: make install
     - name: Build sky.db
-      run: make db CI=true
+      run: make db setup CI=true
     - name: Check Lint
       run: make lint CI=true
     - name: Check Format
