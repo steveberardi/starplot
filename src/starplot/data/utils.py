@@ -24,7 +24,9 @@ def download(url, download_path, description: str = "", silent=False):
 
             progress = int(25 * bytes_written / total_size)
             if not silent:
-                sys.stdout.write("\r[%s%s]" % ("=" * progress, " " * (25 - progress)))
+                sys.stdout.write(
+                    "\r[{}{}]".format("=" * progress, " " * (25 - progress))
+                )
                 sys.stdout.flush()
 
         if not silent:

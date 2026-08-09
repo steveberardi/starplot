@@ -1,3 +1,4 @@
+import itertools
 import math
 import random
 
@@ -173,8 +174,8 @@ def union_at_zero(a: Polygon, b: Polygon) -> Polygon:
     Returns
         Polygon union of first and second polygon
     """
-    a_ra = list(a.exterior.coords.xy)[0]
-    b_ra = list(b.exterior.coords.xy)[0]
+    a_ra = next(iter(a.exterior.coords.xy))
+    b_ra = next(iter(b.exterior.coords.xy))
 
     if max(a_ra) == 360 and min(b_ra) == 0:
         points = list(zip(*b.exterior.coords.xy))
@@ -507,7 +508,7 @@ def split_at_antimeridian(
     half = antimeridian / 2
     segments: list[list[tuple[float, float]]] = [[coords[0]]]
 
-    for (x0, y0), (x1, y1) in zip(coords, coords[1:]):
+    for (x0, y0), (x1, y1) in itertools.pairwise(coords):
         dx = x1 - x0
 
         if dx > half:
@@ -622,26 +623,26 @@ def extent_polygon(
     return np.vstack([bottom, right, top, left])
 
 
-class BaseGeometry:
-    """
-    Wrapper around shapely geometries
+# class BaseGeometry:
+#     """
+#     Wrapper around shapely geometries
 
-    Two types of polygons needed:
-    1. For intersection testing: needs to be split at zero and restricted to 0-360
-    2. For plotting: needs to be extended past 360 if applicable
+#     Two types of polygons needed:
+#     1. For intersection testing: needs to be split at zero and restricted to 0-360
+#     2. For plotting: needs to be extended past 360 if applicable
 
-    TODO:
+#     TODO:
 
-        Functions
-        - intersects
+#         Functions
+#         - intersects
 
-        Properties
-        - centroid
-        - bbox
-        - wkt
-        - wkb
+#         Properties
+#         - centroid
+#         - bbox
+#         - wkt
+#         - wkb
 
-    """
+#     """
 
-    def intersects(self):
-        """ """
+#     def intersects(self):
+#         """TODO"""

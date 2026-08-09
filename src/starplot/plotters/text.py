@@ -334,7 +334,6 @@ class TextPlotterMixin:
 
         x, y = self._prepare_coords(ra, dec)
 
-        attempts = 0
         height = 0
         width = 0
 
@@ -357,8 +356,7 @@ class TextPlotterMixin:
             *collision_handler.anchor_fallbacks,
         ]
 
-        for anchor in anchors:
-            attempts += 1
+        for attempts, anchor in enumerate(anchors, start=1):
             offset_x, offset_y = style.offset_x, style.offset_y
 
             # CENTER = "center"

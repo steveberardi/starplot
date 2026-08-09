@@ -27,10 +27,10 @@ env:
 	touch -a .env
 
 lint:
-	uv run $(DOTENV) ruff check src/ tests/ hash_checks/ $(ARGS)
+	uv run $(DOTENV) ruff check $(ARGS) src/ tests/ hash_checks/ 
 
 format:
-	uv run $(DOTENV) ruff format src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)
+	uv run $(DOTENV) ruff format $(ARGS) src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/
 
 test:
 	uv run $(DOTENV) pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html tests/
