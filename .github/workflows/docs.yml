@@ -16,8 +16,8 @@ jobs:
 
     - uses: astral-sh/setup-uv@v5
 
-    - name: Build Docker image
-      run: make build
+    - name: Install dependencies
+      run: make install env
     
     - name: Build sky.db
       run: make db setup CI=true

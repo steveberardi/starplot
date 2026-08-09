@@ -23,6 +23,9 @@ build:
 	touch -a .env
 	$(DOCKER_BUILD_PYTHON)
 
+env:
+	touch -a .env
+
 lint:
 	uv run $(DOTENV) ruff check src/ tests/ hash_checks/ $(ARGS)
 
@@ -74,7 +77,6 @@ version:
 	uv run $(DOTENV) python -c 'import starplot as sp; print(sp.__version__)'
 
 setup:
-	touch -a .env
 	uv run $(DOTENV) starplot setup
 
 install:

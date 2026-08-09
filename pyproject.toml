@@ -60,7 +60,7 @@ testpaths = ["./tests"]
 filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.ruff.lint]
-ignore = ["E501"]
+ignore = ["E501", "C408"]
 
 [tool.marimo.display]
 theme = "dark"
