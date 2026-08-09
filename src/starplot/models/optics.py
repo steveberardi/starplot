@@ -1,5 +1,4 @@
 import math
-
 from abc import ABC, abstractmethod
 
 import pyproj

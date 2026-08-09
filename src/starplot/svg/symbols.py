@@ -1,7 +1,7 @@
 import math
 
 from starplot.styles import MarkerSymbolEnum
-from starplot.svg.elements import Circle, Line, Ellipse, Group, Rectangle, Polygon
+from starplot.svg.elements import Circle, Ellipse, Group, Line, Polygon, Rectangle
 
 """
 (0,0)          (100,0)

@@ -1,19 +1,21 @@
 import glob
-from enum import Enum
-
 from collections.abc import Iterable
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
+from typing import TYPE_CHECKING
 
+import pyarrow as pa
 from astropy import units as u
 from astropy_healpix import HEALPix
 from ibis import Table
-import pyarrow as pa
-from shapely import Geometry, Polygon, MultiPolygon
+from shapely import Geometry, MultiPolygon, Polygon
 
 from starplot.config import settings
-from starplot.models.base import SkyObject
 from starplot.data.utils import download
+
+if TYPE_CHECKING:
+    from starplot.models.base import SkyObject
 
 
 def merge_schemas(df, explicit_schema: pa.Schema) -> pa.Schema:
@@ -206,7 +208,7 @@ class Catalog:
 
     def build(
         self,
-        objects: Iterable[SkyObject],
+        objects: Iterable["SkyObject"],
         chunk_size: int = 1_000_000,
         columns: list[str] = None,
         partition_columns: list[str] = None,

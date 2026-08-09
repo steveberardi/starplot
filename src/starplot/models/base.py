@@ -1,9 +1,8 @@
 from dataclasses import dataclass, fields
 from functools import cache
-from typing import Optional
 
 import pyarrow as pa
-from skyfield.api import position_of_radec, load_constellation_map
+from skyfield.api import load_constellation_map, position_of_radec
 
 from starplot.mixins import CreateMapMixin, CreateOpticMixin
 
@@ -30,7 +29,7 @@ class SkyObject(
     dec: float
     """Declination, in degrees (-90 to 90)"""
 
-    constellation_id: Optional[str] = None
+    constellation_id: str | None = None
     """Three-letter IAU id of the constellation that contains this object"""
 
     healpix_index: int = None

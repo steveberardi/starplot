@@ -1,8 +1,8 @@
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from starplot import styles, HorizonPlot, _, Observer, Star, CollisionHandler
+from starplot import CollisionHandler, HorizonPlot, Observer, Star, _, styles
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"

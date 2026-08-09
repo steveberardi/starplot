@@ -1,15 +1,15 @@
+from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Optional, Iterator
 from enum import Enum
 
-from ibis import _
 import pyarrow as pa
-from shapely import Polygon, MultiPolygon
+from ibis import _
+from shapely import MultiPolygon, Polygon
 
-from starplot.data.utils import to_pandas
-from starplot.data.catalogs import Catalog, OPEN_NGC
+from starplot.data.catalogs import OPEN_NGC, Catalog
 from starplot.data.dsos import load
-from starplot.models.base import SkyObject, CatalogObject
+from starplot.data.utils import to_pandas
+from starplot.models.base import CatalogObject, SkyObject
 
 
 class DsoType(str, Enum):
@@ -104,32 +104,32 @@ class DSO(CatalogObject, SkyObject):
     Note: this field is parsed into a list of strings _after_ querying DSOs, so if you want to query on this field, you should treat it as a comma-separated list.
     """
 
-    magnitude: Optional[float] = None
+    magnitude: float | None = None
     """Magnitude (if available)"""
 
-    maj_ax: Optional[float] = None
+    maj_ax: float | None = None
     """Major axis of the DSO, in arcmin (if available)"""
 
-    min_ax: Optional[float] = None
+    min_ax: float | None = None
     """Minor axis of the DSO, in arcmin (if available)"""
 
-    angle: Optional[float] = None
+    angle: float | None = None
     """Angle of the DSO, in degrees (if available)"""
 
-    size: Optional[float] = None
+    size: float | None = None
     """Size of the DSO calculated as the area of the minimum bounding rectangle of the DSO, in degrees squared (if available)"""
 
-    m: Optional[str] = None
+    m: str | None = None
     """
     Messier number. *Note that this field is a string, to be consistent with the other identifier fields (`ngc` and `ic`).*
     """
 
-    ngc: Optional[str] = None
+    ngc: str | None = None
     """
     New General Catalogue (NGC) identifier. *Note that this field is a string, to support objects like '3537 NED01'.*
     """
 
-    ic: Optional[str] = None
+    ic: str | None = None
     """
     Index Catalogue (IC) identifier. *Note that this field is a string, to support objects like '4974 NED01'.*
     """

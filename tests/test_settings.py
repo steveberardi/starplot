@@ -1,4 +1,4 @@
-from starplot import ZenithPlot, settings, override_settings
+from starplot import ZenithPlot, override_settings, settings
 
 
 def test_settings_language_valid():

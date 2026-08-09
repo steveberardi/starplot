@@ -9,7 +9,7 @@ def profile(func):
 
         duration = round(time.perf_counter() - start, 4)
 
-        args[0].logger.debug(f"{func.__name__} = {str(duration)} sec")
+        args[0].logger.debug(f"{func.__name__} = {duration!s} sec")
 
         return result
 

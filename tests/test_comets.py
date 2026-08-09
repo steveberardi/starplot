@@ -1,8 +1,8 @@
-import pytest
-
 from datetime import datetime, timedelta
+from unittest.mock import MagicMock, patch
 from zoneinfo import ZoneInfo
-from unittest.mock import patch, MagicMock
+
+import pytest
 
 from starplot import Comet, Observer
 

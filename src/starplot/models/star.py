@@ -1,14 +1,15 @@
+from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Optional, Union, Iterator
+from typing import Union
 
 import numpy as np
 import pyarrow as pa
 from ibis import _
-from shapely import from_wkb, Point, Geometry
+from shapely import Geometry, Point, from_wkb
 
-from starplot.models.base import SkyObject, CatalogObject
-from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
+from starplot.data.catalogs import BIG_SKY_MAG11, Catalog
 from starplot.data.stars import load as _load_stars
+from starplot.models.base import CatalogObject, SkyObject
 
 
 @dataclass(slots=True, kw_only=True)
@@ -26,16 +27,16 @@ class Star(CatalogObject, SkyObject):
     epoch_year: float = None
     """Epoch of position"""
 
-    bv: Optional[float] = None
+    bv: float | None = None
     """B-V Color Index, if available"""
 
-    hip: Optional[int] = None
+    hip: int | None = None
     """Hipparcos Catalog ID, if available"""
 
-    tyc: Optional[str] = None
+    tyc: str | None = None
     """Tycho ID, if available"""
 
-    ccdm: Optional[str] = None
+    ccdm: str | None = None
     """CCDM Component Identifier (if applicable)"""
 
     parallax_mas: float = None
@@ -47,13 +48,13 @@ class Star(CatalogObject, SkyObject):
     dec_mas_per_year: float = None
     """Declination proper motion in milliarcseconds per Julian year"""
 
-    name: Optional[str] = None
+    name: str | None = None
     """Name, if available"""
 
-    bayer: Optional[str] = None
+    bayer: str | None = None
     """Bayer designation, if available"""
 
-    flamsteed: Optional[int] = None
+    flamsteed: int | None = None
     """Flamsteed number, if available"""
 
     @classmethod

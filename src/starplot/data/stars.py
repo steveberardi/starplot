@@ -2,12 +2,12 @@ from functools import cache
 from pathlib import Path
 
 from ibis import _
-from shapely import Polygon, MultiPolygon
+from shapely import MultiPolygon, Polygon
 
 from starplot.config import settings
 from starplot.data import db
-from starplot.data.catalogs import Catalog, SpatialQueryMethod, BIG_SKY_MAG11
-from starplot.data.translations import language_name_column, LANGUAGE_NAME_COLUMNS
+from starplot.data.catalogs import BIG_SKY_MAG11, Catalog, SpatialQueryMethod
+from starplot.data.translations import LANGUAGE_NAME_COLUMNS, language_name_column
 
 
 @cache

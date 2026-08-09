@@ -1,6 +1,5 @@
 import inspect
 import json
-
 from functools import wraps
 
 
@@ -14,7 +13,7 @@ def merge_dict(dict_1: dict, dict_2: dict) -> None:
     Returns:
         None (dict_1 is modified directly)
     """
-    for k in dict_2.keys():
+    for k in dict_2:
         if k in dict_1 and isinstance(dict_1[k], dict) and isinstance(dict_2[k], dict):
             merge_dict(dict_1[k], dict_2[k])
         else:

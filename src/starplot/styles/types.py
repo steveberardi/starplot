@@ -1,7 +1,8 @@
+from typing import Annotated
+
 from pydantic import AfterValidator
-from pydantic_extra_types.color import Color
 from pydantic.functional_serializers import PlainSerializer
-from typing_extensions import Annotated
+from pydantic_extra_types.color import Color
 
 ColorStr = Annotated[
     Color,

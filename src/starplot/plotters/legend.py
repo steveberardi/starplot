@@ -1,13 +1,13 @@
 import math
-from typing import Callable
+from collections.abc import Callable
 
 import numpy as np
 
 from starplot.data.translations import translate
 from starplot.models.star import Star
 from starplot.styles import (
-    MarkerStyle,
     LegendStyle,
+    MarkerStyle,
 )
 from starplot.styles.helpers import use_style
 

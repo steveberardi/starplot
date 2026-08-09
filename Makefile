@@ -74,6 +74,7 @@ version:
 	uv run $(DOTENV) python -c 'import starplot as sp; print(sp.__version__)'
 
 setup:
+	touch -a .env
 	uv run $(DOTENV) starplot setup
 
 install:

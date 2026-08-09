@@ -1,46 +1,45 @@
-# ruff: noqa: F401,F403
+# ruff: noqa: F401
 
 """Star charts and maps of the sky"""
 
 __version__ = "0.21.0"
 
-from .plots import (
-    MapPlot,
-    HorizonPlot,
-    OpticPlot,
-    ZenithPlot,
-    GalaxyPlot,
-)
-from .models import (
-    DSO,
-    DsoType,
-    Star,
-    Constellation,
-    ConstellationBorder,
-    Comet,
-    Planet,
-    Moon,
-    Sun,
-    ObjectList,
-    Scope,
-    Binoculars,
-    Reflector,
-    Refractor,
-    Camera,
-    Satellite,
-    Observer,
-    MilkyWay,
-)
-from .data import Catalog
-from .styles import *
-from .projections import *
-from .config import settings
-from .plotters.text import CollisionHandler
+import contextlib
 
 from ibis import _
 
-
-import contextlib
+from .config import settings
+from .data import Catalog
+from .models import (
+    DSO,
+    Binoculars,
+    Camera,
+    Comet,
+    Constellation,
+    ConstellationBorder,
+    DsoType,
+    MilkyWay,
+    Moon,
+    ObjectList,
+    Observer,
+    Planet,
+    Reflector,
+    Refractor,
+    Satellite,
+    Scope,
+    Star,
+    Sun,
+)
+from .plots import (
+    GalaxyPlot,
+    HorizonPlot,
+    MapPlot,
+    OpticPlot,
+    ZenithPlot,
+)
+from .plotters.text import CollisionHandler
+from .projections import *
+from .styles import *
 
 
 @contextlib.contextmanager

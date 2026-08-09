@@ -1,19 +1,18 @@
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
-import rtree
 import numpy as np
+import rtree
 from ibis import _ as ibis_table
 from skyfield.api import Star as SkyfieldStar
 
-from starplot import callables
 from starplot.data import stars
-from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
+from starplot.data.catalogs import BIG_SKY_MAG11, Catalog
 from starplot.data.translations import translate
 from starplot.models.star import Star, from_tuple
-from starplot.styles import ObjectStyle, use_style
-from starplot.profile import profile
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
+from starplot.styles import ObjectStyle, use_style
 
 
 def size_by_magnitude(star: Star) -> float:
@@ -46,9 +45,7 @@ def size_by_magnitude(star: Star) -> float:
     """
     mag = star.magnitude
     size = 0
-    if mag <= 1:  # 0..1
-        size = 40
-    elif mag <= 2:  # 1..2
+    if mag <= 1 or mag <= 2:  # 0..1
         size = 40
     elif mag <= 3:  # 2..3
         size = 30
@@ -309,7 +306,7 @@ class StarPlotterMixin:
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 
         if not starz:
-            self.logger.debug(f"No stars found.")
+            self.logger.debug("No stars found.")
             return
 
         x, y, sizes, alphas, colors, star_objects = zip(*starz)

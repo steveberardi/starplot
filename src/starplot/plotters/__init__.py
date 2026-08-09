@@ -1,9 +1,9 @@
-# ruff: noqa: F401,F403
+# ruff: noqa: F401
 
-from .constellations import ConstellationPlotterMixin
-from .stars import StarPlotterMixin
-from .dsos import DsoPlotterMixin
-from .milkyway import MilkyWayPlotterMixin
-from .legend import LegendPlotterMixin
 from .arrow import ArrowPlotterMixin
+from .constellations import ConstellationPlotterMixin
+from .dsos import DsoPlotterMixin
+from .legend import LegendPlotterMixin
+from .milkyway import MilkyWayPlotterMixin
+from .stars import StarPlotterMixin
 from .text import TextPlotterMixin

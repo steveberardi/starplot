@@ -1,17 +1,16 @@
+from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Iterator
 
 import numpy as np
-
 from shapely import Polygon
 from skyfield.api import Angle
 
 from starplot.data import load
+from starplot.geometry import circle
 from starplot.models.base import SkyObject
 from starplot.models.observer import Observer
-from starplot.geometry import circle
 
 
 class PlanetName(str, Enum):

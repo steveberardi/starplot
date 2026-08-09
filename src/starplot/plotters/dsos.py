@@ -1,21 +1,21 @@
-from typing import Callable, Mapping
+from collections.abc import Callable, Mapping
 
-from ibis import _
 import numpy as np
+from ibis import _
 
+from starplot.data.catalogs import OPEN_NGC, Catalog
 from starplot.data.dsos import load
-from starplot.data.catalogs import Catalog, OPEN_NGC
 from starplot.data.translations import translate
 from starplot.models.dso import (
     DSO,
+    DSO_LEGEND_LABELS,
+    ONGC_TYPE_MAP,
     DsoType,
     from_tuple,
-    ONGC_TYPE_MAP,
-    DSO_LEGEND_LABELS,
 )
-from starplot.styles import MarkerSymbolEnum
-from starplot.profile import profile
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
+from starplot.styles import MarkerSymbolEnum
 
 
 class DsoPlotterMixin:

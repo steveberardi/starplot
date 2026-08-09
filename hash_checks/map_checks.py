@@ -1,31 +1,30 @@
 import random
-
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import numpy as np
 from shapely import Polygon
 
 from starplot import (
-    MapPlot,
-    styles,
     DSO,
-    Star,
-    DsoType,
-    Moon,
+    Binoculars,
+    CollisionHandler,
     Constellation,
-    _,
-    Observer,
-    Miller,
+    DsoType,
+    MapPlot,
     Mercator,
+    Miller,
     Mollweide,
+    Moon,
+    Observer,
+    PlateCarree,
+    Scope,
+    Star,
     StereoNorth,
     StereoSouth,
-    PlateCarree,
-    CollisionHandler,
-    Binoculars,
-    Scope,
+    _,
+    styles,
 )
 
 HERE = Path(__file__).resolve().parent

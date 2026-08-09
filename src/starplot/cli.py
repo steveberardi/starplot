@@ -1,9 +1,9 @@
 import sys
 
-from starplot.svg.fonts import download_fonts
 from starplot.config import settings
 from starplot.data import db
 from starplot.data.catalogs import download_all_catalogs
+from starplot.svg.fonts import download_fonts
 
 COMMANDS = ["setup"]
 

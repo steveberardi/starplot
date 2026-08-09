@@ -5,7 +5,6 @@ from ibis import duckdb
 from starplot.config import settings
 from starplot.data import DataFiles
 
-
 NAME_TABLES = {
     "star_designations": DataFiles.STAR_DESIGNATIONS,
     "constellation_names": DataFiles.CONSTELLATION_NAMES,
@@ -16,7 +15,7 @@ NAME_TABLES = {
 @cache
 def _connect(extensions_path):
     connection = duckdb.connect()
-    connection.raw_sql(f"SET extension_directory = '{str(extensions_path)}';")
+    connection.raw_sql(f"SET extension_directory = '{extensions_path!s}';")
     connection.raw_sql("INSTALL spatial;")
     connection.load_extension("spatial")
 

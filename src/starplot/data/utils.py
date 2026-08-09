@@ -1,7 +1,7 @@
 import sys
 
-import requests
 import numpy as np
+import requests
 
 
 def download(url, download_path, description: str = "", silent=False):

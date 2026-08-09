@@ -1,22 +1,19 @@
-import sys
 import inspect
+import multiprocessing as mp
+import sys
 import time
 import traceback
-import multiprocessing as mp
-
 from pathlib import Path
 
+import horizon_checks
 import imagehash
+import map_checks
+import optic_checks
 import yaml
-
+import zenith_checks
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from PIL import Image
 from rich.console import Console
-
-import map_checks
-import optic_checks
-import zenith_checks
-import horizon_checks
 
 TEMPLATE_NAME = "template.html"
 

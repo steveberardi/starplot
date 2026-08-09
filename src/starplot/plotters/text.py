@@ -6,13 +6,12 @@ import rtree
 from shapely import Point, box
 from shapely.errors import GEOSException
 
-from starplot.config import settings as StarplotSettings, SvgTextType
-from starplot.styles import AnchorPointEnum, LabelStyle
-from starplot.styles.helpers import use_style
 from starplot.geometry import (
     random_point_in_polygon_at_distance,
     union_at_zero,
 )
+from starplot.styles import AnchorPointEnum, LabelStyle
+from starplot.styles.helpers import use_style
 from starplot.svg.canvas import CoordinateSystem
 from starplot.svg.fonts import get_text_hw
 
@@ -331,7 +330,7 @@ class TextPlotterMixin:
         collision_handler: CollisionHandler,
     ) -> None:
         if not text:
-            return None
+            return
 
         x, y = self._prepare_coords(ra, dec)
 

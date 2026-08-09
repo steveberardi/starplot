@@ -7,8 +7,8 @@ from starplot.config import settings
 from starplot.data import db
 from starplot.data.catalogs import Catalog, SpatialQueryMethod
 from starplot.data.translations import (
-    language_name_column,
     LANGUAGES,
+    language_name_column,
 )
 
 

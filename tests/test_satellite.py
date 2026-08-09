@@ -1,9 +1,9 @@
-import pytest
-
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from starplot import Satellite, Observer
+import pytest
+
+from starplot import Observer, Satellite
 
 TZ_PT = ZoneInfo("America/Los_Angeles")
 

@@ -1,13 +1,13 @@
 from ibis import _
-from shapely import box, union_all, MultiPolygon
+from shapely import MultiPolygon, box, union_all
 
 from starplot.data import db
-from starplot.data.catalogs import Catalog, MILKY_WAY
+from starplot.data.catalogs import MILKY_WAY, Catalog
+from starplot.geometry import split_polygon_at_zero
+from starplot.models.milky_way import from_tuple
+from starplot.profile import profile
 from starplot.styles import PolygonStyle
 from starplot.styles.helpers import use_style
-from starplot.geometry import split_polygon_at_zero
-from starplot.profile import profile
-from starplot.models.milky_way import from_tuple
 
 
 class MilkyWayPlotterMixin:

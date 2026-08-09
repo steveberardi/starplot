@@ -1,8 +1,7 @@
 import os
-
+from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from dataclasses import dataclass, field
 
 
 def _get_path(var_name, default) -> Path:

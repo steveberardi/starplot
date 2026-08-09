@@ -3,47 +3,42 @@ from enum import Enum
 from pathlib import Path
 
 import numpy as np
-from shapely import concave_hull
-
-from shapely import Polygon as ShapelyPolygon, LineString, MultiPoint, Point
-from shapely.ops import transform as _transform_shape
-from shapely.affinity import translate as _translate_shape
-
 from pyproj import CRS
+from shapely import LineString, MultiPoint, Point, concave_hull
+from shapely import Polygon as ShapelyPolygon
+from shapely.affinity import translate as _translate_shape
+from shapely.ops import transform as _transform_shape
 
 from starplot import geometry as _geometry
-from starplot.styles import (
-    PlotStyle,
-    MarkerStyle,
-    LabelStyle,
-    PathStyle,
-    LineStyle,
-    PolygonStyle,
-    GradientStops,
-    GradientType,
-    LegendStyle,
-    TableStyle,
-)
 from starplot.projections import (
+    CoordinateReferenceSystem,
     ProjectionBase,
     latlon_bounds_to_projection,
-    CoordinateReferenceSystem,
 )
-from starplot.svg import symbols, png, fonts
-from starplot.svg.layout import Layout, Region, LegendRegion, TableRegion
+from starplot.styles import (
+    GradientStops,
+    GradientType,
+    LabelStyle,
+    LegendStyle,
+    LineStyle,
+    MarkerStyle,
+    PathStyle,
+    PlotStyle,
+    PolygonStyle,
+    TableStyle,
+)
+from starplot.svg import fonts, png, symbols
 from starplot.svg.elements import (
-    Group,
-    Rectangle,
     ClipPath,
+    Group,
+    Line,
     Polygon,
     Polyline,
-    Line,
+    Rectangle,
     Text,
-    LinearGradient,
-    RadialGradient,
-    Stop,
     create_gradient,
 )
+from starplot.svg.layout import Layout, LegendRegion, Region, TableRegion
 
 
 class CoordinateSystem(str, Enum):

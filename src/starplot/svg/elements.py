@@ -3,7 +3,7 @@ from typing import ClassVar
 
 from fontTools.pens.svgPathPen import SVGPathPen
 
-from starplot.styles import GradientType, GradientStops
+from starplot.styles import GradientStops, GradientType
 from starplot.svg.fonts import find_font
 
 

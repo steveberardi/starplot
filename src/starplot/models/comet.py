@@ -1,11 +1,11 @@
-from datetime import datetime, timedelta
-from typing import Iterator
-from functools import cache
+from collections.abc import Iterator
 from dataclasses import dataclass, fields
+from datetime import datetime, timedelta
+from functools import cache
 
-from skyfield.data import mpc
-from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
 from shapely import Point
+from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
+from skyfield.data import mpc
 
 from starplot.data import load
 from starplot.models.base import SkyObject

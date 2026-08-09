@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
 import pyarrow as pa
-from shapely import Polygon, MultiPolygon
+from shapely import MultiPolygon, Polygon
 
-from starplot.models.base import SkyObject, CatalogObject
+from starplot.models.base import CatalogObject, SkyObject
 
 
 @dataclass(slots=True, kw_only=True)

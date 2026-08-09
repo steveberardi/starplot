@@ -1,18 +1,11 @@
-import random
 import math
+import random
 
-import pyproj
 import numpy as np
-
+import pyproj
 from shapely import union_all
-from shapely.geometry import Point, Polygon, LineString
-from shapely.ops import split as split_geometry
-from shapely.affinity import translate as translate_geometry
-
-
-from shapely.geometry import Polygon, MultiPolygon, LineString, MultiLineString
+from shapely.geometry import LineString, MultiLineString, MultiPolygon, Point, Polygon
 from shapely.ops import split
-from shapely import union_all
 
 from starplot.constants import PROJ_R
 
@@ -652,4 +645,3 @@ class BaseGeometry:
 
     def intersects(self):
         """ """
-        pass

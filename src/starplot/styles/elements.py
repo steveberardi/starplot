@@ -1,19 +1,15 @@
-from typing import Optional, Union
-
-from pydantic import BaseModel
-
 from starplot.styles.base import BaseStyle
 from starplot.styles.constants import (
-    AnchorPointEnum,
     AlignmentEnum,
+    AnchorPointEnum,
+    CapStyleEnum,
     FontStyleEnum,
     FontWeightEnum,
     GradientType,
-    MarkerSymbolEnum,
-    LineStyleEnum,
-    CapStyleEnum,
     JoinStyleEnum,
     LegendLocationEnum,
+    LineStyleEnum,
+    MarkerSymbolEnum,
     ZOrderEnum,
 )
 from starplot.styles.types import ColorStr, GradientStops
@@ -24,16 +20,16 @@ class MarkerStyle(BaseStyle):
     Styling properties for markers.
     """
 
-    color: Optional[ColorStr | GradientStops] = ColorStr("#000")
+    color: ColorStr | GradientStops | None = ColorStr("#000")
     """Fill color of marker. Can be a hex, rgb, hsl, or word string."""
 
-    edge_color: Optional[ColorStr] = ColorStr("#000")
+    edge_color: ColorStr | None = ColorStr("#000")
     """Edge color of marker. Can be a hex, rgb, hsl, or word string."""
 
     edge_width: float = 1
     """Edge width of marker, in pixels. Not available for all marker symbols."""
 
-    line_style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
+    line_style: LineStyleEnum | tuple = LineStyleEnum.SOLID
     """Edge line style. Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
 
     dash_capstyle: CapStyleEnum = CapStyleEnum.PROJECTING
@@ -98,10 +94,10 @@ class LineStyle(BaseStyle):
     width: float = 4
     """Width of line in pixels"""
 
-    color: Optional[ColorStr] = ColorStr("#000")
+    color: ColorStr | None = ColorStr("#000")
     """Color of the line. Can be a hex, rgb, hsl, or word string."""
 
-    style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
+    style: LineStyleEnum | tuple = LineStyleEnum.SOLID
     """Style of the line (e.g. solid, dashed, etc). Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
 
     cap_style: CapStyleEnum = CapStyleEnum.PROJECTING
@@ -139,15 +135,15 @@ class PolygonStyle(BaseStyle):
     edge_width: float = 1
     """Width of the polygon's edge in pixels"""
 
-    edge_color: Optional[ColorStr] = None
+    edge_color: ColorStr | None = None
     """Edge color of the polygon"""
 
-    fill_color: Optional[ColorStr | GradientStops] = None
+    fill_color: ColorStr | GradientStops | None = None
     """Fill color of the polygon"""
 
     gradient_type: GradientType = GradientType.RADIAL
 
-    line_style: Union[LineStyleEnum, tuple] = LineStyleEnum.SOLID
+    line_style: LineStyleEnum | tuple = LineStyleEnum.SOLID
     """Edge line style. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/)."""
 
     alpha: float = 1.0
@@ -244,13 +240,13 @@ class LabelStyle(BaseStyle):
     font_style: FontStyleEnum = FontStyleEnum.NORMAL
     """Style of the label (e.g. normal, italic, etc)"""
 
-    font_name: Optional[str] = "Inter"
+    font_name: str | None = "Inter"
     """Name of the font to use"""
 
-    font_family: Optional[str] = "sans-serif"
+    font_family: str | None = "sans-serif"
     """Font family (e.g. 'monospace', 'sans-serif', 'serif', etc)"""
 
-    line_spacing: Optional[float] = None
+    line_spacing: float | None = None
     """Spacing between lines of text"""
 
     anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
@@ -259,10 +255,10 @@ class LabelStyle(BaseStyle):
     border_width: float = 0
     """Width of border (also known as 'halos') around the text, in pixels"""
 
-    border_color: Optional[ColorStr] = None
+    border_color: ColorStr | None = None
     """Color of border (also known as 'halos') around the text"""
 
-    offset_x: Union[float, int, str] = 0
+    offset_x: float | int | str = 0
     """
     Horizontal offset of the label, in pixels. Negative values supported.
     
@@ -272,7 +268,7 @@ class LabelStyle(BaseStyle):
     the label just outside the marker (avoiding overlapping). To enable "auto" mode you have to specify BOTH offsets (x and y) as "auto."
     """
 
-    offset_y: Union[float, int, str] = 0
+    offset_y: float | int | str = 0
     """
     Vertical offset of the label, in pixels. Negative values supported.
     

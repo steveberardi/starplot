@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from starplot import Star, MapPlot, Mercator, Miller, Observer, _
+from starplot import MapPlot, Mercator, Miller, Observer, Star, _
 
 
 def test_map_radec_invalid():

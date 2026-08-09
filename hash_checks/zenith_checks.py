@@ -1,14 +1,14 @@
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from starplot import (
-    ZenithPlot,
-    Observer,
-    styles,
-    override_settings,
     CollisionHandler,
+    Observer,
+    ZenithPlot,
     _,
+    override_settings,
+    styles,
 )
 
 HERE = Path(__file__).resolve().parent

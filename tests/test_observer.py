@@ -2,7 +2,6 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import pytest
-
 from pydantic import ValidationError
 
 from starplot import Observer
@@ -10,7 +9,7 @@ from starplot import Observer
 
 def test_raises_exception_on_tz_naive():
     with pytest.raises(ValidationError, match=r"Input should have timezone info"):
-        Observer(dt=datetime.now())
+        Observer(dt=datetime.now())  # noqa DTZ005
 
 
 def test_raises_exception_on_invalid_lat_lon():

@@ -1,29 +1,29 @@
-from typing import Callable
+from collections.abc import Callable
 
 import rtree
-from shapely import MultiPoint
 from ibis import _
+from shapely import MultiPoint
 
-from starplot.data import db, constellations as condata
+from starplot.data import constellations as condata
+from starplot.data import db
 from starplot.data.catalogs import (
-    Catalog,
-    CONSTELLATIONS_IAU,
-    CONSTELLATION_BORDERS,
     BIG_SKY_MAG11,
+    CONSTELLATION_BORDERS,
+    CONSTELLATIONS_IAU,
+    Catalog,
 )
 from starplot.data.stars import load as load_stars
-from starplot.models import Star, Constellation
-from starplot.models.constellation import from_tuple
-from starplot.profile import profile
-from starplot.styles import LineStyle, LabelStyle
-from starplot.styles.helpers import use_style
 from starplot.geometry import (
     is_wrapped_polygon,
     line_segment,
-    split_line_at_meridian,
     split_at_antimeridian,
 )
+from starplot.models import Constellation, Star
+from starplot.models.constellation import from_tuple
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
+from starplot.styles import LabelStyle, LineStyle
+from starplot.styles.helpers import use_style
 
 
 class ConstellationPlotterMixin:

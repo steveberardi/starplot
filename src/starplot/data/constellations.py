@@ -6,7 +6,7 @@ from ibis import _
 from starplot.config import settings
 from starplot.data import db
 from starplot.data.catalogs import Catalog
-from starplot.data.translations import language_name_column, LANGUAGE_NAME_COLUMNS
+from starplot.data.translations import LANGUAGE_NAME_COLUMNS, language_name_column
 
 
 @cache

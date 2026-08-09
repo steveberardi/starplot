@@ -1,12 +1,12 @@
-from typing import Iterator
+from collections.abc import Iterator
 from dataclasses import dataclass
 
 from ibis import _
-from shapely import Polygon, MultiPolygon, LineString
+from shapely import LineString, MultiPolygon, Polygon
 
-from starplot.models.base import SkyObject, CatalogObject
-from starplot.data.catalogs import Catalog, CONSTELLATIONS_IAU
+from starplot.data.catalogs import CONSTELLATIONS_IAU, Catalog
 from starplot.data.constellations import load
+from starplot.models.base import CatalogObject, SkyObject
 
 
 @dataclass(slots=True, kw_only=True)

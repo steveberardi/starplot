@@ -1,6 +1,5 @@
 import math
-
-from typing import Callable
+from collections.abc import Callable
 
 from starplot.models import Star
 from starplot.utils import bv_to_hex_color, hex_to_rgb, lighten_hex_color
@@ -131,9 +130,7 @@ def size_by_magnitude_for_optic(star: Star) -> float:
     """Very simple sizer by magnitude for optic plots"""
     m = star.magnitude
 
-    if m < 4.6:
-        return (9 - m) ** 3.6 * 9
-    elif m < 5.85:
+    if m < 4.6 or m < 5.85:
         return (9 - m) ** 3.6 * 9
     elif m < 9:
         return (13 - m) ** 1.8 * 9

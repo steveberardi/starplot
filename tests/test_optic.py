@@ -1,6 +1,6 @@
 import pytest
 
-from starplot import Binoculars, Camera, OpticPlot, Observer, styles
+from starplot import Binoculars, Observer, OpticPlot, styles
 
 
 def test_optic_plot_raises_fov_too_big():

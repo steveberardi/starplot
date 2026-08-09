@@ -4,13 +4,13 @@ from enum import Enum
 
 import numpy as np
 from shapely import Polygon
-from skyfield.api import Angle
 from skyfield import almanac
+from skyfield.api import Angle
 
 from starplot.data import load
-from starplot.models.observer import Observer
-from starplot.models.base import SkyObject
 from starplot.geometry import circle
+from starplot.models.base import SkyObject
+from starplot.models.observer import Observer
 
 
 class MoonPhase(str, Enum):

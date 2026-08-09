@@ -1,8 +1,8 @@
-from pathlib import Path
 from datetime import datetime, timedelta
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from starplot import styles, OpticPlot, callables, Moon, _, Satellite, Observer
+from starplot import Moon, Observer, OpticPlot, Satellite, _, callables, styles
 from starplot.models import optics
 
 HERE = Path(__file__).resolve().parent

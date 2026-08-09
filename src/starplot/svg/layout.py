@@ -1,13 +1,10 @@
 from dataclasses import dataclass, field
 
-from starplot.svg.elements import Element, Group, SVG, Rectangle, Defs
 from starplot.styles import (
-    TitleStyle,
-    LegendStyle,
-    PathStyle,
-    LegendLocationEnum,
     AlignmentEnum,
+    LegendLocationEnum,
 )
+from starplot.svg.elements import SVG, Defs, Element, Group, Rectangle
 
 
 @dataclass

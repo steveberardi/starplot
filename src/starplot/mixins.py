@@ -1,6 +1,7 @@
 from functools import cache
 
-from shapely import Polygon, MultiPolygon
+from shapely import MultiPolygon, Polygon
+
 from starplot.profile import profile
 
 
@@ -258,12 +259,12 @@ class HorizonExtentMaskMixin:
         #     print(current_polygon_coords)
 
         # print(len(polygon_coords))
-        from starplot.geometry import split_polygon_at_zero
+        from pprint import pprint
 
         # polygons = split_polygon_at_zero(extent)
+        from shapely import MultiPoint, convex_hull
 
-        from shapely import convex_hull, MultiPoint
-        from pprint import pprint
+        from starplot.geometry import split_polygon_at_zero
 
         # extent = MultiPolygon([Polygon(c) for c in polygon_coords])
         # extent = Polygon(coords)

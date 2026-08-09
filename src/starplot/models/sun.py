@@ -6,9 +6,9 @@ from shapely import Polygon
 from skyfield.api import Angle
 
 from starplot.data import load
+from starplot.geometry import circle
 from starplot.models.base import SkyObject
 from starplot.models.observer import Observer
-from starplot.geometry import circle
 
 
 @dataclass(slots=True)

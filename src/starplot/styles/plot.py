@@ -6,33 +6,28 @@ from starplot.models.dso import DsoType
 from starplot.styles.base import BaseStyle
 from starplot.styles.constants import (
     AnchorPointEnum,
-    AlignmentEnum,
-    FontStyleEnum,
-    FontWeightEnum,
-    GradientType,
-    MarkerSymbolEnum,
-    LineStyleEnum,
     CapStyleEnum,
-    JoinStyleEnum,
-    LegendLocationEnum,
+    FontWeightEnum,
+    LineStyleEnum,
+    MarkerSymbolEnum,
     ZOrderEnum,
 )
 from starplot.styles.elements import (
+    ArrowStyle,
+    AxesStyle,
+    FigureStyle,
     LabelStyle,
+    LegendStyle,
     LineStyle,
-    PolygonStyle,
     MarkerStyle,
     ObjectStyle,
     PathStyle,
-    LegendStyle,
-    AxesStyle,
-    FigureStyle,
-    TitleStyle,
+    PolygonStyle,
     TableStyle,
-    ArrowStyle,
+    TitleStyle,
 )
 from starplot.styles.helpers import merge_dict
-from starplot.styles.types import ColorStr, GradientStops
+from starplot.styles.types import ColorStr
 
 
 class PlotStyle(BaseStyle):

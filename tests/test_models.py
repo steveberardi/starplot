@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 import pytest
 from shapely import Point
 
-from starplot import _, DSO, Star, Constellation, Sun, Moon, Planet, Observer
+from starplot import DSO, Constellation, Moon, Observer, Planet, Star, Sun, _
 
 
 class TestStar:

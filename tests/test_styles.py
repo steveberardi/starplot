@@ -1,10 +1,9 @@
 import pytest
-
 from pydantic import ValidationError
 from pydantic_extra_types.color import Color
 
 from starplot import MapPlot, Miller
-from starplot.styles import PlotStyle, FontWeightEnum, LineStyle, LineStyleEnum
+from starplot.styles import FontWeightEnum, LineStyle, LineStyleEnum, PlotStyle
 
 
 @pytest.mark.parametrize(

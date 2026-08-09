@@ -1,11 +1,10 @@
 from abc import ABC
 from enum import Enum
-from functools import cached_property, cache
 from typing import ClassVar
 
 import numpy as np
-from pyproj import CRS, Proj, Transformer
 from pydantic import BaseModel, Field
+from pyproj import CRS, Transformer
 
 from starplot.constants import PROJ_R
 
@@ -264,8 +263,6 @@ class ObliqueMercator(ProjectionBase, CenterRADEC, Azimuth):
     """Oblique Mercator projection"""
 
     wraps: bool = True
-
-    pass
 
 
 class Mollweide(ProjectionBase, CenterRA):

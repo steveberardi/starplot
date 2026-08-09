@@ -1,11 +1,10 @@
 import importlib
 import os
-
 from unittest import mock
-from starplot import data, config
+
+from starplot import config, data
 
 from .utils import TEST_DATA_PATH
-
 
 data_path = str(TEST_DATA_PATH)
 

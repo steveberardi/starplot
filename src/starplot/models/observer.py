@@ -1,11 +1,11 @@
+from collections.abc import Callable
 from datetime import datetime, timezone
-from functools import cached_property, cache
-from typing import Callable
+from functools import cache, cached_property
 
-
-from pydantic import BaseModel, AwareDatetime, Field, computed_field
+from pydantic import AwareDatetime, BaseModel, Field, computed_field
+from skyfield.api import Star as SkyfieldStar
+from skyfield.api import wgs84
 from skyfield.timelib import Timescale
-from skyfield.api import wgs84, Star as SkyfieldStar
 
 from starplot.data import load
 

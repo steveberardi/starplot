@@ -1,9 +1,9 @@
+from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Iterator
 
 from shapely import Point
-from skyfield.api import wgs84, EarthSatellite
+from skyfield.api import EarthSatellite, wgs84
 
 from starplot.data import load
 from starplot.models.base import SkyObject
@@ -134,5 +134,5 @@ def get_satellite_at_date_location(
         distance=distance.au,
         geometry=Point(ra.hours * 15, dec.degrees),
     )
-    setattr(result, "_satellite", satellite)
+    result._satellite = satellite
     return result

@@ -3,8 +3,8 @@ import zipfile
 from functools import cache
 from pathlib import Path
 
-from fontTools.ttLib import TTFont
 from fontTools.pens.svgPathPen import SVGPathPen
+from fontTools.ttLib import TTFont
 
 from starplot.config import settings
 from starplot.data.utils import download
