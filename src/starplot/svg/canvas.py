@@ -539,7 +539,7 @@ class Canvas:
                 (
                     style.zorder,
                     Text(
-                        x=(self.layout.axes.width + self.style.figure.padding * 2) / 2,
+                        x=self.layout.axes.width / 2,
                         y=style.font_size * self.scale - style.padding_bottom,
                         attrs=_attrs,
                         text=value,
