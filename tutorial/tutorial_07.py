@@ -5,7 +5,7 @@ from starplot import Planet, Observer, Refractor
 from starplot.styles import PlotStyle, extensions
 
 tz = ZoneInfo("America/Los_Angeles")
-dt = datetime(2025, 2, 18, 21, 0, 0, tzinfo=tz)
+dt = datetime(2025, 2, 18, 21, 30, 0, tzinfo=tz)
 
 observer = Observer(
     dt=dt,
