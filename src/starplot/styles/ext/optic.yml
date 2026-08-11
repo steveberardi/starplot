@@ -23,3 +23,5 @@ figure:
 axes:
   background:
     gradient_type: radial
+  border:
+    width: 8

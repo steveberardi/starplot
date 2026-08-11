@@ -134,7 +134,6 @@ class OpticPlot(
             )
 
         self._adjust_radec_minmax()
-        self._plot_border()
 
     @property
     def alt(self):
@@ -291,18 +290,6 @@ class OpticPlot(
             headers=headers,
             rows=rows,
             style=style
-        )
-
-    def _plot_border(self):
-        optic_polygon = self.optic.polygon(self.pos_az, self.pos_alt)
-
-        self.canvas.polygon(
-            coordinates=list(zip(*optic_polygon.exterior.coords.xy)),
-            style=PolygonStyle(
-                fill_color=None,
-                edge_color=self.style.border_bg_color.as_hex(),
-                edge_width=40,
-            ),
         )
 
     @profile

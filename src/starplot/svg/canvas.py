@@ -119,6 +119,7 @@ class Canvas:
 
         self._init_bounds()
         self._init_clip_path_background()
+        self._init_axes_border()
 
     def _to_axes(self, x, y):
         px, py = self.tx.transform(x, y)
@@ -302,6 +303,39 @@ class Canvas:
             id=axes_clip_path_id, children=[self.background_element]
         )
         self.layout.axes.defs[axes_clip_path_id] = axes_clip_path
+
+    def _init_axes_border(self):
+        """
+        Draws the axes_border region: a border immediately outside the axes
+        clip path. The entire stroke sits outside the clip path -- none of it
+        overlaps the plot content. If the plot also has an axes_frame (e.g. from gridlines),
+        that begins exactly where this border ends, with no overlap between the two.
+        """
+        self._axes_border_offset = 0
+        style = self.style.axes.border
+
+        if style is None:
+            return
+
+        border_width = style.width * self.scale
+        self._axes_border_offset = border_width
+
+        # buffer by half the stroke width so the centered stroke's inner edge
+        # touches the clip path and its outer edge lands at clip_path + border_width
+        # (join_style="mitre" keeps corners sharp instead of shapely's default round)
+        ring = self.clip_path_display.buffer(border_width / 2, join_style="mitre")
+        coords = list(ring.exterior.coords)
+
+        outer = self.clip_path_display.buffer(border_width, join_style="mitre")
+        bx1, by1, bx2, by2 = outer.bounds
+
+        self.layout.axes_border = Region(
+            elements=[
+                (style.zorder, Polyline(points=coords, attrs=style.css(self.scale)))
+            ],
+            height=(by2 - by1),
+            width=(bx2 - bx1),
+        )
 
     def _get_or_create_gradient(
         self, stops: GradientStops, type: GradientType, id: str | None = None
@@ -820,7 +854,7 @@ class Canvas:
             alignment=style.alignment,
         )
 
-    def _clip_path_border(
+    def _axes_frame(
         self,
         style: PathStyle,
         labels: list | None = None,
@@ -828,7 +862,8 @@ class Canvas:
         label_gid: str = "border-labels",
     ) -> None:
         """
-        Creates a border around the axes clip path. The border is plotted as a line element.
+        Creates the axes_frame region: a border drawn just outside the axes clip path,
+        optionally with labels along it (e.g. gridline labels).
 
         Args:
             style: Style of border line
@@ -862,14 +897,18 @@ class Canvas:
 
         # buffer is width / 2 because line is drawn at center of coordinates
         # in other words, half of the width is on the inside and half the width on outside of coordinates
-        border = self.clip_path_display.buffer(border_width / 2)
+        #
+        # also offset by axes_border_offset so this frame begins exactly where
+        # axes_border ends, rather than overlapping it
+        border = self.clip_path_display.buffer(
+            self._axes_border_offset + border_width / 2, join_style="mitre"
+        )
 
-        bx1, by1, bx2, by2 = border.bounds
         cx1, cy1, cx2, cy2 = self.clip_path_display.bounds
-        xoff = (bx2 - bx1) - (cx2 - cx1)
-        yoff = (by2 - by1) - (cy2 - cy1)
 
-        border = _translate_shape(border, xoff=xoff, yoff=yoff)
+        # TODO : remove these offset vars? dont need cause of layout engine
+        xoff = 0
+        yoff = 0
         coords = list(zip(*border.exterior.coords.xy))
         border_line = LineString(coords)
         attrs = style.line.css(self.scale)
@@ -966,7 +1005,9 @@ class Canvas:
                     )
                     label_elements.append((style.line.zorder + 10, element))
 
-        border = self.clip_path_display.buffer(border_width)
+        border = self.clip_path_display.buffer(
+            self._axes_border_offset + border_width, join_style="mitre"
+        )
         bx1, by1, bx2, by2 = border.bounds
 
         elements = [(style.line.zorder, Polyline(points=coords, attrs=attrs))]
@@ -979,7 +1020,7 @@ class Canvas:
                 )
             )
 
-        self.layout.axes_border = Region(
+        self.layout.axes_frame = Region(
             elements=elements,
             height=(by2 - by1),
             width=(bx2 - bx1),

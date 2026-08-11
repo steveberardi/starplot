@@ -129,7 +129,7 @@ class ZenithPlot(MapPlot):
                 ),
             ]
 
-        self.canvas._clip_path_border(style, labels=_labels)
+        self.canvas._axes_frame(style, labels=_labels)
 
     def _adjust_radec_minmax(self):
         _, dec_min, _, dec_max = self.canvas.bounds

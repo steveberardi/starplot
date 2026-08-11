@@ -87,7 +87,7 @@ class TableRegion(Region):
 class Layout:
     axes: AxesRegion = field(default_factory=AxesRegion)
     axes_border: Region = field(default_factory=Region)
-    axes_footer: Region = field(default_factory=Region)
+    axes_frame: Region = field(default_factory=Region)
     title: Region = field(default_factory=Region)
     legend: LegendRegion = field(default_factory=LegendRegion)
     table: TableRegion = field(default_factory=TableRegion)
@@ -98,14 +98,19 @@ class Layout:
 
         This function is responsible for determining the transform() for each region
         """
+        outer_height = max(
+            self.axes.height, self.axes_border.height, self.axes_frame.height
+        )
+        outer_width = max(
+            self.axes.width, self.axes_border.width, self.axes_frame.width
+        )
         height = (
             style.figure.padding * 2
             + self.title.height
-            + max(self.axes.height, self.axes_border.height)
-            + self.axes_footer.height
+            + outer_height
             + self.table.height
         )
-        width = style.figure.padding * 2 + max(self.axes.width, self.axes_border.width)
+        width = style.figure.padding * 2 + outer_width
 
         if "outside" in str(self.legend.location):
             width += self.legend.width + self.legend.margin_x
@@ -122,15 +127,26 @@ class Layout:
         if not self.title.is_empty:
             axes_y += self.title.height
 
-        axes_border_x = axes_x
-        axes_border_y = axes_y
-        border_width_x = 0
-        border_width_y = 0
-        if not self.axes_border.is_empty:
-            border_width_x = (self.axes_border.width - self.axes.width) / 2
-            border_width_y = (self.axes_border.height - self.axes.height) / 2
-            axes_x += border_width_x
-            axes_y += border_width_y
+        # axes, axes_border, and axes_frame all draw their elements using the
+        # same underlying coordinate space (Canvas._to_display()'s [0, width] x
+        # [0, height], which is what clip_path_display and axes' own markers
+        # /polygons/etc are built from). axes_border/axes_frame's geometry is
+        # just that same space buffered outward, so it already extends past
+        # axes' own [0, width] box on its own -- all three render at the exact
+        # same (axes_x, axes_y) translate; nothing here should ever be shifted
+        # relative to the others.
+        #
+        # That outward extent goes negative in local coordinates (e.g. a ring
+        # buffered 40px out starts at local x=-40), so axes_x/axes_y need to
+        # be pushed forward by that amount -- otherwise the ring's outer edge
+        # renders at a negative absolute position and gets clipped by the
+        # figure's own bounds instead of leaving `padding` before it.
+        outer_buffer_x = (outer_width - self.axes.width) / 2
+        outer_buffer_y = (outer_height - self.axes.height) / 2
+        outer_x = axes_x
+        outer_y = axes_y
+        axes_x += outer_buffer_x
+        axes_y += outer_buffer_y
 
         elements = []
         if not self.title.is_empty:
@@ -139,21 +155,19 @@ class Layout:
             )
 
         if not self.axes_border.is_empty:
-            elements.append(self.axes_border.render(x=axes_border_x, y=axes_border_y))
+            elements.append(self.axes_border.render(x=axes_x, y=axes_y))
+
+        if not self.axes_frame.is_empty:
+            elements.append(self.axes_frame.render(x=axes_x, y=axes_y))
 
         if not self.table.is_empty:
-            table_y = (
-                axes_border_y
-                + max(self.axes.height, self.axes_border.height)
-                + self.axes_footer.height
-            )
-            axes_span = max(self.axes.width, self.axes_border.width)
+            table_y = outer_y + outer_height
             if self.table.alignment == AlignmentEnum.RIGHT:
-                table_x = axes_border_x + axes_span - self.table.width
+                table_x = outer_x + outer_width - self.table.width
             elif self.table.alignment == AlignmentEnum.CENTER:
-                table_x = axes_border_x + (axes_span - self.table.width) / 2
+                table_x = outer_x + (outer_width - self.table.width) / 2
             else:
-                table_x = axes_border_x
+                table_x = outer_x
             elements.append(self.table.render(x=table_x, y=table_y))
 
         if not self.legend.is_empty:
@@ -187,32 +201,27 @@ class Layout:
                     - self.legend.margin_y
                 )
             elif loc == LegendLocationEnum.OUTSIDE_TOP_LEFT:
-                legend_x = axes_border_x - self.legend.width - self.legend.margin_x
-                legend_y = axes_border_y + self.legend.margin_y
+                legend_x = outer_x - self.legend.width - self.legend.margin_x
+                legend_y = outer_y + self.legend.margin_y
             elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_LEFT:
-                legend_x = axes_border_x - self.legend.width - self.legend.margin_x
+                legend_x = outer_x - self.legend.width - self.legend.margin_x
                 legend_y = (
-                    axes_border_y
+                    outer_y
                     + self.axes.height
                     - self.legend.height
                     - self.legend.margin_y
                 )
             elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT:
-                legend_x = (
-                    axes_x + self.axes.width + border_width_x + self.legend.margin_x
-                )
+                legend_x = outer_x + outer_width + self.legend.margin_x
                 legend_y = (
-                    axes_border_y
+                    axes_y
                     + self.axes.height
-                    + border_width_y
                     - self.legend.height
                     - self.legend.margin_y
                 )
             elif loc == LegendLocationEnum.OUTSIDE_TOP_RIGHT:
-                legend_x = (
-                    axes_x + self.axes.width + border_width_x + self.legend.margin_x
-                )
-                legend_y = axes_border_y + self.legend.margin_y
+                legend_x = outer_x + outer_width + self.legend.margin_x
+                legend_y = outer_y + self.legend.margin_y
             elements.append(self.legend.render(x=legend_x, y=legend_y))
 
         figure_elements = []

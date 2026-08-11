@@ -21,7 +21,26 @@ class MarkerStyle(BaseStyle):
     """
 
     color: ColorStr | GradientStops | None = ColorStr("#000")
-    """Fill color of marker. Can be a hex, rgb, hsl, or word string."""
+    """
+    Fill color of the marker
+    
+    This can either be a single color (e.g. `#7abfff`) or a list that defines a gradient.
+
+    For gradients, the list items should be tuples with two elements: a float that defines 
+    the stop and a string that defines the color for that stop. For example:
+
+    ```
+    [
+        (0.0, "#7abfff"),
+        (0.2, "#7abfff"),
+        (0.9, "#568feb"),
+        (1.0, "#3f7ee3"),  # the last stop should always be at 1.0
+    ]
+    ```
+
+    There are a few predefined gradients available as [style extensions](/reference-styling/#style-extensions).
+    
+    """
 
     edge_color: ColorStr | None = ColorStr("#000")
     """Edge color of marker. Can be a hex, rgb, hsl, or word string."""
@@ -139,7 +158,26 @@ class PolygonStyle(BaseStyle):
     """Edge color of the polygon"""
 
     fill_color: ColorStr | GradientStops | None = None
-    """Fill color of the polygon"""
+    """
+    Fill color of the polygon
+    
+    This can either be a single color (e.g. `#7abfff`) or a list that defines a gradient.
+
+    For gradients, the list items should be tuples with two elements: a float that defines 
+    the stop and a string that defines the color for that stop. For example:
+
+    ```
+    [
+        (0.0, "#7abfff"),
+        (0.2, "#7abfff"),
+        (0.9, "#568feb"),
+        (1.0, "#3f7ee3"),  # the last stop should always be at 1.0
+    ]
+    ```
+
+    There are a few predefined gradients available as [style extensions](/reference-styling/#style-extensions).
+    
+    """
 
     gradient_type: GradientType = GradientType.RADIAL
 
@@ -410,36 +448,16 @@ class FigureStyle(BaseStyle):
 class AxesStyle(BaseStyle):
     """Styling for the axes of the plot, which is where the map is plotted."""
 
-    # TODO : since this may only have one sub element, maybe just change to:
-    #    PlotStyle.axes: PolygonStyle
-
     background: PolygonStyle = PolygonStyle(
-        edge_width=2, edge_color="#000", fill_color="#fff"
+        edge_width=0, edge_color="#000", fill_color="#fff"
     )
 
-    # background_color: GradientStops | ColorStr | None = ColorStr("#fff")
+    border: LineStyle | None = LineStyle(width=2, color="#000")
     """
-    Background color of the axes.
+    Border drawn immediately outside the axes clip path (the entire stroke sits
+    outside the clip path -- none of it overlaps the plot content). If `None`, 
+    no border is drawn.
 
-    This can either be a single color (e.g. `#7abfff`) or a list that defines a gradient.
-
-    For gradients, the list items should be tuples with two elements: a float that defines 
-    the stop and a string that defines the color for that stop. For example:
-
-    ```
-    "background_color": [
-        (0.0, "#7abfff"),
-        (0.2, "#7abfff"),
-        (0.9, "#568feb"),
-        (1.0, "#3f7ee3"),  # the last stop should always be at 1.0
-    ]
-    ```
-
-    There are a few predefined gradients available as [style extensions](/reference-styling/#style-extensions).
+    If the plot also has gridline labels, then the gridline labels are plotted
+    just outside the axes border, in the axes "frame" region.
     """
-
-    # background_gradient_direction: GradientType = GradientType.RADIAL
-    """Direction of the background gradient (if applicable)"""
-
-    # def has_gradient_background(self):
-    #     return isinstance(self.background_color, list)
