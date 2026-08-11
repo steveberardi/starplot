@@ -24,8 +24,7 @@ style = PlotStyle().extend(
     extensions.FIGURE_TRANSPARENT,
 )
 
-style.axes.background.fill_color = None
-style.axes.background.edge_width = 0
+style.axes.border = None
 
 
 constellation = Constellation.get(iau_id="gem")

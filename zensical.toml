@@ -17,6 +17,7 @@ nav = [
       { "Models" = "reference-models.md" },
       { "Selecting Objects" = "reference-selecting-objects.md" },
       { "Styling" = "reference-styling.md" },
+      { "Layout" = "reference-layout.md" },
       { "Callables" = "reference-callables.md" },
       { "Collision Handling" = "reference-collisions.md" },
       { "Positions" = "reference-positions.md" },
