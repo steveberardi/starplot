@@ -875,10 +875,10 @@ class BasePlot(StarPlotterMixin, ABC):
         collision_handler: CollisionHandler = None,
         **kwargs,
     ):
-        """Plots a line, with optional labels. Either coordinates OR geometry must be specified.
+        """
+        Plots a line, with optional labels. Either coordinates OR geometry must be specified.
 
         Args:
-
             coordinates: List of coordinates, e.g. `[(ra, dec), (ra, dec)]`
             geometry: A shapely LineString. If this value is passed, then the `coordinates` kwarg will be ignored.
             style: Style of the line
@@ -905,7 +905,6 @@ class BasePlot(StarPlotterMixin, ABC):
         self.canvas.line(
             style=style.line,
             coordinates=prepared_coords,
-            # gid="celestial-equator",
         )
 
         if label:

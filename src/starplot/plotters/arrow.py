@@ -21,6 +21,7 @@ class ArrowPlotterMixin:
         scale: float = 0.99,
         length: float = 5,
         max_attempts: int = 100,
+        gid: str = "arrow",
     ):
         """
         Plots an arrow from one point to another if you specify both `origin` and `target`. If you only specify a `target`, then the arrow will serve as a "pointer" to that target.
@@ -32,6 +33,7 @@ class ArrowPlotterMixin:
             scale: Scaling factor for the arrow, to make it offset from the origin/target
             length: If you only specify a target, then this will be the length of the arrow (in degrees). This value is ignored if you're plotting an arrow from one point to another.
             max_attempts: If you only specify a target, then this will be the max number of attempts for plotting the arrow without colliding with labels. Arrow will be plotted on the final attempt.
+            gid: Group id for this layer in the exported SVG
 
         """
 
@@ -149,8 +151,9 @@ class ArrowPlotterMixin:
                 "To plot an arrow you must specify a target or a target and origin."
             )
 
-        self.canvas.polygon(
-            coordinates=list(zip(*arrow_polygon.exterior.coords.xy)),
-            style=style,
-            cs="display",
-        )
+        with self.canvas.group(gid=gid):
+            self.canvas.polygon(
+                coordinates=list(zip(*arrow_polygon.exterior.coords.xy)),
+                style=style,
+                cs="display",
+            )

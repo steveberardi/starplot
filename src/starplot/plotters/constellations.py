@@ -69,6 +69,7 @@ class ConstellationPlotterMixin:
         where: list | None = None,
         sql: str | None = None,
         catalog: Catalog = CONSTELLATIONS_IAU,
+        gid: str = "constellations",
     ):
         """Plots the constellation lines **only**. To plot constellation borders and/or labels, see separate functions for them.
 
@@ -79,6 +80,7 @@ class ConstellationPlotterMixin:
             where: A list of expressions that determine which constellations to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
             sql: SQL query for selecting constellations (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             catalog: The catalog of constellations to use -- see [catalogs overview](/data/overview/) for details
+            gid: Group id for this layer in the exported SVG
         """
         self.logger.debug("Plotting constellation lines...")
 
@@ -159,7 +161,7 @@ class ConstellationPlotterMixin:
             if inbounds:
                 self._objects.constellations.append(c)
 
-        with self.canvas.group(gid="constellations"):
+        with self.canvas.group(gid=gid):
             for coords in lines:
                 self.canvas.line(
                     style=style,

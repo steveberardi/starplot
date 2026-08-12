@@ -13,13 +13,14 @@ from starplot.styles.helpers import use_style
 class MilkyWayPlotterMixin:
     @profile
     @use_style(PolygonStyle, "milky_way")
-    def milky_way(self, style: PolygonStyle = None, catalog: Catalog = MILKY_WAY):
+    def milky_way(self, style: PolygonStyle = None, catalog: Catalog = MILKY_WAY, gid: str = "milky-way"):
         """
         Plots the Milky Way
 
         Args:
             style: Styling of the Milky Way. If None, then the plot's style (specified when creating the plot) will be used
             catalog: Catalog to use for Milky Way polygons
+            gid: Group id for this layer in the exported SVG
         """
         con = db.connect()
         mw = catalog._load(connection=con, table_name="milky_way")
@@ -43,7 +44,7 @@ class MilkyWayPlotterMixin:
         else:
             polygons = [mw_union]
 
-        with self.canvas.group(gid="milky-way"):
+        with self.canvas.group(gid=gid):
             for p in polygons:
                 bounds = box(0, self.dec_min - 5, 360, self.dec_max + 5)
                 p = p.intersection(bounds)
