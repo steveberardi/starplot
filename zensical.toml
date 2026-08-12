@@ -14,6 +14,7 @@ nav = [
       { "HorizonPlot" = "reference-horizonplot.md" },
       { "OpticPlot" = "reference-opticplot.md" },
       { "GalaxyPlot" = "reference-galaxyplot.md" },
+      { "Projections" = "reference-projections.md" },
       { "Models" = "reference-models.md" },
       { "Selecting Objects" = "reference-selecting-objects.md" },
       { "Styling" = "reference-styling.md" },

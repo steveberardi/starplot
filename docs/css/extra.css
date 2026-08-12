@@ -85,7 +85,8 @@ code.doc-symbol {
 
 /* Object Class Headings */
 .doc-object.doc-class {
-    border-top: 2px solid rgba(200, 200, 200, 0.6);
+    border-top: 1px solid rgba(159, 173, 196, 0.8);
+    margin-top: 8px;
 }
 .doc-object.doc-class h2.doc-heading span:nth-child(3) {
     color:hsl(209, 53%, 37%);
@@ -691,5 +692,12 @@ td[data-column-id=bayer] {
   height: 100px !important;
   object-fit: cover;
   object-position: center;
+}
+
+.projection-img {
+  max-width: 400px !important;
+  width: 100%;
+  height: auto;
+  margin: auto;
 }
 

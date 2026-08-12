@@ -38,6 +38,4 @@ After every change, run in this order:
     - Put the source code in the `plots/` directory 
     - Put the output of the final plot in `plots/output/`
     - Prefer SVG output, unless told otherwise
-
-## Don't
 - Avoid comments that only describe what the code does. Instead, focus on writing comments that explain _why_ the code does something.

@@ -262,6 +262,8 @@ class PlateCarree(ProjectionBase, CenterRA):
 class ObliqueMercator(ProjectionBase, CenterRADEC, Azimuth):
     """Oblique Mercator projection"""
 
+    name: ClassVar[str] = "omerc"
+    proj_def_base: str = f"+proj=omerc +R={PROJ_R} +units=m"
     wraps: bool = True
 
 
@@ -327,19 +329,19 @@ class LambertAzEqArea(ProjectionBase, CenterRADEC):
     name: ClassVar[str] = "laea"
 
 
-class Orthographic(ProjectionBase, CenterRADEC):
-    """Shows the celestial sphere as a 3D-looking globe. Objects near the edges will be distorted."""
+# class Orthographic(ProjectionBase, CenterRADEC):
+#     """Shows the celestial sphere as a 3D-looking globe. Objects near the edges will be distorted."""
 
-    proj_def_base: str = f"+proj=ortho +R={PROJ_R} +units=m"
-    global_only: bool = True
-    curved: bool = True
+#     proj_def_base: str = f"+proj=ortho +R={PROJ_R} +units=m"
+#     global_only: bool = True
+#     curved: bool = True
 
-    name: ClassVar[str] = "ortho"
+#     name: ClassVar[str] = "ortho"
 
-    def global_clip_path(self):
-        p0 = [(self.center_ra + 179.999999999, lat - 90) for lat in range(181)]
-        p1 = [(self.center_ra - 179.999999999, lat - 90) for lat in range(181)]
-        return p0 + p1
+#     def global_clip_path(self):
+#         p0 = [(self.center_ra + 179.999999999, lat - 90) for lat in range(181)]
+#         p1 = [(self.center_ra - 179.999999999, lat - 90) for lat in range(181)]
+#         return p0 + p1
 
 
 class Stereographic(ProjectionBase, CenterRADEC):
