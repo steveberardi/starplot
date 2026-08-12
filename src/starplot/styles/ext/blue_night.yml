@@ -4,7 +4,8 @@ axes:
     fill_color: hsl(210, 29%, 15%)
 
 figure:
-  background_color: hsl(210, 29%, 8%)
+  background:
+    fill_color: hsl(210, 29%, 8%)
 
 text_border_color: hsl(210, 29%, 15%)
 

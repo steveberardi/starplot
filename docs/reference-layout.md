@@ -6,7 +6,7 @@ Every plot you create with Starplot is built from a handful of regions, arranged
 
 ## Figure
 
-The outermost region is the exported image itself. Its size is determined automatically from everything you've plotted (the `resolution` you specify when creating a plot is the size of the axes, not necessarily the full exported image). You can add empty space around all the other regions with [`style.figure.padding`][starplot.PlotStyle.figure], and set a background color for the whole image with [`style.figure.background_color`][starplot.PlotStyle.figure].
+The outermost region is the exported image itself. Its size is determined automatically from everything you've plotted (the `resolution` you specify when creating a plot is the size of the axes, not necessarily the full exported image). You can add empty space around all the other regions with [`style.figure.padding`][starplot.PlotStyle.figure], and set a background color for the whole image with [`style.figure.background.fill_color`][starplot.PlotStyle.figure].
 
 ## Title
 

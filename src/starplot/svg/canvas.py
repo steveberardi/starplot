@@ -1028,7 +1028,7 @@ class Canvas:
 
     def render(self, text_as_path: bool = False) -> str:
         """Renders the canvas to an SVG string"""
-        return self.layout.render(self.style, text_as_path)
+        return self.layout.render(self.style, text_as_path, self.scale)
 
     def export(
         self, filename: str | Path, text_as_path: bool = False, scale: float = 1

@@ -5,7 +5,8 @@ axes:
     fill_color: hsl(218, 88%, 97%)
 
 figure:
-  background_color: hsl(212, 27%, 48%)
+  background:
+    fill_color: hsl(212, 27%, 48%)
 
 text_border_color: '#f1f6ff'
 

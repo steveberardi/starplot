@@ -18,7 +18,7 @@ OPTIC = load("optic.yml")
 MAP = load("map.yml")
 HORIZON = load("horizon.yml")
 
-# Color Schemes
+# Color Themes
 GRAYSCALE = load("grayscale.yml")
 GRAYSCALE_DARK = load("grayscale_dark.yml")
 BLUE_LIGHT = load("blue_light.yml")
@@ -34,7 +34,7 @@ PUBLICATION = load("publication.yml")
 STARPLOT = load("starplot.yml")
 
 FIGURE_TRANSPARENT = {
-    "figure": {"background_color": None},
+    "figure": {"background": {"fill_color": None}},
 }
 
 GRADIENT_DAYLIGHT = {

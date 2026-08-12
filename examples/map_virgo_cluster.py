@@ -1,12 +1,12 @@
-from starplot import MapPlot, Equidistant, CollisionHandler, _
-from starplot.styles import PlotStyle, extensions, AnchorPointEnum
+from starplot import CollisionHandler, Equidistant, MapPlot, _
+from starplot.styles import AnchorPointEnum, PlotStyle, extensions
 
 style = PlotStyle().extend(
     extensions.BLUE_MEDIUM,
     extensions.MAP,
     {
         "figure": {
-            "background_color": "hsl(330, 44%, 20%)",
+            "background": {"fill_color": "hsl(330, 44%, 20%)"},
             "padding": 40,
         },
         "dso_galaxy": {

@@ -1,9 +1,13 @@
-background_color: '#fff'
-# figure_background_color: hsl(211, 26%, 24%)
+axes:
+  background:
+    fill_color: '#fff'
 
 text_border_color: '#fff'
 
-figure_background_color: '#fff'
+figure:
+  background:
+    fill_color: '#fff'
+
 border_bg_color: '#fff'
 border_font_color: '#000'
 border_line_color: '#fff'

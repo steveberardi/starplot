@@ -4,7 +4,7 @@ from starplot.styles import (
     AlignmentEnum,
     LegendLocationEnum,
 )
-from starplot.svg.elements import SVG, Defs, Element, Group, Rectangle
+from starplot.svg.elements import SVG, Defs, Element, Group, Rectangle, create_gradient
 
 
 @dataclass
@@ -92,7 +92,7 @@ class Layout:
     legend: LegendRegion = field(default_factory=LegendRegion)
     table: TableRegion = field(default_factory=TableRegion)
 
-    def render(self, style, text_as_path: bool):
+    def render(self, style, text_as_path: bool, scale: float):
         """
         Renders each region
 
@@ -226,14 +226,27 @@ class Layout:
 
         figure_elements = []
 
-        if style.figure.background_color is not None:
+        if style.figure.background is not None:
+            figure_attrs = style.figure.background.css(scale)
+
+            if isinstance(style.figure.background.fill_color, list):
+                gradient = create_gradient(
+                    stops=style.figure.background.fill_color,
+                    type=style.figure.background.gradient_type,
+                    id="figure-background-gradient",
+                )
+                figure_attrs["fill"] = gradient.url
+                figure_elements.append(
+                    Defs(children=[gradient])
+                )
+                
             figure_elements.append(
                 Rectangle(
                     x=0,
                     y=0,
                     height=height,
                     width=width,
-                    attrs={"fill": style.figure.background_color.as_hex()},
+                    attrs=figure_attrs,
                 )
             )
 

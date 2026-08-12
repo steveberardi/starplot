@@ -14,7 +14,8 @@ axes:
     fill_color: hsl(205, 63%, 100%)
 
 figure:
-  background_color: hsl(205, 63%, 100%)
+  background:
+    fill_color: hsl(205, 63%, 100%)
 
 text_border_color: hsl(205, 63%, 100%)
 

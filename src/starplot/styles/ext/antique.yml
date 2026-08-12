@@ -11,7 +11,8 @@ axes:
     fill_color: hsl(48, 80%, 96%)
 
 figure:
-  background_color: hsl(60, 9%, 29%)
+  background:
+    fill_color: hsl(60, 9%, 29%)
 
 text_border_color: hsl(48, 80%, 96%)
 

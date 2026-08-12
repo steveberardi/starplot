@@ -439,7 +439,12 @@ class TitleStyle(LabelStyle):
 
 
 class FigureStyle(BaseStyle):
-    background_color: ColorStr | None = ColorStr("#fff")
+    background: PolygonStyle = PolygonStyle(
+        edge_width=0,
+        edge_color="#000",
+        fill_color="#fff",
+    )
+    """Background of the figure (the area surrounding the axes)"""
 
     padding: int = 0
     """Padding between the axes and edge of figure"""
@@ -449,7 +454,9 @@ class AxesStyle(BaseStyle):
     """Styling for the axes of the plot, which is where the map is plotted."""
 
     background: PolygonStyle = PolygonStyle(
-        edge_width=0, edge_color="#000", fill_color="#fff"
+        edge_width=0,
+        edge_color="#000",
+        fill_color="#fff",
     )
 
     border: LineStyle | None = LineStyle(width=2, color="#000")
