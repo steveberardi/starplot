@@ -11,6 +11,8 @@ from starplot.data.utils import download
 
 FONTS_PATH = settings.data_path / "fonts"
 
+FALLBACK_FONTS = ["arial", "verdana"]
+
 
 def get_font_paths() -> list[Path]:
     paths = []
@@ -91,8 +93,30 @@ def find_font(family: str, weight: int, italic: bool) -> TTFont:
     font_index = build_font_index()
     font_path = font_index.get((family.lower(), weight, italic))
 
-    if not font_path:
+    # 1. Try getting same font but normal weight
+    if not font_path and weight != 400:
         font_path = font_index.get((family.lower(), 400, italic))
+
+    # 2. Try getting a fallback font
+    if not font_path:
+        for fallback in FALLBACK_FONTS:
+            font_path = font_index.get((fallback, weight, italic)) or font_index.get(
+                (fallback, 400, italic)
+            )
+            if font_path:
+                break
+
+    # 3. Just use the first font that's found
+    if not font_path and font_index:
+        font_path = next(iter(font_index.values()))
+
+    # 4. If no fonts are found, raise exception
+    if not font_path:
+        tried = ", ".join(repr(f) for f in [family, *FALLBACK_FONTS])
+        raise ValueError(
+            f"No fonts found on this system (tried {tried}). Starplot needs "
+            "at least one font installed to render text."
+        )
 
     return TTFont(font_path)
 

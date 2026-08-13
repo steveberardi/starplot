@@ -40,3 +40,4 @@ DO NOT run the hash checks unless specifically told to do so
     - Put the output of the final plot in `plots/output/`
     - Prefer SVG output, unless told otherwise
 - Avoid comments that only describe what the code does. Instead, focus on writing comments that explain _why_ the code does something.
+- When writing tests, avoid mocking things when possible

@@ -765,3 +765,33 @@ def check_map_plate_caree():
     p.constellations()
     p.export(filename)
     return filename
+
+
+def check_map_font_fallback():
+    filename = DATA_PATH / "map-font-fallback.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.GRAYSCALE,
+        styles.extensions.MAP,
+    )
+    style.title.font_name = "ThisFontDoesNotExist12345"
+    style.constellation_labels.font_name = "AlsoNotARealFont"
+
+    p = MapPlot(
+        projection=Miller(),
+        ra_min=3.6 * 15,
+        ra_max=7.8 * 15,
+        dec_min=-16,
+        dec_max=23.6,
+        style=style,
+        resolution=RESOLUTION,
+        autoscale=True,
+    )
+    p.constellations()
+    p.constellation_labels()
+    p.stars(where=[_.magnitude < 6])
+    p.title("Font Fallback Test")
+
+    p.export(filename)
+
+    return filename

@@ -22,7 +22,7 @@ class Region:
         self.height = 0
         self.width = 0
 
-    def render(self, x: int, y: int) -> Group | SVG | None:
+    def render(self, x: float, y: float) -> Group | SVG | None:
         if self.is_empty:
             return None
 
