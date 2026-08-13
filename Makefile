@@ -132,6 +132,9 @@ ephemeris:
 scripts:
 	uv run $(DOTENV) python ./scripts/$(SCRIPT).py
 
+list-fonts:
+	uv run $(DOTENV) python ./scripts/list_fonts.py
+
 clean:
 	rm -rf __pycache__
 	rm -rf venv
@@ -140,4 +143,4 @@ clean:
 	rm -rf htmlcov
 	rm -f tests/data/*.png
 
-.PHONY: build test shell flit-build flit-publish clean ephemeris examples scripts tutorial
+.PHONY: build test shell flit-build flit-publish clean ephemeris examples scripts tutorial list-fonts
