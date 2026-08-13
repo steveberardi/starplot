@@ -19,7 +19,7 @@ Starplot — a Python library for creating star charts and maps of the sky.
 - `examples/` — Example code for various plots, used on the documentation website
 - `tutorial/` - Code for the tutorial, used on the documentation website
 - `docs/` — Documentation files (using Zensical for building)
-- `data/` - Raw data for star names, and translations
+- `data/` - Raw data for star names and translations
 - `plots/` - Scratch code for local development
 
 ## Commands
@@ -32,6 +32,7 @@ After every change, run in this order:
 1. [Test command] — fix failing tests
 2. [Format command] - fix formatting
 3. [Lint command] — fix lint errors
+DO NOT run the hash checks unless specifically told to do so
 
 ## Conventions
 - When creating plots for research or investigating an issue:
