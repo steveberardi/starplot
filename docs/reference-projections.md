@@ -52,6 +52,15 @@
 
 ![Mollweide projection: gridlines and Tissot indicatrix](images/projections/mollweide.svg){ .off-glb .projection-img loading=lazy }
 
+## ::: starplot.PlateCarree
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
+![Plate Carree projection: gridlines and Tissot indicatrix](images/projections/plate_carree.svg){ .off-glb .projection-img loading=lazy }
+
 ## ::: starplot.Robinson
     options:
         inherited_members: true

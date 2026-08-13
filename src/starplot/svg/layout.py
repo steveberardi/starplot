@@ -26,6 +26,7 @@ class Region:
         if self.is_empty:
             return None
 
+        x, y = round(x, 2), round(y, 2)
         sorted_by_z = sorted(self.elements, key=lambda e: e[0])
         elements = [e for _, e in sorted_by_z]
         return Group(
@@ -39,6 +40,7 @@ class AxesRegion(Region):
     defs: dict[str, Element] = field(default_factory=dict)
 
     def render(self, x, y) -> SVG:
+        x, y = round(x, 2), round(y, 2)
         axes_sorted_by_z = sorted(self.elements, key=lambda e: e[0])
         axes_elements = [e for _, e in axes_sorted_by_z]
         return SVG(
@@ -70,6 +72,7 @@ class LegendRegion(Region):
         if self.is_empty:
             return None
 
+        x, y = round(x, 2), round(y, 2)
         sorted_by_z = sorted(self.elements, key=lambda e: e[0])
         elements = [e for _, e in sorted_by_z]
         return Group(
@@ -236,10 +239,8 @@ class Layout:
                     id="figure-background-gradient",
                 )
                 figure_attrs["fill"] = gradient.url
-                figure_elements.append(
-                    Defs(children=[gradient])
-                )
-                
+                figure_elements.append(Defs(children=[gradient]))
+
             figure_elements.append(
                 Rectangle(
                     x=0,

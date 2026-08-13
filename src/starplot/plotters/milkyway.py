@@ -13,7 +13,12 @@ from starplot.styles.helpers import use_style
 class MilkyWayPlotterMixin:
     @profile
     @use_style(PolygonStyle, "milky_way")
-    def milky_way(self, style: PolygonStyle = None, catalog: Catalog = MILKY_WAY, gid: str = "milky-way"):
+    def milky_way(
+        self,
+        style: PolygonStyle = None,
+        catalog: Catalog = MILKY_WAY,
+        gid: str = "milky-way",
+    ):
         """
         Plots the Milky Way
 

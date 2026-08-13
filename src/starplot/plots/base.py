@@ -285,6 +285,7 @@ class BasePlot(StarPlotterMixin, ABC):
         labels: Dict[PlanetName, str] = PLANET_LABELS_DEFAULT,
         legend_label: str = "Planet",
         collision_handler: CollisionHandler = None,
+        gid: str = "planets",
     ) -> None:
         """
         Plots the planets, at their _apparent_ RA/DEC (based on the observer you defined).
@@ -295,6 +296,7 @@ class BasePlot(StarPlotterMixin, ABC):
             labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.models.planet.PlanetName])
             legend_label: How to label the planets in the legend. If `None`, then the planets will not be added to the legend
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            gid: Group id for this layer in the exported SVG
         """
         labels = labels or {}
         planets = models.Planet.all(self.observer, self.ephemeris_name)
@@ -302,7 +304,7 @@ class BasePlot(StarPlotterMixin, ABC):
         legend_label = translate(legend_label, self.language)
         handler = collision_handler or self.point_label_handler
 
-        with self.canvas.group(gid="planets"):
+        with self.canvas.group(gid=gid):
             for p in planets:
                 label = labels.get(p.name)
                 label = translate(label, self.language)
@@ -317,7 +319,6 @@ class BasePlot(StarPlotterMixin, ABC):
                         center=(p.ra, p.dec),
                         radius_degrees=p.apparent_size / 2,
                         style=polygon_style,
-                        gid="planet-marker",
                     )
                     self._add_legend_handle_marker(legend_label, style.marker)
 
@@ -328,7 +329,6 @@ class BasePlot(StarPlotterMixin, ABC):
                             p.dec,
                             style.label,
                             collision_handler=handler,
-                            gid="planet-label",
                         )
                 else:
                     self.marker(
@@ -338,8 +338,6 @@ class BasePlot(StarPlotterMixin, ABC):
                         label=label.upper() if label else None,
                         legend_label=legend_label,
                         collision_handler=handler,
-                        gid_marker="planet-marker",
-                        gid_label="planet-label",
                     )
 
     @use_style(ObjectStyle, "sun")
@@ -350,6 +348,7 @@ class BasePlot(StarPlotterMixin, ABC):
         label: str = "Sun",
         legend_label: str = "Sun",
         collision_handler: CollisionHandler = None,
+        gid: str = "sun",
     ) -> None:
         """
         Plots the Sun, at its _apparent_ RA/DEC (based on the observer you defined).
@@ -360,6 +359,7 @@ class BasePlot(StarPlotterMixin, ABC):
             label: How the Sun will be labeled on the plot
             legend_label: How the sun will be labeled in the legend
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            gid: Group id for this layer in the exported SVG
         """
         s = models.Sun.get(
             observer=self.observer,
@@ -375,44 +375,41 @@ class BasePlot(StarPlotterMixin, ABC):
 
         self._objects.sun = s
 
-        if true_size:
-            polygon_style = style.marker.to_polygon_style()
+        with self.canvas.group(gid=gid):
+            if true_size:
+                polygon_style = style.marker.to_polygon_style()
 
-            # hide the edge because it can interfere with the true size
-            polygon_style.edge_color = None
+                # hide the edge because it can interfere with the true size
+                polygon_style.edge_color = None
 
-            self.circle(
-                center=(s.ra, s.dec),
-                radius_degrees=s.apparent_size / 2,
-                style=polygon_style,
-                gid="sun-marker",
-                num_pts=200,
-            )
-
-            style.marker.symbol = MarkerSymbolEnum.CIRCLE
-            self._add_legend_handle_marker(legend_label, style.marker)
-
-            if label:
-                self.text(
-                    label,
-                    s.ra,
-                    s.dec,
-                    style.label,
-                    collision_handler=handler,
-                    gid="sun-label",
+                self.circle(
+                    center=(s.ra, s.dec),
+                    radius_degrees=s.apparent_size / 2,
+                    style=polygon_style,
+                    num_pts=200,
                 )
 
-        else:
-            self.marker(
-                ra=s.ra,
-                dec=s.dec,
-                style=style,
-                label=label,
-                legend_label=legend_label,
-                collision_handler=handler,
-                gid_marker="sun-marker",
-                gid_label="sun-label",
-            )
+                style.marker.symbol = MarkerSymbolEnum.CIRCLE
+                self._add_legend_handle_marker(legend_label, style.marker)
+
+                if label:
+                    self.text(
+                        label,
+                        s.ra,
+                        s.dec,
+                        style.label,
+                        collision_handler=handler,
+                    )
+
+            else:
+                self.marker(
+                    ra=s.ra,
+                    dec=s.dec,
+                    style=style,
+                    label=label,
+                    legend_label=legend_label,
+                    collision_handler=handler,
+                )
 
     @abstractmethod
     def in_bounds(self, ra: float, dec: float) -> bool:
@@ -444,7 +441,7 @@ class BasePlot(StarPlotterMixin, ABC):
         """
         raise NotImplementedError
 
-    def _polygon(self, points: list, style: PolygonStyle, **kwargs):
+    def _polygon(self, points: list, style: PolygonStyle):
         points = self._prepare_coords_many(points)
         self.canvas.polygon(points, style)
 
@@ -455,7 +452,6 @@ class BasePlot(StarPlotterMixin, ABC):
         points: list = None,
         geometry: Polygon = None,
         legend_label: str = None,
-        **kwargs,
     ):
         """
         Plots a polygon.
@@ -475,7 +471,7 @@ class BasePlot(StarPlotterMixin, ABC):
         if geometry is not None:
             points = list(zip(*geometry.exterior.coords.xy))
 
-        self._polygon(points, style, gid=kwargs.get("gid") or "polygon", **kwargs)
+        self._polygon(points, style)
 
         if legend_label is not None:
             self._add_legend_handle_marker(
@@ -512,7 +508,7 @@ class BasePlot(StarPlotterMixin, ABC):
         )
         polygon = polygon.segmentize(0.1)
         points = list(zip(*polygon.exterior.coords.xy))
-        self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
+        self._polygon(points, style)
 
         # if legend_label is not None:
         #     self._add_legend_handle_marker(
@@ -532,7 +528,6 @@ class BasePlot(StarPlotterMixin, ABC):
         start_angle: int = 0,
         end_angle: int = 360,
         legend_label: str = None,
-        **kwargs,
     ):
         """Plots an ellipse
 
@@ -558,7 +553,7 @@ class BasePlot(StarPlotterMixin, ABC):
             end_angle,
         )
         points = list(zip(*polygon.exterior.coords.xy))
-        self._polygon(points, style, gid=kwargs.get("gid") or "polygon")
+        self._polygon(points, style)
 
         # if legend_label is not None:
         #     self._add_legend_handle_marker(
@@ -574,7 +569,6 @@ class BasePlot(StarPlotterMixin, ABC):
         style: PolygonStyle,
         num_pts: int = 100,
         legend_label: str = None,
-        **kwargs,
     ):
         """Plots a circle
 
@@ -592,7 +586,6 @@ class BasePlot(StarPlotterMixin, ABC):
             style=style,
             angle=0,
             num_pts=num_pts,
-            gid=kwargs.get("gid") or "polygon",
         )
 
         # if legend_label is not None:
@@ -610,6 +603,7 @@ class BasePlot(StarPlotterMixin, ABC):
         label: str = "Moon",
         legend_label: str = "Moon",
         collision_handler: CollisionHandler = None,
+        gid: str = "moon",
     ) -> None:
         """
         Plots the Moon, at its _apparent_ RA/DEC (based on the observer you defined).
@@ -621,6 +615,7 @@ class BasePlot(StarPlotterMixin, ABC):
             label: How the Moon will be labeled on the plot
             legend_label: How the Moon will be labeled in the legend
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            gid: Group id for this layer in the exported SVG
         """
         m = models.Moon.get(
             observer=self.observer,
@@ -636,53 +631,50 @@ class BasePlot(StarPlotterMixin, ABC):
 
         self._objects.moon = m
 
-        if true_size:
-            # convert to PolygonStyle because we'll plot the true size as a polygon
-            polygon_style = style.marker.to_polygon_style()
+        with self.canvas.group(gid=gid):
+            if true_size:
+                # convert to PolygonStyle because we'll plot the true size as a polygon
+                polygon_style = style.marker.to_polygon_style()
 
-            # hide the edge because it can interfere with the true size
-            polygon_style.edge_color = None
+                # hide the edge because it can interfere with the true size
+                polygon_style.edge_color = None
 
-            if show_phase:
-                self._moon_with_phase(
-                    moon_phase=m.phase_description,
-                    center=(m.ra, m.dec),
-                    radius_degrees=m.apparent_size / 2,
-                    style=polygon_style,
-                    dark_side_color=style.marker.edge_color,
-                )
+                if show_phase:
+                    self._moon_with_phase(
+                        moon_phase=m.phase_description,
+                        center=(m.ra, m.dec),
+                        radius_degrees=m.apparent_size / 2,
+                        style=polygon_style,
+                        dark_side_color=style.marker.edge_color,
+                    )
+                else:
+                    self.circle(
+                        center=(m.ra, m.dec),
+                        radius_degrees=m.apparent_size / 2,
+                        style=polygon_style,
+                    )
+
+                style.marker.symbol = MarkerSymbolEnum.CIRCLE
+                self._add_legend_handle_marker(legend_label, style.marker)
+
+                if label:
+                    self.text(
+                        label,
+                        m.ra,
+                        m.dec,
+                        style.label,
+                        collision_handler=handler,
+                    )
+
             else:
-                self.circle(
-                    center=(m.ra, m.dec),
-                    radius_degrees=m.apparent_size / 2,
-                    style=polygon_style,
-                    gid="moon-marker",
-                )
-
-            style.marker.symbol = MarkerSymbolEnum.CIRCLE
-            self._add_legend_handle_marker(legend_label, style.marker)
-
-            if label:
-                self.text(
-                    label,
-                    m.ra,
-                    m.dec,
-                    style.label,
+                self.marker(
+                    ra=m.ra,
+                    dec=m.dec,
+                    style=style,
+                    label=label,
+                    legend_label=legend_label,
                     collision_handler=handler,
-                    gid="moon-label",
                 )
-
-        else:
-            self.marker(
-                ra=m.ra,
-                dec=m.dec,
-                style=style,
-                label=label,
-                legend_label=legend_label,
-                collision_handler=handler,
-                gid_marker="moon-marker",
-                gid_label="moon-label",
-            )
 
     def _moon_with_phase(
         self,
@@ -752,7 +744,6 @@ class BasePlot(StarPlotterMixin, ABC):
             num_pts=num_pts,
             angle=0,
             end_angle=180,  # plot as a semicircle
-            gid="moon-marker",
         )
         # Plot right side
         self.ellipse(
@@ -763,7 +754,6 @@ class BasePlot(StarPlotterMixin, ABC):
             num_pts=num_pts,
             angle=180,
             end_angle=180,  # plot as a semicircle
-            gid="moon-marker",
         )
         # Plot middle
         self.ellipse(
@@ -772,7 +762,6 @@ class BasePlot(StarPlotterMixin, ABC):
             width_degrees=ellipse_b_radius_degrees * 2,
             num_pts=num_pts,
             style=middle,
-            gid="moon-marker",
         )
 
     @use_style(PolygonStyle, "optic_fov")
@@ -898,10 +887,8 @@ class BasePlot(StarPlotterMixin, ABC):
         else:
             prepared_coords = [self._prepare_coords(*p) for p in coords]
 
-        gid = kwargs.get("gid") or "line"
-
         collision_handler = collision_handler or self.path_label_handler
-
+        
         self.canvas.line(
             style=style.line,
             coordinates=prepared_coords,
@@ -919,14 +906,24 @@ class BasePlot(StarPlotterMixin, ABC):
                 collision_handler=collision_handler,
             )
 
-    def tissot(self, radius: int = 4):
-        for ra in range(45, 360, 45):
-            for dec in range(-80, 90, 20):
-                self.circle(
-                    center=(ra, dec),
-                    radius_degrees=radius,
-                    style__fill_color="#2e62ae",
-                )
+    def tissot(self, radius: int = 4, gid: str = "tissot"):
+        """
+        Draws a [Tissot indicatrix](https://en.wikipedia.org/wiki/Tissot's_indicatrix), 
+        which helps illustrate the distortion of a projection.
+
+        Args:
+            radius: Radius of each circle, in degrees
+            gid: Group id for this layer in the exported SVG
+        """
+
+        with self.canvas.group(gid=gid):
+            for ra in range(45, 360, 45):
+                for dec in range(-80, 90, 20):
+                    self.circle(
+                        center=(ra, dec),
+                        radius_degrees=radius,
+                        style__fill_color="#2e62ae",
+                    )
 
     def _debug_bbox(self, bbox, color, width=1):
         """

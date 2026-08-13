@@ -32,6 +32,7 @@ class LegendPlotterMixin:
         magnitude_step: float = 1,
         magnitude_size_fn: Callable | None = None,
         magnitude_label_fn: Callable | None = None,
+        gid: str = "legend",
     ):
         """
         Plots the legend.
@@ -52,6 +53,7 @@ class LegendPlotterMixin:
             magnitude_step: Step size for magnitudes in the scale
             magnitude_size_fn: Size function for the star magnitudes. Defaults to the last used size function when calling `stars()`
             magnitude_label_fn: Function for determining the label for each magnitude in the scale. The function should take a single parameter and return a string. Default is `lambda m: str(m)`
+            gid: Group id for this layer in the exported SVG
         """
         if not self._legend_handles:
             return
@@ -77,7 +79,4 @@ class LegendPlotterMixin:
 
             sections.append((magnitude_scale_title, magnitudes))
 
-        self.canvas.legend(
-            sections=sections,
-            style=style,
-        )
+        self.canvas.legend(sections=sections, style=style, gid=gid)

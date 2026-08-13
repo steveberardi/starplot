@@ -183,13 +183,17 @@ class ConstellationPlotterMixin:
     @profile
     @use_style(LineStyle, "constellation_borders")
     def constellation_borders(
-        self, style: LineStyle = None, catalog: Catalog = CONSTELLATION_BORDERS
+        self,
+        style: LineStyle = None,
+        catalog: Catalog = CONSTELLATION_BORDERS,
+        gid: str = "constellation-borders",
     ):
         """Plots the constellation borders
 
         Args:
             style: Styling of the constellation borders. If None, then the plot's style (specified when creating the plot) will be used
             catalog: Catalog to use for constellation borders
+            gid: Group id for this layer in the exported SVG
         """
         con = db.connect()
         borders = catalog._load(connection=con, table_name="constellation_borders")
@@ -214,11 +218,12 @@ class ConstellationPlotterMixin:
             coords = [self._prepare_coords(*p) for p in xy]
             border_lines.append(coords)
 
-        for coords in border_lines:
-            self.canvas.line(
-                style=style,
-                coordinates=coords,
-            )
+        with self.canvas.group(gid=gid):
+            for coords in border_lines:
+                self.canvas.line(
+                    style=style,
+                    coordinates=coords,
+                )
 
     @profile
     @use_style(LabelStyle, "constellation_labels")
@@ -227,6 +232,7 @@ class ConstellationPlotterMixin:
         style: LabelStyle = None,
         label_fn: Callable[[Constellation], str] = Constellation.get_label,
         collision_handler: CollisionHandler = None,
+        gid: str = "constellations-labels",
     ):
         """
         Plots constellation labels for all constellations that have been plotted. This means you must plot the constellations before plotting their labels.
@@ -237,6 +243,7 @@ class ConstellationPlotterMixin:
             style: Styling of the constellation labels. If None, then the plot's style (specified when creating the plot) will be used
             label_fn: Callable for determining the label for each constellation. The default function returns the constellation's name in uppercase.
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with other labels, markers, etc. If `None`, then `CollisionHandler(allow_constellation_line_collisions=True)` will be used (**Important: this function does NOT default to the plot's collision handler, since it's the only area-based label function and collisions should be handled differently**).
+            gid: Group id for this layer in the exported SVG
         """
 
         collision_handler = collision_handler or self.area_label_handler
@@ -247,35 +254,36 @@ class ConstellationPlotterMixin:
 
         all_constellation_stars = Star.find(where=[_.hip.isin(hips)])
 
-        for constellation in self.objects.constellations:
-            constellation_line_stars = [
-                s
-                for s in all_constellation_stars
-                if s.hip in constellation.star_hip_ids
-            ]
-            if not constellation_line_stars:
-                continue
+        with self.canvas.group(gid=gid):
+            for constellation in self.objects.constellations:
+                constellation_line_stars = [
+                    s
+                    for s in all_constellation_stars
+                    if s.hip in constellation.star_hip_ids
+                ]
+                if not constellation_line_stars:
+                    continue
 
-            if is_wrapped_polygon(constellation.boundary):
-                starpoints = []
-                ra, dec = zip(*[(s.ra, s.dec) for s in constellation_line_stars])
-                new_ra = [r - 360 if r > 300 else r for r in ra]
-                starpoints = list(zip(new_ra, dec))
+                if is_wrapped_polygon(constellation.boundary):
+                    starpoints = []
+                    ra, dec = zip(*[(s.ra, s.dec) for s in constellation_line_stars])
+                    new_ra = [r - 360 if r > 300 else r for r in ra]
+                    starpoints = list(zip(new_ra, dec))
 
-            else:
-                ra, dec = zip(*[(s.ra, s.dec) for s in constellation_line_stars])
-                starpoints = list(zip(ra, dec))
+                else:
+                    ra, dec = zip(*[(s.ra, s.dec) for s in constellation_line_stars])
+                    starpoints = list(zip(ra, dec))
 
-            points_line = MultiPoint(starpoints)
-            centroid = points_line.centroid
-            text = label_fn(constellation)
+                points_line = MultiPoint(starpoints)
+                centroid = points_line.centroid
+                text = label_fn(constellation)
 
-            self.text(
-                text,
-                centroid.x,
-                centroid.y,
-                style,
-                area=constellation.boundary,  # TODO : make this intersection with clip path
-                collision_handler=collision_handler,
-                gid="constellations-label-name",
-            )
+                self.text(
+                    text,
+                    centroid.x,
+                    centroid.y,
+                    style,
+                    area=constellation.boundary,  # TODO : make this intersection with clip path
+                    collision_handler=collision_handler,
+                    gid="constellations-label-name",
+                )

@@ -76,14 +76,14 @@ class StarPlotterMixin:
             sql=sql,
         )
 
-    def _scatter_stars(self, ras, decs, sizes, alphas, colors, style=None):
+    def _scatter_stars(self, ras, decs, sizes, alphas, colors, style, gid):
         style = style or self.style.star
 
         self.canvas.markers(
             xs=np.array(ras),
             ys=np.array(decs),
             style=style.marker,
-            gid="stars",
+            gid=gid,
             sizes=sizes,
             colors=colors,
             alphas=alphas,
@@ -198,6 +198,8 @@ class StarPlotterMixin:
         sql: str | None = None,
         sql_labels: str | None = None,
         collision_handler: CollisionHandler = None,
+        gid_markers: str = "stars",
+        gid_labels: str = "stars-labels",
     ):
         """
         Plots stars
@@ -217,6 +219,9 @@ class StarPlotterMixin:
             sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             sql_labels: SQL query for selecting stars that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            gid_markers: Group id for the markers in the exported SVG
+            gid_labels: Group id for the labels in the exported SVG
+
         """
 
         # fallback to style if callables are None
@@ -322,6 +327,7 @@ class StarPlotterMixin:
             alphas,
             colors,
             style=style,
+            gid=gid_markers,
         )
 
         _legend_label = translate(legend_label, self.language) or legend_label
@@ -330,7 +336,7 @@ class StarPlotterMixin:
         if stars_to_index:
             self._stars_rtree = rtree.index.Index(stars_to_index)
 
-        with self.canvas.group(gid="star-labels"):
+        with self.canvas.group(gid=gid_labels):
             self._star_labels(
                 star_objects,
                 sizes,

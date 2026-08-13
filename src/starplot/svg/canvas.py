@@ -588,6 +588,7 @@ class Canvas:
         self,
         sections: list[tuple[str, dict]],
         style: LegendStyle,
+        gid: str = "legend",
     ) -> None:
         """
         Plots a legend with one or more sections
@@ -684,8 +685,16 @@ class Canvas:
 
         self.layout.legend = LegendRegion(
             elements=[
-                (0, background_element),
-                *[(1, e) for e in sections_elements],
+                (
+                    1,
+                    Group(
+                        id=gid,
+                        children=[
+                            background_element,
+                            *sections_elements,
+                        ],
+                    ),
+                )
             ],
             height=height,
             width=width,
