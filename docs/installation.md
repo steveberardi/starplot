@@ -4,8 +4,16 @@ Starplot is available on [PyPI](https://pypi.org/project/starplot/) and [Conda](
 
 Supported Python versions: 3.10 / 3.11 / 3.12 / 3.13
 
+<h3>1. Install Dependencies</h3>
 
-<h3>1. Install Starplot</h3>
+On macOS (with [Homebrew](https://brew.sh/)):
+```
+brew install cairo
+```
+
+For Windows and Linux, [see the Cairo website](https://www.cairographics.org/download/).
+
+<h3>2. Install Starplot</h3>
 ```
 pip install starplot
 ```
@@ -15,7 +23,7 @@ Or, via [Conda](https://anaconda.org/channels/conda-forge/packages/starplot/over
 conda install conda-forge::starplot
 ```
 
-<h3>2. Setup Starplot (optional)</h3>
+<h3>3. Setup Starplot (optional)</h3>
 ```
 starplot setup
 ```
