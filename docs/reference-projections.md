@@ -7,7 +7,7 @@ Shows accurate distances from the center position. Often used for planispheres.
 ![Equidistant projection: gridlines and Tissot indicatrix](images/examples/projection_equidistant.svg){ .projection-img loading=lazy }
 - __LambertAzEqArea__{.fs-2}
 Lambert Azimuthal Equal-Area projection - accurately shows area, but distorts angles.
-![Lambert Azimuthal Equal-Area projection: gridlines and Tissot indicatrix](images/examples/projection_lambert_az_eq_area.svg){ .off-glb .projection-img loading=lazy }
+![Lambert Azimuthal Equal-Area projection: gridlines and Tissot indicatrix](images/examples/projection_lambert_az_eq_area.svg){ .projection-img loading=lazy }
 - __Mercator__{.fs-2}
 Good for declinations between -70 and 70, but distorts objects near the poles<br/><br/>
 ![Mercator projection: gridlines and Tissot indicatrix](images/examples/projection_mercator.svg){ .projection-img loading=lazy }

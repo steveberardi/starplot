@@ -1,8 +1,10 @@
 # Layout
 
-<img src="images/figure_layout.svg" class="off-glb">
+Every plot you create with Starplot is built from a handful of regions. Most of these regions are optional and only take up space in the figure if you actually use the feature they belong to — for example, if you don't plot a legend, no space is reserved for one.
 
-Every plot you create with Starplot is built from a handful of regions, arranged around the axes (the actual plot area). Most of these regions are optional and only take up space in the figure if you actually use the feature they belong to — for example, if you don't plot a legend, no space is reserved for one.
+Here's an illustration that shows all the available regions in a plot (see descriptions below the image):
+
+<img src="images/figure_layout.svg" class="off-glb">
 
 ## Figure
 
