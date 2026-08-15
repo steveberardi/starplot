@@ -67,20 +67,12 @@ code.doc-symbol {
     margin: 6px 4px;
 }
 
-.fg-primary {
-    color: var(--md-primary-fg-color);
-}
-
 .mt-none {
     margin-top: 0 !important;
 }
 
 .ms-1 {
     margin-left: 4px;
-}
-
-.ms-2 {
-    margin-left: 8px;
 }
 
 /* Object Class Headings */
@@ -506,25 +498,8 @@ td[data-column-id=bayer] {
     border: 1px solid hsl(209, 43%, 68%);
 }
 
-.m-0 {
-    margin: 0;
-}
-
-.my-0 {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
 .mt-0 {
     margin-top: 0 !important;
-}
-
-.mb-0 {
-    margin-bottom: 0 !important;
-}
-
-.mt-1 {
-    margin-top: 10px !important;
 }
 
 .divider {
@@ -549,10 +524,6 @@ td[data-column-id=bayer] {
     .bg-info {
         background-color: hsl(209, 40%, 14%);
     }
-}
-
-.mw-660 {
-    /* max-width: 660px; */
 }
 
 .filter-blue {
@@ -626,10 +597,6 @@ td[data-column-id=bayer] {
     font-size: 1.3em !important;
 }
 
-.fs-1 {
-    font-size: 1.5em !important;
-}
-
 .star-list {
     li {
         list-style: none;
@@ -669,10 +636,6 @@ td[data-column-id=bayer] {
     h3 {
         margin-top: 0;
     }
-}
-
-.text-end {
-    text-align: end;
 }
 
 .title-icon {
