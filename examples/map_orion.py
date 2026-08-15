@@ -5,6 +5,7 @@ style = PlotStyle().extend(
     extensions.BLUE_MEDIUM,
     extensions.MAP,
 )
+style.figure.padding = 40
 
 p = MapPlot(
     projection=Miller(),

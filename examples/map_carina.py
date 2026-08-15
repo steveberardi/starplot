@@ -5,6 +5,7 @@ style = PlotStyle().extend(
     extensions.BLUE_GOLD,
     extensions.MAP,
 )
+style.figure.padding = 40
 
 p = MapPlot(
     projection=Equidistant(center_ra=11 * 15),
