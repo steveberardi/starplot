@@ -166,6 +166,36 @@ class BasePlot(StarPlotterMixin, ABC):
         rectangle = box(0, 0, self.canvas.width, self.canvas.height)
         self._clip_path_polygon = rectangle.buffer(-1 * buffer)
 
+    @abstractmethod
+    def in_bounds(self, ra: float, dec: float) -> bool:
+        """Determine if a coordinate is within the bounds of the plot.
+
+        Args:
+            ra: Right ascension
+            dec: Declination
+
+        Returns:
+            bool: True if the coordinate is in bounds, otherwise False
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def _in_bounds_xy(self, x: float, y: float) -> bool:
+        """
+        Determine if a data / projected coordinate is within the non-clipped bounds of the plot.
+
+        This should be extremely precise.
+
+        Args:
+            x: X coordinate
+            y: Y coordinate
+
+        Returns:
+            bool: True if the coordinate is in bounds, otherwise False
+        """
+        raise NotImplementedError
+
     @property
     def magnitude_range(self) -> tuple[float, float]:
         """
@@ -181,17 +211,6 @@ class BasePlot(StarPlotterMixin, ABC):
         """
         return self._objects
 
-    @use_style(TitleStyle, "title")
-    def title(self, text: str, style: TitleStyle = None):
-        """
-        Plots a title at the top of the plot
-
-        Args:
-            text: Title text to plot
-            style: Styling of the title. If None, then the plot's style (specified when creating the plot) will be used
-        """
-        self.canvas.title(text, style)
-
     @profile
     def export(self, filename: str, scale: float = 1):
         """Exports the plot to an image file (SVG or PNG)
@@ -204,6 +223,18 @@ class BasePlot(StarPlotterMixin, ABC):
         text_as_path = StarplotSettings.svg_text_type == SvgTextType.PATH
         self.logger.debug("Exporting...")
         self.canvas.export(filename, text_as_path=text_as_path, scale=scale)
+
+
+    @use_style(TitleStyle, "title")
+    def title(self, text: str, style: TitleStyle = None):
+        """
+        Plots a title at the top of the plot
+
+        Args:
+            text: Title text to plot
+            style: Styling of the title. If None, then the plot's style (specified when creating the plot) will be used
+        """
+        self.canvas.title(text, style)
 
     @use_style(ObjectStyle)
     def marker(
@@ -277,170 +308,60 @@ class BasePlot(StarPlotterMixin, ABC):
         if legend_label is not None:
             self._add_legend_handle_marker(legend_label, style.marker)
 
-    @use_style(ObjectStyle, "planets")
-    def planets(
+    @use_style(PathStyle)
+    def line(
         self,
-        style: ObjectStyle = None,
-        true_size: bool = False,
-        labels: Dict[PlanetName, str] = PLANET_LABELS_DEFAULT,
-        legend_label: str = "Planet",
+        coordinates: list[tuple[float, float]] = None,
+        geometry: LineString = None,
+        style: PathStyle = None,
+        label: str = None,
+        num_labels: int = 2,
         collision_handler: CollisionHandler = None,
-        gid: str = "planets",
-    ) -> None:
+        **kwargs,
+    ):
         """
-        Plots the planets, at their _apparent_ RA/DEC (based on the observer you defined).
+        Plots a line, with optional labels. Either coordinates OR geometry must be specified.
 
         Args:
-            style: Styling of the planets. If None, then the plot's style (specified when creating the plot) will be used
-            true_size: If True, then each planet's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
-            labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.models.planet.PlanetName])
-            legend_label: How to label the planets in the legend. If `None`, then the planets will not be added to the legend
-            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
-            gid: Group id for this layer in the exported SVG
+            coordinates: List of coordinates, e.g. `[(ra, dec), (ra, dec)]`
+            geometry: A shapely LineString. If this value is passed, then the `coordinates` kwarg will be ignored.
+            style: Style of the line
+            label: Label for the line
+            num_labels: Number of labels to plot along the line
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the plot's `path_label_handler` will be used.
+
         """
-        labels = labels or {}
-        planets = models.Planet.all(self.observer, self.ephemeris_name)
 
-        legend_label = translate(legend_label, self.language)
-        handler = collision_handler or self.point_label_handler
+        if coordinates is None and geometry is None:
+            raise ValueError("Must pass coordinates or geometry when plotting lines.")
 
-        with self.canvas.group(gid=gid):
-            for p in planets:
-                label = labels.get(p.name)
-                label = translate(label, self.language)
+        coords = geometry.coords if geometry is not None else coordinates
 
-                if self.in_bounds(p.ra, p.dec):
-                    self._objects.planets.append(p)
+        if kwargs.get("skip_prepare"):
+            prepared_coords = coords
+        else:
+            prepared_coords = [self._prepare_coords(*p) for p in coords]
 
-                if true_size:
-                    polygon_style = style.marker.to_polygon_style()
-                    polygon_style.edge_color = None
-                    self.circle(
-                        center=(p.ra, p.dec),
-                        radius_degrees=p.apparent_size / 2,
-                        style=polygon_style,
-                    )
-                    self._add_legend_handle_marker(legend_label, style.marker)
-
-                    if label:
-                        self.text(
-                            label.upper(),
-                            p.ra,
-                            p.dec,
-                            style.label,
-                            collision_handler=handler,
-                        )
-                else:
-                    self.marker(
-                        ra=p.ra,
-                        dec=p.dec,
-                        style=style,
-                        label=label.upper() if label else None,
-                        legend_label=legend_label,
-                        collision_handler=handler,
-                    )
-
-    @use_style(ObjectStyle, "sun")
-    def sun(
-        self,
-        style: ObjectStyle = None,
-        true_size: bool = False,
-        label: str = "Sun",
-        legend_label: str = "Sun",
-        collision_handler: CollisionHandler = None,
-        gid: str = "sun",
-    ) -> None:
-        """
-        Plots the Sun, at its _apparent_ RA/DEC (based on the observer you defined).
-
-        Args:
-            style: Styling of the Sun. If None, then the plot's style (specified when creating the plot) will be used
-            true_size: If True, then the Sun's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
-            label: How the Sun will be labeled on the plot
-            legend_label: How the sun will be labeled in the legend
-            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
-            gid: Group id for this layer in the exported SVG
-        """
-        s = models.Sun.get(
-            observer=self.observer,
-            ephemeris=self.ephemeris_name,
+        collision_handler = collision_handler or self.path_label_handler
+        
+        self.canvas.line(
+            style=style.line,
+            coordinates=prepared_coords,
         )
-        label = translate(label, self.language)
-        legend_label = translate(legend_label, self.language)
-        s.name = label or s.name
-        handler = collision_handler or self.point_label_handler
 
-        if not self.in_bounds(s.ra, s.dec):
-            return
+        if label:
+            arr = np.array(prepared_coords)
+            xs, ys = arr[:, 0], arr[:, 1]
+            self._text_line(
+                xs,
+                ys,
+                text=label,
+                style=style.label,
+                num_labels=num_labels,
+                collision_handler=collision_handler,
+            )
 
-        self._objects.sun = s
-
-        with self.canvas.group(gid=gid):
-            if true_size:
-                polygon_style = style.marker.to_polygon_style()
-
-                # hide the edge because it can interfere with the true size
-                polygon_style.edge_color = None
-
-                self.circle(
-                    center=(s.ra, s.dec),
-                    radius_degrees=s.apparent_size / 2,
-                    style=polygon_style,
-                    num_pts=200,
-                )
-
-                style.marker.symbol = MarkerSymbolEnum.CIRCLE
-                self._add_legend_handle_marker(legend_label, style.marker)
-
-                if label:
-                    self.text(
-                        label,
-                        s.ra,
-                        s.dec,
-                        style.label,
-                        collision_handler=handler,
-                    )
-
-            else:
-                self.marker(
-                    ra=s.ra,
-                    dec=s.dec,
-                    style=style,
-                    label=label,
-                    legend_label=legend_label,
-                    collision_handler=handler,
-                )
-
-    @abstractmethod
-    def in_bounds(self, ra: float, dec: float) -> bool:
-        """Determine if a coordinate is within the bounds of the plot.
-
-        Args:
-            ra: Right ascension
-            dec: Declination
-
-        Returns:
-            bool: True if the coordinate is in bounds, otherwise False
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def _in_bounds_xy(self, x: float, y: float) -> bool:
-        """
-        Determine if a data / projected coordinate is within the non-clipped bounds of the plot.
-
-        This should be extremely precise.
-
-        Args:
-            x: X coordinate
-            y: Y coordinate
-
-        Returns:
-            bool: True if the coordinate is in bounds, otherwise False
-        """
-        raise NotImplementedError
-
+    
     def _polygon(self, points: list, style: PolygonStyle):
         points = self._prepare_coords_many(points)
         self.canvas.polygon(points, style)
@@ -593,6 +514,140 @@ class BasePlot(StarPlotterMixin, ABC):
         #         legend_label,
         #         style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE),
         #     )
+
+    @use_style(ObjectStyle, "planets")
+    def planets(
+        self,
+        style: ObjectStyle = None,
+        true_size: bool = False,
+        labels: Dict[PlanetName, str] = PLANET_LABELS_DEFAULT,
+        legend_label: str = "Planet",
+        collision_handler: CollisionHandler = None,
+        gid: str = "planets",
+    ) -> None:
+        """
+        Plots the planets, at their _apparent_ RA/DEC (based on the observer you defined).
+
+        Args:
+            style: Styling of the planets. If None, then the plot's style (specified when creating the plot) will be used
+            true_size: If True, then each planet's true apparent size in the sky will be plotted. If False, then the style's marker size will be used.
+            labels: How the planets will be labeled on the plot and legend. If not specified, then the planet's name will be used (see [`Planet`][starplot.models.planet.PlanetName])
+            legend_label: How to label the planets in the legend. If `None`, then the planets will not be added to the legend
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            gid: Group id for this layer in the exported SVG
+        """
+        labels = labels or {}
+        planets = models.Planet.all(self.observer, self.ephemeris_name)
+
+        legend_label = translate(legend_label, self.language)
+        handler = collision_handler or self.point_label_handler
+
+        with self.canvas.group(gid=gid):
+            for p in planets:
+                label = labels.get(p.name)
+                label = translate(label, self.language)
+
+                if self.in_bounds(p.ra, p.dec):
+                    self._objects.planets.append(p)
+
+                if true_size:
+                    polygon_style = style.marker.to_polygon_style()
+                    polygon_style.edge_color = None
+                    self.circle(
+                        center=(p.ra, p.dec),
+                        radius_degrees=p.apparent_size / 2,
+                        style=polygon_style,
+                    )
+                    self._add_legend_handle_marker(legend_label, style.marker)
+
+                    if label:
+                        self.text(
+                            label.upper(),
+                            p.ra,
+                            p.dec,
+                            style.label,
+                            collision_handler=handler,
+                        )
+                else:
+                    self.marker(
+                        ra=p.ra,
+                        dec=p.dec,
+                        style=style,
+                        label=label.upper() if label else None,
+                        legend_label=legend_label,
+                        collision_handler=handler,
+                    )
+
+    @use_style(ObjectStyle, "sun")
+    def sun(
+        self,
+        style: ObjectStyle = None,
+        true_size: bool = False,
+        label: str = "Sun",
+        legend_label: str = "Sun",
+        collision_handler: CollisionHandler = None,
+        gid: str = "sun",
+    ) -> None:
+        """
+        Plots the Sun, at its _apparent_ RA/DEC (based on the observer you defined).
+
+        Args:
+            style: Styling of the Sun. If None, then the plot's style (specified when creating the plot) will be used
+            true_size: If True, then the Sun's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
+            label: How the Sun will be labeled on the plot
+            legend_label: How the sun will be labeled in the legend
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            gid: Group id for this layer in the exported SVG
+        """
+        s = models.Sun.get(
+            observer=self.observer,
+            ephemeris=self.ephemeris_name,
+        )
+        label = translate(label, self.language)
+        legend_label = translate(legend_label, self.language)
+        s.name = label or s.name
+        handler = collision_handler or self.point_label_handler
+
+        if not self.in_bounds(s.ra, s.dec):
+            return
+
+        self._objects.sun = s
+
+        with self.canvas.group(gid=gid):
+            if true_size:
+                polygon_style = style.marker.to_polygon_style()
+
+                # hide the edge because it can interfere with the true size
+                polygon_style.edge_color = None
+
+                self.circle(
+                    center=(s.ra, s.dec),
+                    radius_degrees=s.apparent_size / 2,
+                    style=polygon_style,
+                    num_pts=200,
+                )
+
+                style.marker.symbol = MarkerSymbolEnum.CIRCLE
+                self._add_legend_handle_marker(legend_label, style.marker)
+
+                if label:
+                    self.text(
+                        label,
+                        s.ra,
+                        s.dec,
+                        style.label,
+                        collision_handler=handler,
+                    )
+
+            else:
+                self.marker(
+                    ra=s.ra,
+                    dec=s.dec,
+                    style=style,
+                    label=label,
+                    legend_label=legend_label,
+                    collision_handler=handler,
+                )
 
     @use_style(ObjectStyle, "moon")
     def moon(
@@ -803,6 +858,7 @@ class BasePlot(StarPlotterMixin, ABC):
         label: str = "ECLIPTIC",
         num_labels: int = 2,
         collision_handler: CollisionHandler = None,
+        gid: str = "ecliptic",
     ):
         """Plots the ecliptic
 
@@ -811,18 +867,20 @@ class BasePlot(StarPlotterMixin, ABC):
             label: How the ecliptic will be labeled on the plot
             num_labels: Max number of labels to plot along the line
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the plot's `path_label_handler` will be used.
+            gid: Group id for this layer in the exported SVG
         """
 
         label = translate(label, self.language)
         coords = [(ra * 15, dec) for ra, dec in ecliptic.RA_DECS]
 
-        self.line(
-            style=style,
-            label=label.upper(),
-            num_labels=num_labels,
-            collision_handler=collision_handler,
-            coordinates=coords,
-        )
+        with self.canvas.group(gid=gid):
+            self.line(
+                style=style,
+                label=label.upper(),
+                num_labels=num_labels,
+                collision_handler=collision_handler,
+                coordinates=coords,
+            )
 
     @profile
     @use_style(PathStyle, "celestial_equator")
@@ -832,6 +890,7 @@ class BasePlot(StarPlotterMixin, ABC):
         label: str = "CELESTIAL EQUATOR",
         num_labels: int = 2,
         collision_handler: CollisionHandler = None,
+        gid: str = "celestial-equator",
     ):
         """
         Plots the celestial equator
@@ -841,71 +900,21 @@ class BasePlot(StarPlotterMixin, ABC):
             label: How the celestial equator will be labeled on the plot
             num_labels: Max number of labels to plot along the line
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the plot's `path_label_handler` will be used.
+            gid: Group id for this layer in the exported SVG
         """
         label = translate(label, self.language)
         coords = [(ra, 0) for ra in range(0, 361)]
-        self.line(
-            style=style,
-            label=label.upper(),
-            num_labels=num_labels,
-            collision_handler=collision_handler,
-            coordinates=coords,
-            # gid="celestial-equator",
-        )
-
-    @use_style(PathStyle)
-    def line(
-        self,
-        coordinates: list[tuple[float, float]] = None,
-        geometry: LineString = None,
-        style: PathStyle = None,
-        label: str = None,
-        num_labels: int = 2,
-        collision_handler: CollisionHandler = None,
-        **kwargs,
-    ):
-        """
-        Plots a line, with optional labels. Either coordinates OR geometry must be specified.
-
-        Args:
-            coordinates: List of coordinates, e.g. `[(ra, dec), (ra, dec)]`
-            geometry: A shapely LineString. If this value is passed, then the `coordinates` kwarg will be ignored.
-            style: Style of the line
-            label: Label for the line
-            num_labels: Number of labels to plot along the line
-            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the plot's `path_label_handler` will be used.
-
-        """
-
-        if coordinates is None and geometry is None:
-            raise ValueError("Must pass coordinates or geometry when plotting lines.")
-
-        coords = geometry.coords if geometry is not None else coordinates
-
-        if kwargs.get("skip_prepare"):
-            prepared_coords = coords
-        else:
-            prepared_coords = [self._prepare_coords(*p) for p in coords]
-
-        collision_handler = collision_handler or self.path_label_handler
-        
-        self.canvas.line(
-            style=style.line,
-            coordinates=prepared_coords,
-        )
-
-        if label:
-            arr = np.array(prepared_coords)
-            xs, ys = arr[:, 0], arr[:, 1]
-            self._text_line(
-                xs,
-                ys,
-                text=label,
-                style=style.label,
+        with self.canvas.group(gid=gid):
+            self.line(
+                style=style,
+                label=label.upper(),
                 num_labels=num_labels,
                 collision_handler=collision_handler,
+                coordinates=coords,
+                # gid="celestial-equator",
             )
 
+    
     def tissot(self, radius: int = 4, gid: str = "tissot"):
         """
         Draws a [Tissot indicatrix](https://en.wikipedia.org/wiki/Tissot's_indicatrix), 

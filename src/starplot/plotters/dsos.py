@@ -149,6 +149,8 @@ class DsoPlotterMixin:
         sql_labels: str | None = None,
         catalog: Catalog = OPEN_NGC,
         collision_handler: CollisionHandler = None,
+        gids_markers: Mapping[DsoType, str] | None = None,
+        gids_labels: Mapping[DsoType, str] | None = None,
     ):
         """
         Plots Deep Sky Objects (DSOs).
@@ -164,6 +166,8 @@ class DsoPlotterMixin:
             sql_labels: SQL query for selecting DSOs that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
             catalog: The catalog of DSOs to use -- see [catalogs overview](/data/overview/) for details
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            gids_markers: A dictionary that maps a `DsoType` to the group id (gid) used for that type's markers in the exported SVG. If a type is not in the dict, then the default gid (`dso-{type}-markers`) is used.
+            gids_labels: A dictionary that maps a `DsoType` to the group id (gid) used for that type's labels in the exported SVG. If a type is not in the dict, then the default gid (`dso-{type}-labels`) is used.
         """
 
         # TODO: add kwarg styles
@@ -179,6 +183,9 @@ class DsoPlotterMixin:
             legend_labels = {}
         else:
             legend_labels = {**DSO_LEGEND_LABELS, **legend_labels}
+
+        gids_markers = gids_markers or {}
+        gids_labels = gids_labels or {}
 
         extent = self._extent_mask()
         dso_results = load(extent=extent, filters=where, sql=sql, catalog=catalog)
@@ -240,7 +247,9 @@ class DsoPlotterMixin:
             self._objects.dsos.append(_dso)
 
         for dso_type, items in dsos_by_type.items():
-            with self.canvas.group(gid=f"dso-{dso_type.value}-markers"):
+            with self.canvas.group(
+                gid=gids_markers.get(dso_type, f"dso-{dso_type.value}-markers")
+            ):
                 for item in items:
                     d = item["d"]
                     ra, dec, style = item["ra"], item["dec"], item["style"]
@@ -302,7 +311,9 @@ class DsoPlotterMixin:
                             collision_handler=handler,
                         )
 
-            with self.canvas.group(gid=f"dso-{dso_type.value}-labels"):
+            with self.canvas.group(
+                gid=gids_labels.get(dso_type, f"dso-{dso_type.value}-labels")
+            ):
                 for item in items:
                     label = item["label"]
                     if not label:
