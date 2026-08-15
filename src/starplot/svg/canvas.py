@@ -884,17 +884,19 @@ class Canvas:
         label_elements = []
         label_height = style.label.font_size * self.scale
 
-        # TODO : use fonts.get_text_hw
-
-        def text_width(text, font_size, font_weight):
-            char_width = font_size * (0.75 if font_weight >= 500 else 0.7)
-            return len(text) * char_width
+        def text_width(text, font_size):
+            _, w, _ = fonts.get_text_hw(
+                text=text,
+                font_name=style.label.font_name,
+                font_size=font_size,
+                font_weight=style.label.font_weight,
+                italic=style.label.font_style == "italic",
+            )
+            return w
 
         if width_from_labels:
             text_widths = [
-                text_width(
-                    label, style.label.font_size * self.scale, style.label.font_weight
-                )
+                text_width(label, style.label.font_size * self.scale)
                 for _, label, _ in labels
                 if label
             ]
@@ -963,9 +965,7 @@ class Canvas:
                 dxy = _geometry.extend_line(dxy, distance=border_width * 2)
 
                 labeled_line = LineString(dxy)
-                label_width = text_width(
-                    text, style.label.font_size * self.scale, style.label.font_weight
-                )
+                label_width = text_width(text, style.label.font_size * self.scale)
 
                 if self.debug:
                     label_elements.append(
