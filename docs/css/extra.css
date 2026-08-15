@@ -622,6 +622,10 @@ td[data-column-id=bayer] {
     font-size: 1.1em !important;
 }
 
+.fs-2 {
+    font-size: 1.3em !important;
+}
+
 .fs-1 {
     font-size: 1.5em !important;
 }
