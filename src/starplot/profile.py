@@ -7,9 +7,9 @@ def profile(func):
 
         result = func(*args, **kwargs)
 
-        duration = round(time.perf_counter() - start, 4)
+        duration = int((time.perf_counter() - start) * 1_000)
 
-        args[0].logger.debug(f"{func.__name__} = {duration!s} sec")
+        args[0].logger.debug(f"{func.__name__} = {duration}ms")
 
         return result
 

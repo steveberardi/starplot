@@ -222,14 +222,7 @@ class Text(Element):
                 id=f"{self.id}-stroke", children=paths, attrs=stroke_attrs
             )
             fill_group = Group(id=f"{self.id}-fill", children=paths, attrs=group_attrs)
-
-            # group_attrs["stroke"] = self.attrs.get("stroke")
-            # group_attrs["stroke-width"] = self.attrs.get("stroke-width") / scale
-            # group_attrs["stroke-opacity"] = self.attrs.get("stroke-opacity")
-            # group_attrs["paint-order"] = "stroke fill"
-
             g = Group(id=self.id, children=[stroke_group, fill_group])
-
         else:
             g = Group(id=self.id, children=paths, attrs=group_attrs)
 

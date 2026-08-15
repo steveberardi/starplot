@@ -140,8 +140,8 @@ class DsoPlotterMixin:
     def dsos(
         self,
         where: list | None = None,
-        where_labels: list | None = None,
-        where_true_size: list | None = None,
+        where_labels: list | bool | None = None,
+        where_true_size: list | bool | None = None,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
         alpha_fn: Callable[[DSO], float] | None = None,
         label_fn: Callable[[DSO], str] = DSO.get_label,
@@ -169,6 +169,8 @@ class DsoPlotterMixin:
         # TODO: add kwarg styles
 
         where = where or []
+        if where_labels is False:
+            where_labels = [False]
         where_labels = where_labels or []
         where_true_size = where_true_size or []
         handler = collision_handler or self.point_label_handler
