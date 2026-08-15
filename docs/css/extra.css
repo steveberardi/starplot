@@ -695,7 +695,7 @@ td[data-column-id=bayer] {
 }
 
 .projection-img {
-  max-width: 400px !important;
+  max-width: 600px !important;
   width: 100%;
   height: auto;
   margin: auto;

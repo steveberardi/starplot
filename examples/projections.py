@@ -27,6 +27,8 @@ from starplot import (
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(extensions.STARPLOT, extensions.MAP)
+
+style.axes.border.width = 1
 # axes.border isn't needed for these reference images, and its buffered clip
 # geometry can come back as a MultiPolygon for some of the extreme circular
 # extents below (e.g. StereoSouth) -- another pre-existing bug, unrelated to

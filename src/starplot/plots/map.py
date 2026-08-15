@@ -394,7 +394,7 @@ class MapPlot(
 
         ra_locations = ra_locations or [
             x
-            for x in range(0, 360, 15)  # if self.ra_min <= x <= self.ra_max
+            for x in range(0, 375, 15)  # if self.ra_min <= x <= self.ra_max
         ]
         dec_locations = dec_locations or [
             y

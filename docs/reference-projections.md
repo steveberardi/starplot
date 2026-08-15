@@ -7,7 +7,7 @@
         show_root_heading: true
         heading_level: 2
 
-![Equidistant projection: gridlines and Tissot indicatrix](images/projections/equidistant.svg){ .off-glb .projection-img loading=lazy }
+![Equidistant projection: gridlines and Tissot indicatrix](images/examples/projection_equidistant.svg){ .off-glb .projection-img loading=lazy }
 
 ## ::: starplot.LambertAzEqArea
     options:
@@ -16,7 +16,7 @@
         show_root_heading: true
         heading_level: 2
 
-![Lambert Azimuthal Equal-Area projection: gridlines and Tissot indicatrix](images/projections/lambert_az_eq_area.svg){ .off-glb .projection-img loading=lazy }
+![Lambert Azimuthal Equal-Area projection: gridlines and Tissot indicatrix](images/examples/projection_lambert_az_eq_area.svg){ .off-glb .projection-img loading=lazy }
 
 ## ::: starplot.Mercator
     options:
@@ -25,7 +25,7 @@
         show_root_heading: true
         heading_level: 2
 
-![Mercator projection: gridlines and Tissot indicatrix](images/projections/mercator.svg){ .off-glb .projection-img loading=lazy }
+![Mercator projection: gridlines and Tissot indicatrix](images/examples/projection_mercator.svg){ .off-glb .projection-img loading=lazy }
 
 ## ::: starplot.ObliqueMercator
     options:
@@ -41,7 +41,7 @@
         show_root_heading: true
         heading_level: 2
 
-![Miller projection: gridlines and Tissot indicatrix](images/projections/miller.svg){ .off-glb .projection-img loading=lazy }
+![Miller projection: gridlines and Tissot indicatrix](images/examples/projection_miller.svg){ .off-glb .projection-img loading=lazy }
 
 ## ::: starplot.Mollweide
     options:
@@ -50,7 +50,7 @@
         show_root_heading: true
         heading_level: 2
 
-![Mollweide projection: gridlines and Tissot indicatrix](images/projections/mollweide.svg){ .off-glb .projection-img loading=lazy }
+![Mollweide projection: gridlines and Tissot indicatrix](images/examples/projection_mollweide.svg){ .off-glb .projection-img loading=lazy }
 
 ## ::: starplot.PlateCarree
     options:
@@ -59,7 +59,7 @@
         show_root_heading: true
         heading_level: 2
 
-![Plate Carree projection: gridlines and Tissot indicatrix](images/projections/plate_carree.svg){ .off-glb .projection-img loading=lazy }
+![Plate Carree projection: gridlines and Tissot indicatrix](images/examples/projection_plate_carree.svg){ .off-glb .projection-img loading=lazy }
 
 ## ::: starplot.Robinson
     options:
@@ -68,7 +68,7 @@
         show_root_heading: true
         heading_level: 2
 
-![Robinson projection: gridlines and Tissot indicatrix](images/projections/robinson.svg){ .off-glb .projection-img loading=lazy }
+![Robinson projection: gridlines and Tissot indicatrix](images/examples/projection_robinson.svg){ .off-glb .projection-img loading=lazy }
 
 ## ::: starplot.Stereographic
     options:
@@ -77,7 +77,7 @@
         show_root_heading: true
         heading_level: 2
 
-![Stereographic projection: gridlines and Tissot indicatrix](images/projections/stereographic.svg){ .off-glb .projection-img loading=lazy }
+![Stereographic projection: gridlines and Tissot indicatrix](images/examples/projection_stereographic.svg){ .off-glb .projection-img loading=lazy }
 
 ## ::: starplot.StereoNorth
     options:
@@ -86,7 +86,7 @@
         show_root_heading: true
         heading_level: 2
 
-![StereoNorth projection: gridlines and Tissot indicatrix](images/projections/stereo_north.svg){ .off-glb .projection-img loading=lazy }
+![StereoNorth projection: gridlines and Tissot indicatrix](images/examples/projection_stereo_north.svg){ .off-glb .projection-img loading=lazy }
 
 ## ::: starplot.StereoSouth
     options:
@@ -95,4 +95,4 @@
         show_root_heading: true
         heading_level: 2
 
-![StereoSouth projection: gridlines and Tissot indicatrix](images/projections/stereo_south.svg){ .off-glb .projection-img loading=lazy }
+![StereoSouth projection: gridlines and Tissot indicatrix](images/examples/projection_stereo_south.svg){ .off-glb .projection-img loading=lazy }
