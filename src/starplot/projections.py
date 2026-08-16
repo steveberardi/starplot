@@ -159,6 +159,7 @@ class ProjectionBase(BaseModel, ABC):
 
         if hasattr(self, "azimuth"):
             params["alpha"] = self.azimuth
+            params["lonc"] = self.center_ra
 
         return CRS.from_dict(
             {k: v for k, v in params.items() if k not in ignored_params}
@@ -332,18 +333,3 @@ class Stereographic(ProjectionBase, CenterRADEC):
 
     name: ClassVar[str] = "stere"
     proj_def_base: str = f"+proj=stere +R={PROJ_R} +units=m"
-
-
-# class Orthographic(ProjectionBase, CenterRADEC):
-#     """Shows the celestial sphere as a 3D-looking globe. Objects near the edges will be distorted."""
-
-#     proj_def_base: str = f"+proj=ortho +R={PROJ_R} +units=m"
-#     global_only: bool = True
-#     curved: bool = True
-
-#     name: ClassVar[str] = "ortho"
-
-#     def global_clip_path(self):
-#         p0 = [(self.center_ra + 179.999999999, lat - 90) for lat in range(181)]
-#         p1 = [(self.center_ra - 179.999999999, lat - 90) for lat in range(181)]
-#         return p0 + p1
