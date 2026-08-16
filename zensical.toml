@@ -47,10 +47,6 @@ nav = [
 
 extra_css = ["css/extra.css"]
 
-# mkdocs.yml also sets `exclude_docs: custom/` to keep the theme override
-# template out of the docs_dir/nav validation. Zensical doesn't have an
-# equivalent setting yet, so there's nothing to port here.
-
 # ----------------------------------------------------------------------------
 # Theme
 # ----------------------------------------------------------------------------
@@ -95,9 +91,6 @@ show_symbol_type_heading = true
 # show_symbol_type_toc = true
 signature_crossrefs = true
 line_length = 80
-
-# [project.plugins.macros]
-# include_dir = "."
 
 # ----------------------------------------------------------------------------
 # Markdown extensions
