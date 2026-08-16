@@ -194,6 +194,73 @@ def comet(cx: float, cy: float, size: float, attrs: dict, steps: int = 100):
     return Polygon(points=points, attrs=attrs)
 
 
+def satellite(x: float, y: float, size: float, attrs: dict):
+    panel_w = size * 0.36
+    panel_h = size * 0.24
+    gap = size * 0.05
+    body_w = size * 0.22
+    body_h = size * 0.20
+
+    panel_y0 = round(y - panel_h / 2, PRECISION)
+    left_x0 = round(x - body_w / 2 - gap - panel_w, PRECISION)
+    right_x0 = round(x + body_w / 2 + gap, PRECISION)
+
+    elements = [
+        Rectangle(
+            x=left_x0,
+            y=panel_y0,
+            width=round(panel_w, PRECISION),
+            height=round(panel_h, PRECISION),
+        ),
+        Rectangle(
+            x=right_x0,
+            y=panel_y0,
+            width=round(panel_w, PRECISION),
+            height=round(panel_h, PRECISION),
+        ),
+        Rectangle(
+            x=round(x - body_w / 2, PRECISION),
+            y=round(y - body_h / 2, PRECISION),
+            width=round(body_w, PRECISION),
+            height=round(body_h, PRECISION),
+        ),
+    ]
+
+    mid_y = round(y, PRECISION)
+
+    # grid lines on each solar panel (3 columns x 2 rows)
+    for panel_x0 in (left_x0, right_x0):
+        col_step = panel_w / 3
+        for i in (1, 2):
+            cx = round(panel_x0 + col_step * i, PRECISION)
+            elements.append(
+                Line(x1=cx, y1=panel_y0, x2=cx, y2=round(panel_y0 + panel_h, PRECISION))
+            )
+        elements.append(
+            Line(
+                x1=panel_x0, y1=mid_y, x2=round(panel_x0 + panel_w, PRECISION), y2=mid_y
+            )
+        )
+
+    # connect each panel to the body with a single line through the center
+    elements.append(
+        Line(
+            x1=round(left_x0 + panel_w, PRECISION),
+            y1=mid_y,
+            x2=round(x - body_w / 2, PRECISION),
+            y2=mid_y,
+        )
+    )
+    elements.append(
+        Line(x1=round(x + body_w / 2, PRECISION), y1=mid_y, x2=right_x0, y2=mid_y)
+    )
+
+    return Group(
+        attrs={**attrs, "transform": f"rotate(-45, {x}, {y})"},
+        children=elements,
+    )
+
+
 SYMBOL_FUNCTIONS = {
     MarkerSymbolEnum.CIRCLE: circle,
     MarkerSymbolEnum.CIRCLE_CROSS: circle_cross,
@@ -209,6 +276,7 @@ SYMBOL_FUNCTIONS = {
     MarkerSymbolEnum.SUN: create_star_function(num_points=9),
     MarkerSymbolEnum.PLUS: plus,
     MarkerSymbolEnum.COMET: comet,
+    MarkerSymbolEnum.SATELLITE: satellite,
 }
 
 

@@ -71,6 +71,9 @@ class MarkerSymbolEnum(str, Enum):
     ELLIPSE = "ellipse"
     """\u2b2d"""
 
+    SATELLITE = "satellite"
+    """\U0001f6f0 No preview available, but this is a satellite icon (solar panels + dish antenna)"""
+
 
 class LineStyleEnum(str, Enum):
     SOLID = "solid"
