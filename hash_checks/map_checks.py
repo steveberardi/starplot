@@ -359,7 +359,7 @@ def check_map_wrapping():
     )
 
     p = MapPlot(
-        projection=StereoNorth(),
+        projection=StereoNorth(center_ra=330),
         ra_min=18 * 15,
         ra_max=26 * 15,
         dec_min=30,
@@ -565,7 +565,7 @@ def check_map_plot_custom_clip_path_virgo():
             (13.42 * 15, -11.1613),  # Spica
         ],
         style__line={
-            "color": "red",
+            "stroke": "red",
             "width": 9,
         },
     )

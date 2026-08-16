@@ -401,15 +401,22 @@ class MapPlot(
             for y in range(-80, 90, 10)  # if self.dec_min <= y <= self.dec_max
         ]
 
+        # meridians are clipped to the plot's own dec extent (plus some padding) instead of
+        # sweeping the full -90...90 range -- for azimuthal projections (e.g. StereoNorth),
+        # dec values far from the visible extent project to extremely large coordinates, and
+        # a single line containing such a point fails to render at all (silently dropped by
+        # the cairo rendering backend), even for the portion that's within the visible area
+        dec_padding = 10
+        meridian_dec_min = max(-89.99999, self.dec_min - dec_padding)
+        meridian_dec_max = min(89.99999999, self.dec_max + dec_padding)
+
         with self.canvas.group(gid="gridlines"):
             for ra in ra_locations:
-                coords = geometry.line_segment((ra, -89.99999), (ra, 89.99999999), 0.5)
-                self.line(
-                    coordinates=coords,
-                    style=style,
-                    # label=ra_formatter_fn(ra),
-                    # num_labels=2,
+                coords = geometry.line_segment(
+                    (ra, meridian_dec_min), (ra, meridian_dec_max), 0.5
                 )
+                self.line(coordinates=coords,style=style)
+                
                 if labels:
                     _labels.append((coords, ra_formatter_fn(ra), ("top", "bottom")))
 
@@ -421,12 +428,8 @@ class MapPlot(
                 #     maxx = self.projection.edge_x - 0.00001
                 #     coords = geometry.line_segment((minx, dec), (maxx, dec), 0.5)
                 coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
-                self.line(
-                    coordinates=coords,
-                    style=style,
-                    # label=dec_formatter_fn(dec),
-                    # num_labels=4,
-                )
+                self.line(coordinates=coords,style=style)
+
                 if labels:
                     _labels.append((coords, dec_formatter_fn(dec), ("left", "right")))
 
