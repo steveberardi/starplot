@@ -668,3 +668,38 @@ td[data-column-id=bayer] {
   margin: auto;
 }
 
+.marker-symbol-img {
+  max-width: 80px !important;
+  width: 100%;
+  height: auto;
+  margin: auto;
+}
+
+.marker-symbol-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin: 24px 0;
+}
+
+@media screen and (min-width: 768px) {
+  .marker-symbol-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.marker-symbol-card {
+  text-align: center;
+  padding: 16px 8px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+}
+
+.marker-symbol-card p {
+  margin: 0;
+}
+
+.marker-symbol-name {
+  display: block;
+  margin-top: 8px;
+}
