@@ -106,7 +106,7 @@ def check_optic_wrapping():
         center=(23.9 * 15, 17.5),
         height_degrees=1,
         width_degrees=2,
-        style__fill_color="red",
+        style__fill="red",
     )
     optic_plot.info()
     filename = DATA_PATH / "optic-wrapping.png"
@@ -176,7 +176,7 @@ def check_optic_m45_scope():
     optic_plot.stars(
         where=[_.magnitude < 12],
         color_fn=callables.color_by_bv,
-        style={"label": {"font_color": "#7df597"}},
+        style={"label": {"fill": "#7df597"}},
     )
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-scope.png"
@@ -202,7 +202,7 @@ def check_optic_m45_scope_gradient():
     optic_plot.stars(
         where=[_.magnitude < 12],
         color_fn=callables.color_by_bv,
-        style={"label": {"font_color": "#7df597"}},
+        style={"label": {"fill": "#7df597"}},
     )
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-scope-gradient.png"
@@ -431,7 +431,7 @@ def check_optic_iss_moon_transit():
                 "marker": {
                     "size": 70,
                     "symbol": symbol,
-                    "color": marker_color,
+                    "fill": marker_color,
                     "zorder": 5_000,
                 },
             },

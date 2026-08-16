@@ -1,7 +1,7 @@
 
 axes:
   background:
-    fill_color: '#4c566a'
+    fill: '#4c566a'
 
 text_border_color: '#4c566a'
 
@@ -10,100 +10,100 @@ border_font_color: '#a3be8c'
 border_line_color: '#a3be8c'
 
 title:
-  font_color: '#a3be8c'
+  fill: '#a3be8c'
 
 horizon:
   line:
-    color: '#2e3440'
+    stroke: '#2e3440'
   label:
-    font_color: '#a3be8c'
+    fill: '#a3be8c'
 
 zenith:
   marker:
-    color: '#D99CBA'
+    fill: '#D99CBA'
   label:
-    font_color: '#D99CBA'
+    fill: '#D99CBA'
 
 celestial_equator:
   label:
-    font_color: '#77A67F'
-    border_color: '#4c566a'
+    fill: '#77A67F'
+    stroke: '#4c566a'
   line:
-    color: '#77A67F'
+    stroke: '#77A67F'
 
 ecliptic:
   label:
-    font_color: '#D99CBA'
-    border_color: '#4c566a'
+    fill: '#D99CBA'
+    stroke: '#4c566a'
   line:
-    color: '#D99CBA'
+    stroke: '#D99CBA'
 
 # Constellations
 constellation_labels:
-  font_alpha: 0.7
-  font_color: rgb(230, 204, 147)
+  opacity: 0.7
+  fill: rgb(230, 204, 147)
 constellation_lines:
-  alpha: 0.36
-  color: rgb(230, 204, 147)
+  opacity: 0.36
+  stroke: rgb(230, 204, 147)
 constellation_borders:
-  color: hsl(220, 16%, 12%)
-  alpha: 0.8
+  stroke: hsl(220, 16%, 12%)
+  opacity: 0.8
 
 dso_double_star:
   marker:
-    alpha: 0.9
-    color: '#88c0d0'
-    edge_color: '#88c0d0'
+    opacity: 0.9
+    fill: '#88c0d0'
+    stroke: '#88c0d0'
   label:
-    font_color: '#88c0d0'
+    fill: '#88c0d0'
 dso_galaxy:
   marker:
-    alpha: 0.7
-    color: hsl(330, 45%, 74%)
-    edge_color: hsl(330, 45%, 63%)
+    opacity: 0.7
+    fill: hsl(330, 45%, 74%)
+    stroke: hsl(330, 45%, 63%)
   label:
-    font_color: hsl(330, 45%, 63%)
+    fill: hsl(330, 45%, 63%)
 dso_nebula:
   marker:
-    alpha: 0.7
-    color: hsl(172, 15%, 56%)
-    edge_color: hsl(172, 15%, 50%)
+    opacity: 0.7
+    fill: hsl(172, 15%, 56%)
+    stroke: hsl(172, 15%, 50%)
   label:
-    font_color: hsl(172, 15%, 56%)
+    fill: hsl(172, 15%, 56%)
 dso_planetary_nebula:
   marker:
-    alpha: 0.7
-    color: hsl(172, 15%, 56%)
-    edge_color: hsl(172, 15%, 50%)
+    opacity: 0.7
+    fill: hsl(172, 15%, 56%)
+    stroke: hsl(172, 15%, 50%)
   label:
-    font_color: hsl(172, 15%, 56%)
+    fill: hsl(172, 15%, 56%)
 
 dso_open_cluster: &DSO-OC
   marker:
-    alpha: 0.7
-    color: hsl(61, 45%, 73%)
-    edge_color: hsl(61, 45%, 5%)
+    opacity: 0.7
+    fill: hsl(61, 45%, 73%)
+    stroke: hsl(61, 45%, 5%)
   label:
-    font_color: '#9d9f3c'
+    fill: '#9d9f3c'
 dso_association_stars: *DSO-OC
 
 dso_globular_cluster:
   marker:
-    alpha: 0.7
-    color: '#c7c7c7'
-    edge_color: '#444'
+    opacity: 0.7
+    fill: '#c7c7c7'
+    stroke: '#444'
   label:
-    font_color: '#444'
+    fill: '#444'
 
 
 # other DSOs
 dso_unknown: &DSO
   marker:
-    alpha: 0.7
-    color: '#9CD9BB'
-    edge_color: '#52896e'
+    opacity: 0.7
+    fill: '#9CD9BB'
+    stroke: '#52896e'
   label:
-    font_color: '#52896e'
+    fill: '#52896e'
 dso_dark_nebula: *DSO
 dso_supernova_remnant: *DSO
 dso_nova_star: *DSO
@@ -113,50 +113,50 @@ dso_duplicate: *DSO
 
 gridlines:
   label:
-    font_alpha: 0.8
-    font_color: '#c2d2f3'
+    opacity: 0.8
+    fill: '#c2d2f3'
   line:
-    alpha: 0.8
-    color: '#888'
+    opacity: 0.8
+    stroke: '#888'
     style: solid
 
 milky_way:
-  alpha: 0.16
-  fill_color: '#95a3bf'
+  opacity: 0.16
+  fill: '#95a3bf'
 
 planets:
   label:
-    font_color: '#D99CCF'
+    fill: '#D99CCF'
   marker:
-    alpha: 0.8
-    color: '#D99CCF'
+    opacity: 0.8
+    fill: '#D99CCF'
 
 star:
   label:
-    font_color: '#88c0d0'
+    fill: '#88c0d0'
   marker:
-    color: '#88c0d0'
-    edge_color: '#4c566a'
+    fill: '#88c0d0'
+    stroke: '#4c566a'
 sun:
   label:
-    font_color: '#88c0d0'
+    fill: '#88c0d0'
   marker:
-    color: '#88c0d0'
-    edge_color: '#88c0d0'
+    fill: '#88c0d0'
+    stroke: '#88c0d0'
 moon:
   label:
-    font_color: '#88c0d0'
+    fill: '#88c0d0'
   marker:
-    color: '#88c0d0'
+    fill: '#88c0d0'
 
 bayer_labels:
-  font_alpha: 0.9
-  font_color: '#85c9de'
+  opacity: 0.9
+  fill: '#85c9de'
 
 legend:
   background_color: '#515e76'
   background_alpha: 1.0
   labels:
-    font_color: '#d5e0f5'
+    fill: '#d5e0f5'
   title:
-    font_color: '#d5e0f5'
+    fill: '#d5e0f5'

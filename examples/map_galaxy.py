@@ -29,17 +29,17 @@ p.stars(
     where=[_.magnitude < 7],
     where_labels=[False],
     size_fn=lambda star: 8 - star.magnitude,
-    style__marker__edge_color="#c5c5c5",
+    style__marker__stroke="#c5c5c5",
 )
 
 lmc = DSO.get(name="ESO056-115")
 smc = DSO.get(name="NGC0292")
 mc_style = {
-    "font_color": "#acc2e0",
+    "fill": "#acc2e0",
     "font_size": 42,
     "font_weight": 700,
-    "border_width": 8,
-    "border_color": "#1e232a",
+    "stroke_width": 8,
+    "stroke": "#1e232a",
 }
 
 p.text(

@@ -23,8 +23,8 @@ p.stars(
     style__marker__symbol="star_8",
     style__label__offset_x=8,
     style__label__offset_y=-8,
-    style__label__border_width=2,
-    style__label__border_color="#fefaed",
+    style__label__stroke_width=2,
+    style__label__stroke="#fefaed",
 )
 p.stars(
     where=[

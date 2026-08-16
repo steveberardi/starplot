@@ -42,8 +42,6 @@ else:
 if extent[0] < 0:
     extent = (extent[0] + 360, extent[1], extent[2] + 360, extent[3])
 
-print(constellation.iau_id)
-
 center_ra = (extent[0] + extent[2]) / 2
 if center_ra < 0:
     center_ra += 360
@@ -70,8 +68,8 @@ p.stars(
     where_labels=[False],
     # size_fn=lambda s: 30,
     style__marker__symbol="star",
-    # style__marker__edge_color="#fff",
-    style__marker__edge_width=0,
+    # style__marker__stroke="#fff",
+    style__marker__stroke_width=0,
 )
 
 p.export(f"{constellation.iau_id}.svg")

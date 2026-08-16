@@ -232,9 +232,9 @@ class Layout:
         if style.figure.background is not None:
             figure_attrs = style.figure.background.css(scale)
 
-            if isinstance(style.figure.background.fill_color, list):
+            if isinstance(style.figure.background.fill, list):
                 gradient = create_gradient(
-                    stops=style.figure.background.fill_color,
+                    stops=style.figure.background.fill,
                     type=style.figure.background.gradient_type,
                     id="figure-background-gradient",
                 )

@@ -84,7 +84,7 @@ p.stars(
     where=[_.magnitude < 8],
     bayer_labels=True,
     where_labels=[_.magnitude < 1.75],
-    alpha_fn=lambda star: max(0.01, 1.0 - 0.1 * star.magnitude),
+    opacity_fn=lambda star: max(0.01, 1.0 - 0.1 * star.magnitude),
 )
 
 for ra, dec, name in zip(gal_ra, gal_dec, gal_names):
@@ -120,9 +120,9 @@ for ra, dec, name in zip(gal_ra, gal_dec, gal_names):
             "marker": {
                 "symbol": "circle",
                 "size": 10,
-                "color": "darkblue",
-                "edge_color": "navy",
-                "edge_width": 3.0,
+                "fill": "darkblue",
+                "stroke": "navy",
+                "stroke_width": 3.0,
             }
         },
     )
@@ -131,7 +131,7 @@ for ra, dec, name in zip(gal_ra, gal_dec, gal_names):
         ra=ra,
         dec=dec,
         style={
-            "font_color": "navy",
+            "fill": "navy",
             "font_size": 28,
             "font_weight": 700,
             "offset_x": 35,
@@ -147,9 +147,9 @@ for ra, dec, name in zip(other_gal_ra, other_gal_dec, other_gal_names):
             "marker": {
                 "symbol": "ellipse",
                 "size": 30,
-                "color": "orange",
-                "edge_color": "black",
-                "edge_width": 2.0,
+                "fill": "orange",
+                "stroke": "black",
+                "stroke_width": 2.0,
             }
         },
     )
@@ -158,7 +158,7 @@ for ra, dec, name in zip(other_gal_ra, other_gal_dec, other_gal_names):
         ra=ra,
         dec=dec,
         style={
-            "font_color": "black",
+            "fill": "black",
             "font_size": 28,
             "offset_x": 15.0,
             "offset_y": 40.0,
@@ -166,9 +166,9 @@ for ra, dec, name in zip(other_gal_ra, other_gal_dec, other_gal_names):
     )
 
 p.gridlines()
-p.constellations(style__color="#78d78e", style__alpha=0.25)
-p.constellation_borders(style__color="#035019", style__alpha=0.25)
-p.constellation_labels(style__font_size=28, style__font_color="#035019")
+p.constellations(style__stroke="#78d78e", style__opacity=0.25)
+p.constellation_borders(style__stroke="#035019", style__opacity=0.25)
+p.constellation_labels(style__font_size=28, style__fill="#035019")
 p.milky_way()
 p.ecliptic()
 p.celestial_equator()

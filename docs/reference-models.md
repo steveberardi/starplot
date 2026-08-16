@@ -4,7 +4,7 @@ Starplot has models to represent an observer and some of the objects you can plo
 
 - Defining an observing time and location
 - Selecting objects to plot (via the `where` kwarg) ([see docs](reference-selecting-objects.md))
-- Creating callables to calculate size/color/alpha values ([see docs](reference-callables.md))
+- Creating callables to calculate size/color/opacity values ([see docs](reference-callables.md))
 - Keeping track of plotted objects (via [`ObjectList`][starplot.ObjectList])
 - Getting the position of an object at a specific time (via `get()`)
 - Getting a list of objects that meet a series of conditions (via `find()`)

@@ -69,7 +69,7 @@ def test_map_objects_list_planets():
 
 def test_marker_no_label():
     p = MapPlot(projection=Mercator())
-    p.marker(ra=150, dec=0, style__marker__color="blue")
+    p.marker(ra=150, dec=0, style__marker__fill="blue")
 
 
 def test_text_no_style_kwarg():

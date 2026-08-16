@@ -146,7 +146,7 @@ def check_map_orion_extra():
             "marker": {
                 "size": 30,
                 "symbol": "square",
-                "color": "#ff6868",
+                "fill": "#ff6868",
             },
             "label": {
                 "offset_x": 50,
@@ -164,8 +164,8 @@ def check_map_orion_extra():
         (7 * 15, -10),
         5,
         style=styles.PolygonStyle(
-            fill_color="blue",
-            alpha=0.14,
+            fill="blue",
+            opacity=0.14,
         ),
         legend_label="blue circle",
     )
@@ -402,7 +402,7 @@ def check_map_mollweide():
     p.stars(
         where=[_.magnitude < 4.2],
         where_labels=[_.magnitude < 1.8],
-        style__marker__color="blue",
+        style__marker__fill="blue",
     )
     p.constellations()
     p.dsos(
@@ -448,7 +448,7 @@ def check_map_gridlines():
         ra_formatter_fn=lambda d: None,
         dec_formatter_fn=lambda d: None,
         dec_locations=list(np.arange(-90, 90, 1)),
-        style__line__alpha=0.2,
+        style__line__opacity=0.2,
     )
 
     p.export(filename)
@@ -480,7 +480,7 @@ def check_map_moon_phase_waxing_crescent():
         ra_formatter_fn=lambda d: None,
         dec_formatter_fn=lambda d: None,
         dec_locations=list(np.arange(-90, 90, 0.25)),
-        style__line__alpha=0.2,
+        style__line__opacity=0.2,
     )
     filename = DATA_PATH / "map-moon-phase-waxing-crescent.png"
     p.export(filename)
@@ -590,9 +590,9 @@ def check_map_label_callables():
 
     p.polygon(
         geometry=m45.geometry,
-        style__fill_color=STYLE.dso_open_cluster.marker.color,
-        style__edge_color="red",
-        style__edge_width=16,
+        style__fill=STYLE.dso_open_cluster.marker.fill,
+        style__stroke="red",
+        style__stroke_width=16,
         style__line_style=(0, (4, 8)),
     )
 

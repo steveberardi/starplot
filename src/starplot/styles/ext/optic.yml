@@ -20,7 +20,7 @@ celestial_equator:
     font_size: 27
 figure:
   background:
-    fill_color: null
+    fill: null
 axes:
   background:
     gradient_type: radial

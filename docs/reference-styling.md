@@ -64,7 +64,7 @@ style = PlotStyle()
 After creating the style, you can modify properties of the style directly:
 
 ```python
-style.star.marker.color = "red"
+style.star.marker.fill = "red"
 style.star.label.font_size = 20
 ```
 
@@ -110,21 +110,21 @@ Example:
 
 # make the Milky Way gray
 milky_way:
-  alpha: 0.36
-  color: '#888'
+  opacity: 0.36
+  fill: '#888'
 
 # change the color of star labels to blue and
 # and change their symbol from dots to stars
 star:
   label:
-    font_color: '#0e69b8'
+    fill: '#0e69b8'
   marker:
     symbol: star
 
 # make nebulas green and their markers diamonds
 dso_nebula:
   marker:
-    color: green
+    fill: green
     symbol: diamond
 
 ```
@@ -161,7 +161,7 @@ p.stars(
     style={
         "marker": {
             "symbol": "star",
-            "color": "red",
+            "fill": "red",
         }
     }
 )
@@ -175,7 +175,7 @@ When you only want to override one or two style properties, it can be tedious to
 p.stars(
     where=[_.magnitude < 3],
     style__marker__symbol="star",
-    style__marker__color="red",
+    style__marker__fill="red",
 )
 ```
 

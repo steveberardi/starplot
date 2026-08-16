@@ -279,9 +279,9 @@ class Canvas:
 
         background_attrs = self.style.axes.background.css(self.scale)
 
-        if isinstance(self.style.axes.background.fill_color, list):
+        if isinstance(self.style.axes.background.fill, list):
             background_attrs["fill"] = self._get_or_create_gradient(
-                stops=self.style.axes.background.fill_color,
+                stops=self.style.axes.background.fill,
                 type=self.style.axes.background.gradient_type,
                 id="axes-background-gradient",
             )
@@ -400,9 +400,9 @@ class Canvas:
 
         attrs = style.css(self.scale)
 
-        if isinstance(style.color, list):
+        if isinstance(style.fill, list):
             attrs["fill"] = self._get_or_create_gradient(
-                stops=style.color,
+                stops=style.fill,
                 type=style.gradient_type,
             )
 
@@ -419,17 +419,19 @@ class Canvas:
         gid: str | None = None,
         sizes: list[float] | None = None,
         colors: list[str] | list[list[tuple[float, str]]] | None = None,
-        alphas: list[float] | None = None,
+        opacity_values: list[float] | None = None,
     ) -> None:
         dx, dy = self._to_display(xs, ys)
         gid = gid or "markers"
         count = len(xs)
         sizes = sizes or [style.size] * count
-        colors = colors or [style.color] * count
-        alphas = alphas or [style.alpha] * count
+        colors = colors or [style.fill] * count
+        opacity_values = opacity_values or [style.opacity] * count
         elements = []
 
-        for x, y, size, color, alpha in list(zip(dx, dy, sizes, colors, alphas)):
+        for x, y, size, color, opacity in list(
+            zip(dx, dy, sizes, colors, opacity_values)
+        ):
             attrs = {}
 
             if isinstance(color, list):
@@ -440,8 +442,8 @@ class Canvas:
             else:
                 attrs["fill"] = color
 
-            if alpha != 1:
-                attrs["fill-opacity"] = alpha
+            if opacity != 1:
+                attrs["fill-opacity"] = opacity
 
             element = symbols.create(
                 x, y, size=size * self.scale, symbol=style.symbol, attrs=attrs
@@ -528,9 +530,9 @@ class Canvas:
             attrs = attrs or {}
             _attrs = {**style.css(self.scale), **attrs}
 
-            if isinstance(style.fill_color, list):
+            if isinstance(style.fill, list):
                 _attrs["fill"] = self._get_or_create_gradient(
-                    stops=style.fill_color,
+                    stops=style.fill,
                     type=style.gradient_type,
                 )
 
@@ -931,7 +933,7 @@ class Canvas:
                     10_000_000_000,
                     Polyline(
                         points=list(zip(*clip_path.exterior.coords.xy)),
-                        attrs=LineStyle(color="red", width=4, zorder=1_000_000).css(
+                        attrs=LineStyle(stroke="red", width=4, zorder=1_000_000).css(
                             self.scale
                         ),
                     ),
@@ -942,9 +944,9 @@ class Canvas:
                     10_000_000_000,
                     Polyline(
                         points=list(zip(*border.exterior.coords.xy)),
-                        attrs=LineStyle(color="#1effff", width=2, zorder=1_000_000).css(
-                            self.scale
-                        ),
+                        attrs=LineStyle(
+                            stroke="#1effff", width=2, zorder=1_000_000
+                        ).css(self.scale),
                     ),
                 )
             )

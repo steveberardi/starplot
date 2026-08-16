@@ -15,6 +15,7 @@ from starplot.profile import profile
 from starplot.styles import ObjectStyle, use_style
 from starplot.utils import normalize_where
 
+
 def size_by_magnitude(star: Star) -> float:
     """
     Simple sizing by magnitude, using a step size of 1.
@@ -76,7 +77,7 @@ class StarPlotterMixin:
             sql=sql,
         )
 
-    def _scatter_stars(self, ras, decs, sizes, alphas, colors, style, gid):
+    def _scatter_stars(self, ras, decs, sizes, opacity_values, colors, style, gid):
         style = style or self.style.star
 
         self.canvas.markers(
@@ -86,7 +87,7 @@ class StarPlotterMixin:
             gid=gid,
             sizes=sizes,
             colors=colors,
-            alphas=alphas,
+            opacity_values=opacity_values,
         )
 
     def _star_labels(
@@ -189,7 +190,7 @@ class StarPlotterMixin:
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] = size_by_magnitude,
-        alpha_fn: Callable[[Star], float] | None = None,
+        opacity_fn: Callable[[Star], float] | None = None,
         color_fn: Callable[[Star], str] | None = None,
         label_fn: Callable[[Star], str] = Star.get_label,
         legend_label: str = "Star",
@@ -206,11 +207,11 @@ class StarPlotterMixin:
 
         Args:
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). Can also be a boolean: if `False` then no labels will be plotted.. See [Selecting Objects](/reference-selecting-objects/) for details.  
+            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). Can also be a boolean: if `False` then no labels will be plotted.. See [Selecting Objects](/reference-selecting-objects/) for details.
             catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
             style: If `None`, then the plot's style for stars will be used
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
-            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
+            opacity_fn: Callable for calculating the opacity value of each star. If `None`, then the marker style's opacity will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
             label_fn: Callable for determining the label of each star.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
@@ -226,10 +227,10 @@ class StarPlotterMixin:
 
         # fallback to style if callables are None
         color_hex = (
-            style.marker.color.as_hex()
+            style.marker.fill.as_hex()
         )  # calculate color hex once here to avoid repeated calls in color_fn()
         size_fn = size_fn or (lambda d: style.marker.size)
-        alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
+        opacity_fn = opacity_fn or (lambda d: style.marker.opacity)
         color_fn = color_fn or (lambda d: color_hex)
 
         self._last_used_size_fn = size_fn
@@ -280,8 +281,8 @@ class StarPlotterMixin:
 
             obj = from_tuple(star)
             size = size_fn(obj) * self.scale
-            alpha = alpha_fn(obj)
-            color = color_fn(obj) or style.marker.color.as_hex()
+            opacity = opacity_fn(obj)
+            color = color_fn(obj) or style.marker.fill.as_hex()
 
             if size > 10:
                 rtree_id += 1
@@ -306,7 +307,7 @@ class StarPlotterMixin:
                     # if the index has no stars yet, then wait until end to load for better performance
                     stars_to_index.append((rtree_id, bbox, None))
 
-            starz.append((star.x, star.y, size, alpha, color, obj))
+            starz.append((star.x, star.y, size, opacity, color, obj))
 
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 
@@ -314,7 +315,7 @@ class StarPlotterMixin:
             self.logger.debug("No stars found.")
             return
 
-        x, y, sizes, alphas, colors, star_objects = zip(*starz)
+        x, y, sizes, opacity_values, colors, star_objects = zip(*starz)
 
         self._objects.stars.extend(star_objects)
 
@@ -324,7 +325,7 @@ class StarPlotterMixin:
             x,
             y,
             sizes,
-            alphas,
+            opacity_values,
             colors,
             style=style,
             gid=gid_markers,

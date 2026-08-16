@@ -59,16 +59,16 @@ for sat in iss.trajectory(dt_start, dt_end, step=timedelta(seconds=1)):
         style={
             "marker": {
                 "size": 80,
-                "edge_width": 4,
+                "stroke_width": 4,
                 "symbol": "plus",
-                "color": marker_color,
+                "fill": marker_color,
                 "zorder": 5_000,
             },
             "label": {
-                "font_color": label_color,
+                "fill": label_color,
                 "anchor_point": "bottom center",
-                "border_color": "#000",
-                "border_width": 6,
+                "stroke": "#000",
+                "stroke_width": 6,
                 "font_size": 48,
                 "font_weight": 800,
                 "offset_x": "auto",

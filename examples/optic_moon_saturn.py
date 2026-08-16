@@ -27,7 +27,7 @@ op.moon(
 )
 op.planets(
     true_size=True,
-    style__marker__color="#ffe785",
+    style__marker__fill="#ffe785",
     style__label__offset_x=6,
     style__label__offset_y=-6,
 )

@@ -51,7 +51,7 @@ class PlotStyle(BaseStyle):
     """
 
     text_border_width: int = 2
-    """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `border_width` and `border_color` properties."""
+    """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `stroke_width` and `stroke` properties."""
 
     text_border_color: ColorStr = ColorStr("#fff")
 
@@ -96,7 +96,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             zorder=ZOrderEnum.LAYER_3 + 1,
             size=20,
-            edge_color=None,
+            stroke=None,
         ),
         label=LabelStyle(
             font_size=40,
@@ -134,7 +134,7 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.CIRCLE,
             size=28,
             zorder=ZOrderEnum.LAYER_3,
-            alpha=1,
+            opacity=1,
         ),
         label=LabelStyle(
             font_size=32,
@@ -149,8 +149,8 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
             size=50,
-            color="#c8c8c8",
-            alpha=1,
+            fill="#c8c8c8",
+            opacity=1,
             zorder=ZOrderEnum.LAYER_4,
         ),
         label=LabelStyle(
@@ -166,7 +166,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SUN,
             size=80,
-            color="#000",
+            fill="#000",
             zorder=ZOrderEnum.LAYER_4 - 100,
         ),
         label=LabelStyle(
@@ -183,7 +183,7 @@ class PlotStyle(BaseStyle):
             line_style=(1, 2),
             dash_spacing=28,
             dash_capstyle=CapStyleEnum.ROUND,
-            edge_width=2,
+            stroke_width=2,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
@@ -196,7 +196,7 @@ class PlotStyle(BaseStyle):
             line_style=(1, 2),
             dash_spacing=28,
             dash_capstyle=CapStyleEnum.ROUND,
-            edge_width=2,
+            stroke_width=2,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
@@ -206,9 +206,9 @@ class PlotStyle(BaseStyle):
     dso_globular_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE_CROSS,
-            color="#555",
-            alpha=0.8,
-            edge_width=1.2,
+            fill="#555",
+            opacity=0.8,
+            stroke_width=1.2,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
@@ -236,7 +236,7 @@ class PlotStyle(BaseStyle):
     dso_planetary_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE_CROSSHAIR,
-            edge_width=1.6,
+            stroke_width=1.6,
             size=26,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
@@ -256,7 +256,7 @@ class PlotStyle(BaseStyle):
     dso_dark_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            color="#000",
+            fill="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
@@ -266,7 +266,7 @@ class PlotStyle(BaseStyle):
     dso_supernova_remnant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            color="#000",
+            fill="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
@@ -276,7 +276,7 @@ class PlotStyle(BaseStyle):
     dso_nova_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            color="#000",
+            fill="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
@@ -286,7 +286,7 @@ class PlotStyle(BaseStyle):
     dso_nonexistant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            color="#000",
+            fill="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
@@ -296,7 +296,7 @@ class PlotStyle(BaseStyle):
     dso_unknown: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            color="#000",
+            fill="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
@@ -306,7 +306,7 @@ class PlotStyle(BaseStyle):
     dso_duplicate: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            color="#000",
+            fill="#000",
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(),
@@ -314,15 +314,15 @@ class PlotStyle(BaseStyle):
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
     constellation_lines: LineStyle = LineStyle(
-        color="#c8c8c8", zorder=ZOrderEnum.LAYER_3
+        stroke="#c8c8c8", zorder=ZOrderEnum.LAYER_3
     )
     """Styling for constellation lines"""
 
     constellation_borders: LineStyle = LineStyle(
-        color="#000",
+        stroke="#000",
         width=2.5,
         style=(3, 6),
-        alpha=0.5,
+        opacity=0.5,
         zorder=ZOrderEnum.LAYER_3,
     )
     """Styling for constellation borders"""
@@ -337,9 +337,9 @@ class PlotStyle(BaseStyle):
 
     # Milky Way
     milky_way: PolygonStyle = PolygonStyle(
-        fill_color="#d9d9d9",
-        alpha=0.36,
-        edge_width=0,
+        fill="#d9d9d9",
+        opacity=0.36,
+        stroke_width=0,
         zorder=ZOrderEnum.LAYER_1,
     )
     """Styling for the Milky Way (only applies to map plots)"""
@@ -351,16 +351,16 @@ class PlotStyle(BaseStyle):
     # Gridlines
     gridlines: PathStyle = PathStyle(
         line=LineStyle(
-            color="#888",
+            stroke="#888",
             width=1,
             style=LineStyleEnum.SOLID,
-            alpha=0.6,
+            opacity=0.6,
             zorder=ZOrderEnum.LAYER_2,
         ),
         label=LabelStyle(
             font_size=28,
-            font_color="#000",
-            font_alpha=1,
+            fill="#000",
+            opacity=1,
             font_weight=FontWeightEnum.NORMAL,
             anchor_point=AnchorPointEnum.BOTTOM_CENTER,
             zorder=ZOrderEnum.LAYER_5 + 1000,
@@ -370,20 +370,20 @@ class PlotStyle(BaseStyle):
 
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(
-            color="#777",
+            stroke="#777",
             width=3,
             style=(2, 6),
             cap_style=CapStyleEnum.ROUND,
-            alpha=1,
+            opacity=1,
             zorder=ZOrderEnum.LAYER_3 - 1,
         ),
         label=LabelStyle(
             font_size=30,
-            font_color="#777",
-            font_alpha=1,
+            fill="#777",
+            opacity=1,
             font_weight=FontWeightEnum.NORMAL,
-            border_width=8,
-            border_color="#000",
+            stroke_width=8,
+            stroke="#000",
             zorder=ZOrderEnum.LAYER_3,
         ),
     )
@@ -391,19 +391,19 @@ class PlotStyle(BaseStyle):
 
     celestial_equator: PathStyle = PathStyle(
         line=LineStyle(
-            color="#999",
+            stroke="#999",
             width=3,
             style=LineStyleEnum.DASHED_DOTS,
-            alpha=1,
+            opacity=1,
             zorder=ZOrderEnum.LAYER_3,
         ),
         label=LabelStyle(
             font_size=30,
-            font_color="#999",
+            fill="#999",
             font_weight=FontWeightEnum.NORMAL,
-            font_alpha=1,
-            border_width=8,
-            border_color="#000",
+            opacity=1,
+            stroke_width=8,
+            stroke="#000",
             zorder=ZOrderEnum.LAYER_3,
         ),
     )
@@ -411,19 +411,19 @@ class PlotStyle(BaseStyle):
 
     galactic_equator: PathStyle = PathStyle(
         line=LineStyle(
-            color="#999",
+            stroke="#999",
             width=3,
             style=LineStyleEnum.SOLID,
-            alpha=0.65,
+            opacity=0.65,
             zorder=ZOrderEnum.LAYER_3,
         ),
         label=LabelStyle(
             font_size=30,
-            font_color="#7c7c7c",
+            fill="#7c7c7c",
             font_weight=FontWeightEnum.NORMAL,
-            font_alpha=1,
-            border_width=8,
-            border_color="#000",
+            opacity=1,
+            stroke_width=8,
+            stroke="#000",
             zorder=ZOrderEnum.LAYER_3,
         ),
     )
@@ -431,16 +431,16 @@ class PlotStyle(BaseStyle):
 
     horizon: PathStyle = PathStyle(
         line=LineStyle(
-            color="#fff",
+            stroke="#fff",
             width=110,
             style=LineStyleEnum.SOLID,
             cap_style=CapStyleEnum.ROUND,
-            alpha=1,
+            opacity=1,
             zorder=ZOrderEnum.LAYER_5,
         ),
         label=LabelStyle(
             anchor_point=AnchorPointEnum.CENTER,
-            font_color="#000",
+            fill="#000",
             font_size=70,
             font_weight=FontWeightEnum.BOLD,
             zorder=ZOrderEnum.LAYER_5,
@@ -452,26 +452,26 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.TRIANGLE,
             size=24,
-            color="#000",
-            alpha=0.8,
+            fill="#000",
+            opacity=0.8,
         ),
         label=LabelStyle(font_size=14, font_weight=FontWeightEnum.BOLD),
     )
     """Styling for the zenith marker"""
 
     optic_fov: PolygonStyle = PolygonStyle(
-        fill_color=None,
-        edge_color="red",
+        fill=None,
+        stroke="red",
         line_style=(2, 3),
-        edge_width=3,
+        stroke_width=3,
         zorder=-1000,
     )
     """Styling for optic fields of view"""
 
     arrow: ArrowStyle = ArrowStyle(
-        fill_color="hsl(0, 99%, 31%)",
-        edge_color="#ff0019",
-        edge_width=2,
+        fill="hsl(0, 99%, 31%)",
+        stroke="#ff0019",
+        stroke_width=2,
         zorder=ZOrderEnum.LAYER_4,
     )
     """Styling for optic fields of view"""

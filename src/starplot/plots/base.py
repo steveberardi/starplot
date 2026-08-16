@@ -552,7 +552,7 @@ class BasePlot(StarPlotterMixin, ABC):
 
                 if true_size:
                     polygon_style = style.marker.to_polygon_style()
-                    polygon_style.edge_color = None
+                    polygon_style.stroke = None
                     self.circle(
                         center=(p.ra, p.dec),
                         radius_degrees=p.apparent_size / 2,
@@ -618,7 +618,7 @@ class BasePlot(StarPlotterMixin, ABC):
                 polygon_style = style.marker.to_polygon_style()
 
                 # hide the edge because it can interfere with the true size
-                polygon_style.edge_color = None
+                polygon_style.stroke = None
 
                 self.circle(
                     center=(s.ra, s.dec),
@@ -666,7 +666,7 @@ class BasePlot(StarPlotterMixin, ABC):
         Args:
             style: Styling of the Moon. If None, then the plot's style (specified when creating the plot) will be used
             true_size: If True, then the Moon's true apparent size in the sky will be plotted as a circle (the marker style's symbol will be ignored). If False, then the style's marker size will be used.
-            show_phase: If True, and if `true_size = True`, then the phase of the moon will be illustrated. The dark side of the moon will be colored with the marker's `edge_color`.
+            show_phase: If True, and if `true_size = True`, then the phase of the moon will be illustrated. The dark side of the moon will be colored with the marker's `stroke`.
             label: How the Moon will be labeled on the plot
             legend_label: How the Moon will be labeled in the legend
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
@@ -692,7 +692,7 @@ class BasePlot(StarPlotterMixin, ABC):
                 polygon_style = style.marker.to_polygon_style()
 
                 # hide the edge because it can interfere with the true size
-                polygon_style.edge_color = None
+                polygon_style.stroke = None
 
                 if show_phase:
                     self._moon_with_phase(
@@ -700,7 +700,7 @@ class BasePlot(StarPlotterMixin, ABC):
                         center=(m.ra, m.dec),
                         radius_degrees=m.apparent_size / 2,
                         style=polygon_style,
-                        dark_side_color=style.marker.edge_color,
+                        dark_side_color=style.marker.stroke,
                     )
                 else:
                     self.circle(
@@ -744,7 +744,7 @@ class BasePlot(StarPlotterMixin, ABC):
         Plots the (approximate) moon phase by drawing two half circles and one ellipse in the center,
         and then determining the color of each of the three shapes by the moon phase.
         """
-        illuminated_color = style.fill_color
+        illuminated_color = style.fill
 
         ellipse_b_radius_degrees = np.abs(
             radius_degrees * (2 * self._objects.moon.illumination - 1)
@@ -755,40 +755,40 @@ class BasePlot(StarPlotterMixin, ABC):
         middle = style.copy()
 
         if moon_phase == MoonPhase.WAXING_CRESCENT:
-            left.fill_color = illuminated_color
-            middle.fill_color = dark_side_color
-            right.fill_color = dark_side_color
+            left.fill = illuminated_color
+            middle.fill = dark_side_color
+            right.fill = dark_side_color
 
         elif moon_phase == MoonPhase.FIRST_QUARTER:
-            left.fill_color = illuminated_color
-            middle.alpha = 0
-            right.fill_color = dark_side_color
+            left.fill = illuminated_color
+            middle.opacity = 0
+            right.fill = dark_side_color
 
         elif moon_phase == MoonPhase.WAXING_GIBBOUS:
-            left.fill_color = illuminated_color
-            middle.fill_color = illuminated_color
-            right.fill_color = dark_side_color
+            left.fill = illuminated_color
+            middle.fill = illuminated_color
+            right.fill = dark_side_color
 
         elif moon_phase == MoonPhase.FULL_MOON:
-            left.fill_color = middle.fill_color = right.fill_color = illuminated_color
+            left.fill = middle.fill = right.fill = illuminated_color
 
         elif moon_phase == MoonPhase.WANING_GIBBOUS:
-            left.fill_color = dark_side_color
-            middle.fill_color = illuminated_color
-            right.fill_color = illuminated_color
+            left.fill = dark_side_color
+            middle.fill = illuminated_color
+            right.fill = illuminated_color
 
         elif moon_phase == MoonPhase.LAST_QUARTER:
-            left.fill_color = dark_side_color
-            middle.alpha = 0
-            right.fill_color = illuminated_color
+            left.fill = dark_side_color
+            middle.opacity = 0
+            right.fill = illuminated_color
 
         elif moon_phase == MoonPhase.WANING_CRESCENT:
-            left.fill_color = dark_side_color
-            middle.fill_color = dark_side_color
-            right.fill_color = illuminated_color
+            left.fill = dark_side_color
+            middle.fill = dark_side_color
+            right.fill = illuminated_color
 
         else:
-            left.fill_color = middle.fill_color = right.fill_color = dark_side_color
+            left.fill = middle.fill = right.fill = dark_side_color
 
         # Plot left side
         self.ellipse(
@@ -931,7 +931,7 @@ class BasePlot(StarPlotterMixin, ABC):
                     self.circle(
                         center=(ra, dec),
                         radius_degrees=radius,
-                        style__fill_color="#2e62ae",
+                        style__fill="#2e62ae",
                     )
 
     def _debug_bbox(self, bbox, color, width=1):
@@ -952,6 +952,6 @@ class BasePlot(StarPlotterMixin, ABC):
                 (min_x, max_y),
                 (min_x, min_y),
             ],
-            style=PolygonStyle(fill_color=None, edge_color=color, edge_width=width),
+            style=PolygonStyle(fill=None, stroke=color, stroke_width=width),
             cs=CoordinateSystem.DISPLAY,
         )

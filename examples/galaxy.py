@@ -25,7 +25,7 @@ p.stars(
     where=[_.magnitude < 7],
     where_labels=[False],
     size_fn=lambda star: 8 - star.magnitude,
-    style__marker__edge_color="#c5c5c5",
+    style__marker__stroke="#c5c5c5",
 )
 
 p.open_clusters(

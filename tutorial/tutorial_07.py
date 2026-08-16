@@ -36,6 +36,6 @@ p.planets(
     style__label__offset_x=90,
     style__label__offset_y=-30,
     style__label__font_size=56,
-    style__marker__color="#fcdb72",
+    style__marker__fill="#fcdb72",
 )
 p.export("tutorial_07.png")

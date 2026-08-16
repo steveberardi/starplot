@@ -1,3 +1,5 @@
+from pydantic import Field
+
 from starplot.styles.base import BaseStyle
 from starplot.styles.constants import (
     AlignmentEnum,
@@ -20,7 +22,7 @@ class MarkerStyle(BaseStyle):
     Styling properties for markers.
     """
 
-    color: ColorStr | GradientStops | None = ColorStr("#000")
+    fill: ColorStr | GradientStops | None = ColorStr("#000")
     """
     Fill color of the marker
     
@@ -42,10 +44,10 @@ class MarkerStyle(BaseStyle):
     
     """
 
-    edge_color: ColorStr | None = ColorStr("#000")
+    stroke: ColorStr | None = ColorStr("#000")
     """Edge color of marker. Can be a hex, rgb, hsl, or word string."""
 
-    edge_width: float = 1
+    stroke_width: float = 1
     """Edge width of marker, in pixels. Not available for all marker symbols."""
 
     line_style: LineStyleEnum | tuple = LineStyleEnum.SOLID
@@ -63,8 +65,8 @@ class MarkerStyle(BaseStyle):
     size: float = 22
     """Size of marker in pixels"""
 
-    alpha: float = 1.0
-    """Alpha value (controls transparency)"""
+    opacity: float = Field(default=1.0, ge=0, le=1)
+    """Opacity (transparency) of the marker (0 to 1)"""
 
     gradient_type: GradientType = GradientType.RADIAL
 
@@ -72,18 +74,18 @@ class MarkerStyle(BaseStyle):
     """Zorder of marker"""
 
     def css(self, scale: float = 1) -> dict:
-        solid_fill = self.color is not None and not isinstance(self.color, list)
+        solid_fill = self.fill is not None and not isinstance(self.fill, list)
         attrs = {
-            "stroke": self.edge_color.as_hex() if self.edge_color else "none",
-            "stroke-width": round(self.edge_width * scale, 2),
-            "stroke-opacity": self.alpha,
+            "stroke": self.stroke.as_hex() if self.stroke else "none",
+            "stroke-width": round(self.stroke_width * scale, 2),
+            "stroke-opacity": self.opacity,
             "stroke-linecap": CapStyleEnum(self.dash_capstyle).css(),
         }
         if solid_fill:
-            attrs["fill"] = self.color.as_hex()
+            attrs["fill"] = self.fill.as_hex()
 
-        if self.alpha != 1:
-            attrs["fill-opacity"] = self.alpha
+        if self.opacity != 1:
+            attrs["fill-opacity"] = self.opacity
 
         if self.dash_spacing:
             attrs.update(
@@ -96,10 +98,10 @@ class MarkerStyle(BaseStyle):
 
     def to_polygon_style(self):
         return PolygonStyle(
-            fill_color=self.color,
-            edge_color=self.edge_color,
-            edge_width=self.edge_width,
-            alpha=self.alpha,
+            fill=self.fill,
+            stroke=self.stroke,
+            stroke_width=self.stroke_width,
+            opacity=self.opacity,
             zorder=self.zorder,
             line_style=self.line_style,
         )
@@ -113,7 +115,7 @@ class LineStyle(BaseStyle):
     width: float = 4
     """Width of line in pixels"""
 
-    color: ColorStr | None = ColorStr("#000")
+    stroke: ColorStr | None = ColorStr("#000")
     """Color of the line. Can be a hex, rgb, hsl, or word string."""
 
     style: LineStyleEnum | tuple = LineStyleEnum.SOLID
@@ -122,8 +124,8 @@ class LineStyle(BaseStyle):
     cap_style: CapStyleEnum = CapStyleEnum.PROJECTING
     """Style of line/dash endpoints"""
 
-    alpha: float = 1.0
-    """Alpha value (controls transparency)"""
+    opacity: float = Field(default=1.0, ge=0, le=1)
+    """Opacity (transparency) of the line (0 to 1)"""
 
     zorder: int = ZOrderEnum.LAYER_2
     """Zorder of the line"""
@@ -131,9 +133,9 @@ class LineStyle(BaseStyle):
     def css(self, scale: float = 1) -> dict:
         attrs = {
             "fill": "none",
-            "stroke": self.color.as_hex() if self.color else "none",
+            "stroke": self.stroke.as_hex() if self.stroke else "none",
             "stroke-width": round(self.width * scale, 2),
-            "stroke-opacity": self.alpha,
+            "stroke-opacity": self.opacity,
             "stroke-linecap": CapStyleEnum(self.cap_style).css(),
         }
         if isinstance(self.style, (str, LineStyleEnum)):
@@ -151,13 +153,7 @@ class PolygonStyle(BaseStyle):
     Styling properties for polygons.
     """
 
-    edge_width: float = 1
-    """Width of the polygon's edge in pixels"""
-
-    edge_color: ColorStr | None = None
-    """Edge color of the polygon"""
-
-    fill_color: ColorStr | GradientStops | None = None
+    fill: ColorStr | GradientStops | None = None
     """
     Fill color of the polygon
     
@@ -179,29 +175,33 @@ class PolygonStyle(BaseStyle):
     
     """
 
+    stroke_width: float = 1
+    """Width of the polygon's edge in pixels"""
+
+    stroke: ColorStr | None = None
+    """Edge color of the polygon"""
+
     gradient_type: GradientType = GradientType.RADIAL
 
     line_style: LineStyleEnum | tuple = LineStyleEnum.SOLID
     """Edge line style. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/)."""
 
-    alpha: float = 1.0
-    """Alpha value (controls transparency)"""
+    opacity: float = Field(default=1.0, ge=0, le=1)
+    """Opacity (transparency) of the polygon (0 to 1)"""
 
     zorder: int = ZOrderEnum.LAYER_3
     """Zorder of the polygon"""
 
     def css(self, scale: float = 1.0) -> dict:
-        solid_fill = self.fill_color is not None and not isinstance(
-            self.fill_color, list
-        )
+        solid_fill = self.fill is not None and not isinstance(self.fill, list)
         attrs = {
-            "fill": self.fill_color.as_hex() if solid_fill else "none",
-            "stroke": self.edge_color.as_hex() if self.edge_color else "none",
-            "stroke-width": round(self.edge_width * scale, 2),
+            "fill": self.fill.as_hex() if solid_fill else "none",
+            "stroke": self.stroke.as_hex() if self.stroke else "none",
+            "stroke-width": round(self.stroke_width * scale, 2),
         }
-        if self.alpha != 1:
-            attrs["fill-opacity"] = self.alpha
-            attrs["stroke-opacity"] = self.alpha
+        if self.opacity != 1:
+            attrs["fill-opacity"] = self.opacity
+            attrs["stroke-opacity"] = self.opacity
 
         if isinstance(self.line_style, str):
             ls_css = LineStyleEnum(self.line_style).css()
@@ -215,16 +215,14 @@ class PolygonStyle(BaseStyle):
         return attrs
 
     def to_marker_style(self, symbol: MarkerSymbolEnum):
-        solid_fill = self.fill_color is not None and not isinstance(
-            self.fill_color, list
-        )
-        fill_color = self.fill_color.as_hex() if solid_fill else None
+        solid_fill = self.fill is not None and not isinstance(self.fill, list)
+        fill_color = self.fill.as_hex() if solid_fill else None
         return MarkerStyle(
             symbol=symbol,
-            color=fill_color,
-            edge_color=self.edge_color.as_hex() if self.edge_color else None,
-            edge_width=self.edge_width,
-            alpha=self.alpha,
+            fill=fill_color,
+            stroke=self.stroke.as_hex() if self.stroke else None,
+            stroke_width=self.stroke_width,
+            opacity=self.opacity,
             zorder=self.zorder,
             line_style=self.line_style,
         )
@@ -266,23 +264,23 @@ class LabelStyle(BaseStyle):
     font_size: float = 24
     """Font size of the label, in pixels"""
 
-    font_weight: FontWeightEnum = FontWeightEnum.NORMAL
-    """Font weight (e.g. normal, bold, ultra bold, etc)"""
-
-    font_color: ColorStr = ColorStr("#000")
-    """Font's color"""
-
-    font_alpha: float = 1
-    """Font's alpha (transparency)"""
-
-    font_style: FontStyleEnum = FontStyleEnum.NORMAL
-    """Style of the label (e.g. normal, italic, etc)"""
-
     font_name: str | None = "Inter"
     """Name of the font to use"""
 
     font_family: str | None = "sans-serif"
     """Font family (e.g. 'monospace', 'sans-serif', 'serif', etc)"""
+
+    font_weight: FontWeightEnum = FontWeightEnum.NORMAL
+    """Font weight (e.g. normal, bold, ultra bold, etc)"""
+
+    font_style: FontStyleEnum = FontStyleEnum.NORMAL
+    """Style of the label (e.g. normal, italic, etc)"""
+
+    fill: ColorStr = ColorStr("#000")
+    """Font's color"""
+
+    opacity: float = Field(default=1.0, ge=0, le=1)
+    """Opacity (transparency) of the label (0 to 1)"""
 
     line_spacing: float | None = None
     """Spacing between lines of text"""
@@ -290,10 +288,10 @@ class LabelStyle(BaseStyle):
     anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
     """Anchor point of label"""
 
-    border_width: float = 0
+    stroke_width: float = 0
     """Width of border (also known as 'halos') around the text, in pixels"""
 
-    border_color: ColorStr | None = None
+    stroke: ColorStr | None = None
     """Color of border (also known as 'halos') around the text"""
 
     offset_x: float | int | str = 0
@@ -324,13 +322,13 @@ class LabelStyle(BaseStyle):
             "font-family": f"{self.font_name}, {self.font_family}",
             "font-weight": FontWeightEnum(self.font_weight).value,
             "font-style": FontStyleEnum(self.font_style).value,
-            "fill": self.font_color.as_hex(),
-            "fill-opacity": self.font_alpha,
+            "fill": self.fill.as_hex(),
+            "fill-opacity": self.opacity,
         }
-        if self.border_width and self.border_color:
-            attrs["stroke"] = self.border_color.as_hex()
-            attrs["stroke-width"] = round(self.border_width * scale, 2)
-            attrs["stroke-opacity"] = self.font_alpha
+        if self.stroke_width and self.stroke:
+            attrs["stroke"] = self.stroke.as_hex()
+            attrs["stroke-width"] = round(self.stroke_width * scale, 2)
+            attrs["stroke-opacity"] = self.opacity
             attrs["paint-order"] = "stroke fill"
 
         return attrs
@@ -365,7 +363,7 @@ class TableStyle(BaseStyle):
     cell: LabelStyle = LabelStyle()
     """Style for the body cells' text (see [LabelStyle][starplot.styles.LabelStyle])"""
 
-    border: LineStyle = LineStyle(color="#c5c5c5", width=1)
+    border: LineStyle = LineStyle(stroke="#c5c5c5", width=1)
     """Style for the table's grid lines and outer border (see [LineStyle][starplot.styles.LineStyle])"""
 
     padding_top: int = 40
@@ -440,9 +438,9 @@ class TitleStyle(LabelStyle):
 
 class FigureStyle(BaseStyle):
     background: PolygonStyle = PolygonStyle(
-        edge_width=0,
-        edge_color="#000",
-        fill_color="#fff",
+        stroke_width=0,
+        stroke="#000",
+        fill="#fff",
     )
     """Background of the figure (the area surrounding the axes)"""
 
@@ -454,12 +452,12 @@ class AxesStyle(BaseStyle):
     """Styling for the axes of the plot, which is where the map is plotted."""
 
     background: PolygonStyle = PolygonStyle(
-        edge_width=0,
-        edge_color="#000",
-        fill_color="#fff",
+        stroke_width=0,
+        stroke="#000",
+        fill="#fff",
     )
 
-    border: LineStyle | None = LineStyle(width=2, color="#000")
+    border: LineStyle | None = LineStyle(width=2, stroke="#000")
     """
     Border drawn immediately outside the axes clip path (the entire stroke sits
     outside the clip path -- none of it overlaps the plot content). If `None`, 

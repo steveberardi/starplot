@@ -195,8 +195,8 @@ def normalize_where(where: list | bool) -> list:
     """Normalizes a where kwarg to a list"""
     if where is False:
         return [False]
-    
+
     if where is True:
         return []
-    
+
     return where or []

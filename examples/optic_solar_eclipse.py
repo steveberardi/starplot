@@ -30,11 +30,11 @@ op.moon(
     true_size=True,
     show_phase=True,
     label=None,
-    style__marker__color=gradients.NEW_MOON,
+    style__marker__fill=gradients.NEW_MOON,
 )
 op.sun(
     true_size=True,
-    style__marker__color=gradients.SUN,
+    style__marker__fill=gradients.SUN,
     label=None,
 )
 

@@ -19,9 +19,9 @@ p = MapPlot(
 p.stars(
     where=[_.magnitude < 11],
     where_labels=[False],
-    alpha_fn=lambda s: 0.95 if s.magnitude < 9 else 0.6,
+    opacity_fn=lambda s: 0.95 if s.magnitude < 9 else 0.6,
     catalog=BIG_SKY,
-    style__marker__edge_color="#fff",
+    style__marker__stroke="#fff",
 )
 p.export("map_milky_way_stars.png")
 

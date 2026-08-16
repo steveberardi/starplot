@@ -6,12 +6,12 @@ style = PlotStyle().extend(
     extensions.MAP,
     {
         "figure": {
-            "background": {"fill_color": "hsl(330, 44%, 20%)"},
+            "background": {"fill": "hsl(330, 44%, 20%)"},
             "padding": 40,
         },
         "dso_galaxy": {
             "label": {
-                "font_color": "hsl(330, 44%, 14%)",
+                "fill": "hsl(330, 44%, 14%)",
                 "font_weight": 200,
                 "anchor_point": AnchorPointEnum.BOTTOM_CENTER.value,
             }
@@ -38,7 +38,7 @@ p = MapPlot(
     scale=1,
     point_label_handler=collision_handler,
 )
-p.title("Virgo Cluster", style__font_color="hsl(330, 44%, 92%)")
+p.title("Virgo Cluster", style__fill="hsl(330, 44%, 92%)")
 p.stars(where=[_.magnitude < 12], where_labels=[False])
 p.galaxies(
     where=[

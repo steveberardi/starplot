@@ -67,7 +67,7 @@ def scratchpad():
     )
     p.gridlines(
         labels=False,
-        style__label__font_color="black",
+        style__label__fill="black",
         style__label__font_size=60,
     )
     p.constellations()

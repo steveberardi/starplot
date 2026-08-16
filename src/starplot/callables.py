@@ -138,17 +138,17 @@ def size_by_magnitude_for_optic(star: Star) -> float:
     return 4.8 * 6
 
 
-def alpha_by_magnitude(star: Star) -> float:
+def opacity_by_magnitude(star: Star) -> float:
     """
-    Basic calculator for alpha, based on magnitude:
+    Basic calculator for opacity, based on magnitude:
 
     ```python
     if magnitude < 4.6:
-        alpha = 1
+        opacity = 1
     elif magnitude < 5.8:
-        alpha = 0.9
+        opacity = 0.9
     else:
-        alpha = (16 - m) * 0.09
+        opacity = (16 - m) * 0.09
     ```
     """
     m = star.magnitude

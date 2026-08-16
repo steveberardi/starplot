@@ -301,7 +301,7 @@ class OpticPlot(
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] = None,
-        alpha_fn: Callable[[Star], float] = None,
+        opacity_fn: Callable[[Star], float] = None,
         color_fn: Callable[[Star], str] = None,
         label_fn: Callable[[Star], str] = Star.get_label,
         legend_label: str = "Star",
@@ -320,7 +320,7 @@ class OpticPlot(
             catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
             style: If `None`, then the plot's style for stars will be used
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
-            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
+            opacity_fn: Callable for calculating the opacity value of each star. If `None`, then the marker style's opacity will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
             label_fn: Callable for determining the label of each star.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
@@ -343,7 +343,7 @@ class OpticPlot(
             catalog=catalog,
             style=style,
             size_fn=size_fn,
-            alpha_fn=alpha_fn,
+            opacity_fn=opacity_fn,
             color_fn=color_fn,
             label_fn=label_fn,
             legend_label=legend_label,

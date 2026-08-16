@@ -18,6 +18,7 @@ from starplot.profile import profile
 from starplot.styles import MarkerSymbolEnum
 from starplot.utils import normalize_where
 
+
 class DsoPlotterMixin:
     def messier(self, **kwargs):
         """
@@ -143,7 +144,7 @@ class DsoPlotterMixin:
         where_labels: list | bool | None = None,
         where_true_size: list | bool | None = None,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
-        alpha_fn: Callable[[DSO], float] | None = None,
+        opacity_fn: Callable[[DSO], float] | None = None,
         label_fn: Callable[[DSO], str] = DSO.get_label,
         sql: str | None = None,
         sql_labels: str | None = None,
@@ -160,7 +161,7 @@ class DsoPlotterMixin:
             where_labels: A list of expressions that determine which DSOs are labeled on the plot. By default all DSOs are labeled. See [Selecting Objects](/reference-selecting-objects/) for details. Can also be a boolean: if `False` then no labels will be plotted.
             where_true_size: A list of expressions that determine which DSOs are plotted as their true apparent size in the sky. By default all DSOs are plotted as their true size. Can also be a boolean: if `False` then no DSOs will be plotted as their true size.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
-            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
+            opacity_fn: Callable for calculating the opacity value of each DSO. If `None`, then the marker style's opacity will be used.
             label_fn: Callable for determining the label of each DSO.
             sql: SQL query for selecting DSOs (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             sql_labels: SQL query for selecting DSOs that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
@@ -226,8 +227,8 @@ class DsoPlotterMixin:
             if style is None:
                 continue
 
-            if alpha_fn:
-                style.marker.alpha = alpha_fn(_dso)
+            if opacity_fn:
+                style.marker.opacity = opacity_fn(_dso)
 
             if _dso.pk not in label_pks:
                 label = None

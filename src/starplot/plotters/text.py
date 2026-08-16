@@ -531,8 +531,8 @@ class TextPlotterMixin:
             self.polygon(
                 geometry=area,
                 style={
-                    "edge_color": "red",
-                    "edge_width": 2,
+                    "stroke": "red",
+                    "stroke_width": 2,
                 },
             )
 

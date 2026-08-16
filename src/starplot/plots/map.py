@@ -433,7 +433,7 @@ class MapPlot(
         if not labels:
             return
 
-        border_style = PathStyle(line=LineStyle(color=None), label=style.label)
+        border_style = PathStyle(line=LineStyle(stroke=None), label=style.label)
         self.canvas._axes_frame(
             border_style,
             labels=_labels,

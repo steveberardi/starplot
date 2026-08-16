@@ -396,7 +396,7 @@ class HorizonPlot(
 
         self.canvas.polygon(
             coordinates=coords,
-            style=PolygonStyle(fill_color="hsl(20deg 33% 21%)"),
+            style=PolygonStyle(fill="hsl(20deg 33% 21%)"),
         )
 
     @use_style(PathStyle, "gridlines")
@@ -470,5 +470,5 @@ class HorizonPlot(
         if not labels:
             return
 
-        border_style = PathStyle(line=LineStyle(color=None), label=style.label)
+        border_style = PathStyle(line=LineStyle(stroke=None), label=style.label)
         self.canvas._axes_frame(border_style, labels=_labels, width_from_labels=True)

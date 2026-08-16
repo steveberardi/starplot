@@ -9,12 +9,12 @@ from starplot.styles import FontWeightEnum, LineStyle, LineStyleEnum, PlotStyle
 @pytest.mark.parametrize(
     "kwargs",
     [
-        dict(axes={"background": {"fill_color": "#fff"}}),
-        dict(axes={"background": {"fill_color": Color("#ff8e8e")}}),
-        dict(axes={"background": {"fill_color": "rgb(1,2,3)"}}),
+        dict(axes={"background": {"fill": "#fff"}}),
+        dict(axes={"background": {"fill": Color("#ff8e8e")}}),
+        dict(axes={"background": {"fill": "rgb(1,2,3)"}}),
         dict(star={"label": {"font_weight": FontWeightEnum.BOLD}}),
         dict(
-            axes={"background": {"fill_color": "#fff"}},
+            axes={"background": {"fill": "#fff"}},
             constellation_lines={"width": 2},
         ),
     ],
@@ -29,8 +29,8 @@ def test_plot_style_valid(kwargs):
 @pytest.mark.parametrize(
     "kwargs",
     [
-        dict(axes={"background": {"fill_color": 2}}),
-        dict(axes={"background": {"fill_color": "rgb(1,1,1,1,1,1,1,1,1)"}}),
+        dict(axes={"background": {"fill": 2}}),
+        dict(axes={"background": {"fill": "rgb(1,1,1,1,1,1,1,1,1)"}}),
         dict(constellation="hello"),
         dict(star={"label": {"font_weight": "invalid"}}),
         dict(extra_stuff="hello"),

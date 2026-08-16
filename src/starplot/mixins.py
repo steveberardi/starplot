@@ -144,7 +144,7 @@ class HorizonExtentMaskMixin:
 
         extent = segmentize(extent, max_segment_length=1)
 
-        self.polygon(style__fill_color="red", style__alpha=0.3, geometry=extent)
+        self.polygon(style__fill="red", style__opacity=0.3, geometry=extent)
         # print(extent)
 
         return extent
@@ -192,8 +192,8 @@ class HorizonExtentMaskMixin:
         print(extent.area)
 
         # self.polygon(
-        #     style__fill_color="red",
-        #     style__alpha=0.3,
+        #     style__fill="red",
+        #     style__opacity=0.3,
         #     geometry=extent
         # )
         # print(extent)
@@ -279,7 +279,7 @@ class HorizonExtentMaskMixin:
         mpoly = MultiPolygon(polygons)
 
         for p in mpoly.geoms:
-            self.polygon(style__fill_color="red", style__alpha=0.3, geometry=p)
+            self.polygon(style__fill="red", style__opacity=0.3, geometry=p)
 
         # print(extent)
 

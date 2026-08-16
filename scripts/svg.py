@@ -58,7 +58,7 @@ observer = Observer(
 
 style.constellation_lines.width = 2
 style.constellation_borders.width = 1
-style.dso_open_cluster.marker.edge_width = 1.6
+style.dso_open_cluster.marker.stroke_width = 1.6
 style.axes.background_gradient_direction = "linear"
 
 CENTER_RA = 180
@@ -127,22 +127,22 @@ c.gridlines()
 #     center=(m57.ra, m57.dec),
 #     height_degrees=6,
 #     width_degrees=8,
-#     style__edge_color="red",
+#     style__stroke="red",
 # )
 
 # c.title(
 #     "Hello World!!",
-#     # style__border_color="black",
-#     # style__border_width=400,
+#     # style__stroke="black",
+#     # style__stroke_width=400,
 # )
 
 # c.marker(
 #     ra=m31.ra,
 #     dec=m31.dec,
 #     style__marker__fill="full",
-#     style__marker__color="hsl(195deg 100% 24%)",
-#     style__marker__edge_color="hsl(195deg 100% 64%)",
-#     style__marker__edge_width=2,
+#     style__marker__fill="hsl(195deg 100% 24%)",
+#     style__marker__stroke="hsl(195deg 100% 64%)",
+#     style__marker__stroke_width=2,
 #     style__marker__symbol="comet",
 #     style__marker__size=50,
 # )
