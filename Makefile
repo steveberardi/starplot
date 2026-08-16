@@ -111,7 +111,7 @@ docs-serve:
 	uv run $(DOTENV) zensical serve
 
 docs-build:
-	uv run $(DOTENV) zensical build
+	uv run $(DOTENV) zensical build -c
 
 # ------------------------------------------------------------------
 # PyPi - build & publish

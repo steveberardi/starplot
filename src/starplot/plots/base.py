@@ -431,11 +431,11 @@ class BasePlot(StarPlotterMixin, ABC):
         points = list(zip(*polygon.exterior.coords.xy))
         self._polygon(points, style)
 
-        # if legend_label is not None:
-        #     self._add_legend_handle_marker(
-        #         legend_label,
-        #         style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
-        #     )
+        if legend_label is not None:
+            self._add_legend_handle_marker(
+                legend_label,
+                style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
+            )
 
     @use_style(PolygonStyle)
     def ellipse(
@@ -476,11 +476,11 @@ class BasePlot(StarPlotterMixin, ABC):
         points = list(zip(*polygon.exterior.coords.xy))
         self._polygon(points, style)
 
-        # if legend_label is not None:
-        #     self._add_legend_handle_marker(
-        #         legend_label,
-        #         style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE),
-        #     )
+        if legend_label is not None:
+            self._add_legend_handle_marker(
+                legend_label,
+                style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE),
+            )
 
     @use_style(PolygonStyle)
     def circle(
@@ -509,11 +509,11 @@ class BasePlot(StarPlotterMixin, ABC):
             num_pts=num_pts,
         )
 
-        # if legend_label is not None:
-        #     self._add_legend_handle_marker(
-        #         legend_label,
-        #         style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE),
-        #     )
+        if legend_label is not None:
+            self._add_legend_handle_marker(
+                legend_label,
+                style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE),
+            )
 
     @use_style(ObjectStyle, "planets")
     def planets(

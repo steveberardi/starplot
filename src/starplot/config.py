@@ -48,7 +48,7 @@ class Settings:
 
     - `"element"` will render all text as an [SVG `<text>` element](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/text), 
     which means the text will be editable in graphic design applications but the text may render in a system default font if the original 
-    font isn't available. **Important: when using the "element" method, text borders will be turned OFF.**
+    font isn't available.
     
     """
 
