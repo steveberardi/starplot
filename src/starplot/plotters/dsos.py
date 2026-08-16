@@ -16,7 +16,7 @@ from starplot.models.dso import (
 from starplot.plotters.text import CollisionHandler
 from starplot.profile import profile
 from starplot.styles import MarkerSymbolEnum
-
+from starplot.utils import normalize_where
 
 class DsoPlotterMixin:
     def messier(self, **kwargs):
@@ -139,7 +139,7 @@ class DsoPlotterMixin:
     @profile
     def dsos(
         self,
-        where: list | None = None,
+        where: list | bool | None = None,
         where_labels: list | bool | None = None,
         where_true_size: list | bool | None = None,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
@@ -157,8 +157,8 @@ class DsoPlotterMixin:
 
         Args:
             where: A list of expressions that determine which DSOs to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which DSOs are labeled on the plot. By default all DSOs are labeled. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_true_size: A list of expressions that determine which DSOs are plotted as their true apparent size in the sky. By default all DSOs are plotted as their true size.
+            where_labels: A list of expressions that determine which DSOs are labeled on the plot. By default all DSOs are labeled. See [Selecting Objects](/reference-selecting-objects/) for details. Can also be a boolean: if `False` then no labels will be plotted.
+            where_true_size: A list of expressions that determine which DSOs are plotted as their true apparent size in the sky. By default all DSOs are plotted as their true size. Can also be a boolean: if `False` then no DSOs will be plotted as their true size.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
             label_fn: Callable for determining the label of each DSO.
@@ -172,11 +172,10 @@ class DsoPlotterMixin:
 
         # TODO: add kwarg styles
 
-        where = where or []
-        if where_labels is False:
-            where_labels = [False]
-        where_labels = where_labels or []
-        where_true_size = where_true_size or []
+        where = normalize_where(where)
+        where_labels = normalize_where(where_labels)
+        where_true_size = normalize_where(where_true_size)
+
         handler = collision_handler or self.point_label_handler
 
         if legend_labels is None:

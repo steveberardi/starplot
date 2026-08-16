@@ -131,6 +131,33 @@ class ZenithPlot(MapPlot):
 
         self.canvas._axes_frame(style, labels=_labels)
 
+    @profile
+    @use_style(PathStyle, "gridlines")
+    def gridlines(
+        self,
+        style: PathStyle = None,
+        ra_locations: list[float] = None,
+        dec_locations: list[float] = None,
+    ):
+        """
+        Plots gridlines. 
+        
+        _Gridline labels are not yet supported for zenith plots._
+
+        Args:
+            style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
+            ra_locations: List of Right Ascension locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees.
+            dec_locations: List of Declination locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
+        """
+
+        super().gridlines(
+            style=style,
+            labels=False,
+            ra_locations=ra_locations,
+            dec_locations=dec_locations,
+        )
+
+
     def _adjust_radec_minmax(self):
         _, dec_min, _, dec_max = self.canvas.bounds
         self.ra_min = 0

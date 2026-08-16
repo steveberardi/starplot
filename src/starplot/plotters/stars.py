@@ -13,7 +13,7 @@ from starplot.models.star import Star, from_tuple
 from starplot.plotters.text import CollisionHandler
 from starplot.profile import profile
 from starplot.styles import ObjectStyle, use_style
-
+from starplot.utils import normalize_where
 
 def size_by_magnitude(star: Star) -> float:
     """
@@ -185,7 +185,7 @@ class StarPlotterMixin:
     def stars(
         self,
         where: list | None = None,
-        where_labels: list | None = None,
+        where_labels: list | bool | None = None,
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] = size_by_magnitude,
@@ -206,7 +206,7 @@ class StarPlotterMixin:
 
         Args:
             where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). Can also be a boolean: if `False` then no labels will be plotted.. See [Selecting Objects](/reference-selecting-objects/) for details.  
             catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
             style: If `None`, then the plot's style for stars will be used
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
@@ -235,8 +235,8 @@ class StarPlotterMixin:
         self._last_used_size_fn = size_fn
 
         handler = collision_handler or self.point_label_handler
-        where = where or []
-        where_labels = where_labels or []
+        where = normalize_where(where)
+        where_labels = normalize_where(where_labels)
         stars_to_index = []
 
         star_results = self._load_stars(catalog, filters=where, sql=sql)

@@ -189,3 +189,14 @@ def points_on_line(start, end, num_points=100):
     y_coords = np.linspace(start[1], end[1], num_points)
 
     return list(zip(x_coords, y_coords))
+
+
+def normalize_where(where: list | bool) -> list:
+    """Normalizes a where kwarg to a list"""
+    if where is False:
+        return [False]
+    
+    if where is True:
+        return []
+    
+    return where or []
