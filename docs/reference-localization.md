@@ -9,6 +9,7 @@ Starplot's labels are available in the following languages:
 4. Lithuanian
 5. Persian (Farsi)
 6. Spanish
+7. Italian
 
 **Want to see another language available?** Please help us add it! [Details here](https://github.com/steveberardi/starplot/tree/main/data/raw/translations)
 
