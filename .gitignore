@@ -38,12 +38,16 @@ temp.py
 temp/
 # raw/
 scripts/temp/
+plots/
+scripts/__marimo__/
 
 # Documentation Generated Files
 examples/*.png
 examples/*.jpg
+examples/*.svg
 docs/images/examples/*.png
 docs/images/examples/*.jpg
+docs/images/examples/*.svg
 tutorial/*.png
 docs/images/tutorial/*.png
 docs/data/*.json
