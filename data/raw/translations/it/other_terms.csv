@@ -1,6 +1,6 @@
 English,Italian
 star,stella
-deep sky object,oggetto del cielo profondo
+deep sky object,oggetto del profondo cielo
 open cluster,ammasso aperto
 globular cluster,ammasso globulare
 nebula,nebulosa
@@ -16,8 +16,8 @@ group of galaxies,gruppo di galassie
 hii ionized region,regione hii
 nova star,nova
 planetary nebula,nebulosa planetaria
-reflection nebula,nebulosa di riflessione
-star cluster nebula,nebulosa ammasso stellare
+reflection nebula,nebulosa a riflessione
+star cluster nebula,nebulosa di ammasso stellare
 supernova remnant,resto di supernova
 unknown,sconosciuto
 Mercury,Mercurio
@@ -40,4 +40,4 @@ N (abbreviation for north),N
 E (abbreviation for east),E
 S (abbreviation for south),S
 W (abbreviation for west),O
-Milky Way,Via lattea
+Milky Way,Via Lattea

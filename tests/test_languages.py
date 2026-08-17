@@ -31,7 +31,7 @@ class TestLanguages:
             ("cma", "zh-cn", "大犬"),
             ("cma", "lt", "Didysis Šuo"),
             ("cma", "fa", "سگ بزرگ"),
-            ("cma", "it", "Cane maggiore"),
+            ("cma", "it", "Cane Maggiore"),
         ],
     )
     def test_constellation_name(self, constellation_id, language, expected_value):

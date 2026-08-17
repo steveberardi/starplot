@@ -10,8 +10,8 @@ IC2391,Omicron Velorum Cluster,Ammasso Omicron Velorum
 IC2431 NED02,Browning,Galassia Browning
 IC2574,Coddington's Nebula,Nebulosa di Coddington
 IC2602,Theta Carinae Cluster,Pleiadi del Sud
-IC2944,lam Cen Nebula,lam Cen Nebula
-IC4604,rho Oph Nebula,rho Oph Nebula
+IC2944,lam Cen Nebula,Nebulosa lam Cen
+IC4604,rho Oph Nebula,Nebulosa rho Oph
 IC4703,"Eagle Nebula, Star Queen",Nebulosa Aquila
 IC4715,Small Sagittarius Star Cloud,Piccola Nube Stellare del Sagittario
 IC5070,Pelican Nebula,Nebulosa Pellicano
@@ -36,7 +36,7 @@ NGC1435,Merope Nebula,Nebulosa di Merope
 NGC1499,California Nebula,Nebulosa California
 NGC1555,"Hind's Nebula, Hind's Variable Nebula",Nebulosa di Hind
 NGC1909,the Witch Head Nebula,Nebulosa Testa di Strega
-NGC1952,Crab Nebula,Nebulosa del Granchio
+NGC1952,Crab Nebula,Nebulosa Granchio
 NGC1976,"Great Orion Nebula, Orion Nebula",Nebulosa di Orione
 NGC1977,the Running Man Nebula,Nebulosa Uomo che Corre
 NGC1980,Lower Sword,Spada Inferiore
@@ -51,7 +51,7 @@ NGC2246,Rosette B,Nebulosa Rosetta B
 NGC2261,Hubble's Nebula,Nebulosa Variabile di Hubble
 NGC2264,Christmas Tree Cluster,Albero di Natale
 NGC2301,Great Bird Cluster,Ammasso Grande Uccello
-NGC2360,Caroline's Cluster,Ammasso di Caroline
+NGC2360,Caroline's Cluster,Ammasso Caroline
 NGC2392,Eskimo Nebula,Nebulosa Eskimo
 NGC2537,"Bear Claw Nebula, Bear-Paw Galaxy",Galassia Zampa d'Orso
 NGC2573,Polarissima Australis,Polarissima Australe
@@ -70,9 +70,9 @@ NGC3561,the Guitar,La Chitarra
 NGC3587,Owl Nebula,Nebulosa Gufo
 NGC3766,Pearl Cluster,Ammasso Perla
 NGC3918,Blue Planetary,Nebulosa Planetaria Blu
-NGC3928,Miniature Spiral,Spirale miniature
-NGC4038,Antennae Galaxies,Galassie Antenna
-NGC4039,Antennae Galaxies,Galassie Antenna
+NGC3928,Miniature Spiral,Spirale in miniatura
+NGC4038,Antennae Galaxies,Galassie Antenne
+NGC4039,Antennae Galaxies,Galassie Antenne
 NGC4194,Medusa Galaxy Merger,Galassia Medusa
 NGC4254,"Coma Pinwheel, Virgo Cluster Pinwheel",Ammasso della Vergine Girandola
 NGC4435,Eyes,Catena di Markarian
@@ -96,12 +96,12 @@ NGC5194,Whirlpool Galaxy,Galassia Vortice
 NGC5236,Southern Pinwheel Galaxy,Galassia Girandola del Sud
 NGC6087,S Normae Cluster,Ammasso Norma 5
 NGC6188,Firebird Nebula,Nebulosa Orlo
-NGC6205,Hercules Globular Cluster,Ammasso di Ercole
-NGC6302,"Bug Nebula, Butterfly Nebula",Nebulosa Farfalla
+NGC6205,Hercules Globular Cluster,Ammasso Globulare di Ercole
+NGC6302,"Bug Nebula, Butterfly Nebula",Nebulosa Insetto
 NGC6309,Box Nebula,Nebulosa Scatola
 NGC6357,the War and Peace Nebula,Nebulosa Guerra e Pace
 NGC6369,Little Ghost Nebula,Nebulosa Piccolo Fantasma
-NGC6405,Butterfly Cluster,Amas du Papillon
+NGC6405,Butterfly Cluster,Ammasso Farfalla
 NGC6445,Little Gem,Nebulosa Piccolo Gioiello
 NGC6475,Ptolemy's Cluster,Ammasso di Tolomeo
 NGC6514,Trifid Nebula,Nebulosa Trifida
@@ -111,7 +111,7 @@ NGC6543,Cat's Eye Nebula,Nebulosa Occhio di Gatto
 NGC6611,Eagle Nebula,Nebulosa Aquila
 NGC6618,"Checkmark Nebula, Lobster Nebula, Swan Nebula, omega Nebula",Nebulosa Omega
 NGC6705,Wild Duck Cluster,Ammasso Anatra Selvatica
-NGC6720,Ring Nebula,Nebulosa ad Anello
+NGC6720,Ring Nebula,Nebulosa Anello
 NGC6741,Phantom Streak Nebula,Galassia Phantom Streak
 NGC6818,Little Gem Nebula,Nebulosa Piccolo Gioiello
 NGC6819,Foxhead Cluster,Ammasso Testa di Volpe
@@ -121,7 +121,7 @@ NGC6853,Dumbbell Nebula,Nebulosa Manubrio
 NGC6888,Crescent Nebula,Nebulosa Crescente
 NGC6905,Blue Flash Nebula,Nebulosa Lampo Blu
 NGC6946,Fireworks Galaxy,Galassia Fuochi d'Artificio
-NGC6960,"Veil Nebula, Filamentary Nebula, Western Veil",Nebulosa Velo dell'Ovest
+NGC6960,"Veil Nebula, Filamentary Nebula, Western Veil",Nebulosa Velo
 NGC6992,"Eastern Veil, Network Nebula",Nebulosa Velo dell'Est
 NGC6995,"Eastern Veil, Network Nebula",Nebulosa Velo dell'Est
 NGC7000,North America Nebula,Nebulosa Nord America
@@ -135,19 +135,19 @@ B033,Horsehead Nebula,Nebulosa Testa di Cavallo
 C009,Cave Nebula,Nebulosa Grotta
 C014,"Double Cluster, h & chi Persei",Ammasso doppio di Perseo
 C041,Hyades,Iadi
-C099,Coalsack Nebula,Sacco di Carbone
+C099,Coalsack Nebula,Nebulosa Sacco di Carbone
 Cl399,"Brocchi's Cluster, Al Sufi's Cluster, Coathanger Asterism",Ammasso di Brocchi
 ESO056-115,"Large Magellanic Cloud, Nubecula Major",Grande Nube di Magellano
 ESO097-013,Circinus Galaxy,Galassia del Compasso
-ESO270-017,Fourcade-Figueroa,Oggetto di Fourcade-Figueroa
+ESO270-017,Fourcade-Figueroa,Fourcade-Figueroa
 ESO351-030,Sculptor Dwarf Elliptical,Galassia nana dello Scultore
 ESO356-004,Fornax Dwarf Spheroidal,Galassia nana della Fornace
 HCG079,Seyfert's Sextet,Sestetto di Seyfert
 HCG092,Stephan's Quintet,Quintetto di Stephan
 Mel022,Pleiades,Pleiadi
-Mel111,Coma Star Cluster,Ammasso Stellare della Chioma di Berenice
+Mel111,Coma Star Cluster,Ammasso della Chioma di Berenice
 PGC000143,Wolf-Lundmark-Melotte Galaxy,Galassia di Wolf-Lundmark-Melotte
-PGC029653,Sextans A,Galassia del Sestante A
+PGC029653,Sextans A,Sestante A
 PGC088608,Sextans Dwarf Spheroidal,Galassia nana del Sestante
-UGC05373,Sextans B,Galassia del Sestante B
+UGC05373,Sextans B,Sestante B
 UGC05470,Leo I,Leo I

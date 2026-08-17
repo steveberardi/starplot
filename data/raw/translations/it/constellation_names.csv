@@ -1,13 +1,13 @@
 iau_id,English,Italian
 and,Andromeda,Andromeda
-ant,Antlia,Macchina pneumatica
-aps,Apus,Uccello del paradiso
+ant,Antlia,Macchina Pneumatica
+aps,Apus,Uccello del Paradiso
 aql,Aquila,Aquila
 aqr,Aquarius,Acquario
 ara,Ara,Altare
 ari,Aries,Ariete
 aur,Auriga,Auriga
-boo,Bootes,Bovaro
+boo,Bootes,Boote
 cae,Caelum,Bulino
 cam,Camelopardalis,Giraffa
 cap,Capricornus,Capricorno
@@ -18,17 +18,17 @@ cep,Cepheus,Cefeo
 cet,Cetus,Balena
 cha,Chamaeleon,Camaleonte
 cir,Circinus,Compasso
-cma,Canis Major,Cane maggiore
-cmi,Canis Minor,Cane minore
+cma,Canis Major,Cane Maggiore
+cmi,Canis Minor,Cane Minore
 cnc,Cancer,Cancro
 col,Columba,Colomba
 com,Coma Berenices,Chioma di Berenice
-cra,Corona Australis,Corona australe
-crb,Corona Borealis,Corona boreale
+cra,Corona Australis,Corona Australe
+crb,Corona Borealis,Corona Boreale
 crt,Crater,Cratere
 cru,Crux,Croce del Sud
 crv,Corvus,Corvo
-cvn,Canes Venatici,Cani da caccia
+cvn,Canes Venatici,Cani da Caccia
 cyg,Cygnus,Cigno
 del,Delphinus,Delfino
 dor,Dorado,Dorado
@@ -41,13 +41,13 @@ gru,Grus,Gru
 her,Hercules,Ercole
 hor,Horologium,Orologio
 hya,Hydra,Idra
-hyi,Hydrus,Idra mschio
+hyi,Hydrus,Idra Maschio
 ind,Indus,Indiano
 lac,Lacerta,Lucertola
 leo,Leo,Leone
 lep,Lepus,Lepre
 lib,Libra,Bilancia
-lmi,Leo Minor,Leone minore
+lmi,Leo Minor,Leone Minore
 lup,Lupus,Lupo
 lyn,Lynx,Lince
 lyr,Lyra,Lira
@@ -64,7 +64,7 @@ peg,Pegasus,Pegaso
 per,Perseus,Perseo
 phe,Phoenix,Fenice
 pic,Pictor,Pittore
-psa,Piscis Austrinus,Pesce australe
+psa,Piscis Austrinus,Pesce Australe
 psc,Pisces,Pesci
 pup,Puppis,Poppa
 pyx,Pyxis,Bussola
@@ -79,12 +79,12 @@ sge,Sagitta,Freccia
 sgr,Sagittarius,Sagittario
 tau,Taurus,Toro
 tel,Telescopium,Telescopio
-tra,Triangulum Australe,Triangolo australe
+tra,Triangulum Australe,Triangolo Australe
 tri,Triangulum,Triangolo
 tuc,Tucana,Tucano
-uma,Ursa Major,Orsa maggiore
-umi,Ursa Minor,Orsa minore
+uma,Ursa Major,Orsa Maggiore
+umi,Ursa Minor,Orsa Minore
 vel,Vela,Vele
 vir,Virgo,Vergine
-vol,Volans,Pesce volante
+vol,Volans,Pesce Volante
 vul,Vulpecula,Volpetta
