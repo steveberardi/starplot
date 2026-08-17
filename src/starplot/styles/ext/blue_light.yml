@@ -3,12 +3,6 @@ axes:
   background:
     fill: hsl(218, 88%, 99%)
 
-text_border_color: hsl(218, 88%, 99%)
-
-border_bg_color: '#b5cbe3'
-border_font_color: '#2f4358'
-border_line_color: '#2f4358'
-
 horizon:
   line:
     stroke: '#b5cbe3'

@@ -8,14 +8,9 @@ figure:
   background:
     fill: hsl(212, 27%, 48%)
 
-text_border_color: '#f1f6ff'
-
-border_bg_color: hsl(212, 27%, 56%)
-border_font_color: '#f1f6ff'
-border_line_color: '#2f4358'
-
 title:
   fill: '#f1f6ff'
+
 star:
   marker:
     stroke: '#f1f6ff'

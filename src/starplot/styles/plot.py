@@ -50,17 +50,10 @@ class PlotStyle(BaseStyle):
     
     """
 
-    text_border_width: int = 2
-    """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `stroke_width` and `stroke` properties."""
-
-    text_border_color: ColorStr = ColorStr("#fff")
-
-    # Borders
-    border_font_size: int = 18
-    border_font_weight: FontWeightEnum = FontWeightEnum.BOLD
-    border_font_color: ColorStr = ColorStr("#000")
-    border_line_color: ColorStr = ColorStr("#000")
-    border_bg_color: ColorStr = ColorStr("#fff")
+    # TODO : refactor how global text style props work
+    # text_border_width: int = 2
+    # """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `stroke_width` and `stroke` properties."""
+    # text_border_color: ColorStr = ColorStr("#fff")
 
     # Title
     title: TitleStyle = TitleStyle(
@@ -89,7 +82,7 @@ class PlotStyle(BaseStyle):
         ),
         padding_top=24,
     )
-    """Styling for the data table of the plot, which is always plotted below the axes."""
+    """Styling for the data table of the plot, which is always plotted below the axes. Currently, this is only available in optic plots."""
 
     # Stars
     star: ObjectStyle = ObjectStyle(

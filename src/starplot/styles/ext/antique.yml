@@ -14,12 +14,6 @@ figure:
   background:
     fill: hsl(60, 9%, 29%)
 
-text_border_color: hsl(48, 80%, 96%)
-
-border_bg_color: hsl(60, 3%, 32%)
-border_font_color: hsl(60, 20%, 93%)
-border_line_color: hsl(60, 20%, 53%)
-
 horizon:
   line:
     stroke: hsl(60, 3%, 32%)

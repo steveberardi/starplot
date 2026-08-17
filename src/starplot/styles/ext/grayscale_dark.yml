@@ -7,12 +7,6 @@ figure:
   background:
     fill: hsl(136, 0%, 100%)
 
-text_border_color: hsl(136, 0%, 10%)
-
-border_bg_color: hsl(136, 0%, 20%)
-border_font_color: hsl(136, 0%, 90%)
-border_line_color: hsl(136, 0%, 54%)
-
 horizon:
   line:
     stroke: hsl(136, 0%, 20%)

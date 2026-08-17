@@ -3,12 +3,6 @@ axes:
   background:
     fill: '#fff'
 
-text_border_color: '#fff'
-
-border_bg_color: '#fff'
-border_font_color: '#000'
-border_line_color: '#000'
-
 title:
   fill: '#000'
 

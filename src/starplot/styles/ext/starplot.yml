@@ -17,12 +17,6 @@ figure:
   background:
     fill: hsl(205, 63%, 100%)
 
-text_border_color: hsl(205, 63%, 100%)
-
-border_bg_color: hsl(205, 40%, 88%)
-border_font_color: hsl(205, 65%, 8%)
-border_line_color: hsl(205, 45%, 28%)
-
 title:
   fill: hsl(205, 75%, 5%)
 

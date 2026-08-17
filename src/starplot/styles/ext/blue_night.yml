@@ -7,12 +7,6 @@ figure:
   background:
     fill: hsl(210, 29%, 8%)
 
-text_border_color: hsl(210, 29%, 15%)
-
-border_bg_color: hsl(210, 29%, 5%)
-border_font_color: hsl(209, 56%, 86%)
-border_line_color: hsl(209, 38%, 50%)
-
 title:
   fill: hsl(210, 29%, 94%)
 
