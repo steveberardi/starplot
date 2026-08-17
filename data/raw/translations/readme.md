@@ -27,7 +27,9 @@ Please follow these steps in a pull request to submit a new translation:
     - `dso_names.csv`
     - `other_terms.csv`
     - `star_names.csv`
-3. Add the ISO-639-1 code to the `LANGUAGES` list [here](https://github.com/steveberardi/starplot/blob/main/src/starplot/data/translations.py)
+3. Add the ISO-639-1 code to:
+    - `LANGUAGES` list [here](https://github.com/steveberardi/starplot/blob/main/src/starplot/data/translations.py)
+    - Doc-string for `Settings.language` [here](https://github.com/steveberardi/starplot/blob/main/src/starplot/config.py)
 4. Copy the values from `other_terms.csv` to the `LABELS` dictionary [here](https://github.com/steveberardi/starplot/blob/main/src/starplot/data/translations.py)
 5. Include a `readme.md` file in the data folder that explains the source of the translation (e.g. a well known astronomy book in the language, astronomical society, etc) - [see example here](https://github.com/steveberardi/starplot/blob/main/data/raw/translations/it/readme.md)
 
