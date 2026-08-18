@@ -171,7 +171,7 @@ class DsoPlotterMixin:
             gids_labels: A dictionary that maps a `DsoType` to the group id (gid) used for that type's labels in the exported SVG. If a type is not in the dict, then the default gid (`dso-{type}-labels`) is used.
         """
 
-        # TODO: add kwarg styles
+        # TODO: add kwarg styles (same structure as legend_labels)
 
         where = normalize_where(where)
         where_labels = normalize_where(where_labels)

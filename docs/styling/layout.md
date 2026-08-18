@@ -2,7 +2,7 @@
 
 Every plot you create with Starplot is made up of one or more regions. Most of these regions are optional and only take up space in the figure if you actually use the feature they belong to — for example, if you don't plot a legend, no space is reserved for one. Here's an illustration that shows all the available regions in a plot (see descriptions below the image):
 
-<img src="images/figure_layout.svg" class="off-glb">
+<img src="/images/figure_layout.svg" class="off-glb">
 
 ## Figure
 

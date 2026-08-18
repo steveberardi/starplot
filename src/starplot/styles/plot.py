@@ -467,7 +467,7 @@ class PlotStyle(BaseStyle):
         stroke_width=2,
         zorder=ZOrderEnum.LAYER_4,
     )
-    """Styling for optic fields of view"""
+    """Styling for arrows"""
 
     def get_dso_style(self, dso_type: DsoType):
         """Returns the style for a DSO type"""
