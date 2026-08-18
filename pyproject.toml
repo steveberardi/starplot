@@ -1,5 +1,5 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
+requires = ["flit_core == 3.12.0"]
 build-backend = "flit_core.buildapi"
 
 [project]
@@ -15,6 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
+requires-python = ">=3.10"
 dynamic = ["version", "description"]
 keywords = ["astronomy", "stars", "charts", "maps", "constellations", "sky", "plotting"]
 dependencies = [
@@ -68,6 +69,7 @@ theme = "dark"
 dev = [
     "click==8.2.1",
     "flit==3.12.0",
+    "flit_core==3.12.0",
     "griffe==1.15.0",
     "imagehash==4.3.1",
     "ipython==7.12.0",

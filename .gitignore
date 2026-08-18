@@ -36,14 +36,18 @@ temp/
 scripts/temp/
 scripts/scratchpad.py
 
+plots/
+scripts/__marimo__/
 
 # Documentation Generated Files
 examples/*.png
 examples/*.svg
 examples/*.jpg
+examples/*.svg
 docs/images/examples/*.png
 docs/images/examples/*.svg
 docs/images/examples/*.jpg
+docs/images/examples/*.svg
 tutorial/*.png
 docs/images/tutorial/*.png
 docs/data/*.json
