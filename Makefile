@@ -125,10 +125,10 @@ docs-publish:
 # ------------------------------------------------------------------
 # PyPi - build & publish
 flit-build:
-	$(DOCKER_RUN) "python -m flit build"
+	$(DOCKER_RUN) "uv run flit build"
 
 flit-publish:
-	$(DOCKER_RUN) "python -m flit publish"
+	$(DOCKER_RUN) "uv run flit publish"
 
 flit-install:
 	FLIT_ROOT_INSTALL=1 flit install

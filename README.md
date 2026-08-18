@@ -18,7 +18,7 @@
 - 🚀 **Data Backend** - powered by DuckDB + Ibis for fast object lookup
 - 📓 **Custom Data Catalogs** - with helpers for building and optimizing
 - 🧭 **Label Collision Avoidance** - ensuring all labels are readable
-- 🌐 **Localization** - label translations for Chinese, French, Lithuanian, Persian, and Spanish
+- 🌐 **Localization** - label translations for Chinese, French, Italian, Lithuanian, Persian, and Spanish
 
 ## Examples
 *Zenith chart of the stars from a specific time/location:*

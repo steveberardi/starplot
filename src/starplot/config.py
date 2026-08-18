@@ -65,6 +65,7 @@ class Settings:
     - `es` = Spanish
     - `fa` = Persian (Farsi). Make sure you have a Persian font installed that supports RTL (such as [Vazir](https://github.com/rastikerdar/vazir-font) or [Noto Sans Arabic](https://fonts.google.com/noto/specimen/Noto+Sans+Arabic)) and set it as the font in your plot's style.
     - `fr` = French
+    - `it` = Italian
     - `lt` = Lithuanian
     - `zh-cn` = Chinese. Make sure you have a good Chinese font installed (such as [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC)) and you'll also need to set that as the font in your plot's style.
     - `zh-tw` = Traditional Chinese
