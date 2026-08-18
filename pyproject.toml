@@ -15,7 +15,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.10"
 dynamic = ["version", "description"]
 keywords = ["astronomy", "stars", "charts", "maps", "constellations", "sky", "plotting"]
 dependencies = [
