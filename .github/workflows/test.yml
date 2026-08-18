@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
+    - name: Build PIP Package
+      run: make flit-build
     - name: Build Docker Image
       run: make build
     - name: Build sky.db
