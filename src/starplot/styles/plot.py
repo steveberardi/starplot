@@ -27,7 +27,6 @@ from starplot.styles.elements import (
     TitleStyle,
 )
 from starplot.styles.helpers import merge_dict
-from starplot.styles.types import ColorStr
 
 
 class PlotStyle(BaseStyle):
@@ -53,7 +52,7 @@ class PlotStyle(BaseStyle):
     # TODO : refactor how global text style props work
     # text_border_width: int = 2
     # """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `stroke_width` and `stroke` properties."""
-    # text_border_color: ColorStr = ColorStr("#fff")
+    # text_border_color: Color = Color("#fff")
 
     # Title
     title: TitleStyle = TitleStyle(
@@ -468,6 +467,27 @@ class PlotStyle(BaseStyle):
         zorder=ZOrderEnum.LAYER_4,
     )
     """Styling for arrows"""
+
+    tissot: PolygonStyle = PolygonStyle(
+        fill="#2e62ae",
+        stroke_width=0,
+    )
+
+
+    # Generic plotting functions
+    line: PathStyle = PathStyle()
+
+    polygon: PolygonStyle = PolygonStyle()
+
+    circle: PolygonStyle = PolygonStyle()
+
+    ellipse: PolygonStyle = PolygonStyle()
+
+    rectangle: PolygonStyle = PolygonStyle()
+
+    marker: ObjectStyle = ObjectStyle()
+    
+
 
     def get_dso_style(self, dso_type: DsoType):
         """Returns the style for a DSO type"""

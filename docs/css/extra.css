@@ -666,6 +666,7 @@ td[data-column-id=bayer] {
   width: 100%;
   height: auto;
   margin: auto;
+  padding: 14px 0;
 }
 
 .marker-symbol-img {

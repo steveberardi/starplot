@@ -2,10 +2,10 @@ from typing import Annotated
 
 from pydantic import AfterValidator
 from pydantic.functional_serializers import PlainSerializer
-from pydantic_extra_types.color import Color
+from pydantic_extra_types.color import Color as _Color
 
-ColorStr = Annotated[
-    Color,
+Color = Annotated[
+    _Color,
     PlainSerializer(
         lambda c: c.as_hex() if c and c != "none" else None,
         return_type=str,
@@ -22,7 +22,7 @@ def _validate_stops(stops: list[tuple[float, str]]) -> list[tuple[float, str]]:
 
 
 GradientStops = Annotated[
-    list[tuple[float, ColorStr]],
+    list[tuple[float, Color]],
     AfterValidator(_validate_stops),
     PlainSerializer(
         lambda stops: [(offset, c.as_hex() if c else None) for offset, c in stops],

@@ -27,7 +27,7 @@ from starplot.styles import (
     PolygonStyle,
     AnchorPointEnum,
 )
-from starplot.projections import ProjectionBase, CoordinateReferenceSystem
+from starplot.projections import ProjectionBase, CoordinateReferenceSystem, StereoNorth, StereoSouth
 from starplot.plotters import StarPlotterMixin
 from starplot.plotters.text import CollisionHandler
 from starplot.styles.helpers import use_style
@@ -236,7 +236,7 @@ class BasePlot(StarPlotterMixin, ABC):
         """
         self.canvas.title(text, style)
 
-    @use_style(ObjectStyle)
+    @use_style(ObjectStyle, "marker")
     def marker(
         self,
         ra: float,
@@ -308,7 +308,7 @@ class BasePlot(StarPlotterMixin, ABC):
         if legend_label is not None:
             self._add_legend_handle_marker(legend_label, style.marker)
 
-    @use_style(PathStyle)
+    @use_style(PathStyle, "line")
     def line(
         self,
         coordinates: list[tuple[float, float]] = None,
@@ -366,7 +366,7 @@ class BasePlot(StarPlotterMixin, ABC):
         points = self._prepare_coords_many(points)
         self.canvas.polygon(points, style)
 
-    @use_style(PolygonStyle)
+    @use_style(PolygonStyle, "polygon")
     def polygon(
         self,
         style: PolygonStyle,
@@ -400,7 +400,7 @@ class BasePlot(StarPlotterMixin, ABC):
                 style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
             )
 
-    @use_style(PolygonStyle)
+    @use_style(PolygonStyle, "rectangle")
     def rectangle(
         self,
         center: tuple,
@@ -409,7 +409,6 @@ class BasePlot(StarPlotterMixin, ABC):
         style: PolygonStyle,
         angle: float = 0,
         legend_label: str = None,
-        **kwargs,
     ):
         """Plots a rectangle
 
@@ -437,7 +436,7 @@ class BasePlot(StarPlotterMixin, ABC):
                 style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
             )
 
-    @use_style(PolygonStyle)
+    @use_style(PolygonStyle, "ellipse")
     def ellipse(
         self,
         center: tuple,
@@ -482,7 +481,7 @@ class BasePlot(StarPlotterMixin, ABC):
                 style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE),
             )
 
-    @use_style(PolygonStyle)
+    @use_style(PolygonStyle, "circle")
     def circle(
         self,
         center: tuple,
@@ -914,24 +913,28 @@ class BasePlot(StarPlotterMixin, ABC):
                 # gid="celestial-equator",
             )
 
-    
-    def tissot(self, radius: int = 4, gid: str = "tissot"):
+
+    @use_style(PolygonStyle, "tissot")
+    def tissot(self, radius: int = 4, style: PolygonStyle = None, gid: str = "tissot"):
         """
         Draws a [Tissot indicatrix](https://en.wikipedia.org/wiki/Tissot's_indicatrix), 
         which helps illustrate the distortion of a projection.
 
         Args:
             radius: Radius of each circle, in degrees
+            style: Styling of the Tissot circles. If None, then the plot's style will be used
             gid: Group id for this layer in the exported SVG
         """
 
         with self.canvas.group(gid=gid):
-            for ra in range(45, 360, 45):
+            ra_start = 45 if not isinstance(self.projection, (StereoNorth, StereoSouth)) else 0
+            for ra in range(ra_start, 360, 45):
                 for dec in range(-80, 90, 20):
                     self.circle(
                         center=(ra, dec),
                         radius_degrees=radius,
-                        style__fill="#2e62ae",
+                        style=style,
+                        # style__fill="#2e62ae",
                     )
 
     def _debug_bbox(self, bbox, color, width=1):

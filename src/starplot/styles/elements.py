@@ -14,7 +14,7 @@ from starplot.styles.constants import (
     MarkerSymbolEnum,
     ZOrderEnum,
 )
-from starplot.styles.types import ColorStr, GradientStops
+from starplot.styles.types import Color, GradientStops
 
 
 class MarkerStyle(BaseStyle):
@@ -22,7 +22,7 @@ class MarkerStyle(BaseStyle):
     Styling properties for markers.
     """
 
-    fill: ColorStr | GradientStops | None = ColorStr("#000")
+    fill: Color | GradientStops | None = Color("#000")
     """
     Fill color of the marker
     
@@ -44,7 +44,7 @@ class MarkerStyle(BaseStyle):
     
     """
 
-    stroke: ColorStr | None = ColorStr("#000")
+    stroke: Color | None = Color("#000")
     """Edge color of marker. Can be a hex, rgb, hsl, or word string."""
 
     stroke_width: float = 1
@@ -62,7 +62,7 @@ class MarkerStyle(BaseStyle):
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.CIRCLE
     """Symbol for marker"""
 
-    size: float = 22
+    size: float = 24
     """Size of marker in pixels"""
 
     opacity: float = Field(default=1.0, ge=0, le=1)
@@ -112,10 +112,10 @@ class LineStyle(BaseStyle):
     Styling properties for lines.
     """
 
-    width: float = 4
+    width: float = 2
     """Width of line in pixels"""
 
-    stroke: ColorStr | None = ColorStr("#000")
+    stroke: Color | None = Color("#000")
     """Color of the line. Can be a hex, rgb, hsl, or word string."""
 
     style: LineStyleEnum | tuple = LineStyleEnum.SOLID
@@ -153,7 +153,7 @@ class PolygonStyle(BaseStyle):
     Styling properties for polygons.
     """
 
-    fill: ColorStr | GradientStops | None = None
+    fill: Color | GradientStops | None = Color("#c2c2c2")
     """
     Fill color of the polygon
     
@@ -178,7 +178,7 @@ class PolygonStyle(BaseStyle):
     stroke_width: float = 1
     """Width of the polygon's edge in pixels"""
 
-    stroke: ColorStr | None = None
+    stroke: Color | None = Color("#000")
     """Edge color of the polygon"""
 
     gradient_type: GradientType = GradientType.RADIAL
@@ -276,7 +276,7 @@ class LabelStyle(BaseStyle):
     font_style: FontStyleEnum = FontStyleEnum.NORMAL
     """Style of the label (e.g. normal, italic, etc)"""
 
-    fill: ColorStr = ColorStr("#000")
+    fill: Color = Color("#000")
     """Font's color"""
 
     opacity: float = Field(default=1.0, ge=0, le=1)
@@ -291,7 +291,7 @@ class LabelStyle(BaseStyle):
     stroke_width: float = 0
     """Width of border (also known as 'halos') around the text, in pixels"""
 
-    stroke: ColorStr | None = None
+    stroke: Color | None = None
     """Color of border (also known as 'halos') around the text"""
 
     offset_x: float | int | str = 0
@@ -379,7 +379,7 @@ class LegendStyle(BaseStyle):
     location: LegendLocationEnum = LegendLocationEnum.INSIDE_TOP_RIGHT
     """Location of the legend, relative to the map area (inside or outside)"""
 
-    background_color: ColorStr = ColorStr("#fff")
+    background_color: Color = Color("#fff")
     """Background color of the legend box"""
 
     background_alpha: float = 1.0
@@ -388,7 +388,7 @@ class LegendStyle(BaseStyle):
     border_radius: float = 8.0
     """Border radius of legend box"""
 
-    border_color: ColorStr = ColorStr("#c5c5c5")
+    border_color: Color = Color("#c5c5c5")
     """Border color of the legend box"""
 
     border_width: float = 1

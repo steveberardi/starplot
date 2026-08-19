@@ -9,11 +9,11 @@ Shows accurate distances from the center position. Often used for planispheres.
 Lambert Azimuthal Equal-Area projection - accurately shows area, but distorts angles.
 ![Lambert Azimuthal Equal-Area projection: gridlines and Tissot indicatrix](images/examples/projection_lambert_az_eq_area.svg){ .projection-img loading=lazy }
 - __Mercator__{.fs-2}
-Good for declinations between -70 and 70, but distorts objects near the poles<br/><br/>
+Good for declinations between -70 and 70, but distorts objects near the poles
 ![Mercator projection: gridlines and Tissot indicatrix](images/examples/projection_mercator.svg){ .projection-img loading=lazy }
 - __Miller__{.fs-2}
 Similar to Mercator: good for declinations between -70 and 70, but distorts objects near the poles
-![Miller projection: gridlines and Tissot indicatrix](images/examples/projection_miller.svg){ .projection-img loading=lazy }<br/>
+![Miller projection: gridlines and Tissot indicatrix](images/examples/projection_miller.svg){ .projection-img loading=lazy }
 - __Mollweide__{.fs-2}
 Good for showing the entire celestial sphere in one plot
 ![Mollweide projection: gridlines and Tissot indicatrix](images/examples/projection_mollweide.svg){ .projection-img loading=lazy }
@@ -31,7 +31,7 @@ Similar to the North/South Stereographic projection, but allows custom central d
 ![Stereographic projection: gridlines and Tissot indicatrix](images/examples/projection_stereographic.svg){ .projection-img loading=lazy }
 - __PlateCarree__{.fs-2}
 An equirectangular projection
-![Plate Carree projection: gridlines and Tissot indicatrix](images/examples/projection_plate_carree.svg){ .projection-img loading=lazy }<br/><br/><br/>
+![Plate Carree projection: gridlines and Tissot indicatrix](images/examples/projection_plate_carree.svg){ .projection-img loading=lazy }
 
 </div>
 
