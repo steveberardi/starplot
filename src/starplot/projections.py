@@ -159,7 +159,7 @@ class ProjectionBase(BaseModel, ABC):
 
         if hasattr(self, "azimuth"):
             params["alpha"] = self.azimuth
-            params["lonc"] = self.center_ra
+            params["lonc"] = params["lon_0"]
 
         return CRS.from_dict(
             {k: v for k, v in params.items() if k not in ignored_params}
