@@ -461,36 +461,28 @@ class Canvas:
         coordinates: list[tuple[float, float]] | None = None,
         style: PathStyle | LineStyle = None,
     ) -> None:
-        lines_split = []
+        arr = np.array(coordinates)
+        px, py = self.tx.transform(arr[:, 0], arr[:, 1])
+
         if self.projection.wraps:
-            # split at antimeridian AND edge_x
-            lines_antimeridian = _geometry.split_at_antimeridian(
-                coordinates,
-                offset=0.0001,
+            # Cut wherever the *projected* line jumps or goes non-finite,
+            # instead of guessing where the projection's seam falls in RA/DEC
+            # space (that only has a simple answer for unrotated cylindrical
+            # projections -- see ObliqueMercator, whose seam isn't a fixed RA).
+            max_jump = 0.5 * max(self.maxx - self.minx, self.maxy - self.miny)
+            lines_split = _geometry.split_line_at_projection_jumps(
+                list(zip(px, py)), max_jump=max_jump
             )
-            for line in lines_antimeridian:
-                lines_edge_x = _geometry.split_line_at_x(
-                    line, self.projection.edge_x, offset=0.001
-                )
-                lines_split.extend(lines_edge_x)
-
         else:
-            lines_split = [coordinates]
-
-        # geom = LineString(coordinates)
-
-        # if self.projection.wraps:
-        #     lines_split = _geometry.split_at_x(
-        #         geometry=geom, wrap_x=self.projection.edge_x
-        #     )
-        # else:
-        #     lines_split = [geom]
+            lines_split = [list(zip(px, py))]
 
         for line in lines_split:
-            coords = line  # list(zip(*line.coords.xy))
-            arr = np.array(coords)
+            if len(line) < 2:
+                continue
+
+            arr = np.array(line)
             xs, ys = arr[:, 0], arr[:, 1]
-            dx, dy = self._to_display(xs, ys)
+            dx, dy = self._to_display(xs, ys, cs=CoordinateSystem.PROJECTED)
             dxy = list(zip(dx, dy))
 
             attrs = style.css(self.scale)

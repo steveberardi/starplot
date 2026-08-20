@@ -548,51 +548,53 @@ def split_at_antimeridian(
     return segments
 
 
-def split_line_at_x(
+def split_line_at_projection_jumps(
     coords: list[tuple[float, float]],
-    split_x: float,
-    offset: float | None = 0.000001,
-) -> list[list[tuple]]:
+    max_jump: float,
+) -> list[list[tuple[float, float]]]:
     """
-    Split a list of (x, y) coords at a specific x value.
-    Returns a list of segments (each a list of (x, y) tuples).
+    Split a line of *already-projected* (x, y) coords wherever a point is
+    non-finite or the distance from the previous point exceeds `max_jump`.
 
-    If offset is provided, the split points are nudged away from split_x on each side.
+    Where a projection's discontinuity (antimeridian wraparound, a pole
+    singularity, etc.) actually falls in raw data (e.g. RA/DEC) space depends
+    on the projection -- for a plain cylindrical projection it's a fixed
+    meridian, but for a rotated one (e.g. oblique Mercator) it's a curve that
+    isn't expressible as a single coordinate value. Rather than compute that
+    curve analytically per-projection, this projects first and cuts wherever
+    the *output* actually jumps or blows up, which works the same way for
+    every projection.
+
+    Args:
+        coords: List of already-projected (x, y) coordinate tuples
+        max_jump: Distance threshold (in projected units) above which two
+            consecutive points are considered discontinuous
+
+    Returns:
+        List of coordinate-list segments
     """
     if not coords:
         return []
 
     segments = []
-    current = [coords[0]]
+    current = []
 
-    for i in range(1, len(coords)):
-        x1, y1 = current[-1]
-        x2, y2 = coords[i]
+    for x, y in coords:
+        if not (math.isfinite(x) and math.isfinite(y)):
+            if current:
+                segments.append(current)
+                current = []
+            continue
 
-        if x1 == split_x:
-            x1 += offset
-        if x2 == split_x:
-            x2 += offset
+        if current:
+            px, py = current[-1]
+            if math.hypot(x - px, y - py) > max_jump:
+                segments.append(current)
+                current = []
 
-        if ((x1 <= split_x <= x2) or (x2 <= split_x <= x1)) and x1 != x2:
-            t = (split_x - x1) / (x2 - x1)
-            y_cross = y1 + t * (y2 - y1)
+        current.append((x, y))
 
-            if offset is not None:
-                # Nudge each end away from split_x
-                end_x = split_x - offset if x1 <= split_x else split_x + offset
-                start_x = split_x + offset if x1 <= split_x else split_x - offset
-            else:
-                end_x = split_x
-                start_x = split_x
-
-            current.append((end_x, y_cross))
-            segments.append(current)
-            current = [(start_x, y_cross), (x2, y2)]
-        else:
-            current.append((x2, y2))
-
-    if len(current) >= 2:
+    if current:
         segments.append(current)
 
     return segments
