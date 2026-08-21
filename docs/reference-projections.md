@@ -32,6 +32,10 @@ Similar to the North/South Stereographic projection, but allows custom central d
 - __PlateCarree__{.fs-2}
 An equirectangular projection
 ![Plate Carree projection: gridlines and Tissot indicatrix](images/examples/projection_plate_carree.svg){ .projection-img loading=lazy }
+- __ObliqueMercator__{.fs-2}
+A cylindrical projection like Mercator, but the "cylinder" is wrapped around a specified great circle instead of the equator — you set that circle with center_ra/center_dec (a point on it) and azimuth (its direction there). This makes it useful for framing a narrow band of sky that runs at an angle to the RA/DEC grid — e.g. tracing the Milky Way's galactic plane, an eclipse path, or a satellite ground track — with low, Mercator-like distortion right along that line and shapes/angles preserved locally (it's conformal).
+![Oblique Mercator projection: gridlines and Tissot indicatrix](images/examples/projection_oblique_mercator.svg){ .projection-img loading=lazy }
+
 
 </div>
 

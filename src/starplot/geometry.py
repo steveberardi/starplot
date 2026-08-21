@@ -5,8 +5,7 @@ import random
 import numpy as np
 import pyproj
 from shapely import union_all
-from shapely.geometry import LineString, MultiLineString, MultiPolygon, Point, Polygon
-from shapely.ops import split
+from shapely.geometry import LineString, Point, Polygon
 
 from starplot.constants import PROJ_R
 
@@ -236,26 +235,6 @@ def split_polygon_at_zero(polygon: Polygon) -> list[Polygon]:
     return [polygon]
 
 
-MERIDIAN = LineString([(360, 90), (360, -90)])
-
-
-def split_geometry_with_line(geometry, line=MERIDIAN):
-    """Split a geometry with a line."""
-    if not geometry.intersects(line):
-        return [geometry]
-
-    result = split(geometry, line)
-
-    geoms = []
-    for geom in result.geoms:
-        if isinstance(geom, (Polygon, LineString)):
-            geoms.append(geom)
-        elif isinstance(geom, (MultiPolygon, MultiLineString)):
-            geoms.extend(list(geom.geoms))
-
-    return geoms or [geometry]
-
-
 def normalize_to_360(polygon: Polygon) -> Polygon:
     """
     If the provided polygon has coordinates with large jumps from < 100 to > 300,
@@ -272,39 +251,6 @@ def normalize_to_360(polygon: Polygon) -> Polygon:
     return polygon
 
 
-def fix_wrap(
-    coords: list[tuple[float, float]], wrap_x: float = 360
-) -> list[tuple[float, float]]:
-    """
-    Unwraps X coordinates that jump by more than 180 degrees between consecutive
-    points (e.g. 359 -> 1), by adding/subtracting 360 as needed to keep the sequence
-    continuous. This is needed for rings that legitimately span the full 0-360 range
-    (e.g. the Milky Way polygon in galactic coordinates).
-
-    The unwrapped result is then shifted by a multiple of 360 (if needed) so that it
-    straddles wrap_x, since callers rely on splitting the ring with a vertical line at
-    exactly x=wrap_x.
-
-    Args:
-        coords: List of coordinate tuples (x, y)
-        wrap_x: The X value the result should straddle, so it can be split there
-
-    Returns:
-        List of unwrapped coordinate tuples
-    """
-    arr = np.array(coords, dtype=float)
-    x = arr[:, 0]
-    unwrapped = np.degrees(np.unwrap(np.radians(x)))
-
-    if unwrapped.max() < wrap_x:
-        unwrapped += 360 * np.ceil((wrap_x - unwrapped.max()) / 360)
-    elif unwrapped.min() > wrap_x:
-        unwrapped -= 360 * np.ceil((unwrapped.min() - wrap_x) / 360)
-
-    arr[:, 0] = unwrapped
-    return list(map(tuple, arr))
-
-
 def restrict_to_360(polygon: Polygon) -> Polygon:
     """
     If the polygon has a max RA over 360, then subtract 360 from all RA coordinates.
@@ -316,86 +262,6 @@ def restrict_to_360(polygon: Polygon) -> Polygon:
         return Polygon(list(zip(new_ra, dec)))
 
     return polygon
-
-
-def split_at_x(
-    geometry: Polygon | LineString, wrap_x: float = 360
-) -> list[Polygon] | list[LineString]:
-    """
-
-    Splits a geometry at the specified wrap point.
-
-    Also nudges X values exactly at the wrap point to be away from it.
-
-    Args:
-        geometry: Polygon or LineString that possibly needs splitting
-        wrap_x: The X value where the geometry should be split (i.e. where it 'wraps')
-
-    Returns:
-        List of polygons or line strings
-    """
-    if isinstance(geometry, LineString):
-        geometry_class = LineString
-        coords = list(zip(*geometry.coords.xy))
-
-    if isinstance(geometry, Polygon):
-        geometry_class = Polygon
-        coords = list(zip(*geometry.exterior.coords.xy))
-
-    needs_splitting = False
-    needs_normalize = False
-
-    if wrap_x == 0:
-        wrap_x = 360
-
-    for i, xy in enumerate(coords[1:]):
-        x, y = xy
-        prev_x = coords[i - 1][0]
-        if prev_x < wrap_x < x or x < wrap_x < prev_x:
-            needs_splitting = True
-        if abs(prev_x - x) > 180:
-            needs_normalize = True
-            if wrap_x == 360:
-                needs_splitting = True
-
-    if not needs_splitting:
-        return [geometry]
-
-    if needs_normalize:
-        coords = fix_wrap(coords, wrap_x)
-
-    line = LineString([(wrap_x, 90), (wrap_x, -90)])
-    result = split_geometry_with_line(
-        geometry=geometry_class(coords),
-        line=line,
-    )
-
-    geoms = []
-    for g in result:
-        new_coords = []
-
-        if geometry_class is Polygon:
-            g_coords = g.exterior.coords.xy
-        elif geometry_class is LineString:
-            g_coords = g.coords.xy
-
-        _x, _ = [p for p in g_coords]
-        x_max = max(_x)
-
-        for x, y in list(zip(*g_coords)):
-            new_x = x
-            if new_x > 360:
-                new_x -= 360
-            if new_x == wrap_x and x_max > wrap_x:
-                new_x += 0.000001
-            elif new_x == wrap_x and x_max == wrap_x:
-                new_x -= 0.000001
-
-            new_coords.append((new_x, y))
-
-        geoms.append(geometry_class(new_coords))
-
-    return geoms
 
 
 def split_line_at_meridian(p1, p2, meridian=360):
@@ -598,6 +464,49 @@ def split_line_at_projection_jumps(
         segments.append(current)
 
     return segments
+
+
+def split_ring_at_projection_jumps(
+    coords: list[tuple[float, float]],
+    max_jump: float,
+) -> list[list[tuple[float, float]]]:
+    """
+    Like `split_line_at_projection_jumps`, but for a *closed* ring (e.g. a
+    polygon's exterior). Treats the sequence as cyclic, so an arc that wraps
+    across the start/end of the coordinate list comes back as a single
+    piece instead of being cut in two at an arbitrary array boundary.
+
+    Args:
+        coords: List of already-projected (x, y) ring coordinates (first and
+            last points may or may not repeat -- both are handled)
+        max_jump: Distance threshold (in projected units) above which two
+            consecutive points are considered discontinuous
+
+    Returns:
+        List of coordinate-list arcs. Empty if the ring has fewer than 3
+        distinct points.
+    """
+    pts = coords[:-1] if len(coords) > 1 and coords[0] == coords[-1] else list(coords)
+    n = len(pts)
+    if n < 3:
+        return []
+
+    def finite(p):
+        return math.isfinite(p[0]) and math.isfinite(p[1])
+
+    jump_after = [
+        i
+        for i in range(n)
+        if not (finite(pts[i]) and finite(pts[(i + 1) % n]))
+        or math.hypot(pts[(i + 1) % n][0] - pts[i][0], pts[(i + 1) % n][1] - pts[i][1])
+        > max_jump
+    ]
+    if not jump_after:
+        return [pts]
+
+    start = (jump_after[0] + 1) % n
+    rotated = [pts[(start + k) % n] for k in range(n)]
+    return split_line_at_projection_jumps(rotated, max_jump)
 
 
 def extent_polygon(

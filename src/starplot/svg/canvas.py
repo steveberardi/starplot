@@ -1,11 +1,12 @@
 import hashlib
+import math
 from contextlib import contextmanager
 from enum import Enum
 from pathlib import Path
 
 import numpy as np
 from pyproj import CRS
-from shapely import LineString, MultiPoint, Point, concave_hull
+from shapely import LineString, MultiPoint, Point, box, concave_hull
 from shapely import Polygon as ShapelyPolygon
 from shapely.affinity import translate as _translate_shape
 from shapely.ops import transform as _transform_shape
@@ -124,6 +125,15 @@ class Canvas:
     def _to_axes(self, x, y):
         px, py = self.tx.transform(x, y)
         return normalize(px, self.minx, self.maxx), normalize(py, self.miny, self.maxy)
+
+    @property
+    def _max_projection_jump(self) -> float:
+        """
+        Distance (in projected units) above which two consecutive projected
+        points are considered discontinuous -- i.e. on opposite sides of the
+        projection's seam/pole rather than genuinely adjacent.
+        """
+        return 0.5 * max(self.maxx - self.minx, self.maxy - self.miny)
 
     def _to_display(self, x, y, cs: CoordinateSystem = CoordinateSystem.DATA):
         if cs == CoordinateSystem.DISPLAY:
@@ -456,6 +466,71 @@ class Canvas:
             Group(id=gid, attrs=style.css(self.scale), children=elements),
         )
 
+    def _refine_jump(self, a, b):
+        """
+        A coarse jump between two *original* (RA/DEC) points doesn't mean
+        the whole segment should be dropped -- for a densely-sampled curve
+        (gridlines, the ecliptic) dropping the one small gap between two
+        adjacent samples is imperceptible, but for a sparse line (e.g. a
+        constellation edge, just 2 points total) it would silently delete
+        the entire line. So re-sample the original a->b segment finely and
+        re-run the same jump split at that resolution, giving each side a
+        real line reaching almost all the way to the seam instead of
+        nothing.
+        """
+        ra_a, ra_b = a[0], b[0]
+        # interpolate along the *shorter* way around -- a plain linspace
+        # between e.g. RA 359 and RA 1 would otherwise sweep the long way
+        # through RA 180, cutting across the whole visible sky instead of
+        # the real ~2-degree gap between them.
+        if ra_b - ra_a > 180:
+            ra_b -= 360
+        elif ra_a - ra_b > 180:
+            ra_b += 360
+
+        ra = np.linspace(ra_a, ra_b, 64)
+        dec = np.linspace(a[1], b[1], 64)
+        rx, ry = self.tx.transform(ra, dec)
+        return _geometry.split_line_at_projection_jumps(
+            list(zip(rx, ry)), max_jump=self._max_projection_jump
+        )
+
+    def _split_line_with_refinement(self, coordinates, px, py):
+        max_jump = self._max_projection_jump
+        segments = []
+        current = []
+
+        for i, (x, y) in enumerate(zip(px, py)):
+            finite = np.isfinite(x) and np.isfinite(y)
+
+            if not finite:
+                if current:
+                    segments.append(current)
+                    current = []
+                continue
+
+            if current:
+                lx, ly = current[-1]
+                if math.hypot(x - lx, y - ly) > max_jump:
+                    refined = self._refine_jump(coordinates[i - 1], coordinates[i])
+                    if not refined:
+                        segments.append(current)
+                        current = []
+                    elif len(refined) == 1:
+                        current.extend(refined[0])
+                    else:
+                        current.extend(refined[0])
+                        segments.append(current)
+                        segments.extend(refined[1:-1])
+                        current = list(refined[-1])
+
+            current.append((x, y))
+
+        if current:
+            segments.append(current)
+
+        return segments
+
     def line(
         self,
         coordinates: list[tuple[float, float]] | None = None,
@@ -469,10 +544,7 @@ class Canvas:
             # instead of guessing where the projection's seam falls in RA/DEC
             # space (that only has a simple answer for unrotated cylindrical
             # projections -- see ObliqueMercator, whose seam isn't a fixed RA).
-            max_jump = 0.5 * max(self.maxx - self.minx, self.maxy - self.miny)
-            lines_split = _geometry.split_line_at_projection_jumps(
-                list(zip(px, py)), max_jump=max_jump
-            )
+            lines_split = self._split_line_with_refinement(coordinates, px, py)
         else:
             lines_split = [list(zip(px, py))]
 
@@ -488,6 +560,144 @@ class Canvas:
             attrs = style.css(self.scale)
             self._add_element(style.zorder, Polyline(points=dxy, attrs=attrs))
 
+    def _find_visible_interior_point(self, coordinates) -> Point | None:
+        """
+        Finds a point that's both inside the original (un-projected) polygon
+        and projects into the visible plot bounds, or None if no such point
+        could be found (e.g. this particular piece isn't actually visible in
+        the current view). Used as known-interior ground truth by
+        `_clip_wrapped_polygon`, to check that resolving a wrapped polygon's
+        self-intersections didn't fill its outside instead of its inside.
+        """
+        original = ShapelyPolygon(coordinates)
+        if not original.is_valid:
+            original = original.buffer(0)
+        if original.is_empty:
+            return None
+
+        minx, miny, maxx, maxy = original.bounds
+        rng = np.random.default_rng(0)
+        candidates = [original.representative_point()]
+        candidates += [
+            Point(x, y)
+            for x, y in zip(rng.uniform(minx, maxx, 300), rng.uniform(miny, maxy, 300))
+        ]
+
+        for pt in candidates:
+            if not original.contains(pt):
+                continue
+
+            x, y = self.tx.transform(pt.x, pt.y)
+            if (
+                np.isfinite(x)
+                and np.isfinite(y)
+                and self.minx <= x <= self.maxx
+                and self.miny <= y <= self.maxy
+            ):
+                return Point(x, y)
+
+        return None
+
+    def _clip_wrapped_polygon(self, coordinates, px, py) -> list[ShapelyPolygon]:
+        """
+        Given an already-projected polygon ring that may span a projection's
+        seam/pole, returns the ring(s) actually visible within the plot's
+        bounds.
+
+        A polygon crossing the seam projects into a ring with one or more
+        edges that are straight chords connecting points which aren't really
+        adjacent on the sphere (the projected line jumped or went non-finite
+        between them -- see Canvas.line, which cuts a *line* at these same
+        points). A polygon can't just stop at a cut, though; it needs to stay
+        closed.
+
+        The common case is a small, locally compact object that just happens
+        to straddle the seam (e.g. a DSO catalog polygon near RA 0/360, or a
+        pole singularity landing inside a small shape) -- there, each real
+        boundary arc's own two cut ends stay close together, so closing an
+        arc by connecting them directly with a short chord is a safe,
+        unambiguous stand-in for "whatever the boundary does off-screen." No
+        buffer(0)/winding involved, so there's nothing to resolve wrong.
+
+        For a polygon that spans a large stretch of sky (the Milky Way, or
+        any shape whose cut ends land far apart), a short chord isn't a
+        reasonable stand-in, so this falls back to repairing the whole ring
+        at once with buffer(0) and intersecting it with the plot's own
+        bounds -- GEOS resolves that the same way regardless of which
+        projection produced the ring.
+
+        buffer(0)'s self-intersection repair has to pick a winding for the
+        patched-up ring, though, and the "fake" edges bridging a jump/pole
+        can just as easily land on the wrong side -- filling everywhere
+        BUT the true shape instead of the shape itself. So the result is
+        checked against a point known to be inside the original polygon, and
+        swapped for its complement (within the visible bounds) if that check
+        fails.
+
+        Known limitation: that correction is a single global flip, checked
+        against one point. A ring with more than one jump (e.g. a polygon
+        that fully encircles the sky, crossing the seam twice) gets a fake
+        chord at *each* jump, and buffer(0) picks a winding per
+        self-intersection independently -- one chord can resolve correctly
+        while another resolves inverted in the same ring, which this can't
+        detect or fix (checking more points wouldn't help, since the two bad
+        regions can each look "correct" from a single sample). Confirmed
+        correct for single-jump cases; a wrap that still looks inside-out
+        after this likely needs real polygon clipping (walking each real
+        boundary arc and closing gaps via the view box's own corners)
+        instead of this repair-and-check approach.
+        """
+        finite = np.isfinite(px) & np.isfinite(py)
+
+        if finite.all():
+            jumps = np.hypot(np.diff(px), np.diff(py)) > self._max_projection_jump
+            if not jumps.any():
+                return [ShapelyPolygon(zip(px, py))]
+
+        view = box(self.minx, self.miny, self.maxx, self.maxy)
+        arcs = _geometry.split_ring_at_projection_jumps(
+            list(zip(px, py)), max_jump=self._max_projection_jump
+        )
+        if arcs and all(
+            math.hypot(arc[-1][0] - arc[0][0], arc[-1][1] - arc[0][1])
+            <= 0.1 * self._max_projection_jump
+            for arc in arcs
+        ):
+            pieces = []
+            for arc in arcs:
+                if len(arc) < 3:
+                    continue
+                local = ShapelyPolygon([*arc, arc[0]])
+                if not local.is_valid:
+                    local = local.buffer(0)
+                clipped = local.intersection(view)
+                if not clipped.is_empty:
+                    pieces.extend(
+                        clipped.geoms if hasattr(clipped, "geoms") else [clipped]
+                    )
+            return [g for g in pieces if g.geom_type == "Polygon"]
+
+        # non-finite coords (e.g. a projection's pole) can't be represented
+        # in a shapely geometry -- push them far outside the plot's bounds
+        # instead, so they still resolve to "outside the visible area" below.
+        far = 1e6 * max(self.maxx - self.minx, self.maxy - self.miny)
+        px = np.nan_to_num(px, nan=far, posinf=far, neginf=-far)
+        py = np.nan_to_num(py, nan=far, posinf=far, neginf=-far)
+
+        raw = ShapelyPolygon(zip(px, py)).buffer(0)
+        resolved = raw.intersection(view)
+
+        inside_point = self._find_visible_interior_point(coordinates)
+        if inside_point is not None and not resolved.contains(inside_point):
+            resolved = view.difference(raw)
+
+        if resolved.is_empty:
+            return []
+        if resolved.geom_type == "Polygon":
+            return [resolved]
+
+        return [g for g in resolved.geoms if g.geom_type == "Polygon"]
+
     def polygon(
         self,
         coordinates: list[tuple[float, float]],
@@ -495,19 +705,19 @@ class Canvas:
         cs: CoordinateSystem = CoordinateSystem.DATA,
         attrs: dict | None = None,
     ) -> None:
-        p = ShapelyPolygon(coordinates)
-
-        # Antimeridian wraparound only means something for raw ra/dec (DATA)
-        # coordinates. For already-projected/pixel-space coordinates (e.g.
-        # PROJECTED or DISPLAY, as used for arrows/debug overlays), splitting
-        # at the projection's ra-based edge_x is meaningless and corrupts the
-        # shape whenever it happens to span more than 180 (pixel) units.
+        # Antimeridian/seam wraparound only means something for raw ra/dec
+        # (DATA) coordinates. For already-projected/pixel-space coordinates
+        # (e.g. PROJECTED or DISPLAY, as used for arrows/debug overlays),
+        # clipping at the projection's seam is meaningless and corrupts the
+        # shape.
         if self.projection.wraps and cs == CoordinateSystem.DATA:
-            polygons_split = _geometry.split_at_x(
-                geometry=p, wrap_x=self.projection.edge_x
-            )
+            arr = np.array(coordinates)
+            px, py = self.tx.transform(arr[:, 0], arr[:, 1])
+            polygons_split = self._clip_wrapped_polygon(coordinates, px, py)
+            result_cs = CoordinateSystem.PROJECTED
         else:
-            polygons_split = [p]
+            polygons_split = [ShapelyPolygon(coordinates)]
+            result_cs = cs
 
         for p in polygons_split:
             if p.is_empty:
@@ -516,7 +726,7 @@ class Canvas:
             polygon_coords = list(zip(*p.exterior.coords.xy))
             arr = np.array(polygon_coords)
             xs, ys = arr[:, 0], arr[:, 1]
-            dx, dy = self._to_display(xs, ys, cs)
+            dx, dy = self._to_display(xs, ys, result_cs)
             dxy = list(zip(dx, dy))
 
             attrs = attrs or {}

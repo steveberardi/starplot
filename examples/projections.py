@@ -17,6 +17,7 @@ from starplot import (
     Mercator,
     Miller,
     Mollweide,
+    ObliqueMercator,
     PlateCarree,
     Robinson,
     Stereographic,
@@ -59,6 +60,20 @@ PROJECTIONS = [
     ("miller", Miller(), dict(dec_min=-85, dec_max=85), None),
     ("mercator", Mercator(), dict(dec_min=-80, dec_max=80), None),
     ("plate_carree", PlateCarree(), dict(dec_min=-90, dec_max=90), None),
+    # Oblique Mercator is Mercator wrapped around an arbitrary great circle
+    # (set by center_ra/center_dec + azimuth) instead of the equator, so
+    # unlike plain Mercator its blow-up points aren't fixed at the poles --
+    # they're always exactly 90 degrees from the center, in whichever two
+    # directions are perpendicular to azimuth. A rectangular RA/DEC extent
+    # can't dodge that (it's 2 points, not a dec band), so -- as with the
+    # azimuthal projections below -- this uses a circle around the center,
+    # sized well under that 90-degree radius.
+    (
+        "oblique_mercator",
+        ObliqueMercator(azimuth=45),
+        dict(),
+        geometry.circle(center=(180, 0), diameter_degrees=150, num_pts=100),
+    ),
     # Global-only projections always show the entire sky
     ("mollweide", Mollweide(), dict(), None),
     ("robinson", Robinson(), dict(), None),

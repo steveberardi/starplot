@@ -35,9 +35,7 @@ dependencies = [
     "ibis-framework[duckdb,geospatial] >= 11",
     "astropy-healpix >= 1.1.2",
     "fonttools >= 4.62.1",
-    "cairosvg >= 2.9.0",
     "pydantic-extra-types>=2.11.1",
-    "resvg-py",
 ]
 requires-python = ">=3.10,<=3.13"
 
@@ -48,6 +46,12 @@ Source = "https://github.com/steveberardi/starplot"
 
 [project.scripts]
 starplot = "starplot.cli:main"
+
+[project.optional-dependencies]
+png = [
+    "cairosvg >= 2.9.0",
+    "resvg-py",
+]
 
 [tool.flit.sdist]
 include = [
