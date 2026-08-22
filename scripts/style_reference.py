@@ -296,7 +296,8 @@ def build_node(name: str, type_name: str, doc: str, classes: dict, path: str) ->
     field of its style type (each itself a node or a leaf), so the whole
     subtree is available to render in place -- no separate lookup elsewhere."""
     cdef = classes[type_name]
-    doc_html, doc_full = render_doc(doc or cdef["doc"])
+    raw_doc = doc or cdef["doc"]
+    doc_html, doc_full = render_doc(raw_doc)
 
     children = []
     for f in resolve_fields(type_name, classes):
@@ -322,6 +323,8 @@ def build_node(name: str, type_name: str, doc: str, classes: dict, path: str) ->
         "type_name": type_name,
         "doc_html": doc_html,
         "doc_full": doc_full,
+        "search_doc": raw_doc.lower(),
+        "path": path,
         "children": children,
     }
 

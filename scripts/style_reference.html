@@ -257,13 +257,15 @@ details.node summary .tname {
    property actually contested. */
 .node-body {
   /* padding: 5px 6px 5px 10px; */
-  padding: 8px 10px;
+  /* padding: 8px 10px; */
   /* border-left: 2px solid var(--line); */
-  margin: 8px 10px;
+  /* margin: 8px 10px; */
   /* margin-bottom: 4px !important; */
+  margin-left: 12px;
+  
 }
 
-.fields { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--card-bg); }
+.fields { display: flex; flex-direction: column; gap: 0; border: 0px solid var(--line); border-radius: 0px; overflow: hidden; background: var(--card-bg); }
 .fields > details.node { border: none; border-radius: 0; margin: 0;}
 .fields > details.node + details.node,
 .fields > details.node + .field,
@@ -271,8 +273,8 @@ details.node summary .tname {
 .fields--top > details.node { border-radius: 10px; border: 1px solid var(--line); }
 .fields--top > details.node > summary { background: var(--card-bg-top); }
 
-.fields > details.node > summary { padding: 16px 16px; }
-.fields--top > details.node > summary { padding: 16px 16px; }
+.fields > details.node > summary { padding: 8px 16px; }
+.fields--top > details.node > summary { padding: 12px 16px; }
 
 .field {
   position: relative;
@@ -281,6 +283,7 @@ details.node summary .tname {
   gap: 12px;
   align-items: start;
   padding: 9px 14px;
+  margin-left: 28px;
 }
 .field + .field { border-top: 1px solid var(--line); }
 .field:hover { background: var(--surface-2); }
@@ -336,7 +339,7 @@ footer.page-foot code { font-family: var(--font-mono); }
 ::selection { background: var(--accent); color: var(--accent-ink); }
 </style>
 {% macro render_leaf(leaf) -%}
-<div class="field" data-name="{{ leaf.name }}" data-doc="{{ leaf.search_doc }}">
+<div class="field" data-name="{{ leaf.name }}" data-doc="{{ leaf.search_doc }}" data-path="{{ leaf.path }}">
   <code class="fname">{{ leaf.name }}</code>
   <span class="ftype">{{ leaf.type }}</span>
   {%- if leaf.default_value is not none %}
@@ -353,7 +356,7 @@ footer.page-foot code { font-family: var(--font-mono); }
 {%- endmacro %}
 
 {% macro render_node(node) -%}
-<details class="node">
+<details class="node" data-name="{{ node.name }}" data-doc="{{ node.search_doc }}" data-path="{{ node.path }}">
   <summary>
     <div class="fname-group">
       <code class="fname">{{ node.name }}</code>
@@ -383,7 +386,7 @@ footer.page-foot code { font-family: var(--font-mono); }
     <div class="controls">
       <label class="search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="filter" type="text" placeholder="Filter style properties&hellip;" autocomplete="off" />
+        <input id="filter" type="text" placeholder="Search styles&hellip;" autocomplete="off" />
       </label>
       <button class="ctl" id="expandAll" type="button">Expand all</button>
       <button class="ctl" id="collapseAll" type="button">Collapse all</button>
@@ -409,6 +412,7 @@ footer.page-foot code { font-family: var(--font-mono); }
 </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
 <script>
 (function () {
 
@@ -434,8 +438,34 @@ footer.page-foot code { font-family: var(--font-mono); }
   var allLeaves = Array.prototype.slice.call(document.querySelectorAll(".field"));
   var allGroups = Array.prototype.slice.call(document.querySelectorAll(".group"));
 
+  // One flat index over every leaf property AND every style node (axes,
+  // marker, ...), searched by name, full dotted path, and description --
+  // so "open" fuzzy-matches dso_open_cluster's node, not just leaves whose
+  // own name/doc happens to contain it.
+  var searchItems = allLeaves.map(function (el) {
+    return { el: el, kind: "leaf", name: el.dataset.name, path: el.dataset.path, doc: el.dataset.doc };
+  }).concat(allNodes.map(function (el) {
+    return { el: el, kind: "node", name: el.dataset.name, path: el.dataset.path, doc: el.dataset.doc };
+  }));
+
+  var fuse = new Fuse(searchItems, {
+    keys: [
+      { name: "name", weight: 2 },
+      { name: "path", weight: 1.5 },
+      { name: "doc", weight: 1 },
+    ],
+    // 0.3 (Fuse's common default range) let short queries fuzzy-match
+    // unrelated fields with ignoreLocation on -- e.g. "open" matched
+    // "line_style" and "offset_x" anywhere in the ~800-item index. 0.2
+    // still tolerates a single missing/wrong letter (e.g. "strok" ->
+    // stroke, "galxy" -> galaxy) without that noise.
+    threshold: 0.2,
+    ignoreLocation: true,
+    minMatchCharLength: 2,
+  });
+
   input.addEventListener("input", function () {
-    var q = input.value.trim().toLowerCase();
+    var q = input.value.trim();
 
     if (!q) {
       allLeaves.forEach(function (f) { f.classList.remove("is-hidden"); });
@@ -444,19 +474,33 @@ footer.page-foot code { font-family: var(--font-mono); }
       return;
     }
 
-    allLeaves.forEach(function (f) {
-      var hay = (f.getAttribute("data-name") + " " + f.getAttribute("data-doc")).toLowerCase();
-      f.classList.toggle("is-hidden", hay.indexOf(q) === -1);
+    // A node match (e.g. the query matches dso_open_cluster's own name)
+    // cascades down: every leaf field nested inside it counts as visible
+    // too, not just the node header itself.
+    var visibleLeaves = new Set();
+    var matchedNodes = new Set();
+
+    fuse.search(q).forEach(function (result) {
+      var item = result.item;
+      if (item.kind === "leaf") {
+        visibleLeaves.add(item.el);
+      } else {
+        matchedNodes.add(item.el);
+        item.el.querySelectorAll(".field").forEach(function (f) { visibleLeaves.add(f); });
+      }
     });
 
-    // bottom-up: a node stays visible (and opens) if it has any visible
-    // leaf field, or a nested node that itself stayed visible
+    allLeaves.forEach(function (f) {
+      f.classList.toggle("is-hidden", !visibleLeaves.has(f));
+    });
+
+    // bottom-up: a node stays visible (and opens) if it matched directly,
+    // has any visible leaf field, or a nested node that itself stayed visible
     for (var i = allNodes.length - 1; i >= 0; i--) {
       var node = allNodes[i];
-      var nameMatch = node.querySelector(":scope > summary .fname").textContent.toLowerCase().indexOf(q) !== -1;
       var hasVisibleField = node.querySelector(":scope > .node-body > .fields > .field:not(.is-hidden)");
       var hasVisibleChild = node.querySelector(":scope > .node-body > .fields > details.node:not(.is-hidden)");
-      var visible = nameMatch || !!hasVisibleField || !!hasVisibleChild;
+      var visible = matchedNodes.has(node) || !!hasVisibleField || !!hasVisibleChild;
       node.classList.toggle("is-hidden", !visible);
       if (visible) node.open = true;
     }
