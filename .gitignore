@@ -39,7 +39,7 @@ scripts/scratchpad.py
 plots/
 scripts/__marimo__/
 
-# Documentation Generated Files
+# Documentation - Generated Files
 examples/*.png
 examples/*.svg
 examples/*.jpg
@@ -51,6 +51,7 @@ docs/images/examples/*.svg
 tutorial/*.png
 docs/images/tutorial/*.png
 docs/data/*.json
+docs/snippets/style_reference.html
 
 # Profiling files
 *.prof

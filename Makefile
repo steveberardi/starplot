@@ -73,6 +73,9 @@ build-star-designations:
 build-doc-data:
 	uv run $(DOTENV) data/scripts/docdata.py
 
+style-reference:
+	uv run $(DOTENV) scripts/style_reference.py
+
 version:
 	uv run $(DOTENV) python -c 'import starplot as sp; print(sp.__version__)'
 
@@ -108,7 +111,7 @@ test-3.13:
 # ------------------------------------------------------------------
 # Docs
 docs-serve:
-	uv run $(DOTENV) zensical serve
+	uv run $(DOTENV) zensical build -c && uv run $(DOTENV) zensical serve
 
 docs-build:
 	uv run $(DOTENV) zensical build -c

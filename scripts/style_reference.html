@@ -1,0 +1,448 @@
+<style>
+/* Colors reference Zensical/Material's own CSS variables first (so this
+   page automatically follows whatever light/dark scheme is already active
+   on the page it's embedded in, including the site's own toggle -- no
+   separate theme switcher of its own needed), falling back to a static
+   palette when those variables don't exist, e.g. when this file is opened
+   on its own outside the docs site. The dark fallback block below only
+   ever affects that fallback; embedded, Material's real variables win
+   regardless of which block "fires", since they're not redefined here.
+
+   Defined on `body`, not `:root`: Material scopes its dark ("slate")
+   values to a `body[data-md-color-scheme="slate"]` selector, and a
+   var() reference only sees the value of the variable it references as
+   inherited at the element it's declared on -- defining these on `:root`
+   would freeze them at Material's light-mode values before that
+   body-level override ever applies. */
+body {
+  color-scheme: light dark;
+  --bg: var(--md-default-bg-color, hsl(0, 0%, 100%));
+  --surface: var(--md-code-bg-color, hsl(209, 30%, 98%));
+  --surface-2: color-mix(in srgb, var(--surface), var(--ink) 8%);
+  /* Blue, not a Material-matched neutral -- these two back the
+     collapsible property boxes specifically, echoing the blue tones
+     Starplot's own style extensions use (see styles/ext/blue_medium.yml,
+     blue_dark.yml). --card-bg-top stays a shade darker for top-level
+     headers regardless of theme, same as the --surface-2 pattern above.
+     The dark variant is set below via [data-md-color-scheme="slate"]
+     (Material's own toggle attribute, always present when embedded) or,
+     absent that attribute, prefers-color-scheme for standalone viewing --
+     not a plain media query here, since that would go dark by raw OS
+     preference even while the surrounding Material page stays light. */
+  --card-bg: hsl(218, 65%, 95%);
+  --card-bg-top: color-mix(in srgb, var(--card-bg), var(--ink) 8%);
+  --ink: var(--md-default-fg-color, hsl(209, 50%, 33%));
+  --muted: var(--md-default-fg-color--light, hsl(209, 15%, 40%));
+  --faint: var(--md-default-fg-color--lighter, hsl(209, 12%, 56%));
+  --accent: var(--md-primary-fg-color, hsl(209, 53%, 37%));
+  --accent-ink: hsl(0, 0%, 100%);
+  --line: var(--md-default-fg-color--lightest, hsl(209, 20%, 88%));
+  --code-bg: var(--md-code-bg-color, hsl(209, 25%, 94%));
+  --shadow: 0 1px 2px hsl(209 40% 20% / 0.06), 0 8px 24px hsl(209 40% 20% / 0.05);
+
+  --font-display: "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Fira Code", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --bg: var(--md-default-bg-color, hsl(210, 16%, 15%));
+    --surface: var(--md-code-bg-color, hsl(210, 15%, 19%));
+    --ink: var(--md-default-fg-color, hsl(210, 50%, 92%));
+    --muted: var(--md-default-fg-color--light, hsl(210, 14%, 68%));
+    --faint: var(--md-default-fg-color--lighter, hsl(210, 12%, 52%));
+    --accent: var(--md-primary-fg-color, hsl(209, 70%, 68%));
+    --accent-ink: hsl(210, 30%, 10%);
+    --line: var(--md-default-fg-color--lightest, hsl(210, 15%, 30%));
+    --code-bg: var(--md-code-bg-color, hsl(210, 14%, 24%));
+    --shadow: 0 1px 2px hsl(0 0% 0% / 0.3), 0 8px 24px hsl(0 0% 0% / 0.35);
+  }
+  body:not([data-md-color-scheme]) {
+    --card-bg: hsl(212, 35%, 20%);
+  }
+}
+
+body[data-md-color-scheme="slate"] {
+  --card-bg: hsl(212, 35%, 20%);
+}
+
+* { box-sizing: border-box; }
+
+/* Same embedding problem as the details/summary reset below, but for
+   inline code: Material styles every bare <code> in the page content
+   via ".md-typeset code" -- a class+type selector, so it out-specifies
+   a plain class like .fname even though this rule loads first. Reset
+   color/background here (matching that same specificity); an explicit
+   var(--ink) rather than `inherit`, since Material also sets its own
+   color higher up the tree (on .md-typeset itself), so inherit would
+   just pick that up instead of this page's own palette. A *more*
+   specific rule further down (.fdoc code, .fdoc-inline code) still
+   wins normally where it wants a different color. */
+.wrap code, header.top code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  word-break: normal;
+  color: var(--ink);
+}
+
+.skyline {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background-image: radial-gradient(1px 1px at 8% 12%, var(--faint), transparent),
+    radial-gradient(1px 1px at 22% 68%, var(--faint), transparent),
+    radial-gradient(1.5px 1.5px at 38% 24%, var(--faint), transparent),
+    radial-gradient(1px 1px at 54% 82%, var(--faint), transparent),
+    radial-gradient(1px 1px at 71% 10%, var(--faint), transparent),
+    radial-gradient(1.5px 1.5px at 85% 55%, var(--faint), transparent),
+    radial-gradient(1px 1px at 93% 30%, var(--faint), transparent),
+    radial-gradient(1px 1px at 4% 88%, var(--faint), transparent),
+    radial-gradient(1px 1px at 62% 46%, var(--faint), transparent),
+    radial-gradient(1px 1px at 30% 95%, var(--faint), transparent);
+  background-repeat: no-repeat;
+}
+@media (prefers-color-scheme: dark) { .skyline { opacity: 0.55; } }
+
+.wrap { position: relative; max-width: 900px; margin: 0 auto; padding: 0 24px 96px; }
+
+header.top {
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.top-inner { max-width: 900px; margin: 0 auto; padding: 18px 24px 16px; }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.eyebrow .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 27px;
+  letter-spacing: -0.01em;
+  margin: 4px 0 4px;
+  text-wrap: balance;
+}
+
+.sub { color: var(--muted); font-size: 14.5px; max-width: 62ch; margin: 0 0 16px; }
+.sub code { font-size: 0.92em; }
+
+.controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+.search { position: relative; flex: 1 1 240px; min-width: 180px; }
+.search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--faint); }
+.search input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 9px 12px 9px 32px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+}
+.search input::placeholder { color: var(--faint); }
+.search input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+button.ctl {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+}
+button.ctl:hover { color: var(--ink); border-color: var(--faint); }
+
+.stat-row { display: flex; gap: 18px; margin-top: 14px; font-family: var(--font-mono); font-size: 12px; color: var(--faint); }
+.stat-row b { color: var(--ink); font-weight: 600; }
+
+main { padding-top: 0px; }
+
+h2.section-head {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+h2.section-head::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+.section-desc { color: var(--muted); font-size: 13.5px; margin: 0 0 20px; max-width: 62ch; }
+
+.group { margin-bottom: 26px; }
+.group h3 { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.03em; color: var(--ink); margin: 0 0 8px; }
+
+.fields--top { display: flex; flex-direction: column; gap: 8px; }
+
+
+.md-typeset {
+  line-height: 1.5;
+}
+
+/* This page gets embedded in a Material/Zensical docs page via a snippet
+   include, and Material styles bare <details>/<summary> as an admonition
+   box -- border, background, margin/padding, and a colored mask-image icon
+   on summary::before/::after -- with the same selector specificity as the
+   rules below. Since those rules load first (in the page's real <head>,
+   before this embedded <style>), later-wins cascade order means our
+   declarations replace theirs property-by-property, but only for
+   properties we actually set -- so margin/padding and the icon layers
+   need an explicit reset here even though this page has no icon or
+   spacing of its own to put there. */
+details.node {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card-bg);
+  box-shadow: none;
+  overflow: hidden;
+}
+details.node[open] > summary { border-bottom: 1px solid var(--line); }
+details.node.is-hidden { display: none; }
+
+details.node summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-family: var(--font-display);
+  /* Material's own `.md-typeset details:not([open]) > summary` rule is
+     more specific than a plain reset here and reintroduces a bottom
+     margin while collapsed, so this one property needs !important to
+     reliably win in both the open and closed state. */
+  margin: 0 !important;
+}
+details.node summary::-webkit-details-marker { display: none; }
+details.node summary::marker { content: ""; }
+details.node summary::after { content: none; display: none; }
+details.node summary::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-right: 1.5px solid var(--faint);
+  border-bottom: 1.5px solid var(--faint);
+  transform: rotate(-45deg);
+  transition: transform 0.15s ease;
+  flex: none;
+  position: static;
+  background-color: transparent;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+details.node[open] > summary::before { transform: rotate(45deg); }
+
+details.node summary .fname-group { display: flex; flex-direction: column; min-width: 0; }
+details.node summary .fname { font-size: 18px; }
+details.node summary .fdoc-inline { font-family: var(--font-body); font-size: 0.85em; font-weight: 400; color: var(--muted); }
+details.node summary .fdoc-inline code { font-family: var(--font-mono); font-size: 0.95em; background: var(--code-bg); padding: 0 3px; border-radius: 3px; color: var(--ink); }
+details.node summary .tname {
+  margin-left: auto;
+  flex: none;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface-2);
+  border-radius: 999px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
+.node-body { padding: 12px 14px 14px 22px; border-left: 2px solid var(--line); margin: 0 14px 14px 20px; }
+
+.fields { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--card-bg); }
+.fields > details.node { border: none; border-radius: 0; margin: 0;}
+.fields > details.node + details.node,
+.fields > details.node + .field,
+.fields > .field + details.node { border-top: 1px solid var(--line); }
+.fields--top > details.node { border-radius: 10px; border: 1px solid var(--line); }
+.fields--top > details.node > summary { background: var(--card-bg-top); }
+
+.field {
+  display: grid;
+  grid-template-columns: 150px 120px 90px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 9px 14px;
+}
+.field + .field { border-top: 1px solid var(--line); }
+.field:hover { background: var(--surface-2); }
+.field.is-hidden { display: none; }
+
+.fname { font-family: var(--font-mono); font-size: 13px; color: var(--ink); font-weight: 600; }
+.ftype { font-family: var(--font-mono); font-size: 11.5px; color: var(--faint); padding-top: 2px; word-break: break-word; }
+.fdefault { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); padding-top: 2px; display: flex; align-items: center; gap: 5px; }
+.swatch { display: inline-block; width: 9px; height: 9px; border-radius: 3px; border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); flex: none; }
+.fdoc { color: var(--muted); font-size: 13px; padding-top: 1px; }
+.fdoc code { font-family: var(--font-mono); font-size: 0.92em; background: var(--code-bg); padding: 1px 4px; border-radius: 4px; color: var(--ink); }
+
+footer.page-foot {
+  margin-top: 56px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  color: var(--faint);
+  font-size: 12.5px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+footer.page-foot code { font-family: var(--font-mono); }
+
+@media (max-width: 640px) {
+  .field { grid-template-columns: 1fr; gap: 4px; }
+  .ftype, .fdefault { padding-top: 0; }
+  .node-body { padding-left: 14px; margin-left: 10px; }
+}
+
+::selection { background: var(--accent); color: var(--accent-ink); }
+</style>
+<div class="skyline" aria-hidden="true"></div>
+{% macro render_leaf(leaf) -%}
+<div class="field" data-name="{{ leaf.name }}" data-doc="{{ leaf.search_doc }}">
+  <code class="fname">{{ leaf.name }}</code>
+  <span class="ftype">{{ leaf.type }}</span>
+  {%- if leaf.default_value is not none %}
+  <span class="fdefault">{% if leaf.is_color %}<i class="swatch" style="background:{{ leaf.default_value }}"></i>{% endif %}{{ leaf.default_value }}</span>
+  {%- else %}
+  <span class="fdefault"></span>
+  {%- endif %}
+  <span class="fdoc"{% if leaf.doc_full %} title="{{ leaf.doc_full }}"{% endif %}>{{ leaf.doc_html | safe }}</span>
+</div>
+{%- endmacro %}
+
+{% macro render_node(node) -%}
+<details class="node">
+  <summary>
+    <div class="fname-group">
+      <code class="fname">{{ node.name }}</code>
+      {%- if node.doc_html %}
+      <span class="fdoc-inline"{% if node.doc_full %} title="{{ node.doc_full }}"{% endif %}>{{ node.doc_html | safe }}</span>
+      {%- endif %}
+    </div>
+    <span class="tname">{{ node.type_name }}</span>
+  </summary>
+  <div class="node-body">
+    <div class="fields">
+      {%- for child in node.children %}
+        {%- if child.kind == "node" %}
+        {{ render_node(child) }}
+        {%- else %}
+        {{ render_leaf(child) }}
+        {%- endif %}
+      {%- endfor %}
+    </div>
+  </div>
+</details>
+{%- endmacro %}
+
+<header class="top">
+  <div class="top-inner">
+    <h1>Style Explorer</h1>
+    <div class="controls">
+      <label class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="filter" type="text" placeholder="Filter style properties&hellip;" autocomplete="off" />
+      </label>
+      <button class="ctl" id="expandAll" type="button">Expand all</button>
+      <button class="ctl" id="collapseAll" type="button">Collapse all</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<main>
+  <section id="elements-section">
+    {% for group in groups %}
+    <div class="group">
+      <h2>{{ group.name }}</h2>
+      <div class="fields--top">
+        {%- for node in group.nodes %}
+        {{ render_node(node) }}
+        {%- endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <footer class="page-foot">
+    <span>Generated from <code>starplot/styles/plot.py</code> &amp; <code>starplot/styles/elements.py</code></span>
+    <span>Use with <code>PlotStyle().extend({ ... })</code></span>
+  </footer>
+</main>
+</div>
+
+<script>
+(function () {
+
+  var allNodes = Array.prototype.slice.call(document.querySelectorAll("details.node"));
+  document.getElementById("expandAll").addEventListener("click", function () {
+    allNodes.forEach(function (d) { d.open = true; });
+  });
+  document.getElementById("collapseAll").addEventListener("click", function () {
+    allNodes.forEach(function (d) { d.open = false; });
+  });
+
+  var input = document.getElementById("filter");
+  var allLeaves = Array.prototype.slice.call(document.querySelectorAll(".field"));
+  var allGroups = Array.prototype.slice.call(document.querySelectorAll(".group"));
+
+  input.addEventListener("input", function () {
+    var q = input.value.trim().toLowerCase();
+
+    if (!q) {
+      allLeaves.forEach(function (f) { f.classList.remove("is-hidden"); });
+      allNodes.forEach(function (d) { d.classList.remove("is-hidden"); });
+      allGroups.forEach(function (g) { g.classList.remove("is-hidden"); });
+      return;
+    }
+
+    allLeaves.forEach(function (f) {
+      var hay = (f.getAttribute("data-name") + " " + f.getAttribute("data-doc")).toLowerCase();
+      f.classList.toggle("is-hidden", hay.indexOf(q) === -1);
+    });
+
+    // bottom-up: a node stays visible (and opens) if it has any visible
+    // leaf field, or a nested node that itself stayed visible
+    for (var i = allNodes.length - 1; i >= 0; i--) {
+      var node = allNodes[i];
+      var nameMatch = node.querySelector(":scope > summary .fname").textContent.toLowerCase().indexOf(q) !== -1;
+      var hasVisibleField = node.querySelector(":scope > .node-body > .fields > .field:not(.is-hidden)");
+      var hasVisibleChild = node.querySelector(":scope > .node-body > .fields > details.node:not(.is-hidden)");
+      var visible = nameMatch || !!hasVisibleField || !!hasVisibleChild;
+      node.classList.toggle("is-hidden", !visible);
+      if (visible) node.open = true;
+    }
+
+    allGroups.forEach(function (g) {
+      var visible = g.querySelector(".fields--top > details.node:not(.is-hidden)");
+      g.classList.toggle("is-hidden", !visible);
+    });
+  });
+})();
+</script>
+

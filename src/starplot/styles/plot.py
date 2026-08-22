@@ -98,7 +98,7 @@ class PlotStyle(BaseStyle):
             offset_y="auto",
         ),
     )
-    """Styling for stars *(see [`ObjectStyle`][starplot.styles.ObjectStyle])*"""
+    """Styling for stars"""
 
     bayer_labels: LabelStyle = LabelStyle(
         font_size=36,
@@ -334,7 +334,7 @@ class PlotStyle(BaseStyle):
         stroke_width=0,
         zorder=ZOrderEnum.LAYER_1,
     )
-    """Styling for the Milky Way (only applies to map plots)"""
+    """Styling for the Milky Way"""
 
     # Legend
     legend: LegendStyle = LegendStyle()
@@ -358,7 +358,7 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_5 + 1000,
         ),
     )
-    """Styling for gridlines (including Right Ascension / Declination labels). *Only applies to map plots*."""
+    """Styling for gridlines (including Right Ascension / Declination labels)"""
 
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(
