@@ -145,12 +145,12 @@ button.ctl:hover { color: var(--ink); border-color: var(--faint); }
 .stat-row { display: flex; gap: 18px; margin-top: 14px; font-family: var(--font-mono); font-size: 12px; color: var(--faint); }
 .stat-row b { color: var(--ink); font-weight: 600; }
 
-main { padding-top: 0px; }
+main { padding-top: 20px; }
 
 h2.section-head {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: 600;
+  font-size: 14px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
@@ -159,7 +159,15 @@ h2.section-head {
   align-items: baseline;
   gap: 10px;
 }
-h2.section-head::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+h2.section-head::after { 
+  content: ""; 
+  flex: 1; 
+  align-self: center;
+  height: 3px;
+  background-image: linear-gradient(to right, #d0d0d0 40%, transparent 20%);
+  background-size: 8px 3px;
+  background-repeat: repeat-x;
+}
 
 .section-desc { color: var(--muted); font-size: 13.5px; margin: 0 0 20px; max-width: 62ch; }
 
@@ -346,15 +354,12 @@ footer.page-foot code { font-family: var(--font-mono); }
   </div>
 </header>
 
-
-<div class="divider"></div>
-
 <div class="wrap">
 <main>
   <section id="elements-section">
     {% for group in groups %}
     <div class="group">
-      <h2>{{ group.name }}</h2>
+      <h2 class="section-head">{{ group.name }}</h2>
       <div class="fields--top">
         {%- for node in group.nodes %}
         {{ render_node(node) }}
@@ -364,10 +369,6 @@ footer.page-foot code { font-family: var(--font-mono); }
     {% endfor %}
   </section>
 
-  <footer class="page-foot">
-    <span>Generated from <code>starplot/styles/plot.py</code> &amp; <code>starplot/styles/elements.py</code></span>
-    <span>Use with <code>PlotStyle().extend({ ... })</code></span>
-  </footer>
 </main>
 </div>
 

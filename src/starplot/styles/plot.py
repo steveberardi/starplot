@@ -31,7 +31,7 @@ from starplot.styles.helpers import merge_dict
 
 class PlotStyle(BaseStyle):
     """
-    Defines the styling for a plot
+    Defines all the styling properties for a plot
     """
 
     axes: AxesStyle = AxesStyle()
@@ -54,7 +54,6 @@ class PlotStyle(BaseStyle):
     # """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `stroke_width` and `stroke` properties."""
     # text_border_color: Color = Color("#fff")
 
-    # Title
     title: TitleStyle = TitleStyle(
         font_size=85,
         font_weight=FontWeightEnum.BOLD,
@@ -83,7 +82,6 @@ class PlotStyle(BaseStyle):
     )
     """Styling for the data table of the plot, which is always plotted below the axes. Currently, this is only available in optic plots."""
 
-    # Stars
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             zorder=ZOrderEnum.LAYER_3 + 1,
@@ -168,7 +166,6 @@ class PlotStyle(BaseStyle):
     )
     """Styling for the Sun"""
 
-    # Deep Sky Objects (DSOs)
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
@@ -327,7 +324,6 @@ class PlotStyle(BaseStyle):
     )
     """Styling for constellation labels"""
 
-    # Milky Way
     milky_way: PolygonStyle = PolygonStyle(
         fill="#d9d9d9",
         opacity=0.36,
@@ -336,11 +332,9 @@ class PlotStyle(BaseStyle):
     )
     """Styling for the Milky Way"""
 
-    # Legend
     legend: LegendStyle = LegendStyle()
     """Styling for legend"""
 
-    # Gridlines
     gridlines: PathStyle = PathStyle(
         line=LineStyle(
             stroke="#888",
@@ -358,7 +352,7 @@ class PlotStyle(BaseStyle):
             zorder=ZOrderEnum.LAYER_5 + 1000,
         ),
     )
-    """Styling for gridlines (including Right Ascension / Declination labels)"""
+    """Styling for gridlines and their labels"""
 
     ecliptic: PathStyle = PathStyle(
         line=LineStyle(
