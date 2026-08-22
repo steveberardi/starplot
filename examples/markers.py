@@ -5,15 +5,41 @@ Renders every marker symbol available
 from starplot import MapPlot, Miller
 from starplot.styles import MarkerSymbolEnum, PlotStyle, extensions
 
-style = PlotStyle().extend(
-    extensions.STARPLOT,
+style_medium = PlotStyle().extend(
+    extensions.BLUE_MEDIUM,
     extensions.MAP,
     extensions.FIGURE_TRANSPARENT,
 )
-style.axes.border = None
+style_medium.axes.border = None
+
+style_night = PlotStyle().extend(
+    extensions.BLUE_NIGHT,
+    extensions.MAP,
+    extensions.FIGURE_TRANSPARENT,
+)
 
 CENTER_RA = 180
 CENTER_DEC = 0
+
+
+marker_styles = {
+    "circle": None,
+    "circle_cross": None,
+    "circle_crosshair": None,
+    "circle_line": None,
+    "comet": None,
+    "diamond": None,
+    "ellipse": None,
+    "plus": None,
+    "satellite": None,
+    "square": None,
+    "star": None,
+    "star_4": None,
+    "star_8": None,
+    "sun": None,
+    "triangle": None,
+}
+
 
 for symbol in MarkerSymbolEnum:
     p = MapPlot(

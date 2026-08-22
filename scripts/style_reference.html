@@ -120,8 +120,7 @@ h1 {
   font-size: 14px;
   padding: 9px 12px 9px 32px;
   border-radius: 8px;
-  border: 1px solid var(--line);
-  background: var(--surface);
+  border: 1px solid hsl(209, 13%, 78%);
   color: var(--ink);
 }
 .search input::placeholder { color: var(--faint); }
@@ -144,6 +143,8 @@ button.ctl:hover { color: var(--ink); border-color: var(--faint); }
 .stat-row b { color: var(--ink); font-weight: 600; }
 
 main { padding-top: 20px; }
+
+header { margin-bottom: 20px;}
 
 h2.section-head {
   font-family: var(--font-display);
@@ -234,7 +235,10 @@ details.node summary::before {
 details.node[open] > summary::before { transform: rotate(45deg); }
 
 details.node summary .fname-group { display: flex; flex-direction: column; min-width: 0; }
-details.node summary .fname { font-size: 18px; }
+details.node summary .fname { 
+  font-size: 18px;
+  font-weight: 600; 
+}
 details.node summary .fdoc-inline { font-family: var(--font-body); font-size: 0.75em; font-weight: 300; color: var(--muted); }
 details.node summary .fdoc-inline code { font-family: var(--font-mono); font-size: 0.95em; background: var(--code-bg); padding: 0 3px; border-radius: 3px; color: var(--ink); }
 details.node summary .tname {
@@ -289,7 +293,7 @@ details.node summary .tname {
 .field:hover { background: var(--surface-2); }
 .field.is-hidden { display: none; }
 
-.fname { font-family: var(--font-mono); font-size: 13px; color: var(--ink); font-weight: 600; }
+.fname { font-family: var(--font-mono); font-size: 13px; color: var(--ink); font-weight: 500; }
 .ftype { font-family: var(--font-mono); font-size: 11.5px; color: var(--faint); padding-top: 2px; word-break: break-word; }
 .fdefault { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); padding-top: 2px; display: flex; align-items: center; gap: 5px; }
 .swatch { display: inline-block; width: 9px; height: 9px; border-radius: 3px; border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); flex: none; }
