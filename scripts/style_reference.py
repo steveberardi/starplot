@@ -75,7 +75,7 @@ GROUPS = [
             "tissot",
         ],
     ),
-    ("Generic Shapes", ["line", "polygon", "circle", "ellipse", "rectangle", "marker"]),
+    ("Generic Shapes", ["line", "polygon", "circle", "ellipse", "rectangle", "marker", "text"]),
 ]
 
 # A few PlotStyle fields have no docstring in source -- short fallbacks for display.

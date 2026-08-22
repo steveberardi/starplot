@@ -88,33 +88,6 @@ body[data-md-color-scheme="slate"] {
   color: var(--ink);
 }
 
-.skyline {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.18;
-  background-image: radial-gradient(1px 1px at 8% 12%, var(--faint), transparent),
-    radial-gradient(1px 1px at 22% 68%, var(--faint), transparent),
-    radial-gradient(1.5px 1.5px at 38% 24%, var(--faint), transparent),
-    radial-gradient(1px 1px at 54% 82%, var(--faint), transparent),
-    radial-gradient(1px 1px at 71% 10%, var(--faint), transparent),
-    radial-gradient(1.5px 1.5px at 85% 55%, var(--faint), transparent),
-    radial-gradient(1px 1px at 93% 30%, var(--faint), transparent),
-    radial-gradient(1px 1px at 4% 88%, var(--faint), transparent),
-    radial-gradient(1px 1px at 62% 46%, var(--faint), transparent),
-    radial-gradient(1px 1px at 30% 95%, var(--faint), transparent);
-  background-repeat: no-repeat;
-}
-@media (prefers-color-scheme: dark) { .skyline { opacity: 0.55; } }
-
-.wrap { position: relative; max-width: 900px; margin: 0 auto; padding: 0 24px 96px; }
-
-header.top {
-  background: var(--bg);
-  border-bottom: 1px solid var(--line);
-}
-.top-inner { max-width: 900px; margin: 0 auto; padding: 18px 24px 16px; }
-
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -262,9 +235,9 @@ details.node summary .fdoc-inline code { font-family: var(--font-mono); font-siz
 details.node summary .tname {
   margin-left: auto;
   flex: none;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-weight: 400;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
   background: var(--surface-2);
   border-radius: 999px;
@@ -321,7 +294,6 @@ footer.page-foot code { font-family: var(--font-mono); }
 
 ::selection { background: var(--accent); color: var(--accent-ink); }
 </style>
-<div class="skyline" aria-hidden="true"></div>
 {% macro render_leaf(leaf) -%}
 <div class="field" data-name="{{ leaf.name }}" data-doc="{{ leaf.search_doc }}">
   <code class="fname">{{ leaf.name }}</code>
@@ -373,6 +345,9 @@ footer.page-foot code { font-family: var(--font-mono); }
     </div>
   </div>
 </header>
+
+
+<div class="divider"></div>
 
 <div class="wrap">
 <main>

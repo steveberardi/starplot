@@ -476,16 +476,25 @@ class PlotStyle(BaseStyle):
 
     # Generic plotting functions
     line: PathStyle = PathStyle()
+    """Default styling for lines"""
 
     polygon: PolygonStyle = PolygonStyle()
+    """Default styling for polygons"""
 
     circle: PolygonStyle = PolygonStyle()
+    """Default styling for circles"""
 
     ellipse: PolygonStyle = PolygonStyle()
+    """Default styling for ellipses"""
 
     rectangle: PolygonStyle = PolygonStyle()
+    """Default styling for rectangles"""
 
     marker: ObjectStyle = ObjectStyle()
+    """Default styling for markers"""
+
+    text: LabelStyle = LabelStyle()
+    """Default styling for text"""
     
 
 
