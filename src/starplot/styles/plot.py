@@ -467,7 +467,6 @@ class PlotStyle(BaseStyle):
         stroke_width=0,
     )
 
-
     # Generic plotting functions
     line: PathStyle = PathStyle()
     """Default styling for lines"""
@@ -489,8 +488,6 @@ class PlotStyle(BaseStyle):
 
     text: LabelStyle = LabelStyle()
     """Default styling for text"""
-    
-
 
     def get_dso_style(self, dso_type: DsoType):
         """Returns the style for a DSO type"""

@@ -334,6 +334,7 @@ class Stereographic(ProjectionBase, CenterRADEC):
     name: ClassVar[str] = "stere"
     proj_def_base: str = f"+proj=stere +R={PROJ_R} +units=m"
 
+
 class Gnomonic(ProjectionBase, CenterRADEC):
     """Gnomonic projection"""
 

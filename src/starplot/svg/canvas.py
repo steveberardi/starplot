@@ -6,6 +6,7 @@ from pathlib import Path
 
 import numpy as np
 from pyproj import CRS
+from pyqtree import Index as QuadIndex
 from shapely import LineString, MultiPoint, Point, box, concave_hull
 from shapely import Polygon as ShapelyPolygon
 from shapely.affinity import translate as _translate_shape
@@ -1086,7 +1087,6 @@ class Canvas:
 
         """
         label_elements = []
-        label_height = style.label.font_size * self.scale
 
         def text_width(text, font_size):
             _, w, _ = fonts.get_text_hw(
@@ -1153,10 +1153,19 @@ class Canvas:
                 )
             )
 
+        border = self.clip_path_display.buffer(
+            self._axes_border_offset + border_width, join_style="mitre"
+        )
+        bx1, by1, bx2, by2 = border.bounds
+        frame_height = by2 - by1
+        frame_width = bx2 - bx1
+
         if labels:
             # 1. convert coordinates to display
             # 2. find intersection of line with border
             # 3. add text element at intersection
+
+            label_index = QuadIndex(bbox=(0, 0, frame_width, frame_height))
 
             for xy, text, locations in labels:
                 if not text:
@@ -1169,7 +1178,13 @@ class Canvas:
                 dxy = _geometry.extend_line(dxy, distance=border_width * 2)
 
                 labeled_line = LineString(dxy)
-                label_width = text_width(text, style.label.font_size * self.scale)
+                label_height, label_width, _ = fonts.get_text_hw(
+                    text=text,
+                    font_name=style.label.font_name,
+                    font_size=style.label.font_size * self.scale,
+                    font_weight=style.label.font_weight,
+                    italic=style.label.font_style == "italic",
+                )
 
                 if self.debug:
                     label_elements.append(
@@ -1206,6 +1221,19 @@ class Canvas:
                     ):
                         continue
 
+                    # check for overlapping labels
+                    label_bbox = (
+                        ix.x - label_width / 2,
+                        ix.y,
+                        ix.x + label_width / 2,
+                        ix.y + label_height,
+                    )
+
+                    if label_index.intersect(label_bbox):
+                        continue
+                    else:
+                        label_index.insert(text, label_bbox)
+
                     element = Text(
                         x=ix.x,
                         y=ix.y + style.label.font_size * self.scale / 2.75,
@@ -1217,11 +1245,6 @@ class Canvas:
                         },
                     )
                     label_elements.append((style.line.zorder + 10, element))
-
-        border = self.clip_path_display.buffer(
-            self._axes_border_offset + border_width, join_style="mitre"
-        )
-        bx1, by1, bx2, by2 = border.bounds
 
         elements = [(style.line.zorder, Polyline(points=coords, attrs=attrs))]
         if label_elements:
@@ -1235,8 +1258,8 @@ class Canvas:
 
         self.layout.axes_frame = Region(
             elements=elements,
-            height=(by2 - by1),
-            width=(bx2 - bx1),
+            height=frame_height,
+            width=frame_width,
         )
 
     def render(self, text_as_path: bool = False) -> str:
