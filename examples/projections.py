@@ -23,6 +23,7 @@ from starplot import (
     Stereographic,
     StereoNorth,
     StereoSouth,
+    Gnomonic,
     geometry,
 )
 from starplot.styles import PlotStyle, extensions
@@ -115,6 +116,22 @@ PROJECTIONS = [
         Stereographic(),
         dict(),
         geometry.circle(center=(180, 0), diameter_degrees=STEREO_RADIUS, num_pts=100),
+    ),
+    # Gnomonic projects the sphere from its own center onto a tangent
+    # plane, so it can only show strictly *less* than a hemisphere -- at
+    # exactly 90 degrees from center (a 180-degree-diameter circle) the
+    # projection shoots off to infinity, so this needs to stay under that.
+    # dec_min is also set here (rather than left at the dict() default of
+    # -90) so the plot doesn't count as a "global extent" -- that skips
+    # recalculating the true visible dec range from the clip circle, and
+    # gridlines() then draws meridians all the way from -90 to 90, which
+    # crosses straight through gnomonic's blow-up boundary and drops the
+    # RA gridlines entirely (their points literally project to infinity).
+    (
+        "gnomonic",
+        Gnomonic(center_dec=90),
+        dict(dec_min=0),
+        geometry.circle(center=(180, 90), diameter_degrees=120, num_pts=100),
     ),
 ]
 

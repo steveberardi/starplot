@@ -27,7 +27,7 @@ from starplot.styles import (
     PolygonStyle,
     AnchorPointEnum,
 )
-from starplot.projections import ProjectionBase, CoordinateReferenceSystem, StereoNorth, StereoSouth
+from starplot.projections import ProjectionBase, CoordinateReferenceSystem, StereoNorth, StereoSouth, Gnomonic
 from starplot.plotters import StarPlotterMixin
 from starplot.plotters.text import CollisionHandler
 from starplot.styles.helpers import use_style
@@ -927,7 +927,7 @@ class BasePlot(StarPlotterMixin, ABC):
         """
 
         with self.canvas.group(gid=gid):
-            ra_start = 45 if not isinstance(self.projection, (StereoNorth, StereoSouth)) else 0
+            ra_start = 45 if not isinstance(self.projection, (StereoNorth, StereoSouth, Gnomonic)) else 0
             for ra in range(ra_start, 360, 45):
                 for dec in range(-80, 90, 20):
                     self.circle(
