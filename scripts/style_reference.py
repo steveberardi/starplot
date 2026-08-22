@@ -75,7 +75,10 @@ GROUPS = [
             "tissot",
         ],
     ),
-    ("Generic Shapes", ["line", "polygon", "circle", "ellipse", "rectangle", "marker", "text"]),
+    (
+        "Generic Shapes",
+        ["line", "polygon", "circle", "ellipse", "rectangle", "marker", "text"],
+    ),
 ]
 
 # A few PlotStyle fields have no docstring in source -- short fallbacks for display.
@@ -271,7 +274,7 @@ def render_default(default: str | None):
 # ---------------------------------------------------------------- tree data
 
 
-def build_leaf(field: dict) -> dict:
+def build_leaf(field: dict, path: str) -> dict:
     doc_html, doc_full = render_doc(field["doc"])
     default = render_default(field["default"])
 
@@ -284,10 +287,11 @@ def build_leaf(field: dict) -> dict:
         "doc_html": doc_html,
         "doc_full": doc_full,
         "search_doc": field["doc"].lower(),
+        "path": path,
     }
 
 
-def build_node(name: str, type_name: str, doc: str, classes: dict) -> dict:
+def build_node(name: str, type_name: str, doc: str, classes: dict, path: str) -> dict:
     """Builds one property as a tree node: its own identity, plus every
     field of its style type (each itself a node or a leaf), so the whole
     subtree is available to render in place -- no separate lookup elsewhere."""
@@ -297,10 +301,20 @@ def build_node(name: str, type_name: str, doc: str, classes: dict) -> dict:
     children = []
     for f in resolve_fields(type_name, classes):
         nested = core_type(f["type"])
+        child_path = f"{path}.{f['name']}"
         if nested in classes:
-            children.append(build_node(f["name"], nested, f["doc"], classes))
+            children.append(
+                build_node(f["name"], nested, f["doc"], classes, child_path)
+            )
         else:
-            children.append(build_leaf(f))
+            children.append(build_leaf(f, child_path))
+
+    # Every nested style type here is a BaseStyle subclass (that's what
+    # makes it a node instead of a leaf) -- push those last so a style's
+    # plain values (padding, opacity, ...) read before its nested styles
+    # (background, marker, ...), a stable sort so declaration order still
+    # holds within each group.
+    children.sort(key=lambda c: c["kind"] == "node")
 
     return {
         "kind": "node",
@@ -319,7 +333,8 @@ def build_groups(plot_fields: dict, classes: dict) -> list:
         for fname in field_names:
             f = plot_fields[fname]
             doc = f["doc"] or DOC_FALLBACKS.get(fname, "")
-            nodes.append(build_node(fname, core_type(f["type"]), doc, classes))
+            path = f"style.{fname}"
+            nodes.append(build_node(fname, core_type(f["type"]), doc, classes, path))
         groups.append({"name": group_name, "nodes": nodes})
     return groups
 
