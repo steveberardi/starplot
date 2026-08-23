@@ -14,12 +14,12 @@ p = MapPlot(
     projection=Mollweide(),
     style=style,
     resolution=4800,
-    scale=0.5,
+    scale=0.36,
 )
 p.stars(
     where=[_.magnitude < 11],
-    where_labels=[False],
-    opacity_fn=lambda s: 0.95 if s.magnitude < 9 else 0.6,
+    where_labels=False,
+    opacity_fn=lambda s: 0.9 if s.magnitude < 9 else 0.6,
     catalog=BIG_SKY,
     style__marker__stroke="#fff",
 )

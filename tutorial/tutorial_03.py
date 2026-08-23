@@ -21,7 +21,6 @@ p = ZenithPlot(
         extensions.FIGURE_TRANSPARENT,  # make the figure background transparent
     ),
     resolution=4000,
-    scale=0.9,
 )
 # Again, we plot the constellations first, because Starplot will use the constellation
 # lines to determine where to place labels for stars (labels will look better if they're

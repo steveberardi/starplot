@@ -456,10 +456,8 @@ class Canvas:
             if opacity != 1:
                 attrs["fill-opacity"] = opacity
 
-            element = symbols.create(
-                x, y, size=size * self.scale, symbol=style.symbol, attrs=attrs
-            )
-
+            # do not apply scale to size here because it was already applied with size_fn
+            element = symbols.create(x, y, size=size, symbol=style.symbol, attrs=attrs)
             elements.append(element)
 
         self._add_element(

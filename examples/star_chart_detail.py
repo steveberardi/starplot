@@ -19,8 +19,6 @@ p = ZenithPlot(
         # extensions.GRADIENT_TRUE_NIGHT,
         extensions.FIGURE_TRANSPARENT,
     ),
-    resolution=3600,
-    autoscale=True,
 )
 p.horizon()
 p.constellations()

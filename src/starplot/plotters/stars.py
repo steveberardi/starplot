@@ -6,6 +6,7 @@ import rtree
 from ibis import _ as ibis_table
 from skyfield.api import Star as SkyfieldStar
 
+from starplot.callables import size_by_magnitude
 from starplot.data import stars
 from starplot.data.catalogs import BIG_SKY_MAG11, Catalog
 from starplot.data.translations import translate
@@ -15,55 +16,6 @@ from starplot.profile import profile
 from starplot.styles import ObjectStyle, use_style
 from starplot.utils import normalize_where
 
-
-def size_by_magnitude(star: Star) -> float:
-    """
-    Simple sizing by magnitude, using a step size of 1.
-
-    ```python
-    if mag <= 0:
-        size = 3800
-    elif mag <= 1:  # 0..1
-        size = 2400
-    elif mag <= 2:  # 1..2
-        size = 1600
-    elif mag <= 3:  # 2..3
-        size = 1000
-    elif mag <= 4:  # 3..4
-        size = 600
-    elif mag <= 5:  # 4..5
-        size = 300
-    elif mag <= 6:  # 5..6
-        size = 120
-    elif mag <= 7:  # 6..7
-        size = 60
-    elif mag <= 8:  # 7..8
-        size = 40
-    else:           # > 8
-        size = 20
-
-    ```
-    """
-    mag = star.magnitude
-    size = 0
-    if mag <= 1 or mag <= 2:  # 0..1
-        size = 40
-    elif mag <= 3:  # 2..3
-        size = 30
-    elif mag <= 4:  # 3..4
-        size = 20
-    elif mag <= 5:  # 4..5
-        size = 15
-    elif mag <= 6:  # 5..6
-        size = 10
-    elif mag <= 7:  # 6..7
-        size = 6
-    elif mag <= 8:  # 7..8
-        size = 3
-    else:  # > 8
-        size = 2
-
-    return size
 
 
 class StarPlotterMixin:
@@ -226,12 +178,9 @@ class StarPlotterMixin:
         """
 
         # fallback to style if callables are None
-        color_hex = (
-            style.marker.fill.as_hex()
-        )  # calculate color hex once here to avoid repeated calls in color_fn()
         size_fn = size_fn or (lambda d: style.marker.size)
         opacity_fn = opacity_fn or (lambda d: style.marker.opacity)
-        color_fn = color_fn or (lambda d: color_hex)
+        color_fn = color_fn or (lambda d: style.marker.fill)
 
         self._last_used_size_fn = size_fn
 

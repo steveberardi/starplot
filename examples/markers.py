@@ -48,7 +48,7 @@ for symbol in MarkerSymbolEnum:
         ra_max=CENTER_RA + 10,
         dec_min=CENTER_DEC - 10,
         dec_max=CENTER_DEC + 10,
-        style=style,
+        style=style_medium,
         resolution=300,
     )
     p.marker(

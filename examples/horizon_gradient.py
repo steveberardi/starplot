@@ -10,6 +10,7 @@ style = PlotStyle().extend(
     extensions.GRADIENT_PRE_DAWN,
 )
 style.figure.padding = 40
+style.constellation_lines.width = 4
 
 dt = datetime(2025, 8, 20, 21, 0, 0, 0, tzinfo=ZoneInfo("Pacific/Honolulu"))
 
@@ -24,8 +25,6 @@ p = HorizonPlot(
     azimuth=(155, 250),
     observer=observer,
     style=style,
-    resolution=4000,
-    scale=1,
 )
 
 p.constellations()
@@ -33,9 +32,8 @@ p.milky_way()
 p.gridlines()
 
 p.stars(
-    where=[_.magnitude < 5],
+    where=[_.magnitude < 4.6],
     where_labels=[_.magnitude < 2],
-    style__marker__symbol="star_4",
 )
 
 p.messier(

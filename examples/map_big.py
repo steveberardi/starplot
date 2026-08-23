@@ -16,7 +16,7 @@ p = MapPlot(
     style=style,
     resolution=6000,
     # since this map has a very large extent, let's scale everything down
-    scale=0.8,
+    scale=0.72,
 )
 p.gridlines()
 p.constellations()

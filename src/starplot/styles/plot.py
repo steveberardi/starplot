@@ -303,7 +303,9 @@ class PlotStyle(BaseStyle):
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
     constellation_lines: LineStyle = LineStyle(
-        stroke="#c8c8c8", zorder=ZOrderEnum.LAYER_3
+        stroke="#c8c8c8", 
+        width=5,
+        zorder=ZOrderEnum.LAYER_3,
     )
     """Styling for constellation lines"""
 
@@ -317,7 +319,7 @@ class PlotStyle(BaseStyle):
     """Styling for constellation borders"""
 
     constellation_labels: LabelStyle = LabelStyle(
-        font_size=21,
+        font_size=40,
         font_weight=FontWeightEnum.NORMAL,
         zorder=ZOrderEnum.LAYER_3,
         anchor_point=AnchorPointEnum.CENTER,
@@ -418,7 +420,7 @@ class PlotStyle(BaseStyle):
     horizon: PathStyle = PathStyle(
         line=LineStyle(
             stroke="#fff",
-            width=110,
+            width=135,
             style=LineStyleEnum.SOLID,
             cap_style=CapStyleEnum.ROUND,
             opacity=1,
@@ -427,7 +429,7 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             anchor_point=AnchorPointEnum.CENTER,
             fill="#000",
-            font_size=70,
+            font_size=98,
             font_weight=FontWeightEnum.BOLD,
             zorder=ZOrderEnum.LAYER_5,
         ),

@@ -20,8 +20,6 @@ p = ZenithPlot(
         extensions.BLUE_MEDIUM,
         extensions.FIGURE_TRANSPARENT,
     ),
-    resolution=3600,
-    autoscale=True,
 )
 p.horizon()
 p.constellations()

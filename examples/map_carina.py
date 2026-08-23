@@ -15,7 +15,7 @@ p = MapPlot(
     dec_max=-55,
     style=style,
     resolution=3000,
-    scale=1,
+    scale=1.1,
 )
 
 p.gridlines(

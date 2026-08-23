@@ -15,7 +15,6 @@ observer = Observer(
 p = ZenithPlot(
     observer=observer,
     resolution=4000,
-    scale=0.9,
 )
 p.constellations()  # Plot the constellation lines first
 p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 3])
