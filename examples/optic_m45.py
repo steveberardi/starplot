@@ -32,8 +32,6 @@ p = OpticPlot(
         eyepiece_fov=82,
     ),
     style=style,
-    resolution=4096,
-    autoscale=True,
 )
 p.stars(
     where=[_.magnitude < 12],

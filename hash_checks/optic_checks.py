@@ -29,8 +29,8 @@ style_blue = styles.PlotStyle().extend(
 POWAY = {"lat": 32.97, "lon": -117.038611}
 
 plot_kwargs = dict(
-    resolution=2048,
-    scale=0.8,
+    resolution=4096,
+    scale=1,
 )
 
 observer_dec_16_poway = Observer(

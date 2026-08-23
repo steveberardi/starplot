@@ -20,7 +20,7 @@ STYLE = styles.PlotStyle().extend(
 
 JUNE_2023 = datetime(2023, 6, 20, 21, 0, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 
-RESOLUTION = 3800
+RESOLUTION = 4096
 
 HANDLER = CollisionHandler(seed=1, allow_constellation_line_collisions=True)
 

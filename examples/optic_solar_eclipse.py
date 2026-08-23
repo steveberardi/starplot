@@ -24,7 +24,6 @@ op = m.create_optic(
         extensions.OPTIC,
         extensions.GRADIENT_DAYLIGHT,
     ),
-    resolution=2000,
 )
 op.moon(
     true_size=True,

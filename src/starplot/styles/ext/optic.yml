@@ -1,23 +1,3 @@
-star:
-  label:
-    font_size: 36
-  marker:
-    size: 30
-bayer_labels:
-  font_size: 40
-flamsteed_labels:
-  font_size: 40
-planets:
-  marker:
-    size: 30
-legend:
-  location: "outside bottom right"
-ecliptic:
-  label:
-    font_size: 27
-celestial_equator:
-  label:
-    font_size: 27
 figure:
   background:
     fill: null
@@ -26,3 +6,27 @@ axes:
     gradient_type: radial
   border:
     width: 8
+
+legend:
+  location: "outside bottom right"
+
+star:
+  label:
+    font_size: 58
+bayer_labels:
+  font_size: 56
+flamsteed_labels:
+  font_size: 50
+
+planets:
+  marker:
+    size: 60
+
+
+ecliptic:
+  label:
+    font_size: 60
+celestial_equator:
+  label:
+    font_size: 60
+
