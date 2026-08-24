@@ -355,16 +355,16 @@ class PathStyle(BaseStyle):
 
 
 class TableStyle(BaseStyle):
-    """Defines the style for a table of data (see [Canvas.table][starplot.svg.canvas.Canvas.table])"""
+    """Defines the style for a table of data"""
 
     header: LabelStyle = LabelStyle(font_weight=FontWeightEnum.BOLD)
-    """Style for the header row's text (see [LabelStyle][starplot.styles.LabelStyle])"""
+    """Style for the table's header row text"""
 
     cell: LabelStyle = LabelStyle()
-    """Style for the body cells' text (see [LabelStyle][starplot.styles.LabelStyle])"""
+    """Style for the table's cell text"""
 
     border: LineStyle = LineStyle(stroke="#c5c5c5", width=1)
-    """Style for the table's grid lines and outer border (see [LineStyle][starplot.styles.LineStyle])"""
+    """Style for the table's grid lines and outer border"""
 
     padding_top: int = 40
     """Padding above the table, in pixels. Creates space between the axes and the table."""
@@ -466,3 +466,24 @@ class AxesStyle(BaseStyle):
     If the plot also has gridline labels, then the gridline labels are plotted
     just outside the axes border, in the axes "frame" region.
     """
+
+class PlotBaseStyle(BaseStyle):
+    """
+    Default base styles for all child styles that have these values set to `None` / null
+
+    This is a way to apply some styles to everything in the plot, unless a style specifically sets one of these values.
+
+    For example, if all object label styles have `font_name = None` then the `base` font name will be used.
+    
+    """
+    font_name: str = "Inter"
+    """Name of the base font to use if a style's font is set to `None`"""
+
+    font_family: str = "sans-serif"
+    """Font family (e.g. 'monospace', 'sans-serif', 'serif', etc) to use if a style's font family is set to `None`"""
+
+    text_stroke_width: float = 0
+    """Width of border (also known as 'halos' in map design) around text, in pixels"""
+
+    text_stroke: Color | None = None
+    """Color of border (also known as 'halos' in map design) around text if a style's value is set to `None`"""

@@ -25,6 +25,7 @@ from starplot.styles.elements import (
     PolygonStyle,
     TableStyle,
     TitleStyle,
+    PlotBaseStyle,
 )
 from starplot.styles.helpers import merge_dict
 
@@ -32,6 +33,11 @@ from starplot.styles.helpers import merge_dict
 class PlotStyle(BaseStyle):
     """
     Defines all the styling properties for a plot
+    """
+
+    base: PlotBaseStyle = PlotBaseStyle()
+    """
+    Default base styles for undefined style properties. This is a way to apply some styles to everything in the plot, unless a style specifically sets one of these values.
     """
 
     axes: AxesStyle = AxesStyle()
@@ -48,11 +54,6 @@ class PlotStyle(BaseStyle):
     - Padding between the axes (map region) and edge of image
     
     """
-
-    # TODO : refactor how global text style props work
-    # text_border_width: int = 2
-    # """Text border (aka halos) width. This will apply to _all_ text labels on the plot. If you'd like to control these borders by object type, then set this global width to `0` and refer to the label style's `stroke_width` and `stroke` properties."""
-    # text_border_color: Color = Color("#fff")
 
     title: TitleStyle = TitleStyle(
         font_size=85,

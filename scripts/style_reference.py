@@ -35,7 +35,7 @@ OUTPUT_PATH = REPO_ROOT / "docs" / "snippets" / "style_reference.html"
 # This mirrors the section comments in styles/plot.py (# Stars, # Deep Sky
 # Objects, etc) -- real structure from the source, not an invented one.
 GROUPS = [
-    ("Layout", ["axes", "figure", "title", "table", "legend"]),
+    ("Layout", ["base", "axes", "figure", "title", "table", "legend"]),
     ("Stars", ["star", "bayer_labels", "flamsteed_labels"]),
     ("Solar System", ["planets", "moon", "sun"]),
     (
