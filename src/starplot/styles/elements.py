@@ -467,6 +467,7 @@ class AxesStyle(BaseStyle):
     just outside the axes border, in the axes "frame" region.
     """
 
+
 class PlotBaseStyle(BaseStyle):
     """
     Default base styles for all child styles that have these values set to `None` / null
@@ -474,8 +475,9 @@ class PlotBaseStyle(BaseStyle):
     This is a way to apply some styles to everything in the plot, unless a style specifically sets one of these values.
 
     For example, if all object label styles have `font_name = None` then the `base` font name will be used.
-    
+
     """
+
     font_name: str = "Inter"
     """Name of the base font to use if a style's font is set to `None`"""
 

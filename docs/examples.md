@@ -72,12 +72,6 @@
             <p class="example-card-title">The Big Dipper</p>
         </a>
     </li>
-    <!-- <li>
-        <a href="/examples/map-orthographic/">
-            <img src="/images/examples/map_orthographic-sm.png" alt="Orthographic Map" class="off-glb" loading="lazy"/>
-            <p class="example-card-title">Orthographic Map</p>
-        </a>
-    </li> -->
     <li>
         <a href="/examples/optic-iss-transit/">
             <img src="/images/examples/optic_iss_transit-sm.png" alt="ISS Moon Transit" class="off-glb" loading="lazy"/>
@@ -94,6 +88,12 @@
         <a href="/examples/star-chart-french/">
             <img src="/images/examples/star_chart_french-sm.png" alt="Star Chart in French" class="off-glb" loading="lazy"/>
             <p class="example-card-title">Star Chart in French</p>
+        </a>
+    </li>
+    <li>
+        <a href="/examples/map-orthographic/">
+            <img src="/images/examples/map_orthographic-sm.png" alt="Orthographic Map" class="off-glb" loading="lazy"/>
+            <p class="example-card-title">Orthographic Map</p>
         </a>
     </li>
     <!-- <li>

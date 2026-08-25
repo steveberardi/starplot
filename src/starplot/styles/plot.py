@@ -171,7 +171,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
             line_style=(1, 2),
-            dash_spacing=28,
+            dash_spacing=20,
             dash_capstyle=CapStyleEnum.ROUND,
             stroke_width=2,
             zorder=ZOrderEnum.LAYER_3 - 1,
@@ -184,7 +184,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
             line_style=(1, 2),
-            dash_spacing=28,
+            dash_spacing=20,
             dash_capstyle=CapStyleEnum.ROUND,
             stroke_width=2,
             zorder=ZOrderEnum.LAYER_3 - 1,
@@ -304,7 +304,7 @@ class PlotStyle(BaseStyle):
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
     constellation_lines: LineStyle = LineStyle(
-        stroke="#c8c8c8", 
+        stroke="#c8c8c8",
         width=5,
         zorder=ZOrderEnum.LAYER_3,
     )

@@ -17,7 +17,6 @@ from starplot.styles import ObjectStyle, use_style
 from starplot.utils import normalize_where
 
 
-
 class StarPlotterMixin:
     def _load_stars(self, catalog, filters=None, sql=None):
         extent = self._extent_mask()

@@ -12,18 +12,19 @@ azimuthal projection near its antipode).
 
 from starplot import (
     Equidistant,
+    Gnomonic,
     LambertAzEqArea,
     MapPlot,
     Mercator,
     Miller,
     Mollweide,
     ObliqueMercator,
+    Orthographic,
     PlateCarree,
     Robinson,
     Stereographic,
     StereoNorth,
     StereoSouth,
-    Gnomonic,
     geometry,
 )
 from starplot.styles import PlotStyle, extensions
@@ -133,6 +134,12 @@ PROJECTIONS = [
         dict(dec_min=0),
         geometry.circle(center=(180, 90), diameter_degrees=120, num_pts=100),
     ),
+    # Orthographic shows the sky as seen from infinitely far away, like a
+    # view of the globe -- it can only show one hemisphere (up to 90 degrees
+    # from center) at a time, but unlike Gnomonic/Stereographic it doesn't
+    # need a manual clip circle: it knows its own visible-hemisphere bounds,
+    # so the default dict()/no-clip_path extent below is enough on its own.
+    ("orthographic", Orthographic(), dict(), None),
 ]
 
 for name, projection, extent, clip_path in PROJECTIONS:

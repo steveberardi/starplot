@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from pyproj import CRS, Transformer
 
 from starplot.constants import PROJ_R
+from starplot.geometry import circle
 
 
 class CoordinateReferenceSystem(str, Enum):
@@ -105,6 +106,15 @@ class ProjectionBase(BaseModel, ABC):
     global_only: bool = False
     curved: bool = False
     wraps: bool = False
+
+    # Set on hemisphere-limited projections (e.g. Orthographic): points
+    # farther than this many degrees from (center_ra, center_dec) aren't
+    # actually visible, even if PROJ still returns a finite (but wrong,
+    # mirrored) projected coordinate for them -- see geometry.py's
+    # split_line_at_horizon/split_ring_at_horizon, which use this to cut
+    # lines/polygons in RA/DEC space before projecting, since there's no
+    # reliable jump/non-finite signature to catch this after the fact.
+    max_angular_distance: float | None = None
 
     name: ClassVar[str] = None
     r: int | None = PROJ_R
@@ -340,3 +350,44 @@ class Gnomonic(ProjectionBase, CenterRADEC):
 
     name: ClassVar[str] = "gnom"
     proj_def_base: str = f"+proj=gnom +R={PROJ_R} +units=m"
+
+
+class Orthographic(ProjectionBase, CenterRADEC):
+    """
+    Orthographic projection - shows the sky as seen from an infinite distance, like a view of the globe.
+
+    Similar to the Stereographic/Gnomonic projections, but distorts angles/shapes instead of straight lines,
+    and can only show one hemisphere (up to 90 degrees from center) at a time.
+    """
+
+    name: ClassVar[str] = "ortho"
+    proj_def_base: str = f"+proj=ortho +R={PROJ_R} +units=m"
+    curved: bool = True
+    wraps: bool = True
+    max_angular_distance: float = 90.0
+
+    @property
+    def global_bounds(self):
+        # Unlike cylindrical/pseudo-cylindrical projections, orthographic
+        # always maps the visible hemisphere to a disc of radius R centered
+        # at the origin, regardless of center_ra/center_dec -- so this can
+        # be computed directly instead of via the generic edge-sampling
+        # approach in latlon_bounds_to_projection(), which (built for
+        # rectangular lat/lon regions) degenerates to a near-zero-width
+        # bounding box here, since the sampled edges of the full -180..180/
+        # -90..90 region collapse to little more than a line under this
+        # projection.
+        return -PROJ_R, -PROJ_R, PROJ_R, PROJ_R
+
+    def global_clip_path(self):
+        # The limb of the visible hemisphere is just the set of points
+        # exactly 90 degrees from the center -- a circle in RA/DEC space,
+        # same helper used for the other azimuthal projections' clip paths
+        # in examples/projections.py.
+        return list(
+            circle(
+                center=(self.center_ra, self.center_dec),
+                diameter_degrees=179.98,
+                num_pts=360,
+            ).exterior.coords
+        )

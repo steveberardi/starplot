@@ -535,17 +535,38 @@ class Canvas:
         coordinates: list[tuple[float, float]] | None = None,
         style: PathStyle | LineStyle = None,
     ) -> None:
-        arr = np.array(coordinates)
-        px, py = self.tx.transform(arr[:, 0], arr[:, 1])
-
-        if self.projection.wraps:
-            # Cut wherever the *projected* line jumps or goes non-finite,
-            # instead of guessing where the projection's seam falls in RA/DEC
-            # space (that only has a simple answer for unrotated cylindrical
-            # projections -- see ObliqueMercator, whose seam isn't a fixed RA).
-            lines_split = self._split_line_with_refinement(coordinates, px, py)
+        max_angular_distance = self.projection.max_angular_distance
+        if max_angular_distance is not None:
+            # A hemisphere-limited projection (e.g. Orthographic) can map a
+            # point just beyond its horizon to a finite location near its
+            # visible neighbor, instead of jumping or going non-finite --
+            # cut those out in RA/DEC space first, since the post-projection
+            # jump detection below can't see this kind of discontinuity.
+            center = (self.projection.center_ra, self.projection.center_dec)
+            raw_segments = _geometry.split_line_at_horizon(
+                coordinates, center, max_angular_distance
+            )
         else:
-            lines_split = [list(zip(px, py))]
+            raw_segments = [coordinates]
+
+        lines_split = []
+        for raw_segment in raw_segments:
+            if len(raw_segment) < 2:
+                continue
+
+            arr = np.array(raw_segment)
+            px, py = self.tx.transform(arr[:, 0], arr[:, 1])
+
+            if self.projection.wraps:
+                # Cut wherever the *projected* line jumps or goes non-finite,
+                # instead of guessing where the projection's seam falls in RA/DEC
+                # space (that only has a simple answer for unrotated cylindrical
+                # projections -- see ObliqueMercator, whose seam isn't a fixed RA).
+                lines_split.extend(
+                    self._split_line_with_refinement(raw_segment, px, py)
+                )
+            else:
+                lines_split.append(list(zip(px, py)))
 
         for line in lines_split:
             if len(line) < 2:
@@ -710,9 +731,28 @@ class Canvas:
         # clipping at the projection's seam is meaningless and corrupts the
         # shape.
         if self.projection.wraps and cs == CoordinateSystem.DATA:
-            arr = np.array(coordinates)
-            px, py = self.tx.transform(arr[:, 0], arr[:, 1])
-            polygons_split = self._clip_wrapped_polygon(coordinates, px, py)
+            max_angular_distance = self.projection.max_angular_distance
+            if max_angular_distance is not None:
+                # Same reasoning as Canvas.line(): a hemisphere-limited
+                # projection can fold an invisible point onto a finite
+                # location on the visible disc with no jump to detect after
+                # projecting, so cut the ring at the horizon in RA/DEC space
+                # first. Each visible arc is then run through the existing
+                # jump/close/repair pipeline below on its own.
+                center = (self.projection.center_ra, self.projection.center_dec)
+                arcs = _geometry.split_ring_at_horizon(
+                    coordinates, center, max_angular_distance
+                )
+            else:
+                arcs = [coordinates]
+
+            polygons_split = []
+            for arc in arcs:
+                if len(arc) < 3:
+                    continue
+                arr = np.array(arc)
+                px, py = self.tx.transform(arr[:, 0], arr[:, 1])
+                polygons_split.extend(self._clip_wrapped_polygon(arc, px, py))
             result_cs = CoordinateSystem.PROJECTED
         else:
             polygons_split = [ShapelyPolygon(coordinates)]

@@ -13,7 +13,7 @@ skip = [
     "map_comet_neowise.py",
     "horizon_sgr.py",
     "optic_moon_saturn.py",
-    "map_orthographic.py",
+    # "map_orthographic.py",
     "galaxy_custom_marker.py",
     "map_milky_way_stars.py",
     # "stuff.py",

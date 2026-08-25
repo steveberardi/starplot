@@ -4,7 +4,9 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "starplot"
-authors = [{name = "Steve Berardi", email = "hello@steveberardi.com"}]
+authors = [
+    {name = "Steve Berardi", email = "steve@starplot.dev"},
+]
 readme = "README.md"
 license = {file = "LICENSE"}
 classifiers = [

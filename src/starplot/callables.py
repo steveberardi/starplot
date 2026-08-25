@@ -108,6 +108,7 @@ def size_by_magnitude(star: Star) -> float:
 
     return size
 
+
 def size_by_magnitude_simple(star: Star) -> float:
     """Very simple sizer by magnitude for map plots"""
     m = star.magnitude

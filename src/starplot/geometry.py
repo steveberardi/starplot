@@ -5,6 +5,7 @@ import random
 import numpy as np
 import pyproj
 from shapely import union_all
+from shapely.errors import GEOSException
 from shapely.geometry import LineString, Point, Polygon
 
 from starplot.constants import PROJ_R
@@ -322,7 +323,18 @@ def is_wrapped_polygon(polygon: Polygon) -> bool:
 
 def line_segment(start, end, step) -> list[tuple[float, float]]:
     """Returns coordinates on the line from start to end at the specified step-size"""
-    return LineString([start, end]).segmentize(step).coords
+    try:
+        return LineString([start, end]).segmentize(step).coords
+    except GEOSException:
+        # A constellation line with one endpoint on the invisible side of a
+        # hemisphere-limited projection (e.g. Orthographic) can project to
+        # display coordinates that are enormously far from the other
+        # endpoint, since nothing clips it before this point -- GEOS
+        # refuses to segmentize a line that long at this small a step
+        # ("Tolerance is too small compared to geometry length"). The line
+        # is headed off-canvas either way, so just return its two
+        # endpoints unsubdivided instead of crashing the whole plot.
+        return [start, end]
 
 
 def extend_line(
@@ -507,6 +519,96 @@ def split_ring_at_projection_jumps(
     start = (jump_after[0] + 1) % n
     rotated = [pts[(start + k) % n] for k in range(n)]
     return split_line_at_projection_jumps(rotated, max_jump)
+
+
+def angular_distance(ra1: float, dec1: float, ra2: float, dec2: float) -> float:
+    """Great-circle angular distance between two RA/DEC points, in degrees."""
+    ra1, dec1, ra2, dec2 = (math.radians(v) for v in (ra1, dec1, ra2, dec2))
+    cos_c = math.sin(dec1) * math.sin(dec2) + math.cos(dec1) * math.cos(
+        dec2
+    ) * math.cos(ra1 - ra2)
+    cos_c = max(-1.0, min(1.0, cos_c))  # guard float rounding at +/-1
+    return math.degrees(math.acos(cos_c))
+
+
+def split_line_at_horizon(
+    coords: list[tuple[float, float]],
+    center: tuple[float, float],
+    max_angular_distance: float,
+) -> list[list[tuple[float, float]]]:
+    """
+    Split a line of *raw* (ra, dec) coords wherever a point falls beyond
+    max_angular_distance from center -- for hemisphere-limited projections
+    (e.g. Orthographic), where PROJ maps a point just beyond the horizon
+    to a finite location close to its visible neighbor (mirrored back onto
+    the visible disc) rather than a jump or a non-finite value, so
+    split_line_at_projection_jumps -- which only looks at the *projected*
+    output -- can't detect the cut on its own. This runs first, in RA/DEC
+    space, before projecting.
+
+    Args:
+        coords: List of raw (ra, dec) coordinate tuples
+        center: The projection's (center_ra, center_dec)
+        max_angular_distance: Points farther than this from center (in
+            degrees) are dropped
+
+    Returns:
+        List of coordinate-list segments
+    """
+    if not coords:
+        return []
+
+    center_ra, center_dec = center
+    segments = []
+    current = []
+
+    for ra, dec in coords:
+        if angular_distance(ra, dec, center_ra, center_dec) <= max_angular_distance:
+            current.append((ra, dec))
+        elif current:
+            segments.append(current)
+            current = []
+
+    if current:
+        segments.append(current)
+
+    return segments
+
+
+def split_ring_at_horizon(
+    coords: list[tuple[float, float]],
+    center: tuple[float, float],
+    max_angular_distance: float,
+) -> list[list[tuple[float, float]]]:
+    """
+    Like `split_line_at_horizon`, but for a *closed* ring. Treats the
+    sequence as cyclic, so an arc that wraps across the start/end of the
+    coordinate list comes back as a single piece instead of being cut in
+    two at an arbitrary array boundary.
+
+    Returns:
+        List of coordinate-list arcs. Empty if nothing is visible.
+    """
+    pts = coords[:-1] if len(coords) > 1 and coords[0] == coords[-1] else list(coords)
+    n = len(pts)
+    if n < 3:
+        return []
+
+    center_ra, center_dec = center
+    visible = [
+        angular_distance(ra, dec, center_ra, center_dec) <= max_angular_distance
+        for ra, dec in pts
+    ]
+
+    if all(visible):
+        return [pts]
+    if not any(visible):
+        return []
+
+    cut_after = [i for i in range(n) if visible[i] and not visible[(i + 1) % n]]
+    start = (cut_after[0] + 1) % n
+    rotated = [pts[(start + k) % n] for k in range(n)]
+    return split_line_at_horizon(rotated, center, max_angular_distance)
 
 
 def extent_polygon(
