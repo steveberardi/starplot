@@ -49,14 +49,7 @@ planets:
 milky_way:
   fill: 'hsl(203, 60%, 84%)'
   stroke_width: 0
-gridlines:
-  label:
-    opacity: 1
-    fill: hsl(212, 27%, 93%)
-  line:
-    opacity: 0.6
-    stroke: '#888'
-    style: solid
+
 sun:
   marker:
     fill: '#ffd22e'
@@ -73,6 +66,14 @@ zenith:
     fill: '#b979b7'
   label:
     fill: '#b979b7'
+
+gridlines:
+  label:
+    opacity: 1
+    fill: hsl(212, 27%, 93%)
+  line:
+    opacity: 0.6
+    stroke: '#888'
 
 # DSOs
 

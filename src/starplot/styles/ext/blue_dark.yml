@@ -121,7 +121,6 @@ gridlines:
   line:
     opacity: 0.7
     stroke: hsl(209, 53%, 37%)
-    style: solid
     width: 1
 milky_way:
   opacity: 0.26

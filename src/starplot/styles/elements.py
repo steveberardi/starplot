@@ -17,6 +17,48 @@ from starplot.styles.constants import (
 from starplot.styles.types import Color, GradientStops
 
 
+def _dash_array_attrs(
+    dash_array: LineStyleEnum | tuple | None, scale: float, nominal: float = 100
+) -> dict:
+    """
+    Resolves a `dash_array` field (a LineStyleEnum, raw tuple, or None) into
+    `stroke-dasharray`/`pathLength` SVG attrs.
+
+    The dasharray values are scaled like everything else drawn on the plot,
+    and the pattern is normalized via `pathLength` so it repeats a whole
+    number of times from one end of the path to the other -- without this,
+    the last repeat gets cut off part way through a dash/gap wherever the
+    path happens to end, which is most noticeable on short paths where the
+    pattern only repeats once or twice. `pathLength` is chosen as the
+    nearest multiple of one full dash/gap cycle to `nominal`, so the
+    pattern's visual density stays close to what plain (unnormalized)
+    values would look like.
+    """
+    if not dash_array:
+        return {}
+
+    values = (
+        LineStyleEnum(dash_array).values()
+        if isinstance(dash_array, (str, LineStyleEnum))
+        else dash_array
+    )
+    if not values:
+        return {}
+
+    scaled = [n * scale for n in values]
+    cycle = sum(scaled)
+    if cycle <= 0:
+        return {}
+
+    repeats = max(1, round(nominal / cycle))
+    path_length = cycle * repeats
+
+    return {
+        "pathLength": round(path_length, 4),
+        "stroke-dasharray": ",".join(str(round(n, 4)) for n in scaled),
+    }
+
+
 class MarkerStyle(BaseStyle):
     """
     Styling properties for markers.
@@ -48,16 +90,13 @@ class MarkerStyle(BaseStyle):
     """Stroke color of marker. Can be a hex, rgb, hsl, or word string."""
 
     stroke_width: float = 1
-    """Stroke width of marker, in pixels. Not available for all marker symbols."""
+    """Stroke width of marker, in pixels."""
 
     dash_array: LineStyleEnum | tuple | None = None
-    """Stroke line style. Can be a predefined value in `LineStyleEnum` or a [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/)."""
+    """Dash style of the marker's stroke. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyleEnum.ROUND`, since a zero-length dash is only visible with a round cap."""
 
     dash_capstyle: CapStyleEnum = CapStyleEnum.PROJECTING
     """Style of dash endpoints"""
-
-    dash_spacing: float | None = None
-    """Spacing for dashes"""
 
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.CIRCLE
     """Symbol for marker"""
@@ -88,20 +127,7 @@ class MarkerStyle(BaseStyle):
             attrs["fill-opacity"] = self.opacity
 
         if self.dash_array:
-            if isinstance(self.dash_array, LineStyleEnum):
-                values = LineStyleEnum(self.dash_array).values()
-            else:
-                values = self.dash_array
-            
-            attrs["stroke-dasharray"] = ",".join([str(n * scale) for n in values])
-
-            if self.dash_spacing:
-                attrs.update(
-                    {
-                        "pathLength": 100,
-                        "stroke-dasharray": f"0 {round(100 / self.dash_spacing * scale, 4)}",
-                    }
-                )
+            attrs.update(_dash_array_attrs(self.dash_array, scale))
         return attrs
 
     def to_polygon_style(self):
@@ -111,7 +137,8 @@ class MarkerStyle(BaseStyle):
             stroke_width=self.stroke_width,
             opacity=self.opacity,
             zorder=self.zorder,
-            line_style=self.dash_array,
+            dash_array=self.dash_array,
+            dash_capstyle=self.dash_capstyle,
         )
 
 
@@ -126,8 +153,8 @@ class LineStyle(BaseStyle):
     stroke: Color | None = Color("#000")
     """Color of the line. Can be a hex, rgb, hsl, or word string."""
 
-    style: LineStyleEnum | tuple = LineStyleEnum.SOLID
-    """Style of the line (e.g. solid, dashed, etc). Can be a predefined value in `LineStyleEnum` or a [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/)."""
+    dash_array: LineStyleEnum | tuple | None = LineStyleEnum.SOLID
+    """Dash style of the line. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyleEnum.ROUND`, since a zero-length dash is only visible with a round cap."""
 
     cap_style: CapStyleEnum = CapStyleEnum.PROJECTING
     """Style of line/dash endpoints"""
@@ -146,12 +173,7 @@ class LineStyle(BaseStyle):
             "stroke-opacity": self.opacity,
             "stroke-linecap": CapStyleEnum(self.cap_style).css(),
         }
-        if isinstance(self.style, (str, LineStyleEnum)):
-            ls_css = LineStyleEnum(self.style).css()
-            if ls_css:
-                attrs["stroke-dasharray"] = ls_css
-        elif self.style:
-            attrs["stroke-dasharray"] = ",".join([str(n) for n in self.style])
+        attrs.update(_dash_array_attrs(self.dash_array, scale))
 
         return attrs
 
@@ -191,8 +213,11 @@ class PolygonStyle(BaseStyle):
 
     gradient_type: GradientType = GradientType.RADIAL
 
-    line_style: LineStyleEnum | tuple | None = LineStyleEnum.SOLID
-    """Edge line style. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/)."""
+    dash_array: LineStyleEnum | tuple | None = LineStyleEnum.SOLID
+    """Dash style of the polygon's stroke. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyleEnum.ROUND`, since a zero-length dash is only visible with a round cap."""
+
+    dash_capstyle: CapStyleEnum = CapStyleEnum.ROUND
+    """Style of dash endpoints. Matters even for a closed ring's dashes: a zero-length dash (as used for a dotted `dash_array`, e.g. `(0, 5)`) is only visible with a `round` cap -- `projecting`/`butt` caps render it as nothing."""
 
     opacity: float = Field(default=1.0, ge=0, le=1)
     """Opacity (transparency) of the polygon (0 to 1)"""
@@ -211,14 +236,9 @@ class PolygonStyle(BaseStyle):
             attrs["fill-opacity"] = self.opacity
             attrs["stroke-opacity"] = self.opacity
 
-        if isinstance(self.line_style, str):
-            ls_css = LineStyleEnum(self.line_style).css()
-            if ls_css:
-                attrs["stroke-dasharray"] = ls_css
-        elif self.line_style:
-            attrs["stroke-dasharray"] = ",".join([str(n) for n in self.line_style])
-
-        # attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
+        if self.dash_array:
+            attrs.update(_dash_array_attrs(self.dash_array, scale))
+            attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
 
         return attrs
 
@@ -232,7 +252,8 @@ class PolygonStyle(BaseStyle):
             stroke_width=self.stroke_width,
             opacity=self.opacity,
             zorder=self.zorder,
-            line_style=self.line_style,
+            dash_array=self.dash_array,
+            dash_capstyle=self.dash_capstyle,
         )
 
 

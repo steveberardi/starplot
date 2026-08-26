@@ -112,7 +112,6 @@ gridlines:
   line:
     opacity: 0.8
     stroke: '#888'
-    style: solid
 
 milky_way:
   opacity: 0.16

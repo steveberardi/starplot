@@ -26,7 +26,6 @@ gridlines:
   line:
     opacity: 0.8
     stroke: hsl(210, 19%, 45%)
-    style: solid
     width: 1
 
 zenith:

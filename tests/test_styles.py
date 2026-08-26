@@ -42,8 +42,8 @@ def test_plot_style_invalid(kwargs):
 
 
 def test_style_enums_use_strings():
-    line_style = LineStyle(style=LineStyleEnum.DASHED)
-    assert line_style.style == "dashed"
+    line_style = LineStyle(dash_array=LineStyleEnum.DASHED)
+    assert line_style.dash_array == "dashed"
 
 
 def test_style_context_manager():

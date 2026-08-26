@@ -583,8 +583,7 @@ def check_map_label_callables():
         dec_min=22,
         dec_max=26,
         style=STYLE,
-        resolution=2000,
-        autoscale=True,
+        scale=1.5,
     )
     m45 = DSO.get(m="45")
 
@@ -593,7 +592,7 @@ def check_map_label_callables():
         style__fill=STYLE.dso_open_cluster.marker.fill,
         style__stroke="red",
         style__stroke_width=16,
-        style__line_style=(0, (4, 8)),
+        style__dash_array=(8, 32),
     )
 
     p.stars(

@@ -81,7 +81,6 @@ gridlines:
   line:
     opacity: 0.6
     stroke: hsl(68, 11%, 71%)
-    style: solid
     width: 1
 star:
   marker:

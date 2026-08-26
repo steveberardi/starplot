@@ -84,17 +84,17 @@ class LineStyleEnum(str, Enum):
     def css(self) -> str | None:
         return {
             LineStyleEnum.SOLID: None,
-            LineStyleEnum.DASHED: "6,3",
-            LineStyleEnum.DOTTED: "2,3",
-            LineStyleEnum.DASHED_DOTS: "6,3,1,3",
+            LineStyleEnum.DASHED: "12,6",
+            LineStyleEnum.DOTTED: "0,5",
+            LineStyleEnum.DASHED_DOTS: "10,2,10",
         }.get(self.value)
-    
+
     def values(self) -> str | None:
         return {
             LineStyleEnum.SOLID: None,
-            LineStyleEnum.DASHED: (6,3),
-            LineStyleEnum.DOTTED: (2,3),
-            LineStyleEnum.DASHED_DOTS: (6,3,1,3),
+            LineStyleEnum.DASHED: (12, 6),
+            LineStyleEnum.DOTTED: (0, 5),
+            LineStyleEnum.DASHED_DOTS: (10, 2, 10),
         }.get(self.value)
 
 

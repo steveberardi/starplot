@@ -45,7 +45,6 @@ gridlines:
   line:
     opacity: 0.6
     stroke: '#888'
-    style: solid
 
 # Stars
 star:

@@ -170,8 +170,7 @@ class PlotStyle(BaseStyle):
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            dash_array=(1, 2),
-            dash_spacing=20,
+            dash_array=LineStyleEnum.DOTTED,
             dash_capstyle=CapStyleEnum.ROUND,
             stroke_width=2,
             zorder=ZOrderEnum.LAYER_3 - 1,
@@ -183,8 +182,7 @@ class PlotStyle(BaseStyle):
     dso_association_stars: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            dash_array=(1, 2),
-            dash_spacing=20,
+            dash_array=LineStyleEnum.DOTTED,
             dash_capstyle=CapStyleEnum.ROUND,
             stroke_width=2,
             zorder=ZOrderEnum.LAYER_3 - 1,
@@ -313,7 +311,7 @@ class PlotStyle(BaseStyle):
     constellation_borders: LineStyle = LineStyle(
         stroke="#000",
         width=2.5,
-        style=(3, 6),
+        dash_array=(3, 6),
         opacity=0.5,
         zorder=ZOrderEnum.LAYER_3,
     )
@@ -342,7 +340,7 @@ class PlotStyle(BaseStyle):
         line=LineStyle(
             stroke="#888",
             width=1,
-            style=LineStyleEnum.SOLID,
+            dash_array=LineStyleEnum.SOLID,
             opacity=0.6,
             zorder=ZOrderEnum.LAYER_2,
         ),
@@ -361,7 +359,7 @@ class PlotStyle(BaseStyle):
         line=LineStyle(
             stroke="#777",
             width=3,
-            style=(2, 6),
+            dash_array=(2, 6),
             cap_style=CapStyleEnum.ROUND,
             opacity=1,
             zorder=ZOrderEnum.LAYER_3 - 1,
@@ -381,16 +379,15 @@ class PlotStyle(BaseStyle):
     celestial_equator: PathStyle = PathStyle(
         line=LineStyle(
             stroke="#999",
-            width=3,
-            style=LineStyleEnum.DASHED_DOTS,
-            opacity=1,
+            width=4,
+            dash_array=LineStyleEnum.DASHED_DOTS,
+            cap_style=CapStyleEnum.ROUND,
             zorder=ZOrderEnum.LAYER_3,
         ),
         label=LabelStyle(
             font_size=30,
             fill="#999",
             font_weight=FontWeightEnum.NORMAL,
-            opacity=1,
             stroke_width=8,
             stroke="#000",
             zorder=ZOrderEnum.LAYER_3,
@@ -401,9 +398,9 @@ class PlotStyle(BaseStyle):
     galactic_equator: PathStyle = PathStyle(
         line=LineStyle(
             stroke="#999",
-            width=3,
-            style=LineStyleEnum.SOLID,
-            opacity=0.65,
+            width=4,
+            dash_array=LineStyleEnum.SOLID,
+            opacity=0.8,
             zorder=ZOrderEnum.LAYER_3,
         ),
         label=LabelStyle(
@@ -422,7 +419,7 @@ class PlotStyle(BaseStyle):
         line=LineStyle(
             stroke="#fff",
             width=135,
-            style=LineStyleEnum.SOLID,
+            dash_array=LineStyleEnum.SOLID,
             cap_style=CapStyleEnum.ROUND,
             opacity=1,
             zorder=ZOrderEnum.LAYER_5,
@@ -451,7 +448,7 @@ class PlotStyle(BaseStyle):
     optic_fov: PolygonStyle = PolygonStyle(
         fill=None,
         stroke="red",
-        line_style=(2, 3),
+        dash_array=(2, 3),
         stroke_width=3,
         zorder=-1000,
     )
