@@ -170,7 +170,7 @@ class PlotStyle(BaseStyle):
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            line_style=(1, 2),
+            dash_array=(1, 2),
             dash_spacing=20,
             dash_capstyle=CapStyleEnum.ROUND,
             stroke_width=2,
@@ -183,7 +183,7 @@ class PlotStyle(BaseStyle):
     dso_association_stars: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            line_style=(1, 2),
+            dash_array=(1, 2),
             dash_spacing=20,
             dash_capstyle=CapStyleEnum.ROUND,
             stroke_width=2,

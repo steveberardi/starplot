@@ -88,6 +88,14 @@ class LineStyleEnum(str, Enum):
             LineStyleEnum.DOTTED: "2,3",
             LineStyleEnum.DASHED_DOTS: "6,3,1,3",
         }.get(self.value)
+    
+    def values(self) -> str | None:
+        return {
+            LineStyleEnum.SOLID: None,
+            LineStyleEnum.DASHED: (6,3),
+            LineStyleEnum.DOTTED: (2,3),
+            LineStyleEnum.DASHED_DOTS: (6,3,1,3),
+        }.get(self.value)
 
 
 class CapStyleEnum(str, Enum):

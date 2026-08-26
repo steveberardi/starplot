@@ -45,13 +45,13 @@ class MarkerStyle(BaseStyle):
     """
 
     stroke: Color | None = Color("#000")
-    """Edge color of marker. Can be a hex, rgb, hsl, or word string."""
+    """Stroke color of marker. Can be a hex, rgb, hsl, or word string."""
 
     stroke_width: float = 1
-    """Edge width of marker, in pixels. Not available for all marker symbols."""
+    """Stroke width of marker, in pixels. Not available for all marker symbols."""
 
-    line_style: LineStyleEnum | tuple = LineStyleEnum.SOLID
-    """Edge line style. Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
+    dash_array: LineStyleEnum | tuple | None = None
+    """Stroke line style. Can be a predefined value in `LineStyleEnum` or a [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/)."""
 
     dash_capstyle: CapStyleEnum = CapStyleEnum.PROJECTING
     """Style of dash endpoints"""
@@ -87,13 +87,21 @@ class MarkerStyle(BaseStyle):
         if self.opacity != 1:
             attrs["fill-opacity"] = self.opacity
 
-        if self.dash_spacing:
-            attrs.update(
-                {
-                    "pathLength": 100,
-                    "stroke-dasharray": f"0 {round(100 / self.dash_spacing, 4)}",
-                }
-            )
+        if self.dash_array:
+            if isinstance(self.dash_array, LineStyleEnum):
+                values = LineStyleEnum(self.dash_array).values()
+            else:
+                values = self.dash_array
+            
+            attrs["stroke-dasharray"] = ",".join([str(n * scale) for n in values])
+
+            if self.dash_spacing:
+                attrs.update(
+                    {
+                        "pathLength": 100,
+                        "stroke-dasharray": f"0 {round(100 / self.dash_spacing * scale, 4)}",
+                    }
+                )
         return attrs
 
     def to_polygon_style(self):
@@ -103,7 +111,7 @@ class MarkerStyle(BaseStyle):
             stroke_width=self.stroke_width,
             opacity=self.opacity,
             zorder=self.zorder,
-            line_style=self.line_style,
+            line_style=self.dash_array,
         )
 
 
@@ -119,7 +127,7 @@ class LineStyle(BaseStyle):
     """Color of the line. Can be a hex, rgb, hsl, or word string."""
 
     style: LineStyleEnum | tuple = LineStyleEnum.SOLID
-    """Style of the line (e.g. solid, dashed, etc). Can be a predefined value in `LineStyleEnum` or a [Matplotlib linestyle tuple](https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html)."""
+    """Style of the line (e.g. solid, dashed, etc). Can be a predefined value in `LineStyleEnum` or a [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/)."""
 
     cap_style: CapStyleEnum = CapStyleEnum.PROJECTING
     """Style of line/dash endpoints"""
@@ -183,7 +191,7 @@ class PolygonStyle(BaseStyle):
 
     gradient_type: GradientType = GradientType.RADIAL
 
-    line_style: LineStyleEnum | tuple = LineStyleEnum.SOLID
+    line_style: LineStyleEnum | tuple | None = LineStyleEnum.SOLID
     """Edge line style. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/)."""
 
     opacity: float = Field(default=1.0, ge=0, le=1)

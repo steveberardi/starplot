@@ -50,7 +50,7 @@ p.marker(
             "fill": None,
             "stroke": "hsl(44, 70%, 73%)",
             "stroke_width": 2,
-            "line_style": [1, [2, 3]],
+            "dash_array": (2, 3),
             "opacity": 1,
             "zorder": 100,
         },
