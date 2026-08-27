@@ -1,3 +1,5 @@
+# Deep Sky Objects
+
 Starplot has one officially supported catalog of deep sky objects (DSOs):
 
 ::: starplot.data.catalogs.OPEN_NGC

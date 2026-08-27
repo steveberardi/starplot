@@ -1,7 +1,3 @@
-
-
-
-
 <style>
 
     .md-content {
@@ -10,6 +6,8 @@
 </style>
 <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+
+# Deep Sky Objects
 
 The table below shows all the deep sky objects (DSOs) available in OpenNGC's database.
 
