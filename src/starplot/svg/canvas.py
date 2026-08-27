@@ -811,19 +811,20 @@ class Canvas:
             "text-anchor": "middle",
             # "dominant-baseline": "central",
         }
+        padding_bottom = style.padding_bottom * self.scale
         self.layout.title = Region(
             elements=[
                 (
                     style.zorder,
                     Text(
                         x=self.layout.axes.width / 2,
-                        y=style.font_size * self.scale - style.padding_bottom,
+                        y=style.font_size * self.scale - padding_bottom,
                         attrs=_attrs,
                         text=value,
                     ),
                 )
             ],
-            height=style.font_size * self.scale + style.padding_bottom,
+            height=style.font_size * self.scale + padding_bottom,
             width=self.layout.axes.width,
         )
 
@@ -840,10 +841,17 @@ class Canvas:
             sections: List of sections for the legend, in the format (title, handles)
             style: Styling properties for the legend (applies to all sections)
         """
-        x = style.padding_x
-        y = style.padding_y
-        height = style.padding_y * 2
-        width = style.padding_x * 2
+        scale = self.scale
+        padding_x = style.padding_x * scale
+        padding_y = style.padding_y * scale
+        label_padding = style.label_padding * scale
+        symbol_padding = style.symbol_padding * scale
+        symbol_size = style.symbol_size * scale
+
+        x = padding_x
+        y = padding_y
+        height = padding_y * 2
+        width = padding_x * 2
         sections_elements = []
         title_element = None
 
@@ -853,35 +861,33 @@ class Canvas:
                 h, w, _ = fonts.get_text_hw(
                     text=title,
                     font_name=style.title.font_name,
-                    font_size=style.title.font_size * self.scale,
+                    font_size=style.title.font_size * scale,
                     font_weight=style.title.font_weight,
                     italic=style.title.font_style == "italic",
                 )
                 y += h
-                title_element = Text(
-                    x=x, y=y, text=title, attrs=style.title.css(self.scale)
-                )
+                title_element = Text(x=x, y=y, text=title, attrs=style.title.css(scale))
                 sections_elements.append(title_element)
-                height += h * 2 + style.label_padding
+                height += h * 2 + label_padding
                 width = max(width, w * 1.5)
-                y += h + style.label_padding / 2
+                y += h + label_padding / 2
             else:
-                y += style.label_padding / 2
+                y += label_padding / 2
 
             for label, config in handles.items():
                 marker_style, size = config
-                marker_size = size or style.symbol_size
+                marker_size = (size or style.symbol_size) * scale
                 marker_element = symbols.create(
-                    x + style.symbol_size / 2,
+                    x + symbol_size / 2,
                     y,
-                    marker_size * self.scale,
+                    marker_size,
                     marker_style.symbol,
-                    marker_style.css(self.scale),
+                    marker_style.css(scale),
                 )
 
-                y += style.symbol_size / 2
-                label_x = x + style.symbol_size * self.scale + style.symbol_padding
-                label_attrs = style.labels.css(self.scale)
+                y += symbol_size / 2
+                label_x = x + symbol_size + symbol_padding
+                label_attrs = style.labels.css(scale)
                 label_element = Text(x=label_x, y=y, text=label, attrs=label_attrs)
 
                 sections_elements.append(
@@ -893,25 +899,21 @@ class Canvas:
                 h, w, _ = fonts.get_text_hw(
                     text=label,
                     font_name=style.labels.font_name,
-                    font_size=style.labels.font_size * self.scale,
+                    font_size=style.labels.font_size * scale,
                     font_weight=style.labels.font_weight,
                     italic=style.labels.font_style == "italic",
                 )
-                height += max(marker_size * self.scale, h) + style.label_padding
-                w += (
-                    marker_size * self.scale
-                    + style.symbol_padding
-                    + style.padding_x * 2
-                )
+                height += max(marker_size, h) + label_padding
+                w += marker_size + symbol_padding + padding_x * 2
 
                 width = max(width, w)
 
-                y += h + style.label_padding
+                y += h + label_padding
 
             if i < len(sections) - 1:
-                height += style.label_padding  # * 2.5
+                height += label_padding  # * 2.5
             else:
-                height += style.label_padding
+                height += label_padding
 
         background_element = Rectangle(
             x=0,
@@ -921,8 +923,8 @@ class Canvas:
             attrs={
                 "fill": style.background_color.as_hex(),
                 "stroke": style.border_color.as_hex(),
-                "stroke-width": style.border_width,
-                "rx": style.border_radius,
+                "stroke-width": style.border_width * scale,
+                "rx": style.border_radius * scale,
             },
         )
 
@@ -971,9 +973,11 @@ class Canvas:
         header_style = style.header
         cell_style = style.cell
         border_style = style.border
-        top = style.padding_top
 
         scale = self.scale
+        top = style.padding_top * scale
+        padding_x = padding_x * scale
+        padding_y = padding_y * scale
         header_attrs = header_style.css(scale)
         cell_attrs = cell_style.css(scale)
         border_attrs = border_style.css(scale)

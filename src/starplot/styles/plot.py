@@ -54,7 +54,6 @@ class PlotStyle(BaseStyle):
         font_size=85,
         font_weight=FontWeightEnum.BOLD,
         zorder=ZOrderEnum.LAYER_5,
-        line_spacing=150,
         anchor_point=AnchorPointEnum.BOTTOM_CENTER,
         padding_bottom=24,
     )

@@ -101,31 +101,30 @@ class Layout:
 
         This function is responsible for determining the transform() for each region
         """
+        padding = style.figure.padding * scale
+        legend_margin_x = self.legend.margin_x * scale
+        legend_margin_y = self.legend.margin_y * scale
+
         outer_height = max(
             self.axes.height, self.axes_border.height, self.axes_frame.height
         )
         outer_width = max(
             self.axes.width, self.axes_border.width, self.axes_frame.width
         )
-        height = (
-            style.figure.padding * 2
-            + self.title.height
-            + outer_height
-            + self.table.height
-        )
-        width = style.figure.padding * 2 + outer_width
+        height = padding * 2 + self.title.height + outer_height + self.table.height
+        width = padding * 2 + outer_width
 
         if "outside" in str(self.legend.location):
-            width += self.legend.width + self.legend.margin_x
+            width += self.legend.width + legend_margin_x
 
-        axes_x = style.figure.padding
-        axes_y = style.figure.padding
+        axes_x = padding
+        axes_y = padding
 
         if self.legend.location in [
             LegendLocationEnum.OUTSIDE_TOP_LEFT.value,
             LegendLocationEnum.OUTSIDE_BOTTOM_LEFT.value,
         ]:
-            axes_x += self.legend.width + self.legend.margin_x
+            axes_x += self.legend.width + legend_margin_x
 
         if not self.title.is_empty:
             axes_y += self.title.height
@@ -153,9 +152,7 @@ class Layout:
 
         elements = []
         if not self.title.is_empty:
-            elements.append(
-                self.title.render(x=style.figure.padding, y=style.figure.padding)
-            )
+            elements.append(self.title.render(x=padding, y=padding))
 
         if not self.axes_border.is_empty:
             elements.append(self.axes_border.render(x=axes_x, y=axes_y))
@@ -178,53 +175,41 @@ class Layout:
             legend_y = 0
             loc = self.legend.location
             if loc == LegendLocationEnum.INSIDE_TOP_LEFT:
-                legend_x = axes_x + self.legend.margin_x
-                legend_y = axes_y + self.legend.margin_y
+                legend_x = axes_x + legend_margin_x
+                legend_y = axes_y + legend_margin_y
             elif loc == LegendLocationEnum.INSIDE_TOP_RIGHT:
                 legend_x = (
-                    axes_x + self.axes.width - self.legend.width - self.legend.margin_x
+                    axes_x + self.axes.width - self.legend.width - legend_margin_x
                 )
-                legend_y = axes_y + self.legend.margin_y
+                legend_y = axes_y + legend_margin_y
             elif loc == LegendLocationEnum.INSIDE_BOTTOM_LEFT:
-                legend_x = axes_x + style.margin_x
+                legend_x = axes_x + legend_margin_x
                 legend_y = (
-                    axes_y
-                    + self.axes.height
-                    - self.legend.height
-                    - self.legend.margin_y
+                    axes_y + self.axes.height - self.legend.height - legend_margin_y
                 )
             elif loc == LegendLocationEnum.INSIDE_BOTTOM_RIGHT:
                 legend_x = (
-                    axes_x + self.axes.width - self.legend.width - self.legend.margin_x
+                    axes_x + self.axes.width - self.legend.width - legend_margin_x
                 )
                 legend_y = (
-                    axes_y
-                    + self.axes.height
-                    - self.legend.height
-                    - self.legend.margin_y
+                    axes_y + self.axes.height - self.legend.height - legend_margin_y
                 )
             elif loc == LegendLocationEnum.OUTSIDE_TOP_LEFT:
-                legend_x = outer_x - self.legend.width - self.legend.margin_x
-                legend_y = outer_y + self.legend.margin_y
+                legend_x = outer_x - self.legend.width - legend_margin_x
+                legend_y = outer_y + legend_margin_y
             elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_LEFT:
-                legend_x = outer_x - self.legend.width - self.legend.margin_x
+                legend_x = outer_x - self.legend.width - legend_margin_x
                 legend_y = (
-                    outer_y
-                    + self.axes.height
-                    - self.legend.height
-                    - self.legend.margin_y
+                    outer_y + self.axes.height - self.legend.height - legend_margin_y
                 )
             elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT:
-                legend_x = outer_x + outer_width + self.legend.margin_x
+                legend_x = outer_x + outer_width + legend_margin_x
                 legend_y = (
-                    axes_y
-                    + self.axes.height
-                    - self.legend.height
-                    - self.legend.margin_y
+                    axes_y + self.axes.height - self.legend.height - legend_margin_y
                 )
             elif loc == LegendLocationEnum.OUTSIDE_TOP_RIGHT:
-                legend_x = outer_x + outer_width + self.legend.margin_x
-                legend_y = outer_y + self.legend.margin_y
+                legend_x = outer_x + outer_width + legend_margin_x
+                legend_y = outer_y + legend_margin_y
             elements.append(self.legend.render(x=legend_x, y=legend_y))
 
         figure_elements = []

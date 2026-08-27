@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import Field
 
 from starplot.styles.base import BaseStyle
@@ -288,9 +290,7 @@ class ArrowStyle(PolygonStyle):
 
 
 class LabelStyle(BaseStyle):
-    """
-    Styling properties for a label.
-    """
+    """Styling properties for a label."""
 
     font_size: float = 24
     """Font size of the label, in pixels"""
@@ -313,9 +313,6 @@ class LabelStyle(BaseStyle):
     opacity: float = Field(default=1.0, ge=0, le=1)
     """Opacity (transparency) of the label (0 to 1)"""
 
-    line_spacing: float | None = None
-    """Spacing between lines of text"""
-
     anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
     """Anchor point of label"""
 
@@ -325,21 +322,20 @@ class LabelStyle(BaseStyle):
     stroke: Color | None = None
     """Color of border (also known as 'halos') around the text"""
 
-    offset_x: float | int | str = 0
+    offset_x: float | int | Literal["auto"] = 0
     """
     Horizontal offset of the label, in pixels. Negative values supported.
     
-    
-    **Auto Mode** (_experimental_): If the label is plotted as part of a marker (e.g. stars, via `marker()`, etc), then you can also
+    **Auto Mode**: If the label is plotted as part of a marker (e.g. stars, via `marker()`, etc), then you can also
     specify the offset as `"auto"` which will calculate the offset automatically based on the marker's size and place
     the label just outside the marker (avoiding overlapping). To enable "auto" mode you have to specify BOTH offsets (x and y) as "auto."
     """
 
-    offset_y: float | int | str = 0
+    offset_y: float | int | Literal["auto"] = 0
     """
     Vertical offset of the label, in pixels. Negative values supported.
     
-    **Auto Mode** (_experimental_): If the label is plotted as part of a marker (e.g. stars, via `marker()`, etc), then you can also
+    **Auto Mode**: If the label is plotted as part of a marker (e.g. stars, via `marker()`, etc), then you can also
     specify the offset as `"auto"` which will calculate the offset automatically based on the marker's size and place
     the label just outside the marker (avoiding overlapping). To enable "auto" mode you have to specify BOTH offsets (x and y) as "auto."
     """

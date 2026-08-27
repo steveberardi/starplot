@@ -294,7 +294,10 @@ class TextPlotterMixin:
         self, style: LabelStyle, text: str, marker_size: float
     ) -> LabelStyle:
         if style.offset_x != "auto" and style.offset_y != "auto":
-            return style
+            new_style = style.model_copy()
+            new_style.offset_x = style.offset_x * self.scale
+            new_style.offset_y = style.offset_y * self.scale
+            return new_style
 
         new_style = style.model_copy()
         scaled_font_size = style.font_size * self.scale
@@ -312,9 +315,13 @@ class TextPlotterMixin:
 
         if offset_x == "auto":
             offset_x = round(size / 2 + 3, self.canvas.precision)
+        else:
+            offset_x = offset_x * self.scale
 
         if offset_y == "auto":
             offset_y = round(size / 2 - height / 2, self.canvas.precision)
+        else:
+            offset_y = offset_y * self.scale
 
         new_style.offset_x = offset_x
         new_style.offset_y = offset_y
@@ -750,11 +757,15 @@ class TextPlotterMixin:
 
         collision_handler = collision_handler or self.point_label_handler
 
+        # offset_x/offset_y coming from _offset_from_marker() are already
+        # resolved to concrete, scaled pixel values -- only the "auto"
+        # default (for labels plotted without a marker offset) needs scaling
+        # here, or it'd be scaled twice.
         if style.offset_x == "auto":
-            style.offset_x = 4
+            style.offset_x = 4 * self.scale
 
         if style.offset_y == "auto":
-            style.offset_y = 4
+            style.offset_y = 4 * self.scale
 
         if kwargs.get("area"):
             self._text_area(
