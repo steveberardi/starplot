@@ -106,7 +106,7 @@ test-3.13:
 # ------------------------------------------------------------------
 # Docs
 docs-serve:
-	uv run $(DOTENV) zensical build -c && uv run $(DOTENV) zensical serve
+	uv run $(DOTENV) zensical serve
 
 docs-build:
 	uv run $(DOTENV) zensical build -c

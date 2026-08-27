@@ -273,7 +273,6 @@ SYMBOL_FUNCTIONS = {
     MarkerSymbolEnum.STAR: create_star_function(num_points=5),
     MarkerSymbolEnum.STAR_4: create_star_function(num_points=4),
     MarkerSymbolEnum.STAR_8: create_star_function(num_points=8),
-    MarkerSymbolEnum.SUN: create_star_function(num_points=9),
     MarkerSymbolEnum.PLUS: plus,
     MarkerSymbolEnum.COMET: comet,
     MarkerSymbolEnum.SATELLITE: satellite,

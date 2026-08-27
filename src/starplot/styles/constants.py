@@ -41,9 +41,6 @@ class MarkerSymbolEnum(str, Enum):
     STAR = "star"
     """\u2605"""
 
-    SUN = "sun"
-    """\u263c"""
-
     DIAMOND = "diamond"
     """\u25c6"""
 

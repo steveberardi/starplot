@@ -149,7 +149,7 @@ class PlotStyle(BaseStyle):
 
     sun: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SUN,
+            symbol=MarkerSymbolEnum.STAR_8,
             size=80,
             fill="#000",
             zorder=ZOrderEnum.LAYER_4 - 100,

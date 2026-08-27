@@ -23,12 +23,6 @@
 </div>
 
 <div class="marker-symbol-card" markdown>
-![Sun](/images/reference/marker_sun.svg){ loading=lazy .marker-symbol-img}
-
-`sun`{: .marker-symbol-name}
-</div>
-
-<div class="marker-symbol-card" markdown>
 ![Diamond](/images/reference/marker_diamond.svg){ loading=lazy .marker-symbol-img}
 
 `diamond`{: .marker-symbol-name}
