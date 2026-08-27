@@ -100,14 +100,14 @@ class LineStyleEnum(str, Enum):
 
 class CapStyleEnum(str, Enum):
     BUTT = "butt"
-    PROJECTING = "projecting"
+    SQUARE = "square"
     ROUND = "round"
 
     def css(self) -> str | None:
         return {
             CapStyleEnum.BUTT: "butt",
             CapStyleEnum.ROUND: "round",
-            CapStyleEnum.PROJECTING: "square",
+            CapStyleEnum.SQUARE: "square",
         }.get(self.value)
 
 

@@ -150,6 +150,53 @@ def extract_classes(path: Path) -> dict:
     return classes
 
 
+def extract_enums(path: Path) -> dict:
+    """Parses a module and returns {EnumClassName: [value, value, ...]},
+    using each member's own *value* (e.g. "radial"), not its name
+    (RADIAL) -- that's what actually goes in a style dict/YAML."""
+    tree = ast.parse(path.read_text())
+    enums = {}
+
+    for node in tree.body:
+        if not isinstance(node, ast.ClassDef):
+            continue
+        if not any(_unparse(b) == "Enum" for b in node.bases):
+            continue
+
+        values = []
+        for stmt in node.body:
+            if not (
+                isinstance(stmt, ast.Assign)
+                and len(stmt.targets) == 1
+                and isinstance(stmt.targets[0], ast.Name)
+            ):
+                continue
+            try:
+                # literal_eval (rather than a plain ast.Constant check)
+                # so negative numbers -- e.g. ZOrderEnum.LAYER_1 = -2_000,
+                # parsed as UnaryOp(USub, Constant), not a plain Constant
+                # -- still come through instead of being silently dropped.
+                values.append(ast.literal_eval(stmt.value))
+            except ValueError:
+                pass
+        if values:
+            enums[node.name] = values
+
+    return enums
+
+
+def field_enum_values(ftype: str, enums: dict) -> list | None:
+    """If a field's type annotation references exactly one known enum
+    class -- directly (`GradientType`) or as one member of a union
+    (`LineStyleEnum | tuple | None`) -- returns that enum's possible
+    values. A field just *defaulting* to an enum member (e.g. `zorder:
+    int = ZOrderEnum.LAYER_2`) doesn't count -- its type is `int`, not
+    an enum."""
+    parts = [p.strip() for p in ftype.split("|")]
+    matches = [enums[p] for p in parts if p in enums]
+    return matches[0] if len(matches) == 1 else None
+
+
 # ---------------------------------------------------------- field resolution
 
 _RESOLVED_FIELDS_CACHE: dict = {}
@@ -206,7 +253,7 @@ SEE_PAREN = re.compile(r"\s*\(see [^)]*\)\.?\s*$", re.IGNORECASE)
 BACKTICK = re.compile(r"`([^`]+)`")
 FIELD_DEFAULT = re.compile(r"default=([^,)]+)")
 COLOR_WRAP = re.compile(r"^Color\('(.+)'\)$")
-ENUM_VALUE = re.compile(r"^[A-Za-z]+Enum\.([A-Za-z0-9_]+)$")
+ENUM_VALUE = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)\.([A-Za-z0-9_]+)$")
 
 
 def clean_doc(doc: str) -> str:
@@ -244,7 +291,7 @@ def render_doc(doc: str, limit: int = 1024) -> tuple[str, str]:
     return rendered, (doc if truncated else "")
 
 
-def render_default(default: str | None):
+def render_default(default: str | None, enums: dict):
     """Returns (display value, is_color) for a leaf field's default, or
     None if there's nothing worth showing."""
     if default is None:
@@ -255,8 +302,8 @@ def render_default(default: str | None):
         return m.group(1), True
 
     m = ENUM_VALUE.match(default)
-    if m:
-        return m.group(1), False
+    if m and m.group(1) in enums:
+        return m.group(2), False
 
     if default.startswith("Field("):
         m = FIELD_DEFAULT.search(default)
@@ -274,9 +321,9 @@ def render_default(default: str | None):
 # ---------------------------------------------------------------- tree data
 
 
-def build_leaf(field: dict, path: str) -> dict:
+def build_leaf(field: dict, path: str, enums: dict) -> dict:
     doc_html, doc_full = render_doc(field["doc"])
-    default = render_default(field["default"])
+    default = render_default(field["default"], enums)
 
     return {
         "kind": "leaf",
@@ -288,10 +335,13 @@ def build_leaf(field: dict, path: str) -> dict:
         "doc_full": doc_full,
         "search_doc": field["doc"].lower(),
         "path": path,
+        "enum_values": field_enum_values(field["type"], enums),
     }
 
 
-def build_node(name: str, type_name: str, doc: str, classes: dict, path: str) -> dict:
+def build_node(
+    name: str, type_name: str, doc: str, classes: dict, path: str, enums: dict
+) -> dict:
     """Builds one property as a tree node: its own identity, plus every
     field of its style type (each itself a node or a leaf), so the whole
     subtree is available to render in place -- no separate lookup elsewhere."""
@@ -305,10 +355,10 @@ def build_node(name: str, type_name: str, doc: str, classes: dict, path: str) ->
         child_path = f"{path}.{f['name']}"
         if nested in classes:
             children.append(
-                build_node(f["name"], nested, f["doc"], classes, child_path)
+                build_node(f["name"], nested, f["doc"], classes, child_path, enums)
             )
         else:
-            children.append(build_leaf(f, child_path))
+            children.append(build_leaf(f, child_path, enums))
 
     # Every nested style type here is a BaseStyle subclass (that's what
     # makes it a node instead of a leaf) -- push those last so a style's
@@ -329,7 +379,7 @@ def build_node(name: str, type_name: str, doc: str, classes: dict, path: str) ->
     }
 
 
-def build_groups(plot_fields: dict, classes: dict) -> list:
+def build_groups(plot_fields: dict, classes: dict, enums: dict) -> list:
     groups = []
     for group_name, field_names in GROUPS:
         nodes = []
@@ -337,7 +387,9 @@ def build_groups(plot_fields: dict, classes: dict) -> list:
             f = plot_fields[fname]
             doc = f["doc"] or DOC_FALLBACKS.get(fname, "")
             path = f"style.{fname}"
-            nodes.append(build_node(fname, core_type(f["type"]), doc, classes, path))
+            nodes.append(
+                build_node(fname, core_type(f["type"]), doc, classes, path, enums)
+            )
         groups.append({"name": group_name, "nodes": nodes})
     return groups
 
@@ -345,8 +397,8 @@ def build_groups(plot_fields: dict, classes: dict) -> list:
 # ------------------------------------------------------------------- page
 
 
-def build_html(plot_fields: dict, classes: dict) -> str:
-    groups = build_groups(plot_fields, classes)
+def build_html(plot_fields: dict, classes: dict, enums: dict) -> str:
+    groups = build_groups(plot_fields, classes, enums)
     total_leaves = sum(
         leaf_count(core_type(plot_fields[name]["type"]), classes)
         for _, names in GROUPS
@@ -370,8 +422,9 @@ def main():
     elements_classes = extract_classes(STYLES_DIR / "elements.py")
     plot_classes = extract_classes(STYLES_DIR / "plot.py")
     plot_fields = {f["name"]: f for f in plot_classes["PlotStyle"]["fields"]}
+    enums = extract_enums(STYLES_DIR / "constants.py")
 
-    html = build_html(plot_fields, elements_classes)
+    html = build_html(plot_fields, elements_classes, enums)
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(html)

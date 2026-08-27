@@ -95,7 +95,7 @@ class MarkerStyle(BaseStyle):
     dash_array: LineStyleEnum | tuple | None = None
     """Dash style of the marker's stroke. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyleEnum.ROUND`, since a zero-length dash is only visible with a round cap."""
 
-    dash_capstyle: CapStyleEnum = CapStyleEnum.PROJECTING
+    dash_capstyle: CapStyleEnum = CapStyleEnum.SQUARE
     """Style of dash endpoints"""
 
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.CIRCLE
@@ -156,7 +156,7 @@ class LineStyle(BaseStyle):
     dash_array: LineStyleEnum | tuple | None = LineStyleEnum.SOLID
     """Dash style of the line. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyleEnum.ROUND`, since a zero-length dash is only visible with a round cap."""
 
-    cap_style: CapStyleEnum = CapStyleEnum.PROJECTING
+    cap_style: CapStyleEnum = CapStyleEnum.SQUARE
     """Style of line/dash endpoints"""
 
     opacity: float = Field(default=1.0, ge=0, le=1)
@@ -217,7 +217,7 @@ class PolygonStyle(BaseStyle):
     """Dash style of the polygon's stroke. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyleEnum.ROUND`, since a zero-length dash is only visible with a round cap."""
 
     dash_capstyle: CapStyleEnum = CapStyleEnum.ROUND
-    """Style of dash endpoints. Matters even for a closed ring's dashes: a zero-length dash (as used for a dotted `dash_array`, e.g. `(0, 5)`) is only visible with a `round` cap -- `projecting`/`butt` caps render it as nothing."""
+    """Style of dash endpoints. Matters even for a closed ring's dashes: a zero-length dash (as used for a dotted `dash_array`, e.g. `(0, 5)`) is only visible with a `round` cap -- `square`/`butt` caps render it as nothing."""
 
     opacity: float = Field(default=1.0, ge=0, le=1)
     """Opacity (transparency) of the polygon (0 to 1)"""
@@ -277,7 +277,7 @@ class ArrowStyle(PolygonStyle):
         cap_styles = {
             CapStyleEnum.BUTT: "flat",
             CapStyleEnum.ROUND: "round",
-            CapStyleEnum.PROJECTING: "square",
+            CapStyleEnum.SQUARE: "square",
         }
         return {
             "cap_style": cap_styles[self.cap_style],
