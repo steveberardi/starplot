@@ -47,12 +47,7 @@ class PlotStyle(BaseStyle):
     """
     Styling for the figure of the plot, which is the surrounding region outside the axes. 
     
-    This area can include:
-    
-    - Title of the plot
-    - Legend (if plotted 'outside')
-    - Padding between the axes (map region) and edge of image
-    
+    This area can include: title, legend (if plotted 'outside'), and padding between the axes (map region) and edge of image.
     """
 
     title: TitleStyle = TitleStyle(

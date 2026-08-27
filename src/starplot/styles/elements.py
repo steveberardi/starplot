@@ -108,6 +108,7 @@ class MarkerStyle(BaseStyle):
     """Opacity (transparency) of the marker (0 to 1)"""
 
     gradient_type: GradientType = GradientType.RADIAL
+    """Type / direction of gradient, if a gradient background is used."""
 
     zorder: int = ZOrderEnum.LAYER_2
     """Zorder of marker"""
@@ -212,6 +213,7 @@ class PolygonStyle(BaseStyle):
     """Edge color of the polygon"""
 
     gradient_type: GradientType = GradientType.RADIAL
+    """Type / direction of gradient, if a gradient background is used."""
 
     dash_array: LineStyleEnum | tuple | None = LineStyleEnum.SOLID
     """Dash style of the polygon's stroke. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyleEnum.ROUND`, since a zero-length dash is only visible with a round cap."""
@@ -485,6 +487,7 @@ class AxesStyle(BaseStyle):
         stroke="#000",
         fill="#fff",
     )
+    """Background of the axes. This will always be plotted at the lowest Z-order."""
 
     border: LineStyle | None = LineStyle(width=2, stroke="#000")
     """
