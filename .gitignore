@@ -48,10 +48,13 @@ docs/images/examples/*.png
 docs/images/examples/*.svg
 docs/images/examples/*.jpg
 docs/images/examples/*.svg
+docs/images/reference/*.png
+docs/images/reference/*.svg
+docs/images/reference/*.jpg
+docs/images/reference/style_reference.html
 tutorial/*.png
 docs/images/tutorial/*.png
 docs/data/*.json
-docs/snippets/style_reference.html
 
 # Profiling files
 *.prof

@@ -1,1 +1,1 @@
---8<-- "docs/snippets/style_reference.html"
+--8<-- "docs/images/reference/style_reference.html"

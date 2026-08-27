@@ -28,11 +28,8 @@ jobs:
     - name: Build Tutorial
       run: make tutorial
     
-    - name: Build Data Reference
-      run: make build-doc-data
-
-    - name: Build Docs
-      run: make docs-build
+    - name: Build Documentation
+      run: make docs
 
     - name: Set Version Environment Variable
       run: |

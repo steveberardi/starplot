@@ -17,6 +17,9 @@ DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) starplot-$(PYTHON_VERSION)
 export PYTHONPATH=./src/
 
 # ------------------------------------------------------------------
+install:
+	uv sync --all-groups --all-extras
+
 build: PYTHON_VERSION=3.12.12
 build: DOCKER_BUILD_ARGS=-t starplot-dev
 build:
@@ -70,20 +73,12 @@ build-data-clean:
 build-star-designations:
 	uv run $(DOTENV) data/scripts/star_designations.py
 
-build-doc-data:
-	uv run $(DOTENV) data/scripts/docdata.py
-
-style-reference:
-	uv run $(DOTENV) scripts/style_reference.py
-
 version:
 	uv run $(DOTENV) python -c 'import starplot as sp; print(sp.__version__)'
 
 setup:
 	uv run $(DOTENV) starplot setup
 
-install:
-	uv sync --all-groups --all-extras
 
 # ------------------------------------------------------------------
 # Python version testing
@@ -115,6 +110,15 @@ docs-serve:
 
 docs-build:
 	uv run $(DOTENV) zensical build -c
+
+docs-references:
+	uv run $(DOTENV) docs/scripts/data.py
+	uv run $(DOTENV) docs/scripts/markers.py
+	uv run $(DOTENV) docs/scripts/projections.py
+	uv run $(DOTENV) docs/scripts/style_reference.py
+
+docs: docs-references docs-build
+
 
 # ------------------------------------------------------------------
 # PyPi - build & publish

@@ -10,6 +10,8 @@ azimuthal projection near its antipode).
 
 """
 
+from pathlib import Path
+
 from starplot import (
     Equidistant,
     Gnomonic,
@@ -28,6 +30,9 @@ from starplot import (
     geometry,
 )
 from starplot.styles import PlotStyle, extensions
+
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "images" / "reference"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 style = PlotStyle().extend(extensions.STARPLOT, extensions.MAP)
 
@@ -156,4 +161,4 @@ for name, projection, extent, clip_path in PROJECTIONS:
     )
     p.gridlines(labels=False)
     p.tissot()
-    p.export(f"projection_{name}.svg")
+    p.export(str(OUTPUT_DIR / f"projection_{name}.svg"))

@@ -383,7 +383,7 @@ class Orthographic(ProjectionBase, CenterRADEC):
         # The limb of the visible hemisphere is just the set of points
         # exactly 90 degrees from the center -- a circle in RA/DEC space,
         # same helper used for the other azimuthal projections' clip paths
-        # in examples/projections.py.
+        # in docs/scripts/projections.py.
         return list(
             circle(
                 center=(self.center_ra, self.center_dec),

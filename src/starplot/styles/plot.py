@@ -22,10 +22,10 @@ from starplot.styles.elements import (
     MarkerStyle,
     ObjectStyle,
     PathStyle,
+    PlotBaseStyle,
     PolygonStyle,
     TableStyle,
     TitleStyle,
-    PlotBaseStyle,
 )
 from starplot.styles.helpers import merge_dict
 

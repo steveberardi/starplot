@@ -26,10 +26,10 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 STYLES_DIR = REPO_ROOT / "src" / "starplot" / "styles"
 SCRIPT_DIR = Path(__file__).resolve().parent
-OUTPUT_PATH = REPO_ROOT / "docs" / "snippets" / "style_reference.html"
+OUTPUT_PATH = REPO_ROOT / "docs" / "images" / "reference" / "style_reference.html"
 
 # Groups of PlotStyle's own properties, in the order they should appear.
 # This mirrors the section comments in styles/plot.py (# Stars, # Deep Sky

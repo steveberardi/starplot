@@ -2,8 +2,13 @@
 Renders every marker symbol available
 """
 
+from pathlib import Path
+
 from starplot import MapPlot, Miller
 from starplot.styles import MarkerSymbolEnum, PlotStyle, extensions
+
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "images" / "reference"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 style_medium = PlotStyle().extend(
     extensions.BLUE_MEDIUM,
@@ -60,4 +65,4 @@ for symbol in MarkerSymbolEnum:
         style__marker__stroke="hsl(205, 83%, 16%)",
         style__marker__stroke_width=8,
     )
-    p.export(f"marker_{symbol.value}.svg")
+    p.export(str(OUTPUT_DIR / f"marker_{symbol.value}.svg"))
