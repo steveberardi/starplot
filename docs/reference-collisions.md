@@ -28,14 +28,14 @@ Below are the defaults for each type of collision handler. These are the default
 CollisionHandler(
     attempts=10,
     anchor_fallbacks=[
-        AnchorPointEnum.BOTTOM_RIGHT,
-        AnchorPointEnum.TOP_LEFT,
-        AnchorPointEnum.TOP_RIGHT,
-        AnchorPointEnum.BOTTOM_LEFT,
-        AnchorPointEnum.BOTTOM_CENTER,
-        AnchorPointEnum.TOP_CENTER,
-        AnchorPointEnum.RIGHT_CENTER,
-        AnchorPointEnum.LEFT_CENTER,
+        AnchorPoint.BOTTOM_RIGHT,
+        AnchorPoint.TOP_LEFT,
+        AnchorPoint.TOP_RIGHT,
+        AnchorPoint.BOTTOM_LEFT,
+        AnchorPoint.BOTTOM_CENTER,
+        AnchorPoint.TOP_CENTER,
+        AnchorPoint.RIGHT_CENTER,
+        AnchorPoint.LEFT_CENTER,
     ]
 )
 ```

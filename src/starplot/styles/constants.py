@@ -6,7 +6,7 @@ class GradientType(str, Enum):
     RADIAL = "radial"
 
 
-class FontWeightEnum(int, Enum):
+class FontWeight:
     """Options for font weight."""
 
     THIN = 100
@@ -20,7 +20,7 @@ class FontWeightEnum(int, Enum):
     HEAVY = 900
 
 
-class FontStyleEnum(str, Enum):
+class FontStyle:
     NORMAL = "normal"
     ITALIC = "italic"
     OBLIQUE = "oblique"
@@ -72,49 +72,28 @@ class MarkerSymbolEnum(str, Enum):
     """\U0001f6f0 No preview available, but this is a satellite icon (solar panels + dish antenna)"""
 
 
-class LineStyleEnum(str, Enum):
+class DashArray:
+    """Options for a line's dash style"""
+
     SOLID = "solid"
     DASHED = "dashed"
     DASHED_DOTS = "dashdot"
     DOTTED = "dotted"
 
-    def css(self) -> str | None:
-        return {
-            LineStyleEnum.SOLID: None,
-            LineStyleEnum.DASHED: "12,6",
-            LineStyleEnum.DOTTED: "0,5",
-            LineStyleEnum.DASHED_DOTS: "10,2,10",
-        }.get(self.value)
 
-    def values(self) -> str | None:
-        return {
-            LineStyleEnum.SOLID: None,
-            LineStyleEnum.DASHED: (12, 6),
-            LineStyleEnum.DOTTED: (0, 5),
-            LineStyleEnum.DASHED_DOTS: (10, 2, 10),
-        }.get(self.value)
-
-
-class CapStyleEnum(str, Enum):
+class CapStyle:
     BUTT = "butt"
     SQUARE = "square"
     ROUND = "round"
 
-    def css(self) -> str | None:
-        return {
-            CapStyleEnum.BUTT: "butt",
-            CapStyleEnum.ROUND: "round",
-            CapStyleEnum.SQUARE: "square",
-        }.get(self.value)
 
-
-class JoinStyleEnum(str, Enum):
+class JoinStyle:
     MITRE = "mitre"
     BEVEL = "bevel"
     ROUND = "round"
 
 
-class LegendLocationEnum(str, Enum):
+class LegendLocation:
     """Options for the location of the map legend, relative to the axes"""
 
     INSIDE_TOP_LEFT = "inside_top_left"
@@ -128,7 +107,7 @@ class LegendLocationEnum(str, Enum):
     OUTSIDE_BOTTOM_LEFT = "outside_bottom_left"
 
 
-class AnchorPointEnum(str, Enum):
+class AnchorPoint:
     """Options for the anchor point of labels"""
 
     CENTER = "center"
@@ -141,21 +120,16 @@ class AnchorPointEnum(str, Enum):
     BOTTOM_RIGHT = "bottom_right"
     BOTTOM_CENTER = "bottom_center"
 
-    @staticmethod
-    def from_str(value: str) -> "AnchorPointEnum":
-        options = {ap.value: ap for ap in AnchorPointEnum}
-        return options.get(value)
 
-
-class AlignmentEnum(str, Enum):
-    """Alignment options for the legend's title and entries"""
+class HorizontalAlignment:
+    """Horizontal alignment options for the legend's title and entries"""
 
     LEFT = "left"
     RIGHT = "right"
     CENTER = "center"
 
 
-class ZOrderEnum(int, Enum):
+class ZOrder:
     """
     Z Order presets for managing layers
     """

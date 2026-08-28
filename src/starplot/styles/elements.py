@@ -4,26 +4,29 @@ from pydantic import Field
 
 from starplot.styles.base import BaseStyle
 from starplot.styles.constants import (
-    AlignmentEnum,
-    AnchorPointEnum,
-    CapStyleEnum,
-    FontStyleEnum,
-    FontWeightEnum,
+    DashArray,
+    FontWeight,
     GradientType,
-    JoinStyleEnum,
-    LegendLocationEnum,
-    LineStyleEnum,
     MarkerSymbolEnum,
-    ZOrderEnum,
+    ZOrder,
 )
 from starplot.styles.types import Color, GradientStops
 
+_DASH_ARRAY_VALUES = {
+    DashArray.SOLID: None,
+    DashArray.DASHED: (12, 6),
+    DashArray.DOTTED: (0, 5),
+    DashArray.DASHED_DOTS: (10, 2, 10),
+}
+
 
 def _dash_array_attrs(
-    dash_array: LineStyleEnum | tuple | None, scale: float, nominal: float = 100
+    dash_array: Literal["solid", "dashed", "dashdot", "dotted"] | tuple | None,
+    scale: float,
+    nominal: float = 100,
 ) -> dict:
     """
-    Resolves a `dash_array` field (a LineStyleEnum, raw tuple, or None) into
+    Resolves a `dash_array` field (a DashArray value, raw tuple, or None) into
     `stroke-dasharray`/`pathLength` SVG attrs.
 
     The dasharray values are scaled like everything else drawn on the plot,
@@ -40,8 +43,8 @@ def _dash_array_attrs(
         return {}
 
     values = (
-        LineStyleEnum(dash_array).values()
-        if isinstance(dash_array, (str, LineStyleEnum))
+        _DASH_ARRAY_VALUES.get(dash_array)
+        if isinstance(dash_array, str)
         else dash_array
     )
     if not values:
@@ -95,10 +98,10 @@ class MarkerStyle(BaseStyle):
     stroke_width: float = 1
     """Stroke width of marker, in pixels."""
 
-    dash_array: Literal["solid", "dashed", "dashdot", "dotted"] | tuple[int] | None = (
-        None
-    )
-    """Dash style of the marker's stroke. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyleEnum.ROUND`, since a zero-length dash is only visible with a round cap."""
+    dash_array: (
+        Literal["solid", "dashed", "dashdot", "dotted"] | tuple[int, ...] | None
+    ) = None
+    """Dash style of the marker's stroke. Can be a predefined value in `DashArray` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyle.ROUND`, since a zero-length dash is only visible with a round cap."""
 
     dash_capstyle: Literal["square", "butt", "round"] = "square"
     """Style of dash endpoints"""
@@ -115,7 +118,7 @@ class MarkerStyle(BaseStyle):
     gradient_type: GradientType = GradientType.RADIAL
     """Type / direction of gradient, if a gradient background is used."""
 
-    zorder: int = ZOrderEnum.LAYER_2
+    zorder: int = ZOrder.LAYER_2
     """Zorder of marker"""
 
     def css(self, scale: float = 1) -> dict:
@@ -124,7 +127,7 @@ class MarkerStyle(BaseStyle):
             "stroke": self.stroke.as_hex() if self.stroke else "none",
             "stroke-width": round(self.stroke_width * scale, 2),
             "stroke-opacity": self.opacity,
-            "stroke-linecap": CapStyleEnum(self.dash_capstyle).css(),
+            "stroke-linecap": self.dash_capstyle,
         }
         if solid_fill:
             attrs["fill"] = self.fill.as_hex()
@@ -159,16 +162,18 @@ class LineStyle(BaseStyle):
     stroke: Color | None = Color("#000")
     """Color of the line. Can be a hex, rgb, hsl, or word string."""
 
-    dash_array: LineStyleEnum | tuple | None = LineStyleEnum.SOLID
-    """Dash style of the line. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyleEnum.ROUND`, since a zero-length dash is only visible with a round cap."""
+    dash_array: (
+        Literal["solid", "dashed", "dashdot", "dotted"] | tuple[int, ...] | None
+    ) = "solid"
+    """Dash style of the line. Can be a predefined value in `DashArray` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyle.ROUND`, since a zero-length dash is only visible with a round cap."""
 
-    cap_style: CapStyleEnum = CapStyleEnum.SQUARE
+    cap_style: Literal["butt", "square", "round"] = "square"
     """Style of line/dash endpoints"""
 
     opacity: float = Field(default=1.0, ge=0, le=1)
     """Opacity (transparency) of the line (0 to 1)"""
 
-    zorder: int = ZOrderEnum.LAYER_2
+    zorder: int = ZOrder.LAYER_2
     """Zorder of the line"""
 
     def css(self, scale: float = 1) -> dict:
@@ -177,7 +182,7 @@ class LineStyle(BaseStyle):
             "stroke": self.stroke.as_hex() if self.stroke else "none",
             "stroke-width": round(self.width * scale, 2),
             "stroke-opacity": self.opacity,
-            "stroke-linecap": CapStyleEnum(self.cap_style).css(),
+            "stroke-linecap": self.cap_style,
         }
         attrs.update(_dash_array_attrs(self.dash_array, scale))
 
@@ -220,16 +225,18 @@ class PolygonStyle(BaseStyle):
     gradient_type: GradientType = GradientType.RADIAL
     """Type / direction of gradient, if a gradient background is used."""
 
-    dash_array: LineStyleEnum | tuple | None = LineStyleEnum.SOLID
-    """Dash style of the polygon's stroke. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyleEnum.ROUND`, since a zero-length dash is only visible with a round cap."""
+    dash_array: (
+        Literal["solid", "dashed", "dashdot", "dotted"] | tuple[int, ...] | None
+    ) = "solid"
+    """Dash style of the polygon's stroke. Can be a predefined value in `DashArray` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyle.ROUND`, since a zero-length dash is only visible with a round cap."""
 
-    dash_capstyle: CapStyleEnum = CapStyleEnum.ROUND
+    dash_capstyle: Literal["butt", "square", "round"] = "round"
     """Style of dash endpoints. Matters even for a closed ring's dashes: a zero-length dash (as used for a dotted `dash_array`, e.g. `(0, 5)`) is only visible with a `round` cap -- `square`/`butt` caps render it as nothing."""
 
     opacity: float = Field(default=1.0, ge=0, le=1)
     """Opacity (transparency) of the polygon (0 to 1)"""
 
-    zorder: int = ZOrderEnum.LAYER_3
+    zorder: int = ZOrder.LAYER_3
     """Zorder of the polygon"""
 
     def css(self, scale: float = 1.0) -> dict:
@@ -245,7 +252,7 @@ class PolygonStyle(BaseStyle):
 
         if self.dash_array:
             attrs.update(_dash_array_attrs(self.dash_array, scale))
-            attrs["stroke-linecap"] = CapStyleEnum(self.dash_capstyle).css()
+            attrs["stroke-linecap"] = self.dash_capstyle
 
         return attrs
 
@@ -274,17 +281,17 @@ class ArrowStyle(PolygonStyle):
     head_height: float = 70
     """Height of the arrow's head, in pixels"""
 
-    cap_style: CapStyleEnum = CapStyleEnum.BUTT
+    cap_style: Literal["butt", "square", "round"] = "butt"
     """Cap style of the arrow"""
 
-    join_style: JoinStyleEnum = JoinStyleEnum.MITRE
+    join_style: Literal["mitre", "bevel", "round"] = "mitre"
     """Join style of the arrow"""
 
     def shapely_kwargs(self):
         cap_styles = {
-            CapStyleEnum.BUTT: "flat",
-            CapStyleEnum.ROUND: "round",
-            CapStyleEnum.SQUARE: "square",
+            "butt": "flat",
+            "round": "round",
+            "square": "square",
         }
         return {
             "cap_style": cap_styles[self.cap_style],
@@ -304,10 +311,10 @@ class LabelStyle(BaseStyle):
     font_family: str | None = "sans-serif"
     """Font family (e.g. 'monospace', 'sans-serif', 'serif', etc)"""
 
-    font_weight: FontWeightEnum = FontWeightEnum.NORMAL
+    font_weight: Literal[100, 200, 300, 400, 500, 600, 700, 800, 900] = 400
     """Font weight (e.g. normal, bold, ultra bold, etc)"""
 
-    font_style: FontStyleEnum = FontStyleEnum.NORMAL
+    font_style: Literal["normal", "italic", "oblique"] = "normal"
     """Style of the label (e.g. normal, italic, etc)"""
 
     fill: Color = Color("#000")
@@ -316,7 +323,17 @@ class LabelStyle(BaseStyle):
     opacity: float = Field(default=1.0, ge=0, le=1)
     """Opacity (transparency) of the label (0 to 1)"""
 
-    anchor_point: AnchorPointEnum = AnchorPointEnum.BOTTOM_RIGHT
+    anchor_point: Literal[
+        "center",
+        "left_center",
+        "right_center",
+        "top_left",
+        "top_right",
+        "top_center",
+        "bottom_left",
+        "bottom_right",
+        "bottom_center",
+    ] = "bottom_right"
     """Anchor point of label"""
 
     stroke_width: float = 0
@@ -343,15 +360,15 @@ class LabelStyle(BaseStyle):
     the label just outside the marker (avoiding overlapping). To enable "auto" mode you have to specify BOTH offsets (x and y) as "auto."
     """
 
-    zorder: int = ZOrderEnum.LAYER_4
+    zorder: int = ZOrder.LAYER_4
     """Zorder of the label"""
 
     def css(self, scale: float = 1.0) -> dict:
         attrs = {
             "font-size": round(self.font_size * scale, 2),
             "font-family": f"{self.font_name}, {self.font_family}",
-            "font-weight": FontWeightEnum(self.font_weight).value,
-            "font-style": FontStyleEnum(self.font_style).value,
+            "font-weight": self.font_weight,
+            "font-style": self.font_style,
             "fill": self.fill.as_hex(),
             "fill-opacity": self.opacity,
         }
@@ -387,7 +404,7 @@ class PathStyle(BaseStyle):
 class TableStyle(BaseStyle):
     """Defines the style for a table of data"""
 
-    header: LabelStyle = LabelStyle(font_weight=FontWeightEnum.BOLD)
+    header: LabelStyle = LabelStyle(font_weight=FontWeight.BOLD)
     """Style for the table's header row text"""
 
     cell: LabelStyle = LabelStyle()
@@ -399,14 +416,23 @@ class TableStyle(BaseStyle):
     padding_top: int = 40
     """Padding above the table, in pixels. Creates space between the axes and the table."""
 
-    alignment: AlignmentEnum = AlignmentEnum.CENTER
+    alignment: Literal["left", "right", "center"] = "center"
     """Horizontal alignment of the table, relative to the axes region"""
 
 
 class LegendStyle(BaseStyle):
     """Defines the style for the map legend."""
 
-    location: LegendLocationEnum = LegendLocationEnum.INSIDE_TOP_RIGHT
+    location: Literal[
+        "inside_top_left",
+        "inside_top_right",
+        "inside_bottom_right",
+        "inside_bottom_left",
+        "outside_top_left",
+        "outside_top_right",
+        "outside_bottom_right",
+        "outside_bottom_left",
+    ] = "inside_top_right"
     """Location of the legend, relative to the map area (inside or outside)"""
 
     background_color: Color = Color("#fff")
@@ -424,7 +450,7 @@ class LegendStyle(BaseStyle):
     border_width: float = 1
     """Border's width, in pixels"""
 
-    zorder: int = ZOrderEnum.LAYER_5
+    zorder: int = ZOrder.LAYER_5
     """Zorder of the legend"""
 
     margin_x: float = 20
@@ -441,7 +467,7 @@ class LegendStyle(BaseStyle):
 
     title: LabelStyle = LabelStyle(
         font_size=42,
-        font_weight=FontWeightEnum.BOLD,
+        font_weight=FontWeight.BOLD,
     )
     """Style for the legend's labels (see [LabelStyle][starplot.styles.LabelStyle])"""
 
@@ -450,7 +476,7 @@ class LegendStyle(BaseStyle):
 
     labels: LabelStyle = LabelStyle(
         font_size=28,
-        font_weight=FontWeightEnum.NORMAL,
+        font_weight=FontWeight.NORMAL,
     )
     """Style for the legend's labels (see [LabelStyle][starplot.styles.LabelStyle])"""
 

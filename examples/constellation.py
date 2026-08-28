@@ -12,7 +12,7 @@ from starplot.styles import (
     PlotStyle,
     extensions,
     PolygonStyle,
-    AnchorPointEnum,
+    AnchorPoint,
     PathStyle,
 )
 

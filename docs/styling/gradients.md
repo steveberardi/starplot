@@ -76,47 +76,13 @@ Below are previews of all built-in gradients available in Starplot. They're most
 
 A gradient is just a list of stops in the format: `(offset, color)` -- the same format used by all the built-in gradients above -- so you can define your own and use it anywhere a fill color is accepted, e.g. the axes background:
 
+<div class="tutorial">
 ```python
-from starplot import MapPlot, Miller, _
-from starplot.styles import PlotStyle, extensions
-
-# the last stop should always be at 1.0
-my_gradient = [
-    (0.0, "#f4d58d"),
-    (0.3, "#c17ecb"),
-    (0.7, "#4b3f8f"),
-    (1.0, "#100d29"),
-]
-
-example_style = PlotStyle().extend(
-    extensions.BLUE_NIGHT,
-    extensions.MAP,
-)
-example_style.axes.background.fill = my_gradient
-
-cas = Constellation.get(iau_id="cas")
-
-p = MapPlot(
-    projection=StereoNorth(center_ra=15),
-    ra_min=-5,
-    ra_max=35,
-    dec_min=55,
-    dec_max=65,
-    style=example_style,
-    scale=1.5,
-)
-p.stars(
-    where=[_.hip.isin(cas.star_hip_ids)],
-    where_labels=False,
-    style__marker__symbol="star_4",
-    style__marker__stroke_width=4,
-    size_fn=lambda s: 80,
-)
-p.constellations()
-p.export("gradient_example.svg")
+--8<-- "examples/gradient.py"
 ```
+</div>
 
-![Example of a custom-defined gradient applied to a map plot's axes background](/images/reference/gradient_example.svg){ loading=lazy style="max-width:800px;width:100%;height:auto;margin:24px auto;display:block;" }
+![Example of a custom-defined gradient applied to a map plot's axes background](/images/examples/gradient.svg){ loading=lazy style="max-width:800px;width:100%;height:auto;margin:24px auto;display:block;" }
 
 Most of the gradients shown above (all except `sun` and `new_moon`) are also available as ready-to-use [style extensions](extensions.md) named `GRADIENT_<NAME>` (e.g. `GRADIENT_CIVIL_TWILIGHT`), which apply the gradient directly to the axes background without having to define the stops yourself.
 

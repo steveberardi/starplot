@@ -78,23 +78,23 @@
         inherited_members: true
 
 ---
-
+<!-- 
 ## Constants
 
-::: starplot.styles.FontStyleEnum
+::: starplot.styles.FontStyle
     options:
         show_root_heading: true
         show_docstring_attributes: true
         members: true
 
-::: starplot.styles.FontWeightEnum
+::: starplot.styles.FontWeight
     options:
         show_root_heading: true
         show_docstring_attributes: true
         members: true
         members_order: source
 
-::: starplot.styles.LineStyleEnum
+::: starplot.styles.DashArray
     options:
         show_root_heading: true
         show_docstring_attributes: true
@@ -106,34 +106,28 @@
         show_docstring_attributes: true
         members: true
 
-::: starplot.styles.LegendLocationEnum
+::: starplot.styles.LegendLocation
     options:
         show_root_heading: true
         show_docstring_attributes: true
         members: true
 
-::: starplot.styles.AnchorPointEnum
+::: starplot.styles.CapStyle
     options:
         show_root_heading: true
         show_docstring_attributes: true
         members: true
 
-::: starplot.styles.CapStyleEnum
+::: starplot.styles.JoinStyle
     options:
         show_root_heading: true
         show_docstring_attributes: true
         members: true
 
-::: starplot.styles.JoinStyleEnum
+::: starplot.styles.ZOrder
     options:
         show_root_heading: true
         show_docstring_attributes: true
         members: true
 
-::: starplot.styles.ZOrderEnum
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        members: true
-
----
+--- -->

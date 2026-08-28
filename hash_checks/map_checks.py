@@ -739,7 +739,7 @@ def check_map_constellation_clip_path():
         bayer_labels=True,
     )
 
-    p.title(constellation.name, style__line_spacing=80)
+    p.title(constellation.name)
 
     filename = DATA_PATH / "map-constellation-clip-path.png"
     p.export(filename)

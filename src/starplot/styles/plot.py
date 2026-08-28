@@ -5,12 +5,12 @@ import yaml
 from starplot.models.dso import DsoType
 from starplot.styles.base import BaseStyle
 from starplot.styles.constants import (
-    AnchorPointEnum,
-    CapStyleEnum,
-    FontWeightEnum,
-    LineStyleEnum,
+    AnchorPoint,
+    CapStyle,
+    DashArray,
+    FontWeight,
     MarkerSymbolEnum,
-    ZOrderEnum,
+    ZOrder,
 )
 from starplot.styles.elements import (
     ArrowStyle,
@@ -52,9 +52,9 @@ class PlotStyle(BaseStyle):
 
     title: TitleStyle = TitleStyle(
         font_size=85,
-        font_weight=FontWeightEnum.BOLD,
-        zorder=ZOrderEnum.LAYER_5,
-        anchor_point=AnchorPointEnum.BOTTOM_CENTER,
+        font_weight=FontWeight.BOLD,
+        zorder=ZOrder.LAYER_5,
+        anchor_point=AnchorPoint.BOTTOM_CENTER,
         padding_bottom=24,
     )
     """Styling for the title of the plot"""
@@ -62,16 +62,16 @@ class PlotStyle(BaseStyle):
     table: TableStyle = TableStyle(
         header=LabelStyle(
             font_size=32,
-            zorder=ZOrderEnum.LAYER_5,
+            zorder=ZOrder.LAYER_5,
             font_family="Inter",
-            font_weight=FontWeightEnum.BOLD,
-            anchor_point=AnchorPointEnum.BOTTOM_CENTER,
+            font_weight=FontWeight.BOLD,
+            anchor_point=AnchorPoint.BOTTOM_CENTER,
         ),
         cell=LabelStyle(
             font_size=32,
-            zorder=ZOrderEnum.LAYER_5,
+            zorder=ZOrder.LAYER_5,
             font_family="Inter",
-            anchor_point=AnchorPointEnum.BOTTOM_CENTER,
+            anchor_point=AnchorPoint.BOTTOM_CENTER,
         ),
         padding_top=24,
     )
@@ -79,14 +79,14 @@ class PlotStyle(BaseStyle):
 
     star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            zorder=ZOrderEnum.LAYER_3 + 1,
+            zorder=ZOrder.LAYER_3 + 1,
             size=20,
             stroke=None,
         ),
         label=LabelStyle(
             font_size=40,
-            font_weight=FontWeightEnum.BOLD,
-            zorder=ZOrderEnum.LAYER_3 + 2,
+            font_weight=FontWeight.BOLD,
+            zorder=ZOrder.LAYER_3 + 2,
             offset_x="auto",
             offset_y="auto",
         ),
@@ -95,10 +95,10 @@ class PlotStyle(BaseStyle):
 
     bayer_labels: LabelStyle = LabelStyle(
         font_size=36,
-        font_weight=FontWeightEnum.LIGHT,
+        font_weight=FontWeight.LIGHT,
         font_name="GFS Didot",
-        zorder=ZOrderEnum.LAYER_4,
-        anchor_point=AnchorPointEnum.TOP_LEFT,
+        zorder=ZOrder.LAYER_4,
+        anchor_point=AnchorPoint.TOP_LEFT,
         offset_x="auto",
         offset_y="auto",
     )
@@ -106,9 +106,9 @@ class PlotStyle(BaseStyle):
 
     flamsteed_labels: LabelStyle = LabelStyle(
         font_size=26,
-        font_weight=FontWeightEnum.LIGHT,
-        zorder=ZOrderEnum.LAYER_4,
-        anchor_point=AnchorPointEnum.BOTTOM_LEFT,
+        font_weight=FontWeight.LIGHT,
+        zorder=ZOrder.LAYER_4,
+        anchor_point=AnchorPoint.BOTTOM_LEFT,
         offset_x="auto",
         offset_y="auto",
     )
@@ -118,12 +118,12 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
             size=28,
-            zorder=ZOrderEnum.LAYER_3,
+            zorder=ZOrder.LAYER_3,
             opacity=1,
         ),
         label=LabelStyle(
             font_size=32,
-            font_weight=FontWeightEnum.BOLD,
+            font_weight=FontWeight.BOLD,
             offset_x="auto",
             offset_y="auto",
         ),
@@ -136,11 +136,11 @@ class PlotStyle(BaseStyle):
             size=50,
             fill="#c8c8c8",
             opacity=1,
-            zorder=ZOrderEnum.LAYER_4,
+            zorder=ZOrder.LAYER_4,
         ),
         label=LabelStyle(
             font_size=32,
-            font_weight=FontWeightEnum.BOLD,
+            font_weight=FontWeight.BOLD,
             offset_x="auto",
             offset_y="auto",
         ),
@@ -152,11 +152,11 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.STAR_8,
             size=80,
             fill="#000",
-            zorder=ZOrderEnum.LAYER_4 - 100,
+            zorder=ZOrder.LAYER_4 - 100,
         ),
         label=LabelStyle(
             font_size=32,
-            font_weight=FontWeightEnum.BOLD,
+            font_weight=FontWeight.BOLD,
         ),
     )
     """Styling for the Sun"""
@@ -164,10 +164,10 @@ class PlotStyle(BaseStyle):
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            dash_array=LineStyleEnum.DOTTED,
-            dash_capstyle=CapStyleEnum.ROUND,
+            dash_array=DashArray.DOTTED,
+            dash_capstyle=CapStyle.ROUND,
             stroke_width=2,
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
@@ -176,10 +176,10 @@ class PlotStyle(BaseStyle):
     dso_association_stars: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE,
-            dash_array=LineStyleEnum.DOTTED,
-            dash_capstyle=CapStyleEnum.ROUND,
+            dash_array=DashArray.DOTTED,
+            dash_capstyle=CapStyle.ROUND,
             stroke_width=2,
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
@@ -191,7 +191,7 @@ class PlotStyle(BaseStyle):
             fill="#555",
             opacity=0.8,
             stroke_width=1.2,
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
@@ -200,7 +200,7 @@ class PlotStyle(BaseStyle):
     dso_galaxy: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.ELLIPSE,
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
@@ -209,7 +209,7 @@ class PlotStyle(BaseStyle):
     dso_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
@@ -220,7 +220,7 @@ class PlotStyle(BaseStyle):
             symbol=MarkerSymbolEnum.CIRCLE_CROSSHAIR,
             stroke_width=1.6,
             size=26,
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
     )
@@ -229,7 +229,7 @@ class PlotStyle(BaseStyle):
     dso_double_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.CIRCLE_LINE,
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x=1, offset_y=-1),
     )
@@ -239,7 +239,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             fill="#000",
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -249,7 +249,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             fill="#000",
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -259,7 +259,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             fill="#000",
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -269,7 +269,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             fill="#000",
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -279,7 +279,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             fill="#000",
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -289,7 +289,7 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol=MarkerSymbolEnum.SQUARE,
             fill="#000",
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(),
     )
@@ -298,7 +298,7 @@ class PlotStyle(BaseStyle):
     constellation_lines: LineStyle = LineStyle(
         stroke="#c8c8c8",
         width=5,
-        zorder=ZOrderEnum.LAYER_3,
+        zorder=ZOrder.LAYER_3,
     )
     """Styling for constellation lines"""
 
@@ -307,15 +307,15 @@ class PlotStyle(BaseStyle):
         width=2.5,
         dash_array=(3, 6),
         opacity=0.5,
-        zorder=ZOrderEnum.LAYER_3,
+        zorder=ZOrder.LAYER_3,
     )
     """Styling for constellation borders"""
 
     constellation_labels: LabelStyle = LabelStyle(
         font_size=40,
-        font_weight=FontWeightEnum.NORMAL,
-        zorder=ZOrderEnum.LAYER_3,
-        anchor_point=AnchorPointEnum.CENTER,
+        font_weight=FontWeight.NORMAL,
+        zorder=ZOrder.LAYER_3,
+        anchor_point=AnchorPoint.CENTER,
     )
     """Styling for constellation labels"""
 
@@ -323,7 +323,7 @@ class PlotStyle(BaseStyle):
         fill="#d9d9d9",
         opacity=0.36,
         stroke_width=0,
-        zorder=ZOrderEnum.LAYER_1,
+        zorder=ZOrder.LAYER_1,
     )
     """Styling for the Milky Way"""
 
@@ -334,17 +334,17 @@ class PlotStyle(BaseStyle):
         line=LineStyle(
             stroke="#888",
             width=1,
-            dash_array=LineStyleEnum.SOLID,
+            dash_array=DashArray.SOLID,
             opacity=0.6,
-            zorder=ZOrderEnum.LAYER_2,
+            zorder=ZOrder.LAYER_2,
         ),
         label=LabelStyle(
             font_size=28,
             fill="#000",
             opacity=1,
-            font_weight=FontWeightEnum.NORMAL,
-            anchor_point=AnchorPointEnum.BOTTOM_CENTER,
-            zorder=ZOrderEnum.LAYER_5 + 1000,
+            font_weight=FontWeight.NORMAL,
+            anchor_point=AnchorPoint.BOTTOM_CENTER,
+            zorder=ZOrder.LAYER_5 + 1000,
         ),
     )
     """Styling for gridlines and their labels"""
@@ -354,18 +354,18 @@ class PlotStyle(BaseStyle):
             stroke="#777",
             width=3,
             dash_array=(2, 6),
-            cap_style=CapStyleEnum.ROUND,
+            cap_style=CapStyle.ROUND,
             opacity=1,
-            zorder=ZOrderEnum.LAYER_3 - 1,
+            zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(
             font_size=30,
             fill="#777",
             opacity=1,
-            font_weight=FontWeightEnum.NORMAL,
+            font_weight=FontWeight.NORMAL,
             stroke_width=8,
             stroke="#000",
-            zorder=ZOrderEnum.LAYER_3,
+            zorder=ZOrder.LAYER_3,
         ),
     )
     """Styling for the Ecliptic"""
@@ -374,17 +374,17 @@ class PlotStyle(BaseStyle):
         line=LineStyle(
             stroke="#999",
             width=4,
-            dash_array=LineStyleEnum.DASHED_DOTS,
-            cap_style=CapStyleEnum.ROUND,
-            zorder=ZOrderEnum.LAYER_3,
+            dash_array=DashArray.DASHED_DOTS,
+            cap_style=CapStyle.ROUND,
+            zorder=ZOrder.LAYER_3,
         ),
         label=LabelStyle(
             font_size=30,
             fill="#999",
-            font_weight=FontWeightEnum.NORMAL,
+            font_weight=FontWeight.NORMAL,
             stroke_width=8,
             stroke="#000",
-            zorder=ZOrderEnum.LAYER_3,
+            zorder=ZOrder.LAYER_3,
         ),
     )
     """Styling for the Celestial Equator"""
@@ -393,18 +393,18 @@ class PlotStyle(BaseStyle):
         line=LineStyle(
             stroke="#999",
             width=4,
-            dash_array=LineStyleEnum.SOLID,
+            dash_array=DashArray.SOLID,
             opacity=0.8,
-            zorder=ZOrderEnum.LAYER_3,
+            zorder=ZOrder.LAYER_3,
         ),
         label=LabelStyle(
             font_size=30,
             fill="#7c7c7c",
-            font_weight=FontWeightEnum.NORMAL,
+            font_weight=FontWeight.NORMAL,
             opacity=1,
             stroke_width=8,
             stroke="#000",
-            zorder=ZOrderEnum.LAYER_3,
+            zorder=ZOrder.LAYER_3,
         ),
     )
     """Styling for the Galactic Equator"""
@@ -413,17 +413,17 @@ class PlotStyle(BaseStyle):
         line=LineStyle(
             stroke="#fff",
             width=135,
-            dash_array=LineStyleEnum.SOLID,
-            cap_style=CapStyleEnum.ROUND,
+            dash_array=DashArray.SOLID,
+            cap_style=CapStyle.ROUND,
             opacity=1,
-            zorder=ZOrderEnum.LAYER_5,
+            zorder=ZOrder.LAYER_5,
         ),
         label=LabelStyle(
-            anchor_point=AnchorPointEnum.CENTER,
+            anchor_point=AnchorPoint.CENTER,
             fill="#000",
             font_size=98,
-            font_weight=FontWeightEnum.BOLD,
-            zorder=ZOrderEnum.LAYER_5,
+            font_weight=FontWeight.BOLD,
+            zorder=ZOrder.LAYER_5,
         ),
     )
     """Styling for the horizon"""
@@ -435,7 +435,7 @@ class PlotStyle(BaseStyle):
             fill="#000",
             opacity=0.8,
         ),
-        label=LabelStyle(font_size=14, font_weight=FontWeightEnum.BOLD),
+        label=LabelStyle(font_size=14, font_weight=FontWeight.BOLD),
     )
     """Styling for the zenith marker"""
 
@@ -452,7 +452,7 @@ class PlotStyle(BaseStyle):
         fill="hsl(0, 99%, 31%)",
         stroke="#ff0019",
         stroke_width=2,
-        zorder=ZOrderEnum.LAYER_4,
+        zorder=ZOrder.LAYER_4,
     )
     """Styling for arrows"""
 

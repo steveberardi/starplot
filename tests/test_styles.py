@@ -3,7 +3,7 @@ from pydantic import ValidationError
 from pydantic_extra_types.color import Color
 
 from starplot import MapPlot, Miller
-from starplot.styles import FontWeightEnum, LineStyle, LineStyleEnum, PlotStyle
+from starplot.styles import DashArray, FontWeight, LineStyle, PlotStyle
 
 
 @pytest.mark.parametrize(
@@ -12,7 +12,7 @@ from starplot.styles import FontWeightEnum, LineStyle, LineStyleEnum, PlotStyle
         dict(axes={"background": {"fill": "#fff"}}),
         dict(axes={"background": {"fill": Color("#ff8e8e")}}),
         dict(axes={"background": {"fill": "rgb(1,2,3)"}}),
-        dict(star={"label": {"font_weight": FontWeightEnum.BOLD}}),
+        dict(star={"label": {"font_weight": FontWeight.BOLD}}),
         dict(
             axes={"background": {"fill": "#fff"}},
             constellation_lines={"width": 2},
@@ -42,7 +42,7 @@ def test_plot_style_invalid(kwargs):
 
 
 def test_style_enums_use_strings():
-    line_style = LineStyle(dash_array=LineStyleEnum.DASHED)
+    line_style = LineStyle(dash_array=DashArray.DASHED)
     assert line_style.dash_array == "dashed"
 
 

@@ -174,7 +174,7 @@ def extract_enums(path: Path) -> dict:
                 continue
             try:
                 # literal_eval (rather than a plain ast.Constant check)
-                # so negative numbers -- e.g. ZOrderEnum.LAYER_1 = -2_000,
+                # so negative numbers -- e.g. ZOrder.LAYER_1 = -2_000,
                 # parsed as UnaryOp(USub, Constant), not a plain Constant
                 # -- still come through instead of being silently dropped.
                 members[stmt.targets[0].id] = ast.literal_eval(stmt.value)
@@ -246,9 +246,9 @@ def literal_type_lines(ftype: str) -> list[str] | None:
 def field_enum_values(ftype: str, enums: dict) -> list | None:
     """If a field's type annotation references exactly one known enum
     class -- directly (`GradientType`) or as one member of a union
-    (`LineStyleEnum | tuple | None`) -- returns that enum's possible
+    (`SomeEnum | tuple | None`) -- returns that enum's possible
     values. A field just *defaulting* to an enum member (e.g. `zorder:
-    int = ZOrderEnum.LAYER_2`) doesn't count -- its type is `int`, not
+    int = ZOrder.LAYER_2`) doesn't count -- its type is `int`, not
     an enum."""
     parts = [p.strip() for p in ftype.split("|")]
     matches = [list(enums[p].values()) for p in parts if p in enums]

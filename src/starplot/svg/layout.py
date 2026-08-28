@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 
 from starplot.styles import (
-    AlignmentEnum,
-    LegendLocationEnum,
+    HorizontalAlignment,
+    LegendLocation,
 )
 from starplot.svg.elements import SVG, Defs, Element, Group, Rectangle, create_gradient
 
@@ -64,7 +64,7 @@ class AxesRegion(Region):
 
 @dataclass
 class LegendRegion(Region):
-    location: LegendLocationEnum = LegendLocationEnum.OUTSIDE_TOP_RIGHT
+    location: str = LegendLocation.OUTSIDE_TOP_RIGHT
     margin_x: int = 0
     margin_y: int = 0
 
@@ -83,7 +83,7 @@ class LegendRegion(Region):
 
 @dataclass
 class TableRegion(Region):
-    alignment: AlignmentEnum = AlignmentEnum.CENTER
+    alignment: str = HorizontalAlignment.CENTER
 
 
 @dataclass
@@ -121,8 +121,8 @@ class Layout:
         axes_y = padding
 
         if self.legend.location in [
-            LegendLocationEnum.OUTSIDE_TOP_LEFT.value,
-            LegendLocationEnum.OUTSIDE_BOTTOM_LEFT.value,
+            LegendLocation.OUTSIDE_TOP_LEFT,
+            LegendLocation.OUTSIDE_BOTTOM_LEFT,
         ]:
             axes_x += self.legend.width + legend_margin_x
 
@@ -162,9 +162,9 @@ class Layout:
 
         if not self.table.is_empty:
             table_y = outer_y + outer_height
-            if self.table.alignment == AlignmentEnum.RIGHT:
+            if self.table.alignment == HorizontalAlignment.RIGHT:
                 table_x = outer_x + outer_width - self.table.width
-            elif self.table.alignment == AlignmentEnum.CENTER:
+            elif self.table.alignment == HorizontalAlignment.CENTER:
                 table_x = outer_x + (outer_width - self.table.width) / 2
             else:
                 table_x = outer_x
@@ -174,40 +174,40 @@ class Layout:
             legend_x = 0
             legend_y = 0
             loc = self.legend.location
-            if loc == LegendLocationEnum.INSIDE_TOP_LEFT:
+            if loc == LegendLocation.INSIDE_TOP_LEFT:
                 legend_x = axes_x + legend_margin_x
                 legend_y = axes_y + legend_margin_y
-            elif loc == LegendLocationEnum.INSIDE_TOP_RIGHT:
+            elif loc == LegendLocation.INSIDE_TOP_RIGHT:
                 legend_x = (
                     axes_x + self.axes.width - self.legend.width - legend_margin_x
                 )
                 legend_y = axes_y + legend_margin_y
-            elif loc == LegendLocationEnum.INSIDE_BOTTOM_LEFT:
+            elif loc == LegendLocation.INSIDE_BOTTOM_LEFT:
                 legend_x = axes_x + legend_margin_x
                 legend_y = (
                     axes_y + self.axes.height - self.legend.height - legend_margin_y
                 )
-            elif loc == LegendLocationEnum.INSIDE_BOTTOM_RIGHT:
+            elif loc == LegendLocation.INSIDE_BOTTOM_RIGHT:
                 legend_x = (
                     axes_x + self.axes.width - self.legend.width - legend_margin_x
                 )
                 legend_y = (
                     axes_y + self.axes.height - self.legend.height - legend_margin_y
                 )
-            elif loc == LegendLocationEnum.OUTSIDE_TOP_LEFT:
+            elif loc == LegendLocation.OUTSIDE_TOP_LEFT:
                 legend_x = outer_x - self.legend.width - legend_margin_x
                 legend_y = outer_y + legend_margin_y
-            elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_LEFT:
+            elif loc == LegendLocation.OUTSIDE_BOTTOM_LEFT:
                 legend_x = outer_x - self.legend.width - legend_margin_x
                 legend_y = (
                     outer_y + self.axes.height - self.legend.height - legend_margin_y
                 )
-            elif loc == LegendLocationEnum.OUTSIDE_BOTTOM_RIGHT:
+            elif loc == LegendLocation.OUTSIDE_BOTTOM_RIGHT:
                 legend_x = outer_x + outer_width + legend_margin_x
                 legend_y = (
                     axes_y + self.axes.height - self.legend.height - legend_margin_y
                 )
-            elif loc == LegendLocationEnum.OUTSIDE_TOP_RIGHT:
+            elif loc == LegendLocation.OUTSIDE_TOP_RIGHT:
                 legend_x = outer_x + outer_width + legend_margin_x
                 legend_y = outer_y + legend_margin_y
             elements.append(self.legend.render(x=legend_x, y=legend_y))

@@ -1,5 +1,5 @@
 from starplot import CollisionHandler, Equidistant, MapPlot, _
-from starplot.styles import AnchorPointEnum, PlotStyle, extensions
+from starplot.styles import AnchorPoint, PlotStyle, extensions
 
 style = PlotStyle().extend(
     extensions.BLUE_MEDIUM,
@@ -13,7 +13,7 @@ style = PlotStyle().extend(
             "label": {
                 "fill": "hsl(330, 44%, 14%)",
                 "font_weight": 200,
-                "anchor_point": AnchorPointEnum.BOTTOM_CENTER.value,
+                "anchor_point": AnchorPoint.BOTTOM_CENTER,
             }
         },
     },

@@ -10,7 +10,7 @@ from starplot.geometry import (
     random_point_in_polygon_at_distance,
     union_at_zero,
 )
-from starplot.styles import AnchorPointEnum, LabelStyle
+from starplot.styles import AnchorPoint, LabelStyle
 from starplot.styles.helpers import use_style
 from starplot.svg.canvas import CoordinateSystem
 from starplot.svg.fonts import get_text_hw
@@ -66,7 +66,7 @@ class CollisionHandler:
     seed: int = None
     """Random seed for randomly generating points"""
 
-    anchor_fallbacks: list[AnchorPointEnum] = None
+    anchor_fallbacks: list[str] = None
     """
     If a point-based label's preferred anchor point results in a collision, then these fallbacks will be tried in 
     sequence until a collision-free position is found.
@@ -74,28 +74,28 @@ class CollisionHandler:
     Default:
     ```python
     [
-        AnchorPointEnum.BOTTOM_RIGHT,
-        AnchorPointEnum.TOP_LEFT,
-        AnchorPointEnum.TOP_RIGHT,
-        AnchorPointEnum.BOTTOM_LEFT,
-        AnchorPointEnum.BOTTOM_CENTER,
-        AnchorPointEnum.TOP_CENTER,
-        AnchorPointEnum.RIGHT_CENTER,
-        AnchorPointEnum.LEFT_CENTER,
+        AnchorPoint.BOTTOM_RIGHT,
+        AnchorPoint.TOP_LEFT,
+        AnchorPoint.TOP_RIGHT,
+        AnchorPoint.BOTTOM_LEFT,
+        AnchorPoint.BOTTOM_CENTER,
+        AnchorPoint.TOP_CENTER,
+        AnchorPoint.RIGHT_CENTER,
+        AnchorPoint.LEFT_CENTER,
     ]
     ```
     """
 
     def __post_init__(self):
         self.anchor_fallbacks = self.anchor_fallbacks or [
-            AnchorPointEnum.BOTTOM_RIGHT,
-            AnchorPointEnum.TOP_LEFT,
-            AnchorPointEnum.TOP_RIGHT,
-            AnchorPointEnum.BOTTOM_LEFT,
-            AnchorPointEnum.BOTTOM_CENTER,
-            AnchorPointEnum.TOP_CENTER,
-            AnchorPointEnum.RIGHT_CENTER,
-            AnchorPointEnum.LEFT_CENTER,
+            AnchorPoint.BOTTOM_RIGHT,
+            AnchorPoint.TOP_LEFT,
+            AnchorPoint.TOP_RIGHT,
+            AnchorPoint.BOTTOM_LEFT,
+            AnchorPoint.BOTTOM_CENTER,
+            AnchorPoint.TOP_CENTER,
+            AnchorPoint.RIGHT_CENTER,
+            AnchorPoint.LEFT_CENTER,
         ]
 
 
@@ -380,16 +380,16 @@ class TextPlotterMixin:
             # TODO : this anchor stuff should be backend-agnostic, move to canvas
 
             if anchor in [
-                AnchorPointEnum.BOTTOM_RIGHT,
-                AnchorPointEnum.RIGHT_CENTER,
-                AnchorPointEnum.TOP_RIGHT,
+                AnchorPoint.BOTTOM_RIGHT,
+                AnchorPoint.RIGHT_CENTER,
+                AnchorPoint.TOP_RIGHT,
             ]:
                 x0 = display_x + offset_x
 
             elif anchor in [
-                AnchorPointEnum.BOTTOM_LEFT,
-                AnchorPointEnum.LEFT_CENTER,
-                AnchorPointEnum.TOP_LEFT,
+                AnchorPoint.BOTTOM_LEFT,
+                AnchorPoint.LEFT_CENTER,
+                AnchorPoint.TOP_LEFT,
             ]:
                 x0 = display_x - offset_x
                 attrs = {"text-anchor": "end"}
@@ -397,16 +397,16 @@ class TextPlotterMixin:
                 x0 = display_x
 
             if anchor in [
-                AnchorPointEnum.TOP_RIGHT,
-                AnchorPointEnum.TOP_CENTER,
-                AnchorPointEnum.TOP_LEFT,
+                AnchorPoint.TOP_RIGHT,
+                AnchorPoint.TOP_CENTER,
+                AnchorPoint.TOP_LEFT,
             ]:
                 y0 = display_y - offset_y
 
             elif anchor in [
-                AnchorPointEnum.BOTTOM_RIGHT,
-                AnchorPointEnum.BOTTOM_CENTER,
-                AnchorPointEnum.BOTTOM_LEFT,
+                AnchorPoint.BOTTOM_RIGHT,
+                AnchorPoint.BOTTOM_CENTER,
+                AnchorPoint.BOTTOM_LEFT,
             ]:
                 # In SVG, the origin is top left corner
                 y0 = display_y + height + offset_y
@@ -417,9 +417,9 @@ class TextPlotterMixin:
             offset_y = round_away_from_zero(offset_y)
 
             if anchor in [
-                AnchorPointEnum.TOP_LEFT,
-                AnchorPointEnum.LEFT_CENTER,
-                AnchorPointEnum.BOTTOM_LEFT,
+                AnchorPoint.TOP_LEFT,
+                AnchorPoint.LEFT_CENTER,
+                AnchorPoint.BOTTOM_LEFT,
             ]:
                 attrs = {"text-anchor": "end"}
                 # y0 = display_y - offset_y - height
@@ -427,7 +427,7 @@ class TextPlotterMixin:
             else:
                 bbox = create_bbox(x0 - 2, y0 + 4, height=height, width=width)
 
-            if anchor == AnchorPointEnum.CENTER:
+            if anchor == AnchorPoint.CENTER:
                 attrs = {
                     "text-anchor": "middle",
                     "dominant-baseline": "central",
