@@ -124,13 +124,12 @@ class MarkerStyle(BaseStyle):
     def css(self, scale: float = 1) -> dict:
         solid_fill = self.fill is not None and not isinstance(self.fill, list)
         attrs = {
+            "fill": self.fill.as_hex() if solid_fill else "none",
             "stroke": self.stroke.as_hex() if self.stroke else "none",
             "stroke-width": round(self.stroke_width * scale, 2),
             "stroke-opacity": self.opacity,
             "stroke-linecap": self.dash_capstyle,
         }
-        if solid_fill:
-            attrs["fill"] = self.fill.as_hex()
 
         if self.opacity != 1:
             attrs["fill-opacity"] = self.opacity
