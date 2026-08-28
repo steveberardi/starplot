@@ -28,10 +28,10 @@ CENTER_RA = 180
 CENTER_DEC = 0
 
 default_style = MarkerStyle(
-        fill="#c6e4f9",
-        stroke="#053659",
-        stroke_width=2,
-    )
+    fill="#b7d9f1",
+    stroke="#053659",
+    stroke_width=2,
+)
 
 marker_styles = {
     "circle": style_medium.dso_open_cluster.marker,
@@ -54,8 +54,8 @@ marker_styles = {
 for symbol in MarkerSymbolEnum:
     symbol_str = symbol.value
 
-    marker_style = marker_styles.get(symbol_str)
-    marker_style.size = 60
+    marker_style = default_style
+    marker_style.size = 64
     marker_style.symbol = symbol_str
     marker_style.stroke_width = default_style.stroke_width
 
@@ -69,8 +69,8 @@ for symbol in MarkerSymbolEnum:
         dec_min=CENTER_DEC - 10,
         dec_max=CENTER_DEC + 10,
         style=style_medium,
-        resolution=64 if symbol_str != "circle_line" else 128,
-        scale=0.5,
+        resolution=64 if symbol_str != "circle_line" else 100,
+        scale=0.6,
     )
     p.marker(
         ra=CENTER_RA,

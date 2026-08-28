@@ -367,14 +367,14 @@ class TextPlotterMixin:
             offset_x, offset_y = style.offset_x, style.offset_y
 
             # CENTER = "center"
-            # LEFT_CENTER = "left center"
-            # RIGHT_CENTER = "right center"
-            # TOP_LEFT = "top left"
-            # TOP_RIGHT = "top right"
-            # TOP_CENTER = "top center"
-            # BOTTOM_LEFT = "bottom left"
-            # BOTTOM_RIGHT = "bottom right"
-            # BOTTOM_CENTER = "bottom center"
+            # LEFT_CENTER = "left_center"
+            # RIGHT_CENTER = "right_center"
+            # TOP_LEFT = "top_left"
+            # TOP_RIGHT = "top_right"
+            # TOP_CENTER = "top_center"
+            # BOTTOM_LEFT = "bottom_left"
+            # BOTTOM_RIGHT = "bottom_right"
+            # BOTTOM_CENTER = "bottom_center"
             attrs = None
 
             # TODO : this anchor stuff should be backend-agnostic, move to canvas

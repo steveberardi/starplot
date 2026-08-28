@@ -148,7 +148,7 @@ def create_star_function(num_points: int):
 
 
 def plus(x: float, y: float, size: float, attrs: dict):
-    t = 8
+    t = size / 8  # thickness
     s = size / 2
     points = [
         (x - t, y - s),  # top-left of top arm

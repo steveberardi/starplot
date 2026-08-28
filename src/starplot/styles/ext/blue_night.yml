@@ -73,7 +73,6 @@ star:
 bayer_labels:
   opacity: 0.9
   fill: hsl(210, 29%, 94%)
-  font_size: 24
 
 flamsteed_labels:
   opacity: 0.9

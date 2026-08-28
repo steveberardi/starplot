@@ -6,7 +6,7 @@ style = PlotStyle().extend(
     extensions.MAP,
     {
         "legend": {
-            "location": "inside bottom right",  # show legend inside map
+            "location": "inside_bottom_right",  # show legend inside map
         },
     },
 )

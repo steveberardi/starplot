@@ -52,11 +52,12 @@ def _dash_array_attrs(
     if cycle <= 0:
         return {}
 
-    repeats = max(1, round(nominal / cycle))
-    path_length = cycle * repeats
+    # TODO : find workaround for plotting balanced dash patterns
+    # "pathLength": round(path_length, 4), # not supported in cairo-svg
+    # repeats = max(1, round(nominal / cycle))
+    # path_length = cycle * repeats
 
     return {
-        "pathLength": round(path_length, 4),
         "stroke-dasharray": ",".join(str(round(n, 4)) for n in scaled),
     }
 
@@ -94,10 +95,12 @@ class MarkerStyle(BaseStyle):
     stroke_width: float = 1
     """Stroke width of marker, in pixels."""
 
-    dash_array: LineStyleEnum | tuple | None = None
+    dash_array: Literal["solid", "dashed", "dashdot", "dotted"] | tuple[int] | None = (
+        None
+    )
     """Dash style of the marker's stroke. Can be a predefined value in `LineStyleEnum` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyleEnum.ROUND`, since a zero-length dash is only visible with a round cap."""
 
-    dash_capstyle: CapStyleEnum = CapStyleEnum.SQUARE
+    dash_capstyle: Literal["square", "butt", "round"] = "square"
     """Style of dash endpoints"""
 
     symbol: MarkerSymbolEnum = MarkerSymbolEnum.CIRCLE

@@ -72,7 +72,7 @@ with p.style.dso_nebula as neb:
 p.constellation_labels()
 
 p.legend(
-    style__location="inside bottom right",
+    style__location="inside_bottom_right",
     style__margin_x=20,
 )
 

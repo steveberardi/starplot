@@ -1,6 +1,6 @@
 
 
-## Symbols
+Below are previews of all marker symbols available in Starplot. Many aspects of the symbol can be customized through its style, including fill color, edge color, edge thickness, edge style (solid, dotted, dashed, etc), opacity, and much more. See [`MarkerStyle`][starplot.MarkerStyle] for details.
 
 <div class="marker-symbol-grid" markdown>
 

@@ -114,6 +114,7 @@ docs-build:
 docs-references:
 	uv run $(DOTENV) docs/scripts/data.py
 	uv run $(DOTENV) docs/scripts/markers.py
+	uv run $(DOTENV) docs/scripts/gradients.py
 	uv run $(DOTENV) docs/scripts/projections.py
 	uv run $(DOTENV) docs/scripts/style_reference.py
 

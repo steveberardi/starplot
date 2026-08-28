@@ -37,7 +37,7 @@ class PlotStyle(BaseStyle):
 
     base: PlotBaseStyle = PlotBaseStyle()
     """
-    Default base styles for undefined style properties. This is a way to apply some styles to everything in the plot, unless a style specifically sets one of these values.
+    Default base styles for undefined style properties. This is a way to apply some styles to everything in the plot, unless a style explicitly sets one of these values.
     """
 
     axes: AxesStyle = AxesStyle()

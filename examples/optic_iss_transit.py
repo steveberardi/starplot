@@ -66,7 +66,7 @@ for sat in iss.trajectory(dt_start, dt_end, step=timedelta(seconds=1)):
             },
             "label": {
                 "fill": label_color,
-                "anchor_point": "bottom center",
+                "anchor_point": "bottom_center",
                 "stroke": "#000",
                 "stroke_width": 6,
                 "font_size": 48,

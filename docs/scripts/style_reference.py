@@ -136,6 +136,7 @@ def extract_classes(path: Path) -> dict:
                         "name": stmt.target.id,
                         "type": _unparse(stmt.annotation),
                         "default": _unparse(stmt.value),
+                        "default_node": stmt.value,
                         "doc": _first_paragraph(doc),
                     }
                 )
@@ -151,7 +152,7 @@ def extract_classes(path: Path) -> dict:
 
 
 def extract_enums(path: Path) -> dict:
-    """Parses a module and returns {EnumClassName: [value, value, ...]},
+    """Parses a module and returns {EnumClassName: {MEMBER_NAME: value, ...}},
     using each member's own *value* (e.g. "radial"), not its name
     (RADIAL) -- that's what actually goes in a style dict/YAML."""
     tree = ast.parse(path.read_text())
@@ -163,7 +164,7 @@ def extract_enums(path: Path) -> dict:
         if not any(_unparse(b) == "Enum" for b in node.bases):
             continue
 
-        values = []
+        members = {}
         for stmt in node.body:
             if not (
                 isinstance(stmt, ast.Assign)
@@ -176,13 +177,70 @@ def extract_enums(path: Path) -> dict:
                 # so negative numbers -- e.g. ZOrderEnum.LAYER_1 = -2_000,
                 # parsed as UnaryOp(USub, Constant), not a plain Constant
                 # -- still come through instead of being silently dropped.
-                values.append(ast.literal_eval(stmt.value))
+                members[stmt.targets[0].id] = ast.literal_eval(stmt.value)
             except ValueError:
                 pass
-        if values:
-            enums[node.name] = values
+        if members:
+            enums[node.name] = members
 
     return enums
+
+
+def call_kwargs(node) -> dict:
+    """If `node` is a class-instantiation call (e.g. the `MarkerStyle(...)`
+    a PlotStyle field like `dso_open_cluster` sets for its `marker` field),
+    returns {kwarg_name: value_ast_node} for its keyword arguments -- the
+    field values that *instance* overrides, as opposed to the underlying
+    style class's own field defaults. `{}` for anything else (no override,
+    or an override that isn't itself a call, e.g. `label=None`)."""
+    if not isinstance(node, ast.Call):
+        return {}
+    return {kw.arg: kw.value for kw in node.keywords if kw.arg is not None}
+
+
+def split_top_level(s: str, sep: str) -> list[str]:
+    """Splits `s` on `sep`, but only where it's not nested inside brackets
+    (e.g. won't split the commas inside `Literal["a", "b"]` when splitting
+    a union type on `|`)."""
+    parts = []
+    depth = 0
+    current = ""
+    for ch in s:
+        if ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth -= 1
+        if ch == sep and depth == 0:
+            parts.append(current.strip())
+            current = ""
+        else:
+            current += ch
+    parts.append(current.strip())
+    return parts
+
+
+LITERAL_TYPE = re.compile(r"^Literal\[(.*)\]$")
+
+
+def literal_type_lines(ftype: str) -> list[str] | None:
+    """If a field's type annotation contains a `Literal[...]` anywhere in
+    its top-level union (e.g. `Literal["solid", "dashed"] | tuple[int] |
+    None`), returns one line per union member, with the Literal's own
+    values each expanded onto their own line too -- e.g. ['\\'solid\\'',
+    '\\'dashed\\'', 'tuple[int]', 'None']. Returns None for a type with no
+    Literal, so the caller can fall back to the plain single-line display."""
+    members = split_top_level(ftype, "|")
+    if not any(LITERAL_TYPE.match(m) for m in members):
+        return None
+
+    lines = []
+    for member in members:
+        m = LITERAL_TYPE.match(member)
+        if m:
+            lines.extend(split_top_level(m.group(1), ","))
+        else:
+            lines.append(member)
+    return lines
 
 
 def field_enum_values(ftype: str, enums: dict) -> list | None:
@@ -193,7 +251,7 @@ def field_enum_values(ftype: str, enums: dict) -> list | None:
     int = ZOrderEnum.LAYER_2`) doesn't count -- its type is `int`, not
     an enum."""
     parts = [p.strip() for p in ftype.split("|")]
-    matches = [enums[p] for p in parts if p in enums]
+    matches = [list(enums[p].values()) for p in parts if p in enums]
     return matches[0] if len(matches) == 1 else None
 
 
@@ -302,18 +360,19 @@ def render_default(default: str | None, enums: dict):
         return m.group(1), True
 
     m = ENUM_VALUE.match(default)
-    if m and m.group(1) in enums:
-        return m.group(2), False
+    if m and m.group(1) in enums and m.group(2) in enums[m.group(1)]:
+        value = enums[m.group(1)][m.group(2)]
+        return (f'"{value}"' if isinstance(value, str) else str(value)), False
 
     if default.startswith("Field("):
         m = FIELD_DEFAULT.search(default)
         return (m.group(1), False) if m else (default, False)
 
     if default == "None":
-        return "none", False
+        return "None", False
 
     if default.startswith("'") and default.endswith("'"):
-        return default[1:-1], False
+        return f'"{default[1:-1]}"', False
 
     return default, False
 
@@ -321,14 +380,18 @@ def render_default(default: str | None, enums: dict):
 # ---------------------------------------------------------------- tree data
 
 
-def build_leaf(field: dict, path: str, enums: dict) -> dict:
+def build_leaf(field: dict, path: str, enums: dict, override_node=None) -> dict:
     doc_html, doc_full = render_doc(field["doc"])
-    default = render_default(field["default"], enums)
+    default_str = (
+        _unparse(override_node) if override_node is not None else field["default"]
+    )
+    default = render_default(default_str, enums)
 
     return {
         "kind": "leaf",
         "name": field["name"],
         "type": field["type"],
+        "type_lines": literal_type_lines(field["type"]),
         "default_value": default[0] if default else None,
         "is_color": default[1] if default else False,
         "doc_html": doc_html,
@@ -340,25 +403,48 @@ def build_leaf(field: dict, path: str, enums: dict) -> dict:
 
 
 def build_node(
-    name: str, type_name: str, doc: str, classes: dict, path: str, enums: dict
+    name: str,
+    type_name: str,
+    doc: str,
+    classes: dict,
+    path: str,
+    enums: dict,
+    override_node=None,
 ) -> dict:
     """Builds one property as a tree node: its own identity, plus every
     field of its style type (each itself a node or a leaf), so the whole
-    subtree is available to render in place -- no separate lookup elsewhere."""
+    subtree is available to render in place -- no separate lookup elsewhere.
+
+    `override_node` is the AST value of the specific PlotStyle instance
+    this node came from (e.g. `dso_open_cluster`'s `MarkerStyle(...)` call
+    for its `marker` field) -- its keyword arguments take precedence over
+    the style class's own field defaults, since that's what a user actually
+    gets when they use e.g. `dso_open_cluster`, not MarkerStyle's defaults."""
     cdef = classes[type_name]
     raw_doc = doc or cdef["doc"]
     doc_html, doc_full = render_doc(raw_doc)
+
+    override_kwargs = call_kwargs(override_node)
 
     children = []
     for f in resolve_fields(type_name, classes):
         nested = core_type(f["type"])
         child_path = f"{path}.{f['name']}"
+        child_override = override_kwargs.get(f["name"])
         if nested in classes:
             children.append(
-                build_node(f["name"], nested, f["doc"], classes, child_path, enums)
+                build_node(
+                    f["name"],
+                    nested,
+                    f["doc"],
+                    classes,
+                    child_path,
+                    enums,
+                    child_override,
+                )
             )
         else:
-            children.append(build_leaf(f, child_path, enums))
+            children.append(build_leaf(f, child_path, enums, child_override))
 
     # Every nested style type here is a BaseStyle subclass (that's what
     # makes it a node instead of a leaf) -- push those last so a style's
@@ -388,7 +474,15 @@ def build_groups(plot_fields: dict, classes: dict, enums: dict) -> list:
             doc = f["doc"] or DOC_FALLBACKS.get(fname, "")
             path = f"style.{fname}"
             nodes.append(
-                build_node(fname, core_type(f["type"]), doc, classes, path, enums)
+                build_node(
+                    fname,
+                    core_type(f["type"]),
+                    doc,
+                    classes,
+                    path,
+                    enums,
+                    f["default_node"],
+                )
             )
         groups.append({"name": group_name, "nodes": nodes})
     return groups

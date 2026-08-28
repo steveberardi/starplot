@@ -117,29 +117,29 @@ class JoinStyleEnum(str, Enum):
 class LegendLocationEnum(str, Enum):
     """Options for the location of the map legend, relative to the axes"""
 
-    INSIDE_TOP_LEFT = "inside top left"
-    INSIDE_TOP_RIGHT = "inside top right"
-    INSIDE_BOTTOM_RIGHT = "inside bottom right"
-    INSIDE_BOTTOM_LEFT = "inside bottom left"
+    INSIDE_TOP_LEFT = "inside_top_left"
+    INSIDE_TOP_RIGHT = "inside_top_right"
+    INSIDE_BOTTOM_RIGHT = "inside_bottom_right"
+    INSIDE_BOTTOM_LEFT = "inside_bottom_left"
 
-    OUTSIDE_TOP_LEFT = "outside top left"
-    OUTSIDE_TOP_RIGHT = "outside top right"
-    OUTSIDE_BOTTOM_RIGHT = "outside bottom right"
-    OUTSIDE_BOTTOM_LEFT = "outside bottom left"
+    OUTSIDE_TOP_LEFT = "outside_top_left"
+    OUTSIDE_TOP_RIGHT = "outside_top_right"
+    OUTSIDE_BOTTOM_RIGHT = "outside_bottom_right"
+    OUTSIDE_BOTTOM_LEFT = "outside_bottom_left"
 
 
 class AnchorPointEnum(str, Enum):
     """Options for the anchor point of labels"""
 
     CENTER = "center"
-    LEFT_CENTER = "left center"
-    RIGHT_CENTER = "right center"
-    TOP_LEFT = "top left"
-    TOP_RIGHT = "top right"
-    TOP_CENTER = "top center"
-    BOTTOM_LEFT = "bottom left"
-    BOTTOM_RIGHT = "bottom right"
-    BOTTOM_CENTER = "bottom center"
+    LEFT_CENTER = "left_center"
+    RIGHT_CENTER = "right_center"
+    TOP_LEFT = "top_left"
+    TOP_RIGHT = "top_right"
+    TOP_CENTER = "top_center"
+    BOTTOM_LEFT = "bottom_left"
+    BOTTOM_RIGHT = "bottom_right"
+    BOTTOM_CENTER = "bottom_center"
 
     @staticmethod
     def from_str(value: str) -> "AnchorPointEnum":

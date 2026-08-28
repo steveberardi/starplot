@@ -21,6 +21,7 @@ nav = [
           { "Overview" = "styling/overview.md" },
           { "Layout" = "styling/layout.md" },
           { "Markers" = "styling/markers.md" },
+          { "Gradients" = "styling/gradients.md" },
           { "Extensions" = "styling/extensions.md" },
           { "Explorer" = "styling/explorer.md" },
           { "Reference" = "styling/reference.md" },

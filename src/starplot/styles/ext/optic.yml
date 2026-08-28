@@ -8,7 +8,7 @@ axes:
     width: 8
 
 legend:
-  location: "outside bottom right"
+  location: "outside_bottom_right"
 
 star:
   label:

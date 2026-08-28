@@ -76,7 +76,6 @@ gridlines:
   label:
     opacity: 0.8
     fill: hsl(60, 3%, 92%)
-    font_size: 8
     font_weight: 200
   line:
     opacity: 0.6

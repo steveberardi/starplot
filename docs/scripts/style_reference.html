@@ -22,15 +22,18 @@ body {
   /* Blue, not a Material-matched neutral -- these two back the
      collapsible property boxes specifically, echoing the blue tones
      Starplot's own style extensions use (see styles/ext/blue_medium.yml,
-     blue_dark.yml). --card-bg-top stays a shade darker for top-level
-     headers regardless of theme, same as the --surface-2 pattern above.
-     The dark variant is set below via [data-md-color-scheme="slate"]
-     (Material's own toggle attribute, always present when embedded) or,
-     absent that attribute, prefers-color-scheme for standalone viewing --
-     not a plain media query here, since that would go dark by raw OS
-     preference even while the surrounding Material page stays light. */
-  --card-bg: hsl(218, 65%, 95%);
-  --card-bg-top: color-mix(in srgb, var(--card-bg), var(--ink) 8%);
+     blue_dark.yml). --card-bg-top is a brighter, more saturated shade for
+     top-level property headers, so they read as a distinct "shelf" above
+     the more muted, lighter --card-bg used for everything nested under
+     them. Both are set explicitly per theme (light here, dark below via
+     [data-md-color-scheme="slate"] or, absent that attribute,
+     prefers-color-scheme for standalone viewing -- not a plain media
+     query here, since that would go dark by raw OS preference even while
+     the surrounding Material page stays light) rather than derived from
+     one another, so each theme can tune saturation/brightness on its own
+     instead of inheriting a fixed relationship. */
+  --card-bg: hsl(218, 45%, 97%);
+  --card-bg-top: hsl(218, 68%, 95%);
   --ink: var(--md-default-fg-color, hsl(209, 50%, 33%));
   --muted: var(--md-default-fg-color--light, hsl(209, 15%, 40%));
   --faint: var(--md-default-fg-color--lighter, hsl(209, 12%, 56%));
@@ -59,12 +62,14 @@ body {
     --shadow: 0 1px 2px hsl(0 0% 0% / 0.3), 0 8px 24px hsl(0 0% 0% / 0.35);
   }
   body:not([data-md-color-scheme]) {
-    --card-bg: hsl(212, 35%, 20%);
+    --card-bg: hsl(212, 22%, 24%);
+    --card-bg-top: hsl(212, 35%, 25%);
   }
 }
 
 body[data-md-color-scheme="slate"] {
-  --card-bg: hsl(212, 35%, 20%);
+  --card-bg: hsl(212, 22%, 24%);
+  --card-bg-top: hsl(212, 45%, 28%);
 }
 
 /* Same embedding problem as the details/summary reset below, but for
@@ -153,7 +158,7 @@ h2.section-head {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
-  margin: 0 0 4px;
+  margin: 0 0 8px;
   display: flex;
   align-items: baseline;
   gap: 12px;
@@ -170,7 +175,7 @@ h2.section-head::after {
 
 .section-desc { color: var(--muted); font-size: 13.5px; margin: 0 0 20px; max-width: 62ch; }
 
-.group { margin-bottom: 26px; }
+.group { margin-bottom: 32px; }
 .group h3 { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.03em; color: var(--ink); margin: 0 0 8px; }
 
 .fields--top { display: flex; flex-direction: column; gap: 8px; }
@@ -208,15 +213,11 @@ details.node.is-hidden { display: none; }
 details.node summary {
   list-style: none;
   cursor: pointer;
-  padding: 10px 14px;
+  padding: 18px 16px;
   display: flex;
   align-items: center;
   gap: 28px;
   font-family: var(--font-display);
-  /* Material's own `.md-typeset details:not([open]) > summary` rule is
-     more specific than a plain reset here and reintroduces a bottom
-     margin while collapsed, so this one property needs !important to
-     reliably win in both the open and closed state. */
   margin: 0 !important;
 }
 details.node summary::-webkit-details-marker { display: none; }
@@ -240,10 +241,10 @@ details.node[open] > summary::before { transform: rotate(45deg); }
 
 details.node summary .fname-group { display: flex; flex-direction: column; min-width: 0; }
 details.node summary .fname { 
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600; 
 }
-details.node summary .fdoc-inline { font-family: var(--font-body); font-size: 0.75em; font-weight: 300; color: var(--muted); }
+details.node summary .fdoc-inline { font-family: var(--font-body); font-size: 0.75em; font-weight: 300; color: var(--muted); max-width: 660px;}
 details.node summary .fdoc-inline code { font-family: var(--font-mono); font-size: 0.95em; background: var(--code-bg); padding: 0 3px; border-radius: 3px; color: var(--ink); }
 details.node summary .tname {
   margin-left: auto;
@@ -270,6 +271,8 @@ details.node summary .tname {
   /* margin: 8px 10px; */
   /* margin-bottom: 4px !important; */
   margin-left: 12px;
+  margin-top: 8px;
+  margin-bottom: 8px;
   
 }
 
@@ -280,14 +283,15 @@ details.node summary .tname {
 .fields > .field + details.node { border-top: 1px solid var(--line); }
 .fields--top > details.node { border-radius: 10px; border: 1px solid var(--line); }
 .fields--top > details.node > summary { background: var(--card-bg-top); }
+.fields--top > details.node > summary .fname { font-size: 17px; font-weight: 700; }
 
 .fields > details.node > summary { padding: 8px 16px; }
-.fields--top > details.node > summary { padding: 12px 16px; }
+.fields--top > details.node > summary { padding: 16px; }
 
 .field {
   position: relative;
   display: grid;
-  grid-template-columns: 150px 120px 90px 1fr 28px;
+  grid-template-columns: 150px 130px 130px 1fr 26px;
   gap: 12px;
   align-items: start;
   padding: 9px 14px;
@@ -366,7 +370,7 @@ footer.page-foot code { font-family: var(--font-mono); }
 {% macro render_leaf(leaf) -%}
 <div class="field" data-name="{{ leaf.name }}" data-doc="{{ leaf.search_doc }}" data-path="{{ leaf.path }}">
   <code class="fname">{{ leaf.name }}</code>
-  <span class="ftype">{{ leaf.type }}</span>
+  <span class="ftype">{% if leaf.type_lines %}{% for line in leaf.type_lines %}{{ line }}{% if not loop.last %}<br>{% endif %}{% endfor %}{% else %}{{ leaf.type }}{% endif %}</span>
   {%- if leaf.default_value is not none %}
   <span class="fdefault">{% if leaf.is_color %}<i class="swatch" style="background:{{ leaf.default_value }}"></i>{% endif %}{{ leaf.default_value }}</span>
   {%- else %}
@@ -441,6 +445,8 @@ footer.page-foot code { font-family: var(--font-mono); }
 
 </main>
 </div>
+
+<br/><br/><br/>
 
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
 <script>

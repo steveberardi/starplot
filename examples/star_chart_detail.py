@@ -16,7 +16,6 @@ p = ZenithPlot(
     observer=observer,
     style=PlotStyle().extend(
         extensions.BLUE_NIGHT,
-        # extensions.GRADIENT_TRUE_NIGHT,
         extensions.FIGURE_TRANSPARENT,
     ),
 )
@@ -62,7 +61,7 @@ p.marker(
             "opacity": 1,
             "offset_x": "auto",
             "offset_y": "auto",
-            "anchor_point": "top right",
+            "anchor_point": "top_right",
         },
     },
     label="Mel 111",

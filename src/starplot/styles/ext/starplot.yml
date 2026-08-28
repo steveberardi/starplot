@@ -165,7 +165,6 @@ star:
 sun:
   label:
     fill: hsl(205, 58%, 22%)
-    font_size: 9
   marker:
     fill: hsl(205, 72%, 32%)
     stroke: hsl(205, 72%, 32%)

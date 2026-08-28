@@ -148,17 +148,17 @@ c.gridlines()
 # )
 
 # c.legend(
-#     style__location="outside top right",
+#     style__location="outside_top_right",
 #     style__margin_y=0,
 # )
 
 # c.legend(
-#     style__location="outside bottom right",
+#     style__location="outside_bottom_right",
 #     style__margin_y=0,
 #     magnitude_scale=True,
 # )
 c.legend(
-    style__location="outside top right",
+    style__location="outside_top_right",
     style__margin_y=0,
     style__margin_x=40,
     magnitude_scale=True,
