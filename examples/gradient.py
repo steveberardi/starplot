@@ -6,7 +6,7 @@ style = PlotStyle().extend(
     extensions.MAP,
 )
 
-# define your gradient
+# define your gradient and apply it to the axes background
 style.axes.background.fill = GradientStyle(
     stops=(
         (0.0, "#f4d58d"),

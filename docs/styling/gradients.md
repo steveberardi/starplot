@@ -1,9 +1,8 @@
 # Gradients
 
-All styles with a `fill` property can be filled as a solid color or a gradient. Starplot has a few built-in gradient styles, but you can also [build your own](#build-your-own).
+Markers and polygons can have a solid color fill or a gradient fill. Starplot has a few pre-defined gradients, but you can also [build your own](#build-your-own). Gradient backgrounds are defined through a [`GradientStyle`][starplot.styles.GradientStyle]. The `GradientStyle` consists of a tuple of color stops (in the format of `(offset, color)`) and a `type` (`"linear"` or `"radial"`).
 
-Below are previews of all built-in gradients available in Starplot. They're most commonly used for the axes background (e.g. to simulate the sky's color during twilight or daytime), but they can be used anywhere a fill color is accepted, including marker fills. Each one is a tuple of `(offset, color)` stops -- the same shape as [`GradientStyle.stops`][starplot.GradientStyle] -- so most are available directly as ready-to-use [style extensions](extensions.md) (see below), or you can wrap one yourself: `GradientStyle(stops=gradients.CIVIL_TWILIGHT, type="linear")`. See [`PolygonStyle`][starplot.PolygonStyle] for details on how a gradient `fill` value is rendered.
-
+Pre-defined gradient stops available in `starplot.styles.gradients`:
 <div class="gradient-swatch-grid" markdown>
 
 <div class="gradient-swatch-card" markdown>
@@ -80,9 +79,15 @@ Below are previews of all built-in gradients available in Starplot. They're most
 
 </div>
 
-<h2 id="build-your-own">Build Your Own</h2>
+<h2 id="using-built-in-gradients">Using Built-In Gradients</h2>
 
-You can define your own gradient by setting the `fill` of a style to an instance of [`GradientStyle`][starplot.styles.GradientStyle]. The `GradientStyle` consists of a tuple of color stops (in the format of `(offset, color)`) and a `type` (`"linear"` or `"radial"`).
+- [Example of using gradient on horizon plot](/examples/horizon-gradient/)
+- [Example of using a gradient on a polygon](/examples/optic-solar-eclipse/)
+- [Example of using gradients on stars](/examples/optic-m45/)
+
+<h2 id="build-your-own">Building Your Own</h2>
+
+You can define your own gradient by setting the `fill` of a marker or polygon style to an instance of [`GradientStyle`][starplot.styles.GradientStyle]. The `GradientStyle` consists of a tuple of color stops (in the format of `(offset, color)`) and a `type` (`"linear"` or `"radial"`).
 
 Example:
 <div class="tutorial">
@@ -92,8 +97,6 @@ Example:
 </div>
 
 ![Example of a custom-defined gradient applied to a map plot's axes background](/images/examples/gradient.svg){ loading=lazy style="max-width:800px;width:100%;height:auto;margin:24px auto;display:block;" }
-
-Most of the gradients shown above (all except `sun` and `new_moon`) are also available as ready-to-use [style extensions](extensions.md) named `GRADIENT_<NAME>` (e.g. `GRADIENT_CIVIL_TWILIGHT`), which apply the gradient directly to the axes background without having to define the stops yourself.
 
 <br/>
 <br/>

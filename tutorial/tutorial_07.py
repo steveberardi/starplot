@@ -38,9 +38,9 @@ p.planets(
     style__label__font_size=64,
     style__marker__fill={  # create a gradient fill
         "stops": (
-            (0.0, "#CBA44F"),   # outer edge - darker gold
-            (0.5, "#DFC165"),   # mid-tone
-            (1.0, "#FCDB72"),   # center
+            (0.0, "#CBA44F"),  # outer edge - darker gold
+            (0.5, "#DFC165"),  # mid-tone
+            (1.0, "#FCDB72"),  # center
         ),
         "type": "radial",
     },
