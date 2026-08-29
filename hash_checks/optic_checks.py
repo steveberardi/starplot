@@ -100,7 +100,7 @@ def check_optic_wrapping():
     optic_plot.stars(
         where=[_.magnitude < 8],
         style__marker__symbol="star",
-        style__marker__size=80,
+        size_fn=lambda s: 80,
     )
     optic_plot.rectangle(
         center=(23.9 * 15, 17.5),
