@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 from fontTools.pens.svgPathPen import SVGPathPen
+from pydantic_extra_types.color import Color as _Color
 
 from starplot.styles import GradientStops, GradientType
 from starplot.svg.fonts import find_font
@@ -270,6 +271,18 @@ class RadialGradient(Element):
         return f"{int(self.r * 100)}%"
 
 
+def _stop_attrs(color) -> dict:
+    # cairosvg doesn't parse alpha packed into an 8-digit hex stop-color (it
+    # silently treats it as fully opaque), so translucent stops need their
+    # alpha split out into a separate stop-opacity attribute instead.
+    c = color if isinstance(color, _Color) else _Color(color)
+    r, g, b, a = c.as_rgb_tuple(alpha=True)
+    attrs = {"stop-color": f"rgb({r},{g},{b})"}
+    if a != 1:
+        attrs["stop-opacity"] = round(a, 4)
+    return attrs
+
+
 def create_gradient(
     stops: GradientStops,
     type: GradientType,
@@ -284,7 +297,7 @@ def create_gradient(
             children=list(
                 reversed(
                     [
-                        Stop(offset=1 - offset, attrs={"stop-color": color})
+                        Stop(offset=1 - offset, attrs=_stop_attrs(color))
                         for offset, color in stops
                     ]
                 )
@@ -298,7 +311,7 @@ def create_gradient(
         x2=0,
         y2=0,
         children=[
-            Stop(offset=offset, attrs={"stop-color": color}) for offset, color in stops
+            Stop(offset=offset, attrs=_stop_attrs(color)) for offset, color in stops
         ],
     )
 

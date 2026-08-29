@@ -13,7 +13,7 @@ from starplot.data.translations import translate
 from starplot.models.star import Star, from_tuple
 from starplot.plotters.text import CollisionHandler
 from starplot.profile import profile
-from starplot.styles import ObjectStyle, use_style
+from starplot.styles import GradientStyle, ObjectStyle, use_style
 from starplot.utils import normalize_where
 
 
@@ -142,7 +142,7 @@ class StarPlotterMixin:
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] = size_by_magnitude,
         opacity_fn: Callable[[Star], float] | None = None,
-        color_fn: Callable[[Star], str] | None = None,
+        color_fn: Callable[[Star], str | GradientStyle] | None = None,
         label_fn: Callable[[Star], str] = Star.get_label,
         legend_label: str = "Star",
         bayer_labels: bool = False,
@@ -230,7 +230,7 @@ class StarPlotterMixin:
             obj = from_tuple(star)
             size = size_fn(obj) * self.scale
             opacity = opacity_fn(obj)
-            color = color_fn(obj) or style.marker.fill.as_hex()
+            color = color_fn(obj) or style.marker.fill
 
             if size > 10:
                 rtree_id += 1

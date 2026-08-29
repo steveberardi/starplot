@@ -1,5 +1,5 @@
-from starplot import MapPlot, StereoNorth, _, Constellation
-from starplot.styles import PlotStyle, extensions
+from starplot import Constellation, MapPlot, StereoNorth, _
+from starplot.styles import GradientStyle, PlotStyle, extensions
 
 style = PlotStyle().extend(
     extensions.BLUE_NIGHT,
@@ -7,12 +7,15 @@ style = PlotStyle().extend(
 )
 
 # define your gradient
-style.axes.background.fill = [
-    (0.0, "#f4d58d"),
-    (0.3, "#c17ecb"),
-    (0.7, "#4b3f8f"),
-    (1.0, "#100d29"),  # last stop should always be 1.0
-]
+style.axes.background.fill = GradientStyle(
+    stops=(
+        (0.0, "#f4d58d"),
+        (0.3, "#c17ecb"),
+        (0.7, "#4b3f8f"),
+        (1.0, "#100d29"),  # last stop should always be 1.0
+    ),
+    type="linear",
+)
 
 cas = Constellation.get(iau_id="cas")
 

@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, field_serializer, field_validator
 
 from starplot.styles.base import BaseStyle
 from starplot.styles.constants import (
@@ -10,7 +10,7 @@ from starplot.styles.constants import (
     MarkerSymbolEnum,
     ZOrder,
 )
-from starplot.styles.types import Color, GradientStops
+from starplot.styles.types import Color, _validate_stops
 
 _DASH_ARRAY_VALUES = {
     DashArray.SOLID: None,
@@ -65,31 +65,64 @@ def _dash_array_attrs(
     }
 
 
+class GradientStyle(BaseStyle):
+    """
+    Styling properties for a gradient fill.
+    """
+
+    stops: tuple[tuple[float, Color], ...]
+    """
+    The gradient's color stops, as a tuple of `(offset, color)` pairs. The last stop's offset must always be `1.0`. 
+    
+    Example:
+
+    ```
+    (
+        (0.0, "#7abfff"),
+        (0.2, "#7abfff"),
+        (0.9, "#568feb"),
+        (1.0, "#3f7ee3"),
+    )
+    ```
+    """
+
+    type: Literal["linear", "radial"] = GradientType.RADIAL
+    """Type / direction of the gradient."""
+
+    @field_validator("stops")
+    @classmethod
+    def _check_stops(cls, stops):
+        return _validate_stops(stops)
+
+    @field_serializer("stops")
+    def _serialize_stops(self, stops):
+        return [(offset, c.as_hex() if c else None) for offset, c in stops]
+
+
 class MarkerStyle(BaseStyle):
     """
     Styling properties for markers.
     """
 
-    fill: Color | GradientStops | None = Color("#000")
+    fill: Color | GradientStyle | None = Color("#000")
     """
     Fill color of the marker
-    
-    This can either be a single color (e.g. `#7abfff`) or a list that defines a gradient.
 
-    For gradients, the list items should be tuples with two elements: a float that defines 
-    the stop and a string that defines the color for that stop. For example:
+    This can either be a single color (e.g. `#7abfff`) or a `GradientStyle` that defines a gradient. For example:
 
     ```
-    [
-        (0.0, "#7abfff"),
-        (0.2, "#7abfff"),
-        (0.9, "#568feb"),
-        (1.0, "#3f7ee3"),  # the last stop should always be at 1.0
-    ]
+    GradientStyle(
+        stops=(
+            (0.0, "#7abfff"),
+            (0.2, "#7abfff"),
+            (0.9, "#568feb"),
+            (1.0, "#3f7ee3"),  # the last stop should always be at 1.0
+        ),
+    )
     ```
 
     There are a few predefined gradients available as [style extensions](/reference-styling/#style-extensions).
-    
+
     """
 
     stroke: Color | None = Color("#000")
@@ -115,14 +148,11 @@ class MarkerStyle(BaseStyle):
     opacity: float = Field(default=1.0, ge=0, le=1)
     """Opacity (transparency) of the marker (0 to 1)"""
 
-    gradient_type: GradientType = GradientType.RADIAL
-    """Type / direction of gradient, if a gradient background is used."""
-
     zorder: int = ZOrder.LAYER_2
     """Zorder of marker"""
 
     def css(self, scale: float = 1) -> dict:
-        solid_fill = self.fill is not None and not isinstance(self.fill, list)
+        solid_fill = self.fill is not None and not isinstance(self.fill, GradientStyle)
         attrs = {
             "fill": self.fill.as_hex() if solid_fill else "none",
             "stroke": self.stroke.as_hex() if self.stroke else "none",
@@ -193,26 +223,25 @@ class PolygonStyle(BaseStyle):
     Styling properties for polygons.
     """
 
-    fill: Color | GradientStops | None = Color("#c2c2c2")
+    fill: Color | GradientStyle | None = Color("#c2c2c2")
     """
     Fill color of the polygon
-    
-    This can either be a single color (e.g. `#7abfff`) or a list that defines a gradient.
 
-    For gradients, the list items should be tuples with two elements: a float that defines 
-    the stop and a string that defines the color for that stop. For example:
+    This can either be a single color (e.g. `#7abfff`) or a `GradientStyle` that defines a gradient. For example:
 
     ```
-    [
-        (0.0, "#7abfff"),
-        (0.2, "#7abfff"),
-        (0.9, "#568feb"),
-        (1.0, "#3f7ee3"),  # the last stop should always be at 1.0
-    ]
+    GradientStyle(
+        stops=(
+            (0.0, "#7abfff"),
+            (0.2, "#7abfff"),
+            (0.9, "#568feb"),
+            (1.0, "#3f7ee3"),  # the last stop should always be at 1.0
+        ),
+    )
     ```
 
     There are a few predefined gradients available as [style extensions](/reference-styling/#style-extensions).
-    
+
     """
 
     stroke_width: float = 1
@@ -220,9 +249,6 @@ class PolygonStyle(BaseStyle):
 
     stroke: Color | None = Color("#000")
     """Edge color of the polygon"""
-
-    gradient_type: GradientType = GradientType.RADIAL
-    """Type / direction of gradient, if a gradient background is used."""
 
     dash_array: (
         Literal["solid", "dashed", "dashdot", "dotted"] | tuple[int, ...] | None
@@ -239,7 +265,7 @@ class PolygonStyle(BaseStyle):
     """Zorder of the polygon"""
 
     def css(self, scale: float = 1.0) -> dict:
-        solid_fill = self.fill is not None and not isinstance(self.fill, list)
+        solid_fill = self.fill is not None and not isinstance(self.fill, GradientStyle)
         attrs = {
             "fill": self.fill.as_hex() if solid_fill else "none",
             "stroke": self.stroke.as_hex() if self.stroke else "none",
@@ -256,7 +282,7 @@ class PolygonStyle(BaseStyle):
         return attrs
 
     def to_marker_style(self, symbol: MarkerSymbolEnum):
-        solid_fill = self.fill is not None and not isinstance(self.fill, list)
+        solid_fill = self.fill is not None and not isinstance(self.fill, GradientStyle)
         fill_color = self.fill.as_hex() if solid_fill else None
         return MarkerStyle(
             symbol=symbol,

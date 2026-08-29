@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 
 from starplot.styles import (
+    GradientStyle,
     HorizontalAlignment,
     LegendLocation,
 )
@@ -217,10 +218,10 @@ class Layout:
         if style.figure.background is not None:
             figure_attrs = style.figure.background.css(scale)
 
-            if isinstance(style.figure.background.fill, list):
+            if isinstance(style.figure.background.fill, GradientStyle):
                 gradient = create_gradient(
-                    stops=style.figure.background.fill,
-                    type=style.figure.background.gradient_type,
+                    stops=style.figure.background.fill.stops,
+                    type=style.figure.background.fill.type,
                     id="figure-background-gradient",
                 )
                 figure_attrs["fill"] = gradient.url

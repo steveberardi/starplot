@@ -27,13 +27,12 @@ op = m.create_optic(
 )
 op.moon(
     true_size=True,
-    show_phase=True,
     label=None,
-    style__marker__fill=gradients.NEW_MOON,
+    style__marker__fill={"stops": gradients.NEW_MOON, "type": "radial"},
 )
 op.sun(
     true_size=True,
-    style__marker__fill=gradients.SUN,
+    style__marker__fill={"stops": gradients.SUN, "type": "radial"},
     label=None,
 )
 

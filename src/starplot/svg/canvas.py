@@ -19,8 +19,7 @@ from starplot.projections import (
     latlon_bounds_to_projection,
 )
 from starplot.styles import (
-    GradientStops,
-    GradientType,
+    GradientStyle,
     LabelStyle,
     LegendStyle,
     LineStyle,
@@ -290,10 +289,9 @@ class Canvas:
 
         background_attrs = self.style.axes.background.css(self.scale)
 
-        if isinstance(self.style.axes.background.fill, list):
+        if isinstance(self.style.axes.background.fill, GradientStyle):
             background_attrs["fill"] = self._get_or_create_gradient(
-                stops=self.style.axes.background.fill,
-                type=self.style.axes.background.gradient_type,
+                self.style.axes.background.fill,
                 id="axes-background-gradient",
             )
 
@@ -349,18 +347,18 @@ class Canvas:
         )
 
     def _get_or_create_gradient(
-        self, stops: GradientStops, type: GradientType, id: str | None = None
+        self, gradient_style: GradientStyle, id: str | None = None
     ) -> str:
         """
         Returns URL of gradient element with specified id, or creates and returns it if it doesn't exist.
         """
-        gid = id or gradient_hash(stops)
+        gid = id or gradient_hash(gradient_style.stops)
         existing = self.layout.axes.defs.get(gid)
 
         if existing:
             return existing.url
 
-        gradient = create_gradient(stops, type, gid)
+        gradient = create_gradient(gradient_style.stops, gradient_style.type, gid)
         self.layout.axes.defs[gradient.id] = gradient
         return gradient.url
 
@@ -411,11 +409,8 @@ class Canvas:
 
         attrs = style.css(self.scale)
 
-        if isinstance(style.fill, list):
-            attrs["fill"] = self._get_or_create_gradient(
-                stops=style.fill,
-                type=style.gradient_type,
-            )
+        if isinstance(style.fill, GradientStyle):
+            attrs["fill"] = self._get_or_create_gradient(style.fill)
 
         element = symbols.create(
             dx, dy, style.size * self.scale, style.symbol, attrs=attrs
@@ -429,7 +424,7 @@ class Canvas:
         style: MarkerStyle,
         gid: str | None = None,
         sizes: list[float] | None = None,
-        colors: list[str] | list[list[tuple[float, str]]] | None = None,
+        colors: list[str] | list[GradientStyle] | None = None,
         opacity_values: list[float] | None = None,
     ) -> None:
         dx, dy = self._to_display(xs, ys)
@@ -445,11 +440,8 @@ class Canvas:
         ):
             attrs = {}
 
-            if isinstance(color, list):
-                attrs["fill"] = self._get_or_create_gradient(
-                    stops=color,
-                    type=style.gradient_type,
-                )
+            if isinstance(color, GradientStyle):
+                attrs["fill"] = self._get_or_create_gradient(color)
             else:
                 attrs["fill"] = color
 
@@ -771,11 +763,8 @@ class Canvas:
             attrs = attrs or {}
             _attrs = {**style.css(self.scale), **attrs}
 
-            if isinstance(style.fill, list):
-                _attrs["fill"] = self._get_or_create_gradient(
-                    stops=style.fill,
-                    type=style.gradient_type,
-                )
+            if isinstance(style.fill, GradientStyle):
+                _attrs["fill"] = self._get_or_create_gradient(style.fill)
 
             self._add_element(style.zorder, Polygon(points=dxy, attrs=_attrs))
 

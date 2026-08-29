@@ -77,6 +77,11 @@
         show_docstring_attributes: true
         inherited_members: true
 
+::: starplot.styles.GradientStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
 ---
 <!-- 
 ## Constants

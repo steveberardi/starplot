@@ -3,7 +3,3 @@
 constellation_labels:
   font_size: 50
   font_weight: 800
-
-axes:
-  background:
-    gradient_type: linear

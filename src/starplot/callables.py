@@ -2,6 +2,7 @@ import math
 from collections.abc import Callable
 
 from starplot.models import Star
+from starplot.styles import GradientStyle
 from starplot.utils import bv_to_hex_color, hex_to_rgb, lighten_hex_color
 
 
@@ -169,7 +170,7 @@ def color_by_bv(star: Star) -> str:
     return bv_to_hex_color(bv)
 
 
-def color_by_bv_gradient(star: Star) -> list:
+def color_by_bv_gradient(star: Star) -> GradientStyle:
     """
     Calculates a radial gradient by the object's [B-V index](https://en.wikipedia.org/wiki/Color_index),
     meant to resemble how a star looks through binoculars or a telescope: a bright core that gradually fades to fully transparent at the edge.
@@ -179,8 +180,11 @@ def color_by_bv_gradient(star: Star) -> list:
     color = color_by_bv(star) or "#ffffff"
     r, g, b = hex_to_rgb(color)
 
-    return [
-        [0.0, f"rgba({r}, {g}, {b}, 0)"],
-        [0.6, color],
-        [1.0, lighten_hex_color(color, 0.2)],
-    ]
+    return GradientStyle(
+        stops=(
+            (0.0, f"rgba({r}, {g}, {b}, 0)"),
+            (0.6, color),
+            (1.0, lighten_hex_color(color, 0.2)),
+        ),
+        type="radial",
+    )

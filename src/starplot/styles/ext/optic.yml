@@ -2,8 +2,6 @@ figure:
   background:
     fill: null
 axes:
-  background:
-    gradient_type: radial
   border:
     width: 8
 
