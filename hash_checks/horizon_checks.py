@@ -35,13 +35,13 @@ def _horizon():
         resolution=RESOLUTION,
         scale=1,
     )
+    p.ground()
     p.constellations()
     p.constellation_borders()
     p.milky_way()
     p.stars(where=[_.magnitude < 5])
     p.messier(where_true_size=[_.size > 1])
     p.ecliptic()
-    p.horizon()
     p.constellation_labels(collision_handler=HANDLER)
     p.gridlines()
     return p
@@ -76,7 +76,6 @@ def check_horizon_north_celestial_pole():
     p.stars(where=[_.magnitude < 5])
     p.messier(where_true_size=[_.size > 1])
     p.ecliptic()
-    p.horizon()
     p.constellation_labels(collision_handler=HANDLER)
     p.gridlines()
 
@@ -106,12 +105,12 @@ def check_horizon_gradient_background():
         resolution=RESOLUTION,
         scale=1,
     )
+    p.ground()
     p.constellations()
     p.constellation_borders()
     p.milky_way()
     p.stars(where=[_.magnitude < 5])
     p.ecliptic()
-    p.horizon()
     p.constellation_labels(collision_handler=HANDLER)
     p.gridlines()
 

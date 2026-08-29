@@ -9,7 +9,7 @@ Starplot is a Python library for creating star charts and maps of the sky
 
 <div class="grid cards feature-cards" markdown>
 
-- <img src="images/examples/map_orion.png" width="600"> <h3>__Maps__</h3> shows an area that you define
+- <img src="images/examples/map_orion.png" width="600"> <h3>__Maps__</h3> shows an area that you define in one of many available map projections
 - <img src="images/examples/horizon_gradient.png" width="600"> <h3>Horizon Charts</h3> shows the horizon at a specific time and place
 - <img src="images/examples/star_chart_basic.png" height="600" width="600"> <h3>Zenith Charts</h3> shows the entire sky at a specific time and place
 - <img src="images/examples/optic_m45.png" width="600"> <h3>Optic Charts</h3> shows what you'll see through an optic (e.g. telescope) at a specific time and place

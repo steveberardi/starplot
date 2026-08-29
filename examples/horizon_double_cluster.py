@@ -39,6 +39,11 @@ p = HorizonPlot(
     style=style,
     scale=1.15,
 )
+
+p.ground()
+p.style.gridlines.line.width = 2
+p.gridlines()
+
 p.constellations(where=[_.iau_id.isin(["cas", "umi", "per"])])
 p.stars(
     where=[_.hip.isin(cas.star_hip_ids + umi.star_hip_ids + per.star_hip_ids)],
@@ -66,9 +71,5 @@ p.arrow(
     scale=0.92,
     style__zorder=0,
 )
-
-p.horizon()
-p.style.gridlines.line.width = 2
-p.gridlines()
 
 p.export("horizon_double_cluster.png")

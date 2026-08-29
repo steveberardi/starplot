@@ -338,7 +338,7 @@ class PlotStyle(BaseStyle):
             zorder=ZOrder.LAYER_2,
         ),
         label=LabelStyle(
-            font_size=28,
+            font_size=32,
             fill="#000",
             opacity=1,
             font_weight=FontWeight.NORMAL,

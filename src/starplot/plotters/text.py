@@ -202,6 +202,7 @@ class TextPlotterMixin:
         self._constellations_rtree = rtree.index.Index()
         self._stars_rtree = rtree.index.Index()
         self._markers_rtree = rtree.index.Index()
+        self._ground_rtree = rtree.index.Index()
 
     def _is_label_collision(self, bbox: BBox) -> bool:
         ix = list(self._labels_rtree.intersection(bbox))
@@ -219,6 +220,10 @@ class TextPlotterMixin:
         ix = list(self._markers_rtree.intersection(bbox))
         return len(ix) > 0
 
+    def _is_ground_collision(self, bbox: BBox) -> bool:
+        ix = list(self._ground_rtree.intersection(bbox))
+        return len(ix) > 0
+    
     def _is_clipped(self, points) -> bool:
         for x, y in points:
             if not self.canvas.clip_path_display.contains(Point(x, y)):
@@ -288,6 +293,9 @@ class TextPlotterMixin:
         ):
             return False
 
+        if self._is_ground_collision(bbox_padded):
+            return False
+        
         return True
 
     def _offset_from_marker(

@@ -1,7 +1,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from starplot import HorizonPlot, Observer, _
+from starplot import HorizonPlot, Observer, callables, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
@@ -11,6 +11,7 @@ style = PlotStyle().extend(
 )
 style.figure.padding = 40
 style.constellation_lines.width = 4
+style.star.marker.stroke_width = 0
 
 dt = datetime(2025, 8, 20, 21, 0, 0, 0, tzinfo=ZoneInfo("Pacific/Honolulu"))
 
@@ -25,8 +26,10 @@ p = HorizonPlot(
     azimuth=(155, 250),
     observer=observer,
     style=style,
+    scale=1.2,
 )
 
+p.ground(min_altitude=3.5, max_altitude=6)
 p.constellations()
 p.milky_way()
 p.gridlines()
@@ -34,6 +37,7 @@ p.gridlines()
 p.stars(
     where=[_.magnitude < 4.6],
     where_labels=[_.magnitude < 2],
+    color_fn=callables.color_by_bv_gradient,
 )
 
 p.messier(

@@ -3,6 +3,7 @@ import random
 from functools import cache
 from typing import Callable
 
+import rtree
 import pandas as pd
 
 from skyfield.api import Star as SkyfieldStar
@@ -21,6 +22,8 @@ from starplot.styles import (
     PathStyle,
     LineStyle,
     PolygonStyle,
+    GradientStyle,
+    gradients,
 )
 from starplot.plots.base import BasePlot
 from starplot.plotters.text import CollisionHandler
@@ -371,20 +374,24 @@ class HorizonPlot(
                 ]
             )
 
-    @use_style(PathStyle, "horizon")
-    def horizon(
+    @use_style(PolygonStyle)
+    def ground(
         self,
-        min_altitude: float = 2,
-        max_altitude: float = 8,
-        style: PathStyle = None,
+        min_altitude: float = 3,
+        max_altitude: float = 6,
+        style: PolygonStyle = None,
     ):
         """
-        Plots rectangle for horizon that shows cardinal directions and azimuth labels.
+        Plots a polygon for the ground. This should be plotted before any labels to avoid collisions.
 
         Args:
-            style: Style of the horizon path. If None, then the plot's style definition will be used.
-            labels: Dictionary that maps azimuth values (0...360) to their cardinal direction labels (e.g. "N"). Default is to label each 45deg direction (e.g. "N", "NE", "E", etc)
+            min_altitude: Minimum altitude of the ground to generate, in degrees.
+            max_altitude: Maximum altitude of the ground to generate, in degrees.
+            style: Style of the ground.
+            
         """
+
+        style = PolygonStyle(fill=GradientStyle(stops=gradients.GROUND, type="linear"), zorder=10_000)
 
         coords = generate_horizon_polygon(
             min_altitude=min_altitude,
@@ -394,9 +401,15 @@ class HorizonPlot(
             num_octaves=23,
         )
 
+        display_coords = [self.canvas._to_display(*p) for p in coords]
+        bbox = Polygon(display_coords).bounds
+
+        self._ground_rtree = rtree.index.Index()
+        self._ground_rtree.insert(0, bbox)
+        
         self.canvas.polygon(
             coordinates=coords,
-            style=PolygonStyle(fill="hsl(20deg 33% 21%)"),
+            style=style,
         )
 
     @use_style(PathStyle, "gridlines")
@@ -408,8 +421,6 @@ class HorizonPlot(
         alt_locations: list[float] = None,
         az_formatter_fn: Callable[[float], str] = None,
         alt_formatter_fn: Callable[[float], str] = None,
-        show_ticks: bool = True,
-        tick_step: int = 5,
     ):
         """
         Plots gridlines
@@ -421,8 +432,6 @@ class HorizonPlot(
             alt_locations: List of altitude locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
             az_formatter_fn: Callable for creating labels of azimuth gridlines
             alt_formatter_fn: Callable for creating labels of altitude gridlines
-            show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
-            tick_step: Step size for tick marks
         """
         _labels = []
 
