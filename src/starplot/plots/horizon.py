@@ -374,7 +374,7 @@ class HorizonPlot(
                 ]
             )
 
-    @use_style(PolygonStyle)
+    @use_style(PolygonStyle, "ground")
     def ground(
         self,
         min_altitude: float = 3,
@@ -390,9 +390,6 @@ class HorizonPlot(
             style: Style of the ground.
             
         """
-
-        style = PolygonStyle(fill=GradientStyle(stops=gradients.GROUND, type="linear"), zorder=10_000)
-
         coords = generate_horizon_polygon(
             min_altitude=min_altitude,
             max_altitude=max_altitude,

@@ -427,6 +427,12 @@ class PlotStyle(BaseStyle):
     )
     """Styling for the horizon"""
 
+    ground: PolygonStyle = PolygonStyle(
+        fill="#000",
+        zorder=10_000,
+    )
+    """Styling for the ground (only applies to horizon plots)"""
+
     zenith: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol="triangle",

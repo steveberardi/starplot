@@ -223,7 +223,7 @@ class TextPlotterMixin:
     def _is_ground_collision(self, bbox: BBox) -> bool:
         ix = list(self._ground_rtree.intersection(bbox))
         return len(ix) > 0
-    
+
     def _is_clipped(self, points) -> bool:
         for x, y in points:
             if not self.canvas.clip_path_display.contains(Point(x, y)):
@@ -295,7 +295,7 @@ class TextPlotterMixin:
 
         if self._is_ground_collision(bbox_padded):
             return False
-        
+
         return True
 
     def _offset_from_marker(

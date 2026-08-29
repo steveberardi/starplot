@@ -40,7 +40,6 @@ p = HorizonPlot(
     scale=1.15,
 )
 
-p.ground()
 p.style.gridlines.line.width = 2
 p.gridlines()
 

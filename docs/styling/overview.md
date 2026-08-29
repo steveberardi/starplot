@@ -36,6 +36,7 @@ style = style.extend(
     extensions.BLUE_LIGHT,
     extensions.MAP,
 )
+style.figure.padding = 20  # add some padding around the axes
 
 # Step 3: apply the style in a new map plot
 mp = MapPlot(
@@ -76,7 +77,6 @@ Once you have an instance of a PlotStyle, then you can customize it with the Plo
 
 Starplot has a few [built-in extensions](extensions.md) for applying color schemes and optimizing different plot types. But, you can also easily create your own extensions.
 
-### Basic Example
 Here's a simple example of extending a style to use a different font for Bayer labels of stars:
 
 ```python

@@ -2,7 +2,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from starplot import HorizonPlot, Observer, callables, _
-from starplot.styles import PlotStyle, extensions
+from starplot.styles import PlotStyle, extensions, gradients
 
 style = PlotStyle().extend(
     extensions.BLUE_GOLD,
@@ -29,7 +29,14 @@ p = HorizonPlot(
     scale=1.2,
 )
 
-p.ground(min_altitude=3.5, max_altitude=6)
+p.ground(
+    min_altitude=3.5,
+    max_altitude=6,
+    style__fill={
+        "stops": gradients.GROUND,
+        "type": "linear",
+    },
+)
 p.constellations()
 p.milky_way()
 p.gridlines()
