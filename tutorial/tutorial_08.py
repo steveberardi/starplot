@@ -27,14 +27,14 @@ p = antares.create_optic(
     ),
     style=style,
     raise_on_below_horizon=False,
-    autoscale=True,
+    scale=1.2,
 )
 
 p.stars(
     where=[_.magnitude < 12],
     where_labels=[_.magnitude < 8],
     bayer_labels=True,
-    color_fn=callables.color_by_bv,  # <-- here's where we specify the callable
+    color_fn=callables.color_by_bv_gradient,  # <-- here's where we specify the callable
 )
 
 p.export("tutorial_08.png")
