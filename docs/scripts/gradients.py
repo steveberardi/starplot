@@ -24,6 +24,7 @@ GRADIENT_NAMES = [
     "civil_twilight",
     "nautical_twilight",
     "astronomical_twilight",
+    "lavender_twilight",
     "true_night",
     "pre_dawn",
     "optic_falloff",

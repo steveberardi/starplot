@@ -67,6 +67,12 @@ GRADIENT_ASTRONOMICAL_TWILIGHT = {
     },
 }
 
+GRADIENT_LAVENDER_TWILIGHT = {
+    "axes": {
+        "background": {"fill": {"stops": gradients.LAVENDER_TWILIGHT, "type": "linear"}}
+    },
+}
+
 GRADIENT_TRUE_NIGHT = {
     "axes": {"background": {"fill": {"stops": gradients.TRUE_NIGHT, "type": "linear"}}},
 }

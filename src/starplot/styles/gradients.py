@@ -53,6 +53,13 @@ ASTRONOMICAL_TWILIGHT = (
     (1.0, "#000000"),
 )
 
+LAVENDER_TWILIGHT = (
+    (0.0, "#928FD8"),
+    (0.3, "#B5A8E0"),
+    (0.65, "#DDBFE6"),
+    (1.0, "#F8D9EC"),
+)
+
 TRUE_NIGHT = (
     (0.0, "#00002B"),
     (0.1, "#00002B"),

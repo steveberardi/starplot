@@ -37,6 +37,12 @@ Below are previews of all built-in gradients available in Starplot. They're most
 </div>
 
 <div class="gradient-swatch-card" markdown>
+![Lavender Twilight](/images/reference/gradient_lavender_twilight.svg){ loading=lazy .gradient-swatch-img}
+
+`LAVENDER_TWILIGHT`{: .gradient-swatch-name}
+</div>
+
+<div class="gradient-swatch-card" markdown>
 ![Nautical Twilight](/images/reference/gradient_nautical_twilight.svg){ loading=lazy .gradient-swatch-img}
 
 `NAUTICAL_TWILIGHT`{: .gradient-swatch-name}
