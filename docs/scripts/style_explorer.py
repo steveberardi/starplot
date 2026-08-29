@@ -1,22 +1,17 @@
 """
 Generates an HTML reference page for every style property on PlotStyle,
-as a single navigable tree: PlotStyle's own properties (star, gridlines,
-axes, etc), each expanding in place to the fields of its style type, which
-themselves expand in place for any nested style type (e.g. ObjectStyle's
-`marker` field expands to MarkerStyle's fields), and so on down to plain
-values.
+as a collapsible tree.
 
-Field names, types, defaults, and descriptions are all read directly from
-the pydantic models in starplot/styles/plot.py and starplot/styles/elements.py
-via the ast module, so the page can't drift from the actual source. Since
-many properties share the same underlying style type (most DSOs, planets,
+Since many properties share the same underlying style type (most DSOs, planets,
 the moon, and the sun are all ObjectStyle, for example), that type's fields
 get repeated at every place it's used -- deliberately, so each branch of
 the tree is self-contained and expands right where it is instead of
 jumping elsewhere on the page.
 
 This module only extracts and shapes the data; the page's HTML, CSS, and
-JS all live in the Jinja2 template style_reference.html, next to this file.
+JS all live in the Jinja2 template style_explorer.html, next to this file.
+
+This code was created via Claude Code.
 """
 
 import ast
@@ -29,11 +24,9 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 STYLES_DIR = REPO_ROOT / "src" / "starplot" / "styles"
 SCRIPT_DIR = Path(__file__).resolve().parent
-OUTPUT_PATH = REPO_ROOT / "docs" / "images" / "reference" / "style_reference.html"
+OUTPUT_PATH = REPO_ROOT / "docs" / "images" / "reference" / "style_explorer.html"
 
 # Groups of PlotStyle's own properties, in the order they should appear.
-# This mirrors the section comments in styles/plot.py (# Stars, # Deep Sky
-# Objects, etc) -- real structure from the source, not an invented one.
 GROUPS = [
     ("Layout", ["base", "axes", "figure", "title", "table", "legend"]),
     ("Stars", ["star", "bayer_labels", "flamsteed_labels"]),
@@ -80,17 +73,6 @@ GROUPS = [
         ["line", "polygon", "circle", "ellipse", "rectangle", "marker", "text"],
     ),
 ]
-
-# A few PlotStyle fields have no docstring in source -- short fallbacks for display.
-DOC_FALLBACKS = {
-    "tissot": "Default style for the Tissot indicatrix",
-    "line": "Default style for lines plotted with `line()`",
-    "polygon": "Default style for polygons plotted with `polygon()`",
-    "circle": "Default style for circles plotted with `circle()`",
-    "ellipse": "Default style for ellipses plotted with `ellipse()`",
-    "rectangle": "Default style for rectangles plotted with `rectangle()`",
-    "marker": "Default style for markers plotted with `marker()`",
-}
 
 
 # ---------------------------------------------------------------- extraction
@@ -151,41 +133,6 @@ def extract_classes(path: Path) -> dict:
     return classes
 
 
-def extract_enums(path: Path) -> dict:
-    """Parses a module and returns {EnumClassName: {MEMBER_NAME: value, ...}},
-    using each member's own *value* (e.g. "radial"), not its name
-    (RADIAL) -- that's what actually goes in a style dict/YAML."""
-    tree = ast.parse(path.read_text())
-    enums = {}
-
-    for node in tree.body:
-        if not isinstance(node, ast.ClassDef):
-            continue
-        if not any(_unparse(b) == "Enum" for b in node.bases):
-            continue
-
-        members = {}
-        for stmt in node.body:
-            if not (
-                isinstance(stmt, ast.Assign)
-                and len(stmt.targets) == 1
-                and isinstance(stmt.targets[0], ast.Name)
-            ):
-                continue
-            try:
-                # literal_eval (rather than a plain ast.Constant check)
-                # so negative numbers -- e.g. ZOrder.LAYER_1 = -2_000,
-                # parsed as UnaryOp(USub, Constant), not a plain Constant
-                # -- still come through instead of being silently dropped.
-                members[stmt.targets[0].id] = ast.literal_eval(stmt.value)
-            except ValueError:
-                pass
-        if members:
-            enums[node.name] = members
-
-    return enums
-
-
 def call_kwargs(node) -> dict:
     """If `node` is a class-instantiation call (e.g. the `MarkerStyle(...)`
     a PlotStyle field like `dso_open_cluster` sets for its `marker` field),
@@ -243,22 +190,9 @@ def literal_type_lines(ftype: str) -> list[str] | None:
     return lines
 
 
-def field_enum_values(ftype: str, enums: dict) -> list | None:
-    """If a field's type annotation references exactly one known enum
-    class -- directly (`GradientType`) or as one member of a union
-    (`SomeEnum | tuple | None`) -- returns that enum's possible
-    values. A field just *defaulting* to an enum member (e.g. `zorder:
-    int = ZOrder.LAYER_2`) doesn't count -- its type is `int`, not
-    an enum."""
-    parts = [p.strip() for p in ftype.split("|")]
-    matches = [list(enums[p].values()) for p in parts if p in enums]
-    return matches[0] if len(matches) == 1 else None
-
-
 # ---------------------------------------------------------- field resolution
 
 _RESOLVED_FIELDS_CACHE: dict = {}
-_LEAF_COUNT_CACHE: dict = {}
 
 
 def resolve_fields(type_name: str, classes: dict) -> list:
@@ -286,21 +220,6 @@ def core_type(ftype: str) -> str:
     return ftype.replace(" | None", "").strip()
 
 
-def leaf_count(type_name: str, classes: dict) -> int:
-    """Total number of plain (non-nested) properties reachable from a style
-    type, counting through every nested style field."""
-    if type_name in _LEAF_COUNT_CACHE:
-        return _LEAF_COUNT_CACHE[type_name]
-
-    total = 0
-    for f in resolve_fields(type_name, classes):
-        nested = core_type(f["type"])
-        total += leaf_count(nested, classes) if nested in classes else 1
-
-    _LEAF_COUNT_CACHE[type_name] = total
-    return total
-
-
 # --------------------------------------------------------------- doc markup
 
 BRACKET_LINK = re.compile(r"\[([^\]]+)\]\[[^\]]+\]")
@@ -311,7 +230,6 @@ SEE_PAREN = re.compile(r"\s*\(see [^)]*\)\.?\s*$", re.IGNORECASE)
 BACKTICK = re.compile(r"`([^`]+)`")
 FIELD_DEFAULT = re.compile(r"default=([^,)]+)")
 COLOR_WRAP = re.compile(r"^Color\('(.+)'\)$")
-ENUM_VALUE = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)\.([A-Za-z0-9_]+)$")
 
 
 def clean_doc(doc: str) -> str:
@@ -349,7 +267,7 @@ def render_doc(doc: str, limit: int = 1024) -> tuple[str, str]:
     return rendered, (doc if truncated else "")
 
 
-def render_default(default: str | None, enums: dict):
+def render_default(default: str | None):
     """Returns (display value, is_color) for a leaf field's default, or
     None if there's nothing worth showing."""
     if default is None:
@@ -358,11 +276,6 @@ def render_default(default: str | None, enums: dict):
     m = COLOR_WRAP.match(default)
     if m:
         return m.group(1), True
-
-    m = ENUM_VALUE.match(default)
-    if m and m.group(1) in enums and m.group(2) in enums[m.group(1)]:
-        value = enums[m.group(1)][m.group(2)]
-        return (f'"{value}"' if isinstance(value, str) else str(value)), False
 
     if default.startswith("Field("):
         m = FIELD_DEFAULT.search(default)
@@ -380,12 +293,12 @@ def render_default(default: str | None, enums: dict):
 # ---------------------------------------------------------------- tree data
 
 
-def build_leaf(field: dict, path: str, enums: dict, override_node=None) -> dict:
+def build_leaf(field: dict, path: str, override_node=None) -> dict:
     doc_html, doc_full = render_doc(field["doc"])
     default_str = (
         _unparse(override_node) if override_node is not None else field["default"]
     )
-    default = render_default(default_str, enums)
+    default = render_default(default_str)
 
     return {
         "kind": "leaf",
@@ -398,7 +311,6 @@ def build_leaf(field: dict, path: str, enums: dict, override_node=None) -> dict:
         "doc_full": doc_full,
         "search_doc": field["doc"].lower(),
         "path": path,
-        "enum_values": field_enum_values(field["type"], enums),
     }
 
 
@@ -408,7 +320,6 @@ def build_node(
     doc: str,
     classes: dict,
     path: str,
-    enums: dict,
     override_node=None,
 ) -> dict:
     """Builds one property as a tree node: its own identity, plus every
@@ -439,12 +350,11 @@ def build_node(
                     f["doc"],
                     classes,
                     child_path,
-                    enums,
                     child_override,
                 )
             )
         else:
-            children.append(build_leaf(f, child_path, enums, child_override))
+            children.append(build_leaf(f, child_path, child_override))
 
     # Every nested style type here is a BaseStyle subclass (that's what
     # makes it a node instead of a leaf) -- push those last so a style's
@@ -465,13 +375,13 @@ def build_node(
     }
 
 
-def build_groups(plot_fields: dict, classes: dict, enums: dict) -> list:
+def build_groups(plot_fields: dict, classes: dict) -> list:
     groups = []
     for group_name, field_names in GROUPS:
         nodes = []
         for fname in field_names:
             f = plot_fields[fname]
-            doc = f["doc"] or DOC_FALLBACKS.get(fname, "")
+            doc = f["doc"] or ""
             path = f"style.{fname}"
             nodes.append(
                 build_node(
@@ -480,7 +390,6 @@ def build_groups(plot_fields: dict, classes: dict, enums: dict) -> list:
                     doc,
                     classes,
                     path,
-                    enums,
                     f["default_node"],
                 )
             )
@@ -491,34 +400,23 @@ def build_groups(plot_fields: dict, classes: dict, enums: dict) -> list:
 # ------------------------------------------------------------------- page
 
 
-def build_html(plot_fields: dict, classes: dict, enums: dict) -> str:
-    groups = build_groups(plot_fields, classes, enums)
-    total_leaves = sum(
-        leaf_count(core_type(plot_fields[name]["type"]), classes)
-        for _, names in GROUPS
-        for name in names
-    )
-    total_elements = sum(len(names) for _, names in GROUPS)
+def build_html(plot_fields: dict, classes: dict) -> str:
+    groups = build_groups(plot_fields, classes)
 
     env = Environment(
         loader=FileSystemLoader(SCRIPT_DIR),
         autoescape=select_autoescape(["html", "jinja"]),
     )
-    template = env.get_template("style_reference.html")
-    return template.render(
-        groups=groups,
-        total_elements=total_elements,
-        total_leaves=total_leaves,
-    )
+    template = env.get_template("style_explorer.html")
+    return template.render(groups=groups)
 
 
 def main():
     elements_classes = extract_classes(STYLES_DIR / "elements.py")
     plot_classes = extract_classes(STYLES_DIR / "plot.py")
     plot_fields = {f["name"]: f for f in plot_classes["PlotStyle"]["fields"]}
-    enums = extract_enums(STYLES_DIR / "constants.py")
 
-    html = build_html(plot_fields, elements_classes, enums)
+    html = build_html(plot_fields, elements_classes)
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(html)

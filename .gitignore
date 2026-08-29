@@ -51,7 +51,7 @@ docs/images/examples/*.svg
 docs/images/reference/*.png
 docs/images/reference/*.svg
 docs/images/reference/*.jpg
-docs/images/reference/style_reference.html
+docs/images/reference/style_explorer.html
 tutorial/*.png
 docs/images/tutorial/*.png
 docs/data/*.json

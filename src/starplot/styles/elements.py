@@ -6,7 +6,6 @@ from starplot.styles.base import BaseStyle
 from starplot.styles.constants import (
     DashArray,
     FontWeight,
-    GradientType,
     ZOrder,
 )
 from starplot.styles.types import Color, MarkerSymbol, _validate_stops
@@ -85,7 +84,7 @@ class GradientStyle(BaseStyle):
     ```
     """
 
-    type: Literal["linear", "radial"] = GradientType.RADIAL
+    type: Literal["linear", "radial"] = "radial"
     """Type / direction of the gradient."""
 
     @field_validator("stops")
@@ -131,7 +130,10 @@ class MarkerStyle(BaseStyle):
     dash_array: (
         Literal["solid", "dashed", "dashdot", "dotted"] | tuple[int, ...] | None
     ) = None
-    """Dash style of the marker's stroke. Can be a predefined value in `DashArray` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyle.ROUND`, since a zero-length dash is only visible with a round cap."""
+    """
+    Dash style of the marker's stroke. 
+    Can be a predefined string option (e.g. "dashed") or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/).
+    """
 
     dash_capstyle: Literal["square", "butt", "round"] = "square"
     """Style of dash endpoints"""
@@ -206,7 +208,10 @@ class LineStyle(BaseStyle):
     dash_array: (
         Literal["solid", "dashed", "dashdot", "dotted"] | tuple[int, ...] | None
     ) = "solid"
-    """Dash style of the line. Can be a predefined value in `DashArray` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyle.ROUND`, since a zero-length dash is only visible with a round cap."""
+    """
+    Dash style of the line's stroke. 
+    Can be a predefined string option (e.g. "dashed") or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/).
+    """
 
     cap_style: Literal["butt", "square", "round"] = "square"
     """Style of line/dash endpoints"""
@@ -265,7 +270,10 @@ class PolygonStyle(BaseStyle):
     dash_array: (
         Literal["solid", "dashed", "dashdot", "dotted"] | tuple[int, ...] | None
     ) = "solid"
-    """Dash style of the polygon's stroke. Can be a predefined value in `DashArray` or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/). A dash of `0` (e.g. `(0, 5)`) draws a row of evenly-spaced round dots instead of dashes -- pair it with `dash_capstyle=CapStyle.ROUND`, since a zero-length dash is only visible with a round cap."""
+    """
+    Dash style of the polygon's stroke. 
+    Can be a predefined string option (e.g. "dashed") or a tuple [stroke dasharray](https://css-tricks.com/almanac/properties/s/stroke-dasharray/).
+    """
 
     dash_capstyle: Literal["butt", "square", "round"] = "round"
     """Style of dash endpoints. Matters even for a closed ring's dashes: a zero-length dash (as used for a dotted `dash_array`, e.g. `(0, 5)`) is only visible with a `round` cap -- `square`/`butt` caps render it as nothing."""

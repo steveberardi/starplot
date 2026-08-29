@@ -144,9 +144,6 @@ button.ctl {
 }
 button.ctl:hover { color: var(--ink); border-color: var(--faint); }
 
-.stat-row { display: flex; gap: 18px; margin-top: 14px; font-family: var(--font-mono); font-size: 12px; color: var(--faint); }
-.stat-row b { color: var(--ink); font-weight: 600; }
-
 main { padding-top: 20px; }
 
 header { margin-bottom: 20px;}
@@ -308,23 +305,6 @@ details.node summary .tname {
 .fdoc { color: var(--muted); font-size: 13px; padding-top: 1px; }
 .fdoc code { font-family: var(--font-mono); font-size: 0.92em; background: var(--code-bg); padding: 1px 4px; border-radius: 4px; color: var(--ink); }
 
-.fenum {
-   display: flex; 
-   flex-wrap: wrap;
-   gap: 4px;
-   margin-top: 5px;
-   padding-top: 8px;
-   border-top: 1px dotted color-mix(in srgb, var(--ink) 10%, transparent);
-}
-.fenum code { 
-  font-family: var(--font-mono);
-  font-size: 0.85em;
-  background: var(--code-bg);
-  padding: 1px 5px;
-  border-radius: 4px; 
-  color: var(--muted); 
-}
-
 .copy-btn {
   display: inline-flex;
   align-items: center;
@@ -378,9 +358,6 @@ footer.page-foot code { font-family: var(--font-mono); }
   {%- endif %}
   <div class="fdoc"{% if leaf.doc_full %} title="{{ leaf.doc_full }}"{% endif %}>
     {{- leaf.doc_html | safe }}
-    {%- if leaf.enum_values %}
-    <div class="fenum"><strong>Options: </strong>{% for v in leaf.enum_values %}<code>{{ v }}</code>{% endfor %}</div>
-    {%- endif %}
   </div>
   <button class="copy-btn" type="button" data-path="{{ leaf.path }}" title="Copy path" aria-label="Copy {{ leaf.path }} to clipboard">
     <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
