@@ -105,12 +105,6 @@
         show_docstring_attributes: true
         members: true
 
-::: starplot.styles.MarkerSymbolEnum
-    options:
-        show_root_heading: true
-        show_docstring_attributes: true
-        members: true
-
 ::: starplot.styles.LegendLocation
     options:
         show_root_heading: true

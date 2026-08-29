@@ -246,9 +246,7 @@ def check_optic_m45_camera():
         style=style_dark,
         **plot_kwargs,
     )
-    optic_plot.stars(
-        where=[_.magnitude < 12], style__marker__symbol=styles.MarkerSymbolEnum.STAR
-    )
+    optic_plot.stars(where=[_.magnitude < 12], style__marker__symbol="star")
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-camera.png"
     optic_plot.export(filename)

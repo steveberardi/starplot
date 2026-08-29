@@ -1,6 +1,6 @@
 import math
 
-from starplot.styles import MarkerSymbolEnum
+from starplot.styles.types import MarkerSymbol
 from starplot.svg.elements import Circle, Ellipse, Group, Line, Polygon, Rectangle
 
 """
@@ -262,23 +262,23 @@ def satellite(x: float, y: float, size: float, attrs: dict):
 
 
 SYMBOL_FUNCTIONS = {
-    MarkerSymbolEnum.CIRCLE: circle,
-    MarkerSymbolEnum.CIRCLE_CROSS: circle_cross,
-    MarkerSymbolEnum.CIRCLE_CROSSHAIR: circle_crosshair,
-    MarkerSymbolEnum.CIRCLE_LINE: circle_line,
-    MarkerSymbolEnum.ELLIPSE: ellipse,
-    MarkerSymbolEnum.SQUARE: square,
-    MarkerSymbolEnum.TRIANGLE: triangle,
-    MarkerSymbolEnum.DIAMOND: diamond,
-    MarkerSymbolEnum.STAR: create_star_function(num_points=5),
-    MarkerSymbolEnum.STAR_4: create_star_function(num_points=4),
-    MarkerSymbolEnum.STAR_8: create_star_function(num_points=8),
-    MarkerSymbolEnum.PLUS: plus,
-    MarkerSymbolEnum.COMET: comet,
-    MarkerSymbolEnum.SATELLITE: satellite,
+    "circle": circle,
+    "circle_cross": circle_cross,
+    "circle_crosshair": circle_crosshair,
+    "circle_line": circle_line,
+    "ellipse": ellipse,
+    "square": square,
+    "triangle": triangle,
+    "diamond": diamond,
+    "star": create_star_function(num_points=5),
+    "star_4": create_star_function(num_points=4),
+    "star_8": create_star_function(num_points=8),
+    "plus": plus,
+    "comet": comet,
+    "satellite": satellite,
 }
 
 
-def create(x, y, size, symbol: MarkerSymbolEnum, attrs: dict):
+def create(x, y, size, symbol: MarkerSymbol, attrs: dict):
     attrs = attrs or {}
     return SYMBOL_FUNCTIONS.get(symbol)(x, y, size, attrs)

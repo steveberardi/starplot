@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import AfterValidator
 from pydantic.functional_serializers import PlainSerializer
@@ -10,6 +10,23 @@ Color = Annotated[
         lambda c: c.as_hex() if c and c != "none" else None,
         return_type=str,
     ),
+]
+
+MarkerSymbol = Literal[
+    "plus",
+    "circle",
+    "square",
+    "star",
+    "diamond",
+    "triangle",
+    "circle_cross",
+    "circle_crosshair",
+    "circle_line",
+    "comet",
+    "star_4",
+    "star_8",
+    "ellipse",
+    "satellite",
 ]
 
 

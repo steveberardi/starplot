@@ -22,7 +22,6 @@ from starplot.styles import (
     ObjectStyle,
     LabelStyle,
     TitleStyle,
-    MarkerSymbolEnum,
     PathStyle,
     PolygonStyle,
     AnchorPoint,
@@ -397,7 +396,7 @@ class BasePlot(StarPlotterMixin, ABC):
         if legend_label is not None:
             self._add_legend_handle_marker(
                 legend_label,
-                style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
+                style=style.to_marker_style(symbol="square"),
             )
 
     @use_style(PolygonStyle, "rectangle")
@@ -433,7 +432,7 @@ class BasePlot(StarPlotterMixin, ABC):
         if legend_label is not None:
             self._add_legend_handle_marker(
                 legend_label,
-                style=style.to_marker_style(symbol=MarkerSymbolEnum.SQUARE),
+                style=style.to_marker_style(symbol="square"),
             )
 
     @use_style(PolygonStyle, "ellipse")
@@ -478,7 +477,7 @@ class BasePlot(StarPlotterMixin, ABC):
         if legend_label is not None:
             self._add_legend_handle_marker(
                 legend_label,
-                style=style.to_marker_style(symbol=MarkerSymbolEnum.ELLIPSE),
+                style=style.to_marker_style(symbol="ellipse"),
             )
 
     @use_style(PolygonStyle, "circle")
@@ -511,7 +510,7 @@ class BasePlot(StarPlotterMixin, ABC):
         if legend_label is not None:
             self._add_legend_handle_marker(
                 legend_label,
-                style=style.to_marker_style(symbol=MarkerSymbolEnum.CIRCLE),
+                style=style.to_marker_style(symbol="circle"),
             )
 
     @use_style(ObjectStyle, "planets")
@@ -626,7 +625,7 @@ class BasePlot(StarPlotterMixin, ABC):
                     num_pts=200,
                 )
 
-                style.marker.symbol = MarkerSymbolEnum.CIRCLE
+                style.marker.symbol = "circle"
                 self._add_legend_handle_marker(legend_label, style.marker)
 
                 if label:
@@ -708,7 +707,7 @@ class BasePlot(StarPlotterMixin, ABC):
                         style=polygon_style,
                     )
 
-                style.marker.symbol = MarkerSymbolEnum.CIRCLE
+                style.marker.symbol = "circle"
                 self._add_legend_handle_marker(legend_label, style.marker)
 
                 if label:

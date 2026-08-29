@@ -7,10 +7,9 @@ from starplot.styles.constants import (
     DashArray,
     FontWeight,
     GradientType,
-    MarkerSymbolEnum,
     ZOrder,
 )
-from starplot.styles.types import Color, _validate_stops
+from starplot.styles.types import Color, MarkerSymbol, _validate_stops
 
 _DASH_ARRAY_VALUES = {
     DashArray.SOLID: None,
@@ -100,15 +99,13 @@ class GradientStyle(BaseStyle):
 
 
 class MarkerStyle(BaseStyle):
-    """
-    Styling properties for markers.
-    """
+    """Styling properties for markers."""
 
     fill: Color | GradientStyle | None = Color("#000")
     """
     Fill color of the marker
 
-    This can either be a single color (e.g. `#7abfff`) or a `GradientStyle` that defines a gradient. For example:
+    This can be a single color (e.g. `#7abfff`) or a `GradientStyle` that defines a gradient. For example:
 
     ```
     GradientStyle(
@@ -139,8 +136,23 @@ class MarkerStyle(BaseStyle):
     dash_capstyle: Literal["square", "butt", "round"] = "square"
     """Style of dash endpoints"""
 
-    symbol: MarkerSymbolEnum = MarkerSymbolEnum.CIRCLE
-    """Symbol for marker"""
+    symbol: Literal[
+        "plus",
+        "circle",
+        "square",
+        "star",
+        "diamond",
+        "triangle",
+        "circle_cross",
+        "circle_crosshair",
+        "circle_line",
+        "comet",
+        "star_4",
+        "star_8",
+        "ellipse",
+        "satellite",
+    ] = "circle"
+    """Symbol for marker."""
 
     size: float = 24
     """Size of marker in pixels"""
@@ -281,12 +293,10 @@ class PolygonStyle(BaseStyle):
 
         return attrs
 
-    def to_marker_style(self, symbol: MarkerSymbolEnum):
-        solid_fill = self.fill is not None and not isinstance(self.fill, GradientStyle)
-        fill_color = self.fill.as_hex() if solid_fill else None
+    def to_marker_style(self, symbol: MarkerSymbol):
         return MarkerStyle(
             symbol=symbol,
-            fill=fill_color,
+            fill=self.fill,
             stroke=self.stroke.as_hex() if self.stroke else None,
             stroke_width=self.stroke_width,
             opacity=self.opacity,

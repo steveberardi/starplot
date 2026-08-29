@@ -26,52 +26,6 @@ class FontStyle:
     OBLIQUE = "oblique"
 
 
-class MarkerSymbolEnum(str, Enum):
-    """Options for marker symbols"""
-
-    PLUS = "plus"
-    """+"""
-
-    CIRCLE = "circle"
-    """\u25cf"""
-
-    SQUARE = "square"
-    """\u25a0"""
-
-    STAR = "star"
-    """\u2605"""
-
-    DIAMOND = "diamond"
-    """\u25c6"""
-
-    TRIANGLE = "triangle"
-    """\u23f6"""
-
-    CIRCLE_CROSS = "circle_cross"
-    """\u1aa0"""
-
-    CIRCLE_CROSSHAIR = "circle_crosshair"
-    """No preview available, but this is the standard symbol for planetary nebulae"""
-
-    CIRCLE_LINE = "circle_line"
-    """\u29b5  the standard symbol for double stars"""
-
-    COMET = "comet"
-    """\u2604"""
-
-    STAR_4 = "star_4"
-    """\u2726"""
-
-    STAR_8 = "star_8"
-    """\u2734"""
-
-    ELLIPSE = "ellipse"
-    """\u2b2d"""
-
-    SATELLITE = "satellite"
-    """\U0001f6f0 No preview available, but this is a satellite icon (solar panels + dish antenna)"""
-
-
 class DashArray:
     """Options for a line's dash style"""
 

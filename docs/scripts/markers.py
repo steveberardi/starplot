@@ -3,9 +3,11 @@ Renders every marker symbol available
 """
 
 from pathlib import Path
+from typing import get_args
 
 from starplot import MapPlot, Miller
-from starplot.styles import MarkerSymbolEnum, PlotStyle, extensions, MarkerStyle, ObjectStyle
+from starplot.styles import MarkerStyle, ObjectStyle, PlotStyle, extensions
+from starplot.styles.types import MarkerSymbol
 
 OUTPUT_DIR = Path(__file__).resolve().parent.parent / "images" / "reference"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -51,9 +53,7 @@ marker_styles = {
 }
 
 
-for symbol in MarkerSymbolEnum:
-    symbol_str = symbol.value
-
+for symbol_str in get_args(MarkerSymbol):
     marker_style = default_style
     marker_style.size = 64
     marker_style.symbol = symbol_str
@@ -77,4 +77,4 @@ for symbol in MarkerSymbolEnum:
         dec=CENTER_DEC,
         style=object_style,
     )
-    p.export(str(OUTPUT_DIR / f"marker_{symbol.value}.svg"))
+    p.export(str(OUTPUT_DIR / f"marker_{symbol_str}.svg"))

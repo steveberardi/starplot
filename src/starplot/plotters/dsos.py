@@ -15,7 +15,6 @@ from starplot.models.dso import (
 )
 from starplot.plotters.text import CollisionHandler
 from starplot.profile import profile
-from starplot.styles import MarkerSymbolEnum
 from starplot.utils import normalize_where
 
 
@@ -279,7 +278,7 @@ class DsoPlotterMixin:
 
                             poly_style = style.marker.to_polygon_style()
 
-                            if style.marker.symbol == MarkerSymbolEnum.SQUARE:
+                            if style.marker.symbol == "square":
                                 self.rectangle(
                                     (ra, dec),
                                     min_ax_degrees * 2,

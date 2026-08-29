@@ -9,7 +9,6 @@ from starplot.styles.constants import (
     CapStyle,
     DashArray,
     FontWeight,
-    MarkerSymbolEnum,
     ZOrder,
 )
 from starplot.styles.elements import (
@@ -116,7 +115,7 @@ class PlotStyle(BaseStyle):
 
     planets: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE,
+            symbol="circle",
             size=28,
             zorder=ZOrder.LAYER_3,
             opacity=1,
@@ -132,7 +131,7 @@ class PlotStyle(BaseStyle):
 
     moon: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE,
+            symbol="circle",
             size=50,
             fill="#c8c8c8",
             opacity=1,
@@ -149,7 +148,7 @@ class PlotStyle(BaseStyle):
 
     sun: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.STAR_8,
+            symbol="star_8",
             size=80,
             fill="#000",
             zorder=ZOrder.LAYER_4 - 100,
@@ -163,7 +162,7 @@ class PlotStyle(BaseStyle):
 
     dso_open_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE,
+            symbol="circle",
             dash_array=DashArray.DOTTED,
             dash_capstyle=CapStyle.ROUND,
             stroke_width=2,
@@ -175,7 +174,7 @@ class PlotStyle(BaseStyle):
 
     dso_association_stars: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE,
+            symbol="circle",
             dash_array=DashArray.DOTTED,
             dash_capstyle=CapStyle.ROUND,
             stroke_width=2,
@@ -187,7 +186,7 @@ class PlotStyle(BaseStyle):
 
     dso_globular_cluster: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE_CROSS,
+            symbol="circle_cross",
             fill="#555",
             opacity=0.8,
             stroke_width=1.2,
@@ -199,7 +198,7 @@ class PlotStyle(BaseStyle):
 
     dso_galaxy: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.ELLIPSE,
+            symbol="ellipse",
             zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
@@ -208,7 +207,7 @@ class PlotStyle(BaseStyle):
 
     dso_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE,
+            symbol="square",
             zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),
@@ -217,7 +216,7 @@ class PlotStyle(BaseStyle):
 
     dso_planetary_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE_CROSSHAIR,
+            symbol="circle_crosshair",
             stroke_width=1.6,
             size=26,
             zorder=ZOrder.LAYER_3 - 1,
@@ -228,7 +227,7 @@ class PlotStyle(BaseStyle):
 
     dso_double_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.CIRCLE_LINE,
+            symbol="circle_line",
             zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x=1, offset_y=-1),
@@ -237,7 +236,7 @@ class PlotStyle(BaseStyle):
 
     dso_dark_nebula: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE,
+            symbol="square",
             fill="#000",
             zorder=ZOrder.LAYER_3 - 1,
         ),
@@ -247,7 +246,7 @@ class PlotStyle(BaseStyle):
 
     dso_supernova_remnant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE,
+            symbol="square",
             fill="#000",
             zorder=ZOrder.LAYER_3 - 1,
         ),
@@ -257,7 +256,7 @@ class PlotStyle(BaseStyle):
 
     dso_nova_star: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE,
+            symbol="square",
             fill="#000",
             zorder=ZOrder.LAYER_3 - 1,
         ),
@@ -267,7 +266,7 @@ class PlotStyle(BaseStyle):
 
     dso_nonexistant: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE,
+            symbol="square",
             fill="#000",
             zorder=ZOrder.LAYER_3 - 1,
         ),
@@ -277,7 +276,7 @@ class PlotStyle(BaseStyle):
 
     dso_unknown: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE,
+            symbol="square",
             fill="#000",
             zorder=ZOrder.LAYER_3 - 1,
         ),
@@ -287,7 +286,7 @@ class PlotStyle(BaseStyle):
 
     dso_duplicate: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.SQUARE,
+            symbol="square",
             fill="#000",
             zorder=ZOrder.LAYER_3 - 1,
         ),
@@ -430,7 +429,7 @@ class PlotStyle(BaseStyle):
 
     zenith: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
-            symbol=MarkerSymbolEnum.TRIANGLE,
+            symbol="triangle",
             size=24,
             fill="#000",
             opacity=0.8,
