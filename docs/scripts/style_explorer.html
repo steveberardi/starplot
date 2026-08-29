@@ -298,6 +298,22 @@ details.node summary .tname {
 .field:hover { background: var(--surface-2); }
 .field.is-hidden { display: none; }
 
+.fields-header {
+  display: grid;
+  grid-template-columns: 150px 140px 130px 1fr 80px;
+  gap: 12px;
+  padding: 0 14px 6px;
+  margin-left: 28px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+}
+
 .fname { font-family: var(--font-mono); font-size: 13px; color: var(--ink); font-weight: 500; }
 .ftype { font-family: var(--font-mono); font-size: 11.5px; padding-top: 2px; word-break: break-word; line-height: 1.6em;}
 .fdefault { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); padding-top: 2px; display: flex; align-items: center; gap: 5px; }
@@ -339,6 +355,7 @@ footer.page-foot {
 footer.page-foot code { font-family: var(--font-mono); }
 
 @media (max-width: 640px) {
+  .fields-header { display: none; }
   .field { grid-template-columns: 1fr; gap: 4px; padding-right: 40px; }
   .ftype, .fdefault { padding-top: 0; }
   .node-body { padding-left: 10px; margin-left: 8px; }
@@ -379,6 +396,15 @@ footer.page-foot code { font-family: var(--font-mono); }
   </summary>
   <div class="node-body">
     <div class="fields">
+      {%- if node.children | selectattr("kind", "equalto", "leaf") | list %}
+      <div class="fields-header">
+        <span>Property</span>
+        <span>Type</span>
+        <span>Default</span>
+        <span>Description</span>
+        <span style="text-align: end;">Copy<br/>Path</span>
+      </div>
+      {%- endif %}
       {%- for child in node.children %}
         {%- if child.kind == "node" %}
         {{ render_node(child) }}
