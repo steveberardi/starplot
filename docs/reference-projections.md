@@ -71,24 +71,35 @@
     }
 }
 
+.tutorial p {
+    margin-top: 0;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
 
 </style>
 
 # Projections
 
-[Map plots](reference-mapplot.md) support a variety of projections, which are methods for flattening the curved, three-dimensional surface of a sphere (in Starplot, that's the sky) onto a two-dimensional flat surface like paper or a computer screen. Every projection is imperfect in some way because something will always be distorted. 
+<div class="grid tutorial" markdown>
+
+<div markdown class="mt-0">
+[Map plots](reference-mapplot.md) support a variety of projections, which are methods for flattening the curved, three-dimensional surface of a sphere (in Starplot, that's the sky) onto a two-dimensional flat surface like paper or a computer screen. Every projection is imperfect in some way because something will always be distorted.
 
 Projections in Starplot are ultimately handled by [PROJ](https://proj.org/en/stable/) (via [pyproj](https://pyproj4.github.io/pyproj/stable/)), but Starplot has thin wrappers for each projection that let you customize a few properties (e.g. central RA/DEC).
 
-**Basic Usage**
-<div class="tutorial">
-```python
+Below is a list of all projections supported by map plots, along with a [Tissot's indicatrix](https://en.wikipedia.org/wiki/Tissot's_indicatrix) for each projection to illustrate how it distorts objects:
+</div>
+
+```python title="Basic Usage"
 from starplot import MapPlot, Stereographic
 
 p = MapPlot(
     dec_min=-20,
     dec_max=90,
-    projection=Stereographic(  # create a Stereographic projection with a custom center RA/DEC 
+    # create a Stereographic projection 
+    # with a custom center RA/DEC 
+    projection=Stereographic(
         center_ra=250, 
         center_dec=35,
     )
@@ -96,7 +107,7 @@ p = MapPlot(
 ```
 </div>
 
-Below is a list of all projections supported by map plots, along with a [Tissot's indicatrix](https://en.wikipedia.org/wiki/Tissot's_indicatrix) for each projection to illustrate how it distorts objects:
+
 
 --8<-- "docs/images/reference/projection_list.html"
 
