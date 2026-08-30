@@ -1,5 +1,27 @@
 # Projections
 
+[Map plots](reference-mapplot.md) support a variety of projections, which are methods for flattening the curved, three-dimensional surface of a sphere (in Starplot, that's the sky) onto a two-dimensional flat surface like paper or a computer screen. Every projection is imperfect in some way because something will always be distorted. 
+
+One of the common ways to visualize the distortions of a projection is by plotting [Tissot's indicatrix](https://en.wikipedia.org/wiki/Tissot's_indicatrix), which is a series of circles at various positions. Since they're actually circles on the surface of the sphere, you can see how that projection distorts objects by how much each circle looks distorted (i.e. more like an ellipse).
+
+Projections in Starplot are ultimately handled by [PROJ](https://proj.org/en/stable/) (via [pyproj](https://pyproj4.github.io/pyproj/stable/)), but Starplot has thin wrappers for each projection that let you customize a few properties (e.g. central RA/DEC).
+
+Below is a list of all projections supported by map plots, along with a Tissot indicatrix and available properties for each projection:
+
+<div class="projection-card" markdown>
+
+
+## Equidistant
+Shows accurate distances from the center position. Often used for planispheres.
+![Equidistant projection: gridlines and Tissot indicatrix](images/reference/projection_equidistant.svg){ width=400 loading=lazy }
+
+
+
+
+</div>
+
+<hr/>
+
 <div class="grid cards feature-cards" markdown>
 
 - __Equidistant__{.fs-2}

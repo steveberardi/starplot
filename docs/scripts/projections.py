@@ -36,8 +36,11 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 style = PlotStyle().extend(extensions.STARPLOT, extensions.MAP)
 
-style.axes.border.width = 1
+style.axes.border.width = 2
+style.axes.border.stroke = "#153358CA"
+style.axes.background.fill = None
 style.figure.background.fill = None
+style.tissot.fill = "#3D699EE5"
 # axes.border isn't needed for these reference images, and its buffered clip
 # geometry can come back as a MultiPolygon for some of the extreme circular
 # extents below (e.g. StereoSouth) -- another pre-existing bug, unrelated to
@@ -156,7 +159,7 @@ for name, projection, extent, clip_path in PROJECTIONS:
     p = MapPlot(
         projection=projection,
         style=style,
-        resolution=1600,
+        resolution=600,
         **kwargs,
     )
     p.gridlines(labels=False)
