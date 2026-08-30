@@ -185,7 +185,14 @@ def check_optic_m45_scope():
 
 
 def check_optic_m45_scope_gradient():
-    style_gradient = style_dark.extend(styles.extensions.GRADIENT_PRE_DAWN)
+    style_gradient = style_dark.extend(
+        styles.extensions.GRADIENT_PRE_DAWN,
+        {
+            "star": {
+                "marker": {"stroke_width": 0},
+            }
+        },
+    )
     optic_plot = OpticPlot(
         # M45
         ra=3.7836111111 * 15,
@@ -201,7 +208,7 @@ def check_optic_m45_scope_gradient():
     )
     optic_plot.stars(
         where=[_.magnitude < 12],
-        color_fn=callables.color_by_bv,
+        color_fn=callables.color_by_bv_gradient,
         style={"label": {"fill": "#7df597"}},
     )
     optic_plot.info()

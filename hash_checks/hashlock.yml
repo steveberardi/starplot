@@ -154,10 +154,10 @@ optic_m45_scope:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/optic-m45-scope.png
   phash: c49853c57b166f98
 optic_m45_scope_gradient:
-  dhash: 403070b070aae870407070b870aae870e0f0b0b0b0aac870
+  dhash: 403030a07086e8704030f0b87086e870e8f0b090b08ac870
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/optic-m45-scope-gradient.png
-  phash: c43a4be56b916d92
+  phash: 943a4fe53b946c92
 optic_moon_phase_full:
   dhash: f0d48eb2b28ed4f0f0d48eb2b28ed4f0f0d48eb2b28ed4f0
   exception: null
