@@ -1,6 +1,6 @@
 # Gradients
 
-Markers and polygons can have a solid color fill or a gradient fill. Starplot has a few pre-defined gradients, but you can also [build your own](#build-your-own). Gradient backgrounds are defined through a [`GradientStyle`][starplot.styles.GradientStyle]. The `GradientStyle` consists of a tuple of color stops (in the format of `(offset, color)`) and a `type` (`"linear"` or `"radial"`).
+Markers and polygons can have a [solid color fill](color.md) or a gradient fill. Starplot has a few pre-defined gradients, but you can also [build your own](#build-your-own). Gradient backgrounds are defined through a [`GradientStyle`][starplot.styles.GradientStyle]. The `GradientStyle` consists of a tuple of color stops (in the format of `(offset, color)`) and a `type` (`"linear"` or `"radial"`).
 
 Pre-defined gradient stops available in `starplot.styles.gradients`:
 <div class="gradient-swatch-grid" markdown>

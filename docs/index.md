@@ -37,7 +37,7 @@ Starplot is a Python library for creating star charts and maps of the sky
     <li><strong>Data Backend</strong> - powered by DuckDB + Ibis for fast object lookup</li>
     <li><strong>Custom Data Catalogs</strong> - with helpers for building and optimizing</li>
     <li><strong>Label Collision Avoidance</strong> - ensuring all labels are readable</li>
-    <li><strong>Localization</strong> - label translations for Chinese, French, Lithuanian, Persian, and Spanish</li>
+    <li><strong>Localization</strong> - label translations for Chinese, French, Italian, Lithuanian, Persian, and Spanish</li>
   </ul>
 
 </div>

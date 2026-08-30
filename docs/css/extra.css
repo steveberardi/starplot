@@ -747,3 +747,107 @@ code.gradient-swatch-name {
   margin-top: 8px;
   font-size: 12px;
 }
+
+.color-swatch-preview {
+  width: 100%;
+  height: 80px;
+  border-radius: 6px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  background-image:
+    linear-gradient(45deg, #ccc 25%, transparent 25%),
+    linear-gradient(-45deg, #ccc 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #ccc 75%),
+    linear-gradient(-45deg, transparent 75%, #ccc 75%);
+  background-size: 10px 10px;
+  background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+  background-color: #fff;
+}
+
+.color-swatch-preview > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.color-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 28px 0;
+}
+
+@media screen and (min-width: 768px) {
+  .color-swatch-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.color-swatch-card {
+  text-align: center;
+  padding: 4px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+}
+
+.color-swatch-card p {
+  margin: 0;
+}
+
+code.color-swatch-name {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.color-format-table .md-typeset__table,
+.color-format-table .md-typeset__table table {
+  display: table !important;
+  width: 100% !important;
+}
+
+.color-format-table table {
+  table-layout: fixed;
+  
+}
+
+.color-format-table th {
+  background-color: var(--md-code-bg-color--light);
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--md-default-fg-color--lighter);
+}
+
+.color-format-table th:nth-child(1),
+.color-format-table td:nth-child(1) {
+  width: 20%;
+  
+}
+
+.color-format-table th:nth-child(2),
+.color-format-table td:nth-child(2) {
+  width: 35%;
+}
+
+.color-format-table th:nth-child(3),
+.color-format-table td:nth-child(3) {
+  width: 45%;
+}
+
+.md-typeset table:not([class]) {
+    border-radius: 10px;
+
+    th:first-child {
+        border-top-left-radius: 9px;
+    }
+    th:last-child {
+        border-top-right-radius: 9px;
+    }
+}
+
+/* .md-typeset table:not([class]) th:nth-child(1) {
+    border-top-left-radius: 10px;
+} */
+
