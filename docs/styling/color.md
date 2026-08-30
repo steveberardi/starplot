@@ -2,10 +2,10 @@
 
 Anywhere a style has a color property — a marker's fill, a line's stroke, a label's text or halo, a legend's background, etc — that property is defined by Starplot's `Color` type. `Color` follows the [CSS3 color specification](http://www.w3.org/TR/css3-color/#svg-color), so you can define colors the same way you would in CSS: by name, hex code, `rgb()`/`rgba()`, or `hsl()`/`hsla()`. It also supports an alpha channel, so any of these formats can have a transparency level.
 
-- [Supported Formats](#supported-formats)
+<!-- - [Supported Formats](#supported-formats)
 - [Basic Usage](#basic-usage)
 - [Transparency](#transparency)
-- [Null Values](#null-values)
+- [Null Values](#null-values) -->
 
 ## Supported Formats
 
@@ -88,7 +88,7 @@ Anywhere a style has a color property — a marker's fill, a line's stroke, a la
 
 ## Basic Usage
 
-Any style property typed as `Color` will accept a value in any of the formats above, and Starplot will automatically parse and validate it:
+Any style property typed as `Color` will accept a value in any of the formats above, and Starplot will automatically parse and validate it. Examples:
 
 ```python
 from starplot import PlotStyle
@@ -115,7 +115,7 @@ c.as_hsl()  # 'hsl(219, 79%, 66%)'
 
 ## Transparency
 
-Every color format above supports an alpha channel, which controls the color's transparency. The alpha channel can have a value between 0 (fully transparent) to 1 (fully solid, no transparency). For example, here's how you would specify the Milky Way's fill to be 30% full:
+Every color format also supports an alpha channel, which controls the color's transparency. The alpha channel can have a value between 0 (fully transparent) to 1 (fully solid, no transparency). For example, here's how you would specify the Milky Way's fill to be 30% solid:
 
 ```python
 style.milky_way.fill = "rgba(200, 200, 255, 0.3)"
