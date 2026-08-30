@@ -7,6 +7,20 @@
     --md-primary-fg-color--light: hsl(209, 53%, 70%);
     --md-primary-bg-color--light: hsl(209, 78%, 90%);
     --md-primary-fg-color--dark:  hsl(209, 53%, 27%);
+
+    --bg-light--light: hsl(208, 70%, 95%);
+    --bg-light--dark: hsl(208, 30%, 15%);
+    --muted-bg-color--light: hsl(209, 42%, 95%);
+    --muted-bg-color--dark: hsl(209, 24%, 12%);
+}
+
+table th {
+  background-color: var(--md-code-bg-color--light);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--md-default-fg-color--light);
 }
 
 .md-typeset h1,
@@ -33,7 +47,7 @@
 }
 
 .md-search__button {
-    background-color: hsl(206, 50%, 84%);
+    background-color: var(--bg-light);
 
     &:hover {
         background-color: hsl(206, 50%, 94%);
@@ -122,6 +136,8 @@ h2.doc-heading, h3.doc-heading {
 
 [data-md-color-scheme=default] {
     --doc-symbol-class-bg-color: hsl(209, 74%, 90%);
+    --muted-bg-color: var(--muted-bg-color--light);
+    --bg-light: var(--bg-light--light);
 
     .doc-function .doc-heading {
         background-color: hsl(209, 53%, 81%);
@@ -143,6 +159,8 @@ h2.doc-heading, h3.doc-heading {
 [data-md-color-scheme=slate] {
 
     --md-typeset-a-color: hsl(209, 63%, 65%);
+    --muted-bg-color: var(--muted-bg-color--dark);
+    --bg-light: var(--bg-light--dark);
 
     .doc-function .doc-heading {
         background-color: hsl(209, 53%, 21%);
@@ -446,29 +464,13 @@ td[data-column-id=bayer] {
     max-width: 600px;
 }
 
-#grid {
-    background-color: var(--md-primary-fg-color);
-    padding: 4px;
-    border-radius: 8px;
-
-    th {
-        background-color: hsl(209deg 53% 85%);
-        font-weight: bold;
-        color: var(--md-code-hl-name-color);
-    }
-
-    td, th {
-        padding: 8px 12px;
-        vertical-align: middle;
-    }
-}
 .gridjs-search {
     width: 100% !important;
 }
 .gridjs-search-input {
     padding: 0;
     width: 100% !important;
-    border: 1px solid var(--md-primary-fg-color) !important;
+    border: 1px solid hsl(209, 13%, 83%) !important;
 }
 
 .email-form {
@@ -556,7 +558,7 @@ td[data-column-id=bayer] {
 
 .table-coming-soon {
     background-color: var(--md-default-bg-color);
-    border: 1px solid hsl(209, 53%, 56%) !important;
+    border: 1px solid hsl(209, 23%, 76%) !important;
     border-radius: 10px;
     border-collapse: collapse;
     display: inline-block;
@@ -565,7 +567,7 @@ td[data-column-id=bayer] {
     touch-action: auto;
 
     tr {
-        border-top: 1px solid hsl(209, 53%, 56%) !important;
+        border-top: 1px solid hsl(209, 23%, 76%) !important;
     }
 
     tr:first-child {
@@ -621,7 +623,7 @@ td[data-column-id=bayer] {
 
 .star-panel {
     border-radius: 10px;
-    background-color: rgb(232, 242, 251);
+    background-color: var(--bg-light);
     padding: 24px 16px;
 
     h3 {
@@ -634,7 +636,7 @@ td[data-column-id=bayer] {
 .cards.feature-cards {
     li {
         align-items: start;
-        background-color: rgb(237, 241, 247);
+        background-color: var(--muted-bg-color);
     }
 
     h3 {
@@ -809,15 +811,6 @@ code.color-swatch-name {
 .color-format-table table {
   table-layout: fixed;
   
-}
-
-.color-format-table th {
-  background-color: var(--md-code-bg-color--light);
-  font-weight: 400;
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--md-default-fg-color--lighter);
 }
 
 .color-format-table th:nth-child(1),

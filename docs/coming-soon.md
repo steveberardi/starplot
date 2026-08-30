@@ -1,5 +1,6 @@
 # Coming Soon
 
+
 <table class="table-coming-soon">
     <tr>
         <td>v0.22</td>
