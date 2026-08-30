@@ -78,10 +78,10 @@ Anywhere a style has a color property — a marker's fill, a line's stroke, a la
 | Format | Examples | Description |
 | ----- | ------ | --- |
 | Name | `"aliceblue"`<br>`"steelblue"` | Any of the standard [CSS3 named colors](http://www.w3.org/TR/css3-color/#svg-color), case-insensitive |
-| Hex | `"#888"`<br>`"#faa8d1"`<br>`"#b979b780"` | Short or long form, optionally with a 4th or 8th hex pair for alpha |
+| Hex | `"#888"`<br>`"#faa8d1"`<br>`"#b979b780"` | Short or long form, with or without the alpha channel |
 | RGB / RGBA | `"rgb(89, 120, 155)"`<br>`"rgba(31, 132, 214, 0.6)"` | Standard CSS `rgb()`/`rgba()` function notation |
 | HSL / HSLA | `"hsl(203, 60%, 84%)"`<br>`"hsla(37, 78%, 80%, 0.5)"` | Standard CSS `hsl()`/`hsla()` function notation |
-| Tuple | `(201, 240, 178)`<br>`(250, 168, 209, 0.4)` | `(r, g, b)` with values 0-255, or `(r, g, b, a)` with alpha as a `float` between `0` and `1` |
+| Tuple | `(201, 240, 178)`<br>`(250, 168, 209, 0.4)` | Tuple of integers (`(r, g, b)`) with values 0-255, or `(r, g, b, a)` with alpha as a `float` between `0` and `1` |
 | `"transparent"` | `"transparent"` | A fully transparent color (i.e. `alpha = 0`) |
 
 </div>

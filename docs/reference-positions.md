@@ -2,7 +2,7 @@
 
 Starplot can plot objects in two types of positions: astrometric and apparent.
 
-### Astrometric Position
+## Astrometric Position
 
 Astrometric position is the "true" geometric position of an object in space, corrected for the time it takes for light to travel. For example, from Earth we see Jupiter where it was more than 30 minutes ago.
 
@@ -15,7 +15,7 @@ Plots that use astrometric positions:
 - [GalaxyPlot](reference-galaxyplot.md)
 
 
-### Apparent Position
+## Apparent Position
 Apparent position is where the object _appears_ to be in the sky as seen by the observer, which is affected by these observational effects:
 
 - Light-time delay
@@ -23,7 +23,7 @@ Apparent position is where the object _appears_ to be in the sky as seen by the 
 - Atmospheric refraction (bends light as it passes through Earth's atmosphere)
 - Precession and nutation (wobbles in Earth's rotation axis)
 
-This is typically the position you'd want to plot when you're creating charts for observation at a specific time and place. For example: what the Pleiades looks like through a refractor telescope at a certain time/place.
+This is typically the position you'd want to plot when you're creating charts for observation at a specific time and place. For example: what the Pleiades looks like through a refractor telescope from your backyard tonight.
 
 Plots that use apparent positions:
 

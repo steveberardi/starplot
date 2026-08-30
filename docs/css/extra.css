@@ -823,17 +823,20 @@ code.color-swatch-name {
 .color-format-table th:nth-child(1),
 .color-format-table td:nth-child(1) {
   width: 20%;
-  
+}
+
+.color-format-table td:nth-child(1) {
+    font-weight: 600;
 }
 
 .color-format-table th:nth-child(2),
 .color-format-table td:nth-child(2) {
-  width: 35%;
+  width: 30%;
 }
 
 .color-format-table th:nth-child(3),
 .color-format-table td:nth-child(3) {
-  width: 45%;
+  width: 50%;
 }
 
 .md-typeset table:not([class]) {
