@@ -116,6 +116,7 @@ docs-references:
 	uv run $(DOTENV) docs/scripts/markers.py
 	uv run $(DOTENV) docs/scripts/gradients.py
 	uv run $(DOTENV) docs/scripts/projections.py
+	uv run $(DOTENV) docs/scripts/projection_list.py
 	uv run $(DOTENV) docs/scripts/style_explorer.py
 
 docs: docs-references docs-build

@@ -1,0 +1,24 @@
+{% for card in cards %}
+<div class="projection-card">
+    <div>
+        <h3>{{ card.name }}</h3>
+        <p>{{ card.doc }}</p>
+        {% if card.properties %}
+        <div class="sub-header">Properties</div>
+        <ul>
+            {% for prop in card.properties %}
+            <li>{{ prop }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <p class="proj-link">
+            <a href="{{ card.proj_url }}" target="_blank" rel="noopener">
+                Details @ proj.org
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+            </a>
+        </p>
+    </div>
+    <img src="images/reference/{{ card.image }}" />
+</div>
+{% endfor %}

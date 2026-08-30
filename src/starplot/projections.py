@@ -100,10 +100,14 @@ class Azimuth(BaseModel, ABC):
 
 
 class ProjectionBase(BaseModel, ABC):
-    proj_def_base: str = None
-    global_only: bool = False
-    curved: bool = False
-    wraps: bool = False
+
+    name: ClassVar[str] = None
+    r: ClassVar[int] = PROJ_R
+    units: ClassVar[str] = "m"
+    proj_def_base: ClassVar[str | None] = None
+    global_only: ClassVar[bool] = False
+    curved: ClassVar[bool] = False
+    wraps: ClassVar[bool] = False
 
     # Set on hemisphere-limited projections (e.g. Orthographic): points
     # farther than this many degrees from (center_ra, center_dec) aren't
@@ -112,18 +116,10 @@ class ProjectionBase(BaseModel, ABC):
     # split_line_at_horizon/split_ring_at_horizon, which use this to cut
     # lines/polygons in RA/DEC space before projecting, since there's no
     # reliable jump/non-finite signature to catch this after the fact.
-    max_angular_distance: float | None = None
-
-    name: ClassVar[str] = None
-    r: int | None = PROJ_R
-    units: str = "m"
+    max_angular_distance: ClassVar[float | None] = None
 
     class Config:
         arbitrary_types_allowed = True
-
-    # @property
-    # def edge_x(self) -> float | None:
-    #     return None
 
     @property
     def global_bounds(self):
@@ -238,8 +234,8 @@ class Miller(ProjectionBase, CenterRA):
     """Similar to Mercator: good for declinations between -70 and 70, but distorts objects near the poles"""
 
     name: ClassVar[str] = "mill"
-    proj_def_base: str = f"+proj=mill +R={PROJ_R} +units=m"
-    wraps: bool = True
+    proj_def_base: ClassVar[str] = f"+proj=mill +R={PROJ_R} +units=m"
+    wraps: ClassVar[bool] = True
 
     @property
     def edge_x(self) -> float | None:
@@ -253,33 +249,33 @@ class Mercator(ProjectionBase, CenterRA):
     """Good for declinations between -70 and 70, but distorts objects near the poles"""
 
     name: ClassVar[str] = "merc"
-    proj_def_base: str = f"+proj=merc +R={PROJ_R} +units=m"
-    wraps: bool = True
+    proj_def_base: ClassVar[str] = f"+proj=merc +R={PROJ_R} +units=m"
+    wraps: ClassVar[bool] = True
 
 
 class PlateCarree(ProjectionBase, CenterRA):
     """An equirectangular projection"""
 
     name: ClassVar[str] = "eqc"
-    proj_def_base: str = f"+proj=eqc +R={PROJ_R} +units=m"
-    wraps: bool = True
+    proj_def_base: ClassVar[str] = f"+proj=eqc +R={PROJ_R} +units=m"
+    wraps: ClassVar[bool] = True
 
 
 class ObliqueMercator(ProjectionBase, CenterRADEC, Azimuth):
-    """Oblique Mercator projection"""
+    """A cylindrical projection like Mercator, but the "cylinder" is wrapped around a specified great circle instead of the equator — you set that circle with center_ra/center_dec (a point on it) and azimuth (its direction there). This makes it useful for framing a narrow band of sky that runs at an angle to the RA/DEC grid — e.g. tracing the Milky Way's galactic plane, an eclipse path, or a satellite ground track — with low, Mercator-like distortion right along that line and shapes/angles preserved locally (it's conformal)."""
 
     name: ClassVar[str] = "omerc"
-    proj_def_base: str = f"+proj=omerc +R={PROJ_R} +units=m"
-    wraps: bool = True
+    proj_def_base: ClassVar[str] = f"+proj=omerc +R={PROJ_R} +units=m"
+    wraps: ClassVar[bool] = True
 
 
 class Mollweide(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
 
-    proj_def_base: str = f"+proj=moll +R={PROJ_R} +units=m"
-    global_only: bool = True
-    curved: bool = True
-    wraps: bool = True
+    proj_def_base: ClassVar[str] = f"+proj=moll +R={PROJ_R} +units=m"
+    global_only: ClassVar[bool] = True
+    curved: ClassVar[bool] = True
+    wraps: ClassVar[bool] = True
 
     name: ClassVar[str] = "moll"
 
@@ -293,16 +289,16 @@ class Equidistant(ProjectionBase, CenterRADEC):
     """Shows accurate distances from the center position. Often used for planispheres."""
 
     name: ClassVar[str] = "aeqd"
-    proj_def_base: str = f"+proj=aeqd +R={PROJ_R} +units=m"
+    proj_def_base: ClassVar[str] = f"+proj=aeqd +R={PROJ_R} +units=m"
 
 
 class StereoNorth(ProjectionBase, CenterRA):
     """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""
 
     name: ClassVar[str] = "stere"
-    center_dec: float = 90
+    center_dec: ClassVar[float] = 90
 
-    proj_def_base: str = f"+proj=stere +lat_0=90 +R={PROJ_R} +units=m"
+    proj_def_base: ClassVar[str] = f"+proj=stere +lat_0=90 +R={PROJ_R} +units=m"
 
 
 class StereoSouth(ProjectionBase, CenterRA):
@@ -316,11 +312,11 @@ class Robinson(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
 
     name: ClassVar[str] = "robin"
-    proj_def_base: str = f"+proj=robin +R={PROJ_R} +units=m"
+    proj_def_base: ClassVar[str] = f"+proj=robin +R={PROJ_R} +units=m"
 
-    global_only: bool = True
-    curved: bool = True
-    wraps: bool = True
+    global_only: ClassVar[bool] = True
+    curved: ClassVar[bool] = True
+    wraps: ClassVar[bool] = True
 
     def global_clip_path(self):
         p0 = [(self.center_ra + 179.999999999, lat - 90) for lat in range(181)]
@@ -338,14 +334,14 @@ class Stereographic(ProjectionBase, CenterRADEC):
     """Similar to the North/South Stereographic projection, but allows custom central declination"""
 
     name: ClassVar[str] = "stere"
-    proj_def_base: str = f"+proj=stere +R={PROJ_R} +units=m"
+    proj_def_base: ClassVar[str] = f"+proj=stere +R={PROJ_R} +units=m"
 
 
 class Gnomonic(ProjectionBase, CenterRADEC):
     """Gnomonic projection"""
 
     name: ClassVar[str] = "gnom"
-    proj_def_base: str = f"+proj=gnom +R={PROJ_R} +units=m"
+    proj_def_base: ClassVar[str] = f"+proj=gnom +R={PROJ_R} +units=m"
 
 
 class Orthographic(ProjectionBase, CenterRADEC):
@@ -357,10 +353,10 @@ class Orthographic(ProjectionBase, CenterRADEC):
     """
 
     name: ClassVar[str] = "ortho"
-    proj_def_base: str = f"+proj=ortho +R={PROJ_R} +units=m"
-    curved: bool = True
-    wraps: bool = True
-    max_angular_distance: float = 90.0
+    proj_def_base: ClassVar[str] = f"+proj=ortho +R={PROJ_R} +units=m"
+    curved: ClassVar[bool] = True
+    wraps: ClassVar[bool] = True
+    max_angular_distance: ClassVar[float | None] = 90.0
 
     @property
     def global_bounds(self):

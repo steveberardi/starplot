@@ -302,6 +302,10 @@ code.raw {
     display: none;
 }
 
+.d-none {
+    display: none;
+}
+
 /* hide inactive nav items */
 .md-nav--secondary li:not(:has( a.md-nav__link--active)) {
     nav {
