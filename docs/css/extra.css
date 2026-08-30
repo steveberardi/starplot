@@ -842,25 +842,3 @@ code.color-swatch-name {
         border-top-right-radius: 9px;
     }
 }
-
-/* .md-typeset table:not([class]) th:nth-child(1) {
-    border-top-left-radius: 10px;
-} */
-
-
-.projection-card {
-    padding: 20px 16px;
-    background-color: var(--muted-bg-color);
-    border-radius: 8px;
-    border: 1px solid var(--md-default-fg-color--light);
-    display: grid;
-  grid-template-columns: 3fr 2fr; /* text : image ratio */
-  gap: 24px;
-
-
-    h2 {
-        margin-top: 0;
-    }
-
-    
-}

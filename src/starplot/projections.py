@@ -100,8 +100,6 @@ class Azimuth(BaseModel, ABC):
 
 
 class ProjectionBase(BaseModel, ABC):
-    threshold: int = 1000
-
     proj_def_base: str = None
     global_only: bool = False
     curved: bool = False
@@ -232,8 +230,6 @@ class AutoProjection:
 
     #     else:
     #         c = ccrs.Miller(central_longitude=central_longitude)
-
-    #     c.threshold = 1_000
 
     #     return c
 

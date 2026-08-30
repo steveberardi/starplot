@@ -1,26 +1,119 @@
+<style>
+.sub-header {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--md-default-fg-color--light);
+    margin: 32px 0 8px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.projection-card {
+    padding: 28px;
+    margin-bottom: 20px;
+    background-color: var(--muted-bg-color);
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 2fr 2fr;
+    gap: 24px;
+
+    ul {
+        margin: 0px !important;
+        font-family: "Fira Code", var(--md-code-font-family);
+    }
+
+    ul li {
+        margin-left: 0px !important;
+        list-style-type: none;
+        margin-top: 4px;
+        font-size: 13px;
+    }
+
+    h3 {
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-top: 0;
+    }
+
+    h4, h5 {
+        font-weight: 500;
+        letter-spacing: 0.07rem;
+        margin-bottom: 0;
+        margin-top: 20px;
+    }
+
+    h2, h3, h4, h5 {
+        font-family: "Fira Code", var(--md-code-font-family);
+        
+    }
+
+    
+}
+
+
+</style>
+
 # Projections
 
 [Map plots](reference-mapplot.md) support a variety of projections, which are methods for flattening the curved, three-dimensional surface of a sphere (in Starplot, that's the sky) onto a two-dimensional flat surface like paper or a computer screen. Every projection is imperfect in some way because something will always be distorted. 
 
-One of the common ways to visualize the distortions of a projection is by plotting [Tissot's indicatrix](https://en.wikipedia.org/wiki/Tissot's_indicatrix), which is a series of circles at various positions. Since they're actually circles on the surface of the sphere, you can see how that projection distorts objects by how much each circle looks distorted (i.e. more like an ellipse).
-
 Projections in Starplot are ultimately handled by [PROJ](https://proj.org/en/stable/) (via [pyproj](https://pyproj4.github.io/pyproj/stable/)), but Starplot has thin wrappers for each projection that let you customize a few properties (e.g. central RA/DEC).
 
-Below is a list of all projections supported by map plots, along with a Tissot indicatrix and available properties for each projection:
+!!! example "Basic Usage"
+    ```python
+    from starplot import MapPlot, Stereographic
 
-<div class="projection-card" markdown>
+    p = MapPlot(
+        dec_min=-20,
+        dec_max=90,
+        projection=Stereographic(  # create a Stereographic projection with a custom center RA/DEC 
+            center_ra=250, 
+            center_dec=35,
+        )
+    )
+    ```
 
 
-## Equidistant
-Shows accurate distances from the center position. Often used for planispheres.
-![Equidistant projection: gridlines and Tissot indicatrix](images/reference/projection_equidistant.svg){ width=400 loading=lazy }
+Below is a list of all projections supported by map plots, along with a [Tissot's indicatrix](https://en.wikipedia.org/wiki/Tissot's_indicatrix) for each projection to illustrate how it distorts objects:
+<!-- 
+One of the common ways to visualize the distortions of a projection is by plotting [Tissot's indicatrix](https://en.wikipedia.org/wiki/Tissot's_indicatrix), which is a series of circles at various positions. Since they're actually circles on the surface of the sphere, you can see how that projection distorts objects by how much each circle looks distorted (i.e. more like an ellipse). -->
 
-
-
-
+<div class="projection-card">
+    <div>
+        <h3>Equidistant</h3>
+        <p>Shows accurate distances from the center position. Often used for planispheres.</p>
+        <div class="sub-header">Properties</div>
+        <ul>
+            <li>center_ra</li>
+            <li>center_dec</li>
+        </ul>
+    </div>
+    <img src="images/reference/projection_equidistant.svg" width=400 />
 </div>
 
-<hr/>
+<div class="projection-card">
+    <div>
+        <h3>LambertAzEqArea</h3>
+        <p>Lambert Azimuthal Equal-Area projection - accurately shows area, but distorts angles.</p>
+        <div class="sub-header">Properties</div>
+        <ul>
+            <li>center_ra</li>
+            <li>center_dec</li>
+        </ul>
+    </div>
+    <img src="images/reference/projection_lambert_az_eq_area.svg" width=400 />
+</div>
+
+
+
+
+
 
 <div class="grid cards feature-cards" markdown>
 
