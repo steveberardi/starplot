@@ -1,10 +1,10 @@
-PYTHON=./venv/bin/python
 DE421_URL=https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp
 
 ifeq ($(CI), true)
  DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
 else
- DR_ARGS=-it --env-file ./.env
+ DR_ARGS=-it 
+ #--env-file ./.env
 endif
 
 DOTENV=--env-file $(shell pwd)/.env
@@ -13,6 +13,8 @@ DOCKER_BUILDER=starplot-builder
 
 DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" .
 DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) starplot-$(PYTHON_VERSION)
+
+# docker run --rm -it -v .:/starplot starplot-3.12.12 bash -c -v $(shell pwd):/starplot
 
 export PYTHONPATH=./src/
 
@@ -27,7 +29,7 @@ build:
 	$(DOCKER_BUILD_PYTHON)
 
 env:
-	touch -a .env
+	test -f .env || echo "STARPLOT_DATA_PATH=$(CURDIR)/data/" > .env
 
 lint:
 	uv run $(DOTENV) ruff check $(ARGS) src/ tests/ hash_checks/ 
@@ -79,27 +81,36 @@ version:
 setup:
 	uv run $(DOTENV) starplot setup
 
+download-test-fonts:
+	uv run $(DOTENV) scripts/download_test_fonts.py
 
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------
-test-3.10: PYTHON_VERSION=3.10.19
+test-3.10: PYTHON_VERSION=3.10.21
 test-3.10:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test-3.11: PYTHON_VERSION=3.11.14
+test-3.11: PYTHON_VERSION=3.11.16
 test-3.11:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test-3.12: PYTHON_VERSION=3.12.12
+test-3.12: PYTHON_VERSION=3.12.14
 test-3.12:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test-3.13: PYTHON_VERSION=3.13.8
+test-3.13: PYTHON_VERSION=3.13.15
 test-3.13:
+	$(DOCKER_BUILD_PYTHON)
+	$(DOCKER_RUN_PYTHON_TEST)
+
+# there are warnings with 3.14, but tests/checks pass
+# needs more investigation
+test-3.14: PYTHON_VERSION=3.14.7
+test-3.14:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 

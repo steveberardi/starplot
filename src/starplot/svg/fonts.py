@@ -11,7 +11,7 @@ from starplot.data.utils import download
 
 FONTS_PATH = settings.data_path / "fonts"
 
-FALLBACK_FONTS = ["arial", "verdana"]
+FALLBACK_FONTS = ["liberation sans", "liberation-sans", "arial", "verdana"]
 
 
 def get_font_paths() -> list[Path]:
@@ -101,7 +101,7 @@ def find_font(family: str, weight: int, italic: bool) -> TTFont:
     if not font_path:
         for fallback in FALLBACK_FONTS:
             font_path = font_index.get((fallback, weight, italic)) or font_index.get(
-                (fallback, 400, italic)
+                (fallback, 400, False)
             )
             if font_path:
                 break

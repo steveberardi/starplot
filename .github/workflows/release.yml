@@ -16,6 +16,9 @@ jobs:
     - name: Install dependencies
       run: make install env
     
+    - name: Download test fonts
+      run: make download-test-fonts
+      
     - name: Check Lint
       run: make lint CI=true
     

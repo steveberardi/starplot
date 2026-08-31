@@ -39,7 +39,7 @@ map_custom_stars:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-custom-stars.png
   phash: e61a5ea62525b7b0
 map_font_fallback:
-  dhash: 4e3129ceae2e84284e3129ceae2e84284e3129ceae2e8428
+  dhash: 4e3129ceae2e85284e3129ceae2e85284e3129ceae2e8528
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-font-fallback.png
   phash: a6337e26232537f0

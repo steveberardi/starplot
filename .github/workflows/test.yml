@@ -18,6 +18,8 @@ jobs:
     - uses: astral-sh/setup-uv@v5
     - name: Install dependencies
       run: make install env
+    - name: Download test fonts
+      run: make download-test-fonts
     - name: Build sky.db
       run: make db setup CI=true
     - name: Check Lint

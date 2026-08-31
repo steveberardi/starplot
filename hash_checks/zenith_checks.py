@@ -95,16 +95,16 @@ def check_zenith_chinese():
             {
                 "star": {
                     "label": {
-                        "font_name": "Noto Sans SC",
+                        "font_name": "Noto Sans CJK SC",
                     }
                 },
                 "horizon": {
                     "label": {
-                        "font_name": "Noto Sans SC",
+                        "font_name": "Noto Sans CJK SC",
                     }
                 },
                 "constellation_labels": {
-                    "font_name": "Noto Sans SC",
+                    "font_name": "Noto Sans CJK SC",
                 },
             },
         ),
