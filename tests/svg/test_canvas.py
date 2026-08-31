@@ -6,9 +6,15 @@ from shapely import Polygon as ShapelyPolygon
 from shapely import box
 
 from starplot import geometry as _geometry
-from starplot.projections import CoordinateReferenceSystem, PlateCarree
-from starplot.styles import PlotStyle
+from starplot.projections import (
+    CoordinateReferenceSystem,
+    Equidistant,
+    Orthographic,
+    PlateCarree,
+)
+from starplot.styles import LineStyle, PlotStyle, PolygonStyle
 from starplot.svg.canvas import Canvas, CoordinateSystem
+from starplot.svg.elements import Polygon, Polyline
 from starplot.utils import normalize
 
 LOGGER = logging.getLogger("starplot-test")
@@ -295,3 +301,126 @@ class TestWrappingGeometry:
         view_with_margin = view.buffer(1)
         for p in result:
             assert view_with_margin.contains(p)
+
+
+class TestLine:
+    def _polylines(self, canvas):
+        return [e for _, e in canvas.layout.axes.elements if isinstance(e, Polyline)]
+
+    def test_line_on_non_wrapping_projection_stays_one_segment(self):
+        # GIVEN a canvas using a non-wrapping projection and a simple line
+        canvas = _canvas(Equidistant(), bounds=[10, -40, 80, 40])
+        coords = [(30, -5), (40, -5), (50, 5)]
+
+        # WHEN plotting the line
+        canvas.line(coordinates=coords, style=LineStyle())
+
+        # THEN it renders as a single polyline, with points matching the
+        # projected/display coordinates exactly (no jump-splitting applies)
+        polylines = self._polylines(canvas)
+        assert len(polylines) == 1
+        arr = np.array(coords)
+        px, py = canvas.tx.transform(arr[:, 0], arr[:, 1])
+        dx, dy = canvas._to_display(px, py, cs=CoordinateSystem.PROJECTED)
+        assert polylines[0].points == pytest.approx(list(zip(dx, dy)))
+
+    def test_line_on_wrapping_projection_splits_at_seam(self):
+        # GIVEN a canvas using a wrapping projection and a line crossing RA 0/360
+        canvas = _canvas(PlateCarree(), bounds=[0, -90, 360, 90])
+        coords = [(355, 0), (357, 0), (359, 0), (1, 0), (3, 0), (5, 0)]
+
+        # WHEN plotting the line
+        canvas.line(coordinates=coords, style=LineStyle())
+
+        # THEN it's split into two polylines, one on each side of the seam
+        assert len(self._polylines(canvas)) == 2
+
+    def test_line_drops_points_beyond_the_horizon(self):
+        # GIVEN a canvas using a hemisphere-limited projection (Orthographic)
+        # and a line where the last point is beyond its 90-degree horizon
+        canvas = _canvas(Orthographic(), bounds=[0, -90, 360, 90])
+        coords = [(180, 0), (200, 0), (220, 0), (240, 0), (260, 0), (280, 0)]
+
+        # WHEN plotting the line
+        canvas.line(coordinates=coords, style=LineStyle())
+
+        # THEN the resulting polyline only includes the points within the
+        # horizon, dropping the last (100 degrees from center) point
+        polylines = self._polylines(canvas)
+        assert len(polylines) == 1
+        assert len(polylines[0].points) == len(coords) - 1
+
+    def test_line_entirely_beyond_horizon_renders_nothing(self):
+        # GIVEN a canvas using Orthographic and a line entirely beyond its horizon
+        canvas = _canvas(Orthographic(), bounds=[0, -90, 360, 90])
+        coords = [(0, 0), (5, 0), (10, 0)]
+
+        # WHEN plotting the line
+        canvas.line(coordinates=coords, style=LineStyle())
+
+        # THEN nothing is rendered
+        assert self._polylines(canvas) == []
+
+
+class TestPolygon:
+    def _polygons(self, canvas):
+        return [
+            e
+            for _, e in canvas.layout.axes.elements
+            if isinstance(e, Polygon) and e is not canvas.background_element
+        ]
+
+    def test_polygon_projected_cs_bypasses_wrap_clipping(self):
+        # GIVEN a canvas using a wrapping projection, and a ring that DOES get
+        # split into two pieces when clipped as DATA (RA/DEC) coordinates
+        # straddling the seam (see TestWrappingGeometry)
+        circle_poly = _geometry.circle(center=(0, 0), diameter_degrees=6, num_pts=60)
+        coords = list(circle_poly.exterior.coords)
+
+        canvas_data = _canvas(PlateCarree(), bounds=[0, -90, 360, 90])
+        canvas_data.polygon(coords, PolygonStyle(), cs=CoordinateSystem.DATA)
+
+        canvas_projected = _canvas(PlateCarree(), bounds=[0, -90, 360, 90])
+
+        # WHEN plotting the same ring as already-PROJECTED coordinates instead
+        canvas_projected.polygon(coords, PolygonStyle(), cs=CoordinateSystem.PROJECTED)
+
+        # THEN the DATA version is split into two pieces, but the PROJECTED
+        # version bypasses wrap clipping entirely and stays a single polygon
+        # with every vertex from the input ring intact
+        assert len(self._polygons(canvas_data)) == 2
+        projected_polys = self._polygons(canvas_projected)
+        assert len(projected_polys) == 1
+        assert len(projected_polys[0].points) == len(coords)
+
+    def test_polygon_entirely_beyond_horizon_renders_nothing(self):
+        # GIVEN a canvas using Orthographic and a ring on the far side of the
+        # globe from the projection's center (180 degrees away, fully invisible)
+        canvas = _canvas(Orthographic(), bounds=[0, -90, 360, 90])
+        coords = list(
+            _geometry.circle(
+                center=(0, 0), diameter_degrees=10, num_pts=30
+            ).exterior.coords
+        )
+
+        # WHEN plotting the ring
+        canvas.polygon(coords, PolygonStyle())
+
+        # THEN nothing is rendered
+        assert self._polygons(canvas) == []
+
+    def test_polygon_fully_within_horizon_stays_whole(self):
+        # GIVEN a canvas using Orthographic and a ring centered on the
+        # projection's own center (fully within its 90-degree horizon)
+        canvas = _canvas(Orthographic(), bounds=[0, -90, 360, 90])
+        coords = list(
+            _geometry.circle(
+                center=(180, 0), diameter_degrees=10, num_pts=30
+            ).exterior.coords
+        )
+
+        # WHEN plotting the ring
+        canvas.polygon(coords, PolygonStyle())
+
+        # THEN it renders as a single, unsplit polygon
+        assert len(self._polygons(canvas)) == 1

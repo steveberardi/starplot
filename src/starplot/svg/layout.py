@@ -69,18 +69,6 @@ class LegendRegion(Region):
     margin_x: int = 0
     margin_y: int = 0
 
-    def render(self, x, y) -> Group:
-        if self.is_empty:
-            return None
-
-        x, y = round(x, 2), round(y, 2)
-        sorted_by_z = sorted(self.elements, key=lambda e: e[0])
-        elements = [e for _, e in sorted_by_z]
-        return Group(
-            children=elements,
-            attrs={"transform": f"translate({x}, {y})"},
-        )
-
 
 @dataclass
 class TableRegion(Region):
