@@ -36,8 +36,8 @@ DO NOT run the hash checks unless specifically told to do so
 
 ## Conventions
 - When creating plots for research or investigating an issue:
-    - Put the source code in the `plots/` directory 
-    - Put the output of the final plot in `plots/output/`
+    - Put the source code in the `plots/claude/` directory 
+    - Put the output of the final plot in `plots/claude/output/`
     - Prefer SVG output, unless told otherwise
 - Avoid comments that only describe what the code does. Instead, focus on writing comments that explain _why_ the code does something.
 - When writing tests, avoid mocking things when possible
