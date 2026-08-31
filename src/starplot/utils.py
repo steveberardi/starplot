@@ -200,3 +200,33 @@ def normalize_where(where: list | bool) -> list:
         return []
 
     return where or []
+
+
+def normalize(value: float, min_val: float, max_val: float) -> float:
+    """
+    Normalizes a value to a 0-1 range, relative to a min/max range.
+
+    Args:
+        value: The value to normalize
+        min_val: The minimum of the value's range (maps to 0)
+        max_val: The maximum of the value's range (maps to 1)
+
+    Returns:
+        The normalized value (extrapolates outside 0-1 if value is outside the min/max range)
+    """
+    return (value - min_val) / (max_val - min_val)
+
+
+def lerp(start: float, end: float, t: float) -> float:
+    """
+    Linear interpolation between two numbers.
+
+    Args:
+        start: The starting value
+        end: The ending value
+        t: The interpolation factor (0.0 = start, 1.0 = end)
+
+    Returns:
+        The interpolated value between start and end
+    """
+    return start + (end - start) * t

@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import ClassVar
+from xml.sax.saxutils import escape
 
 from fontTools.pens.svgPathPen import SVGPathPen
 from pydantic_extra_types.color import Color as _Color
@@ -331,7 +332,8 @@ def render(element: Element, indent: int = 0, text_as_path: bool = False) -> str
 
     if element.attrs:
         attrs.update(element.attrs)
-    attr_str = "".join(f' {k}="{v}"' for k, v in attrs.items())
+    quote_map = {'"': "&quot;"}
+    attr_str = "".join(f' {k}="{escape(str(v), quote_map)}"' for k, v in attrs.items())
 
     if not element.children and not isinstance(element, Text):
         return f"{pad}<{element.name}{attr_str} />"
@@ -340,7 +342,7 @@ def render(element: Element, indent: int = 0, text_as_path: bool = False) -> str
         return element.render_as_path()
 
     elif isinstance(element, Text):
-        inner = element.text
+        inner = escape(element.text)
 
     elif element.children:
         children = "\n".join(

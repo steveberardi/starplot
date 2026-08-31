@@ -100,7 +100,6 @@ class Azimuth(BaseModel, ABC):
 
 
 class ProjectionBase(BaseModel, ABC):
-
     name: ClassVar[str] = None
     r: ClassVar[int] = PROJ_R
     units: ClassVar[str] = "m"

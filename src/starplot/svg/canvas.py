@@ -41,6 +41,7 @@ from starplot.svg.elements import (
     create_gradient,
 )
 from starplot.svg.layout import Layout, LegendRegion, Region, TableRegion
+from starplot.utils import lerp, normalize
 
 
 class CoordinateSystem(str, Enum):
@@ -49,25 +50,6 @@ class CoordinateSystem(str, Enum):
     AXES = "axes"
     DISPLAY = "display"
     FIGURE_DISPLAY = "figure_display"
-
-
-def normalize(value, min_val, max_val):
-    return (value - min_val) / (max_val - min_val)
-
-
-def lerp(start: float, end: float, t: float) -> float:
-    """
-    Linear interpolation between two numbers.
-
-    Args:
-        start: The starting value
-        end: The ending value
-        t: The interpolation factor (0.0 = start, 1.0 = end)
-
-    Returns:
-        The interpolated value between start and end
-    """
-    return start + (end - start) * t
 
 
 def gradient_hash(stops, length=8) -> str:
@@ -153,14 +135,15 @@ class Canvas:
 
         x = ax * self.width
         y = (1 - ay) * self.height
-        if self.precision == 0:
-            return x.astype(int), y.astype(int)
 
         if self.invert_x:
             x = self.width - x
 
         if self.invert_y:
             y = self.height - y
+
+        if self.precision == 0:
+            return x.astype(int), y.astype(int)
 
         return np.round(x, self.precision), np.round(y, self.precision)
 

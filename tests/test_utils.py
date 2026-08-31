@@ -84,3 +84,31 @@ def test_bv_to_hex_color(bv, hexcolor):
 )
 def test_azimuth_to_string(az, expected):
     assert utils.azimuth_to_string(az) == expected
+
+
+@pytest.mark.parametrize(
+    "value,min_val,max_val,expected",
+    [
+        (5, 0, 10, 0.5),
+        (0, 0, 10, 0),
+        (10, 0, 10, 1),
+        (-5, 0, 10, -0.5),  # extrapolates below the range
+        (15, 0, 10, 1.5),  # extrapolates above the range
+    ],
+)
+def test_normalize(value, min_val, max_val, expected):
+    assert utils.normalize(value, min_val, max_val) == expected
+
+
+@pytest.mark.parametrize(
+    "start,end,t,expected",
+    [
+        (0, 10, 0, 0),
+        (0, 10, 1, 10),
+        (0, 10, 0.5, 5),
+        (10, 0, 0.5, 5),
+        (0, 10, 1.5, 15),  # extrapolates beyond t=1
+    ],
+)
+def test_lerp(start, end, t, expected):
+    assert utils.lerp(start, end, t) == expected
