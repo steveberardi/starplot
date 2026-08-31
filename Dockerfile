@@ -9,6 +9,9 @@ ENV UV_PROJECT_ENVIRONMENT=/usr/local
 ENV STARPLOT_DATA_PATH=/starplot/data
 ENV PYTHONPATH=/starplot/src/
 
+# Install Cairo (for PNG exports)
+RUN sudo apt update && sudo apt install libcairo2-dev
+
 # Install Chinese font
 # Noto Sans SC -> https://fonts.google.com/noto/specimen/Noto+Sans+SC
 RUN mkdir -p /usr/share/fonts/truetype
