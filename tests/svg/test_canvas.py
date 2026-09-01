@@ -1,4 +1,5 @@
 import logging
+import math
 
 import numpy as np
 import pytest
@@ -12,9 +13,19 @@ from starplot.projections import (
     Orthographic,
     PlateCarree,
 )
-from starplot.styles import LineStyle, PlotStyle, PolygonStyle
+from starplot.styles import (
+    GradientStyle,
+    LegendStyle,
+    LineStyle,
+    MarkerStyle,
+    PlotStyle,
+    PolygonStyle,
+    TableStyle,
+    TitleStyle,
+)
+from starplot.svg import fonts
 from starplot.svg.canvas import Canvas, CoordinateSystem
-from starplot.svg.elements import Polygon, Polyline
+from starplot.svg.elements import Group, Line, Polygon, Polyline, Rectangle
 from starplot.utils import normalize
 
 LOGGER = logging.getLogger("starplot-test")
@@ -424,3 +435,450 @@ class TestPolygon:
 
         # THEN it renders as a single, unsplit polygon
         assert len(self._polygons(canvas)) == 1
+
+
+class TestLegend:
+    def _text_hw(self, text, style):
+        h, w, _ = fonts.get_text_hw(
+            text=text,
+            font_name=style.font_name,
+            font_size=style.font_size,
+            font_weight=style.font_weight,
+            italic=style.font_style == "italic",
+        )
+        return h, w
+
+    def test_legend_single_label_no_title(self):
+        # GIVEN a canvas and a legend style, sized in real font metrics
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        style = LegendStyle()
+        label_h, label_w = self._text_hw("Star", style.labels)
+
+        # WHEN plotting a legend with a single section, no title, one label
+        canvas.legend(sections=[("", {"Star": (MarkerStyle(), None)})], style=style)
+
+        # THEN height/width match the padding + one label row + marker/text,
+        # derived independently from the style's own padding constants
+        expected_height = (
+            style.padding_y * 2
+            + max(style.symbol_size, label_h)
+            + 2 * style.label_padding
+        )
+        expected_width = (
+            label_w + style.symbol_size + style.symbol_padding + style.padding_x * 2
+        )
+        assert canvas.layout.legend.height == pytest.approx(expected_height)
+        assert canvas.layout.legend.width == pytest.approx(expected_width)
+
+    def test_legend_title_adds_two_line_heights_and_extra_padding(self):
+        # GIVEN a canvas and a legend style
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        style = LegendStyle()
+        title_h, title_w = self._text_hw("My Title", style.title)
+        label_h, _ = self._text_hw("Star", style.labels)
+
+        # WHEN plotting a legend with a titled section and one label
+        canvas.legend(
+            sections=[("My Title", {"Star": (MarkerStyle(), None)})], style=style
+        )
+
+        # THEN the title contributes twice its own height plus its own
+        # padding line, on top of the single-label case
+        expected_height = (
+            style.padding_y * 2
+            + 2 * title_h
+            + max(style.symbol_size, label_h)
+            + 3 * style.label_padding
+        )
+        assert canvas.layout.legend.height == pytest.approx(expected_height)
+        # the title can also widen the legend beyond what the label needs
+        assert canvas.layout.legend.width >= title_w
+
+    def test_legend_height_grows_with_each_additional_label(self):
+        # GIVEN two canvases and a legend style
+        canvas_one = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        canvas_two = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        style = LegendStyle()
+
+        # WHEN plotting legends with one vs two labels in the same section
+        canvas_one.legend(sections=[("", {"Star": (MarkerStyle(), None)})], style=style)
+        canvas_two.legend(
+            sections=[
+                (
+                    "",
+                    {
+                        "Star": (MarkerStyle(), None),
+                        "Bright Star": (MarkerStyle(), None),
+                    },
+                )
+            ],
+            style=style,
+        )
+
+        # THEN each extra label adds its own row -- height grows accordingly
+        bright_h, _ = self._text_hw("Bright Star", style.labels)
+        expected_extra = max(style.symbol_size, bright_h) + style.label_padding
+        assert canvas_two.layout.legend.height == pytest.approx(
+            canvas_one.layout.legend.height + expected_extra
+        )
+
+    def test_legend_height_grows_with_each_additional_section(self):
+        # GIVEN two canvases and a legend style
+        canvas_one = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        canvas_two = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        style = LegendStyle()
+
+        # WHEN plotting legends with one vs two untitled sections
+        canvas_one.legend(sections=[("", {"Star": (MarkerStyle(), None)})], style=style)
+        canvas_two.legend(
+            sections=[
+                ("", {"Star": (MarkerStyle(), None)}),
+                ("", {"Star": (MarkerStyle(), None)}),
+            ],
+            style=style,
+        )
+
+        # THEN a second section adds its own full row plus an extra
+        # inter-section padding gap (unlike a same-section extra label)
+        label_h, _ = self._text_hw("Star", style.labels)
+        expected_extra = max(style.symbol_size, label_h) + 2 * style.label_padding
+        assert canvas_two.layout.legend.height == pytest.approx(
+            canvas_one.layout.legend.height + expected_extra
+        )
+
+
+class TestTable:
+    def _cell_width(self, value, style, scale=1.0):
+        _, w, _ = fonts.get_text_hw(
+            text=str(value),
+            font_name=style.font_name,
+            font_size=style.font_size * scale,
+            font_weight=style.font_weight,
+            italic=style.font_style == "italic",
+        )
+        return w
+
+    def test_table_dimensions_match_column_and_row_metrics(self):
+        # GIVEN a canvas, a table style, and a small table of data
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        style = TableStyle()
+        headers = ["Name", "Magnitude"]
+        rows = [["Vega", "0.03"], ["Sirius", "-1.46"]]
+
+        # WHEN plotting the table
+        canvas.table(headers=headers, rows=rows, style=style)
+
+        # THEN each column's width is the widest cell (header or data) in
+        # that column, plus padding on both sides, and the table's overall
+        # height covers the header row plus every data row
+        padding_x, padding_y = 28, 20  # canvas.table()'s own defaults
+        col_widths = [
+            max(
+                self._cell_width(headers[c], style.header),
+                *[self._cell_width(row[c], style.cell) for row in rows],
+            )
+            + padding_x * 2
+            for c in range(len(headers))
+        ]
+        header_height = style.header.font_size + padding_y * 2
+        row_height = style.cell.font_size + padding_y * 2
+        expected_width = sum(col_widths)
+        expected_height = style.padding_top + header_height + row_height * len(rows)
+
+        assert canvas.layout.table.width == pytest.approx(expected_width)
+        assert canvas.layout.table.height == pytest.approx(expected_height)
+
+    def test_table_border_lines_separate_columns_rows_and_header(self):
+        # GIVEN a canvas, a table style, and a table with 2 columns and 3 rows
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        style = TableStyle()
+        headers = ["Name", "Magnitude"]
+        rows = [["Vega", "0.03"], ["Sirius", "-1.46"], ["Rigel", "0.13"]]
+
+        # WHEN plotting the table
+        canvas.table(headers=headers, rows=rows, style=style)
+
+        lines = [e for _, e in canvas.layout.table.elements if isinstance(e, Line)]
+        rects = [e for _, e in canvas.layout.table.elements if isinstance(e, Rectangle)]
+
+        # THEN there's one vertical separator per internal column boundary
+        # (num_cols - 1), one horizontal line under the header, and one more
+        # per internal row boundary (len(rows) - 1) -- but none below the
+        # very last row, since the border rectangle already closes it off
+        assert len(lines) == (len(headers) - 1) + 1 + (len(rows) - 1)
+        vertical = [line for line in lines if line.x1 == line.x2]
+        horizontal = [line for line in lines if line.y1 == line.y2]
+        assert len(vertical) == len(headers) - 1
+        assert len(horizontal) == 1 + (len(rows) - 1)
+
+        # AND a single border rectangle wraps the whole table exactly
+        assert len(rects) == 1
+        border = rects[0]
+        assert border.x == 0
+        assert border.width == pytest.approx(canvas.layout.table.width)
+        assert border.y + border.height == pytest.approx(canvas.layout.table.height)
+
+
+class TestInitBounds:
+    def test_clip_path_constrains_bounds_to_its_own_extent(self):
+        # GIVEN the same projection/bounds, once with a clip_path covering
+        # only part of them, and once without any clip_path
+        clip_path = ShapelyPolygon(
+            [(20, -10), (60, -10), (60, 20), (20, 20), (20, -10)]
+        )
+
+        # WHEN constructing each canvas
+        clipped = _canvas(PlateCarree(), bounds=[10, -40, 80, 40], clip_path=clip_path)
+        unclipped = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+
+        # THEN the clipped canvas's projected bounds are snapped to the clip
+        # path's own (smaller) extent, not the originally requested bounds
+        assert (clipped.maxx - clipped.minx) < (unclipped.maxx - unclipped.minx)
+        assert clipped.bounds == pytest.approx((20, -10, 60, 20), abs=1e-6)
+
+    def test_global_bounds_use_projections_own_global_bounds(self):
+        # GIVEN a canvas whose requested bounds span the whole sky
+        canvas = _canvas(PlateCarree(), bounds=[0, -90, 360, 90])
+
+        # WHEN it initializes its bounds
+        # THEN it's recognized as global, and takes its projected extent
+        # directly from the projection (not by densifying the user's bounds)
+        assert canvas._is_global()
+        assert canvas.projected_bounds == canvas.projection.global_bounds
+        assert canvas.bounds == pytest.approx((1e-7, -90, 359.999999, 90))
+
+    def test_ra_0_360_epsilon_nudge_avoids_degenerate_bounds(self):
+        # GIVEN a (non-global) canvas whose bounds touch RA 0 and 360 exactly
+        # -- a projection singularity for a plain cylindrical projection --
+        # but with a small enough dec span to not trigger the global-bounds
+        # branch above
+        canvas = _canvas(PlateCarree(), bounds=[0, -40, 360, 40])
+
+        # WHEN it initializes its bounds
+        # THEN it's still non-global, and the projected width stays
+        # non-degenerate (a zero-width span here would later divide by zero
+        # in _refresh_figure_dimensions's aspect-ratio math)
+        assert not canvas._is_global()
+        assert canvas.minx != canvas.maxx
+        assert math.isfinite(canvas.minx) and math.isfinite(canvas.maxx)
+
+
+class TestRefreshFigureDimensions:
+    def test_wide_bounds_fill_width_and_derive_height_from_aspect_ratio(self):
+        # GIVEN bounds much wider (in RA) than tall (in DEC)
+        canvas = _canvas(PlateCarree(), bounds=[10, -20, 100, 10])
+        span_x = abs(canvas.maxx - canvas.minx)
+        span_y = abs(canvas.maxy - canvas.miny)
+        assert span_x > span_y  # sanity check on the fixture itself
+
+        # WHEN the canvas computes its figure dimensions
+        # THEN width is set to the full resolution, and height is derived to
+        # preserve the projected aspect ratio
+        assert canvas.width == canvas.resolution
+        assert canvas.height / canvas.width == pytest.approx(span_y / span_x)
+
+    def test_tall_bounds_fill_height_and_derive_width_from_aspect_ratio(self):
+        # GIVEN bounds much taller (in DEC) than wide (in RA)
+        canvas = _canvas(PlateCarree(), bounds=[10, -60, 30, 60])
+        span_x = abs(canvas.maxx - canvas.minx)
+        span_y = abs(canvas.maxy - canvas.miny)
+        assert span_y > span_x  # sanity check on the fixture itself
+
+        # WHEN the canvas computes its figure dimensions
+        # THEN height is set to the full resolution, and width is derived to
+        # preserve the projected aspect ratio
+        assert canvas.height == canvas.resolution
+        assert canvas.width / canvas.height == pytest.approx(span_x / span_y)
+
+
+class TestGroup:
+    def test_group_wraps_its_elements_in_a_single_group(self):
+        # GIVEN a canvas
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        before = len(canvas.layout.axes.elements)
+
+        # WHEN drawing two markers inside a group() context
+        with canvas.group(gid="g1"):
+            canvas.marker(30, 0, MarkerStyle())
+            canvas.marker(40, 0, MarkerStyle())
+
+        # THEN exactly one new element is added -- a single Group containing
+        # both markers, not two separate top-level elements
+        added = canvas.layout.axes.elements[before:]
+        assert len(added) == 1
+        _, group = added[0]
+        assert isinstance(group, Group)
+        assert group.id == "g1"
+        assert len(group.children) == 2
+
+    def test_group_zorder_defaults_to_its_lowest_child_zorder(self):
+        # GIVEN a canvas
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+
+        # WHEN drawing markers with different zorders inside a group with no
+        # explicit zorder of its own
+        with canvas.group():
+            canvas.marker(30, 0, MarkerStyle(zorder=5))
+            canvas.marker(40, 0, MarkerStyle(zorder=2))
+
+        # THEN the group's own zorder is the minimum of its children's
+        group_zorder, _ = canvas.layout.axes.elements[-1]
+        assert group_zorder == 2
+
+    def test_group_explicit_zorder_overrides_the_default(self):
+        # GIVEN a canvas
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+
+        # WHEN drawing a marker inside a group with an explicit zorder
+        with canvas.group(zorder=99):
+            canvas.marker(30, 0, MarkerStyle(zorder=5))
+
+        # THEN the group uses that explicit zorder instead of its child's
+        group_zorder, _ = canvas.layout.axes.elements[-1]
+        assert group_zorder == 99
+
+    def test_nested_groups_combine_into_a_single_outer_group(self):
+        # GIVEN a canvas
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+
+        # WHEN drawing a marker, then nesting another group with its own
+        # marker inside the same outer group
+        with canvas.group(gid="outer"):
+            canvas.marker(30, 0, MarkerStyle())
+            with canvas.group(gid="inner"):
+                canvas.marker(40, 0, MarkerStyle())
+
+        # THEN the outer group has exactly 2 children -- its own marker, and
+        # the inner group as a single nested element (not flattened together)
+        _, outer = canvas.layout.axes.elements[-1]
+        assert len(outer.children) == 2
+        assert isinstance(outer.children[1], Group)
+        assert outer.children[1].id == "inner"
+
+    def test_empty_group_adds_nothing(self):
+        # GIVEN a canvas
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        before = len(canvas.layout.axes.elements)
+
+        # WHEN entering a group context without drawing anything inside it
+        with canvas.group(gid="empty"):
+            pass
+
+        # THEN nothing is added
+        assert len(canvas.layout.axes.elements) == before
+
+
+class TestGetOrCreateGradient:
+    def test_creates_and_registers_a_new_gradient(self):
+        # GIVEN a canvas and a gradient style
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        before = len(canvas.layout.axes.defs)
+
+        # WHEN resolving it for the first time
+        url = canvas._get_or_create_gradient(
+            GradientStyle(stops=((0.0, "#7abfff"), (1.0, "#3f7ee3")))
+        )
+
+        # THEN a new gradient is registered in the axes defs, and the
+        # returned url references it
+        assert len(canvas.layout.axes.defs) == before + 1
+        assert url.startswith("url(#")
+
+    def test_same_content_with_no_id_reuses_the_cached_gradient(self):
+        # GIVEN a canvas and two GradientStyles with identical stops
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        style_a = GradientStyle(stops=((0.0, "#7abfff"), (1.0, "#3f7ee3")))
+        style_b = GradientStyle(stops=((0.0, "#7abfff"), (1.0, "#3f7ee3")))
+
+        # WHEN resolving both, neither with an explicit id
+        url_a = canvas._get_or_create_gradient(style_a)
+        before = len(canvas.layout.axes.defs)
+        url_b = canvas._get_or_create_gradient(style_b)
+
+        # THEN the second resolves to the same (content-hash-based) gradient
+        # instead of creating a duplicate
+        assert url_b == url_a
+        assert len(canvas.layout.axes.defs) == before
+
+    def test_different_content_with_no_id_creates_separate_gradients(self):
+        # GIVEN a canvas and two GradientStyles with different stops
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        before = len(canvas.layout.axes.defs)
+
+        # WHEN resolving both, neither with an explicit id
+        url_a = canvas._get_or_create_gradient(
+            GradientStyle(stops=((0.0, "#7abfff"), (1.0, "#3f7ee3")))
+        )
+        url_b = canvas._get_or_create_gradient(
+            GradientStyle(stops=((0.0, "#000000"), (1.0, "#ffffff")))
+        )
+
+        # THEN they resolve to two distinct gradients
+        assert url_a != url_b
+        assert len(canvas.layout.axes.defs) == before + 2
+
+    def test_explicit_id_reuses_by_id_even_with_different_content(self):
+        # GIVEN a canvas, and two GradientStyles with different stops
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        before = len(canvas.layout.axes.defs)
+        first = GradientStyle(stops=((0.0, "#111111"), (1.0, "#222222")))
+        second = GradientStyle(stops=((0.0, "#999999"), (1.0, "#888888")))
+
+        # WHEN resolving both under the SAME explicit id
+        url_first = canvas._get_or_create_gradient(first, id="bg-gradient")
+        url_second = canvas._get_or_create_gradient(second, id="bg-gradient")
+
+        # THEN the second call reuses whatever was registered under that id
+        # first, ignoring its own (different) content entirely
+        assert url_second == url_first
+        assert len(canvas.layout.axes.defs) == before + 1
+        stored = canvas.layout.axes.defs["bg-gradient"]
+        assert (
+            stored.children[-1].attrs["stop-color"] == "rgb(17,17,17)"
+        )  # from `first`
+
+
+class TestTitle:
+    def test_title_region_dimensions_and_text_position(self):
+        # GIVEN a canvas and a title style
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        style = TitleStyle(font_size=42, padding_bottom=20)
+
+        # WHEN plotting a title
+        canvas.title("My Title", style)
+
+        # THEN the title region's height/width are derived from the style's
+        # own font size/padding and the axes' width
+        region = canvas.layout.title
+        scale = canvas.scale
+        assert region.height == pytest.approx(
+            style.font_size * scale + style.padding_bottom * scale
+        )
+        assert region.width == pytest.approx(canvas.layout.axes.width)
+
+        # AND the text itself is horizontally centered on the axes, anchored
+        # by its own font-size/padding math
+        _, text = region.elements[0]
+        assert text.x == pytest.approx(canvas.layout.axes.width / 2)
+        assert text.y == pytest.approx(
+            style.font_size * scale - style.padding_bottom * scale
+        )
+        assert text.attrs["text-anchor"] == "middle"
+        assert text.text == "My Title"
+
+
+class TestExport:
+    def test_export_svg_writes_valid_svg_file(self, tmp_path):
+        # GIVEN a canvas with something drawn on it
+        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+        canvas.marker(30, 0, MarkerStyle())
+        out_file = tmp_path / "out.svg"
+
+        # WHEN exporting to a svg file
+        canvas.export(str(out_file))
+
+        # THEN it writes a valid SVG document that matches render()
+        content = out_file.read_text()
+        assert content.startswith("<svg")
+        assert content.rstrip().endswith("</svg>")
+        assert content == canvas.render()
