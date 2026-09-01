@@ -5,7 +5,6 @@ import pytest
 from starplot.svg.elements import (
     SVG,
     Circle,
-    Element,
     Group,
     Polygon,
     RadialGradient,
@@ -15,6 +14,7 @@ from starplot.svg.elements import (
     _stop_attrs,
     create_gradient,
 )
+
 
 class TestRenderElements:
     def test_render_self_closing_tag_without_children(self):
@@ -27,7 +27,6 @@ class TestRenderElements:
         # THEN it renders as a self-closing tag
         assert result == '<rect x="1" y="2" height="3" width="4" />'
 
-
     def test_render_includes_id_first(self):
         # GIVEN an element with an id
         el = Rectangle(id="my-rect", x=1, y=2, height=3, width=4)
@@ -37,7 +36,6 @@ class TestRenderElements:
 
         # THEN the id attribute appears first, before the element's own props
         assert result == '<rect id="my-rect" x="1" y="2" height="3" width="4" />'
-
 
     def test_render_omits_none_props(self):
         # GIVEN an element whose optional props (x/y) are left as their None default
@@ -51,7 +49,6 @@ class TestRenderElements:
         assert ' y="' not in out
         assert 'viewBox="0 0 200 100"' in out
 
-
     def test_render_attrs_override_props_and_append_new_keys(self):
         # GIVEN an element whose attrs dict overlaps one prop (x) and adds a new one (fill)
         el = Rectangle(x=1, y=2, height=3, width=4, attrs={"fill": "red", "x": "99"})
@@ -63,7 +60,6 @@ class TestRenderElements:
         #  AND the new key is appended after the props
         assert out == '<rect x="99" y="2" height="3" width="4" fill="red" />'
 
-
     def test_render_uses_render_prop_override(self):
         # GIVEN an element whose prop has a custom render_<prop> method (points)
         el = Polygon(points=[(0, 0), (1, 1), (2, 0)])
@@ -73,7 +69,6 @@ class TestRenderElements:
 
         # THEN the custom renderer is used instead of a plain str() of the prop
         assert result == '<polygon points="0,0 1,1 2,0" />'
-
 
     def test_render_offset_and_percentage_overrides(self):
         # GIVEN a gradient Stop and a RadialGradient, whose props render as percentages
@@ -88,7 +83,6 @@ class TestRenderElements:
         assert stop_out == '<stop offset="25%" stop-color="red" />'
         assert gradient_out == '<radialGradient id="g1" cx="50%" cy="50%" r="50%" />'
 
-
     def test_render_nested_children_are_indented(self):
         # GIVEN a group containing one child element
         child = Rectangle(x=0, y=0, height=1, width=1)
@@ -100,7 +94,6 @@ class TestRenderElements:
         # THEN the child is rendered on its own line, indented one level deeper
         assert result == '<g>\n  <rect x="0" y="0" height="1" width="1" />\n</g>'
 
-
     def test_render_empty_group_is_self_closing(self):
         # GIVEN a group with no children
         group = Group()
@@ -110,7 +103,6 @@ class TestRenderElements:
 
         # THEN it renders as a self-closing tag, just like any other childless element
         assert result == "<g />"
-
 
     def test_render_group_indent_propagates_to_children(self):
         # GIVEN a group with one child, rendered starting at a non-zero indent
@@ -127,13 +119,10 @@ class TestRenderElements:
         assert lines[2] == "    </g>"
 
 
-
-
 class TestRenderText:
     def _first_glyph_x(self, out: str) -> float:
         match = re.search(r"translate\(([\-\d.]+),", out)
         return float(match.group(1))
-
 
     def test_render_text_element_is_not_self_closing(self):
         # GIVEN a Text element with no children
@@ -145,7 +134,6 @@ class TestRenderText:
         # THEN it still renders with an open/close tag pair (never self-closing),
         # with its text as the tag's inner content
         assert result == '<text x="10" y="20" font-size="12">hello</text>'
-
 
     def test_render_escapes_special_characters_in_text_and_attrs(self):
         # GIVEN a Text element whose text and attrs contain XML special characters
@@ -165,7 +153,6 @@ class TestRenderText:
             out == '<text x="10" y="20" data-note="a &quot;quoted&quot; '
             '&amp; &lt;weird&gt; value">M31 &amp; "friends" &lt;great&gt;</text>'
         )
-
 
     def test_render_as_path_produces_path_elements_instead_of_text(self):
         # GIVEN a Text element with font attrs needed to resolve a real font
@@ -189,7 +176,6 @@ class TestRenderText:
         assert "<path" in out
         assert "<text" not in out
         assert 'fill="#000000"' in out
-
 
     def test_render_as_path_multiline_resets_cursor_and_advances_y(self):
         # GIVEN a single-line and an equivalent two-line ("A\nA") Text element
@@ -225,7 +211,6 @@ class TestRenderText:
         # of continuing to advance the cursor rightward
         assert double_out.count("<path") == 2 * single_out.count("<path")
 
-
     def test_render_as_path_stroke_creates_separate_stroke_and_fill_groups(self):
         # GIVEN a Text element with a stroke set
         el = Text(
@@ -251,7 +236,6 @@ class TestRenderText:
         assert 'id="label-stroke"' in out
         assert 'id="label-fill"' in out
 
-
     def test_render_as_path_default_and_start_anchor_start_at_x(self):
         # GIVEN Text elements with no text-anchor set, and with text-anchor="start"
         attrs = {
@@ -261,7 +245,9 @@ class TestRenderText:
             "font-size": "24",
         }
         default_el = Text(x=100, y=0, text="AAAA", attrs=attrs)
-        start_el = Text(x=100, y=0, text="AAAA", attrs={**attrs, "text-anchor": "start"})
+        start_el = Text(
+            x=100, y=0, text="AAAA", attrs={**attrs, "text-anchor": "start"}
+        )
 
         # WHEN rendering both with text_as_path=True
         default_out = default_el.render(text_as_path=True)
@@ -270,7 +256,6 @@ class TestRenderText:
         # THEN both place the first glyph exactly at the Text's own x, unshifted
         assert self._first_glyph_x(default_out) == 100
         assert self._first_glyph_x(start_out) == 100
-
 
     def test_render_as_path_middle_anchor_centers_between_start_and_end(self):
         # GIVEN Text elements identical except for text-anchor (start/middle/end)
@@ -318,7 +303,6 @@ class TestRenderGradient:
             "rgb(63,126,227)",
         ]
 
-
     def test_create_gradient_radial_reverses_stop_order(self):
         # GIVEN the same set of color stops
         stops = ((0.0, "#7abfff"), (0.5, "#568feb"), (1.0, "#3f7ee3"))
@@ -336,7 +320,6 @@ class TestRenderGradient:
             "rgb(122,191,255)",
         ]
 
-
     def test_stop_attrs_splits_alpha_into_stop_opacity(self):
         # GIVEN an 8-digit hex color with a translucent alpha channel
         # WHEN building its stop attrs
@@ -346,7 +329,6 @@ class TestRenderGradient:
         # (cairosvg silently ignores alpha packed into an 8-digit hex stop-color)
         assert attrs["stop-color"] == "rgb(122,191,255)"
         assert attrs["stop-opacity"] == pytest.approx(128 / 255, abs=1e-3)
-
 
     def test_stop_attrs_omits_stop_opacity_when_fully_opaque(self):
         # GIVEN a fully opaque color, as a 6-digit hex and as an 8-digit hex with ff alpha
