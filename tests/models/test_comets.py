@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 from zoneinfo import ZoneInfo
 
@@ -6,7 +7,8 @@ import pytest
 
 from starplot import Comet, Observer
 
-from .utils import TEST_DATA_PATH
+TEST_DATA_PATH = Path(__file__).resolve().parent.parent / "data"
+
 
 TZ_PT = ZoneInfo("America/Los_Angeles")
 
