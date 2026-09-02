@@ -5,6 +5,7 @@ import time
 import traceback
 from pathlib import Path
 
+import galaxy_checks
 import horizon_checks
 import imagehash
 import map_checks
@@ -170,6 +171,7 @@ if __name__ == "__main__":
     callables += Hashio.find_functions(zenith_checks)
     callables += Hashio.find_functions(optic_checks)
     callables += Hashio.find_functions(horizon_checks)
+    callables += Hashio.find_functions(galaxy_checks)
 
     h = Hashio(callables=callables)
 

@@ -1,4 +1,4 @@
-from starplot import _, GalaxyPlot, DSO
+from starplot import _, GalaxyPlot
 from starplot.styles import PlotStyle, extensions
 
 
@@ -11,11 +11,11 @@ style = PlotStyle().extend(
 p = GalaxyPlot(
     style=style,
     resolution=2000,
-    scale=0.56,
+    scale=0.48,
 )
 p.gridlines()
 
-p.galactic_equator(num_labels=2)
+p.galactic_equator(num_labels=1)
 p.celestial_equator(num_labels=2)
 p.ecliptic(num_labels=2)
 

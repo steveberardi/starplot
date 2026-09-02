@@ -110,19 +110,6 @@ def size_by_magnitude(star: Star) -> float:
     return size
 
 
-def size_by_magnitude_simple(star: Star) -> float:
-    """Very simple sizer by magnitude for map plots"""
-    m = star.magnitude
-    if m < 1.6:
-        return (9 - m) ** 2.85
-    elif m < 4.6:
-        return (8 - m) ** 2.92
-    elif m < 5.8:
-        return (9 - m) ** 2.46
-
-    return 2.23
-
-
 def size_by_magnitude_for_optic(star: Star) -> float:
     """Very simple sizer by magnitude for optic plots"""
     m = star.magnitude

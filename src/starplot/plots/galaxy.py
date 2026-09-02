@@ -76,7 +76,7 @@ class GalaxyPlot(
         point_label_handler: CollisionHandler = None,
         area_label_handler: CollisionHandler = None,
         path_label_handler: CollisionHandler = None,
-        scale: float = 0.32,
+        scale: float = 0.8,
         autoscale: bool = False,
         suppress_warnings: bool = True,
         *args,
