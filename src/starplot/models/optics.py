@@ -26,9 +26,6 @@ class Optic(BaseModel, ABC):
     def polygon(self, center_x, center_y):
         pass
 
-    def transform(self, axis) -> None:
-        pass
-
     @abstractmethod
     def in_bounds(self, x, y, scale: float = 1) -> bool:
         pass
@@ -127,9 +124,6 @@ class Refractor(Scope):
     def label(self):
         return "Refractor"
 
-    def transform(self, axis) -> None:
-        axis.invert_xaxis()
-
 
 class Reflector(Scope):
     """Creates a new Reflector Telescope optic
@@ -155,10 +149,6 @@ class Reflector(Scope):
     @property
     def label(self):
         return "Reflector"
-
-    def transform(self, axis) -> None:
-        axis.invert_xaxis()
-        axis.invert_yaxis()
 
 
 class Binoculars(Optic):
