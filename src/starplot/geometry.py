@@ -40,6 +40,28 @@ def away_from_poles(dec):
     return dec
 
 
+def _unwrap_lons(lons: list) -> list:
+    """
+    Corrects for pyproj's Geod.fwd() always returning longitude normalized to
+    (-180, 180]. For a shape whose points are generated in angular order
+    (e.g. sweeping around its center), this seam is invisible except when the
+    shape happens to sit near the antimeridian (raw longitude +/-180) --
+    there, adjacent points that are actually close together on the sphere can
+    come back on opposite sides of the seam (e.g. 179.5 and -179.5), which
+    would otherwise register as a fake ~360-degree jump.
+
+    Unwraps each point relative to the previous one so the sequence stays
+    continuous, regardless of where in the 0-360 longitude range the shape sits.
+    """
+    lons = list(lons)
+    for i in range(1, len(lons)):
+        while lons[i] - lons[i - 1] > 180:
+            lons[i] -= 360
+        while lons[i] - lons[i - 1] < -180:
+            lons[i] += 360
+    return lons
+
+
 def rectangle(
     center: tuple,
     height_degrees: float,
@@ -85,6 +107,7 @@ def rectangle(
         ],
         [distance] * 4,
     )
+    lons = _unwrap_lons(lons)
     if min(lons) < 0:
         lons = [lon + 360 for lon in lons]
 
@@ -142,6 +165,7 @@ def ellipse(
         lons.append(lon[0])
         lats.append(lat[0])
 
+    lons = _unwrap_lons(lons)
     if min(lons) < 0:
         lons = [lon + 360 for lon in lons]
 

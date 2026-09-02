@@ -1,8 +1,8 @@
 galaxy_base:
-  dhash: f0c4aa5894b2c4f0f0c4aad894b2c4f0f0c4aad8d4b2ccf0
+  dhash: f0cc92d994b2c8f0f0cc92d894b2c4f0f0c4bad994b2ccf0
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/galaxy-base.png
-  phash: 91434eb41b5b6b9c
+  phash: 91434eb49b5b699c
 horizon_base:
   dhash: 8e86928a8eca8e0d8a86928a8eca8e0d8a86d68e8e8a8d0d
   exception: null
@@ -204,7 +204,7 @@ zenith_base:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/zenith-base.png
   phash: 90d50b556b37685e
 zenith_chinese:
-  dhash: 86077379e4aac8718607617964aac8710607e2b8a682cc71
+  dhash: 86077379e4aac8718607617964aac8710607e2b8a692cc71
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/zenith-chinese.png
   phash: c52ecba43ed22987
