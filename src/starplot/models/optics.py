@@ -19,16 +19,6 @@ class Optic(BaseModel, ABC):
 
     @property
     @abstractmethod
-    def xlim(self):
-        pass
-
-    @property
-    @abstractmethod
-    def ylim(self):
-        pass
-
-    @property
-    @abstractmethod
     def label(self):
         return "Abstract Optic"
 
@@ -97,14 +87,6 @@ class Scope(Optic):
 
     def __str__(self):
         return f"{self.focal_length:.0f}mm w/ {self.eyepiece_focal_length:.0f}mm ({self.magnification:.0f}x) @  {self.eyepiece_fov:.0f}\N{DEGREE SIGN} = {self.true_fov:.2f}\N{DEGREE SIGN} TFOV"
-
-    @property
-    def xlim(self):
-        return self.radius
-
-    @property
-    def ylim(self):
-        return self.radius
 
     @property
     def label(self):
@@ -212,14 +194,6 @@ class Binoculars(Optic):
         return f"{self.magnification:.0f}x @ {self.fov:.0f}\N{DEGREE SIGN} = {self.true_fov}\N{DEGREE SIGN}"
 
     @property
-    def xlim(self):
-        return self.radius
-
-    @property
-    def ylim(self):
-        return self.radius
-
-    @property
     def label(self):
         return "Binoculars"
 
@@ -304,20 +278,6 @@ class Camera(Optic):
 
     def __str__(self):
         return f"{self.sensor_width}x{self.sensor_height} w/ {self.lens_focal_length:.0f}mm lens = {self.true_fov_x:.2f}\N{DEGREE SIGN} x {self.true_fov_y:.2f}\N{DEGREE SIGN}"
-
-    @property
-    def xlim(self):
-        x_offset = self.radius_x * self.rotation / 180
-        if self.rotation:
-            x_offset *= 1.1
-        return self.radius_x + x_offset
-
-    @property
-    def ylim(self):
-        y_offset = self.radius_y * math.sin(math.radians(self.rotation))
-        if self.rotation:
-            y_offset *= 1.2
-        return self.radius_y + y_offset
 
     @property
     def label(self):

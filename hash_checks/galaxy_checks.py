@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from starplot import GalaxyPlot, styles, _
+from starplot import GalaxyPlot, _, styles
 
 HERE = Path(__file__).resolve().parent
 DATA_PATH = HERE / "data"
