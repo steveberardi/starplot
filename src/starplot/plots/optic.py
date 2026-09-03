@@ -278,19 +278,17 @@ class OpticPlot(
             "Observer Date/Time",
             f"Optic - {self.optic.label}",
         ]
-        rows = [[
-            f"{self.pos_alt:.0f}\N{DEGREE SIGN} / {self.pos_az:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az)})",
-            f"{(self.ra / 15):.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
-            f"{self.observer.lat:.2f}\N{DEGREE SIGN}, {self.observer.lon:.2f}\N{DEGREE SIGN}",
-            dt_str,
-            str(self.optic),
-        ]]
+        rows = [
+            [
+                f"{self.pos_alt:.0f}\N{DEGREE SIGN} / {self.pos_az:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az)})",
+                f"{(self.ra / 15):.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
+                f"{self.observer.lat:.2f}\N{DEGREE SIGN}, {self.observer.lon:.2f}\N{DEGREE SIGN}",
+                dt_str,
+                str(self.optic),
+            ]
+        ]
 
-        self.canvas.table(
-            headers=headers,
-            rows=rows,
-            style=style
-        )
+        self.canvas.table(headers=headers, rows=rows, style=style)
 
     @profile
     @use_style(ObjectStyle, "star")
@@ -335,7 +333,6 @@ class OpticPlot(
 
         size_fn_default = lambda s: size_by_magnitude(s) * optic_star_multiplier * 0.5
         size_fn = size_fn or size_fn_default
-
 
         super().stars(
             where=where,

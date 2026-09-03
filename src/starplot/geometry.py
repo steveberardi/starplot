@@ -10,16 +10,6 @@ from shapely.geometry import LineString, Point, Polygon
 
 from starplot.constants import PROJ_R
 
-GLOBAL_EXTENT = Polygon(
-    [
-        [0, -90],
-        [360, -90],
-        [360, 90],
-        [0, 90],
-        [0, -90],
-    ]
-)
-
 GEOD = pyproj.Geod(f"+a={PROJ_R} +f=0.0", sphere=True)
 
 
@@ -258,35 +248,6 @@ def split_polygon_at_zero(polygon: Polygon) -> list[Polygon]:
         return [polygon_1, Polygon(list(zip(p2_new_ra, p2_dec)))]
 
     return [polygon]
-
-
-def normalize_to_360(polygon: Polygon) -> Polygon:
-    """
-    If the provided polygon has coordinates with large jumps from < 100 to > 300,
-    then it likely crosses the 0-point. This function will add 360 to all X coords
-    under 100 and return the result.
-    """
-
-    ra, dec = [p for p in polygon.exterior.coords.xy]
-
-    if min(ra) < 100 and max(ra) > 300:
-        new_ra = [r + 360 if r < 100 else r for r in ra]
-        return Polygon(list(zip(new_ra, dec)))
-
-    return polygon
-
-
-def restrict_to_360(polygon: Polygon) -> Polygon:
-    """
-    If the polygon has a max RA over 360, then subtract 360 from all RA coordinates.
-    """
-    ra, dec = [p for p in polygon.exterior.coords.xy]
-
-    if max(ra) > 360:
-        new_ra = [r - 360 for r in ra]
-        return Polygon(list(zip(new_ra, dec)))
-
-    return polygon
 
 
 def split_line_at_meridian(p1, p2, meridian=360):
@@ -633,31 +594,6 @@ def split_ring_at_horizon(
     start = (cut_after[0] + 1) % n
     rotated = [pts[(start + k) % n] for k in range(n)]
     return split_line_at_horizon(rotated, center, max_angular_distance)
-
-
-def extent_polygon(
-    min_x: float,
-    max_x: float,
-    min_y: float,
-    max_y: float,
-    n: int = 100,
-) -> np.ndarray:
-    """
-    Build a polygon around an extent by sampling n points along each edge.
-    Returns an (4n, 2) array of (x, y) coordinates in order:
-    bottom → right → top → left
-    """
-    xs_bottom = np.linspace(min_x, max_x, n)
-    xs_top = np.linspace(max_x, min_x, n)  # reversed to close polygon CCW
-    ys_left = np.linspace(min_y, max_y, n)
-    ys_right = np.linspace(max_y, min_y, n)  # reversed
-
-    bottom = np.column_stack([xs_bottom, np.full(n, min_y)])
-    right = np.column_stack([np.full(n, max_x), ys_left])
-    top = np.column_stack([xs_top, np.full(n, max_y)])
-    left = np.column_stack([np.full(n, min_x), ys_right])
-
-    return np.vstack([bottom, right, top, left])
 
 
 # class BaseGeometry:

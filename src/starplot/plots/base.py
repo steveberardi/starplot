@@ -26,7 +26,13 @@ from starplot.styles import (
     PolygonStyle,
     AnchorPoint,
 )
-from starplot.projections import ProjectionBase, CoordinateReferenceSystem, StereoNorth, StereoSouth, Gnomonic
+from starplot.projections import (
+    ProjectionBase,
+    CoordinateReferenceSystem,
+    StereoNorth,
+    StereoSouth,
+    Gnomonic,
+)
 from starplot.plotters import StarPlotterMixin
 from starplot.plotters.text import CollisionHandler
 from starplot.styles.helpers import use_style
@@ -223,7 +229,6 @@ class BasePlot(StarPlotterMixin, ABC):
         self.logger.debug("Exporting...")
         self.canvas.export(filename, text_as_path=text_as_path, scale=scale)
 
-
     @use_style(TitleStyle, "title")
     def title(self, text: str, style: TitleStyle = None):
         """
@@ -342,7 +347,7 @@ class BasePlot(StarPlotterMixin, ABC):
             prepared_coords = [self._prepare_coords(*p) for p in coords]
 
         collision_handler = collision_handler or self.path_label_handler
-        
+
         self.canvas.line(
             style=style.line,
             coordinates=prepared_coords,
@@ -360,7 +365,6 @@ class BasePlot(StarPlotterMixin, ABC):
                 collision_handler=collision_handler,
             )
 
-    
     def _polygon(self, points: list, style: PolygonStyle):
         points = self._prepare_coords_many(points)
         self.canvas.polygon(points, style)
@@ -912,11 +916,10 @@ class BasePlot(StarPlotterMixin, ABC):
                 # gid="celestial-equator",
             )
 
-
     @use_style(PolygonStyle, "tissot")
     def tissot(self, radius: int = 4, style: PolygonStyle = None, gid: str = "tissot"):
         """
-        Draws a [Tissot indicatrix](https://en.wikipedia.org/wiki/Tissot's_indicatrix), 
+        Draws a [Tissot indicatrix](https://en.wikipedia.org/wiki/Tissot's_indicatrix),
         which helps illustrate the distortion of a projection.
 
         Args:
@@ -926,7 +929,11 @@ class BasePlot(StarPlotterMixin, ABC):
         """
 
         with self.canvas.group(gid=gid):
-            ra_start = 45 if not isinstance(self.projection, (StereoNorth, StereoSouth, Gnomonic)) else 0
+            ra_start = (
+                45
+                if not isinstance(self.projection, (StereoNorth, StereoSouth, Gnomonic))
+                else 0
+            )
             for ra in range(ra_start, 360, 45):
                 for dec in range(-80, 90, 20):
                     self.circle(

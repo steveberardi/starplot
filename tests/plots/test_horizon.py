@@ -8,7 +8,6 @@ from starplot.svg.elements import Polyline
 
 
 class TestGenerateGroundPolygon:
-
     def test_raises_when_azimuth_end_not_greater_than_start(self):
         with pytest.raises(
             ValueError, match="azimuth_end must be greater than azimuth_start"

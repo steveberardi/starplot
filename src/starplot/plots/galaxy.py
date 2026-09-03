@@ -258,17 +258,19 @@ class GalaxyPlot(
             tick_step: Step size for tick marks
         """
 
-        lon_formatter_fn_default = lambda r: f"{math.floor(r/15)}h"  # noqa: E731
+        lon_formatter_fn_default = lambda r: f"{math.floor(r / 15)}h"  # noqa: E731
         lat_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
 
         _lon_formatter_fn = lon_formatter_fn or lon_formatter_fn_default
         _lat_formatter_fn = lat_formatter_fn or lat_formatter_fn_default
 
         x_locations = lon_locations or [
-            x for x in range(0, 360, 15)  # if self.ra_min <= x <= self.ra_max
+            x
+            for x in range(0, 360, 15)  # if self.ra_min <= x <= self.ra_max
         ]
         y_locations = lat_locations or [
-            y for y in range(-80, 90, 10)  # if self.dec_min <= y <= self.dec_max
+            y
+            for y in range(-80, 90, 10)  # if self.dec_min <= y <= self.dec_max
         ]
 
         for x in x_locations:

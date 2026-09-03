@@ -82,7 +82,7 @@ class TestCLI:
         cli.setup([])
 
         assert expected_url in _urls_called(fonts_dl)
-        
+
     @pytest.mark.parametrize(
         "expected_url",
         [

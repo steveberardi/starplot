@@ -140,8 +140,8 @@ class ZenithPlot(MapPlot):
         dec_locations: list[float] = None,
     ):
         """
-        Plots gridlines. 
-        
+        Plots gridlines.
+
         _Gridline labels are not yet supported for zenith plots._
 
         Args:
@@ -156,7 +156,6 @@ class ZenithPlot(MapPlot):
             ra_locations=ra_locations,
             dec_locations=dec_locations,
         )
-
 
     def _adjust_radec_minmax(self):
         _, dec_min, _, dec_max = self.canvas.bounds

@@ -44,6 +44,7 @@ RECOMMENDED_FONTS = {
     },
 }
 
+
 def get_font_paths() -> list[Path]:
     paths = []
 

@@ -388,7 +388,7 @@ class HorizonPlot(
             min_altitude: Minimum altitude of the ground to generate, in degrees.
             max_altitude: Maximum altitude of the ground to generate, in degrees.
             style: Style of the ground.
-            
+
         """
         coords = generate_ground_polygon(
             min_altitude=min_altitude,
@@ -403,7 +403,7 @@ class HorizonPlot(
 
         self._ground_rtree = rtree.index.Index()
         self._ground_rtree.insert(0, bbox)
-        
+
         self.canvas.polygon(
             coordinates=coords,
             style=style,

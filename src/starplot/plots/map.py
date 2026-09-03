@@ -415,8 +415,8 @@ class MapPlot(
                 coords = geometry.line_segment(
                     (ra, meridian_dec_min), (ra, meridian_dec_max), 0.5
                 )
-                self.line(coordinates=coords,style=style)
-                
+                self.line(coordinates=coords, style=style)
+
                 if labels:
                     _labels.append((coords, ra_formatter_fn(ra), ("top", "bottom")))
 
@@ -428,7 +428,7 @@ class MapPlot(
                 #     maxx = self.projection.edge_x - 0.00001
                 #     coords = geometry.line_segment((minx, dec), (maxx, dec), 0.5)
                 coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
-                self.line(coordinates=coords,style=style)
+                self.line(coordinates=coords, style=style)
 
                 if labels:
                     _labels.append((coords, dec_formatter_fn(dec), ("left", "right")))
