@@ -1,17 +1,17 @@
 from starplot import geometry
 from starplot.coordinates import CoordinateSystem
 from starplot.data.translations import translate
-from starplot.plots.map import MapPlot
 from starplot.models.observer import Observer
+from starplot.plots.map import MapPlot
+from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
 from starplot.projections import Stereographic
 from starplot.styles import (
-    PlotStyle,
     PathStyle,
+    PlotStyle,
     extensions,
 )
 from starplot.styles.helpers import use_style
-from starplot.plotters.text import CollisionHandler
-from starplot.profile import profile
 
 
 class ZenithPlot(MapPlot):
@@ -82,7 +82,6 @@ class ZenithPlot(MapPlot):
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
-            *args,
             **kwargs,
         )
 
@@ -91,15 +90,16 @@ class ZenithPlot(MapPlot):
     def horizon(
         self,
         style: PathStyle = None,
-        labels: list = ["N", "E", "S", "W"],
+        labels: list | None = None,
     ):
         """
         Plots the horizon for the observer of the plot
 
         Args:
             style: Style of the horizon path. If None, then the plot's style definition will be used.
-            labels: List of labels for cardinal directions. **NOTE: labels should be in the order: North, East, South, West.**
+            labels: List of labels for cardinal directions. Default: `["N", "E", "S", "W"]`. **NOTE: labels should be in the order: North, East, South, West.**
         """
+        labels = ["N", "E", "S", "W"] if labels is None else labels
         if self.observer is None:
             raise ValueError("observer is required for plotting the horizon")
 

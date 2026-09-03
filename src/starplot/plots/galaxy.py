@@ -1,36 +1,37 @@
+import math
+from collections.abc import Callable
 from functools import cache
-from typing import Callable
 
-import pandas as pd
-import numpy as np
 import astropy.units as u
+import numpy as np
+import pandas as pd
 from astropy.coordinates import SkyCoord
 from skyfield.api import Star as SkyfieldStar
 from skyfield.framelib import galactic_frame
 
 from starplot import geometry
 from starplot.coordinates import CoordinateSystem
-from starplot.plots.base import BasePlot
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
+from starplot.plots.base import BasePlot
 from starplot.plotters import (
-    ConstellationPlotterMixin,
-    StarPlotterMixin,
-    DsoPlotterMixin,
-    MilkyWayPlotterMixin,
-    LegendPlotterMixin,
     ArrowPlotterMixin,
+    ConstellationPlotterMixin,
+    DsoPlotterMixin,
+    LegendPlotterMixin,
+    MilkyWayPlotterMixin,
+    StarPlotterMixin,
     TextPlotterMixin,
 )
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
+from starplot.projections import CoordinateReferenceSystem, Mollweide
 from starplot.styles import (
+    PathStyle,
     PlotStyle,
     extensions,
     use_style,
-    PathStyle,
 )
-from starplot.projections import Mollweide, Miller, CoordinateReferenceSystem
-from starplot.profile import profile
 
 
 class GalaxyPlot(
@@ -111,7 +112,6 @@ class GalaxyPlot(
             invert_y=False,
             clip_path=None,
             crs=CoordinateReferenceSystem.WNU,
-            *args,
             **kwargs,
         )
 
@@ -213,7 +213,7 @@ class GalaxyPlot(
             num_labels: Max number of labels to plot along the line
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the plot's `path_label_handler` will be used.
         """
-        lons = np.array([ra for ra in range(0, 361)])  # galactic longitudes
+        lons = np.array([ra for ra in range(361)])  # galactic longitudes
         lats = np.array([0] * 361)  # galactic latitudes
 
         coords = SkyCoord(l=lons * u.deg, b=lats * u.deg, frame="galactic")
@@ -236,7 +236,6 @@ class GalaxyPlot(
     def gridlines(
         self,
         style: PathStyle = None,
-        show_labels: list = ["left", "right", "bottom"],
         lon_locations: list[float] = None,
         lat_locations: list[float] = None,
         lon_formatter_fn: Callable[[float], str] = None,
@@ -258,8 +257,8 @@ class GalaxyPlot(
             tick_step: Step size for tick marks
         """
 
-        lon_formatter_fn_default = lambda r: f"{math.floor(r / 15)}h"  # noqa: E731
-        lat_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
+        lon_formatter_fn_default = lambda r: f"{math.floor(r / 15)}h"
+        lat_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "
 
         _lon_formatter_fn = lon_formatter_fn or lon_formatter_fn_default
         _lat_formatter_fn = lat_formatter_fn or lat_formatter_fn_default
@@ -294,54 +293,3 @@ class GalaxyPlot(
             )
 
         # TODO : labels, tick marks
-
-        return
-
-        lon_formatter_fn_default = lambda lon: f"{round(lon)}\u00b0 "  # noqa: E731
-        lat_formatter_fn_default = lambda lat: f"{round(lat)}\u00b0 "  # noqa: E731
-
-        lon_formatter_fn = lon_formatter_fn or lon_formatter_fn_default
-        lat_formatter_fn = lat_formatter_fn or lat_formatter_fn_default
-
-        def lon_formatter(x, pos) -> str:
-            if x < 0:
-                x += 360
-            return lon_formatter_fn(x)
-
-        def lat_formatter(x, pos) -> str:
-            return lat_formatter_fn(x)
-
-        x_locations = (
-            lon_locations
-            if lon_locations is not None
-            else [x for x in range(0, 360, 15)]
-        )
-        x_locations = [x - 180 for x in x_locations]
-        y_locations = (
-            lat_locations
-            if lat_locations is not None
-            else [y for y in range(-90, 90, 10)]
-        )
-
-        label_style_kwargs = style.label.matplot_kwargs(self.scale)
-        label_style_kwargs.pop("va")
-        label_style_kwargs.pop("ha")
-
-        line_style_kwargs = style.line.matplot_kwargs(self.scale)
-        gridlines = self.ax.gridlines(
-            draw_labels=show_labels,
-            x_inline=inline,
-            y_inline=inline,
-            rotate_labels=False,
-            # xpadding=12,
-            # ypadding=12,
-            gid="gridlines",
-            xlocs=FixedLocator(x_locations),
-            xformatter=FuncFormatter(lon_formatter),
-            xlabel_style=label_style_kwargs,
-            ylocs=FixedLocator(y_locations),
-            ylabel_style=label_style_kwargs,
-            yformatter=FuncFormatter(lat_formatter),
-            **line_style_kwargs,
-        )
-        gridlines.set_zorder(style.line.zorder)

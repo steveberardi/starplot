@@ -1,42 +1,39 @@
-from abc import ABC, abstractmethod
-from typing import Dict, Union, Optional
 import logging
+from abc import ABC, abstractmethod
 
 import numpy as np
-
+from shapely import LineString, Polygon
 from shapely.geometry import box
-from shapely import Polygon, LineString
 
-from starplot import models
 from starplot import geometry as _geometry
-from starplot.config import settings as StarplotSettings, SvgTextType
-from starplot.data import load, ecliptic
+from starplot import models
+from starplot.config import SvgTextType
+from starplot.config import settings as StarplotSettings
+from starplot.data import ecliptic, load
 from starplot.data.translations import translate
-from starplot.models.planet import PlanetName, PLANET_LABELS_DEFAULT
 from starplot.models.moon import MoonPhase
-from starplot.models.optics import Optic, Camera
 from starplot.models.observer import Observer
-from starplot.styles import (
-    PlotStyle,
-    MarkerStyle,
-    ObjectStyle,
-    LabelStyle,
-    TitleStyle,
-    PathStyle,
-    PolygonStyle,
-    AnchorPoint,
-)
-from starplot.projections import (
-    ProjectionBase,
-    CoordinateReferenceSystem,
-    StereoNorth,
-    StereoSouth,
-    Gnomonic,
-)
+from starplot.models.optics import Camera, Optic
+from starplot.models.planet import PLANET_LABELS_DEFAULT, PlanetName
 from starplot.plotters import StarPlotterMixin
 from starplot.plotters.text import CollisionHandler
-from starplot.styles.helpers import use_style
 from starplot.profile import profile
+from starplot.projections import (
+    CoordinateReferenceSystem,
+    Gnomonic,
+    ProjectionBase,
+    StereoNorth,
+    StereoSouth,
+)
+from starplot.styles import (
+    AnchorPoint,
+    ObjectStyle,
+    PathStyle,
+    PlotStyle,
+    PolygonStyle,
+    TitleStyle,
+)
+from starplot.styles.helpers import use_style
 from starplot.svg.canvas import Canvas, CoordinateSystem
 
 LOGGER = logging.getLogger("starplot")
@@ -245,8 +242,8 @@ class BasePlot(StarPlotterMixin, ABC):
         self,
         ra: float,
         dec: float,
-        style: Union[dict, ObjectStyle],
-        label: Optional[str] = None,
+        style: dict | ObjectStyle,
+        label: str | None = None,
         legend_label: str = None,
         skip_bounds_check: bool = False,
         collision_handler: CollisionHandler = None,
@@ -522,7 +519,7 @@ class BasePlot(StarPlotterMixin, ABC):
         self,
         style: ObjectStyle = None,
         true_size: bool = False,
-        labels: Dict[PlanetName, str] = PLANET_LABELS_DEFAULT,
+        labels: dict[PlanetName, str] = PLANET_LABELS_DEFAULT,
         legend_label: str = "Planet",
         collision_handler: CollisionHandler = None,
         gid: str = "planets",
@@ -905,7 +902,7 @@ class BasePlot(StarPlotterMixin, ABC):
             gid: Group id for this layer in the exported SVG
         """
         label = translate(label, self.language)
-        coords = [(ra, 0) for ra in range(0, 361)]
+        coords = [(ra, 0) for ra in range(361)]
         with self.canvas.group(gid=gid):
             self.line(
                 style=style,

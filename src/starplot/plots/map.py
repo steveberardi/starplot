@@ -1,5 +1,5 @@
 import math
-from typing import Callable
+from collections.abc import Callable
 from functools import cache
 
 from shapely import Polygon
@@ -8,32 +8,32 @@ from skyfield.api import wgs84
 from starplot import geometry
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
-from starplot.projections import (
-    StereoNorth,
-    StereoSouth,
-    Stereographic,
-    ProjectionBase,
-    CoordinateReferenceSystem,
-)
-from starplot.styles import (
-    ObjectStyle,
-    PlotStyle,
-    PathStyle,
-    extensions,
-    LineStyle,
-)
-from starplot.profile import profile
-from starplot.styles.helpers import use_style
 from starplot.plots.base import BasePlot
 from starplot.plotters import (
-    ConstellationPlotterMixin,
-    MilkyWayPlotterMixin,
     ArrowPlotterMixin,
+    ConstellationPlotterMixin,
     DsoPlotterMixin,
-    TextPlotterMixin,
     LegendPlotterMixin,
+    MilkyWayPlotterMixin,
+    TextPlotterMixin,
 )
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
+from starplot.projections import (
+    CoordinateReferenceSystem,
+    ProjectionBase,
+    Stereographic,
+    StereoNorth,
+    StereoSouth,
+)
+from starplot.styles import (
+    LineStyle,
+    ObjectStyle,
+    PathStyle,
+    PlotStyle,
+    extensions,
+)
+from starplot.styles.helpers import use_style
 
 
 class MapPlot(
@@ -131,7 +131,6 @@ class MapPlot(
             invert_y=False,
             clip_path=clip_path,
             crs=CoordinateReferenceSystem.WNU,
-            *args,
             **kwargs,
         )
 
@@ -286,15 +285,17 @@ class MapPlot(
     def horizon(
         self,
         style: PathStyle = None,
-        labels: list = ["N", "E", "S", "W"],
+        labels: list | None = None,
     ):
         """
         Draws a [great circle](https://en.wikipedia.org/wiki/Great_circle) representing the horizon for the given `lat`, `lon` at time `dt` (so you must define these when creating the plot to use this function)
 
         Args:
             style: Style of the horizon path. If None, then the plot's style definition will be used.
-            labels: List of labels for cardinal directions. **NOTE: labels should be in the order: North, East, South, West.**
+            labels: List of labels for cardinal directions. Default: `["N", "E", "S", "W"]`. **NOTE: labels should be in the order: North, East, South, West.**
         """
+        labels = ["N", "E", "S", "W"] if labels is None else labels
+
         if self.observer is None:
             raise ValueError("observer is required for plotting the horizon")
 
@@ -386,8 +387,8 @@ class MapPlot(
 
         _labels = []
 
-        ra_formatter_fn_default = lambda r: f"{math.floor(r / 15)}h"  # noqa: E731
-        dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
+        ra_formatter_fn_default = lambda r: f"{math.floor(r / 15)}h"
+        dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "
 
         ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
         dec_formatter_fn = dec_formatter_fn or dec_formatter_fn_default

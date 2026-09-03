@@ -1,39 +1,35 @@
 import math
 import random
+from collections.abc import Callable
 from functools import cache
-from typing import Callable
 
-import rtree
 import pandas as pd
-
+import rtree
+from shapely import MultiPolygon, Polygon
 from skyfield.api import Star as SkyfieldStar
-from shapely import Polygon, MultiPolygon
 
 from starplot import geometry
 from starplot.coordinates import CoordinateSystem
-from starplot.projections import LambertAzEqArea, CoordinateReferenceSystem
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
-
+from starplot.plots.base import BasePlot
+from starplot.plotters import (
+    ArrowPlotterMixin,
+    ConstellationPlotterMixin,
+    DsoPlotterMixin,
+    LegendPlotterMixin,
+    MilkyWayPlotterMixin,
+    TextPlotterMixin,
+)
+from starplot.plotters.text import CollisionHandler
+from starplot.projections import CoordinateReferenceSystem, LambertAzEqArea
 from starplot.styles import (
+    LineStyle,
+    PathStyle,
     PlotStyle,
+    PolygonStyle,
     extensions,
     use_style,
-    PathStyle,
-    LineStyle,
-    PolygonStyle,
-    GradientStyle,
-    gradients,
-)
-from starplot.plots.base import BasePlot
-from starplot.plotters.text import CollisionHandler
-from starplot.plotters import (
-    ConstellationPlotterMixin,
-    MilkyWayPlotterMixin,
-    ArrowPlotterMixin,
-    DsoPlotterMixin,
-    TextPlotterMixin,
-    LegendPlotterMixin,
 )
 
 DEFAULT_HORIZON_LABELS = {
@@ -224,7 +220,6 @@ class HorizonPlot(
             invert_y=False,
             clip_path=None,
             crs=CoordinateReferenceSystem.ENU,
-            *args,
             **kwargs,
         )
         self.logger.debug("Creating HorizonPlot...")
@@ -444,7 +439,7 @@ class HorizonPlot(
             label = translate(cardinal_directions.get(az), self.language)
             return label.upper() if label else f"{round(az)}\u00b0"
 
-        alt_formatter_fn_default = lambda alt: f"{round(alt)}\u00b0"  # noqa: E731
+        alt_formatter_fn_default = lambda alt: f"{round(alt)}\u00b0"
 
         az_formatter_fn = az_formatter_fn or az_formatter_fn_default
         alt_formatter_fn = alt_formatter_fn or alt_formatter_fn_default

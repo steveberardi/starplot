@@ -1,39 +1,33 @@
-from typing import Callable
+from collections.abc import Callable
 from pathlib import Path
 
 import pandas as pd
-
 from skyfield.api import Star as SkyfieldStar
 
-from starplot import callables, geometry
-
-from starplot.styles import ObjectStyle, use_style
-from starplot.profile import profile
-from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
+from starplot import geometry
+from starplot.data.catalogs import BIG_SKY_MAG11, Catalog
 from starplot.mixins import ExtentMaskMixin
-from starplot.models import Star, Optic
+from starplot.models import Optic, Star
 from starplot.models.observer import Observer
-from starplot.projections import CoordinateReferenceSystem, Equidistant
-from starplot.styles import (
-    PlotStyle,
-    ObjectStyle,
-    LabelStyle,
-    extensions,
-    use_style,
-    PolygonStyle,
-    TableStyle,
-)
-from starplot.utils import azimuth_to_string
-
 from starplot.plots.base import BasePlot
 from starplot.plotters import (
     DsoPlotterMixin,
-    TextPlotterMixin,
     LegendPlotterMixin,
+    TextPlotterMixin,
 )
 from starplot.plotters.stars import size_by_magnitude
-
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
+from starplot.projections import CoordinateReferenceSystem, Equidistant
+from starplot.styles import (
+    LabelStyle,
+    ObjectStyle,
+    PlotStyle,
+    TableStyle,
+    extensions,
+    use_style,
+)
+from starplot.utils import azimuth_to_string
 
 
 class OpticPlot(
@@ -122,7 +116,6 @@ class OpticPlot(
             invert_y=optic.invert_y,
             clip_path=clip_path,
             crs=CoordinateReferenceSystem.ENU,
-            *args,
             **kwargs,
         )
 
