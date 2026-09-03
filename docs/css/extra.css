@@ -142,7 +142,7 @@ h2.doc-heading, h3.doc-heading {
     --muted-bg-color: var(--muted-bg-color--light);
     --bg-light: var(--bg-light--light);
     --fg-accent-color: var(--fg-accent-color--light);
-    --fg-accent-muted-color: hsl(209, 16%, 44%);
+    --fg-accent-muted-color: hsl(209, 28%, 38%);
 
     .doc-function .doc-heading {
         background-color: hsl(209, 53%, 81%);
