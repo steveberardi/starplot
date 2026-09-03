@@ -28,15 +28,13 @@ hash_checks/data/*.png
 hash_checks/results.html
 
 # local development scripts etc
-plots/
+/plots/
 .tmp/
 temp*
 temp.py
 temp/
 scripts/temp/
 scripts/scratchpad.py
-
-plots/
 scripts/__marimo__/
 
 # Documentation - Generated Files

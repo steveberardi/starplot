@@ -48,7 +48,7 @@ DEFAULT_HORIZON_LABELS = {
 }
 
 
-def generate_horizon_polygon(
+def generate_ground_polygon(
     max_altitude: float,
     min_altitude: float = 0.0,
     azimuth_start: float = 0.0,
@@ -390,7 +390,7 @@ class HorizonPlot(
             style: Style of the ground.
             
         """
-        coords = generate_horizon_polygon(
+        coords = generate_ground_polygon(
             min_altitude=min_altitude,
             max_altitude=max_altitude,
             azimuth_start=self.az[0] - 5,

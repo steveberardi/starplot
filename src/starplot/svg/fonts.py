@@ -14,6 +14,36 @@ FONTS_PATH = settings.data_path / "fonts"
 FALLBACK_FONTS = ["liberation sans", "liberation-sans", "arial", "verdana"]
 
 
+RECOMMENDED_FONTS = {
+    "inter": {
+        "url": "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip",
+        "extract_files": [
+            "extras/ttf/Inter-Regular.ttf",
+            "extras/ttf/Inter-Thin.ttf",
+            "extras/ttf/Inter-Light.ttf",
+            "extras/ttf/Inter-ExtraLight.ttf",
+            "extras/ttf/Inter-Medium.ttf",
+            "extras/ttf/Inter-Italic.ttf",
+            "extras/ttf/Inter-ThinItalic.ttf",
+            "extras/ttf/Inter-LightItalic.ttf",
+            "extras/ttf/Inter-ExtraLightItalic.ttf",
+            "extras/ttf/Inter-MediumItalic.ttf",
+            "extras/ttf/Inter-SemiBoldItalic.ttf",
+            "extras/ttf/Inter-BoldItalic.ttf",
+            "extras/ttf/Inter-ExtraBoldItalic.ttf",
+            "extras/ttf/Inter-BlackItalic.ttf",
+            "extras/ttf/Inter-Bold.ttf",
+            "extras/ttf/Inter-SemiBold.ttf",
+            "extras/ttf/Inter-ExtraBold.ttf",
+            "extras/ttf/Inter-Black.ttf",
+        ],
+    },
+    "gfs-didot": {
+        "url": "https://github.com/google/fonts/raw/refs/heads/main/ofl/gfsdidot/GFSDidot-Regular.ttf",
+        "extract_files": None,
+    },
+}
+
 def get_font_paths() -> list[Path]:
     paths = []
 
@@ -203,37 +233,7 @@ def get_text_hw(
 def download_fonts():
     FONTS_PATH.mkdir(parents=True, exist_ok=True)
 
-    fonts = {
-        "inter": {
-            "url": "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip",
-            "extract_files": [
-                "extras/ttf/Inter-Regular.ttf",
-                "extras/ttf/Inter-Thin.ttf",
-                "extras/ttf/Inter-Light.ttf",
-                "extras/ttf/Inter-ExtraLight.ttf",
-                "extras/ttf/Inter-Medium.ttf",
-                "extras/ttf/Inter-Italic.ttf",
-                "extras/ttf/Inter-ThinItalic.ttf",
-                "extras/ttf/Inter-LightItalic.ttf",
-                "extras/ttf/Inter-ExtraLightItalic.ttf",
-                "extras/ttf/Inter-MediumItalic.ttf",
-                "extras/ttf/Inter-SemiBoldItalic.ttf",
-                "extras/ttf/Inter-BoldItalic.ttf",
-                "extras/ttf/Inter-ExtraBoldItalic.ttf",
-                "extras/ttf/Inter-BlackItalic.ttf",
-                "extras/ttf/Inter-Bold.ttf",
-                "extras/ttf/Inter-SemiBold.ttf",
-                "extras/ttf/Inter-ExtraBold.ttf",
-                "extras/ttf/Inter-Black.ttf",
-            ],
-        },
-        "gfs-didot": {
-            "url": "https://github.com/google/fonts/raw/refs/heads/main/ofl/gfsdidot/GFSDidot-Regular.ttf",
-            "extract_files": None,
-        },
-    }
-
-    for font, props in fonts.items():
+    for font, props in RECOMMENDED_FONTS.items():
         path = FONTS_PATH / font
         path.mkdir(parents=True, exist_ok=True)
 
