@@ -170,23 +170,6 @@ class MapPlot(
 
         minx, self.dec_min, maxx, self.dec_max = self.canvas.bounds
 
-        # from pyproj import Transformer
-        # from pyproj import CRS
-
-        # crs_src = CRS.from_proj4(CoordinateReferenceSystem.WNU.value)
-        # crs_dst = CRS.from_proj4(CoordinateReferenceSystem.ENU.value)
-        # transformer = Transformer.from_crs(crs_src, crs_dst, always_xy=True)
-
-        # # transform a point
-        # minx, _ = transformer.transform(minx, 0)
-        # maxx, _ = transformer.transform(maxx, 0)
-
-        # ra_min = lon_to_ra(minx) * 15
-        # ra_max = lon_to_ra(maxx) * 15
-
-        # print(minx, maxx)
-        # print("************************")
-
         if abs(maxx - minx) > 350:
             minx = 0
             maxx = 360
@@ -196,27 +179,6 @@ class MapPlot(
         elif maxx < 0:
             maxx += 360
 
-        # if minx > maxx:
-        #     minx, maxx = maxx, minx
-
-        # if minx < 0 or maxx < 0:
-        #     minx += 360
-        #     maxx += 360
-
-        # if minx > 360 or maxx > 360:
-        #     minx -= 360
-        #     maxx -= 360
-
-        # minx = 0
-
-        # self.ra_min = 120
-        # self.ra_max = 360
-        # return
-        # if maxx < minx:
-        #     maxx += 360
-
-        # 75 -> 345
-
         # adjust the X min/max if the Y bounds is near the poles
         if (
             isinstance(self.projection, (Stereographic, StereoNorth, StereoSouth))
@@ -224,21 +186,6 @@ class MapPlot(
             self.ra_min = 0
             self.ra_max = 360
 
-        # elif self.ra_max < 360:
-        #     # adjust right ascension to match extent
-        #     ra_min = maxx * -1
-        #     ra_max = minx * -1
-
-        #     if ra_min < 0 or ra_max < 0:
-        #         ra_min += 360
-        #         ra_max += 360
-
-        #     self.ra_min = ra_min
-        #     self.ra_max = ra_max
-
-        # else:
-        #     self.ra_min = lon_to_ra(maxx) * 15
-        #     self.ra_max = lon_to_ra(minx) * 15 + 360
         elif minx < maxx:
             self.ra_min = minx
             self.ra_max = maxx

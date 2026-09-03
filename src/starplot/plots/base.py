@@ -35,6 +35,7 @@ from starplot.styles import (
 )
 from starplot.styles.helpers import use_style
 from starplot.svg.canvas import Canvas, CoordinateSystem
+from starplot.warnings import suppress
 
 LOGGER = logging.getLogger("starplot")
 LOG_HANDLER = logging.StreamHandler()
@@ -69,7 +70,6 @@ class BasePlot(StarPlotterMixin, ABC):
         scale: float = 1.0,
         autoscale: bool = False,
         suppress_warnings: bool = True,
-        # new for canvas backend
         projection: ProjectionBase = None,
         bounds: tuple[float, float, float, float] = None,
         invert_x: bool = False,
@@ -81,6 +81,9 @@ class BasePlot(StarPlotterMixin, ABC):
     ):
         super().__init__()
 
+        if suppress_warnings:
+            suppress()
+            
         self.labels = []
 
         self.language = StarplotSettings.language
@@ -94,8 +97,6 @@ class BasePlot(StarPlotterMixin, ABC):
         self.autoscale = autoscale
         if self.autoscale:
             self.scale = self.resolution / DEFAULT_RESOLUTION
-
-        # self.scale *= 1.28
 
         self.debug = StarplotSettings.debug or bool(kwargs.get("debug"))
         self.debug_text = StarplotSettings.debug or bool(kwargs.get("debug_text"))
