@@ -314,9 +314,6 @@ class MapPlot(
         dec_locations: list[float] = None,
         ra_formatter_fn: Callable[[float], str] = None,
         dec_formatter_fn: Callable[[float], str] = None,
-        tick_marks: bool = False,
-        ra_tick_locations: list[float] = None,
-        dec_tick_locations: list[float] = None,
     ):
         """Plots gridlines
 
@@ -325,11 +322,8 @@ class MapPlot(
             labels: If True, then labels for each gridline will be plotted on the outside of the axes.
             ra_locations: List of Right Ascension locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees.
             dec_locations: List of Declination locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
-            ra_formatter_fn: Callable for creating labels of right ascension gridlines
-            dec_formatter_fn: Callable for creating labels of declination gridlines
-            tick_marks: If True, then tick marks will be plotted outside the axis. **Only supported for rectangular projections (e.g. Mercator, Miller)**
-            ra_tick_locations: List of Right Ascension locations for the tick marks (in degrees, 0...260)
-            dec_tick_locations: List of Declination locations for the tick marks (in degrees, -90...90)
+            ra_formatter_fn: Callable for creating labels of right ascension gridlines. Defaults to `lambda r: f"{math.floor(r / 15)}h"`
+            dec_formatter_fn: Callable for creating labels of declination gridlines. Defaults to `lambda d: f"{round(d)}\u00b0 "`
         """
 
         _labels = []
@@ -340,14 +334,8 @@ class MapPlot(
         ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
         dec_formatter_fn = dec_formatter_fn or dec_formatter_fn_default
 
-        ra_locations = ra_locations or [
-            x
-            for x in range(0, 375, 15)  # if self.ra_min <= x <= self.ra_max
-        ]
-        dec_locations = dec_locations or [
-            y
-            for y in range(-80, 90, 10)  # if self.dec_min <= y <= self.dec_max
-        ]
+        ra_locations = ra_locations or [x for x in range(0, 375, 15)]
+        dec_locations = dec_locations or [y for y in range(-80, 90, 10)]
 
         # meridians are clipped to the plot's own dec extent (plus some padding) instead of
         # sweeping the full -90...90 range -- for azimuthal projections (e.g. StereoNorth),
@@ -369,12 +357,6 @@ class MapPlot(
                     _labels.append((coords, ra_formatter_fn(ra), ("top", "bottom")))
 
             for dec in dec_locations:
-                # if self.projection.edge_x in [0, 360]:
-                #     coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
-                # else:
-                #     minx = self.projection.edge_x + 0.00001
-                #     maxx = self.projection.edge_x - 0.00001
-                #     coords = geometry.line_segment((minx, dec), (maxx, dec), 0.5)
                 coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
                 self.line(coordinates=coords, style=style)
 

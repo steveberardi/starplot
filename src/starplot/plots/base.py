@@ -83,7 +83,7 @@ class BasePlot(StarPlotterMixin, ABC):
 
         if suppress_warnings:
             suppress()
-            
+
         self.labels = []
 
         self.language = StarplotSettings.language
