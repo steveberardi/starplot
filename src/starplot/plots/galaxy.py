@@ -8,7 +8,6 @@ from astropy.coordinates import SkyCoord
 from skyfield.api import Star as SkyfieldStar
 from skyfield.framelib import galactic_frame
 
-from starplot import geometry
 from starplot.coordinates import CoordinateSystem
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
@@ -17,6 +16,7 @@ from starplot.plotters import (
     ArrowPlotterMixin,
     ConstellationPlotterMixin,
     DsoPlotterMixin,
+    GridlinesPlotterMixin,
     LegendPlotterMixin,
     MilkyWayPlotterMixin,
     StarPlotterMixin,
@@ -26,7 +26,6 @@ from starplot.plotters.text import CollisionHandler
 from starplot.profile import profile
 from starplot.projections import CoordinateReferenceSystem, Mollweide
 from starplot.styles import (
-    LineStyle,
     PathStyle,
     PlotStyle,
     extensions,
@@ -44,6 +43,7 @@ class GalaxyPlot(
     LegendPlotterMixin,
     ArrowPlotterMixin,
     TextPlotterMixin,
+    GridlinesPlotterMixin,
 ):
     """Creates a new galaxy plot.
 
@@ -250,9 +250,6 @@ class GalaxyPlot(
             lon_formatter_fn: Callable for creating labels of longitude gridlines. Defaults to `lambda lon: f"{round(lon)}\u00b0 "`
             lat_formatter_fn: Callable for creating labels of latitude gridlines. Defaults to `lambda lat: f"{round(lat)}\u00b0 "`
         """
-
-        _labels = []
-
         lon_formatter_fn_default = lambda lon: f"{round(lon)}\u00b0 "
         lat_formatter_fn_default = lambda lat: f"{round(lat)}\u00b0 "
 
@@ -262,38 +259,11 @@ class GalaxyPlot(
         lon_locations = lon_locations or [x for x in range(0, 375, 15)]
         lat_locations = lat_locations or [y for y in range(-80, 90, 10)]
 
-        # meridians are clipped to the plot's own dec extent (plus some padding) instead of
-        # sweeping the full -90...90 range -- for azimuthal projections (e.g. StereoNorth),
-        # dec values far from the visible extent project to extremely large coordinates, and
-        # a single line containing such a point fails to render at all (silently dropped by
-        # the cairo rendering backend), even for the portion that's within the visible area
-        meridian_lat_min = -89.99999
-        meridian_lat_max = 89.99999999
-
-        with self.canvas.group(gid="gridlines"):
-            for lon in lon_locations:
-                coords = geometry.line_segment(
-                    (lon, meridian_lat_min), (lon, meridian_lat_max), 0.5
-                )
-                self.line(coordinates=coords, style=style, skip_prepare=True)
-
-                if labels:
-                    _labels.append((coords, _lon_formatter_fn(lon), ("top", "bottom")))
-
-            for lat in lat_locations:
-                coords = geometry.line_segment((0.00001, lat), (359.99999, lat), 0.5)
-                self.line(coordinates=coords, style=style, skip_prepare=True)
-
-                if labels:
-                    _labels.append((coords, _lat_formatter_fn(lat), ("left", "right")))
-
-        if not labels:
-            return
-
-        border_style = PathStyle(line=LineStyle(stroke=None), label=style.label)
-        self.canvas._axes_frame(
-            border_style,
-            labels=_labels,
-            width_from_labels=True,
-            label_gid="gridline-labels",
+        super().gridlines(
+            style=style,
+            labels=labels,
+            lon_locations=lon_locations,
+            lat_locations=lat_locations,
+            lon_formatter_fn=_lon_formatter_fn,
+            lat_formatter_fn=_lat_formatter_fn,
         )

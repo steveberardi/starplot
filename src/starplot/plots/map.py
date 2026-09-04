@@ -13,6 +13,7 @@ from starplot.plotters import (
     ArrowPlotterMixin,
     ConstellationPlotterMixin,
     DsoPlotterMixin,
+    GridlinesPlotterMixin,
     LegendPlotterMixin,
     MilkyWayPlotterMixin,
     TextPlotterMixin,
@@ -27,7 +28,6 @@ from starplot.projections import (
     StereoSouth,
 )
 from starplot.styles import (
-    LineStyle,
     ObjectStyle,
     PathStyle,
     PlotStyle,
@@ -45,6 +45,7 @@ class MapPlot(
     ConstellationPlotterMixin,
     ArrowPlotterMixin,
     LegendPlotterMixin,
+    GridlinesPlotterMixin,
 ):
     """Creates a new map plot.
 
@@ -325,9 +326,6 @@ class MapPlot(
             ra_formatter_fn: Callable for creating labels of right ascension gridlines. Defaults to `lambda r: f"{math.floor(r / 15)}h"`
             dec_formatter_fn: Callable for creating labels of declination gridlines. Defaults to `lambda d: f"{round(d)}\u00b0 "`
         """
-
-        _labels = []
-
         ra_formatter_fn_default = lambda r: f"{math.floor(r / 15)}h"
         dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "
 
@@ -337,39 +335,11 @@ class MapPlot(
         ra_locations = ra_locations or [x for x in range(0, 375, 15)]
         dec_locations = dec_locations or [y for y in range(-80, 90, 10)]
 
-        # meridians are clipped to the plot's own dec extent (plus some padding) instead of
-        # sweeping the full -90...90 range -- for azimuthal projections (e.g. StereoNorth),
-        # dec values far from the visible extent project to extremely large coordinates, and
-        # a single line containing such a point fails to render at all (silently dropped by
-        # the cairo rendering backend), even for the portion that's within the visible area
-        dec_padding = 10
-        meridian_dec_min = max(-89.99999, self.dec_min - dec_padding)
-        meridian_dec_max = min(89.99999999, self.dec_max + dec_padding)
-
-        with self.canvas.group(gid="gridlines"):
-            for ra in ra_locations:
-                coords = geometry.line_segment(
-                    (ra, meridian_dec_min), (ra, meridian_dec_max), 0.5
-                )
-                self.line(coordinates=coords, style=style)
-
-                if labels:
-                    _labels.append((coords, ra_formatter_fn(ra), ("top", "bottom")))
-
-            for dec in dec_locations:
-                coords = geometry.line_segment((0.00001, dec), (359.99999, dec), 0.5)
-                self.line(coordinates=coords, style=style)
-
-                if labels:
-                    _labels.append((coords, dec_formatter_fn(dec), ("left", "right")))
-
-        if not labels:
-            return
-
-        border_style = PathStyle(line=LineStyle(stroke=None), label=style.label)
-        self.canvas._axes_frame(
-            border_style,
-            labels=_labels,
-            width_from_labels=True,
-            label_gid="gridline-labels",
+        super().gridlines(
+            style=style,
+            labels=labels,
+            lon_locations=ra_locations,
+            lat_locations=dec_locations,
+            lon_formatter_fn=ra_formatter_fn,
+            lat_formatter_fn=dec_formatter_fn,
         )

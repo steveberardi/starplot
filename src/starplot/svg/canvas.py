@@ -1221,9 +1221,7 @@ class Canvas:
                 for segment in segments:
                     if len(segment) < 2:
                         continue
-                    extended = _geometry.extend_line(
-                        segment, distance=border_width * 2
-                    )
+                    extended = _geometry.extend_line(segment, distance=border_width * 2)
 
                     if self.debug:
                         label_elements.append(
@@ -1238,9 +1236,7 @@ class Canvas:
                             )
                         )
 
-                    border_intersection = LineString(extended).intersection(
-                        border_line
-                    )
+                    border_intersection = LineString(extended).intersection(border_line)
 
                     if isinstance(border_intersection, Point):
                         border_intersection_points.append(border_intersection)
