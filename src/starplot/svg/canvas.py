@@ -1181,6 +1181,13 @@ class Canvas:
 
             label_index = QuadIndex(bbox=(0, 0, frame_width, frame_height))
 
+            # threshold (in display pixels) above which two consecutive
+            # points on a label line are considered discontinuous rather
+            # than genuinely adjacent -- mirrors Canvas._max_projection_jump,
+            # but expressed in display space since `dxy` below is already
+            # projected to display coordinates
+            max_jump = 0.5 * max(frame_width, frame_height)
+
             for xy, text, locations in labels:
                 if not text:
                     continue
@@ -1189,9 +1196,7 @@ class Canvas:
                 dx, dy = self._to_display(xs, ys)
                 dxy = list(zip(dx, dy))
                 dxy = [(x + xoff, y + yoff) for x, y in dxy]
-                dxy = _geometry.extend_line(dxy, distance=border_width * 2)
 
-                labeled_line = LineString(dxy)
                 label_height, label_width, _ = fonts.get_text_hw(
                     text=text,
                     font_name=style.label.font_name,
@@ -1200,27 +1205,49 @@ class Canvas:
                     italic=style.label.font_style == "italic",
                 )
 
-                if self.debug:
-                    label_elements.append(
-                        (
-                            10_000_000_000,
-                            Polyline(
-                                points=dxy,
-                                attrs=LineStyle(
-                                    color="#ff5aff", width=2, zorder=1_000_000
-                                ).css(self.scale),
-                            ),
-                        )
+                # a gridline that sweeps a full-sphere projection (e.g.
+                # Mollweide) can cross the map's seam mid-line -- e.g. a
+                # latitude parallel touches the border at the antimeridian,
+                # not at its own array endpoints -- so `extend_line` (which
+                # only extends the two array endpoints) can miss the real
+                # border crossing entirely. Splitting on projection jumps
+                # first means each segment's own endpoints are the ones
+                # that actually approach the border.
+                segments = _geometry.split_line_at_projection_jumps(
+                    dxy, max_jump=max_jump
+                )
+
+                border_intersection_points = []
+                for segment in segments:
+                    if len(segment) < 2:
+                        continue
+                    extended = _geometry.extend_line(
+                        segment, distance=border_width * 2
                     )
 
-                border_intersection = labeled_line.intersection(border_line)
+                    if self.debug:
+                        label_elements.append(
+                            (
+                                10_000_000_000,
+                                Polyline(
+                                    points=extended,
+                                    attrs=LineStyle(
+                                        stroke="#ff5aff", width=2, zorder=1_000_000
+                                    ).css(self.scale),
+                                ),
+                            )
+                        )
 
-                if isinstance(border_intersection, Point):
-                    border_intersection = MultiPoint([border_intersection])
-                elif not isinstance(border_intersection, MultiPoint):
-                    continue
+                    border_intersection = LineString(extended).intersection(
+                        border_line
+                    )
 
-                for ix in border_intersection.geoms:
+                    if isinstance(border_intersection, Point):
+                        border_intersection_points.append(border_intersection)
+                    elif isinstance(border_intersection, MultiPoint):
+                        border_intersection_points.extend(border_intersection.geoms)
+
+                for ix in border_intersection_points:
                     if locations and any(
                         (
                             ix.y - label_height / 2 < cy1 + yoff
