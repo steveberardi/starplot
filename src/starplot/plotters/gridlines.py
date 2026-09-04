@@ -49,8 +49,9 @@ class GridlinesPlotterMixin:
         # dec values far from the visible extent project to extremely large coordinates, and
         # a single line containing such a point fails to render at all (silently dropped by
         # the cairo rendering backend), even for the portion that's within the visible area
-        meridian_lat_min = -89.99999
-        meridian_lat_max = 89.99999999
+        lat_padding = 10
+        meridian_lat_min = max(-89.99999999, self.dec_min - lat_padding)
+        meridian_lat_max = min(89.99999999, self.dec_max + lat_padding)
 
         with self.canvas.group(gid="gridlines"):
             for lon in lon_locations:

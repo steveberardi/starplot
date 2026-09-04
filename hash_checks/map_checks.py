@@ -441,8 +441,7 @@ def check_map_gridlines():
 
     p.stars(where=[_.magnitude < 6], style__marker__size=45)
 
-    p.gridlines(tick_marks=True)
-
+    p.gridlines()
     p.gridlines(
         ra_locations=list(np.arange(0, 360, 3.75)),
         ra_formatter_fn=lambda d: None,
