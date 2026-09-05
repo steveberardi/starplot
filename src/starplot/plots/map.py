@@ -1,11 +1,10 @@
-import math
 from collections.abc import Callable
 from functools import cache
 
 from shapely import Polygon
 from skyfield.api import wgs84
 
-from starplot import geometry
+from starplot import callables, geometry
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.plots.base import BasePlot
@@ -313,8 +312,10 @@ class MapPlot(
         labels: bool = True,
         ra_locations: list[float] = None,
         dec_locations: list[float] = None,
-        ra_formatter_fn: Callable[[float], str] = None,
-        dec_formatter_fn: Callable[[float], str] = None,
+        ra_label_fn: Callable[[float], str] = callables.floor_hours_label,
+        dec_label_fn: Callable[[float], str] = callables.rounded_degrees_label,
+        ra_label_locations: list[str] = None,
+        dec_label_locations: list[str] = None,
     ):
         """Plots gridlines
 
@@ -323,23 +324,20 @@ class MapPlot(
             labels: If True, then labels for each gridline will be plotted on the outside of the axes.
             ra_locations: List of Right Ascension locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees.
             dec_locations: List of Declination locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
-            ra_formatter_fn: Callable for creating labels of right ascension gridlines. Defaults to `lambda r: f"{math.floor(r / 15)}h"`
-            dec_formatter_fn: Callable for creating labels of declination gridlines. Defaults to `lambda d: f"{round(d)}\u00b0 "`
+            ra_label_fn: Callable for creating labels of right ascension gridlines.`
+            dec_label_fn: Callable for creating labels of declination gridlines.`
+            ra_label_locations: Locations where labels will be plotted (options: `top` and/or `bottom`). Defaults to `['top', 'bottom']`
+            dec_label_locations: Locations where labels will be plotted (options: `left` and/or `right`). Defaults to `['left', 'right']`
         """
-        ra_formatter_fn_default = lambda r: f"{math.floor(r / 15)}h"
-        dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "
-
-        ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
-        dec_formatter_fn = dec_formatter_fn or dec_formatter_fn_default
-
         ra_locations = ra_locations or [x for x in range(0, 375, 15)]
         dec_locations = dec_locations or [y for y in range(-80, 90, 10)]
-
         super().gridlines(
             style=style,
             labels=labels,
             lon_locations=ra_locations,
             lat_locations=dec_locations,
-            lon_formatter_fn=ra_formatter_fn,
-            lat_formatter_fn=dec_formatter_fn,
+            lon_label_fn=ra_label_fn,
+            lat_label_fn=dec_label_fn,
+            lon_label_locations=ra_label_locations,
+            lat_label_locations=dec_label_locations,
         )

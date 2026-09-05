@@ -3,8 +3,8 @@ from shapely import MultiPolygon, Polygon
 
 from starplot import HorizonPlot, Observer
 from starplot.plots.horizon import generate_ground_polygon
+from starplot.svg.elements import Group, Polyline
 from starplot.svg.elements import Polygon as SvgPolygon
-from starplot.svg.elements import Polyline
 
 
 class TestGenerateGroundPolygon:
@@ -221,15 +221,16 @@ class TestHorizonPlotGround:
 class TestHorizonPlotGridlines:
     def test_adds_polylines_to_the_canvas(self):
         p = HorizonPlot(altitude=(0, 40), azimuth=(90, 120), observer=Observer())
-        before = [
-            e for _, e in p.canvas.layout.axes.elements if isinstance(e, Polyline)
-        ]
+        before = [e for _, e in p.canvas.layout.axes.elements if isinstance(e, Group)]
         assert before == []
 
         p.gridlines()
 
-        after = [e for _, e in p.canvas.layout.axes.elements if isinstance(e, Polyline)]
-        assert len(after) > 0
+        groups = [e for _, e in p.canvas.layout.axes.elements if isinstance(e, Group)]
+        assert len(groups) == 1
+        assert groups[0].id == "gridlines"
+        assert len(groups[0].children) > 0
+        assert all(isinstance(c, Polyline) for c in groups[0].children)
 
     def test_default_azimuth_labels_use_cardinal_directions(self):
         # azimuth range includes 0 (North) and 15 degrees
@@ -240,8 +241,8 @@ class TestHorizonPlotGridlines:
     def test_custom_formatter_functions_are_used_for_labels(self):
         p = HorizonPlot(altitude=(0, 40), azimuth=(-10, 30), observer=Observer())
         p.gridlines(
-            az_formatter_fn=lambda az: f"AZ{az}",
-            alt_formatter_fn=lambda alt: f"ALT{alt}",
+            az_label_fn=lambda az: f"AZ{az}",
+            alt_label_fn=lambda alt: f"ALT{alt}",
         )
         svg = p.canvas.render()
         assert "AZ0" in svg

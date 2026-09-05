@@ -444,9 +444,9 @@ def check_map_gridlines():
     p.gridlines()
     p.gridlines(
         ra_locations=list(np.arange(0, 360, 3.75)),
-        ra_formatter_fn=lambda d: None,
-        dec_formatter_fn=lambda d: None,
         dec_locations=list(np.arange(-90, 90, 1)),
+        ra_label_fn=lambda d: None,
+        dec_label_fn=lambda d: None,
         style__line__opacity=0.2,
     )
 
@@ -476,9 +476,9 @@ def check_map_moon_phase_waxing_crescent():
     )
     p.gridlines(
         ra_locations=list(np.arange(0, 24 * 15, 0.05 * 15)),
-        ra_formatter_fn=lambda d: None,
-        dec_formatter_fn=lambda d: None,
         dec_locations=list(np.arange(-90, 90, 0.25)),
+        ra_label_fn=lambda d: None,
+        dec_label_fn=lambda d: None,
         style__line__opacity=0.2,
     )
     filename = DATA_PATH / "map-moon-phase-waxing-crescent.png"

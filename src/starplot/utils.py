@@ -1,77 +1,9 @@
-import math
-from datetime import datetime, timezone
-
 import numpy as np
 
 
 def in_circle(x, y, center_x=0, center_y=0, radius=0.9) -> bool:
     """Determine if a point (x,y) is inside a circle"""
     return (x - center_x) ** 2 + (y - center_y) ** 2 < (radius**2)
-
-
-def lon_to_ra(lon: float):
-    pos_lon = lon + 180
-    ra = 12 - (24 * pos_lon / 360)
-    if ra < 0:
-        ra += 24
-    return ra
-
-
-def ra_to_lon(ra):
-    lon = ra * -15
-    if lon < -180:
-        lon += 360
-
-    return lon
-
-
-def lon_to_ra_hms(lon: float) -> (int, int, int):
-    """Converts longitude back to right ascension
-
-    Args:
-        lon: Longitude to convert
-
-    Returns:
-        Tuple of ints: (hours, minutes, seconds)
-    """
-    pos_lon = lon + 180
-    ra_decimal = 12 - (24 * pos_lon / 360)
-
-    hour = math.floor(ra_decimal)
-
-    min_decimal = 60 * (ra_decimal - hour)
-    minutes = math.floor(min_decimal)
-
-    sec_decimal = 60 * (min_decimal - minutes)
-    seconds = math.floor(sec_decimal)
-
-    if hour < 0:
-        hour += 24
-
-    if seconds >= 60:
-        minutes += 1
-        seconds -= 60
-
-    return hour, minutes, seconds
-
-
-def dec_str_to_float(dec_str):
-    """
-    Converts declination strings to a single float:
-
-    >> dec_str_to_float("-05:20:30")
-    >> -5.341667
-
-    """
-    multiplier = 1
-    dec_d, dec_m, dec_s = [float(d) for d in dec_str.split(":")]
-
-    if dec_str.startswith("-"):
-        multiplier = -1
-
-    dec_f = dec_d + multiplier * ((dec_m / 60) + (dec_s / 3600))
-
-    return round(dec_f, 6)
 
 
 def bv_to_hex_color(bv_index):
@@ -167,10 +99,6 @@ def azimuth_to_string(azimuth_degrees: int):
         azimuth_degrees -= 360
     direction_strings = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"]
     return direction_strings[int(azimuth_degrees / 40)]
-
-
-def dt_or_now(dt):
-    return dt or datetime.now(tz=timezone.utc)
 
 
 def points_on_line(start, end, num_points=100):

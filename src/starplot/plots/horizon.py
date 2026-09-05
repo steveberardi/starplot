@@ -8,8 +8,9 @@ import rtree
 from shapely import MultiPolygon, Polygon
 from skyfield.api import Star as SkyfieldStar
 
-from starplot import geometry
+from starplot import callables
 from starplot.coordinates import CoordinateSystem
+from starplot.data.translations import translate
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.plots.base import BasePlot
@@ -17,14 +18,15 @@ from starplot.plotters import (
     ArrowPlotterMixin,
     ConstellationPlotterMixin,
     DsoPlotterMixin,
+    GridlinesPlotterMixin,
     LegendPlotterMixin,
     MilkyWayPlotterMixin,
     TextPlotterMixin,
 )
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
 from starplot.projections import CoordinateReferenceSystem, LambertAzEqArea
 from starplot.styles import (
-    LineStyle,
     PathStyle,
     PlotStyle,
     PolygonStyle,
@@ -134,6 +136,7 @@ class HorizonPlot(
     LegendPlotterMixin,
     ArrowPlotterMixin,
     TextPlotterMixin,
+    GridlinesPlotterMixin,
 ):
     """Creates a new horizon plot.
 
@@ -404,6 +407,7 @@ class HorizonPlot(
             style=style,
         )
 
+    @profile
     @use_style(PathStyle, "gridlines")
     def gridlines(
         self,
@@ -411,8 +415,10 @@ class HorizonPlot(
         labels: bool = True,
         az_locations: list[float] = None,
         alt_locations: list[float] = None,
-        az_formatter_fn: Callable[[float], str] = None,
-        alt_formatter_fn: Callable[[float], str] = None,
+        az_label_fn: Callable[[float], str] = None,
+        alt_label_fn: Callable[[float], str] = callables.rounded_degrees_label,
+        az_label_locations: list[str] = None,
+        alt_label_locations: list[str] = None,
     ):
         """
         Plots gridlines
@@ -422,54 +428,29 @@ class HorizonPlot(
             labels: If True, then labels for each gridline will be plotted on the outside of the axes.
             az_locations: List of azimuth locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees
             alt_locations: List of altitude locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
-            az_formatter_fn: Callable for creating labels of azimuth gridlines
-            alt_formatter_fn: Callable for creating labels of altitude gridlines
+            az_label_fn: Callable for creating labels of azimuth gridlines. Defaults to [azimuth_with_cardinal_direction_label_factory(self.language)][starplot.callables.azimuth_with_cardinal_direction_label_factory]
+            alt_label_fn: Callable for creating labels of altitude gridlines
+            az_label_locations: Locations where labels will be plotted (options: `top` and/or `bottom`). Defaults to `['bottom']`
+            alt_label_locations: Locations where labels will be plotted (options: `left` and/or `right`). Defaults to `['left', 'right']`
         """
-        _labels = []
+        az_locations = az_locations or [x for x in range(0, 375, 15)]
+        alt_locations = alt_locations or [
+            y
+            for y in range(-20, 90, 10)
+            if self.canvas.bounds[1] < y < self.canvas.bounds[3]
+        ]
 
-        from starplot.data.translations import translate
-
-        def az_formatter_fn_default(az):
-            cardinal_directions = {
-                0: "NORTH",
-                90: "EAST",
-                180: "SOUTH",
-                270: "WEST",
-            }
-            label = translate(cardinal_directions.get(az), self.language)
-            return label.upper() if label else f"{round(az)}\u00b0"
-
-        alt_formatter_fn_default = lambda alt: f"{round(alt)}\u00b0"
-
-        az_formatter_fn = az_formatter_fn or az_formatter_fn_default
-        alt_formatter_fn = alt_formatter_fn or alt_formatter_fn_default
-
-        x_locations = az_locations or [x for x in range(0, 360, 15)]
-        y_locations = alt_locations or [y for y in range(-80, 90, 10)]
-
-        for x in x_locations:
-            coords = geometry.line_segment((x, -20), (x, 90), 0.5)
-            self.canvas.line(
-                coordinates=coords,
-                style=style.line,
-            )
-            if labels:
-                _labels.append((coords, az_formatter_fn(x), ("bottom",)))
-
-        for y in y_locations:
-            if not self.canvas.bounds[1] < y < self.canvas.bounds[3]:
-                continue
-            coords = geometry.line_segment((0.00001, y), (359.99999, y), 0.5)
-            self.canvas.line(
-                coordinates=coords,
-                style=style.line,
-            )
-
-            if labels:
-                _labels.append((coords, alt_formatter_fn(y), ("left", "right")))
-
-        if not labels:
-            return
-
-        border_style = PathStyle(line=LineStyle(stroke=None), label=style.label)
-        self.canvas._axes_frame(border_style, labels=_labels, width_from_labels=True)
+        az_label_fn = (
+            az_label_fn
+            or callables.azimuth_with_cardinal_direction_label_factory(self.language)
+        )
+        super().gridlines(
+            style=style,
+            labels=labels,
+            lon_locations=az_locations,
+            lat_locations=alt_locations,
+            lon_label_fn=az_label_fn,
+            lat_label_fn=alt_label_fn,
+            lon_label_locations=az_label_locations or ["bottom"],
+            lat_label_locations=alt_label_locations,
+        )

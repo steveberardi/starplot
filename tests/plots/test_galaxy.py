@@ -91,7 +91,7 @@ def test_default_lon_label_is_rendered():
 
 def test_custom_formatter_function_is_used_for_labels():
     p = GalaxyPlot()
-    p.gridlines(lon_formatter_fn=lambda lon: f"LON{lon}")
+    p.gridlines(lon_label_fn=lambda lon: f"LON{lon}")
     assert "LON0" in p.canvas.render()
 
 
@@ -101,7 +101,7 @@ def test_lat_labels_are_rendered():
     # array's start/end -- regression test for a bug where that meant no
     # lat label ever registered a border intersection at all
     p = GalaxyPlot()
-    p.gridlines(lat_formatter_fn=lambda lat: f"LAT{lat}")
+    p.gridlines(lat_label_fn=lambda lat: f"LAT{lat}")
     svg = p.canvas.render()
     assert "LAT0" in svg
     assert "LAT30" in svg

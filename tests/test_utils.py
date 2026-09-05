@@ -17,33 +17,6 @@ def test_in_circle(x, y, expected):
 
 
 @pytest.mark.parametrize(
-    "dms,expected",
-    [
-        ("-05:20:30", -5.341667),
-        ("20:00:00", 20),
-        ("-20:00:00", -20),
-        ("-00:30:36", -0.51),
-    ],
-)
-def test_dec_str_to_float(dms, expected):
-    assert utils.dec_str_to_float(dms) == expected
-
-
-@pytest.mark.parametrize(
-    "lon,ra",
-    [
-        (0, (0, 0, 0)),
-        (-60, (4, 0, 0)),
-        (-64, (4, 15, 59)),
-        (100, (17, 19, 59)),
-        (180, (12, 0, 0)),
-    ],
-)
-def test_lon_to_ra(lon, ra):
-    assert utils.lon_to_ra_hms(lon) == ra
-
-
-@pytest.mark.parametrize(
     "bv,hexcolor",
     [
         (-0.03, "#ccd8ff"),
@@ -112,3 +85,61 @@ def test_normalize(value, min_val, max_val, expected):
 )
 def test_lerp(start, end, t, expected):
     assert utils.lerp(start, end, t) == expected
+
+
+@pytest.mark.parametrize(
+    "hex_color,expected",
+    [
+        ("#ff9523", (255, 149, 35)),
+        ("000000", (0, 0, 0)),  # works without a leading '#' too
+        ("#FFFFFF", (255, 255, 255)),
+        ("#0a1b2c", (10, 27, 44)),
+    ],
+)
+def test_hex_to_rgb(hex_color, expected):
+    assert utils.hex_to_rgb(hex_color) == expected
+
+
+@pytest.mark.parametrize(
+    "hex_color,amount,expected",
+    [
+        ("#000000", 0, "#000000"),  # amount=0 leaves the color unchanged
+        ("#000000", 1, "#ffffff"),  # amount=1 blends all the way to white
+        ("#000000", 0.5, "#808080"),
+        ("#ff9523", 0.3, "#ffb565"),
+        ("#ffffff", 0.5, "#ffffff"),  # already white, stays white
+    ],
+)
+def test_lighten_hex_color(hex_color, amount, expected):
+    assert utils.lighten_hex_color(hex_color, amount) == expected
+
+
+@pytest.mark.parametrize(
+    "where,expected",
+    [
+        (False, [False]),
+        (True, []),
+        (None, []),
+        ([], []),
+        (["a", "b"], ["a", "b"]),
+    ],
+)
+def test_normalize_where(where, expected):
+    assert utils.normalize_where(where) == expected
+
+
+@pytest.mark.parametrize(
+    "start,end,num_points,expected",
+    [
+        ((0, 0), (10, 0), 5, [(0, 0), (2.5, 0), (5, 0), (7.5, 0), (10, 0)]),
+        ((0, 0), (10, 0), 2, [(0, 0), (10, 0)]),  # just the two endpoints
+        ((0, 0), (10, 10), 3, [(0, 0), (5, 5), (10, 10)]),
+        ((0, 0), (0, 0), 3, [(0, 0), (0, 0), (0, 0)]),  # zero-length line
+    ],
+)
+def test_points_on_line(start, end, num_points, expected):
+    assert utils.points_on_line(start, end, num_points) == expected
+
+
+def test_points_on_line_defaults_to_100_points():
+    assert len(utils.points_on_line((0, 0), (10, 10))) == 100

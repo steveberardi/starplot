@@ -9,12 +9,12 @@ horizon_base:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/horizon-base.png
   phash: c0953ac53ef00f7a
 horizon_gradient_background:
-  dhash: 517964b2b2b6ae8ce179643232b68e8de178ecb2b2b28e8d
+  dhash: 517964b2b2b6ae8ce179643232b68e8de178e4b2b2b28e8d
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/horizon-gradient-background.png
   phash: 944f62816ee43df4
 horizon_north_celestial_pole:
-  dhash: b89a8ab2acaab2a2b08a8ab2aeaab2a2b09a8ab2aaa2a0a2
+  dhash: b89a8ab2acaab2a2a88a8ab2aeaab2a2b09a8ab2aaa2a0a2
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/horizon-north-celestial-pole.png
   phash: d5732b086edc2a63

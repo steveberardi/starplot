@@ -1,6 +1,7 @@
 import math
 from collections.abc import Callable
 
+from starplot.data.translations import translate
 from starplot.models import Star
 from starplot.styles import GradientStyle
 from starplot.utils import bv_to_hex_color, hex_to_rgb, lighten_hex_color
@@ -175,3 +176,56 @@ def color_by_bv_gradient(star: Star) -> GradientStyle:
         ),
         type="radial",
     )
+
+
+def floor_hours_label(value: float) -> str:
+    """
+    Returns the floor of the value, with an 'h' appended to it.
+
+    Example: `floor_hours_label(50) = '3h'`
+
+    Args:
+        value: The value to label
+
+    """
+    return f"{math.floor(value / 15)}h"
+
+
+def rounded_degrees_label(value: float) -> str:
+    """
+    Returns the rounded value with a degree symbol appended to it.
+
+    Example: `rounded_degrees_label(50.45) = '50°'`
+
+    Args:
+        value: The value to label
+
+    """
+    return f"{round(value)}° "
+
+
+def azimuth_with_cardinal_direction_label_factory(
+    language: str,
+) -> Callable[[float], str]:
+    """
+    Returns a callable for labeling azimuth values. The callable returns the cardinal directions
+    (e.g. North, South, etc) where applicable, and returns the rounded azimuth value with a degree
+    symbol appended for other azimuths (e.g. `'120°'`).
+
+    _This is the default label function for azimuths on HorizonPlot._
+
+    Args:
+        language: Language for the cardinal directions
+    """
+
+    def az_label_fn(az):
+        cardinal_directions = {
+            0: "NORTH",
+            90: "EAST",
+            180: "SOUTH",
+            270: "WEST",
+        }
+        label = translate(cardinal_directions.get(az), language)
+        return label.upper() if label else f"{round(az)}\u00b0"
+
+    return az_label_fn
