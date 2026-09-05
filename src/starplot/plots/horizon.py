@@ -10,7 +10,6 @@ from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
 from starplot.coordinates import CoordinateSystem
-from starplot.data.translations import translate
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
 from starplot.plots.base import BasePlot
