@@ -20,7 +20,7 @@ def _galaxy():
     p.galactic_equator(num_labels=2)
     p.milky_way()
     p.stars(
-        where=[_.magnitude < 7],
+        where=[_.magnitude < 6],
         where_labels=[False],
     )
     p.open_clusters(

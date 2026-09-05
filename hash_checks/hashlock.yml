@@ -1,8 +1,8 @@
 galaxy_base:
-  dhash: 70c492d89496e07070c492d894b2e07070c492d894b2e870
+  dhash: 70cc82da9282c47070c482da92a2c87070cca2eaf292cc70
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/galaxy-base.png
-  phash: 91434eb43b4b6db4
+  phash: 91074ef43b0b6cf4
 horizon_base:
   dhash: 8e86928a8eca8e0d8a86928a8eca8e0d8a86d68e8e8a8d0d
   exception: null

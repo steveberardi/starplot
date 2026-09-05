@@ -22,9 +22,8 @@ p.ecliptic(num_labels=2)
 p.milky_way()
 
 p.stars(
-    where=[_.magnitude < 7],
+    where=[_.magnitude < 6],
     where_labels=[False],
-    size_fn=lambda star: 8 - star.magnitude,
     style__marker__stroke="#c5c5c5",
 )
 

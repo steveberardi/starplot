@@ -140,7 +140,7 @@ class StarPlotterMixin:
         where_labels: list | bool | None = None,
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
         style: ObjectStyle = None,
-        size_fn: Callable[[Star], float] = size_by_magnitude,
+        size_fn: Callable[[Star], float] | None = size_by_magnitude,
         opacity_fn: Callable[[Star], float] | None = None,
         color_fn: Callable[[Star], str | GradientStyle] | None = None,
         label_fn: Callable[[Star], str] = Star.get_label,

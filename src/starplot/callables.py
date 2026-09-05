@@ -44,23 +44,6 @@ def size_by_magnitude_factory(
     return size_fn
 
 
-_size_by_magnitude_default = size_by_magnitude_factory(7.6, 4)
-
-
-def size_by_magnitude_log(star: Star) -> float:
-    """
-    Calculates size by logarithmic scale of magnitude:
-
-    ```python
-    if magnitude >= 7.6:
-        size = 2.36
-    else:
-        size = 20 ** math.log(8 - magnitude)
-    ```
-    """
-    return _size_by_magnitude_default(star)
-
-
 def size_by_magnitude(star: Star) -> float:
     """
     Simple sizing by magnitude, using a step size of 1.
@@ -111,16 +94,34 @@ def size_by_magnitude(star: Star) -> float:
     return size
 
 
-def size_by_magnitude_for_optic(star: Star) -> float:
-    """Very simple sizer by magnitude for optic plots"""
-    m = star.magnitude
+def size_by_fov_factory(fov: float) -> Callable[[Star], float]:
+    """
+    Returns a callable for sizing stars based on the field of view of an optic.
 
-    if m < 4.6 or m < 5.85:
-        return (9 - m) ** 3.6 * 9
-    elif m < 9:
-        return (13 - m) ** 1.8 * 9
+    _This is the default star sizing function for OpticPlot._
 
-    return 4.8 * 6
+    Args:
+        fov: Field of view (in degrees)
+    """
+    fov_multiplier = 20 / fov
+
+    return lambda s: size_by_magnitude(s) * fov_multiplier * 0.5
+
+
+def size_by_magnitude_galaxy(star: Star) -> float:
+    sizes = [
+        15,
+        15,
+        10,
+        8,
+        5,
+        3,
+        2,
+        1,
+    ]
+    mag = max(0, star.magnitude)
+    mag_index = min(int(mag), len(sizes) - 1)
+    return sizes[mag_index]
 
 
 def opacity_by_magnitude(star: Star) -> float:

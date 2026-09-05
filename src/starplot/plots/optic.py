@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 from skyfield.api import Star as SkyfieldStar
 
-from starplot import geometry
+from starplot import callables, geometry
 from starplot.data.catalogs import BIG_SKY_MAG11, Catalog
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Optic, Star
@@ -15,7 +15,6 @@ from starplot.plotters import (
     LegendPlotterMixin,
     TextPlotterMixin,
 )
-from starplot.plotters.stars import size_by_magnitude
 from starplot.plotters.text import CollisionHandler
 from starplot.profile import profile
 from starplot.projections import CoordinateReferenceSystem, Equidistant
@@ -310,7 +309,7 @@ class OpticPlot(
             where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
             catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
             style: If `None`, then the plot's style for stars will be used
-            size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
+            size_fn: Callable for calculating the marker size of each star. Defaults to [`callables.size_by_fov_factory(self.optic.true_fov)`][starplot.callables.size_by_fov_factory]
             opacity_fn: Callable for calculating the opacity value of each star. If `None`, then the marker style's opacity will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
             label_fn: Callable for determining the label of each star.
@@ -322,10 +321,7 @@ class OpticPlot(
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
 
-        optic_star_multiplier = self.FIELD_OF_VIEW_MAX / self.optic.true_fov
-
-        size_fn_default = lambda s: size_by_magnitude(s) * optic_star_multiplier * 0.5
-        size_fn = size_fn or size_fn_default
+        size_fn = size_fn or callables.size_by_fov_factory(self.optic.true_fov)
 
         super().stars(
             where=where,
