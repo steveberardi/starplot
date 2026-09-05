@@ -51,7 +51,9 @@ docs/images/reference/*.svg
 docs/images/reference/*.jpg
 docs/images/reference/*.html
 tutorial/*.png
+tutorial/*.svg
 docs/images/tutorial/*.png
+docs/images/tutorial/*.svg
 docs/data/*.json
 
 # Profiling files

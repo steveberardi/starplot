@@ -45,4 +45,4 @@ p.planets(
         "type": "radial",
     },
 )
-p.export("tutorial_07.png")
+p.export("tutorial_07.svg")

@@ -40,8 +40,16 @@ class GridlinesPlotterMixin:
         lon_locations = lon_locations or [x for x in range(0, 375, 15)]
         lat_locations = lat_locations or [y for y in range(-80, 90, 10)]
 
-        lon_label_locations = lon_label_locations or ["top", "bottom"]
-        lat_label_locations = lat_label_locations or ["left", "right"]
+        lon_label_locations = (
+            lon_label_locations
+            if lon_label_locations is not None
+            else ["top", "bottom"]
+        )
+        lat_label_locations = (
+            lat_label_locations
+            if lat_label_locations is not None
+            else ["left", "right"]
+        )
 
         _, lat_min, _, lat_max = self.canvas.bounds
 
@@ -61,14 +69,14 @@ class GridlinesPlotterMixin:
                 )
                 self.line(coordinates=coords, style=style, skip_prepare=True)
 
-                if labels:
+                if labels and lon_label_locations:
                     _labels.append((coords, lon_label_fn(lon), lon_label_locations))
 
             for lat in lat_locations:
                 coords = geometry.line_segment((0.00001, lat), (359.99999, lat), 0.5)
                 self.line(coordinates=coords, style=style, skip_prepare=True)
 
-                if labels:
+                if labels and lat_label_locations:
                     _labels.append((coords, lat_label_fn(lat), lat_label_locations))
 
         if not labels:

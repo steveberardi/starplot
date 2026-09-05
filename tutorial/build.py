@@ -15,6 +15,6 @@ for filename in glob.iglob("*.py"):
 
 
 print("Copying images to tutorial directory...")
-subprocess.call(f"cp *.png ../docs/images/tutorial/", shell=True)
+subprocess.call(f"cp *.svg ../docs/images/tutorial/", shell=True)
 
 print(f"{time.time() - start}")

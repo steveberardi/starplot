@@ -46,4 +46,4 @@ p.legend()  # add a legend
 
 p.constellation_labels()  # Plot the constellation labels last for best placement
 
-p.export("tutorial_04.png")
+p.export("tutorial_04.svg")

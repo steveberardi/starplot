@@ -48,42 +48,21 @@ def size_by_magnitude(star: Star) -> float:
     """
     Simple sizing by magnitude, using a step size of 1.
 
-    ```python
-    if mag <= 0:
-        size = 3800
-    elif mag <= 1:  # 0..1
-        size = 2400
-    elif mag <= 2:  # 1..2
-        size = 1600
-    elif mag <= 3:  # 2..3
-        size = 1000
-    elif mag <= 4:  # 3..4
-        size = 600
-    elif mag <= 5:  # 4..5
-        size = 300
-    elif mag <= 6:  # 5..6
-        size = 120
-    elif mag <= 7:  # 6..7
-        size = 60
-    elif mag <= 8:  # 7..8
-        size = 40
-    else:           # > 8
-        size = 20
-
-    ```
+    Args:
+        star: The Star instance to size
     """
     mag = star.magnitude
     size = 0
-    if mag <= 1 or mag <= 2:  # 0..1
+    if mag <= 1 or mag <= 2:  # 0..2
         size = 40
     elif mag <= 3:  # 2..3
-        size = 30
-    elif mag <= 4:  # 3..4
         size = 20
-    elif mag <= 5:  # 4..5
+    elif mag <= 4:  # 3..4
         size = 15
-    elif mag <= 6:  # 5..6
+    elif mag <= 5:  # 4..5
         size = 10
+    elif mag <= 6:  # 5..6
+        size = 8
     elif mag <= 7:  # 6..7
         size = 6
     elif mag <= 8:  # 7..8
@@ -105,10 +84,18 @@ def size_by_fov_factory(fov: float) -> Callable[[Star], float]:
     """
     fov_multiplier = 20 / fov
 
-    return lambda s: size_by_magnitude(s) * fov_multiplier * 0.5
+    return lambda s: size_by_magnitude(s) * fov_multiplier * 0.64
 
 
 def size_by_magnitude_galaxy(star: Star) -> float:
+    """
+    Star sizer for galaxy plots that assumes only brighter stars will be plotted, so it uses smaller sizes overall.
+
+    _This is the default star sizing function for GalaxyPlot._
+
+    Args:
+        star: The Star instance to size
+    """
     sizes = [
         15,
         15,
@@ -122,28 +109,6 @@ def size_by_magnitude_galaxy(star: Star) -> float:
     mag = max(0, star.magnitude)
     mag_index = min(int(mag), len(sizes) - 1)
     return sizes[mag_index]
-
-
-def opacity_by_magnitude(star: Star) -> float:
-    """
-    Basic calculator for opacity, based on magnitude:
-
-    ```python
-    if magnitude < 4.6:
-        opacity = 1
-    elif magnitude < 5.8:
-        opacity = 0.9
-    else:
-        opacity = (16 - m) * 0.09
-    ```
-    """
-    m = star.magnitude
-    if m < 4.6:
-        return 1
-    elif m < 5.8:
-        return 0.9
-
-    return (16 - m) * 0.09
 
 
 def color_by_bv(star: Star) -> str:

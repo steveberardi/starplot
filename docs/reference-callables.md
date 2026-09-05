@@ -35,34 +35,14 @@ Callables allow you to define your own functions for calculating a few of the st
     ```
 
 
-## Example
+_[See chapter 8 of the tutorial for an example of using a callable :material-arrow-right:](/tutorial/08/)_
 
-Here's a basic example of using one of the built-in callables to colorize the stars based on their BV index:
 
-```python hl_lines="18"
-from starplot import MapPlot, Mercator, callables, _
-from starplot.styles import PlotStyle, extensions
+Built-In Callables:
 
-style = PlotStyle().extend(
-    extensions.GRAYSCALE_DARK,
-    extensions.MAP,
-)
-p = MapPlot(
-    projection=Mercator(),
-    ra_min=3.4,
-    ra_max=8,
-    dec_min=-16,
-    dec_max=25.6,
-    style=style,
-)
-p.stars(
-    where=[_.magnitude < 12],
-    color_fn=callables.color_by_bv, # <-- here's where we specify the callable
-)
-p.constellations()
-
-p.export("orion_colored_stars.png")
-```
+- [Size](#size)
+- [Color](#color)
+- [Labels](#labels)
 
 ## Creating Your Own Callable
 Let's say you wanted to create a plot where the stars brighter than magnitude 4 should be colored blue and stars dimmer than that should be colored red. Here's a way to do that with a custom callable:
@@ -84,9 +64,68 @@ p.stars(
 ```
 Every callable for stars is passed an instance of [`Star`][starplot.Star], so you can reference various properties of stars in your callables. Similarly, every callable for a DSO is passed an instance of [`DSO`][starplot.DSO].
 
-# ::: starplot.callables
+
+## Size
+
+### ::: starplot.callables.size_by_magnitude
     options:
         inherited_members: true
         merge_init_into_class: true
         show_root_heading: true
-        docstring_section_style: list
+        show_source: true
+
+### ::: starplot.callables.size_by_magnitude_galaxy
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+### ::: starplot.callables.size_by_fov_factory
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+## Color
+
+### ::: starplot.callables.color_by_bv
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+### ::: starplot.callables.color_by_bv_gradient
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+## Labels
+
+
+### ::: starplot.callables.floor_hours_label
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+### ::: starplot.callables.rounded_degrees_label
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+### ::: starplot.callables.azimuth_with_cardinal_direction_label_factory
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+

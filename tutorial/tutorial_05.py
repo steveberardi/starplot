@@ -36,4 +36,4 @@ p = OpticPlot(
 )
 p.stars(where=[_.magnitude < 12])
 
-p.export("tutorial_05.png")
+p.export("tutorial_05.svg")
