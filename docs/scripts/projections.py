@@ -60,6 +60,8 @@ WIDE_AZIMUTHAL_RADIUS = (
     340  # degrees (diameter) -- used for Equidistant/LambertAzEqArea
 )
 
+CLIP_PATH_POINTS = 500
+
 # Each entry: (filename suffix, projection instance, extent kwargs for MapPlot,
 # optional clip_path)
 PROJECTIONS = [
@@ -82,7 +84,7 @@ PROJECTIONS = [
         "oblique_mercator",
         ObliqueMercator(azimuth=45),
         dict(),
-        geometry.circle(center=(180, 0), diameter_degrees=150, num_pts=100),
+        geometry.circle(center=(180, 0), diameter_degrees=150, num_pts=CLIP_PATH_POINTS),
     ),
     # Global-only projections always show the entire sky
     ("mollweide", Mollweide(), dict(), None),
@@ -94,7 +96,7 @@ PROJECTIONS = [
         Equidistant(),
         dict(),
         geometry.circle(
-            center=(180, 0), diameter_degrees=WIDE_AZIMUTHAL_RADIUS, num_pts=100
+            center=(180, 0), diameter_degrees=WIDE_AZIMUTHAL_RADIUS, num_pts=CLIP_PATH_POINTS
         ),
     ),
     (
@@ -102,7 +104,7 @@ PROJECTIONS = [
         LambertAzEqArea(),
         dict(),
         geometry.circle(
-            center=(180, 0), diameter_degrees=WIDE_AZIMUTHAL_RADIUS, num_pts=100
+            center=(180, 0), diameter_degrees=WIDE_AZIMUTHAL_RADIUS, num_pts=CLIP_PATH_POINTS
         ),
     ),
     # Stereographic (conformal) projections blow up toward infinity at their
@@ -112,19 +114,19 @@ PROJECTIONS = [
         "stereo_north",
         StereoNorth(),
         dict(),
-        geometry.circle(center=(180, 90), diameter_degrees=STEREO_RADIUS, num_pts=100),
+        geometry.circle(center=(180, 90), diameter_degrees=STEREO_RADIUS, num_pts=CLIP_PATH_POINTS),
     ),
     (
         "stereo_south",
         StereoSouth(),
         dict(),
-        geometry.circle(center=(180, -90), diameter_degrees=STEREO_RADIUS, num_pts=100),
+        geometry.circle(center=(180, -90), diameter_degrees=STEREO_RADIUS, num_pts=CLIP_PATH_POINTS),
     ),
     (
         "stereographic",
         Stereographic(),
         dict(),
-        geometry.circle(center=(180, 0), diameter_degrees=STEREO_RADIUS, num_pts=100),
+        geometry.circle(center=(180, 0), diameter_degrees=STEREO_RADIUS, num_pts=CLIP_PATH_POINTS),
     ),
     # Gnomonic projects the sphere from its own center onto a tangent
     # plane, so it can only show strictly *less* than a hemisphere -- at
@@ -140,7 +142,7 @@ PROJECTIONS = [
         "gnomonic",
         Gnomonic(center_dec=90),
         dict(dec_min=0),
-        geometry.circle(center=(180, 90), diameter_degrees=120, num_pts=100),
+        geometry.circle(center=(180, 90), diameter_degrees=120, num_pts=CLIP_PATH_POINTS),
     ),
     # Orthographic shows the sky as seen from infinitely far away, like a
     # view of the globe -- it can only show one hemisphere (up to 90 degrees
