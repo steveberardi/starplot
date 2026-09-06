@@ -19,8 +19,8 @@ p = MapPlot(
 )
 
 p.gridlines(
-    ra_locations=[d for d in range(8 * 15, 14 * 15, 5)],
-    dec_locations=[d for d in range(-50, -80, -2)],
+    ra_locations=[d for d in range(8 * 15, 14 * 15, 8)],
+    dec_locations=[d for d in range(-50, -80, -4)],
     ra_label_fn=lambda ra: f"{ra}\u00b0",
 )
 p.constellations()

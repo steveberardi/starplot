@@ -114,11 +114,9 @@ dso_planetary_nebula:
 
 dso_open_cluster: &DSO-OC
   marker:
-    opacity: 1
     fill: hsl(44, 70%, 64%)
-    stroke: hsl(44, 98%, 63%)
-    # rgb(46, 61, 74)
-    stroke_width: 1
+    stroke: hsl(208, 23%, 24%)
+    stroke_width: 4
   label:
     fill: hsl(44, 70%, 64%)
 dso_association_stars: *DSO-OC
