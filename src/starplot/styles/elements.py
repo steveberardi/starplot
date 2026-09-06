@@ -496,37 +496,37 @@ class LegendStyle(BaseStyle):
     zorder: int = ZOrder.LAYER_5
     """Zorder of the legend"""
 
-    margin_x: float = 20
+    margin_x: float = 24
     """Horizontal margin (empty space) between legend and its anchor position."""
 
-    margin_y: float = 20
+    margin_y: float = 24
     """Vertical margin (empty space) between legend and its anchor position."""
 
-    padding_x: float = 40
-    """Padding (in pixels) between the _outside_ of the legend and the map in the X axis. Negative numbers are supported."""
+    padding_x: float = 64
+    """Horizontal padding between the legend's border and its content."""
 
-    padding_y: float = 20
-    """Padding (in pixels) between the _outside_ of the legend and the map in the Y axis. Negative numbers are supported."""
+    padding_y: float = 32
+    """Vertical padding between the legend's border and its content."""
 
     title: LabelStyle = LabelStyle(
-        font_size=42,
+        font_size=56,
         font_weight=FontWeight.BOLD,
     )
     """Style for the legend's labels (see [LabelStyle][starplot.styles.LabelStyle])"""
 
-    label_padding: float = 24
+    label_padding: float = 36
     """Padding between legend labels"""
 
     labels: LabelStyle = LabelStyle(
-        font_size=28,
+        font_size=36,
         font_weight=FontWeight.NORMAL,
     )
     """Style for the legend's labels (see [LabelStyle][starplot.styles.LabelStyle])"""
 
-    symbol_size: int = 28
+    symbol_size: int = 32
     """Size of symbols in the legend, in pixels"""
 
-    symbol_padding: float = 20
+    symbol_padding: float = 32
     """Padding between each symbol and its label"""
 
 

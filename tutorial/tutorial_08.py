@@ -16,7 +16,6 @@ style = styles.PlotStyle().extend(
     styles.extensions.GRAYSCALE_DARK,
     styles.extensions.HORIZON,
 )
-
 style.axes.background.fill = {
     "stops": styles.gradients.NIGHT,
     "type": "linear",
@@ -28,8 +27,8 @@ p = HorizonPlot(
     azimuth=(30, 150),
     observer=observer,
     style=style,
-    scale=0.72,
-    resolution=2600,
+    resolution=2000,
+    autoscale=True,
 )
 p.ground(min_altitude=5, max_altitude=8)
 p.stars(

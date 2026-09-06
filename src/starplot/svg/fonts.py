@@ -3,6 +3,7 @@ import zipfile
 from functools import cache
 from pathlib import Path
 
+from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.ttLib import TTFont
 
@@ -191,6 +192,63 @@ def text_to_svg_path(
     return "\n".join(paths)
 
 
+@cache
+def _glyph_ink_bounds(
+    family: str, weight: int, italic: bool, char: str
+) -> tuple[float, float] | None:
+    """
+    Returns (ymin, ymax) ink extents of a single glyph, in font units
+    (unscaled) -- i.e. the actual drawn extent of this specific glyph, as
+    opposed to the font-wide `hhea` ascent/descent metrics (which are sized
+    to fit the tallest/lowest glyph anywhere in the font, e.g. accented
+    capitals, even when the glyph being measured doesn't need that much
+    room). Cached per (font, char) since walking a glyph's outline is more
+    expensive than reading a font-wide constant, but the result never
+    changes for a given font+char.
+
+    Returns None if the glyph isn't in the font's cmap or has no ink
+    (e.g. a space).
+    """
+    font = find_font(family=family, weight=weight, italic=italic)
+    cmap = font.getBestCmap()
+
+    if ord(char) not in cmap:
+        return None
+
+    glyph_set = font.getGlyphSet()
+    pen = BoundsPen(glyph_set)
+    glyph_set[cmap[ord(char)]].draw(pen)
+
+    if pen.bounds is None:
+        return None
+
+    _, ymin, _, ymax = pen.bounds
+    return ymin, ymax
+
+
+def _line_ink_bounds(
+    line: str, font: TTFont, font_name: str, font_weight: int, italic: bool
+) -> tuple[float, float]:
+    """Returns (ymin, ymax) ink extents (font units) across all glyphs in a line."""
+    ymin_all = None
+    ymax_all = None
+
+    for char in line:
+        bounds = _glyph_ink_bounds(font_name, font_weight, italic, char)
+        if bounds is None:
+            continue
+        ymin, ymax = bounds
+        ymin_all = ymin if ymin_all is None else min(ymin_all, ymin)
+        ymax_all = ymax if ymax_all is None else max(ymax_all, ymax)
+
+    if ymin_all is None:
+        # no glyphs with ink found (e.g. blank/space-only line) -- fall back
+        # to the font-wide metrics so we still return something sane
+        return -abs(font["hhea"].descent), font["hhea"].ascent
+
+    return ymin_all, ymax_all
+
+
 def get_text_hw(
     text: str,
     font_name: str,
@@ -200,11 +258,11 @@ def get_text_hw(
 ) -> tuple[float, float, float]:
     """
     Measures the rendered size of (possibly multi-line) text, using the actual
-    font's glyph metrics -- this must stay consistent with how Text.render_as_path
-    (starplot/svg/elements.py) renders text, since it's used to build the
-    collision-detection bounding box for labels. A rough per-character average
-    isn't accurate enough: for bold/large text it can noticeably underestimate
-    the true width and let labels overlap.
+    ink extents of its specific glyphs -- this must stay consistent with how
+    Text.render_as_path (starplot/svg/elements.py) renders text, since it's
+    used to build the collision-detection bounding box for labels. A rough
+    per-character average isn't accurate enough: for bold/large text it can
+    noticeably underestimate the true width and let labels overlap.
 
     Returns:
         (height, width, ascent) -- `ascent` is how far the first line's glyphs
@@ -222,8 +280,15 @@ def get_text_hw(
         sum(hmtx[cmap[ord(c)]][0] for c in line if ord(c) in cmap) * scale
         for line in lines
     )
-    ascent = font["hhea"].ascent * scale
-    descent = abs(font["hhea"].descent) * scale
+
+    _, first_ymax = _line_ink_bounds(lines[0], font, font_name, font_weight, italic)
+    if len(lines) > 1:
+        last_ymin, _ = _line_ink_bounds(lines[-1], font, font_name, font_weight, italic)
+    else:
+        last_ymin, _ = _line_ink_bounds(lines[0], font, font_name, font_weight, italic)
+
+    ascent = max(0, first_ymax) * scale
+    descent = -min(0, last_ymin) * scale
     # must match the line_height used when rendering multi-line text as paths
     # (see Text.render_as_path in starplot/svg/elements.py)
     line_height = font_size * 1.13

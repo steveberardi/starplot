@@ -76,6 +76,13 @@ class StarPlotterMixin:
             bayer_desig = s.bayer
             flamsteed_num = s.flamsteed
 
+            # star_sizes are already scaled by self.scale (they're reused
+            # directly for rendering the markers), but _offset_from_marker
+            # applies self.scale itself -- undo it here so the marker size it
+            # sees matches its own convention (e.g. style.marker.size, as
+            # passed by marker() and dsos.py), instead of being scaled twice
+            marker_size = star_sizes[i] / self.scale
+
             if label:
                 self.text(
                     label,
@@ -84,17 +91,17 @@ class StarPlotterMixin:
                     style=self._offset_from_marker(
                         style=style.label,
                         text=label,
-                        marker_size=star_sizes[i],
+                        marker_size=marker_size,
                     ),
                     collision_handler=collision_handler,
                     gid="stars-label-name",
                 )
 
             if bayer_labels and bayer_desig and s.is_primary:
-                _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i]))
+                _bayer.append((bayer_desig, s.ra, s.dec, marker_size))
 
             if flamsteed_labels and flamsteed_num and not bayer_desig and s.is_primary:
-                _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i]))
+                _flamsteed.append((flamsteed_num, s.ra, s.dec, marker_size))
 
         # Plot bayer/flamsteed
         for bayer_desig, ra, dec, star_size in _bayer:

@@ -327,7 +327,14 @@ class TextPlotterMixin:
             offset_x = offset_x * self.scale
 
         if offset_y == "auto":
-            offset_y = round(size / 2 - height / 2, self.canvas.precision)
+            # size/2 - height/2 alone centers the label vertically on the
+            # marker's top/bottom edge, with no extra clearance -- for a
+            # marker roughly as large as the label text (e.g. a bright
+            # star), that nets close to zero gap, which can be too tight
+            # when something else (a constellation line, another label)
+            # passes close by. The +3 buffer (matching offset_x's gap)
+            # guarantees a bit of breathing room beyond the marker edge.
+            offset_y = round(size / 2 - height / 2 + 3, self.canvas.precision)
         else:
             offset_y = offset_y * self.scale
 
@@ -538,14 +545,14 @@ class TextPlotterMixin:
                 style={
                     "marker": {
                         "symbol": "circle",
-                        "color": "red",
-                        "fill": "full",
+                        "fill": "red",
                     }
                 },
             )
             self.polygon(
                 geometry=area,
                 style={
+                    "fill": None,
                     "stroke": "red",
                     "stroke_width": 2,
                 },

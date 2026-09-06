@@ -124,3 +124,48 @@ class TestGetTextHw:
         # label collision-detection boxes for text rendered this same way
         rendered_line_offset = ys[1] - ys[0]
         assert rendered_line_offset == pytest.approx(double_h - single_h)
+
+    def test_ascent_reflects_actual_glyph_ink_not_the_fonts_full_em_box(self):
+        # GIVEN the font's own font-wide ascent metric (hhea.ascent), which is
+        # sized to fit the tallest glyph anywhere in the font (e.g. accented
+        # capitals), not just the specific text being measured
+        font = fonts.find_font(family=FONT_FAMILY, weight=400, italic=False)
+        scale = 24 / font["head"].unitsPerEm
+        font_wide_ascent = font["hhea"].ascent * scale
+
+        # WHEN measuring plain text with no tall/accented glyphs
+        _, _, ascent = fonts.get_text_hw(
+            text="Betelgeuse", font_name=FONT_FAMILY, font_size=24
+        )
+
+        # THEN the measured ascent reflects this text's actual ink height,
+        # not the font-wide metric -- otherwise collision boxes end up
+        # taller than what's actually drawn, and can block label positions
+        # that visually have room
+        assert ascent < font_wide_ascent
+
+    def test_descent_is_zero_when_the_line_has_no_descenders(self):
+        # GIVEN text with no descending characters (g, y, p, q, j, etc.)
+        # WHEN measuring its height and ascent
+        height, _, ascent = fonts.get_text_hw(
+            text="TOP", font_name=FONT_FAMILY, font_size=24
+        )
+
+        # THEN there's no meaningful descent below the baseline
+        assert height - ascent == pytest.approx(0, abs=1)
+
+    def test_descent_accounts_for_actual_descenders(self):
+        # GIVEN otherwise-identical text with and without a descender
+        no_descender_height, _, no_descender_ascent = fonts.get_text_hw(
+            text="TOP", font_name=FONT_FAMILY, font_size=24
+        )
+        descender_height, _, descender_ascent = fonts.get_text_hw(
+            text="TOPg", font_name=FONT_FAMILY, font_size=24
+        )
+
+        # THEN adding a descender increases the descent (height - ascent)
+        # without changing the ascent
+        assert descender_ascent == pytest.approx(no_descender_ascent)
+        assert (descender_height - descender_ascent) > (
+            no_descender_height - no_descender_ascent
+        )

@@ -462,7 +462,7 @@ class TestLegend:
         expected_height = (
             style.padding_y * 2
             + max(style.symbol_size, label_h)
-            + 2 * style.label_padding
+            + style.label_padding
         )
         expected_width = (
             label_w + style.symbol_size + style.symbol_padding + style.padding_x * 2
@@ -488,7 +488,7 @@ class TestLegend:
             style.padding_y * 2
             + 2 * title_h
             + max(style.symbol_size, label_h)
-            + 3 * style.label_padding
+            + 2 * style.label_padding
         )
         assert canvas.layout.legend.height == pytest.approx(expected_height)
         # the title can also widen the legend beyond what the label needs
