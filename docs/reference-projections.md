@@ -59,8 +59,7 @@
     }
 
     .proj-link {
-        margin-top: 20px;
-        margin-bottom: 0;
+        margin: 0;
     }
 
     .proj-link a {

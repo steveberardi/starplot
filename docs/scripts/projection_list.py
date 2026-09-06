@@ -17,6 +17,8 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from starplot.projections import *
+
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 PROJECTIONS_FILE = REPO_ROOT / "src" / "starplot" / "projections.py"
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -58,6 +60,20 @@ BASE_PROPERTIES = {
 PROPERTY_ORDER = ["center_ra", "center_dec", "azimuth"]
 
 PROJ_DOCS_URL = "https://proj.org/en/stable/operations/projections/{}.html"
+
+WIKIPEDIA_URL = {
+    Equidistant.name: "https://en.wikipedia.org/wiki/Azimuthal_equidistant_projection",
+    LambertAzEqArea.name: "https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection",
+    Mercator.name: "https://en.wikipedia.org/wiki/Mercator_projection",
+    Miller.name: "https://en.wikipedia.org/wiki/Miller_cylindrical_projection",
+    Mollweide.name: "https://en.wikipedia.org/wiki/Mollweide_projection",
+    ObliqueMercator.name: "https://en.wikipedia.org/wiki/Oblique_Mercator_projection",
+    Orthographic.name: "https://en.wikipedia.org/wiki/Orthographic_projection",
+    PlateCarree.name: "https://en.wikipedia.org/wiki/Equirectangular_projection",
+    Robinson.name: "https://en.wikipedia.org/wiki/Robinson_projection",
+    Stereographic.name: "https://en.wikipedia.org/wiki/Stereographic_map_projection",
+    Gnomonic.name: "https://en.wikipedia.org/wiki/Gnomonic_projection",
+}
 
 
 def _unparse(node):
@@ -135,6 +151,7 @@ def build_cards(classes: dict) -> list[dict]:
                 "properties": resolve_properties(class_name, classes),
                 "image": f"projection_{slug}.svg",
                 "proj_url": PROJ_DOCS_URL.format(proj_name),
+                "wikipedia_url": WIKIPEDIA_URL[proj_name],
             }
         )
     return cards

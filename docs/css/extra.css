@@ -94,6 +94,10 @@ code.doc-symbol {
     margin-left: 4px;
 }
 
+.ms-2 {
+    margin-left: 8px;
+}
+
 /* Object Class Headings */
 .doc-object.doc-class {
     border-top: 1px solid rgba(159, 173, 196, 0.8);
@@ -629,7 +633,6 @@ td[data-column-id=bayer] {
     }
 }
 
-
 .cards.feature-cards {
     li {
         align-items: start;
@@ -662,14 +665,6 @@ td[data-column-id=bayer] {
   height: 100px !important;
   object-fit: cover;
   object-position: center;
-}
-
-.projection-img {
-  max-width: 600px !important;
-  width: 100%;
-  height: auto;
-  margin: auto;
-  padding: 14px 0;
 }
 
 .marker-symbol-img {
