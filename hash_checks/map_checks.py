@@ -12,6 +12,7 @@ from starplot import (
     CollisionHandler,
     Constellation,
     DsoType,
+    Equidistant,
     MapPlot,
     Mercator,
     Miller,
@@ -25,6 +26,7 @@ from starplot import (
     StereoSouth,
     _,
     styles,
+    geometry,
 )
 
 HERE = Path(__file__).resolve().parent
@@ -792,4 +794,33 @@ def check_map_font_fallback():
 
     p.export(filename)
 
+    return filename
+
+
+def check_map_equidistant_tissot():
+    filename = DATA_PATH / "map-equidistant-tissot.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.STARPLOT,
+        styles.extensions.MAP,
+    )
+    style.axes.border.width = 2
+    style.axes.border.stroke = "#153358CA"
+    style.axes.background.fill = "#2E343B"
+    style.figure.background.fill = None
+    style.tissot.fill = "#4476B3E4"
+
+    p = MapPlot(
+        projection=Equidistant(),
+        style=style,
+        resolution=RESOLUTION,
+        clip_path=geometry.circle(
+            center=(180, 0),
+            diameter_degrees=340,
+            num_pts=200,
+        ),
+    )
+    p.gridlines()
+    p.tissot()
+    p.export(filename)
     return filename
