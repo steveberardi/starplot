@@ -460,9 +460,7 @@ class TestLegend:
         # THEN height/width match the padding + one label row + marker/text,
         # derived independently from the style's own padding constants
         expected_height = (
-            style.padding_y * 2
-            + max(style.symbol_size, label_h)
-            + style.label_padding
+            style.padding_y * 2 + max(style.symbol_size, label_h) + style.label_padding
         )
         expected_width = (
             label_w + style.symbol_size + style.symbol_padding + style.padding_x * 2
