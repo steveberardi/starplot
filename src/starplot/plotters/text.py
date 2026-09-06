@@ -15,18 +15,10 @@ from starplot.styles.helpers import use_style
 from starplot.svg.canvas import CoordinateSystem
 from starplot.svg.fonts import get_text_hw
 
-"""
-Long term strategy:
-
-- plot all markers FIRST (but keep track of labels)
-- on export, find best positions for labels
-- introduce some "priority" for labels (e.g. order by)
-
-"""
-
 BBox = tuple[int, int, int, int]
 """Tuple of integers representing bounding box (xmin, ymin, xmax, ymax) -- in display coordinates."""
 
+AUTO_OFFSET_PADDING = 5
 
 def round_away_from_zero(x):
     """
@@ -322,7 +314,7 @@ class TextPlotterMixin:
         offset_y = style.offset_y
 
         if offset_x == "auto":
-            offset_x = round(size / 2 + 3, self.canvas.precision)
+            offset_x = round(size / 2 + AUTO_OFFSET_PADDING * self.scale, self.canvas.precision)
         else:
             offset_x = offset_x * self.scale
 
@@ -332,9 +324,9 @@ class TextPlotterMixin:
             # marker roughly as large as the label text (e.g. a bright
             # star), that nets close to zero gap, which can be too tight
             # when something else (a constellation line, another label)
-            # passes close by. The +3 buffer (matching offset_x's gap)
+            # passes close by. The +6 buffer (matching offset_x's gap)
             # guarantees a bit of breathing room beyond the marker edge.
-            offset_y = round(size / 2 - height / 2 + 3, self.canvas.precision)
+            offset_y = round(size / 2 - height / 2 + AUTO_OFFSET_PADDING * self.scale, self.canvas.precision)
         else:
             offset_y = offset_y * self.scale
 

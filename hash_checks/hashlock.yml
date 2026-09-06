@@ -4,30 +4,30 @@ galaxy_base:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/galaxy-base.png
   phash: 91074ef43b0b6cf4
 horizon_base:
-  dhash: 9e86928e8eca8e0d8a86928e8eca8e0d8a86d68e8e8a8d0d
+  dhash: 9e86928a86ca8e0d8a86928a86ca8e0d8a86d68e868a8d0d
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/horizon-base.png
   phash: c0953ac53ef00f7a
 horizon_gradient_background:
-  dhash: 417964b2b2b68e8cc179643232b68e8dc178e4b2b2b28e8d
+  dhash: 417964b2b2b28e8cc179643232b68e8dc168e4b2b2b28e8d
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/horizon-gradient-background.png
-  phash: 944f62816be43df4
+  phash: 944f62816ee43df4
 horizon_north_celestial_pole:
-  dhash: b89a8ab6acaab2a2a89a8ab2aeaab2a2b29a8ab4aaa2a0a2
+  dhash: b89aaab6acaab2a2a89a8ab2aeaab2a2b29a8ab2aaa2a0a2
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/horizon-north-celestial-pole.png
   phash: d5732b086edc2a63
 map_allow_all_collisions:
-  dhash: 263693caa6b44a26263693caa6b44a26263793caa6b04326
+  dhash: 263693caa6b44a26263693caa6b44a26263793caa6304326
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-allow-all-collisions.png
-  phash: ac1d1e9666c339f0
+  phash: ac1d1eb666c338f0
 map_allow_marker_and_line_collisions:
-  dhash: 858486e73656a66c84848ee73656a66e85848eef3642266e
+  dhash: 858486ef3656a66c84848eef3656a66e85848eed3652a66e
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-allow-some-collisions.png
-  phash: a4c0766d3fe027d8
+  phash: a4d0762d3fe027d8
 map_coma_berenices_dso_size:
   dhash: ca95ecacd188c0c08284ac8c908cc2c2869a92929886c282
   exception: null
@@ -37,27 +37,32 @@ map_constellation_clip_path:
   dhash: 334f6696e4b81910334f6696e4f81910334f6691e4f81918
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-constellation-clip-path.png
-  phash: 99ec5918ccd99ccc
+  phash: 99ee5918c8d99ccc
 map_custom_stars:
   dhash: 5c2128ce8c2ca4485c2128ce8c2ca4485c2128ce8c2ca448
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-custom-stars.png
   phash: e61a5ba405a5b7b4
+map_equidistant_tissot:
+  dhash: 70cc96d4d496cc7070c8d4d4d4d4c87070e8d4d4d4d4e870
+  exception: null
+  filename: /Users/steveberardi/src/starplot/hash_checks/data/map-equidistant-tissot.png
+  phash: 807b1f2b6a5978e8
 map_font_fallback:
-  dhash: 4c7129ceae2f84284c7129ceae2f84284c7129ceae2f8428
+  dhash: 4c7129ceae2d84284c7129ceae2d84284c7129ceae2d8428
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-font-fallback.png
   phash: a6237b26272537f0
 map_gridlines:
-  dhash: 4841951422c849814841951422c849814841951422c84981
+  dhash: 4841951422c849834841951422c849834841951422c84983
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-gridlines.png
-  phash: dab54b172d3262a5
+  phash: cbb44b172d3261b5
 map_label_callables:
   dhash: 80e0e0c8c8e0a080d8982c0c2cac98e0c09a9c0d0d9c98a0
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-m45-label-callables.png
-  phash: b232c9d94ec74ccc
+  phash: b232c9c94ee74ccc
 map_milky_way_multi_polygon:
   dhash: 715f8b8cc8369426f11f8b88c83694266d539b88c8369426
   exception: null
@@ -67,22 +72,22 @@ map_mollweide:
   dhash: 0b6b73632b32170f0b6b73632b32170f2b6973632b32170b
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-mollweide.png
-  phash: abcbb29ce3349461
+  phash: abcbb69ce3249461
 map_moon_phase_waxing_crescent:
   dhash: 8088b04848b088808088a04848a088808088804848808880
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-moon-phase-waxing-crescent.png
   phash: b38ccc3333cccc33
 map_orion_base:
-  dhash: 183939762a2f6468183939562a2b646a5c1939962a2f6468
+  dhash: 183939762e2f6468183939562e2b646a5c1939962e2f6468
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-orion-base.png
-  phash: bf79d2249584b594
+  phash: be79d2268585b594
 map_orion_extra:
-  dhash: 1a1b38752a6f64680a1b38592a6b646a4a1b39952a2f6468
+  dhash: 1a1b38752e6f64680a1b38512e6b646a4a1b39952e2f6468
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-orion-extra.png
-  phash: bf716f24c18e9194
+  phash: bf716f24819e9096
 map_plate_caree:
   dhash: 40928cccc44cb8ca02b28cccc44ca8ca82928c8cc4ccb88a
   exception: null
@@ -92,14 +97,14 @@ map_plot_custom_clip_path_virgo:
   dhash: 0302d24b262d2c0c0323c66e262d24040315c42b2e2d2404
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-custom-clip-path-virgo.png
-  phash: ee49e8eaeb436094
+  phash: ee49e8eaebc26094
 map_plot_limit_by_geometry:
-  dhash: 80b088a4568c648080b088a4568c6480882094a4568c6480
+  dhash: 80a088a4568c648080b090a4568c6480802098a4568c6480
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-limit-by-geometry.png
-  phash: f4d88e3349867359
+  phash: f0d88e33c9867359
 map_scope_bino_fov:
-  dhash: 8c00a0988c80908a8c00a61a0ea28c828c00a61a0ea28c82
+  dhash: 8c00a0988c80808a8c00a61a0ea294828c00a61a0ea29482
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-scope-bino-fov.png
   phash: f1704c73734c4c73
@@ -127,7 +132,7 @@ optic_camera_rotated:
   dhash: 183870d2b0d0e064183870d2b0d0e064183870d2b0d0e064
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/optic-camera-rotated-m45.png
-  phash: d1993f62f0ad0366
+  phash: d0993f62f0af0366
 optic_clipping:
   dhash: 709838e6d2e2fcfc7098b8e6dae2fcfc70c8bae6f6a2fcf0
   exception: null
@@ -147,7 +152,7 @@ optic_m45_camera:
   dhash: 0c303018302400400c303018302400400c30301830240040
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/optic-m45-camera.png
-  phash: 989966e473b34699
+  phash: 989966e463b34e99
 optic_m45_reflector:
   dhash: e0c8a832e0f2f870e0c8a832e0f2f870e0c8a832e0f2f870
   exception: null
@@ -199,17 +204,17 @@ optic_wrapping:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/optic-wrapping.png
   phash: 91c446916bce39de
 zenith_base:
-  dhash: f0ccae868296ecf1f0ccae868a96ecf1f0ccae868e96ecf1
+  dhash: f0ccae868296ecf1f0ccae868696ecf1f0ccae868e96ecf1
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/zenith-base.png
-  phash: 90570b552b563c5f
+  phash: 90570b552b56785f
 zenith_chinese:
-  dhash: 86175359eca2c871860753596ca2c8710607c298a292cc71
+  dhash: 86077359ecaac8718607537964aac8710607d298a682cc71
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/zenith-chinese.png
-  phash: c52ecea41ec36987
+  phash: c52ecea41ed36986
 zenith_gradient:
-  dhash: 86135320b882c87186075329a08ac8710607d2a8a28ecc71
+  dhash: 86135330b882c87186075329b08ac8710607d2b8aa8ecc71
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/zenith-gradient.png
-  phash: c16e8ee41ec36d83
+  phash: c12ecee41ec36d83
