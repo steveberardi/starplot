@@ -883,9 +883,7 @@ class Canvas:
                 y += h + label_padding
 
             if i < len(sections) - 1:
-                height += label_padding  # * 2.5
-            else:
-                height += 0  # label_padding
+                height += label_padding
 
         background_element = Rectangle(
             x=0,
