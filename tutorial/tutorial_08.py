@@ -28,17 +28,17 @@ p = HorizonPlot(
     azimuth=(30, 150),
     observer=observer,
     style=style,
-    scale=0.6,
+    scale=0.72,
     resolution=2600,
 )
 p.ground(min_altitude=5, max_altitude=8)
 p.stars(
-    where=[_.magnitude < 4],
+    where=[_.magnitude < 3.6],
     where_labels=[_.magnitude < 1.6],
     # callable to color the stars based on their BV index:
     color_fn=callables.color_by_bv_gradient,
     # callable to make dimmer stars semi-transparent:
-    opacity_fn=lambda s: 1 if s.magnitude < 2.4 else 0.6,
+    opacity_fn=lambda s: 1 if s.magnitude < 2 else 0.5,
 )
 
 style.gridlines.label.font_size *= 1.2  # make the labels 20% bigger

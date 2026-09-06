@@ -73,8 +73,8 @@ GRADIENT_LAVENDER_TWILIGHT = {
     },
 }
 
-GRADIENT_TRUE_NIGHT = {
-    "axes": {"background": {"fill": {"stops": gradients.TRUE_NIGHT, "type": "linear"}}},
+GRADIENT_NIGHT = {
+    "axes": {"background": {"fill": {"stops": gradients.NIGHT, "type": "linear"}}},
 }
 
 GRADIENT_PRE_DAWN = {

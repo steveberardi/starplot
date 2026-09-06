@@ -54,9 +54,9 @@ Pre-defined gradient stops available in `starplot.styles.gradients`:
 </div>
 
 <div class="gradient-swatch-card" markdown>
-![True Night](/images/reference/gradient_true_night.svg){ loading=lazy .gradient-swatch-img}
+![True Night](/images/reference/gradient_night.svg){ loading=lazy .gradient-swatch-img}
 
-`TRUE_NIGHT`{: .gradient-swatch-name}
+`NIGHT`{: .gradient-swatch-name}
 </div>
 
 <div class="gradient-swatch-card" markdown>
