@@ -32,6 +32,7 @@ OUTPUT_PATH = REPO_ROOT / "docs" / "images" / "reference" / "projection_list.htm
 # so much as an automatic fallback among the ones listed here.
 PROJECTIONS = [
     ("Equidistant", "equidistant"),
+    ("Gnomonic", "gnomonic"),
     ("LambertAzEqArea", "lambert_az_eq_area"),
     ("Mercator", "mercator"),
     ("Miller", "miller"),
@@ -43,7 +44,6 @@ PROJECTIONS = [
     ("StereoNorth", "stereo_north"),
     ("StereoSouth", "stereo_south"),
     ("Stereographic", "stereographic"),
-    ("Gnomonic", "gnomonic"),
 ]
 
 # The only base classes in projections.py that expose user-facing

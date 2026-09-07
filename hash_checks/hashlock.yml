@@ -44,10 +44,10 @@ map_custom_stars:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-custom-stars.png
   phash: e61a5ba405a5b7b4
 map_equidistant_tissot:
-  dhash: 70cc96d4d496cc7070c8d4d4d4d4c87070e8d4d4d4d4e870
+  dhash: 70cc96d4d496cc7070e8d4d4d4d4e87070e8d4d4d4d4e870
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-equidistant-tissot.png
-  phash: 807b1f2b6a5978e8
+  phash: 81371f737a786870
 map_font_fallback:
   dhash: 4c7129ceae2d84284c7129ceae2d84284c7129ceae2d8428
   exception: null

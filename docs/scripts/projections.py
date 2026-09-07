@@ -54,11 +54,12 @@ style.tissot.fill = "#3D699EE5"
 # empty (for a polar center) or scale wildly unevenly (for an equatorial
 # center). Stereographic's scale blows up to infinity at the antipode (it's
 # conformal), so its circle is much smaller than Equidistant/LambertAzEqArea,
-# which stay finite all the way to (almost) the antipode.
-STEREO_RADIUS = 220  # degrees (diameter) -- used for StereoNorth/South/Stereographic
-WIDE_AZIMUTHAL_RADIUS = (
-    340  # degrees (diameter) -- used for Equidistant/LambertAzEqArea
-)
+# which stay finite all the way to (almost) the antipode -- though in
+# practice both are capped at radius 90 here (a hemisphere): MapPlot's
+# clip_path pipeline can't yet correctly render a clip_path that spans the
+# entire sphere, which anything wider would need (see geometry.circle_on_sphere).
+STEREO_DIAMETER = 220  # degrees (diameter) -- used for StereoNorth/South/Stereographic
+WIDE_AZIMUTHAL_DIAMETER = 179  # degrees (radius) -- used for Equidistant/LambertAzEqArea
 
 CLIP_PATH_POINTS = 500
 
@@ -96,7 +97,7 @@ PROJECTIONS = [
         Equidistant(),
         dict(),
         geometry.circle(
-            center=(180, 0), diameter_degrees=WIDE_AZIMUTHAL_RADIUS, num_pts=CLIP_PATH_POINTS
+            center=(180, 0), diameter_degrees=WIDE_AZIMUTHAL_DIAMETER, num_pts=CLIP_PATH_POINTS
         ),
     ),
     (
@@ -104,7 +105,7 @@ PROJECTIONS = [
         LambertAzEqArea(),
         dict(),
         geometry.circle(
-            center=(180, 0), diameter_degrees=WIDE_AZIMUTHAL_RADIUS, num_pts=CLIP_PATH_POINTS
+            center=(180, 0), diameter_degrees=WIDE_AZIMUTHAL_DIAMETER, num_pts=CLIP_PATH_POINTS
         ),
     ),
     # Stereographic (conformal) projections blow up toward infinity at their
@@ -114,19 +115,19 @@ PROJECTIONS = [
         "stereo_north",
         StereoNorth(),
         dict(),
-        geometry.circle(center=(180, 90), diameter_degrees=STEREO_RADIUS, num_pts=CLIP_PATH_POINTS),
+        geometry.circle(center=(180, 90), diameter_degrees=STEREO_DIAMETER, num_pts=CLIP_PATH_POINTS),
     ),
     (
         "stereo_south",
         StereoSouth(),
         dict(),
-        geometry.circle(center=(180, -90), diameter_degrees=STEREO_RADIUS, num_pts=CLIP_PATH_POINTS),
+        geometry.circle(center=(180, -90), diameter_degrees=STEREO_DIAMETER, num_pts=CLIP_PATH_POINTS),
     ),
     (
         "stereographic",
         Stereographic(),
         dict(),
-        geometry.circle(center=(180, 0), diameter_degrees=STEREO_RADIUS, num_pts=CLIP_PATH_POINTS),
+        geometry.circle(center=(180, 0), diameter_degrees=STEREO_DIAMETER, num_pts=CLIP_PATH_POINTS),
     ),
     # Gnomonic projects the sphere from its own center onto a tangent
     # plane, so it can only show strictly *less* than a hemisphere -- at

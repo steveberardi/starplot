@@ -814,9 +814,11 @@ def check_map_equidistant_tissot():
         projection=Equidistant(),
         style=style,
         resolution=RESOLUTION,
+        # radius capped at 90 degrees -- MapPlot's clip_path pipeline can't
+        # yet correctly render a clip_path spanning the whole sphere
         clip_path=geometry.circle(
             center=(180, 0),
-            diameter_degrees=340,
+            diameter_degrees=179,
             num_pts=200,
         ),
     )

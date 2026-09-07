@@ -532,16 +532,8 @@ class Canvas:
             arr = np.array(raw_segment)
             px, py = self.tx.transform(arr[:, 0], arr[:, 1])
 
-            if self.projection.wraps:
-                # Cut wherever the *projected* line jumps or goes non-finite,
-                # instead of guessing where the projection's seam falls in RA/DEC
-                # space (that only has a simple answer for unrotated cylindrical
-                # projections -- see ObliqueMercator, whose seam isn't a fixed RA).
-                lines_split.extend(
-                    self._split_line_with_refinement(raw_segment, px, py)
-                )
-            else:
-                lines_split.append(list(zip(px, py)))
+            # split the projected line wherever it jumps or goes non-finite
+            lines_split.extend(self._split_line_with_refinement(raw_segment, px, py))
 
         for line in lines_split:
             if len(line) < 2:
