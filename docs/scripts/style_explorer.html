@@ -72,6 +72,14 @@ body[data-md-color-scheme="slate"] {
   --card-bg-top: hsl(212, 45%, 28%);
 }
 
+.md-typeset {
+  line-height: 1.4;
+}
+
+.md-content {
+  max-width: 100%;
+}
+
 /* Same embedding problem as the details/summary reset below, but for
    inline code: Material styles every bare <code> in the page content
    via ".md-typeset code" -- a class+type selector, so it out-specifies
@@ -91,6 +99,10 @@ body[data-md-color-scheme="slate"] {
   color: var(--ink);
 }
 
+header.top {
+  padding-bottom: 28px;
+}
+
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -102,15 +114,6 @@ body[data-md-color-scheme="slate"] {
   gap: 8px;
 }
 .eyebrow .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); }
-
-h1 {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 27px;
-  letter-spacing: -0.01em;
-  margin: 4px 0 4px;
-  text-wrap: balance;
-}
 
 .sub { color: var(--muted); font-size: 14.5px; max-width: 62ch; margin: 0 0 16px; }
 .sub code { font-size: 0.92em; }
@@ -144,10 +147,6 @@ button.ctl {
 }
 button.ctl:hover { color: var(--ink); border-color: var(--faint); }
 
-main { padding-top: 20px; }
-
-header { margin-bottom: 20px;}
-
 h2.section-head {
   font-family: var(--font-display);
   font-weight: 600;
@@ -176,14 +175,6 @@ h2.section-head::after {
 .group h3 { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.03em; color: var(--ink); margin: 0 0 8px; }
 
 .fields--top { display: flex; flex-direction: column; gap: 8px; }
-
-.md-typeset {
-  line-height: 1.4;
-}
-
-.md-content {
-  max-width: 100%;
-}
 
 /* This page gets embedded in a Material/Zensical docs page via a snippet
    include, and Material styles bare <details>/<summary> as an admonition

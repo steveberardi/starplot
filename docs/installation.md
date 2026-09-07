@@ -6,6 +6,8 @@ Supported Python versions: 3.10 / 3.11 / 3.12 / 3.13
 
 <h3>1. Install Dependencies</h3>
 
+If you want to export plots to PNG, then you'll need [Cairo](https://www.cairographics.org/download/). If you only want to export to SVG, you can skip this step.
+
 On macOS (with [Homebrew](https://brew.sh/)):
 ```
 brew install cairo
@@ -34,6 +36,7 @@ starplot setup
 
 Starplot will do this automatically when you first create a plot, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
 
+[_Check out our tutorial for a quick intro to Starplot :material-arrow-right:_](/tutorial/)
 
 ---
 
