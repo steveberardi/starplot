@@ -27,6 +27,7 @@ GRADIENT_NAMES = [
     "lavender_twilight",
     "night",
     "pre_dawn",
+    "ground",
     "optic_falloff",
     "optic_fall_in",
 ]

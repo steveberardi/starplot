@@ -41,7 +41,11 @@ table th {
 }
 
 .md-content {
-    max-width: 900px;
+    margin-left: 28px;
+    max-width: 940px;
+}
+.md-grid {
+    max-width: 68rem;
 }
 
 .md-header {
@@ -520,7 +524,7 @@ td[data-column-id=bayer] {
 .divider {
     margin-top: 20px;
     margin-bottom: 20px;
-    border-top: 1px solid hsl(209, 43%, 68%);
+    border-top: 1px solid rgba(159, 173, 196, 0.8)
 }
 
 .info-panel {

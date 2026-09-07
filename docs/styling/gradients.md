@@ -66,16 +66,23 @@ Pre-defined gradient stops available in `starplot.styles.gradients`:
 </div>
 
 <div class="gradient-swatch-card" markdown>
+![Optic Falloff](/images/reference/gradient_ground.svg){ loading=lazy .gradient-swatch-img}
+
+`GROUND`{: .gradient-swatch-name}
+</div>
+
+<div class="gradient-swatch-card" markdown>
 ![Optic Falloff](/images/reference/gradient_optic_falloff.svg){ loading=lazy .gradient-swatch-img}
 
 `OPTIC_FALLOFF`{: .gradient-swatch-name}
 </div>
 
+<!--
 <div class="gradient-swatch-card" markdown>
 ![Optic Fall In](/images/reference/gradient_optic_fall_in.svg){ loading=lazy .gradient-swatch-img}
 
 `OPTIC_FALL_IN`{: .gradient-swatch-name}
-</div>
+</div> -->
 
 </div>
 
