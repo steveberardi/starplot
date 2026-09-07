@@ -174,6 +174,7 @@ def circle(center, diameter_degrees, num_pts=100) -> Polygon:
         num_pts=num_pts,
     )
 
+
 def union_at_zero(a: Polygon, b: Polygon) -> Polygon:
     """
     Returns union of two polygons on a sphere, with coordinates in degrees.

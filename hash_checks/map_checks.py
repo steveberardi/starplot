@@ -25,8 +25,8 @@ from starplot import (
     StereoNorth,
     StereoSouth,
     _,
-    styles,
     geometry,
+    styles,
 )
 
 HERE = Path(__file__).resolve().parent

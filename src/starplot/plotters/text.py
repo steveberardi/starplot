@@ -20,6 +20,7 @@ BBox = tuple[int, int, int, int]
 
 AUTO_OFFSET_PADDING = 5
 
+
 def round_away_from_zero(x):
     """
     Returns ceiling if number is greater than 0, else returns floor
@@ -314,7 +315,9 @@ class TextPlotterMixin:
         offset_y = style.offset_y
 
         if offset_x == "auto":
-            offset_x = round(size / 2 + AUTO_OFFSET_PADDING * self.scale, self.canvas.precision)
+            offset_x = round(
+                size / 2 + AUTO_OFFSET_PADDING * self.scale, self.canvas.precision
+            )
         else:
             offset_x = offset_x * self.scale
 
@@ -326,7 +329,10 @@ class TextPlotterMixin:
             # when something else (a constellation line, another label)
             # passes close by. The +6 buffer (matching offset_x's gap)
             # guarantees a bit of breathing room beyond the marker edge.
-            offset_y = round(size / 2 - height / 2 + AUTO_OFFSET_PADDING * self.scale, self.canvas.precision)
+            offset_y = round(
+                size / 2 - height / 2 + AUTO_OFFSET_PADDING * self.scale,
+                self.canvas.precision,
+            )
         else:
             offset_y = offset_y * self.scale
 
