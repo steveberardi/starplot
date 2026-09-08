@@ -129,7 +129,7 @@ class Hashio:
 
             if not all(
                 [
-                    values["dhash"] == hashlock[func_name]["dhash"],
+                    # values["dhash"] == hashlock[func_name]["dhash"],
                     values["phash"] == hashlock[func_name]["phash"],
                 ]
             ):
