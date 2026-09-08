@@ -40,6 +40,13 @@ format:
 test:
 	uv run $(DOTENV) pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html tests/
 
+test-all-python:
+	for version in 3.10 3.11 3.12 3.13; do \
+		echo "===== Testing Python $$version ====="; \
+		uv run $(DOTENV) --python $$version --isolated pytest tests/; \
+	done
+# 		uv run $(DOTENV) --python $$version --isolated python hash_checks/hashio.py check; \
+
 check-hashes:
 	rm -f hash_checks/data/*.png
 	uv run $(DOTENV) python hash_checks/hashio.py check
