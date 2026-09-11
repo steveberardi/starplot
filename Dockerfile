@@ -26,4 +26,4 @@ RUN uv run starplot setup
 # Install fonts used in tests
 RUN uv run scripts/download_test_fonts.py
 
-CMD ["bash", "-c", "uv run pytest . && uv run hash_checks/hashio.py check"]
+CMD ["bash", "-c", "uv run pytest ."]

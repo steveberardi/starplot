@@ -1,5 +1,7 @@
 DE421_URL=https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp
 
+PYTHON_VERSION=3.12
+
 ifeq ($(CI), true)
  DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
 else
@@ -39,12 +41,8 @@ format:
 test:
 	uv run $(DOTENV) pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html tests/
 
-test-all-python:
-	for version in 3.10 3.11 3.12 3.13; do \
-		echo "===== Testing Python $$version ====="; \
-		uv run $(DOTENV) --python $$version --isolated pytest tests/; \
-	done
-# 		uv run $(DOTENV) --python $$version --isolated python hash_checks/hashio.py check; \
+test-python-version:
+	uv run $(DOTENV) --python $(PYTHON_VERSION) --isolated pytest tests/
 
 check-hashes:
 	rm -f hash_checks/data/*.png
