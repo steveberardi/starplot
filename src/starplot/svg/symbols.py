@@ -233,11 +233,19 @@ def satellite(x: float, y: float, size: float, attrs: dict):
         for i in (1, 2):
             cx = round(panel_x0 + col_step * i, settings.precision)
             elements.append(
-                Line(x1=cx, y1=panel_y0, x2=cx, y2=round(panel_y0 + panel_h, settings.precision))
+                Line(
+                    x1=cx,
+                    y1=panel_y0,
+                    x2=cx,
+                    y2=round(panel_y0 + panel_h, settings.precision),
+                )
             )
         elements.append(
             Line(
-                x1=panel_x0, y1=mid_y, x2=round(panel_x0 + panel_w, settings.precision), y2=mid_y
+                x1=panel_x0,
+                y1=mid_y,
+                x2=round(panel_x0 + panel_w, settings.precision),
+                y2=mid_y,
             )
         )
 
@@ -251,7 +259,12 @@ def satellite(x: float, y: float, size: float, attrs: dict):
         )
     )
     elements.append(
-        Line(x1=round(x + body_w / 2, settings.precision), y1=mid_y, x2=right_x0, y2=mid_y)
+        Line(
+            x1=round(x + body_w / 2, settings.precision),
+            y1=mid_y,
+            x2=right_x0,
+            y2=mid_y,
+        )
     )
 
     return Group(
