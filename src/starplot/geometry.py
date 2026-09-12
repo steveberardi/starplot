@@ -8,6 +8,7 @@ from shapely import union_all
 from shapely.errors import GEOSException
 from shapely.geometry import LineString, Point, Polygon
 
+from starplot.config import settings
 from starplot.constants import PROJ_R
 
 GEOD = pyproj.Geod(f"+a={PROJ_R} +f=0.0", sphere=True)
@@ -102,7 +103,10 @@ def rectangle(
         lons = [lon + 360 for lon in lons]
 
     points = list(zip(lons, lats))
-    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
+    points = [
+        (round(ra, settings.precision), round(dec, settings.precision))
+        for ra, dec in points
+    ]
     points.append(points[0])
     return Polygon(points)
 
@@ -160,7 +164,10 @@ def ellipse(
         lons = [lon + 360 for lon in lons]
 
     points = list(zip(lons, lats))
-    points = [(round(ra, 4), round(dec, 4)) for ra, dec in points]
+    points = [
+        (round(ra, settings.precision), round(dec, settings.precision))
+        for ra, dec in points
+    ]
     points.append(points[0])
     return Polygon(points)
 

@@ -3,6 +3,7 @@ import random
 import numpy as np
 from shapely import LineString, Polygon, affinity, ops
 
+from starplot.config import settings
 from starplot.geometry import circle
 from starplot.profile import profile
 from starplot.styles import ArrowStyle
@@ -151,9 +152,14 @@ class ArrowPlotterMixin:
                 "To plot an arrow you must specify a target or a target and origin."
             )
 
+        coordinates = [
+            (round(x, settings.precision), round(y, settings.precision))
+            for x, y in zip(*arrow_polygon.exterior.coords.xy)
+        ]
+
         with self.canvas.group(gid=gid):
             self.canvas.polygon(
-                coordinates=list(zip(*arrow_polygon.exterior.coords.xy)),
+                coordinates=coordinates,
                 style=style,
                 cs="display",
             )

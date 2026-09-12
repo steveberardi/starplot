@@ -34,7 +34,7 @@ class MilkyWayPlotterMixin:
         )
 
         extent = self._extent_mask()
-        df = mw.filter(_.geometry.intersects(extent)).to_pandas()
+        df = mw.filter(_.geometry.intersects(extent)).order_by("pk").to_pandas()
 
         milky_ways = [from_tuple(m) for m in df.itertuples()]
 

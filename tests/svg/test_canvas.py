@@ -7,6 +7,8 @@ from shapely import Polygon as ShapelyPolygon
 from shapely import box
 
 from starplot import geometry as _geometry
+from starplot import override_settings
+from starplot.config import settings
 from starplot.projections import (
     CoordinateReferenceSystem,
     Equidistant,
@@ -82,8 +84,8 @@ class TestCoordinateConversions:
         canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
         ra, dec = 45, 10
         ax, ay = canvas._to_axes(ra, dec)
-        expected_x = round(ax * canvas.width, canvas.precision)
-        expected_y = round((1 - ay) * canvas.height, canvas.precision)
+        expected_x = round(ax * canvas.width, settings.precision)
+        expected_y = round((1 - ay) * canvas.height, settings.precision)
 
         # WHEN converting the point to display coordinates
         dx, dy = canvas._to_display(ra, dec)
@@ -100,8 +102,8 @@ class TestCoordinateConversions:
         dx, dy = canvas._to_display(0.25, 0.75, cs=CoordinateSystem.AXES)
 
         # THEN it's scaled directly to pixels, with y flipped
-        assert dx == pytest.approx(round(0.25 * canvas.width, canvas.precision))
-        assert dy == pytest.approx(round(0.25 * canvas.height, canvas.precision))
+        assert dx == pytest.approx(round(0.25 * canvas.width, settings.precision))
+        assert dy == pytest.approx(round(0.25 * canvas.height, settings.precision))
 
     def test_to_display_projected_coordinate_system(self):
         # GIVEN a canvas and a point already projected (but not yet normalized)
@@ -113,8 +115,8 @@ class TestCoordinateConversions:
         dx, dy = canvas._to_display(px, py, cs=CoordinateSystem.PROJECTED)
 
         # THEN it matches the same point converted through DATA coordinates
-        assert dx == pytest.approx(round(ax * canvas.width, canvas.precision))
-        assert dy == pytest.approx(round((1 - ay) * canvas.height, canvas.precision))
+        assert dx == pytest.approx(round(ax * canvas.width, settings.precision))
+        assert dy == pytest.approx(round((1 - ay) * canvas.height, settings.precision))
 
     def test_to_display_display_coordinate_system_is_passthrough(self):
         # GIVEN a canvas and an arbitrary point
@@ -143,8 +145,8 @@ class TestCoordinateConversions:
         )
         ra, dec = 30, -20
         ax, ay = canvas._to_axes(ra, dec)
-        expected_x = round(canvas.width - ax * canvas.width, canvas.precision)
-        expected_y = round(canvas.height - (1 - ay) * canvas.height, canvas.precision)
+        expected_x = round(canvas.width - ax * canvas.width, settings.precision)
+        expected_y = round(canvas.height - (1 - ay) * canvas.height, settings.precision)
 
         # WHEN converting the point to display coordinates
         dx, dy = canvas._to_display(ra, dec)
@@ -155,12 +157,13 @@ class TestCoordinateConversions:
 
     def test_to_display_precision_zero_truncates_to_int(self):
         # GIVEN a canvas with precision=0 and an array-valued point
-        canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40], precision=0)
-        xs = np.array([45.2])
-        ys = np.array([10.2])
+        with override_settings(precision=0):
+            canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
+            xs = np.array([45.2])
+            ys = np.array([10.2])
 
-        # WHEN converting the point to display coordinates
-        dx, dy = canvas._to_display(xs, ys)
+            # WHEN converting the point to display coordinates
+            dx, dy = canvas._to_display(xs, ys)
 
         # THEN the result is truncated to an integer dtype instead of rounded
         assert dx.dtype.kind == "i"
@@ -172,19 +175,19 @@ class TestCoordinateConversions:
         # GIVEN a canvas with precision=0 and invert_x/invert_y enabled
         xs = np.array([30.0])
         ys = np.array([-20.0])
-        inverted = _canvas(
-            PlateCarree(),
-            bounds=[10, -40, 80, 40],
-            precision=0,
-            invert_x=True,
-            invert_y=True,
-        )
-        ax, ay = inverted._to_axes(xs[0], ys[0])
-        expected_x = int(inverted.width - ax * inverted.width)
-        expected_y = int(inverted.height - (1 - ay) * inverted.height)
+        with override_settings(precision=0):
+            inverted = _canvas(
+                PlateCarree(),
+                bounds=[10, -40, 80, 40],
+                invert_x=True,
+                invert_y=True,
+            )
+            ax, ay = inverted._to_axes(xs[0], ys[0])
+            expected_x = int(inverted.width - ax * inverted.width)
+            expected_y = int(inverted.height - (1 - ay) * inverted.height)
 
-        # WHEN converting the point to display coordinates
-        dx_inv, dy_inv = inverted._to_display(xs, ys)
+            # WHEN converting the point to display coordinates
+            dx_inv, dy_inv = inverted._to_display(xs, ys)
 
         # THEN inversion still applies, even though the result is truncated to int
         assert dx_inv[0] == expected_x

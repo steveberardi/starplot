@@ -82,4 +82,4 @@ def load(
         pks = result["pk"].to_list()
         dsos = dsos.filter(_.pk.isin(pks))
 
-    return dsos
+    return dsos.order_by("pk")

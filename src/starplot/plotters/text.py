@@ -6,6 +6,7 @@ import rtree
 from shapely import Point, box
 from shapely.errors import GEOSException
 
+from starplot.config import settings
 from starplot.geometry import (
     random_point_in_polygon_at_distance,
     union_at_zero,
@@ -316,7 +317,7 @@ class TextPlotterMixin:
 
         if offset_x == "auto":
             offset_x = round(
-                size / 2 + AUTO_OFFSET_PADDING * self.scale, self.canvas.precision
+                size / 2 + AUTO_OFFSET_PADDING * self.scale, settings.precision
             )
         else:
             offset_x = offset_x * self.scale
@@ -331,7 +332,7 @@ class TextPlotterMixin:
             # guarantees a bit of breathing room beyond the marker edge.
             offset_y = round(
                 size / 2 - height / 2 + AUTO_OFFSET_PADDING * self.scale,
-                self.canvas.precision,
+                settings.precision,
             )
         else:
             offset_y = offset_y * self.scale

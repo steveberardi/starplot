@@ -75,5 +75,10 @@ class Settings:
     debug: bool = field(default_factory=_get_boolean("STARPLOT_DEBUG", False))
     """Global setting for debug mode. When this is enabled, Starplot will log debugging information and plot polygons for debugging text issues"""
 
+    precision: int = field(
+        default_factory=lambda: int(os.environ.get("STARPLOT_PRECISION", "4"))
+    )
+    """Number of decimal places to round coordinates and dimensions to when rendering SVG output."""
+
 
 settings = Settings()

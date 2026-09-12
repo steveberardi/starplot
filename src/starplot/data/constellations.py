@@ -68,4 +68,4 @@ def load(
         pks = result["pk"].to_list()
         c = c.filter(_.pk.isin(pks))
 
-    return c
+    return c.order_by("pk")

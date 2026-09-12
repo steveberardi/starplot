@@ -13,6 +13,7 @@ from shapely.affinity import translate as _translate_shape
 from shapely.ops import transform as _transform_shape
 
 from starplot import geometry as _geometry
+from starplot.config import settings
 from starplot.projections import (
     CoordinateReferenceSystem,
     ProjectionBase,
@@ -75,7 +76,6 @@ class Canvas:
         invert_y: bool = False,
         crs: CoordinateReferenceSystem = None,
         debug: bool = False,
-        precision: int = 2,
         logger=None,
     ):
         self.layout = Layout()
@@ -86,7 +86,6 @@ class Canvas:
         self.bounds = bounds
         self.style = style
         self.scale = scale
-        self.precision = precision
         self.debug = debug
 
         self.clip_path = clip_path
@@ -142,10 +141,10 @@ class Canvas:
         if self.invert_y:
             y = self.height - y
 
-        if self.precision == 0:
+        if settings.precision == 0:
             return x.astype(int), y.astype(int)
 
-        return np.round(x, self.precision), np.round(y, self.precision)
+        return np.round(x, settings.precision), np.round(y, settings.precision)
 
     def _is_global(self):
         return self.projection.global_only or (

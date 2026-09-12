@@ -202,7 +202,9 @@ class ConstellationPlotterMixin:
         )
 
         extent = self._extent_mask()
-        borders_df = borders.filter(_.geometry.intersects(extent)).to_pandas()
+        borders_df = (
+            borders.filter(_.geometry.intersects(extent)).order_by("pk").to_pandas()
+        )
 
         if borders_df.empty:
             return

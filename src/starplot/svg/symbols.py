@@ -1,5 +1,6 @@
 import math
 
+from starplot.config import settings
 from starplot.styles.types import MarkerSymbol
 from starplot.svg.elements import Circle, Ellipse, Group, Line, Polygon, Rectangle
 
@@ -13,11 +14,9 @@ from starplot.svg.elements import Circle, Ellipse, Group, Line, Polygon, Rectang
 (0,100)        (100,100)
 """
 
-PRECISION = 4
-
 
 def circle_cross(x, y, size, attrs):
-    r = round(size / 2, PRECISION)
+    r = round(size / 2, settings.precision)
     return Group(
         attrs=attrs,
         children=[
@@ -29,8 +28,8 @@ def circle_cross(x, y, size, attrs):
 
 
 def circle_crosshair(x, y, size, attrs):
-    r = round(size / 4, PRECISION)
-    n = round(2 * r, PRECISION)
+    r = round(size / 4, settings.precision)
+    n = round(2 * r, settings.precision)
 
     return Group(
         attrs=attrs,
@@ -45,8 +44,8 @@ def circle_crosshair(x, y, size, attrs):
 
 
 def circle_line(x, y, size, attrs):
-    r = round(size / 2, PRECISION)
-    n = round(1.8 * r, PRECISION)
+    r = round(size / 2, settings.precision)
+    n = round(1.8 * r, settings.precision)
     return Group(
         attrs=attrs,
         children=[
@@ -63,13 +62,13 @@ def circle_line(x, y, size, attrs):
 
 
 def circle(x, y, size, attrs):
-    r = round(size / 2, PRECISION)
+    r = round(size / 2, settings.precision)
     return Circle(cx=x, cy=y, r=r, attrs=attrs)
 
 
 def ellipse(x, y, size, attrs):
-    rx = round(size * 0.5, PRECISION)
-    ry = round(size * 0.3, PRECISION)
+    rx = round(size * 0.5, settings.precision)
+    ry = round(size * 0.3, settings.precision)
     _attrs = {
         "transform": f"rotate(-20, {x}, {y})",
         **attrs,
@@ -80,8 +79,8 @@ def ellipse(x, y, size, attrs):
 def square(x, y, size, attrs):
     r = size / 2
     return Rectangle(
-        x=round(x - r, PRECISION),
-        y=round(y - r, PRECISION),
+        x=round(x - r, settings.precision),
+        y=round(y - r, settings.precision),
         height=size,
         width=size,
         attrs=attrs,
@@ -98,8 +97,8 @@ def triangle(
     points = []
     for i in range(3):
         angle = math.radians(-90 + i * 120)
-        xx = round(x + r * math.cos(angle), PRECISION)
-        yy = round(y + r * math.sin(angle), PRECISION)
+        xx = round(x + r * math.cos(angle), settings.precision)
+        yy = round(y + r * math.sin(angle), settings.precision)
         points.append((xx, yy))
 
     return Polygon(points=points, attrs=attrs)
@@ -138,8 +137,8 @@ def create_star_function(num_points: int):
             r = size / 2 if i % 2 == 0 else size / 5
             points.append(
                 (
-                    round(x + r * math.cos(angle), PRECISION),
-                    round(y + r * math.sin(angle), PRECISION),
+                    round(x + r * math.cos(angle), settings.precision),
+                    round(y + r * math.sin(angle), settings.precision),
                 )
             )
         return Polygon(points=points, attrs=attrs)
@@ -201,58 +200,58 @@ def satellite(x: float, y: float, size: float, attrs: dict):
     body_w = size * 0.22
     body_h = size * 0.20
 
-    panel_y0 = round(y - panel_h / 2, PRECISION)
-    left_x0 = round(x - body_w / 2 - gap - panel_w, PRECISION)
-    right_x0 = round(x + body_w / 2 + gap, PRECISION)
+    panel_y0 = round(y - panel_h / 2, settings.precision)
+    left_x0 = round(x - body_w / 2 - gap - panel_w, settings.precision)
+    right_x0 = round(x + body_w / 2 + gap, settings.precision)
 
     elements = [
         Rectangle(
             x=left_x0,
             y=panel_y0,
-            width=round(panel_w, PRECISION),
-            height=round(panel_h, PRECISION),
+            width=round(panel_w, settings.precision),
+            height=round(panel_h, settings.precision),
         ),
         Rectangle(
             x=right_x0,
             y=panel_y0,
-            width=round(panel_w, PRECISION),
-            height=round(panel_h, PRECISION),
+            width=round(panel_w, settings.precision),
+            height=round(panel_h, settings.precision),
         ),
         Rectangle(
-            x=round(x - body_w / 2, PRECISION),
-            y=round(y - body_h / 2, PRECISION),
-            width=round(body_w, PRECISION),
-            height=round(body_h, PRECISION),
+            x=round(x - body_w / 2, settings.precision),
+            y=round(y - body_h / 2, settings.precision),
+            width=round(body_w, settings.precision),
+            height=round(body_h, settings.precision),
         ),
     ]
 
-    mid_y = round(y, PRECISION)
+    mid_y = round(y, settings.precision)
 
     # grid lines on each solar panel (3 columns x 2 rows)
     for panel_x0 in (left_x0, right_x0):
         col_step = panel_w / 3
         for i in (1, 2):
-            cx = round(panel_x0 + col_step * i, PRECISION)
+            cx = round(panel_x0 + col_step * i, settings.precision)
             elements.append(
-                Line(x1=cx, y1=panel_y0, x2=cx, y2=round(panel_y0 + panel_h, PRECISION))
+                Line(x1=cx, y1=panel_y0, x2=cx, y2=round(panel_y0 + panel_h, settings.precision))
             )
         elements.append(
             Line(
-                x1=panel_x0, y1=mid_y, x2=round(panel_x0 + panel_w, PRECISION), y2=mid_y
+                x1=panel_x0, y1=mid_y, x2=round(panel_x0 + panel_w, settings.precision), y2=mid_y
             )
         )
 
     # connect each panel to the body with a single line through the center
     elements.append(
         Line(
-            x1=round(left_x0 + panel_w, PRECISION),
+            x1=round(left_x0 + panel_w, settings.precision),
             y1=mid_y,
-            x2=round(x - body_w / 2, PRECISION),
+            x2=round(x - body_w / 2, settings.precision),
             y2=mid_y,
         )
     )
     elements.append(
-        Line(x1=round(x + body_w / 2, PRECISION), y1=mid_y, x2=right_x0, y2=mid_y)
+        Line(x1=round(x + body_w / 2, settings.precision), y1=mid_y, x2=right_x0, y2=mid_y)
     )
 
     return Group(

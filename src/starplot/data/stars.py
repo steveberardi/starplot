@@ -76,4 +76,4 @@ def load(
         pks = result["pk"].to_list()
         stars = stars.filter(_.pk.isin(pks))
 
-    return stars
+    return stars.order_by("pk")
