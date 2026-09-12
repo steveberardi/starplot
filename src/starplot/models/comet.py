@@ -162,7 +162,7 @@ class Comet(SkyObject):
         cls,
         data: dict,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
     ) -> "Comet":
         """
         Get a comet for a specific date/time/location from an IAU MPC JSON.
@@ -181,7 +181,7 @@ class Comet(SkyObject):
     def all(
         cls,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         reload: bool = False,
     ) -> Iterator["Comet"]:
         """
@@ -208,7 +208,7 @@ class Comet(SkyObject):
         cls,
         name: str,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         reload: bool = False,
     ) -> "Comet":
         """

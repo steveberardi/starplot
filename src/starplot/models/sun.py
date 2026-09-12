@@ -31,7 +31,7 @@ class Sun(SkyObject):
     def get(
         cls,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
     ) -> "Sun":
         """
         Get the Sun for a specific date/time and observing location.

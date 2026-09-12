@@ -86,7 +86,7 @@ class Observer(BaseModel):
         return Observer(dt=ts.J(epoch).utc_datetime())
 
     @cache
-    def position(self, ephemeris: str = "de421.bsp"):
+    def position(self, ephemeris: str = "de440s.bsp"):
         """
         Returns a Skyfield position for this observer.
 
@@ -104,14 +104,14 @@ class Observer(BaseModel):
         return earth + wgs84.latlon(self.lat, self.lon, self.elevation)
 
     @cache
-    def observe(self, ephemeris: str = "de421.bsp") -> Callable:
+    def observe(self, ephemeris: str = "de440s.bsp") -> Callable:
         return self.position(ephemeris).at(self.timescale).observe
 
-    def _astrometric(self, obj: SkyfieldStar, ephemeris: str = "de421.bsp"):
+    def _astrometric(self, obj: SkyfieldStar, ephemeris: str = "de440s.bsp"):
         ra, dec, distance = self.observe(ephemeris)(obj).radec()
         return ra, dec, distance
 
-    def _apparent(self, obj: SkyfieldStar, ephemeris: str = "de421.bsp"):
+    def _apparent(self, obj: SkyfieldStar, ephemeris: str = "de440s.bsp"):
         """Returns apparent AZ, ALT of object"""
         pressure_mbar = self.pressure if self.pressure is not None else "standard"
         pos_alt, pos_az, _ = (
@@ -125,7 +125,7 @@ class Observer(BaseModel):
         return pos_az.degrees, pos_alt.degrees
 
     def radec(
-        self, az: float, alt: float, ephemeris: str = "de421.bsp"
+        self, az: float, alt: float, ephemeris: str = "de440s.bsp"
     ) -> tuple[float, float]:
         observer = self.position(ephemeris).at(self.timescale)
         p = observer.from_altaz(alt_degrees=alt, az_degrees=az)

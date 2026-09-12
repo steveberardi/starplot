@@ -55,7 +55,7 @@ class Moon(SkyObject):
     def get(
         cls,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
     ) -> "Moon":
         """
         Get the Moon for a specific date/time and observing location.
