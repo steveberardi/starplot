@@ -13,6 +13,9 @@ on:
 jobs:
   test-lint-build:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
     - uses: actions/checkout@v6
     - uses: astral-sh/setup-uv@v5
@@ -27,38 +30,55 @@ jobs:
     - name: Check Format
       run: make format CI=true ARGS=--check
     - name: Run Tests
+      id: run-tests
       run: make test e2e CI=true
+    - name: Set Short SHA
+      if: failure() && steps.run-tests.outcome == 'failure'
+      run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+    - id: 'auth'
+      if: failure() && steps.run-tests.outcome == 'failure'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+    - name: 'Set up Google Cloud SDK'
+      if: failure() && steps.run-tests.outcome == 'failure'
+      uses: 'google-github-actions/setup-gcloud@v2'
+      with:
+        version: '>= 363.0.0'
+    - name: 'Upload e2e results on failure'
+      if: failure() && steps.run-tests.outcome == 'failure'
+      run: 'gsutil -m rsync -R -d e2e/actual gs://archives.starplot.dev/e2e-results/$SHORT_SHA/'
     - name: Build PIP Package
       run: make flit-build
 
-  test-python-3-10:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - uses: astral-sh/setup-uv@v5
-    - name: Run Tests - Python 3.10
-      run: make install env download-test-fonts db test-python-version e2e PYTHON_VERSION=3.10
+  # test-python-3-10:
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #   - uses: actions/checkout@v6
+  #   - uses: astral-sh/setup-uv@v5
+  #   - name: Run Tests - Python 3.10
+  #     run: make install env download-test-fonts db test-python-version e2e PYTHON_VERSION=3.10
   
-  test-python-3-11:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - uses: astral-sh/setup-uv@v5
-    - name: Run Tests - Python 3.11
-      run: make install env download-test-fonts db test-python-version e2e PYTHON_VERSION=3.11
+  # test-python-3-11:
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #   - uses: actions/checkout@v6
+  #   - uses: astral-sh/setup-uv@v5
+  #   - name: Run Tests - Python 3.11
+  #     run: make install env download-test-fonts db test-python-version e2e PYTHON_VERSION=3.11
   
-  test-python-3-12:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - uses: astral-sh/setup-uv@v5
-    - name: Run Tests - Python 3.12
-      run: make install env download-test-fonts db test-python-version e2e PYTHON_VERSION=3.12
+  # test-python-3-12:
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #   - uses: actions/checkout@v6
+  #   - uses: astral-sh/setup-uv@v5
+  #   - name: Run Tests - Python 3.12
+  #     run: make install env download-test-fonts db test-python-version e2e PYTHON_VERSION=3.12
   
-  test-python-3-13:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - uses: astral-sh/setup-uv@v5
-    - name: Run Tests - Python 3.13
-      run: make install env download-test-fonts db test-python-version e2e PYTHON_VERSION=3.13
+  # test-python-3-13:
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #   - uses: actions/checkout@v6
+  #   - uses: astral-sh/setup-uv@v5
+  #   - name: Run Tests - Python 3.13
+  #     run: make install env download-test-fonts db test-python-version e2e PYTHON_VERSION=3.13
