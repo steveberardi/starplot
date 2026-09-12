@@ -16,6 +16,10 @@ jobs:
     permissions:
       contents: 'read'
       id-token: 'write'
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
     - uses: actions/checkout@v6
     - uses: astral-sh/setup-uv@v5
@@ -31,67 +35,48 @@ jobs:
       run: make format CI=true ARGS=--check
     - name: Run Tests
       id: run-tests
-      run: make test CI=true
-    # - name: Set Short SHA
-    #   if: failure() && steps.run-tests.outcome == 'failure'
-    #   run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
-    # - id: 'auth'
-    #   if: failure() && steps.run-tests.outcome == 'failure'
-    #   uses: 'google-github-actions/auth@v2'
-    #   with:
-    #     credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-    # - name: 'Set up Google Cloud SDK'
-    #   if: failure() && steps.run-tests.outcome == 'failure'
-    #   uses: 'google-github-actions/setup-gcloud@v2'
-    #   with:
-    #     version: '>= 363.0.0'
-    # - name: 'Upload e2e results on failure'
-    #   if: failure() && steps.run-tests.outcome == 'failure'
-    #   run: 'gsutil -m rsync -R -d e2e/actual gs://archives.starplot.dev/e2e-results/$SHORT_SHA/'
-    # - name: 'Print e2e results URL'
-    #   if: failure() && steps.run-tests.outcome == 'failure'
-    #   run: |
-    #     URL="https://storage.googleapis.com/archives.starplot.dev/e2e-results/$SHORT_SHA/results.html"
-    #     echo "e2e results: $URL"
-    #     echo "### e2e results" >> "$GITHUB_STEP_SUMMARY"
-    #     echo "[$URL]($URL)" >> "$GITHUB_STEP_SUMMARY"
+      run: make test-python-version PYTHON_VERSION=${{ matrix.python-version }} CI=true
+    - name: Run hash checks
+      id: run-hash-checks
+      run: make check-hashes-python-version PYTHON_VERSION=${{ matrix.python-version }} CI=true
     - name: Build examples
+      if: always()
       run: make examples
     - name: Build tutorial
+      if: always()
       run: make tutorial
     - name: Build docs
+      if: always()
       run: make docs
+    - name: Set Short SHA
+      if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+    - id: 'auth'
+      if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+    - name: 'Set up Google Cloud SDK'
+      if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      uses: 'google-github-actions/setup-gcloud@v2'
+      with:
+        version: '>= 363.0.0'
+    - name: 'Upload docs on failure'
+      if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      run: 'gsutil -m rsync -R -d site gs://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}/docs/'
+    - name: 'Upload hash check results on failure'
+      if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      run: |
+        gsutil cp hash_checks/results.html gs://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}/hash-checks/results.html
+        gsutil -m rsync -r hash_checks/data gs://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}/hash-checks/data/
+    - name: 'Print results URLs'
+      if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      run: |
+        BASE="https://storage.googleapis.com/archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}"
+        echo "docs: $BASE/docs/index.html"
+        echo "hash checks: $BASE/hash-checks/results.html"
+        echo "### Test run artifacts (Python ${{ matrix.python-version }})" >> "$GITHUB_STEP_SUMMARY"
+        echo "- [docs]($BASE/docs/index.html)" >> "$GITHUB_STEP_SUMMARY"
+        echo "- [hash checks]($BASE/hash-checks/results.html)" >> "$GITHUB_STEP_SUMMARY"
     - name: Build PIP Package
       run: make flit-build
-
-  test-python-3-10:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - uses: astral-sh/setup-uv@v5
-    - name: Run E2E - Python 3.10
-      run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.10
-  
-  test-python-3-11:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - uses: astral-sh/setup-uv@v5
-    - name: Run E2E - Python 3.11
-      run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.11
-  
-  test-python-3-12:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - uses: astral-sh/setup-uv@v5
-    - name: Run E2E - Python 3.12
-      run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.12
-  
-  test-python-3-13:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - uses: astral-sh/setup-uv@v5
-    - name: Run E2E - Python 3.13
-      run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.13
