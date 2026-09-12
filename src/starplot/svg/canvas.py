@@ -787,7 +787,10 @@ class Canvas:
                     style.zorder,
                     Text(
                         x=round(self.layout.axes.width / 2, settings.precision),
-                        y=round(style.font_size * self.scale - padding_bottom, settings.precision),
+                        y=round(
+                            style.font_size * self.scale - padding_bottom,
+                            settings.precision,
+                        ),
                         attrs=_attrs,
                         text=value,
                     ),
@@ -1243,14 +1246,10 @@ class Canvas:
                 for ix, iy in ix_points:
                     if locations and any(
                         (
-                            iy - label_height / 2 < cy1
-                            and "top" not in locations,
-                            iy + label_height / 2 > cy2
-                            and "bottom" not in locations,
-                            ix - label_width / 2 < cx1
-                            and "left" not in locations,
-                            ix + label_width / 2 > cx2
-                            and "right" not in locations,
+                            iy - label_height / 2 < cy1 and "top" not in locations,
+                            iy + label_height / 2 > cy2 and "bottom" not in locations,
+                            ix - label_width / 2 < cx1 and "left" not in locations,
+                            ix + label_width / 2 > cx2 and "right" not in locations,
                         )
                     ):
                         continue
