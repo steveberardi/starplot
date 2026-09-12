@@ -82,6 +82,7 @@ def check_zenith_gradient():
     p.export(filename)
     return filename
 
+
 @flake
 @override_settings(language="zh-cn")
 def check_zenith_chinese():
