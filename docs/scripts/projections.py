@@ -61,7 +61,7 @@ style.tissot.fill = "#3D699EE5"
 STEREO_DIAMETER = 220  # degrees (diameter) -- used for StereoNorth/South/Stereographic
 WIDE_AZIMUTHAL_DIAMETER = 179  # degrees (radius) -- used for Equidistant/LambertAzEqArea
 
-CLIP_PATH_POINTS = 500
+CLIP_PATH_POINTS = 200
 
 # Each entry: (filename suffix, projection instance, extent kwargs for MapPlot,
 # optional clip_path)
