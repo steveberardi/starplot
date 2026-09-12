@@ -72,7 +72,7 @@ map_mollweide:
   dhash: 0b6b73632b32170f0b6b73632b32170f2b6973632b32170b
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-mollweide.png
-  phash: abcbb69ce3249461
+  phash: ebcbb29ce3249461
 map_moon_phase_waxing_crescent:
   dhash: 8088b04848b088808088a04848a088808088804848808880
   exception: null
@@ -209,7 +209,7 @@ zenith_base:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/zenith-base.png
   phash: 90570b552b56785f
 zenith_chinese:
-  dhash: 86077359ecaac8718607537964aac8710607d298a682cc71
+  dhash: 86074359ecaac8718607535964aac8710607c298a682cc71
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/zenith-chinese.png
   phash: c52ecea41ed36986
