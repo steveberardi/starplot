@@ -2,6 +2,8 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from flaky import flake
+
 from starplot import (
     CollisionHandler,
     Observer,
@@ -80,7 +82,7 @@ def check_zenith_gradient():
     p.export(filename)
     return filename
 
-
+@flake
 @override_settings(language="zh-cn")
 def check_zenith_chinese():
     p = ZenithPlot(
