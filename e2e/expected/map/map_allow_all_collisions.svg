@@ -1,13 +1,13 @@
-<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="1071.2731794172594" width="3006.0" viewBox="0 0 3006.0 1071.2731794172594">
-  <rect x="0" y="0" height="1071.2731794172594" width="3006.0" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
-  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="3.0" y="3.0" height="1065.2731794172594" width="3000" viewBox="0 0 3000 1065.2731794172594">
+<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="1071.2732" width="3006.0" viewBox="0 0 3006.0 1071.2732">
+  <rect x="0" y="0" height="1071.2732" width="3006.0" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="3.0" y="3.0" height="1065.2732" width="3000" viewBox="0 0 3000 1065.2732">
     <defs>
       <clipPath id="axes-clip-path">
-        <polygon id="axes-background" points="0.0,0.0 3000.0,0.0 3000.0,1065.2731794172594 0.0,1065.2731794172594 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+        <polygon id="axes-background" points="0.0,0.0 3000.0,0.0 3000.0,1065.2732 0.0,1065.2732 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
       </clipPath>
     </defs>
     <g id="axes" clip-path="url(#axes-clip-path)">
-      <polygon id="axes-background" points="0.0,0.0 3000.0,0.0 3000.0,1065.2731794172594 0.0,1065.2731794172594 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+      <polygon id="axes-background" points="0.0,0.0 3000.0,0.0 3000.0,1065.2732 0.0,1065.2732 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
       <g id="dso-OCl-markers">
         <circle cx="2419.95" cy="237.8033" r="18.0" fill="#fefa8b" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="round" stroke-dasharray="0.0,7.5" />
         <circle cx="2164.94" cy="835.3522" r="18.0" fill="#fefa8b" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="round" stroke-dasharray="0.0,7.5" />
@@ -168,6 +168,6 @@
     </g>
   </svg>
   <g transform="translate(3.0, 3.0)">
-    <polyline points="-1.5,-1.5 -1.5,1066.7731794172594 3001.5,1066.7731794172594 3001.5,-1.5 -1.5,-1.5" fill="none" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="square" />
+    <polyline points="-1.5,-1.5 -1.5,1066.7732 3001.5,1066.7732 3001.5,-1.5 -1.5,-1.5" fill="none" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
 </svg>

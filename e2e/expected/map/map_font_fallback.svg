@@ -1,13 +1,13 @@
-<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="2727.6490675286254" width="4100.096" viewBox="0 0 4100.096 2727.6490675286254">
-  <rect x="0" y="0" height="2727.6490675286254" width="4100.096" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
-  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="2.048" y="113.664" height="2611.937067528626" width="4096" viewBox="0 0 4096 2611.937067528626">
+<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="2727.6491" width="4100.096" viewBox="0 0 4100.096 2727.6491">
+  <rect x="0" y="0" height="2727.6491" width="4100.096" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="2.048" y="113.664" height="2611.9371" width="4096" viewBox="0 0 4096 2611.9371">
     <defs>
       <clipPath id="axes-clip-path">
-        <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,2611.937067528626 0.0,2611.937067528626 0.0,0.0" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+        <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,2611.9371 0.0,2611.9371 0.0,0.0" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
       </clipPath>
     </defs>
     <g id="axes" clip-path="url(#axes-clip-path)">
-      <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,2611.937067528626 0.0,2611.937067528626 0.0,0.0" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+      <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,2611.9371 0.0,2611.9371 0.0,0.0" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
       <g id="constellations">
         <polyline points="842.9763,2682.3438 719.1016,2587.5023" fill="none" stroke="#c8c8c8" stroke-width="6.14" stroke-opacity="1.0" stroke-linecap="square" />
         <polyline points="719.1016,2587.5023 874.626,2349.3328" fill="none" stroke="#c8c8c8" stroke-width="6.14" stroke-opacity="1.0" stroke-linecap="square" />
@@ -640,6 +640,6 @@ MINOR</text>
     <text x="2048.0" y="62.464000000000006" font-size="87.04" font-family="ThisFontDoesNotExist12345, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">Font Fallback Test</text>
   </g>
   <g transform="translate(2.048, 113.664)">
-    <polyline points="-1.024,-1.024 -1.024,2612.961067528626 4097.024,2612.961067528626 4097.024,-1.024 -1.024,-1.024" fill="none" stroke="#000" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
+    <polyline points="-1.024,-1.024 -1.024,2612.9611 4097.024,2612.9611 4097.024,-1.024 -1.024,-1.024" fill="none" stroke="#000" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
 </svg>

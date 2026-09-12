@@ -49,8 +49,8 @@ class AxesRegion(Region):
             id="axes",
             x=x,
             y=y,
-            height=self.height,
-            width=self.width,
+            height=round(self.height, settings.precision),
+            width=round(self.width, settings.precision),
             children=[
                 Defs(children=self.defs.values()),
                 Group(
@@ -106,6 +106,9 @@ class Layout:
 
         if "outside" in str(self.legend.location):
             width += self.legend.width + legend_margin_x
+
+        height = round(height, settings.precision)
+        width = round(width, settings.precision)
 
         axes_x = padding
         axes_y = padding

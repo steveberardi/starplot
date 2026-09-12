@@ -1,5 +1,5 @@
-<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="2121.734375" width="4121.734375" viewBox="0 0 4121.734375 2121.734375">
-  <rect x="0" y="0" height="2121.734375" width="4121.734375" fill="#0e141a" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="2121.7344" width="4121.7344" viewBox="0 0 4121.7344 2121.7344">
+  <rect x="0" y="0" height="2121.7344" width="4121.7344" fill="#0e141a" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
   <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="60.8672" y="60.8672" height="2000.0" width="4000" viewBox="0 0 4000 2000.0">
     <defs>
       <clipPath id="axes-clip-path">
@@ -1396,86 +1396,86 @@
   <g transform="translate(60.8672, 60.8672)">
     <polyline points="-31.18359375,-31.18359375 -31.18359375,2031.18359375 4031.18359375,2031.18359375 4031.18359375,-31.18359375 -31.18359375,-31.18359375" fill="none" stroke="none" stroke-width="1.5" stroke-opacity="1.0" stroke-linecap="square" />
     <g id="gridline-labels">
-      <text x="3833.3333" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">1h</text>
-      <text x="3833.3333" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">1h</text>
-      <text x="3666.6667" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">2h</text>
-      <text x="3666.6667" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">2h</text>
-      <text x="3500.0" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">3h</text>
-      <text x="3500.0" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">3h</text>
-      <text x="3333.3333" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">4h</text>
-      <text x="3333.3333" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">4h</text>
-      <text x="3166.6667" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">5h</text>
-      <text x="3166.6667" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">5h</text>
-      <text x="3000.0" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">6h</text>
-      <text x="3000.0" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">6h</text>
-      <text x="2833.3333" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">7h</text>
-      <text x="2833.3333" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">7h</text>
-      <text x="2666.6667" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">8h</text>
-      <text x="2666.6667" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">8h</text>
-      <text x="2500.0" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">9h</text>
-      <text x="2500.0" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">9h</text>
-      <text x="2333.3333" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">10h</text>
-      <text x="2333.3333" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">10h</text>
-      <text x="2166.6667" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">11h</text>
-      <text x="2166.6667" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">11h</text>
-      <text x="2000.0" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">12h</text>
-      <text x="2000.0" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">12h</text>
-      <text x="1833.3333" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">13h</text>
-      <text x="1833.3333" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">13h</text>
-      <text x="1666.6667" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">14h</text>
-      <text x="1666.6667" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">14h</text>
-      <text x="1500.0" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">15h</text>
-      <text x="1500.0" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">15h</text>
-      <text x="1333.3333" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">16h</text>
-      <text x="1333.3333" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">16h</text>
-      <text x="1166.6667" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">17h</text>
-      <text x="1166.6667" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">17h</text>
-      <text x="1000.0" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">18h</text>
-      <text x="1000.0" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">18h</text>
-      <text x="833.3333" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">19h</text>
-      <text x="833.3333" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">19h</text>
-      <text x="666.6667" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20h</text>
-      <text x="666.6667" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20h</text>
-      <text x="500.0" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">21h</text>
-      <text x="500.0" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">21h</text>
-      <text x="333.3333" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">22h</text>
-      <text x="333.3333" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">22h</text>
-      <text x="166.6667" y="2039.9108664772727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">23h</text>
-      <text x="166.6667" y="-22.456321022727273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">23h</text>
-      <text x="-31.18359375" y="1897.6161727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-80° </text>
-      <text x="4031.18359375" y="1897.6161727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-80° </text>
-      <text x="-31.18359375" y="1786.5050727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-70° </text>
-      <text x="4031.18359375" y="1786.5050727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-70° </text>
-      <text x="-31.18359375" y="1675.3939727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-60° </text>
-      <text x="4031.18359375" y="1675.3939727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-60° </text>
-      <text x="4031.18359375" y="1564.2828727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-50° </text>
-      <text x="-31.18359375" y="1564.2828727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-50° </text>
-      <text x="4031.18359375" y="1453.1716727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-40° </text>
-      <text x="-31.18359375" y="1453.1716727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-40° </text>
-      <text x="-31.18359375" y="1342.0605727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-30° </text>
-      <text x="4031.18359375" y="1342.0605727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-30° </text>
-      <text x="-31.18359375" y="1230.9494727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-20° </text>
-      <text x="4031.18359375" y="1230.9494727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-20° </text>
-      <text x="4031.18359375" y="1119.8383727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-10° </text>
-      <text x="-31.18359375" y="1119.8383727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-10° </text>
-      <text x="-31.18359375" y="1008.7272727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">0° </text>
-      <text x="4031.18359375" y="1008.7272727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">0° </text>
-      <text x="-31.18359375" y="897.6161727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">10° </text>
-      <text x="4031.18359375" y="897.6161727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">10° </text>
-      <text x="4031.18359375" y="786.5050727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20° </text>
-      <text x="-31.18359375" y="786.5050727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20° </text>
-      <text x="-31.18359375" y="675.3939727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">30° </text>
-      <text x="4031.18359375" y="675.3939727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">30° </text>
-      <text x="4031.18359375" y="564.2828727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">40° </text>
-      <text x="-31.18359375" y="564.2828727272728" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">40° </text>
-      <text x="-31.18359375" y="453.1716727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">50° </text>
-      <text x="4031.18359375" y="453.1716727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">50° </text>
-      <text x="-31.18359375" y="342.06057272727276" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">60° </text>
-      <text x="4031.18359375" y="342.06057272727276" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">60° </text>
-      <text x="-31.18359375" y="230.9494727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">70° </text>
-      <text x="4031.18359375" y="230.9494727272727" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">70° </text>
-      <text x="-31.18359375" y="119.83837272727271" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">80° </text>
-      <text x="4031.18359375" y="119.83837272727271" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">80° </text>
+      <text x="3833.3333" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">1h</text>
+      <text x="3833.3333" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">1h</text>
+      <text x="3666.6667" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">2h</text>
+      <text x="3666.6667" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">2h</text>
+      <text x="3500.0" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">3h</text>
+      <text x="3500.0" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">3h</text>
+      <text x="3333.3333" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">4h</text>
+      <text x="3333.3333" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">4h</text>
+      <text x="3166.6667" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">5h</text>
+      <text x="3166.6667" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">5h</text>
+      <text x="3000.0" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">6h</text>
+      <text x="3000.0" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">6h</text>
+      <text x="2833.3333" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">7h</text>
+      <text x="2833.3333" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">7h</text>
+      <text x="2666.6667" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">8h</text>
+      <text x="2666.6667" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">8h</text>
+      <text x="2500.0" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">9h</text>
+      <text x="2500.0" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">9h</text>
+      <text x="2333.3333" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">10h</text>
+      <text x="2333.3333" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">10h</text>
+      <text x="2166.6667" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">11h</text>
+      <text x="2166.6667" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">11h</text>
+      <text x="2000.0" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">12h</text>
+      <text x="2000.0" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">12h</text>
+      <text x="1833.3333" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">13h</text>
+      <text x="1833.3333" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">13h</text>
+      <text x="1666.6667" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">14h</text>
+      <text x="1666.6667" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">14h</text>
+      <text x="1500.0" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">15h</text>
+      <text x="1500.0" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">15h</text>
+      <text x="1333.3333" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">16h</text>
+      <text x="1333.3333" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">16h</text>
+      <text x="1166.6667" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">17h</text>
+      <text x="1166.6667" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">17h</text>
+      <text x="1000.0" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">18h</text>
+      <text x="1000.0" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">18h</text>
+      <text x="833.3333" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">19h</text>
+      <text x="833.3333" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">19h</text>
+      <text x="666.6667" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20h</text>
+      <text x="666.6667" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20h</text>
+      <text x="500.0" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">21h</text>
+      <text x="500.0" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">21h</text>
+      <text x="333.3333" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">22h</text>
+      <text x="333.3333" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">22h</text>
+      <text x="166.6667" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">23h</text>
+      <text x="166.6667" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">23h</text>
+      <text x="-31.1836" y="1897.6162" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-80° </text>
+      <text x="4031.1836" y="1897.6162" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-80° </text>
+      <text x="-31.1836" y="1786.5051" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-70° </text>
+      <text x="4031.1836" y="1786.5051" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-70° </text>
+      <text x="-31.1836" y="1675.394" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-60° </text>
+      <text x="4031.1836" y="1675.394" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-60° </text>
+      <text x="-31.1836" y="1564.2829" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-50° </text>
+      <text x="4031.1836" y="1564.2829" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-50° </text>
+      <text x="-31.1836" y="1453.1717" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-40° </text>
+      <text x="4031.1836" y="1453.1717" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-40° </text>
+      <text x="-31.1836" y="1342.0606" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-30° </text>
+      <text x="4031.1836" y="1342.0606" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-30° </text>
+      <text x="-31.1836" y="1230.9495" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-20° </text>
+      <text x="4031.1836" y="1230.9495" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-20° </text>
+      <text x="-31.1836" y="1119.8384" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-10° </text>
+      <text x="4031.1836" y="1119.8384" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">-10° </text>
+      <text x="-31.1836" y="1008.7273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">0° </text>
+      <text x="4031.1836" y="1008.7273" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">0° </text>
+      <text x="-31.1836" y="897.6162" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">10° </text>
+      <text x="4031.1836" y="897.6162" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">10° </text>
+      <text x="-31.1836" y="786.5051" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20° </text>
+      <text x="4031.1836" y="786.5051" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20° </text>
+      <text x="-31.1836" y="675.394" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">30° </text>
+      <text x="4031.1836" y="675.394" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">30° </text>
+      <text x="-31.1836" y="564.2829" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">40° </text>
+      <text x="4031.1836" y="564.2829" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">40° </text>
+      <text x="-31.1836" y="453.1717" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">50° </text>
+      <text x="4031.1836" y="453.1717" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">50° </text>
+      <text x="-31.1836" y="342.0606" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">60° </text>
+      <text x="4031.1836" y="342.0606" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">60° </text>
+      <text x="-31.1836" y="230.9495" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">70° </text>
+      <text x="4031.1836" y="230.9495" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">70° </text>
+      <text x="-31.1836" y="119.8384" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">80° </text>
+      <text x="4031.1836" y="119.8384" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">80° </text>
     </g>
   </g>
 </svg>

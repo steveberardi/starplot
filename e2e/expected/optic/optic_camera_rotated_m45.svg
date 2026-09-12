@@ -1,6 +1,6 @@
-<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="4142.88251155774" width="4118.541292695121" viewBox="0 0 4118.541292695121 4142.88251155774">
-  <rect x="0" y="0" height="4142.88251155774" width="4118.541292695121" fill="none" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
-  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="11.2706" y="11.2707" height="3952.341123029755" width="4096" viewBox="0 0 4096 3952.341123029755">
+<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="4142.8825" width="4118.5413" viewBox="0 0 4118.5413 4142.8825">
+  <rect x="0" y="0" height="4142.8825" width="4118.5413" fill="none" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="11.2706" y="11.2707" height="3952.3411" width="4096" viewBox="0 0 4096 3952.3411">
     <defs>
       <clipPath id="axes-clip-path">
         <polygon id="axes-background" points="1461.4481,3952.3411 -0.0,2210.6238 2634.5209,-0.0001 4096.0,1741.733 1461.4481,3952.3411" fill="#1a1a1a" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
@@ -314,7 +314,7 @@
     </g>
   </svg>
   <g transform="translate(11.2706, 11.2707)">
-    <polyline points="1460.9550207007176,3957.9764213053822 4101.635344305332,1742.2260643391808 2635.013937036107,-5.635434473488333 -5.635302042227999,2210.130748828903 1460.9550207007176,3957.9764213053822" fill="none" stroke="#000" stroke-width="8.0" stroke-opacity="1.0" stroke-linecap="square" />
+    <polyline points="1460.955,3957.9764 4101.6353,1742.2261 2635.0139,-5.6354 -5.6353,2210.1307 1460.955,3957.9764" fill="none" stroke="#000" stroke-width="8.0" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
   <g transform="translate(1011.1847, 3974.8825)">
     <line x1="290.59375" y1="24" x2="290.59375" y2="168.0" fill="none" stroke="#c5c5c5" stroke-width="1.0" stroke-opacity="1.0" stroke-linecap="square" />

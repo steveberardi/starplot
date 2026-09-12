@@ -1,13 +1,13 @@
-<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="3522.1369309873335" width="4339.46875" viewBox="0 0 4339.46875 3522.1369309873335">
-  <rect x="0" y="0" height="3522.1369309873335" width="4339.46875" fill="#162737" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
-  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="121.7344" y="121.7344" height="3278.6681809873335" width="4096" viewBox="0 0 4096 3278.6681809873335">
+<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="3522.1369" width="4339.4688" viewBox="0 0 4339.4688 3522.1369">
+  <rect x="0" y="0" height="3522.1369" width="4339.4688" fill="#162737" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="121.7344" y="121.7344" height="3278.6682" width="4096" viewBox="0 0 4096 3278.6682">
     <defs>
       <clipPath id="axes-clip-path">
-        <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,3278.6681809873335 0.0,3278.6681809873335 0.0,0.0" fill="#1f3e5c" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+        <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,3278.6682 0.0,3278.6682 0.0,0.0" fill="#1f3e5c" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
       </clipPath>
     </defs>
     <g id="axes" clip-path="url(#axes-clip-path)">
-      <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,3278.6681809873335 0.0,3278.6681809873335 0.0,0.0" fill="#1f3e5c" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+      <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,3278.6682 0.0,3278.6682 0.0,0.0" fill="#1f3e5c" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
       <g id="gridlines">
         <polyline points="-28672.0,5118.5575 -28672.0,5028.5072 -28672.0,4938.4092 -28672.0,4848.2592 -28672.0,4758.0529 -28672.0,4667.7858 -28672.0,4577.4537 -28672.0,4487.052 -28672.0,4396.5766 -28672.0,4306.0228 -28672.0,4215.3863 -28672.0,4124.6625 -28672.0,4033.8472 -28672.0,3942.9356 -28672.0,3851.9233 -28672.0,3760.8058 -28672.0,3669.5784 -28672.0,3578.2366 -28672.0,3486.7758 -28672.0,3395.1912 -28672.0,3303.4781 -28672.0,3211.632 -28672.0,3119.6479 -28672.0,3027.5211 -28672.0,2935.2468 -28672.0,2842.8201 -28672.0,2750.2361 -28672.0,2657.4898 -28672.0,2564.5763 -28672.0,2471.4906 -28672.0,2378.2275 -28672.0,2284.782 -28672.0,2191.1489 -28672.0,2097.3229 -28672.0,2003.2988 -28672.0,1909.0713 -28672.0,1814.635 -28672.0,1719.9845 -28672.0,1625.1143 -28672.0,1530.0189 -28672.0,1434.6926 -28672.0,1339.1297 -28672.0,1243.3246 -28672.0,1147.2715 -28672.0,1050.9644 -28672.0,954.3974 -28672.0,857.5646 -28672.0,760.4598 -28672.0,663.0769 -28672.0,565.4095 -28672.0,467.4515 -28672.0,369.1964 -28672.0,270.6376 -28672.0,171.7686 -28672.0,72.5828 -28672.0,-26.9268 -28672.0,-126.7668 -28672.0,-226.9444 -28672.0,-327.4665 -28672.0,-428.3404 -28672.0,-529.5734 -28672.0,-631.1728 -28672.0,-733.1462 -28672.0,-835.5012 -28672.0,-938.2456 -28672.0,-1041.3872 -28672.0,-1144.9341 -28672.0,-1248.8944 -28672.0,-1353.2765 -28672.0,-1458.0887 -28672.0,-1563.3396 -28672.0,-1669.0379 -28672.0,-1775.1926 -28672.0,-1881.8126 -28672.0,-1988.9071 -28672.0,-2096.4856" fill="none" stroke="#2c6090" stroke-width="1.5" stroke-opacity="0.7" stroke-linecap="square" />
         <polyline points="34133.3333,5118.5575 34133.3333,5028.5072 34133.3333,4938.4092 34133.3333,4848.2592 34133.3333,4758.0529 34133.3333,4667.7858 34133.3333,4577.4537 34133.3333,4487.052 34133.3333,4396.5766 34133.3333,4306.0228 34133.3333,4215.3863 34133.3333,4124.6625 34133.3333,4033.8472 34133.3333,3942.9356 34133.3333,3851.9233 34133.3333,3760.8058 34133.3333,3669.5784 34133.3333,3578.2366 34133.3333,3486.7758 34133.3333,3395.1912 34133.3333,3303.4781 34133.3333,3211.632 34133.3333,3119.6479 34133.3333,3027.5211 34133.3333,2935.2468 34133.3333,2842.8201 34133.3333,2750.2361 34133.3333,2657.4898 34133.3333,2564.5763 34133.3333,2471.4906 34133.3333,2378.2275 34133.3333,2284.782 34133.3333,2191.1489 34133.3333,2097.3229 34133.3333,2003.2988 34133.3333,1909.0713 34133.3333,1814.635 34133.3333,1719.9845 34133.3333,1625.1143 34133.3333,1530.0189 34133.3333,1434.6926 34133.3333,1339.1297 34133.3333,1243.3246 34133.3333,1147.2715 34133.3333,1050.9644 34133.3333,954.3974 34133.3333,857.5646 34133.3333,760.4598 34133.3333,663.0769 34133.3333,565.4095 34133.3333,467.4515 34133.3333,369.1964 34133.3333,270.6376 34133.3333,171.7686 34133.3333,72.5828 34133.3333,-26.9268 34133.3333,-126.7668 34133.3333,-226.9444 34133.3333,-327.4665 34133.3333,-428.3404 34133.3333,-529.5734 34133.3333,-631.1728 34133.3333,-733.1462 34133.3333,-835.5012 34133.3333,-938.2456 34133.3333,-1041.3872 34133.3333,-1144.9341 34133.3333,-1248.8944 34133.3333,-1353.2765 34133.3333,-1458.0887 34133.3333,-1563.3396 34133.3333,-1669.0379 34133.3333,-1775.1926 34133.3333,-1881.8126 34133.3333,-1988.9071 34133.3333,-2096.4856" fill="none" stroke="#2c6090" stroke-width="1.5" stroke-opacity="0.7" stroke-linecap="square" />
@@ -348,17 +348,17 @@ BERENICES</text>
     </g>
   </svg>
   <g transform="translate(121.7344, 121.7344)">
-    <polyline points="-1.5,-1.5 -1.5,3280.1681809873335 4097.5,3280.1681809873335 4097.5,-1.5 -1.5,-1.5" fill="none" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="square" />
+    <polyline points="-1.5,-1.5 -1.5,3280.1682 4097.5,3280.1682 4097.5,-1.5 -1.5,-1.5" fill="none" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
   <g transform="translate(121.7344, 121.7344)">
     <polyline points="-62.3671875,-62.3671875 -62.3671875,3341.0353684873335 4158.3671875,3341.0353684873335 4158.3671875,-62.3671875 -62.3671875,-62.3671875" fill="none" stroke="none" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="square" />
     <g id="gridline-labels">
-      <text x="1365.3333" y="-44.91264204545455" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">13h</text>
-      <text x="1365.3333" y="3358.489913941879" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">13h</text>
-      <text x="-62.3671875" y="2357.8210454545456" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20° </text>
-      <text x="4158.3671875" y="2357.8210454545456" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20° </text>
-      <text x="-62.3671875" y="418.55034545454544" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">30° </text>
-      <text x="4158.3671875" y="418.55034545454544" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">30° </text>
+      <text x="1365.3333" y="-44.9126" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">13h</text>
+      <text x="1365.3333" y="3358.4899" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">13h</text>
+      <text x="-62.3672" y="2357.821" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20° </text>
+      <text x="4158.3672" y="2357.821" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20° </text>
+      <text x="-62.3672" y="418.5503" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">30° </text>
+      <text x="4158.3672" y="418.5503" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">30° </text>
     </g>
   </g>
 </svg>

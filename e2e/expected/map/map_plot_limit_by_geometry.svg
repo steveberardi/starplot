@@ -1,13 +1,13 @@
-<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="3914.1833698664577" width="4100.096" viewBox="0 0 4100.096 3914.1833698664577">
-  <rect x="0" y="0" height="3914.1833698664577" width="4100.096" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
-  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="2.048" y="2.048" height="3910.087369866458" width="4096" viewBox="0 0 4096 3910.087369866458">
+<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="3914.1834" width="4100.096" viewBox="0 0 4100.096 3914.1834">
+  <rect x="0" y="0" height="3914.1834" width="4100.096" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="2.048" y="2.048" height="3910.0874" width="4096" viewBox="0 0 4096 3910.0874">
     <defs>
       <clipPath id="axes-clip-path">
-        <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,3910.087369866458 0.0,3910.087369866458 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+        <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,3910.0874 0.0,3910.0874 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
       </clipPath>
     </defs>
     <g id="axes" clip-path="url(#axes-clip-path)">
-      <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,3910.087369866458 0.0,3910.087369866458 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+      <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,3910.0874 0.0,3910.0874 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
       <g id="dso-G-markers">
         <ellipse cx="2320.2212" cy="3201.2727" rx="10.24" ry="6.144" transform="rotate(-20, 2320.2212, 3201.2727)" fill="#f7bad9" stroke="#5e0833" stroke-width="1.02" stroke-opacity="1.0" stroke-linecap="square" />
         <ellipse cx="2353.5244" cy="3189.4671" rx="10.24" ry="6.144" transform="rotate(-20, 2353.5244, 3189.4671)" fill="#f7bad9" stroke="#5e0833" stroke-width="1.02" stroke-opacity="1.0" stroke-linecap="square" />
@@ -1560,6 +1560,6 @@
     </g>
   </svg>
   <g transform="translate(2.048, 2.048)">
-    <polyline points="-1.024,-1.024 -1.024,3911.111369866458 4097.024,3911.111369866458 4097.024,-1.024 -1.024,-1.024" fill="none" stroke="#000" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
+    <polyline points="-1.024,-1.024 -1.024,3911.1114 4097.024,3911.1114 4097.024,-1.024 -1.024,-1.024" fill="none" stroke="#000" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
 </svg>

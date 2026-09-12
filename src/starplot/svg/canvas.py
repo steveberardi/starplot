@@ -277,7 +277,10 @@ class Canvas:
                 id="axes-background-gradient",
             )
 
-        dxy = list(self.clip_path_display.exterior.coords)
+        dxy = [
+            (round(x, settings.precision), round(y, settings.precision))
+            for x, y in self.clip_path_display.exterior.coords
+        ]
         self.background_element = Polygon(
             id="axes-background",
             points=dxy,
@@ -315,7 +318,10 @@ class Canvas:
         # touches the clip path and its outer edge lands at clip_path + border_width
         # (join_style="mitre" keeps corners sharp instead of shapely's default round)
         ring = self.clip_path_display.buffer(border_width / 2, join_style="mitre")
-        coords = list(ring.exterior.coords)
+        coords = [
+            (round(x, settings.precision), round(y, settings.precision))
+            for x, y in ring.exterior.coords
+        ]
 
         outer = self.clip_path_display.buffer(border_width, join_style="mitre")
         bx1, by1, bx2, by2 = outer.bounds
@@ -1233,16 +1239,18 @@ class Canvas:
                         border_intersection_points.extend(border_intersection.geoms)
 
                 # TODO: sort border_intersection_points by x, y
-                for ix in border_intersection_points:
+                ix_points = sorted([(ix.x, ix.y) for ix in border_intersection_points])
+
+                for ix, iy in ix_points:
                     if locations and any(
                         (
-                            ix.y - label_height / 2 < cy1 + yoff
+                            iy - label_height / 2 < cy1 + yoff
                             and "top" not in locations,
-                            ix.y + label_height / 2 > cy2 + yoff
+                            iy + label_height / 2 > cy2 + yoff
                             and "bottom" not in locations,
-                            ix.x - label_width / 2 < cx1 + xoff
+                            ix - label_width / 2 < cx1 + xoff
                             and "left" not in locations,
-                            ix.x + label_width / 2 > cx2 + xoff
+                            ix + label_width / 2 > cx2 + xoff
                             and "right" not in locations,
                         )
                     ):
@@ -1250,10 +1258,10 @@ class Canvas:
 
                     # check for overlapping labels
                     label_bbox = (
-                        ix.x - label_width / 2,
-                        ix.y,
-                        ix.x + label_width / 2,
-                        ix.y + label_height,
+                        ix - label_width / 2,
+                        iy,
+                        ix + label_width / 2,
+                        iy + label_height,
                     )
 
                     if label_index.intersect(label_bbox):
@@ -1262,8 +1270,11 @@ class Canvas:
                         label_index.insert(text, label_bbox)
 
                     element = Text(
-                        x=ix.x,
-                        y=ix.y + style.label.font_size * self.scale / 2.75,
+                        x=round(ix, settings.precision),
+                        y=round(
+                            iy + style.label.font_size * self.scale / 2.75,
+                            settings.precision,
+                        ),
                         text=text,
                         attrs={
                             **style.label.css(self.scale),
