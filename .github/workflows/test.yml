@@ -55,37 +55,43 @@ jobs:
         echo "e2e results: $URL"
         echo "### e2e results" >> "$GITHUB_STEP_SUMMARY"
         echo "[$URL]($URL)" >> "$GITHUB_STEP_SUMMARY"
+    - name: Build examples
+      run: make examples
+    - name: Build tutorial
+      run: make tutorial
+    - name: Build docs
+      run: make docs
     - name: Build PIP Package
       run: make flit-build
 
-  # test-python-3-10:
-  #   runs-on: ubuntu-24.04
-  #   steps:
-  #   - uses: actions/checkout@v6
-  #   - uses: astral-sh/setup-uv@v5
-  #   - name: Run E2E - Python 3.10
-  #     run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.10
+  test-python-3-10:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v6
+    - uses: astral-sh/setup-uv@v5
+    - name: Run E2E - Python 3.10
+      run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.10
   
-  # test-python-3-11:
-  #   runs-on: ubuntu-24.04
-  #   steps:
-  #   - uses: actions/checkout@v6
-  #   - uses: astral-sh/setup-uv@v5
-  #   - name: Run E2E - Python 3.11
-  #     run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.11
+  test-python-3-11:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v6
+    - uses: astral-sh/setup-uv@v5
+    - name: Run E2E - Python 3.11
+      run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.11
   
-  # test-python-3-12:
-  #   runs-on: ubuntu-24.04
-  #   steps:
-  #   - uses: actions/checkout@v6
-  #   - uses: astral-sh/setup-uv@v5
-  #   - name: Run E2E - Python 3.12
-  #     run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.12
+  test-python-3-12:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v6
+    - uses: astral-sh/setup-uv@v5
+    - name: Run E2E - Python 3.12
+      run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.12
   
-  # test-python-3-13:
-  #   runs-on: ubuntu-24.04
-  #   steps:
-  #   - uses: actions/checkout@v6
-  #   - uses: astral-sh/setup-uv@v5
-  #   - name: Run E2E - Python 3.13
-  #     run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.13
+  test-python-3-13:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v6
+    - uses: astral-sh/setup-uv@v5
+    - name: Run E2E - Python 3.13
+      run: make install env download-test-fonts db setup test-python-version check-hashes-python-version PYTHON_VERSION=3.13

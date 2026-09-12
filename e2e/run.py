@@ -1,14 +1,20 @@
 """
-Runs every function named `e2e_*` found in the .py files in this directory,
-compares each one's exported SVG against the matching file in expected/, and
-writes an HTML report (actual/results.html) summarizing what passed, failed,
-or is new (no expected file yet).
+Runs every function named `e2e_*` found in the .py files in this directory.
+
+By default, compares each one's exported SVG against the matching file in
+expected/, and writes an HTML report (actual/results.html) summarizing what
+passed, failed, or is new (no expected file yet).
+
+With --lock, skips the comparison entirely and just overwrites expected/
+with whatever each function produces -- use this to record a new baseline.
 """
 
+import argparse
 import difflib
 import importlib.util
 import inspect
 import multiprocessing as mp
+import shutil
 import sys
 import time
 import traceback
@@ -129,6 +135,48 @@ def run() -> tuple[dict, dict, dict]:
     return passed, failed, new
 
 
+def _lock(func) -> tuple[str, bool, str | None]:
+    """
+    Runs one e2e_* function and overwrites its file in expected/ with the result,
+    without comparing against whatever was already there.
+
+    Returns:
+        (name, ok, error) -- error is the traceback string if the function raised
+    """
+    name = func.__name__[len("e2e_") :]
+
+    try:
+        actual_file = Path(func())
+    except Exception:  # noqa: BLE001 -- catch anything the e2e function raises
+        return name, False, traceback.format_exc()
+
+    expected_file = EXPECTED_PATH / actual_file.relative_to(ACTUAL_PATH)
+    expected_file.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(actual_file, expected_file)
+
+    return name, True, None
+
+
+def lock() -> tuple[list[str], list[str]]:
+    functions = _discover_functions()
+
+    console.print("Locking e2e baselines...", style="bold")
+    with mp.Pool(NUM_WORKERS) as pool:
+        results = pool.map(_lock, functions)
+
+    locked, failed = [], []
+    for name, ok, error in results:
+        if ok:
+            locked.append(name)
+            console.print(f"{name}...", style="green")
+        else:
+            failed.append(name)
+            console.print(f"{name}...FAIL", style="red")
+            console.print(error, style="red")
+
+    return locked, failed
+
+
 def write_report(passed: dict, failed: dict, new: dict) -> None:
     env = Environment(loader=FileSystemLoader(HERE), autoescape=select_autoescape())
     template = env.get_template(TEMPLATE_NAME)
@@ -139,18 +187,37 @@ def write_report(passed: dict, failed: dict, new: dict) -> None:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--lock",
+        action="store_true",
+        help="Skip comparing to expected/ -- just run every e2e check and "
+        "overwrite expected/ with the result, to record a new baseline.",
+    )
+    args = parser.parse_args()
+
     start = time.time()
 
-    passed, failed, new = run()
-    write_report(passed, failed, new)
+    if args.lock:
+        locked, failed = lock()
 
-    console.print(f"\n:stopwatch: {round(time.time() - start)}s")
-    console.print(f"PASSED: {len(passed)}\n", style="green")
-    console.print("Results:")
-    console.print(f"{RESULTS_PATH}\n")
-    # webbrowser.open(RESULTS_PATH.as_uri())
+        console.print(f"\n:stopwatch: {round(time.time() - start)}s")
+        console.print(f"LOCKED: {len(locked)}\n", style="green")
 
-    if failed or new:
-        console.print(f"FAILED: {list(failed)}\n", style="bold red")
-        console.print(f"NEW   : {list(new)}\n", style="blue")
-        sys.exit(1)
+        if failed:
+            console.print(f"FAILED: {failed}\n", style="bold red")
+            sys.exit(1)
+    else:
+        passed, failed, new = run()
+        write_report(passed, failed, new)
+
+        console.print(f"\n:stopwatch: {round(time.time() - start)}s")
+        console.print(f"PASSED: {len(passed)}\n", style="green")
+        console.print("Results:")
+        console.print(f"{RESULTS_PATH}\n")
+        # webbrowser.open(RESULTS_PATH.as_uri())
+
+        if failed or new:
+            console.print(f"FAILED: {list(failed)}\n", style="bold red")
+            console.print(f"NEW   : {list(new)}\n", style="blue")
+            sys.exit(1)

@@ -61,8 +61,7 @@ e2e:
 
 e2e-lock:
 	find e2e/actual -name '*.svg' -delete 2>/dev/null || true
-	-uv run $(DOTENV) python e2e/run.py
-	for d in e2e/actual/*; do [ -d "$$d" ] && cp -r "$$d" e2e/expected/; done
+	uv run $(DOTENV) python e2e/run.py --lock
 
 shell:
 	uv run $(DOTENV) ipython
