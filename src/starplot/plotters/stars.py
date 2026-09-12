@@ -210,7 +210,10 @@ class StarPlotterMixin:
 
         label_pks = star_results_labeled.to_pandas()["pk"].tolist()
 
-        stars_df = star_results.to_pandas()
+        # DuckDB/Ibis can return rows in a different order across runs under
+        # concurrent load (no ORDER BY on the underlying scan), which would
+        # otherwise make the SVG's star draw order non-deterministic
+        stars_df = star_results.to_pandas().sort_values("pk").reset_index(drop=True)
         stars_df["ra_hours"], stars_df["dec_degrees"] = (stars_df.ra / 15, stars_df.dec)
 
         nearby_stars = SkyfieldStar.from_dataframe(stars_df)

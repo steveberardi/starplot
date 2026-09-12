@@ -1,0 +1,116 @@
+<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="2319.575694388023" width="4102.0" viewBox="0 0 4102.0 2319.575694388023">
+  <rect x="0" y="0" height="2319.575694388023" width="4102.0" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="3.0" y="3.0" height="2313.575694388023" width="4096" viewBox="0 0 4096 2313.575694388023">
+    <defs>
+      <clipPath id="axes-clip-path">
+        <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,2313.575694388023 0.0,2313.575694388023 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+      </clipPath>
+    </defs>
+    <g id="axes" clip-path="url(#axes-clip-path)">
+      <polygon id="axes-background" points="0.0,0.0 4096.0,0.0 4096.0,2313.575694388023 0.0,2313.575694388023 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+      <polygon points="961.96,1105.03 963.38,1142.87 966.82,1180.57 972.28,1218.03 979.82,1255.14 989.27,1291.82 1000.68,1327.92 1014.06,1363.44 1029.3,1398.24 1046.39,1432.18 1065.29,1465.18 1085.93,1497.19 1108.21,1528.15 1132.13,1557.9 1157.64,1586.37 1184.62,1613.57 1212.96,1639.32 1242.67,1663.62 1273.64,1686.37 1305.75,1707.56 1339.01,1727.07 1373.2,1744.91 1408.31,1760.97 1444.19,1775.24 1480.84,1787.73 1518.03,1798.31 1555.77,1807.0 1593.94,1813.84 1632.39,1818.68 1671.06,1821.61 1709.83,1822.59 1748.61,1821.61 1787.28,1818.68 1825.72,1813.84 1863.9,1807.0 1901.64,1798.31 1938.83,1787.73 1975.47,1775.24 2011.35,1760.97 2046.47,1744.91 2080.66,1727.07 2113.92,1707.56 2146.03,1686.37 2177.0,1663.62 2206.71,1639.32 2235.05,1613.57 2262.03,1586.37 2287.53,1557.9 2311.45,1528.15 2333.74,1497.19 2354.38,1465.18 2373.28,1432.18 2390.37,1398.24 2405.61,1363.44 2418.99,1327.92 2430.4,1291.82 2439.85,1255.14 2447.39,1218.03 2452.85,1180.57 2456.29,1142.87 2457.71,1105.03 2457.05,1067.19 2454.38,1029.39 2449.63,991.75 2442.85,954.45 2434.06,917.48 2423.25,881.02 2410.47,845.14 2395.78,809.93 2379.18,775.53 2360.72,741.99 2340.45,709.49 2318.39,677.96 2294.69,647.64 2269.29,618.54 2242.37,590.76 2213.97,564.43 2184.15,539.49 2152.97,516.18 2120.58,494.43 2086.99,474.36 2052.37,456.03 2016.82,439.51 1980.33,424.78 1943.14,411.98 1905.3,401.04 1866.85,392.07 1827.96,385.03 1788.81,380.02 1749.37,376.99 1709.83,376.0 1670.29,376.99 1630.86,380.02 1591.71,385.03 1552.82,392.07 1514.37,401.04 1476.53,411.98 1439.33,424.78 1402.85,439.51 1367.3,456.03 1332.67,474.36 1299.09,494.43 1266.7,516.18 1235.52,539.49 1205.7,564.43 1177.3,590.76 1150.38,618.54 1124.98,647.64 1101.28,677.96 1079.21,709.49 1058.95,741.99 1040.49,775.53 1023.89,809.93 1009.2,845.14 996.42,881.02 985.61,917.48 976.81,954.45 970.04,991.75 965.29,1029.39 962.61,1067.19 961.96,1105.03" fill="#fefa8b" stroke="#f00" stroke-width="24.0" stroke-dasharray="12.0,48.0" stroke-linecap="round" />
+      <g id="stars" fill="#000" stroke="#fff" stroke-width="1.5" stroke-opacity="1.0" stroke-linecap="square">
+        <circle cx="1708.8" cy="1101.62" r="15.0" fill="black" />
+        <circle cx="1935.12" cy="949.52" r="11.25" fill="black" />
+        <circle cx="2064.93" cy="1096.87" r="11.25" fill="black" />
+        <circle cx="1479.75" cy="1131.53" r="11.25" fill="black" />
+        <circle cx="1866.96" cy="1192.25" r="7.5" fill="black" />
+        <circle cx="2019.6" cy="891.86" r="7.5" fill="black" />
+        <circle cx="2074.87" cy="994.88" r="6.0" fill="black" />
+        <circle cx="1476.31" cy="1083.33" r="6.0" fill="black" />
+        <circle cx="1591.05" cy="1496.61" r="6.0" fill="black" />
+        <circle cx="2025.88" cy="676.04" r="6.0" fill="black" />
+        <circle cx="1924.08" cy="841.31" r="6.0" fill="black" />
+        <circle cx="1936.92" cy="1654.58" r="4.5" fill="black" />
+        <circle cx="1369.76" cy="1249.88" r="4.5" fill="black" />
+        <circle cx="1246.06" cy="1184.68" r="4.5" fill="black" />
+        <circle cx="1569.92" cy="962.44" r="4.5" fill="black" />
+        <circle cx="1707.92" cy="995.51" r="4.5" fill="black" />
+        <circle cx="1727.26" cy="1276.05" r="4.5" fill="black" />
+        <circle cx="1735.94" cy="1320.36" r="4.5" fill="black" />
+        <circle cx="1727.09" cy="1095.14" r="4.5" fill="black" />
+        <circle cx="1508.86" cy="1244.97" r="4.5" fill="black" />
+        <circle cx="1402.85" cy="1328.91" r="4.5" fill="black" />
+        <circle cx="1452.39" cy="941.88" r="4.5" fill="black" />
+        <circle cx="1776.3" cy="861.26" r="4.5" fill="black" />
+        <circle cx="1623.55" cy="589.43" r="4.5" fill="black" />
+        <circle cx="1904.91" cy="856.73" r="4.5" fill="black" />
+        <circle cx="1937.14" cy="1654.06" r="4.5" fill="black" />
+        <circle cx="1370.25" cy="1250.17" r="4.5" fill="black" />
+        <circle cx="1371.18" cy="1250.8" r="4.5" fill="black" />
+        <circle cx="1930.53" cy="1139.92" r="2.25" fill="black" />
+        <circle cx="1962.04" cy="968.18" r="2.25" fill="black" />
+        <circle cx="2226.59" cy="1365.11" r="2.25" fill="black" />
+        <circle cx="1442.72" cy="1019.08" r="2.25" fill="black" />
+        <circle cx="1373.09" cy="960.41" r="2.25" fill="black" />
+        <circle cx="1719.34" cy="1211.73" r="2.25" fill="black" />
+        <circle cx="1713.88" cy="1348.31" r="2.25" fill="black" />
+        <circle cx="1849.37" cy="1014.86" r="2.25" fill="black" />
+        <circle cx="1301.49" cy="875.58" r="2.25" fill="black" />
+        <circle cx="1463.64" cy="933.13" r="2.25" fill="black" />
+        <circle cx="1720.21" cy="821.65" r="2.25" fill="black" />
+        <circle cx="1988.53" cy="1142.06" r="1.5" fill="black" />
+        <circle cx="2222.71" cy="945.58" r="1.5" fill="black" />
+        <circle cx="2035.99" cy="1334.22" r="1.5" fill="black" />
+        <circle cx="2130.9" cy="1085.65" r="1.5" fill="black" />
+        <circle cx="2033.15" cy="1009.93" r="1.5" fill="black" />
+        <circle cx="2289.18" cy="1322.21" r="1.5" fill="black" />
+        <circle cx="1996.99" cy="1621.34" r="1.5" fill="black" />
+        <circle cx="2223.53" cy="1396.51" r="1.5" fill="black" />
+        <circle cx="2067.93" cy="1584.47" r="1.5" fill="black" />
+        <circle cx="2187.27" cy="1230.23" r="1.5" fill="black" />
+        <circle cx="1477.51" cy="1585.45" r="1.5" fill="black" />
+        <circle cx="1411.86" cy="1707.61" r="1.5" fill="black" />
+        <circle cx="1408.75" cy="1542.56" r="1.5" fill="black" />
+        <circle cx="1222.52" cy="1492.57" r="1.5" fill="black" />
+        <circle cx="1474.23" cy="1504.05" r="1.5" fill="black" />
+        <circle cx="1427.43" cy="1520.19" r="1.5" fill="black" />
+        <circle cx="1377.4" cy="1036.05" r="1.5" fill="black" />
+        <circle cx="1076.71" cy="1401.53" r="1.5" fill="black" />
+        <circle cx="1474.18" cy="1227.86" r="1.5" fill="black" />
+        <circle cx="1607.6" cy="978.14" r="1.5" fill="black" />
+        <circle cx="1824.09" cy="1785.48" r="1.5" fill="black" />
+        <circle cx="1765.38" cy="1165.19" r="1.5" fill="black" />
+        <circle cx="1730.92" cy="1081.94" r="1.5" fill="black" />
+        <circle cx="1833.7" cy="1379.66" r="1.5" fill="black" />
+        <circle cx="1820.48" cy="1675.83" r="1.5" fill="black" />
+        <circle cx="1679.2" cy="1425.89" r="1.5" fill="black" />
+        <circle cx="1559.16" cy="1057.58" r="1.5" fill="black" />
+        <circle cx="1722.78" cy="1784.16" r="1.5" fill="black" />
+        <circle cx="1882.58" cy="1665.29" r="1.5" fill="black" />
+        <circle cx="1752.05" cy="1002.29" r="1.5" fill="black" />
+        <circle cx="1875.09" cy="1052.54" r="1.5" fill="black" />
+        <circle cx="1875.04" cy="1052.66" r="1.5" fill="black" />
+        <circle cx="1880.23" cy="1048.67" r="1.5" fill="black" />
+        <circle cx="1538.51" cy="1589.71" r="1.5" fill="black" />
+        <circle cx="1690.83" cy="1388.2" r="1.5" fill="black" />
+        <circle cx="1737.2" cy="1088.19" r="1.5" fill="black" />
+        <circle cx="2125.99" cy="933.94" r="1.5" fill="black" />
+        <circle cx="2138.49" cy="655.37" r="1.5" fill="black" />
+        <circle cx="2000.54" cy="627.95" r="1.5" fill="black" />
+        <circle cx="2332.21" cy="876.91" r="1.5" fill="black" />
+        <circle cx="2183.93" cy="839.86" r="1.5" fill="black" />
+        <circle cx="1166.87" cy="862.07" r="1.5" fill="black" />
+        <circle cx="1329.73" cy="776.17" r="1.5" fill="black" />
+        <circle cx="1202.91" cy="818.87" r="1.5" fill="black" />
+        <circle cx="1600.01" cy="457.6" r="1.5" fill="black" />
+        <circle cx="1714.53" cy="780.99" r="1.5" fill="black" />
+        <circle cx="1766.85" cy="687.31" r="1.5" fill="black" />
+        <circle cx="1737.8" cy="412.04" r="1.5" fill="black" />
+        <circle cx="1578.55" cy="394.75" r="1.5" fill="black" />
+        <circle cx="1969.58" cy="894.18" r="1.5" fill="black" />
+      </g>
+      <g id="stars-labels">
+        <text x="1731.3" y="1144.2917968749998" font-size="54.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">17702</text>
+        <text x="1916.37" y="950.9399999999999" font-size="54.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">17573</text>
+        <text x="2083.68" y="1135.8476533777573" font-size="54.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">17499</text>
+        <text x="1498.5" y="1170.451796875" font-size="54.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">17847</text>
+        <text x="1881.96" y="1227.421796875" font-size="54.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">17608</text>
+        <text x="2034.6" y="927.031796875" font-size="54.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">17531</text>
+      </g>
+    </g>
+  </svg>
+  <g transform="translate(3.0, 3.0)">
+    <polyline points="-1.5,-1.5 -1.5,2315.075694388023 4097.5,2315.075694388023 4097.5,-1.5 -1.5,-1.5" fill="none" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="square" />
+  </g>
+</svg>

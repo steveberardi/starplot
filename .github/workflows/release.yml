@@ -29,10 +29,7 @@ jobs:
       run: make db setup CI=true
 
     - name: Run Tests
-      run: make test CI=true
-    
-    - name: Check Image Hashes
-      run: make check-hashes CI=true
+      run: make test e2e CI=true
     
     - name: Build
       run: make flit-build

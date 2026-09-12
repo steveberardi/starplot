@@ -51,6 +51,15 @@ check-hashes:
 lock-hashes:
 	uv run $(DOTENV) python hash_checks/hashio.py lock
 
+e2e:
+	find e2e/actual -name '*.svg' -delete
+	uv run $(DOTENV) --python $(PYTHON_VERSION) e2e/run.py
+
+e2e-lock:
+	find e2e/actual -name '*.svg' -delete
+	-uv run $(DOTENV) python e2e/run.py
+	for d in e2e/actual/*; do [ -d "$$d" ] && cp -r "$$d" e2e/expected/; done
+
 shell:
 	uv run $(DOTENV) ipython
 
@@ -167,4 +176,4 @@ clean:
 	rm -rf htmlcov
 	rm -f tests/data/*.png
 
-.PHONY: build test shell flit-build flit-publish clean ephemeris examples scripts tutorial list-fonts
+.PHONY: build test shell flit-build flit-publish clean ephemeris examples scripts tutorial list-fonts e2e

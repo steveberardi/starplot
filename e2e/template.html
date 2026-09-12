@@ -1,0 +1,286 @@
+<html data-bs-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <title>E2E Results</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <link href="https://cdn.jsdelivr.net/npm/diff2html@3.4.51/bundles/css/diff2html.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bs-font-monospace: "Fira Code", monospace;
+            --bs-body-font-family: "Inter", sans-serif;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Inter", sans-serif;
+        }
+
+        h3 {
+            font-weight: normal;
+            font-size: 1.6rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-weight: 700;
+        }
+
+        .e2e-result {
+            max-width: 1100px;
+            width: 100%;
+            background: #fff;
+        }
+
+        .image-toggle-img {
+            cursor: pointer;
+        }
+
+        .section {
+            padding: 2rem;
+            border-bottom: 2px dotted #313654;
+            margin-bottom: 16px;
+        }
+
+        .result {
+            padding-bottom: 2.1rem;
+        }
+
+        .tab-content {
+            padding: 1rem;
+        }
+
+        .d2h-file-wrapper {
+            font-family: "Fira Code", monospace;
+            font-size: 0.85rem;
+        }
+
+        .image-toggle-icon {
+            opacity: 0.6;
+            margin-left: 0.35rem;
+        }
+
+        .image-compare {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .image-compare .image-toggle {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Twilight-inspired color scheme for the diff tab (diff2html dark mode) */
+        .diff-container {
+            --d2h-dark-bg-color: #1c1c1c;
+            --d2h-dark-color: #c9c9c9;
+            --d2h-dark-file-header-bg-color: #232323;
+            --d2h-dark-file-header-border-color: #333333;
+            --d2h-dark-border-color: #333333;
+            --d2h-dark-line-border-color: #2a2a2a;
+            --d2h-dark-dim-color: #adadad86;
+            --d2h-dark-ins-bg-color: rgba(145, 192, 104, 0.2);
+            --d2h-dark-ins-border-color: rgba(143, 157, 106, 0.15);
+            --d2h-dark-ins-highlight-bg-color: rgba(143, 157, 106, 0.24);
+            --d2h-dark-ins-label-color: #7a8468;
+            --d2h-dark-del-bg-color: rgba(207, 106, 76, 0.05);
+            --d2h-dark-del-border-color: rgba(207, 106, 76, 0.15);
+            --d2h-dark-del-highlight-bg-color: rgba(207, 106, 76, 0.1);
+            --d2h-dark-del-label-color: #9c6552;
+            --d2h-dark-change-ins-color: rgba(143, 157, 106, 0.24);
+            --d2h-dark-change-del-color: rgba(207, 106, 76, 0.24);
+            --d2h-dark-change-label-color: #a89468;
+            --d2h-dark-empty-placeholder-bg-color: #202020;
+            --d2h-dark-empty-placeholder-border-color: #2e2e2e;
+            --d2h-dark-info-bg-color: #232323;
+            --d2h-dark-info-border-color: #333333;
+            --d2h-dark-moved-label-color: #8a7a94;
+            --d2h-dark-selected-color: rgba(168, 148, 104, 0.24);
+        }
+    </style>
+</head>
+
+<body>
+
+    {% macro result_tabs(func_name, values) %}
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#image-{{ func_name }}"
+                type="button" role="tab">Compare</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#diff-{{ func_name }}"
+                data-diff-container="diff-container-{{ func_name }}" type="button" role="tab">Diff</button>
+        </li>
+    </ul>
+    <div class="tab-content border border-top-0">
+        <div class="tab-pane show active" id="image-{{ func_name }}" role="tabpanel">
+            <div class="image-compare">
+                <button type="button" id="btn-{{ func_name }}" class="btn btn-outline-secondary image-toggle"
+                    data-expected-src="{{ values['expected_filename'] }}" data-actual-src="{{ values['actual_filename'] }}"
+                    data-img-target="img-{{ func_name }}">
+                    <span class="image-toggle-label">Actual</span>
+                    <span class="image-toggle-icon" aria-hidden="true">⇄</span>
+                </button>
+                <img id="img-{{ func_name }}" src="{{ values['actual_filename'] }}" data-showing="actual"
+                    data-toggle-btn="btn-{{ func_name }}" class="e2e-result image-toggle-img">
+            </div>
+        </div>
+        <div class="tab-pane" id="diff-{{ func_name }}" role="tabpanel">
+            <div class="diff-container" id="diff-container-{{ func_name }}"></div>
+            <script type="application/json" class="diff-data"
+                data-target="diff-container-{{ func_name }}">{{ values['diff'] | tojson }}</script>
+        </div>
+    </div>
+    {% endmacro %}
+
+    <!-- FAILED -->
+    <div class="section failed">
+
+        <h2 class="text-danger"><span class="badge text-danger bg-danger-subtle">{{failed|count}}</span> Failed</h2>
+
+        <div class="accordion my-3" id="accordionFailed">
+            {% for func_name, values in failed.items() %}
+            <div class="accordion-item border-danger">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed text-danger fw-bold fs-4 bg-danger-subtle" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#{{ func_name }}" aria-expanded="false"
+                        aria-controls="{{ func_name }}">
+                        ❌ {{ func_name }}
+                    </button>
+                </h2>
+                <div id="{{ func_name }}" class="accordion-collapse collapse show" data-bs-parent="#accordionFailed">
+                    <div class="accordion-body">
+
+                        {% if values['exception'] %}
+                        <pre>{{ values['exception'] }}</pre>
+                        {% else %}
+                        {{ result_tabs(func_name, values) }}
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- NEW -->
+    <div class="section new">
+
+        <h2 class="text-primary"><span class="badge text-primary bg-primary-subtle">{{new|count}}</span> New</h2>
+        {% for func_name, values in new.items() %}
+        <div class="result">
+            <h3>🎉 {{ func_name }}</h3>
+            <img src="{{ values['actual_filename'] }}" class="e2e-result">
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- PASSED -->
+    <div class="section passed">
+
+        <h2 class="text-success"><span class="badge text-success bg-success-subtle">{{passed|count}}</span> Passed
+        </h2>
+
+        <button type="button" class="btn btn-outline-success btn-lg my-3 w-100" id="expand-passed">Expand /
+            Collapse</button>
+
+        <div class="accordion" id="accordionPassed">
+            {% for func_name, values in passed.items() %}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success-subtle" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#{{ func_name }}" aria-expanded="false" aria-controls="{{ func_name }}">
+                        ✅ {{ func_name }}
+                    </button>
+                </h2>
+                <div id="{{ func_name }}" class="accordion-collapse collapse" data-bs-parent="#accordionPassed">
+                    <div class="accordion-body">
+                        {{ result_tabs(func_name, values) }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/diff2html@3.4.51/bundles/js/diff2html.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('expand-passed')?.addEventListener('click', () => {
+                document.querySelectorAll('#accordionPassed .accordion-collapse').forEach(el => {
+                    new bootstrap.Collapse(el, { show: true });
+                });
+            });
+
+            const renderDiff = (container) => {
+                if (!container || container.dataset.rendered) {
+                    return;
+                }
+                container.dataset.rendered = 'true';
+
+                const script = document.querySelector(`script.diff-data[data-target="${container.id}"]`);
+                const diffText = script && JSON.parse(script.textContent);
+                if (!diffText) {
+                    return;
+                }
+                container.innerHTML = Diff2Html.html(diffText, {
+                    drawFileList: false,
+                    matching: 'lines',
+                    outputFormat: 'line-by-line',
+                    colorScheme: 'dark',
+                });
+            };
+
+            document.querySelectorAll('button[data-diff-container]').forEach((button) => {
+                button.addEventListener('shown.bs.tab', () => {
+                    renderDiff(document.getElementById(button.dataset.diffContainer));
+                });
+            });
+
+            // the Expected/Actual buttons are merged into one toggle inside the
+            // Compare tab's body -- clicking either the button or the image
+            // itself flips which image is shown
+            const toggleImage = (button) => {
+                const img = document.getElementById(button.dataset.imgTarget);
+                const label = button.querySelector('.image-toggle-label');
+                const showingExpected = img.dataset.showing === 'expected';
+                img.src = showingExpected ? button.dataset.actualSrc : button.dataset.expectedSrc;
+                img.dataset.showing = showingExpected ? 'actual' : 'expected';
+                label.textContent = showingExpected ? 'Actual' : 'Expected';
+            };
+
+            document.querySelectorAll('button.image-toggle').forEach((button) => {
+                button.addEventListener('click', () => toggleImage(button));
+            });
+
+            document.querySelectorAll('img.image-toggle-img').forEach((img) => {
+                img.addEventListener('click', () => {
+                    toggleImage(document.getElementById(img.dataset.toggleBtn));
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

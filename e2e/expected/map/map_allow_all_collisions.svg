@@ -1,0 +1,173 @@
+<svg id="figure" xmlns="http://www.w3.org/2000/svg" height="1071.2731794172594" width="3006.0" viewBox="0 0 3006.0 1071.2731794172594">
+  <rect x="0" y="0" height="1071.2731794172594" width="3006.0" fill="#fff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+  <svg id="axes" xmlns="http://www.w3.org/2000/svg" x="3.0" y="3.0" height="1065.2731794172594" width="3000" viewBox="0 0 3000 1065.2731794172594">
+    <defs>
+      <clipPath id="axes-clip-path">
+        <polygon id="axes-background" points="0.0,0.0 3000.0,0.0 3000.0,1065.2731794172594 0.0,1065.2731794172594 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+      </clipPath>
+    </defs>
+    <g id="axes" clip-path="url(#axes-clip-path)">
+      <polygon id="axes-background" points="0.0,0.0 3000.0,0.0 3000.0,1065.2731794172594 0.0,1065.2731794172594 0.0,0.0" fill="#fafcff" stroke="#000" stroke-width="0.0" stroke-linecap="round" />
+      <g id="dso-OCl-markers">
+        <circle cx="2419.95" cy="237.8" r="18.0" fill="#fefa8b" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="round" stroke-dasharray="0.0,7.5" />
+        <circle cx="2164.94" cy="835.35" r="18.0" fill="#fefa8b" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="round" stroke-dasharray="0.0,7.5" />
+        <circle cx="2144.4" cy="260.4" r="18.0" fill="#fefa8b" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="round" stroke-dasharray="0.0,7.5" />
+        <circle cx="2065.6" cy="345.31" r="18.0" fill="#fefa8b" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="round" stroke-dasharray="0.0,7.5" />
+        <circle cx="1931.56" cy="169.93" r="18.0" fill="#fefa8b" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="round" stroke-dasharray="0.0,7.5" />
+      </g>
+      <g id="dso-Cl+N-markers">
+        <rect x="2119.07" y="439.66" height="36.0" width="36.0" fill="#c9f0b2" stroke="#3c6417" stroke-width="1.5" stroke-opacity="1.0" stroke-linecap="square" />
+      </g>
+      <g id="dso-GCl-markers">
+        <g fill="#fefa8b" stroke="#000" stroke-width="1.8" stroke-opacity="1.0" stroke-linecap="square">
+          <circle cx="2066.67" cy="525.69" r="18.0" />
+          <line x1="2048.67" y1="525.69" x2="2084.67" y2="525.69" />
+          <line x1="2066.67" y1="543.69" x2="2066.67" y2="507.69000000000005" />
+        </g>
+        <g fill="#fefa8b" stroke="#000" stroke-width="1.8" stroke-opacity="1.0" stroke-linecap="square">
+          <circle cx="1636.3" cy="512.01" r="18.0" />
+          <line x1="1618.3" y1="512.01" x2="1654.3" y2="512.01" />
+          <line x1="1636.3" y1="530.01" x2="1636.3" y2="494.01" />
+        </g>
+        <g fill="#fefa8b" stroke="#000" stroke-width="1.8" stroke-opacity="1.0" stroke-linecap="square">
+          <circle cx="1476.56" cy="578.75" r="18.0" />
+          <line x1="1458.56" y1="578.75" x2="1494.56" y2="578.75" />
+          <line x1="1476.56" y1="596.75" x2="1476.56" y2="560.75" />
+        </g>
+        <g fill="#fefa8b" stroke="#000" stroke-width="1.8" stroke-opacity="1.0" stroke-linecap="square">
+          <circle cx="1339.92" cy="409.48" r="18.0" />
+          <line x1="1321.92" y1="409.48" x2="1357.92" y2="409.48" />
+          <line x1="1339.92" y1="427.48" x2="1339.92" y2="391.48" />
+        </g>
+      </g>
+      <g id="dso-Neb-markers">
+        <rect x="2164.45" y="293.11" height="36.0" width="36.0" fill="#c9f0b2" stroke="#3c6417" stroke-width="1.5" stroke-opacity="1.0" stroke-linecap="square" />
+        <rect x="2139.8" y="442.01" height="36.0" width="36.0" fill="#c9f0b2" stroke="#3c6417" stroke-width="1.5" stroke-opacity="1.0" stroke-linecap="square" />
+      </g>
+      <g id="stars" fill="#000" stroke="#fff" stroke-width="1.5" stroke-opacity="1.0" stroke-linecap="square">
+        <circle cx="505.9" cy="106.71" r="15.0" fill="black" />
+        <circle cx="1725.15" cy="1046.47" r="15.0" fill="black" />
+        <circle cx="1550.73" cy="570.79" r="15.0" fill="black" />
+        <circle cx="684.71" cy="1052.15" r="15.0" fill="black" />
+        <circle cx="868.37" cy="664.32" r="15.0" fill="black" />
+        <circle cx="1905.91" cy="110.39" r="11.25" fill="black" />
+        <circle cx="806.75" cy="115.38" r="11.25" fill="black" />
+        <circle cx="632.92" cy="181.82" r="11.25" fill="black" />
+        <circle cx="1108.59" cy="738.82" r="11.25" fill="black" />
+        <circle cx="576.49" cy="812.05" r="11.25" fill="black" />
+        <circle cx="2664.25" cy="175.71" r="7.5" fill="black" />
+        <circle cx="1616.24" cy="56.41" r="7.5" fill="black" />
+        <circle cx="1616.28" cy="56.4" r="7.5" fill="black" />
+        <circle cx="2964.6" cy="415.76" r="7.5" fill="black" />
+        <circle cx="2560.99" cy="829.38" r="7.5" fill="black" />
+        <circle cx="2255.18" cy="400.24" r="7.5" fill="black" />
+        <circle cx="1956.95" cy="388.1" r="7.5" fill="black" />
+        <circle cx="1798.67" cy="744.4" r="7.5" fill="black" />
+        <circle cx="2047.92" cy="897.17" r="7.5" fill="black" />
+        <circle cx="2124.49" cy="1019.37" r="7.5" fill="black" />
+        <circle cx="872.02" cy="279.47" r="7.5" fill="black" />
+        <circle cx="895.76" cy="287.19" r="7.5" fill="black" />
+        <circle cx="361.49" cy="553.2" r="7.5" fill="black" />
+        <circle cx="1869.6" cy="40.4" r="6.0" fill="black" />
+        <circle cx="1869.62" cy="75.88" r="6.0" fill="black" />
+        <circle cx="1893.37" cy="178.86" r="6.0" fill="black" />
+        <circle cx="1277.75" cy="109.66" r="6.0" fill="black" />
+        <circle cx="1302.32" cy="145.83" r="6.0" fill="black" />
+        <circle cx="1008.29" cy="33.79" r="6.0" fill="black" />
+        <circle cx="1091.41" cy="250.11" r="6.0" fill="black" />
+        <circle cx="899.96" cy="141.85" r="6.0" fill="black" />
+        <circle cx="816.47" cy="68.37" r="6.0" fill="black" />
+        <circle cx="92.02" cy="185.51" r="6.0" fill="black" />
+        <circle cx="234.1" cy="251.19" r="6.0" fill="black" />
+        <circle cx="2202.34" cy="290.93" r="6.0" fill="black" />
+        <circle cx="2153.15" cy="457.94" r="6.0" fill="black" />
+        <circle cx="2178.71" cy="449.63" r="6.0" fill="black" />
+        <circle cx="2332.56" cy="854.74" r="6.0" fill="black" />
+        <circle cx="2283.73" cy="929.95" r="6.0" fill="black" />
+        <circle cx="1287.2" cy="367.33" r="6.0" fill="black" />
+        <circle cx="1402.71" cy="423.13" r="6.0" fill="black" />
+        <circle cx="849.72" cy="332.39" r="6.0" fill="black" />
+        <circle cx="1129.33" cy="527.02" r="6.0" fill="black" />
+        <circle cx="1554.38" cy="1045.24" r="6.0" fill="black" />
+        <circle cx="112.64" cy="415.73" r="6.0" fill="black" />
+        <circle cx="688.47" cy="509.56" r="6.0" fill="black" />
+        <circle cx="419.3" cy="622.59" r="6.0" fill="black" />
+        <circle cx="118.13" cy="473.63" r="6.0" fill="black" />
+        <circle cx="3.26" cy="738.26" r="6.0" fill="black" />
+        <circle cx="123.31" cy="989.83" r="6.0" fill="black" />
+        <circle cx="76.47" cy="1037.19" r="6.0" fill="black" />
+        <circle cx="3.11" cy="738.45" r="6.0" fill="black" />
+      </g>
+      <g id="dso-*-markers">
+        <circle cx="2041.67" cy="359.65" r="15.0" fill="#000" stroke="#fff" stroke-width="1.5" stroke-opacity="1.0" stroke-linecap="square" />
+      </g>
+      <g id="stars-labels">
+        <text x="528.4" y="152.46171875" font-size="63.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">Albaldah</text>
+        <text x="1747.65" y="1093.4841796875" font-size="63.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">Kaus Media</text>
+        <text x="1573.23" y="617.8041796875" font-size="63.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">Kaus Borealis</text>
+        <text x="707.21" y="1097.90171875" font-size="63.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">Ascella</text>
+        <text x="890.87" y="711.2180859375001" font-size="63.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">Nunki</text>
+        <text x="1924.66" y="153.65417968749998" font-size="63.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">Polis</text>
+        <text x="910.76" y="326.7041796875" font-size="63.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">Ainalrami</text>
+        <text x="483.4" y="96.86999999999999" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">π</text>
+        <text x="1702.65" y="1043.54" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">δ</text>
+        <text x="1528.23" y="567.8399999999999" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">λ</text>
+        <text x="662.21" y="1055.3000000000002" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">ζ</text>
+        <text x="845.87" y="654.5100000000001" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">σ</text>
+        <text x="1887.16" y="110.54" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">μ</text>
+        <text x="788.0" y="124.52" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">ξ²</text>
+        <text x="614.17" y="176.25" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">ο</text>
+        <text x="1089.84" y="739.4300000000001" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">φ</text>
+        <text x="557.74" y="805.9599999999999" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">τ</text>
+        <text x="857.02" y="286.69000000000005" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">ν²</text>
+        <text x="880.76" y="294.21999999999997" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">ν¹</text>
+        <text x="346.49" y="563.69" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">ψ</text>
+        <text x="802.97" y="82.57000000000001" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">ξ¹</text>
+        <text x="99.14" y="430.07" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">χ³</text>
+        <text x="104.63" y="487.78" font-size="54.0" font-family="GFS Didot, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">χ¹</text>
+        <text x="2649.25" y="205.27574218750001" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">58</text>
+        <text x="1601.24" y="85.7848828125" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">21</text>
+        <text x="2949.6" y="445.1348828125" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">51</text>
+        <text x="2545.99" y="858.9457421875" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">3</text>
+        <text x="2240.18" y="429.4240234375" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">4</text>
+        <text x="1941.95" y="417.2840234375" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">11</text>
+        <text x="1856.1" y="68.46574218750001" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">16</text>
+        <text x="1856.12" y="103.7548828125" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">15</text>
+        <text x="1879.87" y="206.54402343750002" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">14</text>
+        <text x="994.79" y="61.85685418567518" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">29</text>
+        <text x="1077.91" y="278.1757421875" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">28</text>
+        <text x="886.46" y="169.9157421875" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">33</text>
+        <text x="78.52" y="213.5757421875" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">50</text>
+        <text x="2139.65" y="486.0068541856752" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">9</text>
+        <text x="2165.21" y="477.3140234375" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">7</text>
+        <text x="1389.21" y="451.0048828125" font-size="39.0" font-family="Inter, sans-serif" font-weight="300" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="end">24</text>
+      </g>
+      <g id="dso-*-labels">
+        <text x="2064.17" y="405.6854296875" font-size="63.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0">IC4681</text>
+      </g>
+      <g id="dso-OCl-labels">
+        <text x="2445.45" y="276.74677526595747" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#656201" fill-opacity="1.0">6469</text>
+        <text x="2190.44" y="874.29453125" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#656201" fill-opacity="1.0">6520</text>
+        <text x="2169.9" y="299.17296875" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#656201" fill-opacity="1.0">M21</text>
+        <text x="2091.1" y="384.25453125" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#656201" fill-opacity="1.0">6546</text>
+        <text x="1957.06" y="208.87453125000002" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#656201" fill-opacity="1.0">6568</text>
+      </g>
+      <g id="dso-Cl+N-labels">
+        <text x="2162.57" y="496.60453125000004" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#48791b" fill-opacity="1.0">6530</text>
+      </g>
+      <g id="dso-GCl-labels">
+        <text x="2092.17" y="564.63453125" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#989400" fill-opacity="1.0">6544</text>
+        <text x="1661.8" y="550.95453125" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#989400" fill-opacity="1.0">M28</text>
+        <text x="1502.06" y="617.69453125" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#989400" fill-opacity="1.0">6638</text>
+        <text x="1365.42" y="448.25296875000004" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#989400" fill-opacity="1.0">M22</text>
+      </g>
+      <g id="dso-Neb-labels">
+        <text x="2207.95" y="350.05453125" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#48791b" fill-opacity="1.0">M20</text>
+        <text x="2183.3" y="498.95453125" font-size="36.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#48791b" fill-opacity="1.0">M8</text>
+      </g>
+    </g>
+  </svg>
+  <g transform="translate(3.0, 3.0)">
+    <polyline points="-1.5,-1.5 -1.5,1066.7731794172594 3001.5,1066.7731794172594 3001.5,-1.5 -1.5,-1.5" fill="none" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="square" />
+  </g>
+</svg>

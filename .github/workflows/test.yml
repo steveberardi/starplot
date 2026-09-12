@@ -27,7 +27,7 @@ jobs:
     - name: Check Format
       run: make format CI=true ARGS=--check
     - name: Run Tests
-      run: make test CI=true
+      run: make test e2e CI=true
     - name: Build PIP Package
       run: make flit-build
 
@@ -36,25 +36,25 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name: Run Tests - Python 3.10
-      run: make test-python-version PYTHON_VERSION=3.10
+      run: make test-python-version e2e PYTHON_VERSION=3.10
   
   test-python-3-11:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
     - name: Run Tests - Python 3.11
-      run: make test-python-version PYTHON_VERSION=3.11
+      run: make test-python-version e2e PYTHON_VERSION=3.11
   
   test-python-3-12:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
     - name: Run Tests - Python 3.12
-      run: make test-python-version PYTHON_VERSION=3.12
+      run: make test-python-version e2e PYTHON_VERSION=3.12
   
   test-python-3-13:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
     - name: Run Tests - Python 3.13
-      run: make test-python-version PYTHON_VERSION=3.13
+      run: make test-python-version e2e PYTHON_VERSION=3.13

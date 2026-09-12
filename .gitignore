@@ -27,10 +27,13 @@ data/build/*
 hash_checks/data/*.png
 hash_checks/results.html
 
+# E2E test results
+e2e/actual/
+
 # local development scripts etc
 /plots/
 .tmp/
-temp*
+scripts/temp*
 temp.py
 temp/
 scripts/temp/
