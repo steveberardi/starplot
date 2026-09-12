@@ -48,6 +48,10 @@ check-hashes:
 	rm -f hash_checks/data/*.png
 	uv run $(DOTENV) python hash_checks/hashio.py check
 
+check-hashes-python-version:
+	rm -f hash_checks/data/*.png
+	uv run $(DOTENV) --python $(PYTHON_VERSION) hash_checks/hashio.py check
+
 lock-hashes:
 	uv run $(DOTENV) python hash_checks/hashio.py lock
 

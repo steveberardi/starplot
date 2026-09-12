@@ -1233,6 +1233,7 @@ class Canvas:
                     elif isinstance(border_intersection, MultiPoint):
                         border_intersection_points.extend(border_intersection.geoms)
 
+                # TODO: sort border_intersection_points by x, y
                 for ix in border_intersection_points:
                     if locations and any(
                         (

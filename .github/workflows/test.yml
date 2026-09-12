@@ -51,13 +51,13 @@ jobs:
     - name: Build PIP Package
       run: make flit-build
 
-  # test-python-3-10:
-  #   runs-on: ubuntu-24.04
-  #   steps:
-  #   - uses: actions/checkout@v6
-  #   - uses: astral-sh/setup-uv@v5
-  #   - name: Run Tests - Python 3.10
-  #     run: make install env download-test-fonts db test-python-version e2e PYTHON_VERSION=3.10
+  test-python-3-10:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v6
+    - uses: astral-sh/setup-uv@v5
+    - name: Run Tests - Python 3.10
+      run: make install env download-test-fonts db test-python-version check-hashes-python-version PYTHON_VERSION=3.10
   
   # test-python-3-11:
   #   runs-on: ubuntu-24.04
