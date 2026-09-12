@@ -154,6 +154,7 @@ PROJECTIONS = [
 ]
 
 for name, projection, extent, clip_path in PROJECTIONS:
+    print(f"{name}...")
     kwargs = dict(ra_min=0, ra_max=360, dec_min=-90, dec_max=90)
     kwargs.update(extent)
     if clip_path is not None:
