@@ -651,16 +651,16 @@ MINOR</text>
     <polyline points="-1.0,-1.0 -1.0,2725.5594 4097.0,2725.5594 4097.0,-1.0 -1.0,-1.0" fill="none" stroke="#000" stroke-width="2.0" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
   <g transform="translate(121.1562, 121.1562)">
-    <polyline points="-41.578125,-41.578125 -41.578125,2766.137565033526 4137.578125,2766.137565033526 4137.578125,-41.578125 -41.578125,-41.578125" fill="none" stroke="none" stroke-width="2.0" stroke-opacity="1.0" stroke-linecap="square" />
+    <polyline points="-41.5781,-41.5781 -41.5781,2766.1376 4137.5781,2766.1376 4137.5781,-41.5781 -41.5781,-41.5781" fill="none" stroke="none" stroke-width="2.0" stroke-opacity="1.0" stroke-linecap="square" />
     <g id="gridline-labels">
-      <text x="3705.9048" y="-29.9418" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">4h</text>
-      <text x="3705.9048" y="2777.7739" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">4h</text>
-      <text x="2730.6667" y="-29.9418" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">5h</text>
-      <text x="2730.6667" y="2777.7739" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">5h</text>
-      <text x="1755.4286" y="-29.9418" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">6h</text>
-      <text x="1755.4286" y="2777.7739" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">6h</text>
-      <text x="780.1905" y="-29.9418" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">7h</text>
-      <text x="780.1905" y="2777.7739" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">7h</text>
+      <text x="3705.9048" y="-29.9417" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">4h</text>
+      <text x="3705.9048" y="2777.774" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">4h</text>
+      <text x="2730.6667" y="-29.9417" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">5h</text>
+      <text x="2730.6667" y="2777.774" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">5h</text>
+      <text x="1755.4286" y="-29.9417" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">6h</text>
+      <text x="1755.4286" y="2777.774" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">6h</text>
+      <text x="780.1905" y="-29.9417" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">7h</text>
+      <text x="780.1905" y="2777.774" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">7h</text>
       <text x="-41.5781" y="2392.7327" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">-10° </text>
       <text x="4137.5781" y="2392.7327" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">-10° </text>
       <text x="-41.5781" y="1740.4511" font-size="32.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8edf2" fill-opacity="1.0" text-anchor="middle">0° </text>

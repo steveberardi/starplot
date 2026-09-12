@@ -1394,7 +1394,7 @@
     <polyline points="-0.75,-0.75 -0.75,2000.75 4000.75,2000.75 4000.75,-0.75 -0.75,-0.75" fill="none" stroke="#000" stroke-width="1.5" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
   <g transform="translate(60.8672, 60.8672)">
-    <polyline points="-31.18359375,-31.18359375 -31.18359375,2031.18359375 4031.18359375,2031.18359375 4031.18359375,-31.18359375 -31.18359375,-31.18359375" fill="none" stroke="none" stroke-width="1.5" stroke-opacity="1.0" stroke-linecap="square" />
+    <polyline points="-31.1836,-31.1836 -31.1836,2031.1836 4031.1836,2031.1836 4031.1836,-31.1836 -31.1836,-31.1836" fill="none" stroke="none" stroke-width="1.5" stroke-opacity="1.0" stroke-linecap="square" />
     <g id="gridline-labels">
       <text x="3833.3333" y="-22.4563" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">1h</text>
       <text x="3833.3333" y="2039.9109" font-size="24.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">1h</text>

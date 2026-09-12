@@ -3117,7 +3117,7 @@ MINOR</text>
     <polyline points="-1.024,-1.024 -1.024,2634.7655 4097.024,2634.7655 4097.024,-1.024 -1.024,-1.024" fill="none" stroke="#000" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
   <g transform="translate(83.104, 83.104)">
-    <polyline points="-42.576,-42.576 -42.576,2676.317481198627 4138.576,2676.317481198627 4138.576,-42.576 -42.576,-42.576" fill="none" stroke="none" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
+    <polyline points="-42.576,-42.576 -42.576,2676.3175 4138.576,2676.3175 4138.576,-42.576 -42.576,-42.576" fill="none" stroke="none" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
     <g id="gridline-labels">
       <text x="3705.9048" y="-30.6604" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">4h</text>
       <text x="3705.9048" y="2688.2331" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">4h</text>

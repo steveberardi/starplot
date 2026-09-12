@@ -3305,7 +3305,7 @@
     </g>
   </svg>
   <g transform="translate(0, 0)">
-    <text x="971.531597788012" y="61.0" font-size="85.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg</text>
+    <text x="971.5316" y="61.0" font-size="85.0" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg</text>
   </g>
   <g transform="translate(2.0, 111.0)">
     <polyline points="-1.0,-1.0 -1.0,2001.0 1944.0632,2001.0 1944.0632,-1.0 -1.0,-1.0" fill="none" stroke="#000" stroke-width="2.0" stroke-opacity="1.0" stroke-linecap="square" />

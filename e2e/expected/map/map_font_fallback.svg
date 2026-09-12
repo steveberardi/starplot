@@ -637,7 +637,7 @@ MINOR</text>
     </g>
   </svg>
   <g transform="translate(0.0, 0.0)">
-    <text x="2048.0" y="62.464000000000006" font-size="87.04" font-family="ThisFontDoesNotExist12345, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">Font Fallback Test</text>
+    <text x="2048.0" y="62.464" font-size="87.04" font-family="ThisFontDoesNotExist12345, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">Font Fallback Test</text>
   </g>
   <g transform="translate(2.048, 113.664)">
     <polyline points="-1.024,-1.024 -1.024,2612.9611 4097.024,2612.9611 4097.024,-1.024 -1.024,-1.024" fill="none" stroke="#000" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />

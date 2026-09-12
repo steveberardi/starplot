@@ -2960,15 +2960,15 @@
     </g>
   </svg>
   <g transform="translate(0.0, 0.0)">
-    <text x="2048.0" y="62.464000000000006" font-size="87.04" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">Andromeda + nebula + Vega</text>
+    <text x="2048.0" y="62.464" font-size="87.04" font-family="Inter, sans-serif" font-weight="700" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">Andromeda + nebula + Vega</text>
   </g>
   <g transform="translate(83.104, 194.72)">
     <polyline points="-1.024,-1.024 -1.024,1893.0323 4097.024,1893.0323 4097.024,-1.024 -1.024,-1.024" fill="none" stroke="#000" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
   <g transform="translate(83.104, 194.72)">
-    <polyline points="-42.576,-42.576 -42.576,1934.5843226858187 4138.576,1934.5843226858187 4138.576,-42.576 -42.576,-42.576" fill="none" stroke="none" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
+    <polyline points="-42.576,-42.576 -42.576,1934.5843 4138.576,1934.5843 4138.576,-42.576 -42.576,-42.576" fill="none" stroke="none" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
     <g id="gridline-labels">
-      <text x="658.0856" y="1946.5" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">0h</text>
+      <text x="658.0856" y="1946.4999" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">0h</text>
       <text x="1799.5996" y="-30.6604" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">0h</text>
       <text x="1617.758" y="-30.6604" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">1h</text>
       <text x="1302.7989" y="-30.6604" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">2h</text>
@@ -2977,12 +2977,12 @@
       <text x="2793.2011" y="-30.6604" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">18h</text>
       <text x="2478.242" y="-30.6604" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">19h</text>
       <text x="2296.4004" y="-30.6604" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">20h</text>
-      <text x="3437.9144" y="1946.5" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">20h</text>
+      <text x="3437.9144" y="1946.4999" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">20h</text>
       <text x="2163.283" y="-30.6604" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">21h</text>
-      <text x="2693.0615" y="1946.5" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">21h</text>
+      <text x="2693.0615" y="1946.4999" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">21h</text>
       <text x="2048.0" y="-30.6604" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">22h</text>
-      <text x="2048.0" y="1946.5" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">22h</text>
-      <text x="1402.9385" y="1946.5" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">23h</text>
+      <text x="2048.0" y="1946.4999" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">22h</text>
+      <text x="1402.9385" y="1946.4999" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">23h</text>
       <text x="1932.717" y="-30.6604" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">23h</text>
       <text x="-42.576" y="1502.5262" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">20° </text>
       <text x="4138.576" y="1502.5262" font-size="32.77" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#000" fill-opacity="1.0" text-anchor="middle">20° </text>

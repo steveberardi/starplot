@@ -786,8 +786,8 @@ class Canvas:
                 (
                     style.zorder,
                     Text(
-                        x=self.layout.axes.width / 2,
-                        y=style.font_size * self.scale - padding_bottom,
+                        x=round(self.layout.axes.width / 2, settings.precision),
+                        y=round(style.font_size * self.scale - padding_bottom, settings.precision),
                         attrs=_attrs,
                         text=value,
                     ),
@@ -1130,15 +1130,15 @@ class Canvas:
 
         cx1, cy1, cx2, cy2 = self.clip_path_display.bounds
 
-        # TODO : remove these offset vars? dont need cause of layout engine
-        xoff = 0
-        yoff = 0
-        coords = list(zip(*border.exterior.coords.xy))
+        coords = [
+            (round(x, settings.precision), round(y, settings.precision))
+            for x, y in list(zip(*border.exterior.coords.xy))
+        ]
         border_line = LineString(coords)
         attrs = style.line.css(self.scale)
 
         if self.debug:
-            clip_path = _translate_shape(self.clip_path_display, xoff=xoff, yoff=yoff)
+            clip_path = _translate_shape(self.clip_path_display)
             label_elements.append(
                 (
                     10_000_000_000,
@@ -1190,7 +1190,6 @@ class Canvas:
                 xs, ys = arr[:, 0], arr[:, 1]
                 dx, dy = self._to_display(xs, ys)
                 dxy = list(zip(dx, dy))
-                dxy = [(x + xoff, y + yoff) for x, y in dxy]
 
                 label_height, label_width, _ = fonts.get_text_hw(
                     text=text,
@@ -1244,13 +1243,13 @@ class Canvas:
                 for ix, iy in ix_points:
                     if locations and any(
                         (
-                            iy - label_height / 2 < cy1 + yoff
+                            iy - label_height / 2 < cy1
                             and "top" not in locations,
-                            iy + label_height / 2 > cy2 + yoff
+                            iy + label_height / 2 > cy2
                             and "bottom" not in locations,
-                            ix - label_width / 2 < cx1 + xoff
+                            ix - label_width / 2 < cx1
                             and "left" not in locations,
-                            ix + label_width / 2 > cx2 + xoff
+                            ix + label_width / 2 > cx2
                             and "right" not in locations,
                         )
                     ):

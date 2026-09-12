@@ -351,9 +351,9 @@ BERENICES</text>
     <polyline points="-1.5,-1.5 -1.5,3280.1682 4097.5,3280.1682 4097.5,-1.5 -1.5,-1.5" fill="none" stroke="#000" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
   <g transform="translate(121.7344, 121.7344)">
-    <polyline points="-62.3671875,-62.3671875 -62.3671875,3341.0353684873335 4158.3671875,3341.0353684873335 4158.3671875,-62.3671875 -62.3671875,-62.3671875" fill="none" stroke="none" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="square" />
+    <polyline points="-62.3672,-62.3672 -62.3672,3341.0354 4158.3672,3341.0354 4158.3672,-62.3672 -62.3672,-62.3672" fill="none" stroke="none" stroke-width="3.0" stroke-opacity="1.0" stroke-linecap="square" />
     <g id="gridline-labels">
-      <text x="1365.3333" y="-44.9126" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">13h</text>
+      <text x="1365.3333" y="-44.9127" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">13h</text>
       <text x="1365.3333" y="3358.4899" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">13h</text>
       <text x="-62.3672" y="2357.821" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20° </text>
       <text x="4158.3672" y="2357.821" font-size="48.0" font-family="Inter, sans-serif" font-weight="400" font-style="normal" fill="#e8f0f8" fill-opacity="1.0" text-anchor="middle">20° </text>

@@ -318,6 +318,6 @@
     <polyline points="-1.024,-1.024 -1.024,2603.3886 4097.024,2603.3886 4097.024,-1.024 -1.024,-1.024" fill="none" stroke="#000" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
   <g transform="translate(4.096, 4.096)">
-    <polyline points="-3.072,-3.072 -3.072,2605.436631824819 4099.072,2605.436631824819 4099.072,-3.072 -3.072,-3.072" fill="none" stroke="none" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
+    <polyline points="-3.072,-3.072 -3.072,2605.4366 4099.072,2605.4366 4099.072,-3.072 -3.072,-3.072" fill="none" stroke="none" stroke-width="2.05" stroke-opacity="1.0" stroke-linecap="square" />
   </g>
 </svg>
