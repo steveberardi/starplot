@@ -120,6 +120,54 @@
         </div>
     </div>
 
+    <!-- FLAKY -->
+    <div class="section flaky">
+
+        <h2 class="text-warning"><span class="badge text-warning bg-warning-subtle">{{flaky|count}}</span> Flaky</h2>
+
+        <div class="accordion my-3" id="accordionFlaky">
+            {% for func_name, values in flaky.items() %}
+            <div class="accordion-item border-warning">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed text-warning fw-bold fs-4 bg-warning-subtle" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#{{ func_name }}-flaky" aria-expanded="false"
+                        aria-controls="{{ func_name }}-flaky">
+                        ⚠️ {{ func_name }}
+                    </button>
+                </h2>
+                <div id="{{ func_name }}-flaky" class="accordion-collapse collapse" data-bs-parent="#accordionFlaky">
+                    <div class="accordion-body">
+                        <table class="mb-3 text-white text-opacity-50 bg-black">
+                            <tr>
+                                <th class="border-end"></th>
+                                <th class="border-end pt-2">dhash</th>
+                                <th>phash</th>
+                            </tr>
+                            <tr>
+                                <td class="border-end">expected</td>
+                                <td class="expected-dhash font-monospace border-end">{{ values['dhash_expected'] }}</td>
+                                <td class="expected-phash font-monospace">{{ values['phash_expected'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border-end pb-2">actual</td>
+                                <td class="actual-dhash font-monospace border-end">{{ values['dhash'] }}</td>
+                                <td class="actual-phash font-monospace">{{ values['phash'] }}</td>
+                            </tr>
+
+                        </table>
+
+                        {% if values['exception'] %}
+                        <pre>{{ values['exception'] }}</pre>
+                        {% endif %}
+
+                        <img src="{{ values['filename'] }}" class="img-result ">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
     <!-- NEW -->
     <div class="section new">
 
@@ -193,19 +241,28 @@
                 });
             });
 
-            const failedAcc = document.getElementById("accordionFailed");
-            failedAcc.querySelectorAll(".accordion-item").forEach((element) => {
-                const expected_d = element.querySelector(".expected-dhash");
-                const expected_p = element.querySelector(".expected-phash");
-                const actual_d = element.querySelector(".actual-dhash");
-                const actual_p = element.querySelector(".actual-phash");
+            const highlightHashDiffs = (accordionId) => {
+                const acc = document.getElementById(accordionId);
+                acc.querySelectorAll(".accordion-item").forEach((element) => {
+                    const expected_d = element.querySelector(".expected-dhash");
+                    const expected_p = element.querySelector(".expected-phash");
+                    const actual_d = element.querySelector(".actual-dhash");
+                    const actual_p = element.querySelector(".actual-phash");
 
-                const diff_d = diffSpan(expected_d.innerText, actual_d.innerText);
-                const diff_p = diffSpan(expected_p.innerText, actual_p.innerText)
+                    if (!expected_d || !actual_d) {
+                        return;
+                    }
 
-                actual_d.innerHTML = diff_d.outerHTML;
-                actual_p.innerHTML = diff_p.outerHTML;
-            });
+                    const diff_d = diffSpan(expected_d.innerText, actual_d.innerText);
+                    const diff_p = diffSpan(expected_p.innerText, actual_p.innerText)
+
+                    actual_d.innerHTML = diff_d.outerHTML;
+                    actual_p.innerHTML = diff_p.outerHTML;
+                });
+            };
+
+            highlightHashDiffs("accordionFailed");
+            highlightHashDiffs("accordionFlaky");
         });
     </script>
 

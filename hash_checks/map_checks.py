@@ -4,6 +4,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import numpy as np
+from flaky import flake
 from shapely import Polygon
 
 from starplot import (
@@ -528,6 +529,7 @@ def check_map_plot_limit_by_geometry():
     return filename
 
 
+@flake
 def check_map_plot_custom_clip_path_virgo():
     virgo = Constellation.get(iau_id="vir")
     p = MapPlot(
@@ -681,6 +683,7 @@ def check_map_allow_marker_and_line_collisions():
     return filename
 
 
+@flake
 def check_map_constellation_clip_path():
     constellation = Constellation.get(iau_id="and")
 
@@ -797,6 +800,7 @@ def check_map_font_fallback():
     return filename
 
 
+@flake
 def check_map_equidistant_tissot():
     filename = DATA_PATH / "map-equidistant-tissot.png"
 

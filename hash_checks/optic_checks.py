@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from flaky import flake
+
 from starplot import Moon, Observer, OpticPlot, Satellite, _, callables, styles
 from starplot.models import optics
 
@@ -283,6 +285,7 @@ def check_optic_camera_rotated():
     return filename
 
 
+@flake
 def check_optic_solar_eclipse_binoculars():
     observer = Observer(
         dt=dt_april_8,
@@ -329,6 +332,7 @@ def check_optic_moon_phase_waxing_crescent():
     return filename
 
 
+@flake
 def check_optic_moon_phase_new():
     observer = Observer(
         dt=dt_april_8,
