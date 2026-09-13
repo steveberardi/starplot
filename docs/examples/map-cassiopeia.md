@@ -1,11 +1,11 @@
 ---
 title: Map of Cassiopeia
 ---
-[:octicons-arrow-left-24: Back to Examples](/examples)
+[:octicons-arrow-left-24: Back to Examples](../examples.md)
 
 # Map of Cassiopeia {.example-header}
 
-![map-cas](/images/examples/map_cas.png)
+![map-cas](../images/examples/map_cas.png)
 
 ```python
 --8<-- "examples/map_cas.py"

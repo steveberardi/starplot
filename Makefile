@@ -152,7 +152,7 @@ docs: docs-references docs-build
 # ------------------------------------------------------------------
 # PyPi - build & publish
 flit-build:
-	uv run $(DOTENV) flit build
+	uv run $(DOTENV) flit build --no-vcs
 
 flit-publish:
 	uv run $(DOTENV) flit publish

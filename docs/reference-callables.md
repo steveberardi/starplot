@@ -6,7 +6,7 @@ Many functions in Starplot allow you to pass a callable for creating dynamic sty
 
 - [Creating your own callable](#creating-your-own-callable)
 
-- _[See chapter 8 of the tutorial for an example of using a callable :material-arrow-right:](/tutorial/08/)_
+- _[See chapter 8 of the tutorial for an example of using a callable :material-arrow-right:](tutorial/08.md)_
 
 
 ???- tip  "What's a Callable?"
