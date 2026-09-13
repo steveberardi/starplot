@@ -53,12 +53,12 @@ jobs:
       run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
     - id: 'auth'
       if: always()
-      uses: 'google-github-actions/auth@v2'
+      uses: 'google-github-actions/auth@v3'
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
     - name: 'Set up Google Cloud SDK'
       if: always()
-      uses: 'google-github-actions/setup-gcloud@v2'
+      uses: 'google-github-actions/setup-gcloud@v3'
       with:
         version: '>= 363.0.0'
     - name: 'Upload docs on failure'

@@ -1,5 +1,3 @@
-DE421_URL=https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp
-
 PYTHON_VERSION=3.12
 
 ifeq ($(CI), true)
@@ -14,8 +12,6 @@ DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bas
 
 DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" .
 DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) starplot-$(PYTHON_VERSION)
-
-# docker run --rm -it -v .:/starplot starplot-3.12.12 bash -c -v $(shell pwd):/starplot
 
 export PYTHONPATH=./src/
 
@@ -162,9 +158,6 @@ flit-install:
 
 # ------------------------------------------------------------------
 # Utils
-ephemeris:
-	$(DOCKER_RUN) "python -m jplephem excerpt 2025/1/1 2050/1/1 $(DE421_URL) de421sub.bsp"
-
 scripts:
 	uv run $(DOTENV) python ./scripts/$(SCRIPT).py
 
