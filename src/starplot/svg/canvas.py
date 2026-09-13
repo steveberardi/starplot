@@ -763,7 +763,7 @@ class Canvas:
         dx, dy = self._to_display(x, y, cs)
 
         attrs = attrs or {}
-        _attrs = {**style.css(self.scale), **attrs}
+        _attrs = {**style.css(self.scale, base=self.style.base), **attrs}
 
         if angle:
             _attrs["transform"] = f"rotate({angle}, {dx}, {dy})"
@@ -776,7 +776,7 @@ class Canvas:
         style: LabelStyle,
     ) -> None:
         _attrs = {
-            **style.css(self.scale),
+            **style.css(self.scale, base=self.style.base),
             "text-anchor": "middle",
             # "dominant-baseline": "central",
         }
@@ -832,13 +832,18 @@ class Canvas:
             if title:
                 h, w, _ = fonts.get_text_hw(
                     text=title,
-                    font_name=style.title.font_name,
+                    font_name=style.title.resolved_font_name(self.style.base),
                     font_size=style.title.font_size * scale,
                     font_weight=style.title.font_weight,
                     italic=style.title.font_style == "italic",
                 )
                 y += h
-                title_element = Text(x=x, y=y, text=title, attrs=style.title.css(scale))
+                title_element = Text(
+                    x=x,
+                    y=y,
+                    text=title,
+                    attrs=style.title.css(scale, base=self.style.base),
+                )
                 sections_elements.append(title_element)
                 height += h * 2 + label_padding
                 width = max(width, w * 1.5)
@@ -859,7 +864,7 @@ class Canvas:
 
                 y += symbol_size / 2
                 label_x = x + symbol_size + symbol_padding
-                label_attrs = style.labels.css(scale)
+                label_attrs = style.labels.css(scale, base=self.style.base)
                 label_element = Text(x=label_x, y=y, text=label, attrs=label_attrs)
 
                 sections_elements.append(
@@ -870,7 +875,7 @@ class Canvas:
 
                 h, w, _ = fonts.get_text_hw(
                     text=label,
-                    font_name=style.labels.font_name,
+                    font_name=style.labels.resolved_font_name(self.style.base),
                     font_size=style.labels.font_size * scale,
                     font_weight=style.labels.font_weight,
                     italic=style.labels.font_style == "italic",
@@ -948,8 +953,8 @@ class Canvas:
         top = style.padding_top * scale
         padding_x = padding_x * scale
         padding_y = padding_y * scale
-        header_attrs = header_style.css(scale)
-        cell_attrs = cell_style.css(scale)
+        header_attrs = header_style.css(scale, base=self.style.base)
+        cell_attrs = cell_style.css(scale, base=self.style.base)
         border_attrs = border_style.css(scale)
 
         num_cols = len(headers)
@@ -957,7 +962,7 @@ class Canvas:
         def cell_width(value, style: LabelStyle) -> float:
             _, w, _ = fonts.get_text_hw(
                 text=str(value),
-                font_name=style.font_name,
+                font_name=style.resolved_font_name(self.style.base),
                 font_size=style.font_size * scale,
                 font_weight=style.font_weight,
                 italic=style.font_style == "italic",
@@ -1103,7 +1108,7 @@ class Canvas:
         def text_width(text, font_size):
             _, w, _ = fonts.get_text_hw(
                 text=text,
-                font_name=style.label.font_name,
+                font_name=style.label.resolved_font_name(self.style.base),
                 font_size=font_size,
                 font_weight=style.label.font_weight,
                 italic=style.label.font_style == "italic",
@@ -1196,7 +1201,7 @@ class Canvas:
 
                 label_height, label_width, _ = fonts.get_text_hw(
                     text=text,
-                    font_name=style.label.font_name,
+                    font_name=style.label.resolved_font_name(self.style.base),
                     font_size=style.label.font_size * self.scale,
                     font_weight=style.label.font_weight,
                     italic=style.label.font_style == "italic",
@@ -1275,7 +1280,7 @@ class Canvas:
                         ),
                         text=text,
                         attrs={
-                            **style.label.css(self.scale),
+                            **style.label.css(self.scale, base=self.style.base),
                             "text-anchor": "middle",
                             # "dominant-baseline": "central", # not supported in cairo svg
                         },

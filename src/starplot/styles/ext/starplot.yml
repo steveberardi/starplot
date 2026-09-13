@@ -13,6 +13,9 @@ axes:
   background:
     fill: hsl(205, 63%, 100%)
 
+base:
+  text_stroke: hsl(205, 63%, 100%)
+
 figure:
   background:
     fill: hsl(205, 63%, 100%)

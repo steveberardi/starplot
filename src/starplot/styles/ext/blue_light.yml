@@ -3,6 +3,9 @@ axes:
   background:
     fill: hsl(218, 88%, 99%)
 
+base:
+  text_stroke: hsl(218, 88%, 99%)
+
 horizon:
   line:
     stroke: '#b5cbe3'

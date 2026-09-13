@@ -4,6 +4,9 @@ axes:
   background:
     fill: rgb(46, 61, 74)
 
+base:
+  text_stroke: rgb(46, 61, 74)
+
 figure:
   background:
     fill: hsl(208, 23%, 13%)

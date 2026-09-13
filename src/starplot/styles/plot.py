@@ -34,7 +34,10 @@ class PlotStyle(BaseStyle):
     Defines all the styling properties for a plot
     """
 
-    base: PlotBaseStyle = PlotBaseStyle()
+    base: PlotBaseStyle = PlotBaseStyle(
+        font_name="Inter",
+        text_stroke_width=4,
+    )
     """
     Default base styles for undefined style properties. This is a way to apply some styles to everything in the plot, unless a style explicitly sets one of these values.
     """
@@ -52,6 +55,7 @@ class PlotStyle(BaseStyle):
     title: TitleStyle = TitleStyle(
         font_size=85,
         font_weight=FontWeight.BOLD,
+        stroke_width=0,
         zorder=ZOrder.LAYER_5,
         anchor_point=AnchorPoint.BOTTOM_CENTER,
         padding_bottom=24,
@@ -62,14 +66,14 @@ class PlotStyle(BaseStyle):
         header=LabelStyle(
             font_size=32,
             zorder=ZOrder.LAYER_5,
-            font_family="Inter",
+            stroke_width=0,
             font_weight=FontWeight.BOLD,
             anchor_point=AnchorPoint.BOTTOM_CENTER,
         ),
         cell=LabelStyle(
             font_size=32,
+            stroke_width=0,
             zorder=ZOrder.LAYER_5,
-            font_family="Inter",
             anchor_point=AnchorPoint.BOTTOM_CENTER,
         ),
         padding_top=24,
@@ -312,7 +316,6 @@ class PlotStyle(BaseStyle):
 
     constellation_labels: LabelStyle = LabelStyle(
         font_size=40,
-        font_weight=FontWeight.NORMAL,
         zorder=ZOrder.LAYER_3,
         anchor_point=AnchorPoint.CENTER,
     )
@@ -341,8 +344,8 @@ class PlotStyle(BaseStyle):
             font_size=32,
             fill="#000",
             opacity=1,
-            font_weight=FontWeight.NORMAL,
             anchor_point=AnchorPoint.BOTTOM_CENTER,
+            stroke_width=0,
             zorder=ZOrder.LAYER_5 + 1000,
         ),
     )
@@ -361,7 +364,6 @@ class PlotStyle(BaseStyle):
             font_size=30,
             fill="#777",
             opacity=1,
-            font_weight=FontWeight.NORMAL,
             stroke_width=8,
             stroke="#000",
             zorder=ZOrder.LAYER_3,
@@ -380,7 +382,6 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=30,
             fill="#999",
-            font_weight=FontWeight.NORMAL,
             stroke_width=8,
             stroke="#000",
             zorder=ZOrder.LAYER_3,
@@ -399,7 +400,6 @@ class PlotStyle(BaseStyle):
         label=LabelStyle(
             font_size=30,
             fill="#7c7c7c",
-            font_weight=FontWeight.NORMAL,
             opacity=1,
             stroke_width=8,
             stroke="#000",
@@ -422,6 +422,7 @@ class PlotStyle(BaseStyle):
             fill="#000",
             font_size=98,
             font_weight=FontWeight.BOLD,
+            stroke_width=0,
             zorder=ZOrder.LAYER_5,
         ),
     )

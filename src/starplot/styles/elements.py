@@ -348,11 +348,11 @@ class LabelStyle(BaseStyle):
     font_size: float = 24
     """Font size of the label, in pixels"""
 
-    font_name: str | None = "Inter"
-    """Name of the font to use"""
+    font_name: str | None = None
+    """Name of the font to use. If `None`, then the plot's `base.font_name` will be used."""
 
-    font_family: str | None = "sans-serif"
-    """Font family (e.g. 'monospace', 'sans-serif', 'serif', etc)"""
+    font_family: str | None = None
+    """Font family (e.g. 'monospace', 'sans-serif', 'serif', etc). If `None`, then the plot's `base.font_family` will be used."""
 
     font_weight: Literal[100, 200, 300, 400, 500, 600, 700, 800, 900] = 400
     """Font weight (e.g. normal, bold, ultra bold, etc)"""
@@ -379,11 +379,11 @@ class LabelStyle(BaseStyle):
     ] = "bottom_right"
     """Anchor point of label"""
 
-    stroke_width: float = 0
-    """Width of border (also known as 'halos') around the text, in pixels"""
+    stroke_width: float | None = None
+    """Width of border (also known as 'halos') around the text, in pixels. If `None`, then the plot's `base.text_stroke_width` will be used."""
 
     stroke: Color | None = None
-    """Color of border (also known as 'halos') around the text"""
+    """Color of border (also known as 'halos') around the text. If `None`, then the plot's `base.text_stroke` will be used."""
 
     offset_x: float | int | Literal["auto"] = 0
     """
@@ -406,18 +406,49 @@ class LabelStyle(BaseStyle):
     zorder: int = ZOrder.LAYER_4
     """Zorder of the label"""
 
-    def css(self, scale: float = 1.0) -> dict:
+    def resolved_font_name(self, base: "PlotBaseStyle | None" = None) -> str | None:
+        """Returns `font_name`, falling back to `base.font_name` if it's `None`."""
+        if self.font_name is not None:
+            return self.font_name
+        return base.font_name if base is not None else None
+
+    def resolved_font_family(self, base: "PlotBaseStyle | None" = None) -> str | None:
+        """Returns `font_family`, falling back to `base.font_family` if it's `None`."""
+        if self.font_family is not None:
+            return self.font_family
+        return base.font_family if base is not None else None
+
+    def resolved_stroke(self, base: "PlotBaseStyle | None" = None) -> Color | None:
+        """Returns `stroke`, falling back to `base.text_stroke` if it's `None`."""
+        if self.stroke is not None:
+            return self.stroke
+        return base.text_stroke if base is not None else None
+
+    def resolved_stroke_width(
+        self, base: "PlotBaseStyle | None" = None
+    ) -> float | None:
+        """Returns `stroke_width`, falling back to `base.text_stroke_width` if it's `None`."""
+        if self.stroke_width is not None:
+            return self.stroke_width
+        return base.text_stroke_width if base is not None else None
+
+    def css(self, scale: float = 1.0, base: "PlotBaseStyle | None" = None) -> dict:
+        font_name = self.resolved_font_name(base)
+        font_family = self.resolved_font_family(base)
+        stroke = self.resolved_stroke(base)
+        stroke_width = self.resolved_stroke_width(base)
+
         attrs = {
             "font-size": round(self.font_size * scale, 2),
-            "font-family": f"{self.font_name}, {self.font_family}",
+            "font-family": f"{font_name}, {font_family}",
             "font-weight": self.font_weight,
             "font-style": self.font_style,
             "fill": self.fill.as_hex(),
             "fill-opacity": self.opacity,
         }
-        if self.stroke_width and self.stroke:
-            attrs["stroke"] = self.stroke.as_hex()
-            attrs["stroke-width"] = round(self.stroke_width * scale, 2)
+        if stroke_width and stroke:
+            attrs["stroke"] = stroke.as_hex()
+            attrs["stroke-width"] = round(stroke_width * scale, 2)
             attrs["stroke-opacity"] = self.opacity
             attrs["paint-order"] = "stroke fill"
 

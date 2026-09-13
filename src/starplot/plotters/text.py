@@ -306,7 +306,7 @@ class TextPlotterMixin:
 
         height, _, _ = get_text_hw(
             text=text,
-            font_name=style.font_name,
+            font_name=style.resolved_font_name(self.style.base),
             font_size=scaled_font_size,
             font_weight=style.font_weight,
             italic=style.font_style == "italic",
@@ -366,7 +366,7 @@ class TextPlotterMixin:
         # the true rendered size is font_size * scale, not just font_size
         height, width, _ = get_text_hw(
             text=text,
-            font_name=style.font_name,
+            font_name=style.resolved_font_name(self.style.base),
             font_size=scaled_font_size,
             font_weight=style.font_weight,
             italic=style.font_style == "italic",
@@ -501,7 +501,7 @@ class TextPlotterMixin:
         # the true rendered size is font_size * scale, not just font_size
         height, width, ascent = get_text_hw(
             text=text,
-            font_name=style.font_name,
+            font_name=style.resolved_font_name(self.style.base),
             font_size=scaled_font_size,
             font_weight=style.font_weight,
             italic=style.font_style == "italic",
@@ -643,7 +643,7 @@ class TextPlotterMixin:
         dx, dy = self.canvas._to_display(x, y)
         height, width, _ = get_text_hw(
             text=text,
-            font_name=style.font_name,
+            font_name=style.resolved_font_name(self.style.base),
             font_size=scaled_font_size,
             font_weight=style.font_weight,
             italic=style.font_style == "italic",

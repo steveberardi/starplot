@@ -441,10 +441,10 @@ class TestPolygon:
 
 
 class TestLegend:
-    def _text_hw(self, text, style):
+    def _text_hw(self, text, style, base=None):
         h, w, _ = fonts.get_text_hw(
             text=text,
-            font_name=style.font_name,
+            font_name=style.resolved_font_name(base),
             font_size=style.font_size,
             font_weight=style.font_weight,
             italic=style.font_style == "italic",
@@ -455,7 +455,7 @@ class TestLegend:
         # GIVEN a canvas and a legend style, sized in real font metrics
         canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
         style = LegendStyle()
-        label_h, label_w = self._text_hw("Star", style.labels)
+        label_h, label_w = self._text_hw("Star", style.labels, canvas.style.base)
 
         # WHEN plotting a legend with a single section, no title, one label
         canvas.legend(sections=[("", {"Star": (MarkerStyle(), None)})], style=style)
@@ -475,8 +475,8 @@ class TestLegend:
         # GIVEN a canvas and a legend style
         canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
         style = LegendStyle()
-        title_h, title_w = self._text_hw("My Title", style.title)
-        label_h, _ = self._text_hw("Star", style.labels)
+        title_h, title_w = self._text_hw("My Title", style.title, canvas.style.base)
+        label_h, _ = self._text_hw("Star", style.labels, canvas.style.base)
 
         # WHEN plotting a legend with a titled section and one label
         canvas.legend(
@@ -517,7 +517,7 @@ class TestLegend:
         )
 
         # THEN each extra label adds its own row -- height grows accordingly
-        bright_h, _ = self._text_hw("Bright Star", style.labels)
+        bright_h, _ = self._text_hw("Bright Star", style.labels, canvas_one.style.base)
         expected_extra = max(style.symbol_size, bright_h) + style.label_padding
         assert canvas_two.layout.legend.height == pytest.approx(
             canvas_one.layout.legend.height + expected_extra
@@ -541,7 +541,7 @@ class TestLegend:
 
         # THEN a second section adds its own full row plus an extra
         # inter-section padding gap (unlike a same-section extra label)
-        label_h, _ = self._text_hw("Star", style.labels)
+        label_h, _ = self._text_hw("Star", style.labels, canvas_one.style.base)
         expected_extra = max(style.symbol_size, label_h) + 2 * style.label_padding
         assert canvas_two.layout.legend.height == pytest.approx(
             canvas_one.layout.legend.height + expected_extra
@@ -549,10 +549,10 @@ class TestLegend:
 
 
 class TestTable:
-    def _cell_width(self, value, style, scale=1.0):
+    def _cell_width(self, value, style, scale=1.0, base=None):
         _, w, _ = fonts.get_text_hw(
             text=str(value),
-            font_name=style.font_name,
+            font_name=style.resolved_font_name(base),
             font_size=style.font_size * scale,
             font_weight=style.font_weight,
             italic=style.font_style == "italic",
@@ -575,8 +575,11 @@ class TestTable:
         padding_x, padding_y = 28, 20  # canvas.table()'s own defaults
         col_widths = [
             max(
-                self._cell_width(headers[c], style.header),
-                *[self._cell_width(row[c], style.cell) for row in rows],
+                self._cell_width(headers[c], style.header, base=canvas.style.base),
+                *[
+                    self._cell_width(row[c], style.cell, base=canvas.style.base)
+                    for row in rows
+                ],
             )
             + padding_x * 2
             for c in range(len(headers))

@@ -3,6 +3,9 @@ axes:
   background:
     fill: '#4c566a'
 
+base:
+  text_stroke: '#4c566a'
+
 title:
   fill: '#a3be8c'
 
