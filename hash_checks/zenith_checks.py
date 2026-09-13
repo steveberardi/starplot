@@ -96,19 +96,9 @@ def check_zenith_chinese():
             styles.extensions.BLUE_GOLD,
             styles.extensions.GRADIENT_PRE_DAWN,
             {
-                "star": {
-                    "label": {
-                        "font_name": "Noto Sans CJK SC",
-                    }
-                },
-                "horizon": {
-                    "label": {
-                        "font_name": "Noto Sans CJK SC",
-                    }
-                },
-                "constellation_labels": {
+                "base": {
                     "font_name": "Noto Sans CJK SC",
-                },
+                }
             },
         ),
         resolution=RESOLUTION,
