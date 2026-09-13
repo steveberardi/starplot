@@ -24,24 +24,20 @@ If you're new to contributing to open source projects or git in general, then he
 
 ## Getting Started
 
-The repository has a few helpers for developing locally:
-
-- `Makefile` with commands for various tasks (running tests, etc)
-- `Dockerfile` for running Starplot in an isolated environment
-- `scripts/scratchpad.py` for running scratch code
+The repository has a `Makefile` with commands for various tasks (installing dependencies, running tests, etc). These should make it easier to get things running.
 
 When you're new to a codebase it's usually good to start by just checking out the code, building the development environment and running the tests. So, here's how to do that:
 
-1. `make build` will build a Docker container with Starplot's source code mounted as a volume and will also install all of Starplot's dependencies (e.g. GDAL, Matplotlib, Skyfield, etc) - _this requires Docker to be installed first_
-2. `make test` will run all the unit tests inside the Docker container
+0. `pip install uv` if you don't already have `uv` installed.
+1. `make install` will install all dependencies (including development requirements) in a local virtual environment
+2. `make test` will run all the unit tests inside the virtual environment
 3. `make check-hashes` will run all the image hash checks and create an HTML file with the results (more on this below)
 
 There are also a few other `make` commands that are useful when developing locally:
 
 - `make marimo` will run a marimo edit session with `scripts/marimo.py` so you can quickly test out code and see its results in a [marimo notebook](https://marimo.io/)
-- `make scratchpad` will run `scripts/scratchpad.py` inside the docker container. The `scratchpad.py` file is not checked in to the repo (so you'll have to create it on your machine), but it's a way to run code with the current state of Starplot on your machine -- very helpful when trying things out.
+- `make scratchpad` will run `scripts/scratchpad.py`. The `scratchpad.py` file is not checked in to the repo (so you'll have to create it on your machine), but it's a way to run code with the current state of Starplot on your machine -- very helpful when trying things out.
 - `make profile` will run `scripts/scratchpad.py` through Python's [built-in profiler](https://docs.python.org/3/library/profile.html#module-cProfile) and then start a [snakeviz](https://jiffyclub.github.io/snakeviz/) webserver locally to let you explore the call stack and see runtimes of everything. This can be very helpful when trying to find bottlenecks in code.
-- `make shell` will open a Python shell on the Docker container
 - `make format` will format the code with our standard formatter
 - `make lint` will check for lint (e.g. unused imports) and `make lint ARGS=--fix` can usually autofix things
 - `make docs-serve` will build the docs and start a local webserver for them

@@ -58,6 +58,7 @@ def check_zenith_base():
     return filename
 
 
+@flake
 def check_zenith_gradient():
     p = ZenithPlot(
         observer=Observer(
