@@ -1,3 +1,10 @@
+<style>
+.md-sidebar--secondary .md-sidebar__scrollwrap {
+    border-left: none;
+    display: none;
+}
+</style>
+
 <div class="grid cards examples" markdown>
 <ul>
     <li>

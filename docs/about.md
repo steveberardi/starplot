@@ -1,3 +1,10 @@
+<style>
+.md-sidebar--secondary .md-sidebar__scrollwrap {
+    border-left: none;
+    display: none;
+}
+</style>
+
 # About
 
 ![Starplot](images/logo.svg){ align=right width="128" .off-glb }

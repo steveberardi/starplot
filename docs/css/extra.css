@@ -15,6 +15,7 @@
 
     --fg-accent-color--light: hsl(209, 50%, 31%);
     --fg-accent-color--dark: hsl(210, 40%, 68%);
+    --md-code-font: 'Fira Code';
 }
 
 table th {
@@ -41,11 +42,22 @@ table th {
 }
 
 .md-content {
-    max-width: 940px;
+    max-width: 900px;
 }
 .md-grid {
     max-width: 68rem;
 }
+
+/* Secondary sidebars (when it has links) */
+.md-sidebar--secondary .md-sidebar__scrollwrap:has(a) {
+    border-left: 1px solid #ecf1f7;
+    padding-left: 10px;    
+}
+
+.md-sidebar--secondary .md-nav__link .md-typeset:has(code) {
+    font-size: 0.6rem !important;
+}
+
 
 .md-header {
     background-color: #174567;
@@ -85,8 +97,7 @@ table th {
 code.doc-symbol {
     border-radius: 8px;
     font-size: 0.6em;
-    padding: 2px 6px;
-    margin: 6px 4px;
+    margin-left: 4px;
 }
 
 .mt-none {

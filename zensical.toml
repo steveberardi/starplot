@@ -64,7 +64,7 @@ logo = "images/logo.svg"
 favicon = "images/favicon.png"
 features = [
     "content.code.copy",
-    "toc.integrate",
+    # "toc.integrate",
     "navigation.footer",
     "navigation.indexes",
     # "search.highlight"

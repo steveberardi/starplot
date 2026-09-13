@@ -1,5 +1,10 @@
-# Coming Soon
+<style>
+.md-sidebar--secondary .md-sidebar__scrollwrap {
+    border-left: none;
+}
+</style>
 
+# Coming Soon
 
 <table class="table-coming-soon">
     <tr>
