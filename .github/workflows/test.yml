@@ -49,28 +49,28 @@ jobs:
       if: always()
       run: make docs
     - name: Set Short SHA
-      # if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      if: always()
       run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
     - id: 'auth'
-      # if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      if: always()
       uses: 'google-github-actions/auth@v2'
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
     - name: 'Set up Google Cloud SDK'
-      # if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      if: always()
       uses: 'google-github-actions/setup-gcloud@v2'
       with:
         version: '>= 363.0.0'
     - name: 'Upload docs on failure'
-      # if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      if: always()
       run: 'gsutil -m rsync -R -d site gs://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}/docs/'
     - name: 'Upload hash check results on failure'
-      # if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      if: always()
       run: |
         gsutil cp hash_checks/results.html gs://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}/hash-checks/results.html
         gsutil -m rsync -r hash_checks/data gs://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}/hash-checks/data/
     - name: 'Print results URLs'
-      # if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
+      if: always()
       run: |
         BASE="https://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}"
         echo "docs: $BASE/docs/index.html"
