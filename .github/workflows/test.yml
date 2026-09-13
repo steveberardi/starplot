@@ -72,7 +72,7 @@ jobs:
     - name: 'Print results URLs'
       # if: failure() && (steps.run-tests.outcome == 'failure' || steps.run-hash-checks.outcome == 'failure')
       run: |
-        BASE="https://storage.googleapis.com/archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}"
+        BASE="https://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}"
         echo "docs: $BASE/docs/index.html"
         echo "hash checks: $BASE/hash-checks/results.html"
         echo "### Test run artifacts (Python ${{ matrix.python-version }})" >> "$GITHUB_STEP_SUMMARY"
