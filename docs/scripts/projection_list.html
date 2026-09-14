@@ -1,7 +1,7 @@
 {% for card in cards %}
 <div class="projection-card">
     <div>
-        <h3>{{ card.name }}</h3>
+        <h3 id="{{ card.name }}">{{ card.name }}</h3>
         <p>{{ card.doc }}</p>
         {% if card.properties %}
         <div class="sub-header">Properties</div>

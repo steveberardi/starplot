@@ -1,9 +1,12 @@
 ## v0.21.x
+
 - Replaces the plotting backend (matplotlib + cartopy) with an SVG-first backend
 - Adds support for gradient backgrounds on markers, polygons, and the figure background
 - Adds support for styling the axes border
 - Adds the Gnomonic projection
+- Refactors styling framework with more consistent naming
 
+---
 
 ## v0.20.x
 
@@ -22,6 +25,8 @@
 - [**v0.20.3**] Fixes bugs with styling and class variables
 - [**v0.20.4**] Makes deserializing star data more reliable across environments
 - [**v0.20.5**] Adds Italian translation
+
+---
 
 ## v0.19.x
 [Documentation](https://archives.starplot.dev/0.19.6/)

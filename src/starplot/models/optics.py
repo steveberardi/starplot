@@ -201,18 +201,14 @@ class Binoculars(Optic):
 class Camera(Optic):
     """Creates a new Camera optic
 
-    Note:
-        Field of view for each dimension is calculated using the following formula:
+    Field of view for each dimension is calculated using the following formula:
 
-        ```
-        TFOV = 2 * arctan( d / (2 * f) )
-        ```
+    ```
+    # d = sensor size (height or width)
+    # f = focal length of lens
 
-        _Where_:
-
-        d = sensor size (height or width)
-
-        f = focal length of lens
+    field_of_view = 2 * arctan( d / (2 * f) )
+    ```
 
     Args:
         sensor_height: Height of camera sensor (mm)

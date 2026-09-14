@@ -15,16 +15,6 @@ ts = load.timescale()
 class Observer(BaseModel):
     """
     Represents an observer at a specific time and place.
-
-    Example:
-
-    ```python
-    obs = Observer(
-        dt=datetime(2025, 10, 13, 21, 0, 0, tzinfo=ZoneInfo('US/Pacific')),
-        lat=33.363484,
-        lon=-116.836394,
-    )
-    ```
     """
 
     dt: AwareDatetime = Field(default_factory=lambda: datetime.now(timezone.utc))

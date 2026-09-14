@@ -66,7 +66,7 @@ Select stars that are within the Pleiades (M45) star cluster (assumes `m45 = DSO
 
 ## Important Details
 
-- When writing expressions, you can reference any field on the [model](reference-models.md) you're filtering
+- When writing expressions, you can reference any field on the [model](models/overview.md) you're filtering
 - See table below for a list of [operators](#operators) you can use in your expressions
 - You can combine expressions with the bitwise OR (`|`) / AND (`&`) operators, but you **must** put parenthesis around each expression when doing this (e.g. `(_.magnitude > 8) | (_.name == "Vega")`)
 
