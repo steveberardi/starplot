@@ -1,4 +1,5 @@
 ## v0.21.x
+[Migration Guide](migration-guides/0.21.0.md)
 
 - Replaces the plotting backend (matplotlib + cartopy) with an SVG-first backend
 - Adds support for gradient backgrounds on markers, polygons, and the figure background

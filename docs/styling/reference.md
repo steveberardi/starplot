@@ -14,6 +14,11 @@
 
 ---
 
+::: starplot.styles.PlotBaseStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
 ::: starplot.styles.AxesStyle
     options:
         show_root_heading: true
