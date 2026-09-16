@@ -6,10 +6,12 @@
 - Adds support for styling the axes border
 - Adds the Gnomonic projection
 - Refactors styling framework with more consistent naming
+- Removed fonts from PyPI package, to reduce our filesize
 
 ---
 
 ## v0.20.x
+[Documentation](https://archives.starplot.dev/0.20.5/)
 
 - Adds a `GalaxyPlot` for plotting in galactic coordinates
 - Adds label support to lines with automatic angle adjustment
