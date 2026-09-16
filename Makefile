@@ -96,6 +96,8 @@ setup:
 download-test-fonts:
 	uv run $(DOTENV) scripts/download_test_fonts.py
 
+dev: env db setup download-test-fonts
+
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------

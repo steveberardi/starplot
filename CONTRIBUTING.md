@@ -18,7 +18,7 @@ If you're new to contributing to open source projects or git in general, then he
 2. Clone the repository to your local machine
 3. Create a new branch on your forked version
 4. Commit changes to your fork's branch
-5. Open a pull request from your fork's branch into Starplot's `develop` branch ([here's an example](https://github.com/steveberardi/starplot/pull/89))
+5. Open a pull request from your fork's branch into Starplot's `main` branch ([here's an example](https://github.com/steveberardi/starplot/pull/89))
 6. Wait for someone to review your PR (usually a few days to a week)
 
 
@@ -28,10 +28,13 @@ The repository has a `Makefile` with commands for various tasks (installing depe
 
 When you're new to a codebase it's usually good to start by just checking out the code, building the development environment and running the tests. So, here's how to do that:
 
-0. `pip install uv` if you don't already have `uv` installed.
+0. Install system dependencies:
+    - **uv**: `pip install uv` if you don't already have `uv` installed
+    - **cairo**: [See Starplot install docs for details](https://starplot.dev/installation/)
 1. `make install` will install all dependencies (including development requirements) in a local virtual environment
-2. `make test` will run all the unit tests inside the virtual environment
-3. `make check-hashes` will run all the image hash checks and create an HTML file with the results (more on this below)
+2. `make dev` will build the object name databases, download object catalogs, and download required fonts
+3. `make test` will run all the unit tests inside the virtual environment
+4. `make check-hashes` will run all the image hash checks and create an HTML file with the results (more on this below)
 
 There are also a few other `make` commands that are useful when developing locally:
 
@@ -41,6 +44,8 @@ There are also a few other `make` commands that are useful when developing local
 - `make format` will format the code with our standard formatter
 - `make lint` will check for lint (e.g. unused imports) and `make lint ARGS=--fix` can usually autofix things
 - `make docs-serve` will build the docs and start a local webserver for them
+- `make examples` and `make tutorial` will build images for those sections of the documentation
+- `make docs` will build all the other documentation assets and clear the cache
 
 ## Tests
 
