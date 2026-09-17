@@ -47,4 +47,4 @@ jobs:
         version: '>= 363.0.0'
 
     - name: 'Sync docs to [archives] Cloud Storage Bucket'
-      run: 'gsutil -m rsync -R -d site gs://archives.starplot.dev/test-$STARPLOT_VERSION'
+      run: 'gsutil -m rsync -R -d site gs://archives.starplot.dev/$STARPLOT_VERSION'
