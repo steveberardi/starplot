@@ -3,6 +3,10 @@ scripts/scratchpad.py
 
 .claude/
 
+
+.env-backup
+e2e/
+
 # astronomy data
 *.bsp
 CometEls.txt
@@ -49,7 +53,10 @@ docs/images/examples/*.png
 docs/images/examples/*.jpg
 docs/images/examples/*.svg
 tutorial/*.png
+tutorial/*.svg
 docs/images/tutorial/*.png
+docs/images/tutorial/*.svg
+docs/images/reference/*.*
 docs/data/*.json
 
 # Profiling files
