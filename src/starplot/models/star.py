@@ -167,7 +167,7 @@ class Star(CatalogObject, SkyObject):
 
         Args:
             catalog: The catalog of stars to use
-            where: A list of expressions that determine which stars to find. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where: A list of expressions that determine which stars to find. See [Selecting Objects](reference-selecting-objects.md) for details.
             sql: SQL query for selecting stars (table name is "_")
 
         Returns:

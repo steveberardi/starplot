@@ -8,7 +8,7 @@ When you create a plot, you can specify the default collision handler for three 
 
 You can also override these defaults on all functions that plot text. There are three distinct types of collision handlers because it's very common to want different rules for different types of labels. For example, the default area collision handler allows collisions with constellation lines, but the point handler does not.
 
-_See the [Virgo Galaxy Cluster](/examples/map-virgo-cluster/) plot for an example of using a custom collision handler._
+_See the [Virgo Galaxy Cluster](examples/map-virgo-cluster.md) plot for an example of using a custom collision handler._
 
 
 !!! tip "New Feature"

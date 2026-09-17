@@ -18,7 +18,7 @@ Below is a list of projects that have used Starplot in some way:
 
 <div class="info-panel bg-info columns-2" style="padding: 40px;">
     <a href="https://steveberardimaps.com/products/all-sky-map" target="_blank">
-        <img src="/images/cover-front-sm-360.png" style="max-width: 240px; margin-right: 28px; border: 1px solid #222b46;" class="off-glb">
+        <img src="../images/cover-front-sm-360.png" style="max-width: 240px; margin-right: 28px; border: 1px solid #222b46;" class="off-glb">
     </a>
     <div class="md-typeset">
         <h2 class="mt-0">All Sky Map</h2>

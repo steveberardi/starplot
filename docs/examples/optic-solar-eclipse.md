@@ -1,11 +1,11 @@
 ---
 title: Total Solar Eclipse 2024
 ---
-[:octicons-arrow-left-24: Back to Examples](/examples)
+[:octicons-arrow-left-24: Back to Examples](../examples.md)
 
 # Total Solar Eclipse 2024 {.example-header}
 
-![optic-moon-saturn](/images/examples/optic_solar_eclipse.png)
+![optic-moon-saturn](../images/examples/optic_solar_eclipse.png)
 
 This example shows the Moon and Sun _about 30 minutes before_ the total solar eclipse that occurred on [April 8, 2024](https://en.wikipedia.org/wiki/Solar_eclipse_of_April_8,_2024), as seen from Cleveland, Ohio.
 

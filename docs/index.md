@@ -46,22 +46,22 @@ Starplot is a Python library for creating star charts and maps of the sky
 
 <figure markdown>
   <img src="images/examples/star_chart_basic.png" height="900" width="900">
-  <figcaption>Zenith chart of the stars from a specific time/location (<a href="/examples/star-chart-basic/">source code</a>)</figcaption>
+  <figcaption>Zenith chart of the stars from a specific time/location (<a href="examples/star-chart-basic/">source code</a>)</figcaption>
 </figure>
 
 <figure markdown>
   <img src="images/examples/map_orion.png" width="900">
-  <figcaption>Map around the constellation Orion (<a href="/examples/map-orion/">source code</a>)</figcaption>
+  <figcaption>Map around the constellation Orion (<a href="examples/map-orion/">source code</a>)</figcaption>
 </figure>
 
 <figure markdown>
   <img src="images/examples/horizon_gradient.png" width="900">
-  <figcaption>Horizon chart that shows the sky looking South from Stonehaugh, England at 11:30pm (<a href="/examples/horizon-gradient/">source code</a>)</figcaption>
+  <figcaption>Horizon chart that shows the sky looking South from Stonehaugh, England at 11:30pm (<a href="examples/horizon-gradient/">source code</a>)</figcaption>
 </figure>
 
 <figure markdown>
   <img src="images/examples/optic_m45.png" width="900">
-  <figcaption>Optic simulation that shows what The Pleiades looked like through a refractor telescope on December 16, 2023 at 9pm PT from Palomar Mountain in California (<a href="/examples/optic-m45/">source code</a>)</figcaption>
+  <figcaption>Optic simulation that shows what The Pleiades looked like through a refractor telescope on December 16, 2023 at 9pm PT from Palomar Mountain in California (<a href="examples/optic-m45/">source code</a>)</figcaption>
 </figure>
 
 

@@ -1,11 +1,11 @@
 ---
 title: Map of Canis Major
 ---
-[:octicons-arrow-left-24: Back to Examples](/examples)
+[:octicons-arrow-left-24: Back to Examples](../examples.md)
 
 # Map of Canis Major {.example-header}
 
-![map-canis-major](/images/examples/map_canis_major.png)
+![map-canis-major](../images/examples/map_canis_major.png)
 
 In this example, we set the plot's `clip_path` to the border of Canis Major, so only objects in that constellation are plotted:
 

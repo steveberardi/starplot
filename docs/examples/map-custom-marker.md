@@ -1,11 +1,11 @@
 ---
 title: Map with Custom Galaxy Markers
 ---
-[:octicons-arrow-left-24: Back to Examples](/examples)
+[:octicons-arrow-left-24: Back to Examples](../examples.md)
 
 # Map with Custom Galaxy Markers {.example-header}
 
-![map-sagittarius](/images/examples/galaxy_custom_marker.png)
+![map-sagittarius](../images/examples/galaxy_custom_marker.png)
 
 
 ```python

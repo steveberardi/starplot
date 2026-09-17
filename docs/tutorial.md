@@ -1,7 +1,7 @@
 
 This tutorial walks you through the features of Starplot, starting with the most simple stuff and then moving into some of the more advanced features. If you're new to Starplot, this is a great place to start!
 
-![Orthographic Map](/images/examples/map_orthographic.png){ align=right width="400" }
+![Orthographic Map](images/examples/map_orthographic.png){ align=right width="400" }
 
 Here's an overview of what the tutorial covers:
 
