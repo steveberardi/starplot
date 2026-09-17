@@ -1,11 +1,11 @@
 ---
 title: Star Chart in French
 ---
-[:octicons-arrow-left-24: Back to Examples](/examples)
+[:octicons-arrow-left-24: Back to Examples](../examples.md)
 
 # Star Chart in French {.example-header}
 
-![starchart-french](/images/examples/star_chart_french.png)
+![starchart-french](../images/examples/star_chart_french.png)
 
 
 ```python

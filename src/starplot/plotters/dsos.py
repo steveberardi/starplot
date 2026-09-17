@@ -161,15 +161,15 @@ class DsoPlotterMixin:
         Plots Deep Sky Objects (DSOs).
 
         Args:
-            where: A list of expressions that determine which DSOs to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which DSOs are labeled on the plot. By default all DSOs are labeled. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where: A list of expressions that determine which DSOs to plot. See [Selecting Objects](reference-selecting-objects.md) for details.
+            where_labels: A list of expressions that determine which DSOs are labeled on the plot. By default all DSOs are labeled. See [Selecting Objects](reference-selecting-objects.md) for details.
             where_true_size: A list of expressions that determine which DSOs are plotted as their true apparent size in the sky. By default all DSOs are plotted as their true size.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
             label_fn: Callable for determining the label of each DSO.
             sql: SQL query for selecting DSOs (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             sql_labels: SQL query for selecting DSOs that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
-            catalog: The catalog of DSOs to use -- see [catalogs overview](/data/overview/) for details
+            catalog: The catalog of DSOs to use -- see [catalogs overview](data/overview.md) for details
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
 

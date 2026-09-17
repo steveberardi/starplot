@@ -31,9 +31,9 @@ map_custom_stars:
   filename: /starplot/hash_checks/data/map-custom-stars.png
   phash: e65a5b3405a5b7d0
 map_gridlines:
-  dhash: 082a899422c94983082a899422c94983082a899422c94983
+  dhash: 08298594a2c949a308298594a2c949a308298594a2c949a3
   filename: /starplot/hash_checks/data/map-gridlines.png
-  phash: ebb44b162d3262ad
+  phash: cab44b172d3262af
 map_label_callables:
   dhash: 80a0e0c8c8e0a080d09cac0c0cac98a0809a9d0d0d9d9a80
   filename: /starplot/hash_checks/data/map-m45-label-callables.png
@@ -59,9 +59,9 @@ map_orion_extra:
   filename: /starplot/hash_checks/data/map-orion-extra.png
   phash: bf716646859e9096
 map_plate_caree:
-  dhash: 02928eccc4cca93280928eccc4cca8b280928eccc4ccb8b2
+  dhash: 08928eccc44ca93881928eccc44ca9ba80928eccc4ccb9b2
   filename: /starplot/hash_checks/data/map-plate-caree.png
-  phash: 94656946749b67b1
+  phash: 80657946759a67b9
 map_plot_custom_clip_path_virgo:
   dhash: 03032913978c8c0043032d07878c840003032507878e8400
   filename: /starplot/hash_checks/data/map-custom-clip-path-virgo.png

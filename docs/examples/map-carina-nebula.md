@@ -1,11 +1,11 @@
 ---
 title: Carina Nebula + Clusters
 ---
-[:octicons-arrow-left-24: Back to Examples](/examples)
+[:octicons-arrow-left-24: Back to Examples](../examples.md)
 
 # Carina Nebula + Clusters {.example-header}
 
-![map-carina](/images/examples/map_carina.png)
+![map-carina](../images/examples/map_carina.png)
 
 
 ```python

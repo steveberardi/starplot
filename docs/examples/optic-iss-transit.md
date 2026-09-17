@@ -1,11 +1,11 @@
 ---
 title: ISS Moon Transit
 ---
-[:octicons-arrow-left-24: Back to Examples](/examples)
+[:octicons-arrow-left-24: Back to Examples](../examples.md)
 
 # Optic Plot of the ISS transiting the Moon {.example-header}
 
-![optic-iss-moon-transit](/images/examples/optic_iss_transit.png)
+![optic-iss-moon-transit](../images/examples/optic_iss_transit.png)
 
 This plot shows the [International Space Station (ISS)](https://en.wikipedia.org/wiki/International_Space_Station) when it transits the Moon on December 8, 2025 at 8:03am PT as seen from lat/lon `33.0225028`, `-116.507025` (near Lake Cuyamaca in California, USA).
 

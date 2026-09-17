@@ -802,7 +802,7 @@ class PlotStyle(BaseStyle):
     ]
     ```
 
-    There are a few predefined gradients available as [style extensions](/reference-styling/#style-extensions).
+    There are a few predefined gradients available as [style extensions](reference-styling.md#style-extensions).
 
     **Gradient backgrounds are not yet supported for optic plots that use a camera.**
     """

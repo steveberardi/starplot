@@ -1,11 +1,11 @@
 ---
 title: Optic Plot of the Orion Nebula with a Refractor Telescope
 ---
-[:octicons-arrow-left-24: Back to Examples](/examples)
+[:octicons-arrow-left-24: Back to Examples](../examples.md)
 
 # Optic Plot of the Orion Nebula with a Refractor Telescope
 
-![optic-orion](/images/examples/optic_orion_nebula.png)
+![optic-orion](../images/examples/optic_orion_nebula.png)
 
 
 ```python

@@ -171,9 +171,9 @@ class StarPlotterMixin:
         Plots stars
 
         Args:
-            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
-            catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
+            where: A list of expressions that determine which stars to plot. See [Selecting Objects](reference-selecting-objects.md) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](reference-selecting-objects.md) for details.
+            catalog: The catalog of stars to use -- see [catalogs overview](data/overview.md) for details
             style: If `None`, then the plot's style for stars will be used
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
             alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
