@@ -21,7 +21,7 @@ Note that Serpens is treated as two separate constellations in Starplot.
             'Name',
         ],
         server: {
-            url: 'data/constellations.json',
+            url: '../../data/constellations.json',
             then: data => data.map(c => [
                 c.iau_id,
                 c.name,
