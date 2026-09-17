@@ -22,7 +22,7 @@ DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) starplot-$(PYTHON_VERSION)
 export PYTHONPATH=./src/
 
 # ------------------------------------------------------------------
-build: PYTHON_VERSION=3.12.12
+build: PYTHON_VERSION=3.11.14
 build: DOCKER_BUILD_ARGS=-t starplot-dev
 build:
 	touch -a .env
