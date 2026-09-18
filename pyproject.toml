@@ -16,6 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dynamic = ["version", "description"]
 keywords = ["astronomy", "stars", "charts", "maps", "constellations", "sky", "plotting"]
@@ -41,7 +42,7 @@ dependencies = [
     "pydantic-extra-types >= 2.11.1",
     "cairosvg >= 2.9.0",
 ]
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.10,<3.15"
 
 [project.urls]
 Home = "https://starplot.dev"
