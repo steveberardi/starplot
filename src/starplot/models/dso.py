@@ -84,7 +84,7 @@ class DsoType(str, Enum):
 @dataclass(slots=True, kw_only=True)
 class DSO(CatalogObject, SkyObject):
     """
-    Deep Sky Object (DSO) model. An instance of this model is passed to any [callables](/reference-callables) you define when plotting DSOs.
+    Deep Sky Object (DSO) model. An instance of this model is passed to any [callables](reference-callables.md) you define when plotting DSOs.
     So, you can use any attributes of this model in your callables. Note that some may be null.
     """
 
@@ -222,7 +222,7 @@ class DSO(CatalogObject, SkyObject):
 
         Args:
             catalog: Catalog you want to search
-            where: A list of expressions that determine which DSOs to find. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where: A list of expressions that determine which DSOs to find. See [Selecting Objects](reference-selecting-objects.md) for details.
             sql: SQL query for selecting DSOs (table name is "_")
 
         Returns:

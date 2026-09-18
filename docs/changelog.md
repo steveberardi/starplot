@@ -28,6 +28,7 @@
 - [**v0.20.3**] Fixes bugs with styling and class variables
 - [**v0.20.4**] Makes deserializing star data more reliable across environments
 - [**v0.20.5**] Adds Italian translation
+- [**v0.20.6**] Pins `cartopy` version to `<= 0.24.1`
 
 ---
 

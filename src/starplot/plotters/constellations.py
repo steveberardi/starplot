@@ -77,7 +77,7 @@ class ConstellationPlotterMixin:
 
         Args:
             style: Styling of the constellations. If None, then the plot's style (specified when creating the plot) will be used
-            where: A list of expressions that determine which constellations to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where: A list of expressions that determine which constellations to plot. See [Selecting Objects](reference-selecting-objects.md) for details.
             sql: SQL query for selecting constellations (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             catalog: The catalog of constellations to use -- see [catalogs overview](/data/overview/) for details
             gid: Group id for this layer in the exported SVG

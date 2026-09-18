@@ -51,7 +51,7 @@ def run_example(filename):
 
 
 if __name__ == "__main__":
-    num_workers = 10
+    num_workers = 1
     start = time.time()
     example_files = get_example_names()
     processes = []
