@@ -7,7 +7,18 @@ nav = [
   { "Overview" = "index.md" },
   { "Installation" = "installation.md" },
   { "Examples" = "examples.md" },
-  { "Tutorial" = "tutorial.md" },
+  { "Tutorial" = [
+        "tutorial/index.md",
+        { "1 - Mapping Concepts" = "tutorial/01.md" },
+        { "2 - Star Charts" = "tutorial/02.md" },
+        { "3 - Adding more details" = "tutorial/03.md" },
+        { "4 - Map Plots" = "tutorial/04.md" },
+        { "5 - Optic Plots" = "tutorial/05.md" },
+        { "6 - Selecting Objects" = "tutorial/06.md" },
+        { "7 - Looking up Objects" = "tutorial/07.md" },
+        { "8 - Callables" = "tutorial/08.md" },
+        { "9 - Next Steps" = "tutorial/09.md" },
+  ]},
   { "Reference" = [
       { "MapPlot" = "reference-mapplot.md" },
       { "ZenithPlot" = "reference-zenithplot.md" },
@@ -16,7 +27,7 @@ nav = [
       { "GalaxyPlot" = "reference-galaxyplot.md" },
       { "Projections" = "reference-projections.md" },
       { "Models" = [
-          { "Overview" = "models/overview.md" },
+        "models/index.md",
           { "Observer" = "models/observer.md" },
           { "Star" = "models/star.md" },
           { "Constellation" = "models/constellation.md" },
@@ -31,7 +42,7 @@ nav = [
       ]},
       { "Selecting Objects" = "reference-selecting-objects.md" },
       { "Styling" = [
-          { "Overview" = "styling/overview.md" },
+        "styling/index.md",
           { "Layout" = "styling/layout.md" },
           { "Color" = "styling/color.md" },
           { "Gradients" = "styling/gradients.md" },
@@ -44,6 +55,7 @@ nav = [
       { "Collision Handling" = "reference-collisions.md" },
       { "Positions" = "reference-positions.md" },
       { "Data Catalogs" = [
+        "data/index.md",
           { "Overview" = "data/overview.md" },
           { "Stars" = "data/stars.md" },
           { "Constellations" = "data/constellations.md" },

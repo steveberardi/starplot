@@ -324,7 +324,7 @@ code.raw {
 }
 
 .md-nav__icon {
-    display: none;
+    /* display: none; */
 }
 
 .d-none {
