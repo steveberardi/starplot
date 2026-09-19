@@ -1,5 +1,4 @@
 import pytest
-from shapely import MultiPolygon, Polygon
 
 from starplot import HorizonPlot, Observer
 from starplot.plots.horizon import generate_ground_polygon
@@ -112,24 +111,6 @@ class TestHorizonPlotCenter:
         # midpoint of (350, 390) is 370, which should wrap back to 10
         p = HorizonPlot(altitude=(0, 40), azimuth=(350, 390), observer=Observer())
         assert p.center_az == 10
-
-
-class TestHorizonPlotExtentMask:
-    def test_returns_a_single_polygon_when_not_crossing_north(self):
-        p = HorizonPlot(altitude=(0, 40), azimuth=(90, 120), observer=Observer())
-        assert isinstance(p._extent_mask_altaz(), Polygon)
-
-    def test_returns_two_polygons_when_crossing_north(self):
-        p = HorizonPlot(altitude=(0, 40), azimuth=(350, 390), observer=Observer())
-        mask = p._extent_mask_altaz()
-
-        assert isinstance(mask, MultiPolygon)
-        assert len(mask.geoms) == 2
-        # one piece hugs the 0 edge, the other hugs the 360 edge, together
-        # covering the full azimuth range on either side of North
-        bounds = sorted(g.bounds for g in mask.geoms)
-        assert bounds[0][0] == pytest.approx(0, abs=1)
-        assert bounds[1][2] == pytest.approx(360, abs=1)
 
 
 class TestHorizonPlotInBounds:

@@ -5,7 +5,7 @@ from functools import cache
 
 import pandas as pd
 import rtree
-from shapely import MultiPolygon, Polygon
+from shapely import Polygon
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables
@@ -183,8 +183,6 @@ class HorizonPlot(
 
         self.alt = altitude
         self.az = azimuth
-        self._alt = altitude
-        self._az = azimuth
         self.center_alt = sum(altitude) / 2
         self.center_az = sum(azimuth) / 2
 
@@ -214,8 +212,6 @@ class HorizonPlot(
             **kwargs,
         )
         self.logger.debug("Creating HorizonPlot...")
-
-        self.altaz_mask = self._extent_mask_altaz()
         self.logger.debug(f"Extent = AZ ({self.az}) ALT ({self.alt})")
 
         self._calc_position()
@@ -304,61 +300,6 @@ class HorizonPlot(
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_altaz(y, x)  # alt = y, az = x
-
-    @cache
-    def _extent_mask_altaz(self):
-        """
-        Returns shapely geometry objects of the alt/az extent
-
-        If the extent crosses North cardinal direction, then a MultiPolygon will be returned
-        """
-        extent = self.canvas.bounds
-        alt_min, alt_max = extent[1], extent[3]
-        az_min, az_max = extent[0], extent[2]
-
-        if az_min < 0:
-            az_min += 360
-        if az_max < 0:
-            az_max += 360
-
-        if az_min >= az_max:
-            az_max += 360
-
-        # self.az = (az_min, az_max)
-        # self.alt = (alt_min, alt_max)
-
-        if az_max <= 360:
-            coords = [
-                [az_min, alt_min],
-                [az_max, alt_min],
-                [az_max, alt_max],
-                [az_min, alt_max],
-                [az_min, alt_min],
-            ]
-            return Polygon(coords)
-
-        else:
-            coords_1 = [
-                [az_min, alt_min],
-                [360, alt_min],
-                [360, alt_max],
-                [az_min, alt_max],
-                [az_min, alt_min],
-            ]
-            coords_2 = [
-                [0, alt_min],
-                [az_max - 360, alt_min],
-                [az_max - 360, alt_max],
-                [0, alt_max],
-                [0, alt_min],
-            ]
-
-            return MultiPolygon(
-                [
-                    Polygon(coords_1),
-                    Polygon(coords_2),
-                ]
-            )
 
     @use_style(PolygonStyle, "ground")
     def ground(

@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 from shapely import LineString, Polygon
-from shapely.geometry import box
 
 from starplot import geometry as _geometry
 from starplot import models
@@ -49,15 +48,6 @@ DEFAULT_RESOLUTION = 4000
 
 
 class BasePlot(StarPlotterMixin, ABC):
-    # point_label_handler: CollisionHandler
-    """Default [collision handler][starplot.CollisionHandler] for point labels."""
-
-    # area_label_handler: CollisionHandler
-    """Default [collision handler][starplot.CollisionHandler] for area labels."""
-
-    # path_label_handler: CollisionHandler
-    """Default [collision handler][starplot.CollisionHandler] for path labels."""
-
     def __init__(
         self,
         observer: Observer = None,
@@ -113,16 +103,12 @@ class BasePlot(StarPlotterMixin, ABC):
             clip_path=clip_path,
             invert_x=invert_x,
             invert_y=invert_y,
-            # suppress_warnings=suppress_warnings,
             logger=LOGGER,
             crs=crs,
             debug=self.debug,
         )
-        self._update_clip_path_polygon()
         self.projection = projection
 
-        self._background_clip_path = None
-        self._legend = None
         self._legend_handles = {}
 
         self.point_label_handler = point_label_handler or CollisionHandler(
@@ -164,10 +150,6 @@ class BasePlot(StarPlotterMixin, ABC):
 
     def _prepare_coords_many(self, coordinates: list, epoch_year: float = 2000) -> list:
         return coordinates
-
-    def _update_clip_path_polygon(self, buffer=8):
-        rectangle = box(0, 0, self.canvas.width, self.canvas.height)
-        self._clip_path_polygon = rectangle.buffer(-1 * buffer)
 
     @abstractmethod
     def in_bounds(self, ra: float, dec: float) -> bool:
