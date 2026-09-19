@@ -218,13 +218,6 @@ class TextPlotterMixin:
         ix = list(self._ground_rtree.intersection(bbox))
         return len(ix) > 0
 
-    def _is_clipped(self, points) -> bool:
-        for x, y in points:
-            if not self.canvas.clip_path_display.contains(Point(x, y)):
-                return True
-
-        return False
-
     def _is_clipped_box(self, bbox: BBox) -> bool:
         return not self.canvas.clip_path_display.contains(box(*bbox))
 
@@ -620,7 +613,6 @@ class TextPlotterMixin:
         num_labels: int = 1,
         collision_handler: CollisionHandler = None,
         min_spacing=None,
-        curvature_threshold=0.8,
     ) -> None:
         """
         Plots text labels along a line:
@@ -635,7 +627,6 @@ class TextPlotterMixin:
             collision_handler: Collision handler to use
             min_spacing: minimum spacing between labels (as fraction of line length). If None, uses 1/(n_labels+1)
             prefer_center: if True, place labels at center of smooth sections
-            curvature_threshold: threshold for determining smooth sections
 
         """
         scaled_font_size = style.font_size * self.scale

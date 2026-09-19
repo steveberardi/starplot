@@ -248,9 +248,6 @@ class BasePlot(StarPlotterMixin, ABC):
         legend_label: str = None,
         skip_bounds_check: bool = False,
         collision_handler: CollisionHandler = None,
-        gid: str = None,
-        gid_marker: str = None,
-        gid_label: str = None,
     ) -> None:
         """Plots a marker
 
@@ -274,7 +271,6 @@ class BasePlot(StarPlotterMixin, ABC):
             x,
             y,
             style=style.marker,
-            # gid=gid or "marker",
         )
 
         # Add to spatial index
@@ -304,7 +300,6 @@ class BasePlot(StarPlotterMixin, ABC):
                     marker_size=style.marker.size,
                 ),
                 collision_handler=collision_handler or self.point_label_handler,
-                # gid=kwargs.get("gid_label") or "marker-label",
             )
 
         if legend_label is not None:

@@ -33,17 +33,6 @@ from starplot.styles import (
     use_style,
 )
 
-DEFAULT_HORIZON_LABELS = {
-    0: "N",
-    45: "NE",
-    90: "E",
-    135: "SE",
-    180: "S",
-    225: "SW",
-    270: "W",
-    315: "NW",
-}
-
 
 def generate_ground_polygon(
     max_altitude: float,

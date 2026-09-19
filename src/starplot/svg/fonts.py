@@ -4,7 +4,6 @@ from functools import cache
 from pathlib import Path
 
 from fontTools.pens.boundsPen import BoundsPen
-from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.ttLib import TTFont
 
 from starplot.config import settings
@@ -151,45 +150,6 @@ def find_font(family: str, weight: int, italic: bool) -> TTFont:
         )
 
     return TTFont(font_path)
-
-
-def text_to_svg_path(
-    text: str,
-    font_path: str,
-    font_size: float = 48,
-    x: float = 0,
-    y: float = 0,
-) -> str:
-    font = TTFont(font_path)
-    glyf = font.getGlyphSet()
-    cmap = font.getBestCmap()
-
-    units_per_em = font["head"].unitsPerEm
-    scale = font_size / units_per_em
-
-    paths = []
-    cursor_x = x
-
-    for char in text:
-        codepoint = ord(char)
-        glyph_name = cmap.get(codepoint)
-        if not glyph_name:
-            continue
-
-        glyph = glyf[glyph_name]
-        pen = SVGPathPen(glyf)
-        glyph.draw(pen)
-
-        if pen.getCommands():
-            # SVG y-axis is flipped vs font coordinates
-            paths.append(
-                f'<path transform="translate({cursor_x},{y}) scale({scale},{-scale})" d="{pen.getCommands()}" />'
-            )
-
-        advance = glyph.width * scale
-        cursor_x += advance
-
-    return "\n".join(paths)
 
 
 @cache

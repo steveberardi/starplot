@@ -155,15 +155,6 @@ class MapPlot(
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds(x, y)
 
-    def _latlon_bounds(self):
-        # convert the RA/DEC bounds to lat/lon bounds
-        return [
-            -1 * self.ra_min,
-            -1 * self.ra_max,
-            self.dec_min,
-            self.dec_max,
-        ]
-
     def _adjust_radec_minmax(self):
         if self._is_global_extent():
             return

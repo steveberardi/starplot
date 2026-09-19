@@ -77,13 +77,6 @@ class CenterRA(BaseModel, ABC):
     center_ra: float = Field(default=180, ge=0, le=360)
     """Central right ascension"""
 
-    @property
-    def edge_x(self) -> float | None:
-        if self.center_ra < 180:
-            return self.center_ra + 180
-
-        return self.center_ra - 180
-
 
 class CenterDEC(BaseModel, ABC):
     center_dec: float = Field(default=0, ge=-90, le=90)
@@ -235,13 +228,6 @@ class Miller(ProjectionBase, CenterRA):
     name: ClassVar[str] = "mill"
     proj_def_base: ClassVar[str] = f"+proj=mill +R={PROJ_R} +units=m"
     wraps: ClassVar[bool] = True
-
-    @property
-    def edge_x(self) -> float | None:
-        if self.center_ra < 180:
-            return self.center_ra + 180
-
-        return self.center_ra - 180
 
 
 class Mercator(ProjectionBase, CenterRA):
