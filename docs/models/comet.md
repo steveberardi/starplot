@@ -1,5 +1,7 @@
 # Comet
 
+Comet data is retrieved from the [IAU Minor Planet Center](https://www.minorplanetcenter.net/data).
+
 ::: starplot.Comet
     options:
         inherited_members: true

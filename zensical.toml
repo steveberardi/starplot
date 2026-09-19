@@ -29,6 +29,7 @@ nav = [
       { "Models" = [
         "models/index.md",
           { "Observer" = "models/observer.md" },
+          { "Optics" = "models/optics.md" },
           { "Star" = "models/star.md" },
           { "Constellation" = "models/constellation.md" },
           { "DSO" = "models/dso.md" },
@@ -38,7 +39,6 @@ nav = [
           { "Comet" = "models/comet.md" },
           { "Satellite" = "models/satellite.md" },
           { "Object List" = "models/object-list.md" },
-          { "Optics" = "models/optics.md" },
       ]},
       { "Selecting Objects" = "reference-selecting-objects.md" },
       { "Styling" = [

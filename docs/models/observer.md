@@ -14,6 +14,9 @@ observer = Observer(
 ```
 
 ### Observer at Specific Epoch
+
+There's a static helper function for creating an observer at a specific [epoch](https://en.wikipedia.org/wiki/Epoch_(astronomy)):
+
 ```python
 
 observer = Observer.at_epoch(2000) # J2000

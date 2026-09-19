@@ -1,5 +1,7 @@
 # Optics
 
+Optics are another set of models you instantiate directly when creating [OpticPlots][starplot.OpticPlot] or plotting the field of view of an optic on a map or horizon plot. They define the specific properties of an optic, like binoculars or a telescope.
+
 ::: starplot.models.Binoculars
     options:
         inherited_members: true
