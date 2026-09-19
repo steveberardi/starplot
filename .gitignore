@@ -32,6 +32,7 @@ e2e/actual/
 
 # local development scripts etc
 /plots/
+/claude/
 .tmp/
 scripts/temp*
 temp.py
