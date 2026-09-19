@@ -18,9 +18,9 @@ p = ZenithPlot(
     observer=observer,
     style=PlotStyle().extend(  # add a style to the plot
         extensions.BLUE_MEDIUM,
+        extensions.FIGURE_TRANSPARENT,  # make the figure background transparent
     ),
     resolution=4000,
-    scale=0.9,
 )
 # Again, we plot the constellations first, because Starplot will use the constellation
 # lines to determine where to place labels for stars (labels will look better if they're
@@ -58,16 +58,15 @@ p.marker(
         "marker": {
             "size": 80,
             "symbol": "circle",
-            "fill": "full",
-            "color": "#ed7eed",
-            "edge_color": "#e0c1e0",
-            "alpha": 0.8,
+            "fill": "#ed7eed",
+            "stroke": "#e0c1e0",
+            "opacity": 0.8,
         },
         "label": {
             "font_size": 25,
             "font_weight": 600,
-            "font_color": "#c83cc8",
-            "font_alpha": 1,
+            "fill": "#c83cc8",
+            "opacity": 1,
         },
     },
     label="Mel 111",
@@ -76,4 +75,4 @@ p.horizon()
 
 p.constellation_labels()  # Plot the constellation labels last for best placement
 
-p.export("tutorial_03.png", transparent=True)
+p.export("tutorial_03.svg")

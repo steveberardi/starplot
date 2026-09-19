@@ -1,0 +1,181 @@
+# STARPLOT
+#
+# A monochromatic theme: every color is hue 205, at varying lightness AND
+# saturation (kept >= 35%). Saturation is used as a "role" dial rather than a
+# random variable:
+#   - structural/navigational elements (grid, borders, constellation lines) are
+#     desaturated and muted, so they recede
+#   - content (stars, DSOs, the ecliptic) is more saturated, so it pops
+# Background is pure white (hsl(205, _, 100%) -- at 100% lightness, hue and
+# saturation don't change the result, so it renders as true white).
+
+axes:
+  background:
+    fill: hsl(205, 63%, 100%)
+
+base:
+  text_stroke: hsl(205, 63%, 100%)
+
+figure:
+  background:
+    fill: hsl(205, 63%, 100%)
+
+title:
+  fill: hsl(205, 75%, 5%)
+
+bayer_labels:
+  opacity: 0.8
+  fill: hsl(205, 42%, 28%)
+
+flamsteed_labels:
+  opacity: 0.8
+  fill: hsl(205, 42%, 28%)
+
+horizon:
+  line:
+    stroke: hsl(205, 35%, 85%)
+  label:
+    fill: hsl(205, 62%, 10%)
+
+zenith:
+  marker:
+    fill: hsl(205, 58%, 28%)
+  label:
+    fill: hsl(205, 58%, 28%)
+
+# Lines
+celestial_equator:
+  label:
+    fill: hsl(205, 48%, 38%)
+    stroke: hsl(205, 63%, 100%)
+  line:
+    stroke: hsl(205, 48%, 38%)
+    opacity: 0.75
+
+ecliptic:
+  label:
+    fill: hsl(205, 80%, 30%)
+    stroke: hsl(205, 63%, 100%)
+  line:
+    stroke: hsl(205, 80%, 26%)
+    opacity: 1
+
+# Constellations
+constellation_lines:
+  opacity: 0.58
+  stroke: hsl(205, 45%, 42%)
+constellation_labels:
+  opacity: 0.58
+  fill: hsl(205, 48%, 35%)
+constellation_borders:
+  width: 2
+  opacity: 0.7
+  stroke: hsl(205, 42%, 48%)
+
+dso_double_star:
+  label:
+    fill: hsl(205, 52%, 26%)
+  marker:
+    opacity: 0.9
+    fill: hsl(205, 55%, 60%)
+    stroke: hsl(205, 60%, 25%)
+
+dso_galaxy:
+  marker:
+    opacity: 1
+    fill: hsl(205, 60%, 65%)
+    stroke: hsl(205, 60%, 20%)
+  label:
+    fill: hsl(205, 58%, 14%)
+
+dso_nebula: &DSO-NEB
+  marker:
+    opacity: 1
+    fill: hsl(205, 50%, 80%)
+    stroke: hsl(205, 60%, 32%)
+  label:
+    fill: hsl(205, 58%, 20%)
+dso_planetary_nebula: *DSO-NEB
+
+dso_open_cluster: &DSO-OC
+  marker:
+    opacity: 1
+    fill: hsl(205, 55%, 70%)
+    stroke: hsl(205, 70%, 10%)
+  label:
+    fill: hsl(205, 58%, 12%)
+dso_association_stars: *DSO-OC
+
+dso_globular_cluster:
+  marker:
+    opacity: 1
+    fill: hsl(205, 60%, 68%)
+    stroke: hsl(205, 70%, 10%)
+  label:
+    fill: hsl(205, 58%, 15%)
+
+# other DSOs
+dso_unknown: &DSO
+  label:
+    fill: hsl(205, 42%, 26%)
+  marker:
+    opacity: 0.6
+    fill: hsl(205, 35%, 72%)
+    stroke: hsl(205, 40%, 28%)
+    zorder: -500
+dso_dark_nebula: *DSO
+dso_supernova_remnant: *DSO
+dso_nova_star: *DSO
+dso_nonexistant: *DSO
+dso_unknown: *DSO
+dso_duplicate: *DSO
+
+gridlines:
+  label:
+    opacity: 1
+    fill: hsl(205, 48%, 12%)
+  line:
+    opacity: 0.6
+    stroke: hsl(205, 35%, 74%)
+    width: 1
+
+milky_way:
+  opacity: 0.38
+  fill: hsl(205, 50%, 66%)
+  stroke_width: 0
+
+planets:
+  label:
+    fill: hsl(205, 58%, 22%)
+  marker:
+    opacity: 0.9
+    fill: hsl(205, 65%, 40%)
+
+moon:
+  label:
+    fill: hsl(205, 48%, 14%)
+    opacity: 0.85
+  marker:
+    fill: hsl(205, 40%, 26%)
+
+star:
+  label:
+    fill: hsl(205, 60%, 12%)
+  marker:
+    fill: hsl(205, 83%, 16%)
+    stroke: hsl(205, 80%, 3%)
+
+sun:
+  label:
+    fill: hsl(205, 58%, 22%)
+  marker:
+    fill: hsl(205, 72%, 32%)
+    stroke: hsl(205, 72%, 32%)
+
+legend:
+  background_color: hsl(205, 63%, 100%)
+  background_alpha: 1.0
+  labels:
+    fill: hsl(205, 65%, 8%)
+  title:
+    fill: hsl(205, 65%, 8%)

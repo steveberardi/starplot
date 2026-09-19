@@ -1,7 +1,6 @@
 import pytest
 
-
-from starplot import DSO, Star, Constellation, override_settings
+from starplot import DSO, Constellation, Star, override_settings
 
 
 class TestLanguages:

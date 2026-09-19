@@ -1,52 +1,50 @@
-import math
-from typing import Callable
+from collections.abc import Callable
 from functools import cache
 
-from cartopy import crs as ccrs
-from matplotlib import pyplot as plt
-from matplotlib import patches, ticker
-from matplotlib.ticker import FuncFormatter, FixedLocator
 from shapely import Polygon
 from skyfield.api import wgs84
-import numpy as np
 
-from starplot.coordinates import CoordinateSystem
-from starplot import geometry
-from starplot.plots.base import BasePlot, DPI
+from starplot import callables, geometry
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
+from starplot.plots.base import BasePlot
 from starplot.plotters import (
-    ConstellationPlotterMixin,
-    StarPlotterMixin,
-    DsoPlotterMixin,
-    MilkyWayPlotterMixin,
-    LegendPlotterMixin,
-    GradientBackgroundMixin,
     ArrowPlotterMixin,
+    ConstellationPlotterMixin,
+    DsoPlotterMixin,
+    GridlinesPlotterMixin,
+    LegendPlotterMixin,
+    MilkyWayPlotterMixin,
+    TextPlotterMixin,
 )
 from starplot.plotters.text import CollisionHandler
-from starplot.projections import StereoNorth, StereoSouth, ProjectionBase
+from starplot.profile import profile
+from starplot.projections import (
+    CoordinateReferenceSystem,
+    ProjectionBase,
+    Stereographic,
+    StereoNorth,
+    StereoSouth,
+)
 from starplot.styles import (
     ObjectStyle,
-    PlotStyle,
     PathStyle,
-    GradientDirection,
+    PlotStyle,
     extensions,
 )
 from starplot.styles.helpers import use_style
-from starplot.utils import lon_to_ra, ra_to_lon
 
 
 class MapPlot(
     BasePlot,
     ExtentMaskMixin,
-    StarPlotterMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
+    TextPlotterMixin,
     ConstellationPlotterMixin,
-    LegendPlotterMixin,
-    GradientBackgroundMixin,
     ArrowPlotterMixin,
+    LegendPlotterMixin,
+    GridlinesPlotterMixin,
 ):
     """Creates a new map plot.
 
@@ -73,9 +71,6 @@ class MapPlot(
 
     """
 
-    _coordinate_system = CoordinateSystem.RA_DEC
-    _gradient_direction = GradientDirection.LINEAR
-
     def __init__(
         self,
         projection: ProjectionBase,
@@ -84,7 +79,7 @@ class MapPlot(
         dec_min: float = -90,
         dec_max: float = 90,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
         point_label_handler: CollisionHandler = None,
@@ -100,6 +95,25 @@ class MapPlot(
         observer = observer or Observer.at_epoch(2000)
         style = style or PlotStyle().extend(extensions.MAP)
 
+        if ra_min > ra_max:
+            raise ValueError("ra_min must be less than ra_max")
+        if dec_min > dec_max:
+            raise ValueError("dec_min must be less than dec_max")
+        if dec_min < -90 or dec_max > 90:
+            raise ValueError("Declination out of range (must be -90...90)")
+
+        self.ra_min = ra_min
+        self.ra_max = ra_max
+        self.dec_min = dec_min
+        self.dec_max = dec_max
+
+        bounds = [
+            self.ra_min,
+            self.dec_min,
+            self.ra_max,
+            self.dec_max,
+        ]
+
         super().__init__(
             observer,
             ephemeris,
@@ -111,40 +125,18 @@ class MapPlot(
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
-            *args,
+            projection=projection,
+            bounds=bounds,
+            invert_x=False,
+            invert_y=False,
+            clip_path=clip_path,
+            crs=CoordinateReferenceSystem.WNU,
             **kwargs,
         )
+
         self.logger.debug("Creating MapPlot...")
 
-        if ra_min > ra_max:
-            raise ValueError("ra_min must be less than ra_max")
-        if dec_min > dec_max:
-            raise ValueError("dec_min must be less than dec_max")
-        if dec_min < -90 or dec_max > 90:
-            raise ValueError("Declination out of range (must be -90...90)")
-
-        self.projection = projection
-        self.ra_min = ra_min
-        self.ra_max = ra_max
-        self.dec_min = dec_min
-        self.dec_max = dec_max
-
-        self.clip_path = clip_path
-
-        self._geodetic = ccrs.Geodetic()
-        self._plate_carree = ccrs.PlateCarree()
-        self._crs = ccrs.CRS(
-            proj4_params=[
-                ("proj", "latlong"),
-                ("axis", "wnu"),  # invert
-                ("a", "6378137"),
-            ],
-            globe=ccrs.Globe(ellipse="sphere", flattening=0),
-        )
-        self._init_plot()
-
-    def _plot_kwargs(self) -> dict:
-        return dict(transform=self._crs)
+        self._adjust_radec_minmax()
 
     @cache
     def in_bounds(self, ra: float, dec: float) -> bool:
@@ -157,17 +149,11 @@ class MapPlot(
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        # TODO : try using pyproj transformer directly
-        x, y = self._proj.transform_point(ra, dec, self._crs)
-        data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-        x_axes, y_axes = data_to_axes.transform((x, y))
+        x_axes, y_axes = self.canvas._to_axes(ra, dec)
         return 0 <= x_axes <= 1 and 0 <= y_axes <= 1
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds(x, y)
-
-    def _polygon(self, points, style, **kwargs):
-        super()._polygon(points, style, transform=self._crs, **kwargs)
 
     def _latlon_bounds(self):
         # convert the RA/DEC bounds to lat/lon bounds
@@ -182,34 +168,27 @@ class MapPlot(
         if self._is_global_extent():
             return
 
-        # adjust declination to match extent
-        extent = self.ax.get_extent(crs=self._plate_carree)
-        self.dec_min = extent[2]
-        self.dec_max = extent[3]
+        minx, self.dec_min, maxx, self.dec_max = self.canvas.bounds
 
-        # adjust the RA min/max if the DEC bounds is near the poles
+        if abs(maxx - minx) > 350:
+            minx = 0
+            maxx = 360
+        elif minx < 0:
+            minx += 360
+            maxx += 360
+        elif maxx < 0:
+            maxx += 360
+
+        # adjust the X min/max if the Y bounds is near the poles
         if (
-            isinstance(self.projection, StereoNorth)
-            or isinstance(self.projection, StereoSouth)
+            isinstance(self.projection, (Stereographic, StereoNorth, StereoSouth))
         ) and (self.dec_max > 80 or self.dec_min < -80):
             self.ra_min = 0
             self.ra_max = 360
 
-        elif self.ra_max < 360:
-            # adjust right ascension to match extent
-            ra_min = extent[1] * -1
-            ra_max = extent[0] * -1
-
-            if ra_min < 0 or ra_max < 0:
-                ra_min += 360
-                ra_max += 360
-
-            self.ra_min = ra_min
-            self.ra_max = ra_max
-
-        else:
-            self.ra_min = lon_to_ra(extent[1]) * 15
-            self.ra_max = lon_to_ra(extent[0]) * 15 + 360
+        elif minx < maxx:
+            self.ra_min = minx
+            self.ra_max = maxx
 
         self.logger.debug(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
@@ -248,19 +227,22 @@ class MapPlot(
             legend_label=legend_label,
         )
 
+    @profile
     @use_style(PathStyle, "horizon")
     def horizon(
         self,
         style: PathStyle = None,
-        labels: list = ["N", "E", "S", "W"],
+        labels: list | None = None,
     ):
         """
         Draws a [great circle](https://en.wikipedia.org/wiki/Great_circle) representing the horizon for the given `lat`, `lon` at time `dt` (so you must define these when creating the plot to use this function)
 
         Args:
             style: Style of the horizon path. If None, then the plot's style definition will be used.
-            labels: List of labels for cardinal directions. **NOTE: labels should be in the order: North, East, South, West.**
+            labels: List of labels for cardinal directions. Default: `["N", "E", "S", "W"]`. **NOTE: labels should be in the order: North, East, South, West.**
         """
+        labels = ["N", "E", "S", "W"] if labels is None else labels
+
         if self.observer is None:
             raise ValueError("observer is required for plotting the horizon")
 
@@ -275,31 +257,27 @@ class MapPlot(
             center=(ra.hours * 15, dec.degrees),
             height_degrees=180,
             width_degrees=180,
-            num_pts=100,
+            num_pts=200,
         )
-        points = list(zip(*polygon.exterior.coords.xy))
-        x = []
-        y = []
+        coords = list(zip(*polygon.exterior.coords.xy))
 
-        for ra, dec in points:
-            x0, y0 = self._prepare_coords(ra, dec)
-            x.append(x0)
-            y.append(y0)
+        normalized = []
+        for ra, dec in coords:
+            if ra > 360:
+                ra -= 360
+            normalized.append((ra, dec))
 
-        style_kwargs = {}
-        style_kwargs["clip_on"] = True
-        style_kwargs["clip_path"] = self._background_clip_path
-        self.ax.plot(
-            x,
-            y,
-            dash_capstyle=style.line.dash_capstyle,
-            **style.line.matplot_kwargs(self.scale),
-            **style_kwargs,
-            **self._plot_kwargs(),
+        self.line(
+            coordinates=normalized,
+            style=style,
         )
 
         if not labels:
             return
+
+        from starplot.data.translations import translate
+
+        labels = [translate(label, self.language) for label in labels]
 
         north = observer.from_altaz(alt_degrees=0, az_degrees=0)
         east = observer.from_altaz(alt_degrees=0, az_degrees=90)
@@ -308,22 +286,25 @@ class MapPlot(
 
         cardinal_directions = [north, east, south, west]
 
-        text_kwargs = dict(
-            **style.label.matplot_kwargs(self.scale),
-            xytext=(
-                style.label.offset_x * self.scale,
-                style.label.offset_y * self.scale,
-            ),
-            textcoords="offset points",
-            path_effects=[],
-            clip_on=True,
+        handler = CollisionHandler(
+            allow_clipped=True,
+            allow_label_collisions=True,
+            allow_marker_collisions=True,
+            allow_constellation_line_collisions=True,
+            plot_on_fail=True,
+            attempts=1,
         )
-
         for i, position in enumerate(cardinal_directions):
             ra, dec, _ = position.radec()
-            x, y = self._prepare_coords(ra.hours * 15, dec.degrees)
-            self._text(x, y, labels[i], **text_kwargs)
+            self.text(
+                text=labels[i],
+                ra=ra.hours * 15,
+                dec=dec.degrees,
+                style=style.label,
+                collision_handler=handler,
+            )
 
+    @profile
     @use_style(PathStyle, "gridlines")
     def gridlines(
         self,
@@ -331,11 +312,10 @@ class MapPlot(
         labels: bool = True,
         ra_locations: list[float] = None,
         dec_locations: list[float] = None,
-        ra_formatter_fn: Callable[[float], str] = None,
-        dec_formatter_fn: Callable[[float], str] = None,
-        tick_marks: bool = False,
-        ra_tick_locations: list[float] = None,
-        dec_tick_locations: list[float] = None,
+        ra_label_fn: Callable[[float], str] = callables.floor_hours_label,
+        dec_label_fn: Callable[[float], str] = callables.rounded_degrees_label,
+        ra_label_locations: list[str] = None,
+        dec_label_locations: list[str] = None,
     ):
         """Plots gridlines
 
@@ -344,172 +324,20 @@ class MapPlot(
             labels: If True, then labels for each gridline will be plotted on the outside of the axes.
             ra_locations: List of Right Ascension locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees.
             dec_locations: List of Declination locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
-            ra_formatter_fn: Callable for creating labels of right ascension gridlines
-            dec_formatter_fn: Callable for creating labels of declination gridlines
-            tick_marks: If True, then tick marks will be plotted outside the axis. **Only supported for rectangular projections (e.g. Mercator, Miller)**
-            ra_tick_locations: List of Right Ascension locations for the tick marks (in degrees, 0...260)
-            dec_tick_locations: List of Declination locations for the tick marks (in degrees, -90...90)
+            ra_label_fn: Callable for creating labels of right ascension gridlines.`
+            dec_label_fn: Callable for creating labels of declination gridlines.`
+            ra_label_locations: Locations where labels will be plotted (options: `top` and/or `bottom`). Defaults to `['top', 'bottom']`
+            dec_label_locations: Locations where labels will be plotted (options: `left` and/or `right`). Defaults to `['left', 'right']`
         """
-
-        ra_formatter_fn_default = lambda r: f"{math.floor(r)}h"  # noqa: E731
-        dec_formatter_fn_default = lambda d: f"{round(d)}\u00b0 "  # noqa: E731
-
-        ra_formatter_fn = ra_formatter_fn or ra_formatter_fn_default
-        dec_formatter_fn = dec_formatter_fn or dec_formatter_fn_default
-
-        def ra_formatter(x, pos) -> str:
-            ra = lon_to_ra(x)
-            return ra_formatter_fn(ra)
-
-        def dec_formatter(x, pos) -> str:
-            return dec_formatter_fn(x)
-
-        ra_locations = ra_locations or [x for x in range(0, 360, 15)]
-        dec_locations = dec_locations or [d for d in range(-80, 90, 10)]
-
-        line_style_kwargs = style.line.matplot_kwargs(self.scale)
-        gridlines = self.ax.gridlines(
-            draw_labels=labels,
-            x_inline=False,
-            y_inline=False,
-            rotate_labels=False,
-            xpadding=12,
-            ypadding=12,
-            clip_on=True,
-            clip_path=self._background_clip_path,
-            gid="gridlines",
-            **line_style_kwargs,
+        ra_locations = ra_locations or [x for x in range(0, 375, 15)]
+        dec_locations = dec_locations or [y for y in range(-80, 90, 10)]
+        super().gridlines(
+            style=style,
+            labels=labels,
+            lon_locations=ra_locations,
+            lat_locations=dec_locations,
+            lon_label_fn=ra_label_fn,
+            lat_label_fn=dec_label_fn,
+            lon_label_locations=ra_label_locations,
+            lat_label_locations=dec_label_locations,
         )
-        gridlines.set_zorder(style.line.zorder)
-
-        if labels:
-            self._axis_labels = True
-
-        label_style_kwargs = style.label.matplot_kwargs(self.scale)
-        label_style_kwargs.pop("va")
-        label_style_kwargs.pop("ha")
-
-        if self.dec_max > 75 or self.dec_min < -75:
-            # if the extent is near the poles, then plot the RA gridlines again
-            # because cartopy does not extend lines to poles
-            for ra in ra_locations:
-                self.ax.plot(
-                    (ra, ra),
-                    (-90, 90),
-                    gid="gridlines",
-                    **line_style_kwargs,
-                    **self._plot_kwargs(),
-                )
-
-        gridlines.xlocator = FixedLocator([ra_to_lon(r / 15) for r in ra_locations])
-        gridlines.xformatter = FuncFormatter(ra_formatter)
-        gridlines.xlabel_style = label_style_kwargs
-
-        gridlines.ylocator = FixedLocator(dec_locations)
-        gridlines.yformatter = FuncFormatter(dec_formatter)
-        gridlines.ylabel_style = label_style_kwargs
-
-        if tick_marks:
-            self._tick_marks(style, ra_tick_locations, dec_tick_locations)
-
-    def _tick_marks(self, style, ra_tick_locations=None, dec_tick_locations=None):
-        def in_axes(ra):
-            return self.in_bounds(ra, (self.dec_max + self.dec_min) / 2)
-
-        xticks = ra_tick_locations or [x for x in np.arange(0, 360, 1.875)]
-        yticks = dec_tick_locations or [x for x in np.arange(-90, 90, 1)]
-
-        inbound_xticks = [ra_to_lon(ra / 15) for ra in xticks if in_axes(ra)]
-        self.ax.set_xticks(inbound_xticks, crs=self._plate_carree)
-        self.ax.xaxis.set_major_formatter(ticker.NullFormatter())
-
-        inbound_yticks = [y for y in yticks if y < self.dec_max and y > self.dec_min]
-        self.ax.set_yticks(inbound_yticks, crs=self._plate_carree)
-        self.ax.yaxis.set_major_formatter(ticker.NullFormatter())
-
-        self.ax.tick_params(
-            which="major",
-            width=1,
-            length=8,
-            color=style.label.font_color.as_hex(),
-            top=True,
-            right=True,
-        )
-
-    def _set_extent(self):
-        bounds = self._latlon_bounds()
-        if self._is_global_extent():
-            # this cartopy function works better for setting global extents
-            self.ax.set_global()
-        else:
-            self.ax.set_extent(bounds, crs=self._plate_carree)
-
-    def _init_plot(self):
-        self.fig = plt.figure(
-            figsize=(self.figure_size, self.figure_size),
-            facecolor=self.style.figure_background_color.as_hex(),
-            # layout="constrained",
-            dpi=DPI,
-        )
-
-        self._proj = self.projection.crs
-        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
-        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
-
-        self._set_extent()
-        self._adjust_radec_minmax()
-
-        self.logger.debug(f"Projection = {self.projection.__class__.__name__.upper()}")
-
-        self._fit_to_ax()
-        self._plot_background_clip_path()
-
-    def _ax_to_radec(self, x, y):
-        trans = self.ax.transAxes + self.ax.transData.inverted()
-        x_projected, y_projected = trans.transform((x, y))  # axes to data
-        x_ra, y_ra = self._crs.transform_point(x_projected, y_projected, self._proj)
-        return (x_ra + 360), y_ra
-
-    def _plot_background_clip_path(self):
-        if self.style.has_gradient_background():
-            background_color = "#ffffff00"
-            self._plot_gradient_background(self.style.background_color)
-        else:
-            background_color = self.style.background_color.as_hex()
-
-        def to_axes(points):
-            ax_points = []
-
-            for ra, dec in points:
-                x, y = self._proj.transform_point(ra, dec, self._crs)
-                data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-                x_axes, y_axes = data_to_axes.transform((x, y))
-                ax_points.append([x_axes, y_axes])
-            return ax_points
-
-        if self.clip_path is not None:
-            points = list(zip(*self.clip_path.exterior.coords.xy))
-            self._background_clip_path = patches.Polygon(
-                to_axes(points),
-                facecolor=background_color,
-                fill=True,
-                zorder=-2_000,
-                transform=self.ax.transAxes,
-            )
-        else:
-            # draw patch in axes coords, which are easier to work with
-            # in cases like this cause they go from 0...1 in all plots
-            self._background_clip_path = patches.Rectangle(
-                (0, 0),
-                width=1,
-                height=1,
-                facecolor=background_color,
-                linewidth=0,
-                fill=True,
-                zorder=-2_000,
-                transform=self.ax.transAxes,
-            )
-
-        self.ax.set_facecolor(background_color)
-        self.ax.add_patch(self._background_clip_path)
-        self._update_clip_path_polygon()

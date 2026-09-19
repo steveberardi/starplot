@@ -1,7 +1,12 @@
-from starplot.models import Star, DSO, Moon, Sun, Planet, Constellation
+from starplot.models.constellation import Constellation
+from starplot.models.dso import DSO
+from starplot.models.moon import Moon
+from starplot.models.planet import Planet
+from starplot.models.star import Star
+from starplot.models.sun import Sun
 
 
-class ObjectList(object):
+class ObjectList:
     """Lists of objects that have been plotted. An instance of this model is returned by a plot's `objects` property."""
 
     stars: list[Star] = None

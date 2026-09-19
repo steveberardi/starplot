@@ -1,11 +1,11 @@
-from datetime import datetime, timedelta
-from typing import Iterator
-from functools import cache
+from collections.abc import Iterator
 from dataclasses import dataclass, fields
+from datetime import datetime, timedelta
+from functools import cache
 
-from skyfield.data import mpc
-from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
 from shapely import Point
+from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
+from skyfield.data import mpc
 
 from starplot.data import load
 from starplot.models.base import SkyObject
@@ -162,7 +162,7 @@ class Comet(SkyObject):
         cls,
         data: dict,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
     ) -> "Comet":
         """
         Get a comet for a specific date/time/location from an IAU MPC JSON.
@@ -181,7 +181,7 @@ class Comet(SkyObject):
     def all(
         cls,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         reload: bool = False,
     ) -> Iterator["Comet"]:
         """
@@ -208,7 +208,7 @@ class Comet(SkyObject):
         cls,
         name: str,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         reload: bool = False,
     ) -> "Comet":
         """
@@ -225,7 +225,7 @@ class Comet(SkyObject):
         return get_comet_at_date_location(comet, observer, ephemeris)
 
     def trajectory(
-        self, date_start: datetime, date_end: datetime, step: timedelta = None
+        self, date_start: datetime, date_end: datetime, step: timedelta | None = None
     ) -> Iterator["Comet"]:
         """
         Iterator for getting a trajectory of the comet.

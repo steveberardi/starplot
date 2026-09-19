@@ -1,35 +1,36 @@
 import math
-
+import random
+from collections.abc import Callable
 from functools import cache
-from typing import Callable
 
 import pandas as pd
-
-from cartopy import crs as ccrs
-from matplotlib import pyplot as plt, patches
-from matplotlib.ticker import FixedLocator, FuncFormatter
+import rtree
+from shapely import MultiPolygon, Polygon
 from skyfield.api import Star as SkyfieldStar
-from shapely import Polygon, MultiPolygon
+
+from starplot import callables
 from starplot.coordinates import CoordinateSystem
-from starplot.plots.base import BasePlot, DPI
 from starplot.mixins import ExtentMaskMixin
 from starplot.models.observer import Observer
+from starplot.plots.base import BasePlot
 from starplot.plotters import (
-    ConstellationPlotterMixin,
-    StarPlotterMixin,
-    DsoPlotterMixin,
-    MilkyWayPlotterMixin,
-    GradientBackgroundMixin,
-    LegendPlotterMixin,
     ArrowPlotterMixin,
+    ConstellationPlotterMixin,
+    DsoPlotterMixin,
+    GridlinesPlotterMixin,
+    LegendPlotterMixin,
+    MilkyWayPlotterMixin,
+    TextPlotterMixin,
 )
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
+from starplot.projections import CoordinateReferenceSystem, LambertAzEqArea
 from starplot.styles import (
+    PathStyle,
     PlotStyle,
+    PolygonStyle,
     extensions,
     use_style,
-    PathStyle,
-    GradientDirection,
 )
 
 DEFAULT_HORIZON_LABELS = {
@@ -44,17 +45,97 @@ DEFAULT_HORIZON_LABELS = {
 }
 
 
+def generate_ground_polygon(
+    max_altitude: float,
+    min_altitude: float = 0.0,
+    azimuth_start: float = 0.0,
+    azimuth_end: float = 360.0,
+    num_points: int = 360,
+    num_octaves: int = 4,
+    seed: int | None = None,
+) -> list[tuple[float, float]]:
+    """
+    Generate a list of (azimuth, altitude) coordinates representing a smooth,
+    randomly generated horizon polygon over a specified azimuth range.
+
+    The horizon line spans from azimuth_start to azimuth_end, with altitude
+    values smoothly varying between min_altitude and max_altitude (like
+    rolling hills). The polygon is closed by dropping down to 0 altitude at
+    both ends, so it can be used as a fillable shape from the ground up.
+
+    Args:
+        max_altitude: Maximum altitude (degrees) the horizon line can reach.
+        min_altitude: Minimum altitude (degrees) the horizon line can dip to.
+        azimuth_start: Starting azimuth (degrees) for the horizon range.
+        azimuth_end: Ending azimuth (degrees) for the horizon range.
+        num_points: Number of points to sample along the horizon line (higher = smoother).
+        num_octaves: Number of sine wave layers to sum for the noise (higher = more detail/bumpiness).
+        seed: Optional random seed for reproducibility.
+
+    Returns:
+        List of (azimuth, altitude) tuples forming a closed polygon.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    if azimuth_end <= azimuth_start:
+        raise ValueError("azimuth_end must be greater than azimuth_start")
+
+    if min_altitude >= max_altitude:
+        raise ValueError("min_altitude must be less than max_altitude")
+
+    azimuth_span = azimuth_end - azimuth_start
+    altitude_span = max_altitude - min_altitude
+
+    # Generate random parameters for each "octave" of sine waves.
+    # Frequencies are based on the full 360-degree circle so the noise
+    # pattern is consistent regardless of which azimuth slice is requested.
+    octaves = []
+    for i in range(num_octaves):
+        frequency = i + 1  # number of full cycles around 360 degrees
+        amplitude = 1.0 / (i + 1)  # higher frequencies contribute less
+        phase = random.uniform(0, 2 * math.pi)
+        octaves.append((frequency, amplitude, phase))
+
+    # Sample the noise function across the requested azimuth range.
+    raw_values = []
+    for i in range(num_points):
+        azimuth = azimuth_start + (i / (num_points - 1)) * azimuth_span
+        value = 0.0
+        for frequency, amplitude, phase in octaves:
+            angle_rad = math.radians(azimuth) * frequency
+            value += amplitude * math.sin(angle_rad + phase)
+        raw_values.append(value)
+
+    # Normalize raw noise values to range [min_altitude, max_altitude]
+    min_val = min(raw_values)
+    max_val = max(raw_values)
+    value_range = max_val - min_val if max_val != min_val else 1.0
+
+    horizon_line = []
+    for i in range(num_points):
+        azimuth = azimuth_start + (i / (num_points - 1)) * azimuth_span
+        normalized = (raw_values[i] - min_val) / value_range  # 0 to 1
+        altitude = min_altitude + normalized * altitude_span
+        horizon_line.append((azimuth, altitude))
+
+    # Close the polygon: horizon line, then drop to 0 at azimuth_end,
+    # then back to 0 at azimuth_start, closing the shape.
+    polygon_coords = horizon_line + [(azimuth_end, 0.0), (azimuth_start, 0.0)]
+
+    return polygon_coords
+
+
 class HorizonPlot(
     BasePlot,
     ExtentMaskMixin,
-    # HorizonExtentMaskMixin,
     ConstellationPlotterMixin,
-    StarPlotterMixin,
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
-    GradientBackgroundMixin,
     LegendPlotterMixin,
     ArrowPlotterMixin,
+    TextPlotterMixin,
+    GridlinesPlotterMixin,
 ):
     """Creates a new horizon plot.
 
@@ -78,7 +159,6 @@ class HorizonPlot(
     """
 
     _coordinate_system = CoordinateSystem.AZ_ALT
-    _gradient_direction = GradientDirection.LINEAR
 
     FIELD_OF_VIEW_MAX = 9.0
 
@@ -87,7 +167,7 @@ class HorizonPlot(
         altitude: tuple[float, float],
         azimuth: tuple[float, float],
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
         point_label_handler: CollisionHandler = None,
@@ -102,6 +182,29 @@ class HorizonPlot(
         observer = observer or Observer()
         style = style or PlotStyle().extend(extensions.MAP)
 
+        if azimuth[0] >= azimuth[1]:
+            raise ValueError("Azimuth min must be less than max")
+        if azimuth[1] - azimuth[0] > 180:
+            raise ValueError("Azimuth range cannot be greater than 180 degrees")
+
+        if altitude[0] >= altitude[1]:
+            raise ValueError("Altitude min must be less than max")
+        if altitude[1] - altitude[0] > 90:
+            raise ValueError("Altitude range cannot be greater than 90 degrees")
+
+        self.alt = altitude
+        self.az = azimuth
+        self._alt = altitude
+        self._az = azimuth
+        self.center_alt = sum(altitude) / 2
+        self.center_az = sum(azimuth) / 2
+
+        if self.center_az > 360:
+            self.center_az -= 360
+
+        projection = LambertAzEqArea(center_ra=self.center_az, center_dec=0)
+        bounds = [azimuth[0], altitude[0], azimuth[1], altitude[1]]
+
         super().__init__(
             observer,
             ephemeris,
@@ -113,39 +216,15 @@ class HorizonPlot(
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
-            *args,
+            projection=projection,
+            bounds=bounds,
+            invert_x=False,
+            invert_y=False,
+            clip_path=None,
+            crs=CoordinateReferenceSystem.ENU,
             **kwargs,
         )
-
-        if azimuth[0] >= azimuth[1]:
-            raise ValueError("Azimuth min must be less than max")
-        if azimuth[1] - azimuth[0] > 180:
-            raise ValueError("Azimuth range cannot be greater than 180 degrees")
-
-        if altitude[0] >= altitude[1]:
-            raise ValueError("Altitude min must be less than max")
-        if altitude[1] - altitude[0] > 90:
-            raise ValueError("Altitude range cannot be greater than 90 degrees")
-
         self.logger.debug("Creating HorizonPlot...")
-        self.alt = altitude
-        self.az = azimuth
-        self._alt = altitude
-        self._az = azimuth
-        self.center_alt = sum(altitude) / 2
-        self.center_az = sum(azimuth) / 2
-
-        self._geodetic = ccrs.Geodetic()
-        self._plate_carree = ccrs.PlateCarree()
-        self._crs = ccrs.CRS(
-            proj4_params=[
-                ("proj", "latlong"),
-                ("a", "6378137"),
-            ],
-            globe=ccrs.Globe(ellipse="sphere", flattening=0),
-        )
-
-        self._init_plot()
 
         self.altaz_mask = self._extent_mask_altaz()
         self.logger.debug(f"Extent = AZ ({self.az}) ALT ({self.alt})")
@@ -207,9 +286,6 @@ class HorizonPlot(
             f"Extent = RA ({self.ra_min:.2f}, {self.ra_max:.2f}) DEC ({self.dec_min:.2f}, {self.dec_max:.2f})"
         )
 
-    def _plot_kwargs(self) -> dict:
-        return dict(transform=self._crs)
-
     @cache
     def in_bounds(self, ra, dec) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
@@ -234,15 +310,11 @@ class HorizonPlot(
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        # return self.altaz_mask.contains(Point(az, alt))
-        x, y = self._to_ax(az, alt)
-        return 0 <= x <= 1 and 0 <= y <= 1
+        ax, ay = self.canvas._to_axes(az, alt)
+        return 0 <= ax <= 1 and 0 <= ay <= 1
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_altaz(y, x)  # alt = y, az = x
-
-    def _polygon(self, points, style, **kwargs):
-        super()._polygon(points, style, transform=self._crs, **kwargs)
 
     @cache
     def _extent_mask_altaz(self):
@@ -251,21 +323,9 @@ class HorizonPlot(
 
         If the extent crosses North cardinal direction, then a MultiPolygon will be returned
         """
-        extent = list(self.ax.get_extent(crs=self._plate_carree))
-        alt_min, alt_max = extent[2], extent[3]
-        az_min, az_max = extent[0], extent[1]
-
-        az_ul, _ = self._ax_to_azalt(0, 1)
-        az_ur, _ = self._ax_to_azalt(1, 1)
-
-        if az_ul < 0:
-            az_ul += 360
-
-        if az_ur < 0:
-            az_ur += 360
-
-        az_min = min(self.az[0], self.az[1], az_ul, az_ur)
-        az_max = max(self.az[0], self.az[1], az_ul, az_ur)
+        extent = self.canvas.bounds
+        alt_min, alt_max = extent[1], extent[3]
+        az_min, az_max = extent[0], extent[2]
 
         if az_min < 0:
             az_min += 360
@@ -275,8 +335,8 @@ class HorizonPlot(
         if az_min >= az_max:
             az_max += 360
 
-        self.az = (az_min, az_max)
-        self.alt = (alt_min, alt_max)
+        # self.az = (az_min, az_max)
+        # self.alt = (alt_min, alt_max)
 
         if az_max <= 360:
             coords = [
@@ -311,233 +371,85 @@ class HorizonPlot(
                 ]
             )
 
-    @use_style(PathStyle, "horizon")
-    def horizon(
+    @use_style(PolygonStyle, "ground")
+    def ground(
         self,
-        style: PathStyle = None,
-        labels: dict[int, str] = DEFAULT_HORIZON_LABELS,
+        min_altitude: float = 3,
+        max_altitude: float = 6,
+        style: PolygonStyle = None,
     ):
         """
-        Plots rectangle for horizon that shows cardinal directions and azimuth labels.
+        Plots a polygon for the ground. This should be plotted before any labels to avoid collisions.
 
         Args:
-            style: Style of the horizon path. If None, then the plot's style definition will be used.
-            labels: Dictionary that maps azimuth values (0...360) to their cardinal direction labels (e.g. "N"). Default is to label each 45deg direction (e.g. "N", "NE", "E", etc)
+            min_altitude: Minimum altitude of the ground to generate, in degrees.
+            max_altitude: Maximum altitude of the ground to generate, in degrees.
+            style: Style of the ground.
+
         """
-        patch_y = -0.11 * self.scale
-        bottom = patches.Polygon(
-            [
-                (0, -0.04 * self.scale),
-                (1, -0.04 * self.scale),
-                (1, patch_y),
-                (0, patch_y),
-                (0, -0.04 * self.scale),
-            ],
-            color=style.line.color.as_hex(),
-            transform=self.ax.transAxes,
-            clip_on=False,
+        coords = generate_ground_polygon(
+            min_altitude=min_altitude,
+            max_altitude=max_altitude,
+            azimuth_start=self.az[0] - 5,
+            azimuth_end=self.az[1] + 5,
+            num_octaves=23,
         )
-        self.ax.add_patch(bottom)
 
-        for az, label in labels.items():
-            az = int(az)
-            x, _ = self._to_ax(az, self.alt[0])
-            if x <= 0.03 or x >= 0.97 or math.isnan(x):
-                continue
+        display_coords = [self.canvas._to_display(*p) for p in coords]
+        bbox = Polygon(display_coords).bounds
 
-            self.ax.annotate(
-                label,
-                (x, patch_y + 0.027),
-                xycoords=self.ax.transAxes,
-                xytext=(
-                    style.label.offset_x * self.scale,
-                    style.label.offset_y * self.scale,
-                ),
-                textcoords="offset points",
-                **style.label.matplot_kwargs(self.scale),
-                clip_on=False,
-            )
+        self._ground_rtree = rtree.index.Index()
+        self._ground_rtree.insert(0, bbox)
 
+        self.canvas.polygon(
+            coordinates=coords,
+            style=style,
+        )
+
+    @profile
     @use_style(PathStyle, "gridlines")
     def gridlines(
         self,
         style: PathStyle = None,
-        show_labels: list = ["left", "right", "bottom"],
+        labels: bool = True,
         az_locations: list[float] = None,
         alt_locations: list[float] = None,
-        az_formatter_fn: Callable[[float], str] = None,
-        alt_formatter_fn: Callable[[float], str] = None,
-        divider_line: bool = True,
-        show_ticks: bool = True,
-        tick_step: int = 5,
+        az_label_fn: Callable[[float], str] = None,
+        alt_label_fn: Callable[[float], str] = callables.rounded_degrees_label,
+        az_label_locations: list[str] = None,
+        alt_label_locations: list[str] = None,
     ):
         """
         Plots gridlines
 
         Args:
             style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
-            show_labels: List of locations where labels should be shown (options: "left", "right", "top", "bottom")
+            labels: If True, then labels for each gridline will be plotted on the outside of the axes.
             az_locations: List of azimuth locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees
             alt_locations: List of altitude locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
-            az_formatter_fn: Callable for creating labels of azimuth gridlines
-            alt_formatter_fn: Callable for creating labels of altitude gridlines
-            divider_line: If True, then a divider line will be plotted below the azimuth labels on the bottom of the plot (this is helpful when also plotting the horizon)
-            show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
-            tick_step: Step size for tick marks
+            az_label_fn: Callable for creating labels of azimuth gridlines. Defaults to [azimuth_with_cardinal_direction_label_factory(self.language)][starplot.callables.azimuth_with_cardinal_direction_label_factory]
+            alt_label_fn: Callable for creating labels of altitude gridlines
+            az_label_locations: Locations where labels will be plotted (options: `top` and/or `bottom`). Defaults to `['bottom']`
+            alt_label_locations: Locations where labels will be plotted (options: `left` and/or `right`). Defaults to `['left', 'right']`
         """
-        az_formatter_fn_default = lambda az: f"{round(az)}\u00b0 "  # noqa: E731
-        alt_formatter_fn_default = lambda alt: f"{round(alt)}\u00b0 "  # noqa: E731
-
-        az_formatter_fn = az_formatter_fn or az_formatter_fn_default
-        alt_formatter_fn = alt_formatter_fn or alt_formatter_fn_default
-
-        def az_formatter(x, pos) -> str:
-            if x < 0:
-                x += 360
-            return az_formatter_fn(x)
-
-        def alt_formatter(x, pos) -> str:
-            return alt_formatter_fn(x)
-
-        x_locations = az_locations or [x for x in range(0, 360, 15)]
-        x_locations = [x - 180 for x in x_locations]
-        y_locations = alt_locations or [d for d in range(-90, 90, 10)]
-
-        label_style_kwargs = style.label.matplot_kwargs(self.scale)
-        label_style_kwargs.pop("va")
-        label_style_kwargs.pop("ha")
-
-        line_style_kwargs = style.line.matplot_kwargs(self.scale)
-        gridlines = self.ax.gridlines(
-            draw_labels=show_labels,
-            x_inline=False,
-            y_inline=False,
-            rotate_labels=False,
-            xpadding=12,
-            ypadding=12,
-            gid="gridlines",
-            xlocs=FixedLocator(x_locations),
-            xformatter=FuncFormatter(az_formatter),
-            xlabel_style=label_style_kwargs,
-            ylocs=FixedLocator(y_locations),
-            ylabel_style=label_style_kwargs,
-            yformatter=FuncFormatter(alt_formatter),
-            **line_style_kwargs,
-        )
-        gridlines.set_zorder(style.line.zorder)
-
-        if show_labels:
-            self._axis_labels = True
-
-        # gridlines.xlocator = FixedLocator(x_locations)
-        # gridlines.xformatter = FuncFormatter(az_formatter)
-        # gridlines.xlabel_style = label_style_kwargs
-
-        # gridlines.ylocator = FixedLocator(y_locations)
-        # gridlines.yformatter = FuncFormatter(alt_formatter)
-        # gridlines.ylabel_style = label_style_kwargs
-        # print(gridlines.label_artists)
-        # for label in gridlines.label_artists:
-        #     label.set_zorder(style.label.zorder)
-
-        if divider_line:
-            self.ax.plot(
-                [0, 1],
-                [-0.04 * self.scale, -0.04 * self.scale],
-                lw=1,
-                color=style.label.font_color.as_hex(),
-                clip_on=False,
-                transform=self.ax.transAxes,
-            )
-
-        if not show_ticks or len(x_locations) < 2:
-            return
-
-        # sort x locations so we iterate in order
-        x_locations_sorted = sorted(x_locations)
-        for i, az in enumerate(x_locations_sorted[1:], start=1):
-            prev_az = x_locations_sorted[i - 1]
-
-            # start at az label location + tick step cause we only want ticks between labels
-            for az_tick in range(prev_az + tick_step, az, tick_step):
-                a = int(az_tick)
-                if a >= 360:
-                    a -= 360
-                x, _ = self._to_ax(a, self.alt[0])
-
-                if x <= 0.03 or x >= 0.97 or math.isnan(x):
-                    continue
-
-                self.ax.annotate(
-                    "|",
-                    (x, -0.011 * self.scale),
-                    xycoords=self.ax.transAxes,
-                    **style.label.matplot_kwargs(self.scale / 2),
-                )
-
-    @cache
-    def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
-        """Converts az/alt to axes coordinates"""
-        x, y = self._proj.transform_point(az, alt, self._crs)
-        data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-        x_axes, y_axes = data_to_axes.transform((x, y))
-        return x_axes, y_axes
-
-    @cache
-    def _ax_to_azalt(self, x: float, y: float) -> tuple[float, float]:
-        trans = self.ax.transAxes + self.ax.transData.inverted()
-        x_projected, y_projected = trans.transform((x, y))  # axes to data
-        az, alt = self._crs.transform_point(x_projected, y_projected, self._proj)
-        return float(az), float(alt)
-
-    def _plot_background_clip_path(self):
-        if self.style.has_gradient_background():
-            background_color = "#ffffff00"
-            self._plot_gradient_background(self.style.background_color)
-        else:
-            background_color = self.style.background_color.as_hex()
-
-        self._background_clip_path = patches.Rectangle(
-            (0, 0),
-            width=1,
-            height=1,
-            facecolor=background_color,
-            linewidth=0,
-            fill=True,
-            zorder=-3_000,
-            transform=self.ax.transAxes,
-        )
-        self.ax.set_facecolor(background_color)
-
-        self.ax.add_patch(self._background_clip_path)
-        self._update_clip_path_polygon()
-
-    def _init_plot(self):
-        self._proj = ccrs.LambertAzimuthalEqualArea(
-            central_longitude=sum(self.az) / 2,
-            central_latitude=0,
-        )
-        self._proj.threshold = 100
-        self.fig = plt.figure(
-            figsize=(self.figure_size, self.figure_size),
-            facecolor=self.style.figure_background_color.as_hex(),
-            # layout="constrained",
-            dpi=DPI,
-        )
-        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
-        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
-
-        self.ax.xaxis.set_visible(False)
-        self.ax.yaxis.set_visible(False)
-        self.ax.axis("off")
-
-        bounds = [
-            self.az[0],
-            self.az[1],
-            self.alt[0],
-            self.alt[1],
+        az_locations = az_locations or [x for x in range(0, 375, 15)]
+        alt_locations = alt_locations or [
+            y
+            for y in range(-20, 90, 10)
+            if self.canvas.bounds[1] < y < self.canvas.bounds[3]
         ]
 
-        self.ax.set_extent(bounds, crs=ccrs.PlateCarree())
-        self._fit_to_ax()
-        self._plot_background_clip_path()
+        az_label_fn = (
+            az_label_fn
+            or callables.azimuth_with_cardinal_direction_label_factory(self.language)
+        )
+        super().gridlines(
+            style=style,
+            labels=labels,
+            lon_locations=az_locations,
+            lat_locations=alt_locations,
+            lon_label_fn=az_label_fn,
+            lat_label_fn=alt_label_fn,
+            lon_label_locations=az_label_locations or ["bottom"],
+            lat_label_locations=alt_label_locations,
+        )

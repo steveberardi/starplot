@@ -2,7 +2,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from starplot import OpticPlot, DSO, Observer, _
-from starplot.callables import color_by_bv
+from starplot.callables import color_by_bv_gradient
 from starplot.models import Refractor
 from starplot.styles import PlotStyle, extensions
 
@@ -32,12 +32,9 @@ p = OpticPlot(
         eyepiece_fov=82,
     ),
     style=style,
-    resolution=4096,
-    autoscale=True,
 )
 p.stars(
     where=[_.magnitude < 12],
-    color_fn=color_by_bv,
+    color_fn=color_by_bv_gradient,
 )
-p.info()
-p.export("optic_m45.png", padding=0.1, transparent=True)
+p.export("optic_m45.png")

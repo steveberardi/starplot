@@ -1,0 +1,36 @@
+from starplot import _, GalaxyPlot
+from starplot.styles import PlotStyle, extensions
+
+
+style = PlotStyle().extend(
+    extensions.BLUE_NIGHT,
+    extensions.MAP,
+    extensions.FIGURE_TRANSPARENT,
+)
+
+p = GalaxyPlot(
+    style=style,
+    resolution=2000,
+    scale=0.48,
+)
+p.gridlines()
+
+p.galactic_equator(num_labels=1)
+p.celestial_equator(num_labels=2)
+p.ecliptic(num_labels=2)
+
+p.milky_way()
+
+p.stars(
+    where=[_.magnitude < 6],
+    where_labels=[False],
+    style__marker__stroke="#c5c5c5",
+)
+
+p.open_clusters(
+    where=[(_.magnitude < 16) | (_.magnitude.isnull())],
+    where_labels=[False],
+    where_true_size=[False],
+)
+
+p.export("galaxy.png")

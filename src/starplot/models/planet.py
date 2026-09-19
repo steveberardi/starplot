@@ -1,17 +1,16 @@
+from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Iterator
 
 import numpy as np
-
 from shapely import Polygon
 from skyfield.api import Angle
 
 from starplot.data import load
+from starplot.geometry import circle
 from starplot.models.base import SkyObject
 from starplot.models.observer import Observer
-from starplot.geometry import circle
 
 
 class PlanetName(str, Enum):
@@ -81,7 +80,7 @@ class Planet(SkyObject):
     def all(
         cls,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
     ) -> Iterator["Planet"]:
         """
         Iterator for getting all planets at a specific date/time and observing location.
@@ -120,7 +119,7 @@ class Planet(SkyObject):
         cls,
         name: str,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
     ) -> "Planet":
         """
         Get a planet for a specific date/time.

@@ -1,38 +1,40 @@
+from collections.abc import Callable
 from functools import cache
-from typing import Callable
+from pathlib import Path
 
-import pandas as pd
-import numpy as np
 import astropy.units as u
+import numpy as np
+import pandas as pd
 from astropy.coordinates import SkyCoord
-from cartopy import crs as ccrs
-from matplotlib import pyplot as plt, patches
-from matplotlib.ticker import FixedLocator, FuncFormatter
 from skyfield.api import Star as SkyfieldStar
 from skyfield.framelib import galactic_frame
 
+from starplot import callables
 from starplot.coordinates import CoordinateSystem
-from starplot.plots.base import BasePlot, DPI
+from starplot.data.catalogs import BIG_SKY_MAG11, Catalog
 from starplot.mixins import ExtentMaskMixin
-from starplot.models.observer import Observer
+from starplot.models import Observer, Star
+from starplot.plots.base import BasePlot
 from starplot.plotters import (
-    ConstellationPlotterMixin,
-    StarPlotterMixin,
-    DsoPlotterMixin,
-    MilkyWayPlotterMixin,
-    GradientBackgroundMixin,
-    LegendPlotterMixin,
     ArrowPlotterMixin,
+    ConstellationPlotterMixin,
+    DsoPlotterMixin,
+    GridlinesPlotterMixin,
+    LegendPlotterMixin,
+    MilkyWayPlotterMixin,
+    StarPlotterMixin,
+    TextPlotterMixin,
 )
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
+from starplot.projections import CoordinateReferenceSystem, Mollweide
 from starplot.styles import (
+    ObjectStyle,
+    PathStyle,
     PlotStyle,
     extensions,
     use_style,
-    PathStyle,
-    GradientDirection,
 )
-from starplot.profile import profile
 
 
 class GalaxyPlot(
@@ -43,8 +45,9 @@ class GalaxyPlot(
     DsoPlotterMixin,
     MilkyWayPlotterMixin,
     LegendPlotterMixin,
-    GradientBackgroundMixin,
     ArrowPlotterMixin,
+    TextPlotterMixin,
+    GridlinesPlotterMixin,
 ):
     """Creates a new galaxy plot.
 
@@ -67,19 +70,18 @@ class GalaxyPlot(
     """
 
     _coordinate_system = CoordinateSystem.RA_DEC
-    _gradient_direction = GradientDirection.MOLLWEIDE
 
     def __init__(
         self,
         center_lon: float = 0,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
         point_label_handler: CollisionHandler = None,
         area_label_handler: CollisionHandler = None,
         path_label_handler: CollisionHandler = None,
-        scale: float = 1.0,
+        scale: float = 0.8,
         autoscale: bool = False,
         suppress_warnings: bool = True,
         *args,
@@ -87,7 +89,13 @@ class GalaxyPlot(
     ) -> "GalaxyPlot":
         observer = observer or Observer.at_epoch(2000)
         style = style or PlotStyle().extend(extensions.MAP)
-
+        projection = Mollweide(center_ra=center_lon)
+        bounds = [
+            0,
+            -90,
+            360,
+            90,
+        ]
         super().__init__(
             observer,
             ephemeris,
@@ -99,25 +107,18 @@ class GalaxyPlot(
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
-            *args,
+            projection=projection,
+            bounds=bounds,
+            invert_x=False,
+            invert_y=False,
+            clip_path=None,
+            crs=CoordinateReferenceSystem.WNU,
             **kwargs,
         )
 
         self.center_lon = center_lon
         self.logger.debug("Creating GalaxyPlot...")
-        self._geodetic = ccrs.Geodetic()
-        self._plate_carree = ccrs.PlateCarree()
 
-        self._crs = ccrs.CRS(
-            proj4_params=[
-                ("proj", "latlong"),
-                ("axis", "wnu"),  # invert
-                ("a", "6378137"),
-            ],
-            globe=ccrs.Globe(ellipse="sphere", flattening=0),
-        )
-
-        self._init_plot()
         self._calc_position()
 
     def _prepare_coords(self, ra, dec) -> (float, float):
@@ -152,9 +153,6 @@ class GalaxyPlot(
         df["x"], df["y"] = (lon.degrees, lat.degrees)
         return df
 
-    def _plot_kwargs(self) -> dict:
-        return dict(transform=self._crs)
-
     @cache
     def in_bounds(self, ra, dec) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
@@ -179,16 +177,11 @@ class GalaxyPlot(
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        x, y = self._proj.transform_point(lon, lat, self._crs)
-        data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-        x_axes, y_axes = data_to_axes.transform((x, y))
+        x_axes, y_axes = self.canvas._to_axes(lon, lat)
         return 0 <= x_axes <= 1 and 0 <= y_axes <= 1
 
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_lonlat(x, y)
-
-    def _polygon(self, points, style, **kwargs):
-        super()._polygon(points, style, transform=self._crs, **kwargs)
 
     def _calc_position(self):
         self.location = self.ephemeris["earth"]
@@ -221,7 +214,7 @@ class GalaxyPlot(
             num_labels: Max number of labels to plot along the line
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the plot's `path_label_handler` will be used.
         """
-        lons = np.array([ra for ra in range(0, 361)])  # galactic longitudes
+        lons = np.array([ra for ra in range(361)])  # galactic longitudes
         lats = np.array([0] * 361)  # galactic latitudes
 
         coords = SkyCoord(l=lons * u.deg, b=lats * u.deg, frame="galactic")
@@ -244,129 +237,91 @@ class GalaxyPlot(
     def gridlines(
         self,
         style: PathStyle = None,
-        show_labels: list = ["left", "right", "bottom"],
+        labels: bool = True,
         lon_locations: list[float] = None,
         lat_locations: list[float] = None,
-        lon_formatter_fn: Callable[[float], str] = None,
-        lat_formatter_fn: Callable[[float], str] = None,
-        inline: bool = True,
+        lon_label_fn: Callable[[float], str] = callables.rounded_degrees_label,
+        lat_label_fn: Callable[[float], str] = callables.rounded_degrees_label,
+        lon_label_locations: list[str] = None,
+        lat_label_locations: list[str] = None,
     ):
         """
         Plots gridlines
 
         Args:
             style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
-            show_labels: List of locations where labels should be shown (options: "left", "right", "top", "bottom")
-            az_locations: List of azimuth locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees
-            alt_locations: List of altitude locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
-            az_formatter_fn: Callable for creating labels of azimuth gridlines
-            alt_formatter_fn: Callable for creating labels of altitude gridlines
-            divider_line: If True, then a divider line will be plotted below the azimuth labels on the bottom of the plot (this is helpful when also plotting the horizon)
-            show_ticks: If True, then tick marks will be plotted on the horizon path for every `tick_step` degree that is not also a degree label
-            tick_step: Step size for tick marks
+            labels: If True, then labels for each gridline will be plotted on the outside of the axes.
+            lon_locations: List of longitude locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees.
+            lat_locations: List of latitude locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
+            lon_label_fn: Callable for creating labels of longitude gridlines.`
+            lat_label_fn: Callable for creating labels of latitude gridlines.`
+            lon_label_locations: Locations where labels will be plotted (options: `top` and/or `bottom`). Defaults to `['top', 'bottom']`
+            lat_label_locations: Locations where labels will be plotted (options: `left` and/or `right`). Defaults to `['left', 'right']`
         """
-        lon_formatter_fn_default = lambda lon: f"{round(lon)}\u00b0 "  # noqa: E731
-        lat_formatter_fn_default = lambda lat: f"{round(lat)}\u00b0 "  # noqa: E731
-
-        lon_formatter_fn = lon_formatter_fn or lon_formatter_fn_default
-        lat_formatter_fn = lat_formatter_fn or lat_formatter_fn_default
-
-        def lon_formatter(x, pos) -> str:
-            if x < 0:
-                x += 360
-            return lon_formatter_fn(x)
-
-        def lat_formatter(x, pos) -> str:
-            return lat_formatter_fn(x)
-
-        x_locations = (
-            lon_locations
-            if lon_locations is not None
-            else [x for x in range(0, 360, 15)]
-        )
-        x_locations = [x - 180 for x in x_locations]
-        y_locations = (
-            lat_locations
-            if lat_locations is not None
-            else [y for y in range(-90, 90, 10)]
+        lon_locations = lon_locations or [x for x in range(0, 375, 15)]
+        lat_locations = lat_locations or [y for y in range(-80, 90, 10)]
+        super().gridlines(
+            style=style,
+            labels=labels,
+            lon_locations=lon_locations,
+            lat_locations=lat_locations,
+            lon_label_fn=lon_label_fn,
+            lat_label_fn=lat_label_fn,
+            lon_label_locations=lon_label_locations,
+            lat_label_locations=lat_label_locations,
         )
 
-        label_style_kwargs = style.label.matplot_kwargs(self.scale)
-        label_style_kwargs.pop("va")
-        label_style_kwargs.pop("ha")
+    @profile
+    @use_style(ObjectStyle, "star")
+    def stars(
+        self,
+        where: list = None,
+        where_labels: list = None,
+        catalog: Catalog | Path | str = BIG_SKY_MAG11,
+        style: ObjectStyle = None,
+        size_fn: Callable[[Star], float] = callables.size_by_magnitude_galaxy,
+        opacity_fn: Callable[[Star], float] = None,
+        color_fn: Callable[[Star], str] = None,
+        label_fn: Callable[[Star], str] = Star.get_label,
+        legend_label: str = "Star",
+        bayer_labels: bool = False,
+        flamsteed_labels: bool = False,
+        sql: str = None,
+        sql_labels: str = None,
+        collision_handler: CollisionHandler = None,
+    ):
+        """
+        Plots stars
 
-        line_style_kwargs = style.line.matplot_kwargs(self.scale)
-        gridlines = self.ax.gridlines(
-            draw_labels=show_labels,
-            x_inline=inline,
-            y_inline=inline,
-            rotate_labels=False,
-            # xpadding=12,
-            # ypadding=12,
-            gid="gridlines",
-            xlocs=FixedLocator(x_locations),
-            xformatter=FuncFormatter(lon_formatter),
-            xlabel_style=label_style_kwargs,
-            ylocs=FixedLocator(y_locations),
-            ylabel_style=label_style_kwargs,
-            yformatter=FuncFormatter(lat_formatter),
-            **line_style_kwargs,
+        Args:
+            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
+            catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
+            style: If `None`, then the plot's style for stars will be used
+            size_fn: Callable for calculating the marker size of each star.
+            opacity_fn: Callable for calculating the opacity value of each star. If `None`, then the marker style's opacity will be used.
+            color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
+            label_fn: Callable for determining the label of each star.
+            legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
+            bayer_labels: If True, then Bayer labels for stars will be plotted.
+            flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
+            sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
+            sql_labels: SQL query for selecting stars that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+        """
+        super().stars(
+            where=where,
+            where_labels=where_labels,
+            catalog=catalog,
+            style=style,
+            size_fn=size_fn,
+            opacity_fn=opacity_fn,
+            color_fn=color_fn,
+            label_fn=label_fn,
+            legend_label=legend_label,
+            bayer_labels=bayer_labels,
+            flamsteed_labels=flamsteed_labels,
+            sql=sql,
+            sql_labels=sql_labels,
+            collision_handler=collision_handler,
         )
-        gridlines.set_zorder(style.line.zorder)
-
-    @cache
-    def _to_ax(self, az: float, alt: float) -> tuple[float, float]:
-        """Converts az/alt to axes coordinates"""
-        x, y = self._proj.transform_point(az, alt, self._crs)
-        data_to_axes = self.ax.transData + self.ax.transAxes.inverted()
-        x_axes, y_axes = data_to_axes.transform((x, y))
-        return x_axes, y_axes
-
-    @cache
-    def _ax_to_azalt(self, x: float, y: float) -> tuple[float, float]:
-        trans = self.ax.transAxes + self.ax.transData.inverted()
-        x_projected, y_projected = trans.transform((x, y))  # axes to data
-        az, alt = self._crs.transform_point(x_projected, y_projected, self._proj)
-        return float(az), float(alt)
-
-    def _plot_background_clip_path(self):
-        if self.style.has_gradient_background():
-            background_color = "#ffffff00"
-            self._plot_gradient_background(self.style.background_color)
-        else:
-            background_color = self.style.background_color.as_hex()
-
-        self._background_clip_path = patches.Rectangle(
-            (0, 0),
-            width=1,
-            height=1,
-            facecolor=background_color,
-            linewidth=0,
-            fill=True,
-            zorder=-3_000,
-            transform=self.ax.transAxes,
-        )
-        self.ax.set_facecolor(background_color)
-
-        self.ax.add_patch(self._background_clip_path)
-        self._update_clip_path_polygon()
-
-    def _init_plot(self):
-        self._proj = ccrs.Mollweide(central_longitude=self.center_lon)
-        self._proj.threshold = 100
-        self.fig = plt.figure(
-            figsize=(self.figure_size, self.figure_size),
-            facecolor=self.style.figure_background_color.as_hex(),
-            dpi=DPI,
-        )
-        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
-        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
-
-        self.ax.xaxis.set_visible(False)
-        self.ax.yaxis.set_visible(False)
-        self.ax.axis("off")
-
-        self.ax.set_global()
-
-        self._fit_to_ax()
-        self._plot_background_clip_path()

@@ -1,57 +1,53 @@
-background_color: '#fff'
 
-text_border_color: '#fff'
+axes:
+  background:
+    fill: '#fff'
 
-border_bg_color: '#fff'
-border_font_color: '#000'
-border_line_color: '#000'
+base:
+  text_stroke: '#fff'
 
 title:
-  font_color: '#000'
+  fill: '#000'
 
 celestial_equator:
   label:
-    font_color: '#999'
+    fill: '#999'
   line:
-    color: '#999'
+    stroke: '#999'
 
 star:
   marker:
-    edge_color: '#fff'
+    stroke: '#fff'
 
 # DSOs
 dso_double_star:
   marker:
-    color: '#000'
+    fill: '#000'
 dso_galaxy:
   marker:
-    color: null
-    fill: none
-    alpha: 1
+    fill: null
+    opacity: 1
     symbol: ellipse
 dso_nebula:
   marker:
-    color: '#c8c8c8'
-    fill: full
-    alpha: 1
+    fill: '#c8c8c8'
+    opacity: 1
 dso_planetary_nebula:
   marker:
-    color: null
-    fill: none
-    alpha: 1
+    fill: null
+    opacity: 1
 dso_open_cluster:
   marker:
-    color: null
-    edge_color: '#000'
-    fill: none
-    alpha: 1
+    fill: null
+    stroke: '#000'
+    opacity: 1
 
 
 # other DSOs
 dso_unknown: &DSO
   marker:
-    color: '#000'
-    alpha: 0.28
+    fill: '#000'
+    opacity: 0.28
 dso_dark_nebula: *DSO
 dso_supernova_remnant: *DSO
 dso_nova_star: *DSO
@@ -61,34 +57,32 @@ dso_duplicate: *DSO
 
 ecliptic:
   label:
-    font_color: '#777'
+    fill: '#777'
   line:
-    color: '#777'
+    stroke: '#777'
 milky_way:
-  alpha: 0.28
-  fill_color: '#d9d9d9'
-  edge_width: 0
+  opacity: 0.28
+  fill: '#d9d9d9'
+  stroke_width: 0
 planets:
   marker:
-    color: '#000'
-    fill: left
+    fill: '#000'
 sun:
   marker:
-    color: '#000'
-    edge_color: '#000'
+    fill: '#000'
+    stroke: '#000'
 
 legend:
   background_color: '#fff'
 
 horizon:
   line:
-    color: 'white'
-    edge_color: 'black'
+    stroke: 'white'
   label:
-    font_color: 'black'
+    fill: 'black'
 
 zenith:
   marker:
-    color: black
+    fill: black
   label:
-    font_color: black
+    fill: black

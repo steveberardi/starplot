@@ -1,3 +1,4 @@
+# Selecting Objects
 
 When plotting [stars][starplot.MapPlot.stars], [constellations][starplot.MapPlot.constellations], or [deep sky objects (DSOs)][starplot.MapPlot.dsos], you can select exactly which objects to plot by using expressions that reference fields on the object's model. Only the objects that satisfy ALL the conditions will be plotted.
 
@@ -65,7 +66,7 @@ Select stars that are within the Pleiades (M45) star cluster (assumes `m45 = DSO
 
 ## Important Details
 
-- When writing expressions, you can reference any field on the [model](reference-models.md) you're filtering
+- When writing expressions, you can reference any field on the [model](models/index.md) you're filtering
 - See table below for a list of [operators](#operators) you can use in your expressions
 - You can combine expressions with the bitwise OR (`|`) / AND (`&`) operators, but you **must** put parenthesis around each expression when doing this (e.g. `(_.magnitude > 8) | (_.name == "Vega")`)
 

@@ -1,8 +1,7 @@
 import os
-
+from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from dataclasses import dataclass, field
 
 
 def _get_path(var_name, default) -> Path:
@@ -37,7 +36,7 @@ class Settings:
 
     svg_text_type: SvgTextType = field(
         default_factory=lambda: os.environ.get(
-            "STARPLOT_SVG_TEXT_TYPE", SvgTextType.PATH
+            "STARPLOT_SVG_TEXT_TYPE", SvgTextType.ELEMENT
         )
     )
     """
@@ -49,7 +48,7 @@ class Settings:
 
     - `"element"` will render all text as an [SVG `<text>` element](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/text), 
     which means the text will be editable in graphic design applications but the text may render in a system default font if the original 
-    font isn't available. **Important: when using the "element" method, text borders will be turned OFF.**
+    font isn't available.
     
     """
 
@@ -75,6 +74,11 @@ class Settings:
 
     debug: bool = field(default_factory=_get_boolean("STARPLOT_DEBUG", False))
     """Global setting for debug mode. When this is enabled, Starplot will log debugging information and plot polygons for debugging text issues"""
+
+    precision: int = field(
+        default_factory=lambda: int(os.environ.get("STARPLOT_PRECISION", "4"))
+    )
+    """Number of decimal places to round coordinates and dimensions to when rendering SVG output."""
 
 
 settings = Settings()

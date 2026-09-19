@@ -13,6 +13,8 @@ skip = [
     "map_comet_neowise.py",
     "horizon_sgr.py",
     "optic_moon_saturn.py",
+    # "map_orthographic.py",
+    "galaxy_custom_marker.py",
     # "map_milky_way_stars.py",
     # "stuff.py",
 ]
@@ -49,7 +51,7 @@ def run_example(filename):
 
 
 if __name__ == "__main__":
-    num_workers = 1
+    num_workers = 4
     start = time.time()
     example_files = get_example_names()
     processes = []
@@ -67,6 +69,6 @@ if __name__ == "__main__":
 
     # Copy all images to docs directory
     print("Copying images to examples directory...")
-    subprocess.call("cp *.png ../docs/images/examples/", shell=True)
+    subprocess.call("cp *.png *.svg ../docs/images/examples/", shell=True)
 
     print(f"{time.time() - start}")

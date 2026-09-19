@@ -1,39 +1,50 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from starplot import HorizonPlot, Observer, _
-from starplot.styles import PlotStyle, extensions
+from starplot import HorizonPlot, Observer, callables, _
+from starplot.styles import PlotStyle, extensions, gradients
 
 style = PlotStyle().extend(
     extensions.BLUE_GOLD,
-    extensions.MAP,
+    extensions.HORIZON,
     extensions.GRADIENT_PRE_DAWN,
 )
+style.figure.padding = 40
+style.constellation_lines.width = 4
+style.star.marker.stroke_width = 0
 
-dt = datetime(2025, 7, 26, 23, 30, 0, 0, tzinfo=ZoneInfo("Europe/London"))
+dt = datetime(2025, 8, 20, 21, 0, 0, 0, tzinfo=ZoneInfo("Pacific/Honolulu"))
 
 observer = Observer(
-    lat=55.079112,  # Stonehaugh, England
-    lon=-2.327469,
+    lat=19.8222,  # Mauna Kea Observatories
+    lon=-155.4749,
     dt=dt,
 )
 
 p = HorizonPlot(
     altitude=(0, 60),
-    azimuth=(135, 225),
+    azimuth=(155, 250),
     observer=observer,
     style=style,
-    resolution=3200,
-    scale=0.9,
+    scale=1.2,
 )
 
+p.ground(
+    min_altitude=3.5,
+    max_altitude=6,
+    style__fill={
+        "stops": gradients.GROUND,
+        "type": "linear",
+    },
+)
 p.constellations()
 p.milky_way()
+p.gridlines()
 
 p.stars(
-    where=[_.magnitude < 5],
+    where=[_.magnitude < 4.6],
     where_labels=[_.magnitude < 2],
-    style__marker__symbol="star_4",
+    color_fn=callables.color_by_bv_gradient,
 )
 
 p.messier(
@@ -42,6 +53,5 @@ p.messier(
 )
 
 p.constellation_labels()
-p.horizon(labels={180: "SOUTH"})
 
-p.export("horizon_gradient.png", padding=0.1)
+p.export("horizon_gradient.png")

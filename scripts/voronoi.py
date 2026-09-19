@@ -79,7 +79,7 @@ for constellation in p.objects.constellations:
     #     if inter.geom_type == "Polygon":
     #         p.polygon(
     #             geometry=inter,
-    #             style__edge_color="red",
+    #             style__stroke="red",
     #         )
 
     polygons = []
@@ -96,8 +96,8 @@ for constellation in p.objects.constellations:
             # continue
             # p.polygon(
             #     geometry=inter,
-            #     style__edge_color="blue",
-            #     style__alpha=0.13,
+            #     style__stroke="blue",
+            #     style__opacity=0.13,
             # )
             polygons.append(inter)
 
@@ -132,8 +132,8 @@ for constellation in p.objects.constellations:
 
     p.polygon(
         geometry=polygons_sorted[i],
-        style__fill_color="green",
-        style__alpha=0.23,
+        style__fill="green",
+        style__opacity=0.23,
     )
     p.marker(
         polygons_sorted[i].centroid.x,
@@ -141,9 +141,9 @@ for constellation in p.objects.constellations:
         label=None,
         style__marker__symbol="circle_cross",
         style__marker__size=9,
-        style__marker__color="red",
-        style__marker__edge_color="red",
-        style__marker__edge_width=6,
+        style__marker__fill="red",
+        style__marker__stroke="red",
+        style__marker__stroke_width=6,
     )
 
     for big_p in polygons_sorted:
@@ -151,8 +151,8 @@ for constellation in p.objects.constellations:
         # if big_p.area < constellation.boundary.area/2:
         p.polygon(
             geometry=big_p,
-            style__edge_color="green",
-            style__alpha=0.23,
+            style__stroke="green",
+            style__opacity=0.23,
         )
 
 

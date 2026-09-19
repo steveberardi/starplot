@@ -2,7 +2,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from starplot import Moon, Binoculars, Observer
-from starplot.styles import PlotStyle, extensions
+from starplot.styles import PlotStyle, extensions, gradients
 
 # time of partial eclipse. total eclipse started at 15:13:46
 dt = datetime(2024, 4, 8, 14, 45, 0, 0, tzinfo=ZoneInfo("US/Eastern"))
@@ -24,17 +24,16 @@ op = m.create_optic(
         extensions.OPTIC,
         extensions.GRADIENT_DAYLIGHT,
     ),
-    resolution=2000,
 )
 op.moon(
     true_size=True,
-    show_phase=True,
     label=None,
+    style__marker__fill={"stops": gradients.NEW_MOON, "type": "radial"},
 )
 op.sun(
     true_size=True,
-    style__marker__color="#ffd22e",
+    style__marker__fill={"stops": gradients.SUN, "type": "radial"},
     label=None,
 )
 
-op.export("optic_solar_eclipse.png", padding=0.1, transparent=True)
+op.export("optic_solar_eclipse.png")

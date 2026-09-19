@@ -3,13 +3,13 @@ import time
 
 def profile(func):
     def wrapper(*args, **kwargs):
-        start = time.time()
+        start = time.perf_counter()
 
         result = func(*args, **kwargs)
 
-        duration = round(time.time() - start, 4)
+        duration = int((time.perf_counter() - start) * 1_000)
 
-        args[0].logger.debug(f"{func.__name__} = {str(duration)} sec")
+        args[0].logger.debug(f"{func.__name__} = {duration}ms")
 
         return result
 
