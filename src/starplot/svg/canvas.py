@@ -50,7 +50,6 @@ class CoordinateSystem(str, Enum):
     PROJECTED = "projected"
     AXES = "axes"
     DISPLAY = "display"
-    FIGURE_DISPLAY = "figure_display"
 
 
 def gradient_hash(stops, length=8) -> str:
@@ -89,7 +88,6 @@ class Canvas:
         self.debug = debug
 
         self.clip_path = clip_path
-        self.gradient_counter = 0
         self._group_stack: list[list[tuple[float, object]]] = []
 
         self.invert_x = invert_x
