@@ -14,7 +14,7 @@
 - **Planets and Deep Sky Objects (DSOs)** - with support for plotting their true extent
 - **Comets and Satellites** - easy trajectory plotting
 - **Custom Styles** - for all objects and with 8+ built-in themes
-- **Export** - png, svg, jpeg
+- **Export** - SVG or PNG
 - **Data Backend** - powered by DuckDB + Ibis for fast object lookup
 - **Custom Data Catalogs** - with helpers for building and optimizing
 - **Label Collision Avoidance** - ensuring all labels are readable
@@ -22,7 +22,7 @@
 
 ## Examples
 *Zenith chart of the stars from a specific time and place:*
-![starchart](https://starplot.dev/images/examples/star_chart_detail.png)
+![starchart](https://starplot.dev/images/examples/star_chart_basic.png)
 
 *Map around the constellation Orion:*
 ![map-orion](https://starplot.dev/images/examples/map_orion.png)
