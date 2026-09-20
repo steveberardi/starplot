@@ -7,6 +7,7 @@
 - Adds the Gnomonic projection
 - Refactors styling framework with more consistent naming
 - Removed fonts from PyPI package, to reduce our filesize
+- Adds support for Python 3.14
 
 ---
 
