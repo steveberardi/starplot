@@ -12,7 +12,7 @@
 ---
 
 ## v0.20.x
-[Documentation](https://archives.starplot.dev/0.20.5/)
+[Documentation](https://archives.starplot.dev/0.20.7/)
 
 - Adds a `GalaxyPlot` for plotting in galactic coordinates
 - Adds label support to lines with automatic angle adjustment
