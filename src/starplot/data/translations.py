@@ -426,8 +426,8 @@ LANGUAGES = [
     "fa",
     "fr",
     "it",
-    "nl",
     "lt",
+    "nl",
     "zh-cn",
     "zh-tw",
 ]
