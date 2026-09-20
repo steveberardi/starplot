@@ -21,13 +21,16 @@
 - **Localization** - label translations for Chinese, French, Italian, Lithuanian, Persian, and Spanish
 
 ## Examples
-*Zenith chart of the stars from a specific time/location:*
-![starchart-blue](https://starplot.dev/images/examples/star_chart_basic.png)
+*Zenith chart of the stars from a specific time and place:*
+![starchart](https://starplot.dev/images/examples/star_chart_detail.png)
 
 *Map around the constellation Orion:*
 ![map-orion](https://starplot.dev/images/examples/map_orion.png)
 
-*The Pleiades star cluster, as seen through a refractor telescope from a specific time and location:*
+*Horizon at a specific time and place:*
+![horizon-plot](https://starplot.dev/images/examples/horizon_gradient.png)
+
+*The Pleiades star cluster, as seen through a refractor telescope from a specific time and place:*
 ![optic-pleiades](https://starplot.dev/images/examples/optic_m45.png)
 
 ## Basic Usage
@@ -55,13 +58,12 @@ p = ZenithPlot(
         styles.extensions.BLUE_MEDIUM,
     ),
     resolution=4096,
-    autoscale=True,
 )
 p.constellations()
 p.stars(where=[_.magnitude < 4.6])
 p.constellation_labels()
 p.horizon()
-p.export("starchart.png")
+p.export("starchart.svg")
 ```
 
 ## Documentation
