@@ -66,6 +66,7 @@ class Settings:
     - `fr` = French
     - `it` = Italian
     - `lt` = Lithuanian
+    - `nl` = Dutch
     - `zh-cn` = Chinese. Make sure you have a good Chinese font installed (such as [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC)) and you'll also need to set that as the font in your plot's style.
     - `zh-tw` = Traditional Chinese
 
