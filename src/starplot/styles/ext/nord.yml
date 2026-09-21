@@ -150,8 +150,8 @@ bayer_labels:
   fill: '#85c9de'
 
 legend:
-  background_color: '#515e76'
-  background_alpha: 1.0
+  background:
+    fill: '#515e76'
   labels:
     fill: '#d5e0f5'
   title:

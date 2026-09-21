@@ -116,4 +116,5 @@ planets:
     fill: '#f89d00'
 
 legend:
-  background_color: '#fff'
+  background:
+    fill: '#fff'

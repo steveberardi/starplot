@@ -14,9 +14,9 @@ title:
   fill: hsl(210, 29%, 94%)
 
 legend:
-  background_color: hsl(210, 29%, 20%)
-  background_alpha: 1.0
-  border_color: hsl(210, 29%, 60%)
+  background:
+    fill: hsl(210, 29%, 20%)
+    stroke: hsl(210, 29%, 60%)
   labels:
     fill: hsl(210, 29%, 94%)
   title:

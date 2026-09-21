@@ -155,8 +155,8 @@ sun:
     stroke: hsl(209, 50%, 94%)
 
 legend:
-  background_color: hsl(209, 50%, 26%)
-  background_alpha: 1.0
+  background:
+    fill: hsl(209, 50%, 26%)
   labels:
     fill: hsl(209, 50%, 88%)
   title:

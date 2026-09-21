@@ -130,4 +130,5 @@ gridlines:
   label:
     fill: hsl(136, 0%, 0%)
 legend:
-  background_color: hsl(136, 0%, 64%)
+  background:
+    fill: hsl(136, 0%, 64%)

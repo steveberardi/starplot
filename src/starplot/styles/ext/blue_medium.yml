@@ -137,5 +137,6 @@ dso_unknown: *DSO
 dso_duplicate: *DSO
 
 legend:
-  background_color: '#f1f6ff'
-  border_color: 'hsl(218, 27%, 48%)'
+  background:
+    fill: '#f1f6ff'
+    stroke: 'hsl(218, 27%, 48%)'

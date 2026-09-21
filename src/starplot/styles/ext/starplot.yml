@@ -173,8 +173,8 @@ sun:
     stroke: hsl(205, 72%, 32%)
 
 legend:
-  background_color: hsl(205, 63%, 100%)
-  background_alpha: 1.0
+  background:
+    fill: hsl(205, 63%, 100%)
   labels:
     fill: hsl(205, 65%, 8%)
   title:

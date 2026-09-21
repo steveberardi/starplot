@@ -170,7 +170,8 @@ dso_unknown: *DSO
 dso_duplicate: *DSO
 
 legend:
-  background_color: hsl(48, 50%, 98%)
+  background: 
+    fill: hsl(48, 50%, 98%)
   labels:
     fill: hsl(60, 3%, 24%)
   title:

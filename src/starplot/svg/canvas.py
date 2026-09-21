@@ -888,17 +888,22 @@ class Canvas:
             if i < len(sections) - 1:
                 height += label_padding
 
+        background_attrs = style.background.css(self.scale)
+
+        if isinstance(style.background.fill, GradientStyle):
+            background_attrs["fill"] = self._get_or_create_gradient(
+                style.background.fill,
+                id="legend-background-gradient",
+            )
+
+        background_attrs["rx"] = style.border_radius * scale
+
         background_element = Rectangle(
             x=0,
             y=0,
             height=height,
             width=width,
-            attrs={
-                "fill": style.background_color.as_hex(),
-                "stroke": style.border_color.as_hex(),
-                "stroke-width": style.border_width * scale,
-                "rx": style.border_radius * scale,
-            },
+            attrs=background_attrs,
         )
 
         self.layout.legend = LegendRegion(

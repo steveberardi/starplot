@@ -509,20 +509,15 @@ class LegendStyle(BaseStyle):
     ] = "inside_top_right"
     """Location of the legend, relative to the map area (inside or outside)"""
 
-    background_color: Color = Color("#fff")
-    """Background color of the legend box"""
-
-    background_alpha: float = 1.0
-    """Background's alpha (transparency)"""
+    background: PolygonStyle = PolygonStyle(
+        stroke_width=1.0,
+        stroke="#c5c5c5",
+        fill="#fff",
+    )
+    """Background of the legend"""
 
     border_radius: float = 8.0
-    """Border radius of legend box"""
-
-    border_color: Color = Color("#c5c5c5")
-    """Border color of the legend box"""
-
-    border_width: float = 1
-    """Border's width, in pixels"""
+    """Border radius of legend background element"""
 
     zorder: int = ZOrder.LAYER_5
     """Zorder of the legend"""

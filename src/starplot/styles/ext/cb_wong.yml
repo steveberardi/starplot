@@ -118,4 +118,5 @@ planets:
     fill: hsl(42, 100%, 45%)
 
 legend:
-  background_color: '#fff'
+  background: 
+    fill: '#fff'

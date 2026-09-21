@@ -15,7 +15,8 @@ title:
   fill: '#f1f6ff'
 
 legend:
-  background_color: 'rgb(46, 61, 74)'
+  background: 
+    fill: 'rgb(46, 61, 74)'
   labels:
     fill: 'rgb(244, 233, 203)'
   title:
