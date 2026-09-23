@@ -34,7 +34,7 @@ p = OpticPlot(
     style=style,
 )
 p.stars(
-    where=[_.magnitude < 12],
+    where=[_.magnitude < 11],
     color_fn=color_by_bv_gradient,
 )
 p.export("optic_m45.png")

@@ -318,6 +318,7 @@ class PlotStyle(BaseStyle):
         font_size=40,
         zorder=ZOrder.LAYER_3,
         anchor_point=AnchorPoint.CENTER,
+        stroke_width=0,
     )
     """Styling for constellation labels"""
 

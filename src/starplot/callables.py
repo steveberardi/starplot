@@ -53,10 +53,14 @@ def size_by_magnitude(star: Star) -> float:
     """
     mag = star.magnitude
     size = 0
-    if mag <= 1 or mag <= 2:  # 0..2
-        size = 40
+    if mag <= 0:
+        size = 50
+    elif mag <= 1:  # <= 1
+        size = 42
+    elif mag <= 2:  # 1..2
+        size = 32
     elif mag <= 3:  # 2..3
-        size = 26
+        size = 25
     elif mag <= 4:  # 3..4
         size = 18
     elif mag <= 5:  # 4..5
@@ -67,8 +71,10 @@ def size_by_magnitude(star: Star) -> float:
         size = 6
     elif mag <= 8:  # 7..8
         size = 3
-    else:  # > 8
+    elif mag <= 9:
         size = 2
+    else:
+        size = 1.25
 
     return size
 
