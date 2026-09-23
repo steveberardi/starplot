@@ -1,3 +1,21 @@
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.flex-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.flex-column {
+  flex: 1; 
+  flex-basis: 250px; 
+  padding: 0 20px;
+}
+
+    </style>
 # Models
 
 Starplot has models to represent an observer and some of the objects you can plot, including stars, DSOs, planets, the Sun, and the Moon. These models are used for many things in Starplot:
@@ -11,14 +29,10 @@ Starplot has models to represent an observer and some of the objects you can plo
 
 ---
 
-## All Models
+<div class="flex-container" markdown>
 
-**Observer**
-
-- [Observer](observer.md)
-
-
-**Sky Objects**
+<div class="flex-column" markdown>
+### :material-creation: Sky Objects
 
 - [Star](star.md)
 - [Constellation](constellation.md)
@@ -29,12 +43,27 @@ Starplot has models to represent an observer and some of the objects you can plo
 - [Comet](comet.md)
 - [Satellite](satellite.md)
 - [ObjectList](object-list.md)
+</div>
 
-
-**Optics**
+<div class="flex-column" markdown>
+### :material-telescope: Optics
 
 - [Binoculars](optics.md#starplot.models.Binoculars)
 - [Scope](optics.md#starplot.models.Scope)
 - [Refractor](optics.md#starplot.models.Refractor)
 - [Reflector](optics.md#starplot.models.Reflector)
 - [Camera](optics.md#starplot.models.Camera)
+</div>
+
+<div class="flex-column" markdown>
+### :material-account: Observer
+
+- [Observer](observer.md)
+</div>
+
+
+
+
+
+
+</div>
