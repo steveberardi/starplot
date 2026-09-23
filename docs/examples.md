@@ -158,7 +158,7 @@
 
 <br/>
 
-Check out the [tutorial](tutorial.md) and code reference to learn more about using Starplot!
+Check out the [tutorial](tutorial/index.md) and code reference to learn more about using Starplot!
 {.text-subtitle .text-center}
 
 <br/>

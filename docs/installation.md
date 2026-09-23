@@ -36,7 +36,7 @@ starplot setup
 
 Starplot will do this automatically when you first create a plot, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
 
-[_Check out our tutorial for a quick intro to Starplot :material-arrow-right:_](tutorial.md)
+[_Check out our tutorial for a quick intro to Starplot :material-arrow-right:_](tutorial/index.md)
 
 ---
 
