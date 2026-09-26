@@ -1,6 +1,14 @@
+<style>
+.md-sidebar--secondary .md-sidebar__scrollwrap {
+    border-left: none;
+}
+</style>
+
+# Coming Soon
+
 <table class="table-coming-soon">
     <tr>
-        <td>v0.21</td>
+        <td>v0.22</td>
         <td>
             <h4>⭐ Next Release ⭐</h4>
             <ul>
@@ -11,21 +19,11 @@
         <td></td>
     </tr>
     <tr>
-        <td>v0.22</td>
-        <td>
-            <ul>
-                <li>TBD</li>
-            </ul>
-        </td>
-        <td></td>
-    </tr>
-    <tr>
         <td>v0.23+</td>
         <td>
             <ul>
                 <li>Planet moons</li>
                 <li>Area-based labeling</li>
-                <li>Optimized vector graphics backend</li>
             </ul>
         </td>
         <td></td>
@@ -40,10 +38,12 @@
     </tr>
 </table>
 
-<br/>
+
+<div class="dotted-line"></div>
 
 --8<-- "docs/snippets/_newsletter.html"
 
-<br/>
+<div class="dotted-line"></div>
+
 <br/>
 <br/>

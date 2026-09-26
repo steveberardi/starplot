@@ -1,19 +1,21 @@
 import glob
-from enum import Enum
-
 from collections.abc import Iterable
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
+from typing import TYPE_CHECKING
 
+import pyarrow as pa
 from astropy import units as u
 from astropy_healpix import HEALPix
 from ibis import Table
-import pyarrow as pa
-from shapely import Geometry, Polygon, MultiPolygon
+from shapely import Geometry, MultiPolygon, Polygon
 
 from starplot.config import settings
-from starplot.models.base import SkyObject
 from starplot.data.utils import download
+
+if TYPE_CHECKING:
+    from starplot.models.base import SkyObject
 
 
 def merge_schemas(df, explicit_schema: pa.Schema) -> pa.Schema:
@@ -40,10 +42,10 @@ def merge_schemas(df, explicit_schema: pa.Schema) -> pa.Schema:
 def to_parquet(
     rows: list[dict],
     path: Path,
-    columns: list[str] = None,
+    columns: list[str] | None = None,
     schema: pa.Schema = None,
-    partition_columns: list[str] = None,
-    sorting_columns: list[str] = None,
+    partition_columns: list[str] | None = None,
+    sorting_columns: list[str] | None = None,
     compression: str = "snappy",
     row_group_size: int = 100_000,
     chunk_id: int = 0,
@@ -206,11 +208,11 @@ class Catalog:
 
     def build(
         self,
-        objects: Iterable[SkyObject],
+        objects: Iterable["SkyObject"],
         chunk_size: int = 1_000_000,
-        columns: list[str] = None,
-        partition_columns: list[str] = None,
-        sorting_columns: list[str] = None,
+        columns: list[str] | None = None,
+        partition_columns: list[str] | None = None,
+        sorting_columns: list[str] | None = None,
         compression: str = "snappy",
         row_group_size: int = 200_000,
     ) -> None:

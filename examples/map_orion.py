@@ -2,18 +2,19 @@ from starplot import MapPlot, Miller, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.BLUE_LIGHT,
+    extensions.BLUE_MEDIUM,
     extensions.MAP,
 )
+style.figure.padding = 40
 
 p = MapPlot(
     projection=Miller(),
     ra_min=3.6 * 15,
     ra_max=7.8 * 15,
-    dec_min=-15,
-    dec_max=25,
+    dec_min=-15.2,
+    dec_max=26,
     style=style,
-    resolution=4096,
+    resolution=3600,
     autoscale=True,
 )
 p.gridlines()
@@ -38,4 +39,4 @@ p.constellation_labels()
 p.milky_way()
 p.ecliptic()
 
-p.export("map_orion.png", padding=0.3, transparent=True)
+p.export("map_orion.png")

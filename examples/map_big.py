@@ -52,4 +52,4 @@ p.milky_way()
 p.ecliptic()
 p.celestial_equator()
 
-p.export("map_big.png", padding=0.5)
+p.export("map_big.png")

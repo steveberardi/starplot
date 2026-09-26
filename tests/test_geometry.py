@@ -68,3 +68,36 @@ def test_circle_at_meridian():
         (358.0, -8.0),
     ]
     assert len(points) == 6
+
+
+def test_square_at_antimeridian():
+    polygon = geometry.rectangle(
+        center=(180, 0),
+        height_degrees=4,
+        width_degrees=4,
+    )
+    points = list(zip(*polygon.exterior.coords.xy))
+    assert points == [
+        (177.9992, -1.9996),
+        (177.9992, 1.9996),
+        (182.0008, 1.9996),
+        (182.0008, -1.9996),
+        (177.9992, -1.9996),
+    ]
+
+
+def test_circle_at_antimeridian():
+    polygon = geometry.circle(
+        center=(180, 0),
+        diameter_degrees=16,
+        num_pts=4,
+    )
+    points = list(zip(*polygon.exterior.coords.xy))
+    assert points == [
+        (180.0, -8.0),
+        (172.0, 0.0),
+        (180.0, 8.0),
+        (188.0, 0.0),
+        (180.0, -8.0),
+        (180.0, -8.0),
+    ]

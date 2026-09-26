@@ -1,0 +1,244 @@
+from dataclasses import dataclass, field
+
+from starplot.config import settings
+from starplot.styles import (
+    GradientStyle,
+    HorizontalAlignment,
+    LegendLocation,
+)
+from starplot.svg.elements import SVG, Defs, Element, Group, Rectangle, create_gradient
+
+
+@dataclass
+class Region:
+    elements: list[tuple[int, Element]] = field(default_factory=list)
+    height: int = 0
+    width: int = 0
+
+    @property
+    def is_empty(self):
+        return not bool(self.elements and self.height and self.width)
+
+    def clear(self):
+        self.elements = []
+        self.height = 0
+        self.width = 0
+
+    def render(self, x: float, y: float) -> Group | SVG | None:
+        if self.is_empty:
+            return None
+
+        x, y = round(x, settings.precision), round(y, settings.precision)
+        sorted_by_z = sorted(self.elements, key=lambda e: e[0])
+        elements = [e for _, e in sorted_by_z]
+        return Group(
+            children=elements,
+            attrs={"transform": f"translate({x}, {y})"},
+        )
+
+
+@dataclass
+class AxesRegion(Region):
+    defs: dict[str, Element] = field(default_factory=dict)
+
+    def render(self, x, y) -> SVG:
+        x, y = round(x, settings.precision), round(y, settings.precision)
+        axes_sorted_by_z = sorted(self.elements, key=lambda e: e[0])
+        axes_elements = [e for _, e in axes_sorted_by_z]
+        return SVG(
+            id="axes",
+            x=x,
+            y=y,
+            height=round(self.height, settings.precision),
+            width=round(self.width, settings.precision),
+            children=[
+                Defs(children=self.defs.values()),
+                Group(
+                    id="axes",
+                    attrs={
+                        "clip-path": "url(#axes-clip-path)",
+                    },
+                    children=axes_elements,
+                ),
+            ],
+        )
+
+
+@dataclass
+class LegendRegion(Region):
+    location: str = LegendLocation.OUTSIDE_TOP_RIGHT
+    margin_x: int = 0
+    margin_y: int = 0
+
+
+@dataclass
+class TableRegion(Region):
+    alignment: str = HorizontalAlignment.CENTER
+
+
+@dataclass
+class Layout:
+    axes: AxesRegion = field(default_factory=AxesRegion)
+    axes_border: Region = field(default_factory=Region)
+    axes_frame: Region = field(default_factory=Region)
+    title: Region = field(default_factory=Region)
+    legend: LegendRegion = field(default_factory=LegendRegion)
+    table: TableRegion = field(default_factory=TableRegion)
+
+    def render(self, style, text_as_path: bool, scale: float):
+        """
+        Renders each region
+
+        This function is responsible for determining the transform() for each region
+        """
+        padding = style.figure.padding * scale
+        legend_margin_x = self.legend.margin_x * scale
+        legend_margin_y = self.legend.margin_y * scale
+
+        outer_height = max(
+            self.axes.height, self.axes_border.height, self.axes_frame.height
+        )
+        outer_width = max(
+            self.axes.width, self.axes_border.width, self.axes_frame.width
+        )
+        height = padding * 2 + self.title.height + outer_height + self.table.height
+        width = padding * 2 + outer_width
+
+        if "outside" in str(self.legend.location):
+            width += self.legend.width + legend_margin_x
+
+        height = round(height, settings.precision)
+        width = round(width, settings.precision)
+
+        axes_x = padding
+        axes_y = padding
+
+        if self.legend.location in [
+            LegendLocation.OUTSIDE_TOP_LEFT,
+            LegendLocation.OUTSIDE_BOTTOM_LEFT,
+        ]:
+            axes_x += self.legend.width + legend_margin_x
+
+        if not self.title.is_empty:
+            axes_y += self.title.height
+
+        # axes, axes_border, and axes_frame all draw their elements using the
+        # same underlying coordinate space (Canvas._to_display()'s [0, width] x
+        # [0, height], which is what clip_path_display and axes' own markers
+        # /polygons/etc are built from). axes_border/axes_frame's geometry is
+        # just that same space buffered outward, so it already extends past
+        # axes' own [0, width] box on its own -- all three render at the exact
+        # same (axes_x, axes_y) translate; nothing here should ever be shifted
+        # relative to the others.
+        #
+        # That outward extent goes negative in local coordinates (e.g. a ring
+        # buffered 40px out starts at local x=-40), so axes_x/axes_y need to
+        # be pushed forward by that amount -- otherwise the ring's outer edge
+        # renders at a negative absolute position and gets clipped by the
+        # figure's own bounds instead of leaving `padding` before it.
+        outer_buffer_x = (outer_width - self.axes.width) / 2
+        outer_buffer_y = (outer_height - self.axes.height) / 2
+        outer_x = axes_x
+        outer_y = axes_y
+        axes_x += outer_buffer_x
+        axes_y += outer_buffer_y
+
+        elements = []
+        if not self.title.is_empty:
+            elements.append(self.title.render(x=padding, y=padding))
+
+        if not self.axes_border.is_empty:
+            elements.append(self.axes_border.render(x=axes_x, y=axes_y))
+
+        if not self.axes_frame.is_empty:
+            elements.append(self.axes_frame.render(x=axes_x, y=axes_y))
+
+        if not self.table.is_empty:
+            table_y = outer_y + outer_height
+            if self.table.alignment == HorizontalAlignment.RIGHT:
+                table_x = outer_x + outer_width - self.table.width
+            elif self.table.alignment == HorizontalAlignment.CENTER:
+                table_x = outer_x + (outer_width - self.table.width) / 2
+            else:
+                table_x = outer_x
+            elements.append(self.table.render(x=table_x, y=table_y))
+
+        if not self.legend.is_empty:
+            legend_x = 0
+            legend_y = 0
+            loc = self.legend.location
+            if loc == LegendLocation.INSIDE_TOP_LEFT:
+                legend_x = axes_x + legend_margin_x
+                legend_y = axes_y + legend_margin_y
+            elif loc == LegendLocation.INSIDE_TOP_RIGHT:
+                legend_x = (
+                    axes_x + self.axes.width - self.legend.width - legend_margin_x
+                )
+                legend_y = axes_y + legend_margin_y
+            elif loc == LegendLocation.INSIDE_BOTTOM_LEFT:
+                legend_x = axes_x + legend_margin_x
+                legend_y = (
+                    axes_y + self.axes.height - self.legend.height - legend_margin_y
+                )
+            elif loc == LegendLocation.INSIDE_BOTTOM_RIGHT:
+                legend_x = (
+                    axes_x + self.axes.width - self.legend.width - legend_margin_x
+                )
+                legend_y = (
+                    axes_y + self.axes.height - self.legend.height - legend_margin_y
+                )
+            elif loc == LegendLocation.OUTSIDE_TOP_LEFT:
+                legend_x = outer_x - self.legend.width - legend_margin_x
+                legend_y = outer_y + legend_margin_y
+            elif loc == LegendLocation.OUTSIDE_BOTTOM_LEFT:
+                legend_x = outer_x - self.legend.width - legend_margin_x
+                legend_y = (
+                    outer_y + self.axes.height - self.legend.height - legend_margin_y
+                )
+            elif loc == LegendLocation.OUTSIDE_BOTTOM_RIGHT:
+                legend_x = outer_x + outer_width + legend_margin_x
+                legend_y = (
+                    axes_y + self.axes.height - self.legend.height - legend_margin_y
+                )
+            elif loc == LegendLocation.OUTSIDE_TOP_RIGHT:
+                legend_x = outer_x + outer_width + legend_margin_x
+                legend_y = outer_y + legend_margin_y
+            elements.append(self.legend.render(x=legend_x, y=legend_y))
+
+        figure_elements = []
+
+        if style.figure.background is not None:
+            figure_attrs = style.figure.background.css(scale)
+
+            if isinstance(style.figure.background.fill, GradientStyle):
+                gradient = create_gradient(
+                    stops=style.figure.background.fill.stops,
+                    type=style.figure.background.fill.type,
+                    id="figure-background-gradient",
+                )
+                figure_attrs["fill"] = gradient.url
+                figure_elements.append(Defs(children=[gradient]))
+
+            figure_elements.append(
+                Rectangle(
+                    x=0,
+                    y=0,
+                    height=height,
+                    width=width,
+                    attrs=figure_attrs,
+                )
+            )
+
+        figure_elements.extend(
+            [
+                self.axes.render(x=axes_x, y=axes_y),
+                *elements,
+            ]
+        )
+        figure_svg = SVG(
+            id="figure",
+            height=height,
+            width=width,
+            children=figure_elements,
+        )
+        return figure_svg.render(text_as_path=text_as_path)

@@ -15,11 +15,9 @@ observer = Observer(
 p = ZenithPlot(
     observer=observer,
     style=PlotStyle().extend(
-        extensions.BLUE_GOLD,
-        extensions.GRADIENT_PRE_DAWN,
+        extensions.BLUE_NIGHT,
+        extensions.FIGURE_TRANSPARENT,
     ),
-    resolution=3600,
-    autoscale=True,
 )
 p.horizon()
 p.constellations()
@@ -39,6 +37,7 @@ p.open_clusters(
 p.ecliptic()
 p.celestial_equator()
 p.milky_way()
+p.gridlines()
 
 p.marker(
     ra=12.36 * 15,
@@ -47,27 +46,26 @@ p.marker(
         "marker": {
             "size": 60,
             "symbol": "circle",
-            "fill": "none",
-            "color": None,
-            "edge_color": "hsl(44, 70%, 73%)",
-            "edge_width": 2,
-            "line_style": [1, [2, 3]],
-            "alpha": 1,
+            "fill": None,
+            "stroke": "hsl(44, 70%, 73%)",
+            "stroke_width": 2,
+            "dash_array": (2, 3),
+            "opacity": 1,
             "zorder": 100,
         },
         "label": {
             "zorder": 200,
             "font_size": 22,
             "font_weight": 700,
-            "font_color": "hsl(44, 70%, 64%)",
-            "font_alpha": 1,
+            "fill": "hsl(44, 70%, 64%)",
+            "opacity": 1,
             "offset_x": "auto",
             "offset_y": "auto",
-            "anchor_point": "top right",
+            "anchor_point": "top_right",
         },
     },
     label="Mel 111",
 )
 p.constellation_labels()
 
-p.export("star_chart_detail.png", transparent=True, padding=0.1)
+p.export("star_chart_detail.png")

@@ -3,7 +3,7 @@ from starplot.styles import PlotStyle, extensions
 
 
 style = PlotStyle().extend(
-    extensions.BLUE_MEDIUM,
+    extensions.STARPLOT,
     extensions.MAP,
 )
 p = MapPlot(
@@ -14,7 +14,6 @@ p = MapPlot(
     dec_max=68,
     style=style,
     resolution=3600,
-    scale=1.2,
 )
 p.constellations(where=[_.iau_id == "cas"])  # only plot the lines of Cassiopeia
 
@@ -49,4 +48,4 @@ p.gridlines(
     dec_locations=[d for d in range(0, 90, 5)],
 )
 
-p.export("map_cas.png", padding=0.5)
+p.export("map_cas.png")

@@ -1,12 +1,12 @@
-from typing import Iterator
+from collections.abc import Iterator
 from dataclasses import dataclass
 
 from ibis import _
-from shapely import Polygon, MultiPolygon, LineString
+from shapely import LineString, MultiPolygon, Polygon
 
-from starplot.models.base import SkyObject, CatalogObject
-from starplot.data.catalogs import Catalog, CONSTELLATIONS_IAU
+from starplot.data.catalogs import CONSTELLATIONS_IAU, Catalog
 from starplot.data.constellations import load
+from starplot.models.base import CatalogObject, SkyObject
 
 
 @dataclass(slots=True, kw_only=True)
@@ -67,7 +67,7 @@ class Constellation(CatalogObject, SkyObject):
 
     @classmethod
     def get(
-        cls, catalog: Catalog = CONSTELLATIONS_IAU, sql: str = None, **kwargs
+        cls, catalog: Catalog = CONSTELLATIONS_IAU, sql: str | None = None, **kwargs
     ) -> "Constellation":
         """
         Get a Constellation, by matching its attributes.
@@ -105,8 +105,8 @@ class Constellation(CatalogObject, SkyObject):
     def find(
         cls,
         catalog: Catalog = CONSTELLATIONS_IAU,
-        where: list = None,
-        sql: str = None,
+        where: list | None = None,
+        sql: str | None = None,
     ) -> list["Constellation"]:
         """
         Find Constellations

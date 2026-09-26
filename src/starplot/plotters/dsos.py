@@ -1,31 +1,24 @@
-from typing import Callable, Mapping
+from collections.abc import Callable, Mapping
 
-from ibis import _
 import numpy as np
+from ibis import _
 
+from starplot.data.catalogs import OPEN_NGC, Catalog
 from starplot.data.dsos import load
-from starplot.data.catalogs import Catalog, OPEN_NGC
 from starplot.data.translations import translate
 from starplot.models.dso import (
     DSO,
+    DSO_LEGEND_LABELS,
+    ONGC_TYPE_MAP,
     DsoType,
     from_tuple,
-    ONGC_TYPE_MAP,
-    DSO_LEGEND_LABELS,
 )
-from starplot.styles import MarkerSymbolEnum
-from starplot.profile import profile
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
+from starplot.utils import normalize_where
 
 
 class DsoPlotterMixin:
-    def _plot_dso_polygon(self, polygon, style):
-        coords = list(zip(*polygon.exterior.coords.xy))
-        # close the polygon - for some reason matplotlib needs the coord twice
-        coords.append(coords[0])
-        coords.append(coords[0])
-        self._polygon(coords, style.marker.to_polygon_style(), closed=False)
-
     def messier(self, **kwargs):
         """
         Plots Messier objects
@@ -146,44 +139,52 @@ class DsoPlotterMixin:
     @profile
     def dsos(
         self,
-        where: list = None,
-        where_labels: list = None,
-        where_true_size: list = None,
+        where: list | bool | None = None,
+        where_labels: list | bool | None = None,
+        where_true_size: list | bool | None = None,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
-        alpha_fn: Callable[[DSO], float] = None,
+        opacity_fn: Callable[[DSO], float] | None = None,
         label_fn: Callable[[DSO], str] = DSO.get_label,
-        sql: str = None,
-        sql_labels: str = None,
+        sql: str | None = None,
+        sql_labels: str | None = None,
         catalog: Catalog = OPEN_NGC,
         collision_handler: CollisionHandler = None,
+        gids_markers: Mapping[DsoType, str] | None = None,
+        gids_labels: Mapping[DsoType, str] | None = None,
     ):
         """
         Plots Deep Sky Objects (DSOs).
 
         Args:
-            where: A list of expressions that determine which DSOs to plot. See [Selecting Objects](reference-selecting-objects.md) for details.
-            where_labels: A list of expressions that determine which DSOs are labeled on the plot. By default all DSOs are labeled. See [Selecting Objects](reference-selecting-objects.md) for details.
-            where_true_size: A list of expressions that determine which DSOs are plotted as their true apparent size in the sky. By default all DSOs are plotted as their true size.
+            where: A list of expressions that determine which DSOs to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which DSOs are labeled on the plot. By default all DSOs are labeled. See [Selecting Objects](/reference-selecting-objects/) for details. Can also be a boolean: if `False` then no labels will be plotted.
+            where_true_size: A list of expressions that determine which DSOs are plotted as their true apparent size in the sky. By default all DSOs are plotted as their true size. Can also be a boolean: if `False` then no DSOs will be plotted as their true size.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
-            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each DSO. If `None`, then the marker style's alpha will be used.
+            opacity_fn: Callable for calculating the opacity value of each DSO. If `None`, then the marker style's opacity will be used.
             label_fn: Callable for determining the label of each DSO.
             sql: SQL query for selecting DSOs (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             sql_labels: SQL query for selecting DSOs that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
             catalog: The catalog of DSOs to use -- see [catalogs overview](data/overview.md) for details
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            gids_markers: A dictionary that maps a `DsoType` to the group id (gid) used for that type's markers in the exported SVG. If a type is not in the dict, then the default gid (`dso-{type}-markers`) is used.
+            gids_labels: A dictionary that maps a `DsoType` to the group id (gid) used for that type's labels in the exported SVG. If a type is not in the dict, then the default gid (`dso-{type}-labels`) is used.
         """
 
-        # TODO: add kwarg styles
+        # TODO: add kwarg styles (same structure as legend_labels)
 
-        where = where or []
-        where_labels = where_labels or []
-        where_true_size = where_true_size or []
+        where = normalize_where(where)
+        where_labels = normalize_where(where_labels)
+        where_true_size = normalize_where(where_true_size)
+
         handler = collision_handler or self.point_label_handler
 
         if legend_labels is None:
             legend_labels = {}
         else:
             legend_labels = {**DSO_LEGEND_LABELS, **legend_labels}
+
+        gids_markers = gids_markers or {}
+        gids_labels = gids_labels or {}
 
         extent = self._extent_mask()
         dso_results = load(extent=extent, filters=where, sql=sql, catalog=catalog)
@@ -206,12 +207,15 @@ class DsoPlotterMixin:
 
         results_df = dso_results.to_pandas().replace({np.nan: None})
 
+        # Group DSOs by type (preserving first-seen order) so markers/polygons and
+        # labels can each be plotted into one <g> per type, instead of interleaved.
+        dsos_by_type: dict = {}
+
         for d in results_df.itertuples():
             ra = d.ra
             dec = d.dec
             dso_type = ONGC_TYPE_MAP[d.type]
             style = self.style.get_dso_style(dso_type)
-            maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
             legend_label = legend_labels.get(dso_type)
             if legend_label:
                 legend_label = translate(legend_label, self.language) or legend_label
@@ -222,73 +226,122 @@ class DsoPlotterMixin:
             if style is None:
                 continue
 
-            _alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
-            style.marker.alpha = _alpha_fn(_dso)
+            if opacity_fn:
+                style.marker.opacity = opacity_fn(_dso)
 
             if _dso.pk not in label_pks:
                 label = None
 
-            _true_size = _dso.pk in true_size_pks
-
-            if _true_size and d.size is not None:
-                if "Polygon" == str(d.geometry.geom_type):
-                    self._plot_dso_polygon(d.geometry, style)
-
-                elif "MultiPolygon" == str(d.geometry.geom_type):
-                    for polygon in d.geometry.geoms:
-                        self._plot_dso_polygon(polygon, style)
-                elif maj_ax:
-                    # if object has a major axis then plot its actual extent
-                    maj_ax_degrees = (maj_ax / 60) / 2
-
-                    if min_ax:
-                        min_ax_degrees = (min_ax / 60) / 2
-                    else:
-                        min_ax_degrees = maj_ax_degrees
-
-                    poly_style = style.marker.to_polygon_style()
-
-                    if style.marker.symbol == MarkerSymbolEnum.SQUARE:
-                        self.rectangle(
-                            (ra, dec),
-                            min_ax_degrees * 2,
-                            maj_ax_degrees * 2,
-                            style=poly_style,
-                            angle=angle or 0,
-                        )
-                    else:
-                        self.ellipse(
-                            (ra, dec),
-                            min_ax_degrees * 2,
-                            maj_ax_degrees * 2,
-                            style=poly_style,
-                            angle=angle or 0,
-                        )
-
-                if label and self.in_bounds(ra, dec):
-                    self.text(
-                        label,
-                        ra,
-                        dec,
-                        style.label,
-                        collision_handler=handler,
-                        gid=f"dso-{d.type}-label",
-                    )
-
-                self._add_legend_handle_marker(legend_label, style.marker)
-
-            else:
-                # if no major axis, then just plot as a marker
-                self.marker(
-                    ra=ra,
-                    dec=dec,
-                    style=style,
-                    label=label,
-                    legend_label=legend_label,
-                    collision_handler=handler,
-                    # skip_bounds_check=True,
-                    gid_marker=f"dso-{d.type}-marker",
-                    gid_label=f"dso-{d.type}-label",
-                )
-
+            dsos_by_type.setdefault(dso_type, []).append(
+                {
+                    "d": d,
+                    "ra": ra,
+                    "dec": dec,
+                    "style": style,
+                    "legend_label": legend_label,
+                    "label": label,
+                    "true_size": _dso.pk in true_size_pks,
+                }
+            )
             self._objects.dsos.append(_dso)
+
+        for dso_type, items in dsos_by_type.items():
+            with self.canvas.group(
+                gid=gids_markers.get(dso_type, f"dso-{dso_type.value}-markers")
+            ):
+                for item in items:
+                    d = item["d"]
+                    ra, dec, style = item["ra"], item["dec"], item["style"]
+                    maj_ax, min_ax, angle = d.maj_ax, d.min_ax, d.angle
+
+                    if item["true_size"] and d.size is not None:
+                        if "Polygon" == str(d.geometry.geom_type):
+                            self.polygon(
+                                geometry=d.geometry,
+                                style=style.marker.to_polygon_style(),
+                            )
+
+                        elif "MultiPolygon" == str(d.geometry.geom_type):
+                            for polygon in d.geometry.geoms:
+                                self.polygon(
+                                    geometry=polygon,
+                                    style=style.marker.to_polygon_style(),
+                                )
+                        elif maj_ax:
+                            # if object has a major axis then plot its actual extent
+                            maj_ax_degrees = (maj_ax / 60) / 2
+
+                            if min_ax:
+                                min_ax_degrees = (min_ax / 60) / 2
+                            else:
+                                min_ax_degrees = maj_ax_degrees
+
+                            poly_style = style.marker.to_polygon_style()
+
+                            if style.marker.symbol == "square":
+                                self.rectangle(
+                                    (ra, dec),
+                                    min_ax_degrees * 2,
+                                    maj_ax_degrees * 2,
+                                    style=poly_style,
+                                    angle=angle or 0,
+                                )
+                            else:
+                                self.ellipse(
+                                    (ra, dec),
+                                    min_ax_degrees * 2,
+                                    maj_ax_degrees * 2,
+                                    style=poly_style,
+                                    angle=angle or 0,
+                                )
+
+                        self._add_legend_handle_marker(
+                            item["legend_label"], style.marker
+                        )
+
+                    else:
+                        # if no major axis, then just plot as a marker
+                        self.marker(
+                            ra=ra,
+                            dec=dec,
+                            style=style,
+                            label=None,
+                            legend_label=item["legend_label"],
+                            collision_handler=handler,
+                        )
+
+            with self.canvas.group(
+                gid=gids_labels.get(dso_type, f"dso-{dso_type.value}-labels")
+            ):
+                for item in items:
+                    label = item["label"]
+                    if not label:
+                        continue
+
+                    d = item["d"]
+                    ra, dec, style = item["ra"], item["dec"], item["style"]
+
+                    if item["true_size"] and d.size is not None:
+                        if self.in_bounds(ra, dec):
+                            self.text(
+                                label,
+                                ra,
+                                dec,
+                                style.label,
+                                collision_handler=handler,
+                                gid=f"dso-{d.type}-label",
+                            )
+                    elif self.in_bounds(ra, dec):
+                        # matches the bounds check `marker()` does before plotting
+                        # its label, since this replicates its label-drawing path
+                        self.text(
+                            label,
+                            ra,
+                            dec,
+                            style=self._offset_from_marker(
+                                style=style.label,
+                                text=label,
+                                marker_size=style.marker.size,
+                            ),
+                            collision_handler=handler,
+                        )

@@ -1,7 +1,3 @@
-
-
-
-
 <style>
 
     .md-content {
@@ -10,6 +6,8 @@
 </style>
 <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+
+# Deep Sky Objects
 
 The table below shows all the deep sky objects (DSOs) available in OpenNGC's database.
 
@@ -30,8 +28,8 @@ The table below shows all the deep sky objects (DSOs) available in OpenNGC's dat
             },
             'Common Names',
             'Type', 
-            'RA',
-            'DEC',
+            // 'RA',
+            // 'DEC',
             'Magnitude',
             'Size (deg²)',
             'Geometry',
@@ -42,8 +40,8 @@ The table below shows all the deep sky objects (DSOs) available in OpenNGC's dat
                 dso.name,
                 dso.common_names,
                 dso.type,
-                dso.ra,
-                dso.dec,
+                // dso.ra,
+                // dso.dec,
                 dso.magnitude,
                 dso.size,
                 dso.geom_type,

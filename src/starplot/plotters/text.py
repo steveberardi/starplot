@@ -5,27 +5,21 @@ import numpy as np
 import rtree
 from shapely import Point, box
 from shapely.errors import GEOSException
-from matplotlib.text import Annotation
 
-from starplot.config import settings as StarplotSettings, SvgTextType
-from starplot.styles import AnchorPointEnum, LabelStyle
-from starplot.styles.helpers import use_style
+from starplot.config import settings
 from starplot.geometry import (
     random_point_in_polygon_at_distance,
     union_at_zero,
 )
-
-"""
-Long term strategy:
-
-- plot all markers FIRST (but keep track of labels)
-- on export, find best positions for labels
-- introduce some "priority" for labels (e.g. order by)
-
-"""
+from starplot.styles import AnchorPoint, LabelStyle
+from starplot.styles.helpers import use_style
+from starplot.svg.canvas import CoordinateSystem
+from starplot.svg.fonts import get_text_hw
 
 BBox = tuple[int, int, int, int]
 """Tuple of integers representing bounding box (xmin, ymin, xmax, ymax) -- in display coordinates."""
+
+AUTO_OFFSET_PADDING = 5
 
 
 def round_away_from_zero(x):
@@ -66,7 +60,7 @@ class CollisionHandler:
     seed: int = None
     """Random seed for randomly generating points"""
 
-    anchor_fallbacks: list[AnchorPointEnum] = None
+    anchor_fallbacks: list[str] = None
     """
     If a point-based label's preferred anchor point results in a collision, then these fallbacks will be tried in 
     sequence until a collision-free position is found.
@@ -74,28 +68,28 @@ class CollisionHandler:
     Default:
     ```python
     [
-        AnchorPointEnum.BOTTOM_RIGHT,
-        AnchorPointEnum.TOP_LEFT,
-        AnchorPointEnum.TOP_RIGHT,
-        AnchorPointEnum.BOTTOM_LEFT,
-        AnchorPointEnum.BOTTOM_CENTER,
-        AnchorPointEnum.TOP_CENTER,
-        AnchorPointEnum.RIGHT_CENTER,
-        AnchorPointEnum.LEFT_CENTER,
+        AnchorPoint.BOTTOM_RIGHT,
+        AnchorPoint.TOP_LEFT,
+        AnchorPoint.TOP_RIGHT,
+        AnchorPoint.BOTTOM_LEFT,
+        AnchorPoint.BOTTOM_CENTER,
+        AnchorPoint.TOP_CENTER,
+        AnchorPoint.RIGHT_CENTER,
+        AnchorPoint.LEFT_CENTER,
     ]
     ```
     """
 
     def __post_init__(self):
         self.anchor_fallbacks = self.anchor_fallbacks or [
-            AnchorPointEnum.BOTTOM_RIGHT,
-            AnchorPointEnum.TOP_LEFT,
-            AnchorPointEnum.TOP_RIGHT,
-            AnchorPointEnum.BOTTOM_LEFT,
-            AnchorPointEnum.BOTTOM_CENTER,
-            AnchorPointEnum.TOP_CENTER,
-            AnchorPointEnum.RIGHT_CENTER,
-            AnchorPointEnum.LEFT_CENTER,
+            AnchorPoint.BOTTOM_RIGHT,
+            AnchorPoint.TOP_LEFT,
+            AnchorPoint.TOP_RIGHT,
+            AnchorPoint.BOTTOM_LEFT,
+            AnchorPoint.BOTTOM_CENTER,
+            AnchorPoint.TOP_CENTER,
+            AnchorPoint.RIGHT_CENTER,
+            AnchorPoint.LEFT_CENTER,
         ]
 
 
@@ -143,76 +137,66 @@ def next_best_position(
     return possible[0][1]
 
 
-def find_smooth_sections(
-    coordinates, min_length=2, curvature_threshold=0.1
-) -> list[tuple[int, int, float]]:
+def rotate_bbox(bbox, angle, cx=None, cy=None):
     """
-    Find smooth sections of a (i.e. where curvature is low).
-
-    Args:
-        coordinates: line coordinates
-        min_length: minimum number of points for a smooth section
-        curvature_threshold: maximum curvature to consider "smooth"
-
-    Returns:
-        List of (start_idx, end_idx, smoothness_score) tuples
+    Rotate a bounding box by angle_deg degrees around (cx, cy).
+    If cx/cy not provided, rotates around the bbox center.
+    Returns the axis-aligned bounding box of the rotated corners.
     """
-    x, y = zip(*coordinates)
+    if angle == 0:
+        return bbox
 
-    if len(x) < 3:
-        return [(0, len(x) - 1, 1.0)]
+    xmin, ymin, xmax, ymax = bbox
 
-    # First derivative
-    dx = np.diff(x)
-    dy = np.diff(y)
+    if cx is None:
+        cx = (xmin + xmax) / 2
+    if cy is None:
+        cy = (ymin + ymax) / 2
 
-    # Second derivative (change in slope)
-    ddx = np.diff(dx)
-    ddy = np.diff(dy)
+    corners = np.array(
+        [
+            [xmin, ymin],
+            [xmax, ymin],
+            [xmax, ymax],
+            [xmin, ymax],
+        ]
+    )
 
-    # Curvature approximation
-    curvature = np.abs(ddx) + np.abs(ddy)
+    angle_rad = np.radians(angle)
+    cos_a = np.cos(angle_rad)
+    sin_a = np.sin(angle_rad)
 
-    # Normalize by typical scale
-    curvature = curvature / (np.median(curvature) + 1e-10)
+    # Translate to origin, rotate, translate back
+    corners -= [cx, cy]
+    rotated = corners @ np.array([[cos_a, sin_a], [-sin_a, cos_a]])
+    rotated += [cx, cy]
 
-    # Find smooth regions
-    is_smooth = curvature < curvature_threshold
+    return (
+        rotated[:, 0].min(),
+        rotated[:, 1].min(),
+        rotated[:, 0].max(),
+        rotated[:, 1].max(),
+    )
 
-    # Find contiguous smooth sections with scores
-    smooth_sections = []
-    start = None
 
-    for i in range(len(is_smooth)):
-        if is_smooth[i] and start is None:
-            start = i
-        elif not is_smooth[i] and start is not None:
-            if i - start >= min_length:
-                # Calculate smoothness score (inverse of average curvature)
-                section_curvature = curvature[start:i]
-                smoothness_score = 1.0 / (np.mean(section_curvature) + 1e-10)
-                smooth_sections.append((start, i, smoothness_score))
-            start = None
-
-    # Check last section
-    if start is not None and len(is_smooth) - start >= min_length:
-        section_curvature = curvature[start:]
-        smoothness_score = 1.0 / (np.mean(section_curvature) + 1e-10)
-        smooth_sections.append((start, len(is_smooth), smoothness_score))
-
-    # Sort by smoothness score (descending)
-    smooth_sections.sort(key=lambda s: s[2], reverse=True)
-
-    return smooth_sections if smooth_sections else [(0, len(x) - 1, 1.0)]
+def create_bbox(x, y, height, width) -> BBox:
+    return [
+        x,
+        y - height,
+        x + width,
+        y,
+    ]
 
 
 class TextPlotterMixin:
     def __init__(self, *args, **kwargs):
-        self.labels = []
+        super().__init__()
+
         self._labels_rtree = rtree.index.Index()
         self._constellations_rtree = rtree.index.Index()
         self._stars_rtree = rtree.index.Index()
         self._markers_rtree = rtree.index.Index()
+        self._ground_rtree = rtree.index.Index()
 
     def _is_label_collision(self, bbox: BBox) -> bool:
         ix = list(self._labels_rtree.intersection(bbox))
@@ -230,33 +214,14 @@ class TextPlotterMixin:
         ix = list(self._markers_rtree.intersection(bbox))
         return len(ix) > 0
 
-    def _is_clipped(self, points) -> bool:
-        p = self._clip_path_polygon
-
-        for x, y in points:
-            if not p.contains(Point(x, y)):
-                return True
-
-        return False
+    def _is_ground_collision(self, bbox: BBox) -> bool:
+        ix = list(self._ground_rtree.intersection(bbox))
+        return len(ix) > 0
 
     def _is_clipped_box(self, bbox: BBox) -> bool:
-        return not self._clip_path_polygon.contains(box(*bbox))
+        return not self.canvas.clip_path_display.contains(box(*bbox))
 
-    def _get_label_bbox(self, label: Annotation) -> BBox:
-        # self.fig.draw_without_rendering() # maybe dont need this line after all?
-        extent = label.get_window_extent(renderer=self.fig.canvas.get_renderer())
-        result = (
-            extent.xmin,
-            extent.ymin,
-            extent.xmax,
-            extent.ymax,
-        )
-        if any([np.isnan(p) for p in result]):
-            return None
-
-        return tuple(int(p) for p in result)
-
-    def _add_label_to_rtree(self, label: Annotation, bbox: BBox = None) -> None:
+    def _add_label_to_rtree(self, label: str, bbox: BBox) -> None:
         """
         Adds a label to the R-Tree, which is a spatial index for all plotted labels and used for collision detection.
 
@@ -264,14 +229,12 @@ class TextPlotterMixin:
 
         Args:
             label: Annotation instance returned from matplotlib's annotate() function
-            bbox: Tuple of integers representing bounding box (xmin, ymin, xmax, ymax) -- in display coordinates. If None, then bounding box will be obtained from label instance.
+            bbox: Tuple of integers representing bounding box (xmin, ymin, xmax, ymax) -- in display coordinates.
         """
-        bbox = bbox or self._get_label_bbox(label)
 
         if self.debug_text:
             self._debug_bbox(bbox, color="white", width=1.5)
 
-        self.labels.append(label)
         self._labels_rtree.insert(0, bbox)
 
     def _is_open_space(
@@ -297,7 +260,7 @@ class TextPlotterMixin:
             y1 + padding,
         )
 
-        if any([np.isnan(c) for c in (x0, y0, x1, y1)]):
+        if any(np.isnan(c) for c in (x0, y0, x1, y1)):
             return False
 
         if not allow_clipped and self._is_clipped_box(bbox_padded):
@@ -317,113 +280,165 @@ class TextPlotterMixin:
         ):
             return False
 
+        if self._is_ground_collision(bbox_padded):
+            return False
+
         return True
 
-    def _text(self, x, y, text, **kwargs) -> Annotation:
-        """Plots text at (x, y)"""
-        label = self.ax.annotate(
-            text,
-            (x, y),
-            **kwargs,
-            **self._plot_kwargs(),
+    def _offset_from_marker(
+        self, style: LabelStyle, text: str, marker_size: float
+    ) -> LabelStyle:
+        if style.offset_x != "auto" and style.offset_y != "auto":
+            new_style = style.model_copy()
+            new_style.offset_x = style.offset_x * self.scale
+            new_style.offset_y = style.offset_y * self.scale
+            return new_style
+
+        new_style = style.model_copy()
+        scaled_font_size = style.font_size * self.scale
+
+        height, _, _ = get_text_hw(
+            text=text,
+            font_name=style.resolved_font_name(self.style.base),
+            font_size=scaled_font_size,
+            font_weight=style.font_weight,
+            italic=style.font_style == "italic",
         )
-        if kwargs.get("clip_on"):
-            label.set_clip_on(True)
-            label.set_clip_path(self._background_clip_path)
-        return label
+        size = marker_size * self.scale
+        offset_x = style.offset_x
+        offset_y = style.offset_y
+
+        if offset_x == "auto":
+            offset_x = round(
+                size / 2 + AUTO_OFFSET_PADDING * self.scale, settings.precision
+            )
+        else:
+            offset_x = offset_x * self.scale
+
+        if offset_y == "auto":
+            # size/2 - height/2 alone centers the label vertically on the
+            # marker's top/bottom edge, with no extra clearance -- for a
+            # marker roughly as large as the label text (e.g. a bright
+            # star), that nets close to zero gap, which can be too tight
+            # when something else (a constellation line, another label)
+            # passes close by. The +6 buffer (matching offset_x's gap)
+            # guarantees a bit of breathing room beyond the marker edge.
+            offset_y = round(
+                size / 2 - height / 2 + AUTO_OFFSET_PADDING * self.scale,
+                settings.precision,
+            )
+        else:
+            offset_y = offset_y * self.scale
+
+        new_style.offset_x = offset_x
+        new_style.offset_y = offset_y
+
+        return new_style
 
     def _text_point(
         self,
         ra: float,
         dec: float,
         text: str,
+        style: LabelStyle,
         collision_handler: CollisionHandler,
-        **kwargs,
-    ) -> Annotation | None:
+    ) -> None:
         if not text:
-            return None
+            return
 
         x, y = self._prepare_coords(ra, dec)
 
-        if StarplotSettings.svg_text_type == SvgTextType.PATH:
-            kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
-
-        original_va = kwargs.pop("va", None)
-        original_ha = kwargs.pop("ha", None)
-        original_offset_x, original_offset_y = kwargs.pop("xytext", (0, 0))
-
-        attempts = 0
         height = 0
         width = 0
 
-        data_xy = self._proj.transform_point(x, y, self._crs)
-        display_x, display_y = self.ax.transData.transform(data_xy)
+        scaled_font_size = style.font_size * self.scale
+        display_x, display_y = self.canvas._to_display(x, y)
 
-        anchors = [(original_va, original_ha)]
-        for a in collision_handler.anchor_fallbacks:
-            d = AnchorPointEnum.from_str(a).as_matplot()
-            anchors.append((d["va"], d["ha"]))
+        # canvas.text() applies self.scale again via style.css(scale) when it
+        # renders (style.font_size here was already scaled once by text()), so
+        # the true rendered size is font_size * scale, not just font_size
+        height, width, _ = get_text_hw(
+            text=text,
+            font_name=style.resolved_font_name(self.style.base),
+            font_size=scaled_font_size,
+            font_weight=style.font_weight,
+            italic=style.font_style == "italic",
+        )
 
-        for va, ha in anchors:
-            attempts += 1
-            offset_x, offset_y = original_offset_x, original_offset_y
-            if original_ha != ha and ha != "center":
-                offset_x *= -1
+        anchors = [
+            style.anchor_point,
+            *collision_handler.anchor_fallbacks,
+        ]
 
-            if original_va != va:
-                offset_y *= -1
+        for attempts, anchor in enumerate(anchors, start=1):
+            offset_x, offset_y = style.offset_x, style.offset_y
 
-            if ha == "center":
-                offset_x = 0
-                # offset_y *= 2
+            # CENTER = "center"
+            # LEFT_CENTER = "left_center"
+            # RIGHT_CENTER = "right_center"
+            # TOP_LEFT = "top_left"
+            # TOP_RIGHT = "top_right"
+            # TOP_CENTER = "top_center"
+            # BOTTOM_LEFT = "bottom_left"
+            # BOTTOM_RIGHT = "bottom_right"
+            # BOTTOM_CENTER = "bottom_center"
+            attrs = None
 
-            # if va == "center":
-            #     offset_x *= 2
+            # TODO : this anchor stuff should be backend-agnostic, move to canvas
+
+            if anchor in [
+                AnchorPoint.BOTTOM_RIGHT,
+                AnchorPoint.RIGHT_CENTER,
+                AnchorPoint.TOP_RIGHT,
+            ]:
+                x0 = display_x + offset_x
+
+            elif anchor in [
+                AnchorPoint.BOTTOM_LEFT,
+                AnchorPoint.LEFT_CENTER,
+                AnchorPoint.TOP_LEFT,
+            ]:
+                x0 = display_x - offset_x
+                attrs = {"text-anchor": "end"}
+            else:
+                x0 = display_x
+
+            if anchor in [
+                AnchorPoint.TOP_RIGHT,
+                AnchorPoint.TOP_CENTER,
+                AnchorPoint.TOP_LEFT,
+            ]:
+                y0 = display_y - offset_y
+
+            elif anchor in [
+                AnchorPoint.BOTTOM_RIGHT,
+                AnchorPoint.BOTTOM_CENTER,
+                AnchorPoint.BOTTOM_LEFT,
+            ]:
+                # In SVG, the origin is top left corner
+                y0 = display_y + height + offset_y
+            else:
+                y0 = display_y
 
             offset_x = round_away_from_zero(offset_x)
             offset_y = round_away_from_zero(offset_y)
 
-            if height and width:
-                offset_x_px = abs(offset_x * (self.dpi / 72))
-                offset_y_px = abs(offset_y * (self.dpi / 72))
-
-                if ha == "left":
-                    x0 = int(display_x + offset_x_px)
-                    x1 = int(display_x + offset_x_px + width)
-                elif ha == "right":
-                    x0 = int(display_x - offset_x_px - width)
-                    x1 = int(display_x - offset_x_px)
-                else:
-                    x0 = int(display_x - offset_x_px - width / 2)
-                    x1 = int(display_x + offset_x_px + width / 2)
-
-                if va == "bottom":
-                    # TOP
-                    y0 = int(display_y + offset_y_px)
-                    y1 = int(display_y + offset_y_px + height)
-                elif va == "top":
-                    # BOTTOM
-                    y0 = int(display_y - offset_y_px - height)
-                    y1 = int(display_y - offset_y_px)
-                else:
-                    # CENTER
-                    y0 = int(display_y - height / 2) + offset_y
-                    y1 = int(display_y + height / 2) + offset_y
-
-                bbox = (x0, y0, x1, y1)
-                label = None
-
+            if anchor in [
+                AnchorPoint.TOP_LEFT,
+                AnchorPoint.LEFT_CENTER,
+                AnchorPoint.BOTTOM_LEFT,
+            ]:
+                attrs = {"text-anchor": "end"}
+                # y0 = display_y - offset_y - height
+                bbox = create_bbox(x0 - width - 2, y0 + 4, height=height, width=width)
             else:
-                label = self._text(
-                    x, y, text, va=va, ha=ha, xytext=(offset_x, offset_y), **kwargs
-                )
-                bbox = self._get_label_bbox(label)
+                bbox = create_bbox(x0 - 2, y0 + 4, height=height, width=width)
 
-                if bbox is None:
-                    continue
-
-                height = bbox[3] - bbox[1]
-                width = bbox[2] - bbox[0]
+            if anchor == AnchorPoint.CENTER:
+                attrs = {
+                    "text-anchor": "middle",
+                    "dominant-baseline": "central",
+                }
 
             is_open = self._is_open_space(
                 bbox,
@@ -438,40 +453,52 @@ class TextPlotterMixin:
             )
 
             if is_open or (collision_handler.plot_on_fail and is_final_attempt):
-                label = label or self._text(
-                    x, y, text, va=va, ha=ha, xytext=(offset_x, offset_y), **kwargs
+                self.canvas.text(
+                    x0,
+                    y0,
+                    value=text,
+                    style=style,
+                    angle=0,
+                    cs=CoordinateSystem.DISPLAY,
+                    attrs=attrs,
                 )
-                self._add_label_to_rtree(label, bbox=bbox)
-                return label
-
-            if label is not None:
-                label.remove()
+                self._add_label_to_rtree(text, bbox=bbox)
+                if self.debug_text:
+                    self._debug_bbox(bbox, color="red", width=1)
+                return
 
             if is_final_attempt:
-                return None
+                return
 
     def _text_area(
         self,
         ra: float,
         dec: float,
         text: str,
+        style: LabelStyle,
         area,
         collision_handler: CollisionHandler,
-        **kwargs,
-    ) -> Annotation | None:
-        kwargs["va"] = "center"
-        kwargs["ha"] = "center"
-
-        if StarplotSettings.svg_text_type == SvgTextType.PATH:
-            kwargs["path_effects"] = kwargs.get("path_effects", [self.text_border])
-
-        padding = 0
+    ) -> None:
+        # small visual buffer so labels don't render edge-to-edge with zero gap
+        padding = style.font_size * 0.09
         max_distance = 2_000
         distance_step_size = 2
         attempts = 0
         height = None
         width = None
         bbox = None
+        scaled_font_size = style.font_size * self.scale
+
+        # canvas.text() applies self.scale again via style.css(scale) when it
+        # renders (style.font_size here was already scaled once by text()), so
+        # the true rendered size is font_size * scale, not just font_size
+        height, width, ascent = get_text_hw(
+            text=text,
+            font_name=style.resolved_font_name(self.style.base),
+            font_size=scaled_font_size,
+            font_weight=style.font_weight,
+            italic=style.font_style == "italic",
+        )
 
         origin = Point(ra, dec)
 
@@ -509,16 +536,17 @@ class TextPlotterMixin:
                 origin.y,
                 style={
                     "marker": {
-                        "symbol": "triangle",
-                        "color": "red",
+                        "symbol": "circle",
+                        "fill": "red",
                     }
                 },
             )
             self.polygon(
                 geometry=area,
                 style={
-                    "edge_color": "red",
-                    "edge_width": 2,
+                    "fill": None,
+                    "stroke": "red",
+                    "stroke_width": 2,
                 },
             )
 
@@ -542,25 +570,17 @@ class TextPlotterMixin:
             x, y = self._prepare_coords(point.x, point.y)
 
             if height and width:
-                data_xy = self._proj.transform_point(x, y, self._crs)
-                display_x, display_y = self.ax.transData.transform(data_xy)
+                display_x, display_y = self.canvas._to_display(x, y)
+                # the first line's baseline is drawn AT display_y, and each
+                # additional line is drawn BELOW it -- so only the first line's
+                # ascent extends above display_y; everything else (descent of
+                # the last line, plus any additional lines) extends below it
                 bbox = (
-                    display_x - width / 2,
-                    display_y - height / 2,
-                    display_x + width / 2,
-                    display_y + height / 2,
+                    display_x,
+                    display_y - ascent,
+                    display_x + width,
+                    display_y + (height - ascent),
                 )
-                label = None
-
-            else:
-                label = self._text(x, y, text, **kwargs)
-                bbox = self._get_label_bbox(label)
-
-                if bbox is None:
-                    continue
-
-                height = bbox[3] - bbox[1]
-                width = bbox[2] - bbox[0]
 
             is_open = self._is_open_space(
                 bbox,
@@ -575,26 +595,24 @@ class TextPlotterMixin:
             # # TODO : remove label if not fully inside area?
 
             if is_open or (collision_handler.plot_on_fail and is_final_attempt):
-                label = label or self._text(x, y, text, **kwargs)
-                self._add_label_to_rtree(label, bbox=bbox)
-                return label
-
-            if label is not None:
-                label.remove()
+                self.canvas.text(x, y, value=text, style=style, angle=0)
+                self._add_label_to_rtree(text, bbox=bbox)
+                if self.debug_text:
+                    self._debug_bbox(bbox, color="red", width=1)
+                return
 
             if is_final_attempt:
-                return None
+                return
 
     def _text_line(
         self,
         x,
         y,
         text: str,
+        style: LabelStyle,
         num_labels: int = 1,
         collision_handler: CollisionHandler = None,
         min_spacing=None,
-        curvature_threshold=0.8,
-        **kwargs,
     ) -> None:
         """
         Plots text labels along a line:
@@ -609,43 +627,32 @@ class TextPlotterMixin:
             collision_handler: Collision handler to use
             min_spacing: minimum spacing between labels (as fraction of line length). If None, uses 1/(n_labels+1)
             prefer_center: if True, place labels at center of smooth sections
-            curvature_threshold: threshold for determining smooth sections
 
         """
-        kwargs.pop("ha", None)  # alignment is forced to center of line
-        kwargs.pop("va", None)
-        kwargs.pop("transform", None)  # we'll plot in axes coords
+        scaled_font_size = style.font_size * self.scale
 
-        xy = list(zip(x, y))
-        data_xy = [self._proj.transform_point(_x, _y, self._crs) for _x, _y in xy]
-        display_xy = self.ax.transData.transform(data_xy)
+        dx, dy = self.canvas._to_display(x, y)
+        height, width, _ = get_text_hw(
+            text=text,
+            font_name=style.resolved_font_name(self.style.base),
+            font_size=scaled_font_size,
+            font_weight=style.font_weight,
+            italic=style.font_style == "italic",
+        )
 
         # sort coords by display x value
-        display_xy = display_xy[display_xy[:, 0].argsort()]
+        order = dx.argsort()
+        dx = dx[order]
+        dy = dy[order]
+        display_xy = np.column_stack([dx, dy])
+
+        display_xy = [(x, y) for x, y in display_xy if x >= 0 and y >= 0]
         num_positions = len(display_xy)
 
         if min_spacing is None:
             min_spacing = 1.0 / (num_labels + 1)
 
-        min_distance = int(min_spacing * num_positions)
-        smooth_sections = find_smooth_sections(
-            display_xy, min_length=2, curvature_threshold=curvature_threshold
-        )
-
-        smooth_positions = []
-        for section_start, section_end, _ in smooth_sections:
-            section_center = (section_start + section_end) // 2
-
-            too_close = False
-            for pos in smooth_positions:
-                if abs(section_center - pos) < min_distance:
-                    too_close = True
-                    break
-
-            if not too_close:
-                smooth_positions.append(section_center)
-
-        def plot_label(x0, y0, x1, y1, text):
+        def get_angle(x0, y0, x1, y1):
             # calculate angle in display coordinates
             dx_display = x1 - x0
             dy_display = y1 - y0
@@ -657,22 +664,10 @@ class TextPlotterMixin:
             elif angle < -90:
                 angle += 180
 
-            axes_coords = self.ax.transAxes.inverted().transform([(x0, y0)])
-            x_axes, y_axes = axes_coords[0]
+            return angle
 
-            return self.ax.text(
-                x_axes,
-                y_axes,
-                text,
-                rotation=angle,
-                ha="center",
-                va="center",
-                transform=self.ax.transAxes,
-                **kwargs,
-            )
-
-        offset = num_positions // 20  # offset from start/end of line
-        positions = [p for p in range(num_positions) if p not in smooth_positions]
+        offset = num_positions // 25  # offset from start/end of line
+        positions = [p for p in range(num_positions)]
         positions = positions[offset : -1 * offset]
         attempts = 0
         plotted_positions = set()
@@ -684,23 +679,29 @@ class TextPlotterMixin:
         ):
             attempts += 1
 
-            if smooth_positions:
-                pos = smooth_positions.pop()
-            else:
-                pos = next_best_position(
-                    plotted_positions, positions, num_labels, num_positions
-                )
-
+            pos = next_best_position(
+                plotted_positions, positions, num_labels, num_positions
+            )
             if pos is None:
                 return
             if pos in positions:
                 positions.remove(pos)
 
-            pos = max(0, min(pos, num_positions - 2))
+            # TODO : make adjustment here or account for distance between display coords
+            pos = max(0, min(pos, num_positions - 10))
             x0, y0 = display_xy[pos]
-            x1, y1 = display_xy[pos + 1]
-            label = plot_label(x0, y0, x1, y1, text)
-            bbox = self._get_label_bbox(label)
+            x1, y1 = display_xy[pos + 5]
+
+            y0 += height / 3  # center baseline hack
+            y1 += height / 3
+            angle = get_angle(
+                x0,
+                y0,
+                x1,
+                y1,
+            )
+            bbox = create_bbox(x0, y0, height=height, width=width)
+            bbox = rotate_bbox(bbox, angle)
 
             # TODO : find better bbox (that's rotated with text)
 
@@ -718,13 +719,18 @@ class TextPlotterMixin:
             is_final_attempt = attempts == collision_handler.attempts
 
             if is_open or (collision_handler.plot_on_fail and is_final_attempt):
-                self._add_label_to_rtree(label, bbox=bbox)
+                self.canvas.text(
+                    x0,
+                    y0,
+                    value=text,
+                    style=style,
+                    angle=angle,
+                    cs=CoordinateSystem.DISPLAY,
+                )
+                self._add_label_to_rtree(text, bbox=bbox)
                 plotted_positions.add(pos)
-                if self.debug_text and label:
+                if self.debug_text and text:
                     self._debug_bbox(bbox, color="red", width=1)
-
-            elif label is not None:
-                label.remove()
 
             if is_final_attempt or len(plotted_positions) == num_labels:
                 return
@@ -756,47 +762,30 @@ class TextPlotterMixin:
 
         collision_handler = collision_handler or self.point_label_handler
 
+        # offset_x/offset_y coming from _offset_from_marker() are already
+        # resolved to concrete, scaled pixel values -- only the "auto"
+        # default (for labels plotted without a marker offset) needs scaling
+        # here, or it'd be scaled twice.
         if style.offset_x == "auto":
-            style.offset_x = 0
+            style.offset_x = 4 * self.scale
 
         if style.offset_y == "auto":
-            style.offset_y = 0
+            style.offset_y = 4 * self.scale
 
         if kwargs.get("area"):
-            label = self._text_area(
+            self._text_area(
                 ra,
                 dec,
-                text,
-                **style.matplot_kwargs(self.scale),
+                str(text),
+                style=style,
                 area=kwargs.pop("area"),
                 collision_handler=collision_handler,
-                xycoords="data",
-                xytext=(
-                    style.offset_x * self.scale,
-                    style.offset_y * self.scale,
-                ),
-                textcoords="offset points",
-                **kwargs,
             )
         else:
-            label = self._text_point(
+            self._text_point(
                 ra,
                 dec,
-                text,
-                **style.matplot_kwargs(self.scale),
+                str(text),
+                style=style,
                 collision_handler=collision_handler,
-                xycoords="data",
-                xytext=(
-                    style.offset_x * self.scale,
-                    style.offset_y * self.scale,
-                ),
-                textcoords="offset points",
-                **kwargs,
             )
-
-        if self.debug_text and label:
-            """Plots RED box around actual position of label"""
-            bbox = self._get_label_bbox(label)
-            self._debug_bbox(bbox, color="red", width=1)
-
-        return label

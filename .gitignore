@@ -1,11 +1,6 @@
-# scratchpad for local development
-scripts/scratchpad.py
-
 .claude/
 
-
-.env-backup
-e2e/
+__marimo__/
 
 # astronomy data
 *.bsp
@@ -17,46 +12,52 @@ duckdb-extensions
 # Sky Object Database
 # ignore this because it's large and created on release
 sky.db
-*.parquet
 gaia*/
 
-# Catalogs
+# Data Catalogs
 *.parquet
+*.csv.gz
 
 # Data Folder
+data/fonts/*
 data/build/*
 !data/build/.keep
-data/fonts/*
 
-# Big Sky Catalog
-# we ignore this because of its size (50+ MB)
-bigsky.*.csv.gz
-bigsky*.parquet
-
+# Hash check results
 hash_checks/data/*.png
 hash_checks/results.html
 
+# E2E test results
+e2e/actual/
+
+# local development scripts etc
+/plots/
+/claude/
 .tmp/
-temp*
+scripts/temp*
 temp.py
 temp/
-# raw/
 scripts/temp/
-plots/
+scripts/scratchpad.py
 scripts/__marimo__/
 
-# Documentation Generated Files
+# Documentation - Generated Files
 examples/*.png
+examples/*.svg
 examples/*.jpg
 examples/*.svg
 docs/images/examples/*.png
+docs/images/examples/*.svg
 docs/images/examples/*.jpg
 docs/images/examples/*.svg
+docs/images/reference/*.png
+docs/images/reference/*.svg
+docs/images/reference/*.jpg
+docs/images/reference/*.html
 tutorial/*.png
 tutorial/*.svg
 docs/images/tutorial/*.png
 docs/images/tutorial/*.svg
-docs/images/reference/*.*
 docs/data/*.json
 
 # Profiling files
@@ -155,7 +156,7 @@ ipython_config.py
 __pypackages__/
 
 # Environments
-.env
+.env*
 .venv
 env/
 venv/

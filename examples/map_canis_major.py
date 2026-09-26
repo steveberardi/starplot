@@ -6,6 +6,7 @@ from starplot.styles import PlotStyle, extensions
 style = PlotStyle().extend(
     extensions.BLUE_NIGHT,
     extensions.MAP,
+    extensions.FIGURE_TRANSPARENT,
 )
 canis_major = Constellation.get(name="Canis Major")
 p = MapPlot(
@@ -17,7 +18,7 @@ p = MapPlot(
     style=style,
     resolution=3400,
     clip_path=Polygon(canis_major.border.coords),
-    scale=1.2,
+    scale=1,
 )
 p.constellations(
     where=[_.iau_id == "cma"],
@@ -30,6 +31,4 @@ p.open_clusters(where=[_.magnitude < 9], where_true_size=[False])
 p.stars(where=[_.magnitude < 9], where_labels=[_.magnitude < 4], bayer_labels=True)
 p.constellation_labels()
 
-p.ax.set_axis_off()  # hide the axis background that's outside the clip path
-
-p.export("map_canis_major.png", padding=1)
+p.export("map_canis_major.png")

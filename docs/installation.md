@@ -1,9 +1,21 @@
+# Installation
+
 Starplot is available on [PyPI](https://pypi.org/project/starplot/) and [Conda](https://anaconda.org/channels/conda-forge/packages/starplot/overview), and its dependencies have binary wheels for most operating systems, so installation should be easy. See below for details.
 
-Supported Python versions: 3.10 / 3.11 / 3.12 / 3.13
+Supported Python versions: 3.10 / 3.11 / 3.12 / 3.13 / 3.14
 
+<h3>1. Install Dependencies</h3>
 
-<h3>1. Install Starplot</h3>
+If you want to export plots to PNG, then you'll need [Cairo](https://www.cairographics.org/download/). If you only want to export to SVG, you can skip this step.
+
+On macOS (with [Homebrew](https://brew.sh/)):
+```
+brew install cairo
+```
+
+For Windows and Linux, [see the Cairo website](https://www.cairographics.org/download/).
+
+<h3>2. Install Starplot</h3>
 ```
 pip install starplot
 ```
@@ -13,36 +25,41 @@ Or, via [Conda](https://anaconda.org/channels/conda-forge/packages/starplot/over
 conda install conda-forge::starplot
 ```
 
-<h3>2. Setup Starplot (optional)</h3>
+<h3>3. Setup Starplot (optional)</h3>
 ```
 starplot setup
 ```
-This will install the required [spatial extension](https://duckdb.org/docs/stable/core_extensions/spatial/overview.html) for DuckDB, build the matplotlib font cache, and download data catalogs for stars, constellations, and deep sky objects. Starplot will do this automatically when you first create a plot, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
 
+- Installs the required [spatial extension](https://duckdb.org/docs/stable/core_extensions/spatial/overview.html) for DuckDB
+- Downloads recommended fonts (Inter and GFS Didot)
+- Downloads catalogs for stars, constellations, and deep sky objects
+
+Starplot will do this automatically when you first create a plot, but this `setup` command is a way to do it ahead of time (useful for deployed environments, continuous integration, etc). You can control where Starplot stores these files via [environment variables](reference-settings.md).
+
+[_Check out our tutorial for a quick intro to Starplot :material-arrow-right:_](tutorial/index.md)
 
 ---
 
-## Troubleshooting
+??? tip "Troubleshooting"
+    
+    **GEOS / GDAL errors on installation** - You may need to build these dependencies from source for your environment. See their websites for details: [GEOS](https://libgeos.org/), [GDAL](https://gdal.org/)
 
-### GEOS / GDAL errors on installation
+    **Segmentation Faults** - If you're seeing "segmentation fault" errors when creating maps, you may have to install [shapely](https://shapely.readthedocs.io/en/stable/index.html) from source for your runtime environment:
+    ```
+    pip install --no-binary :all: shapely
+    ```
+    *Warning: this may take awhile (5+ minutes), because it builds shapely from source.*
 
-If you see any errors related to GEOS and/or GDAL when trying to install Starplot, then you may need to build those dependencies from source for your environment.
+    <h3>Other Issue?</h3>
 
-See their websites for details:
+    Please [open an issue on our GitHub page](https://github.com/steveberardi/starplot/issues) and include the following information: 
 
-- [GEOS](https://libgeos.org/)
-- [GDAL](https://gdal.org/)
+    - Starplot version
+    - Python version
+    - Operating system (and version)
+    - Full stack trace of error
 
-### Segmentation Faults
+    <br/>
 
-If you're seeing "segmentation fault" errors when creating maps, you may have to install [shapely](https://shapely.readthedocs.io/en/stable/index.html) from source for your runtime environment:
-```
-pip install --no-binary :all: shapely
-```
-*Warning: this may take awhile (5+ minutes), because it builds shapely from source.*
-
-### Other Issues
-
-If you experience another problem, then please [open an issue on our GitHub page](https://github.com/steveberardi/starplot/issues) and include the following information: operating system (and version), Python version, Starplot version, and Matplotlib version.
 
 <br/><br/><br/>
