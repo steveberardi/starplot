@@ -15,18 +15,17 @@ You can set these values in two ways: through code or through environment variab
 ```python title="Code"
 from starplot import settings
 
-settings.svg_text_type = "element"
+settings.language = "it"
 
-# Create your plot and enjoy your editable text :)
+# Plots will now use the Italian translation
 ```
 
 ```bash title="Environment Variables"
-# To set values through environment variables, 
-# just add the STARPLOT_ prefix to the setting 
+# Add the STARPLOT_ prefix to the setting 
 # name (and uppercase the entire name):
 
 STARPLOT_DATA_PATH=/home/myuser/data
-
+STARPLOT_LANGUAGE=fr
 ```
 </div>
 
