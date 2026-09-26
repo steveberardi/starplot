@@ -88,7 +88,7 @@ build-star-designations:
 	uv run $(DOTENV) data/scripts/star_designations.py
 
 version:
-	uv run $(DOTENV) python -c 'import starplot as sp; print(sp.__version__)'
+	@uv run $(DOTENV) python -c 'import starplot as sp; print(sp.__version__)'
 
 setup:
 	uv run $(DOTENV) starplot setup
