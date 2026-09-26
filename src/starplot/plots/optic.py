@@ -1,44 +1,39 @@
-from typing import Callable
-
+from collections.abc import Callable
+from pathlib import Path
 
 import pandas as pd
-from cartopy import crs as ccrs
-from matplotlib import pyplot as plt, patches, path
 from skyfield.api import Star as SkyfieldStar
 
-
 from starplot import callables, geometry
-from starplot.coordinates import CoordinateSystem
-from starplot.plots.base import BasePlot, DPI
-from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
+from starplot.data.catalogs import BIG_SKY_MAG11, Catalog
 from starplot.mixins import ExtentMaskMixin
-from starplot.models import Star, Optic, Camera
+from starplot.models import Optic, Star
 from starplot.models.observer import Observer
+from starplot.plots.base import BasePlot
 from starplot.plotters import (
-    StarPlotterMixin,
     DsoPlotterMixin,
-    GradientBackgroundMixin,
     LegendPlotterMixin,
+    TextPlotterMixin,
 )
+from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
+from starplot.projections import CoordinateReferenceSystem, Equidistant
 from starplot.styles import (
-    PlotStyle,
-    ObjectStyle,
     LabelStyle,
+    ObjectStyle,
+    PlotStyle,
+    TableStyle,
     extensions,
     use_style,
-    ZOrderEnum,
-    GradientDirection,
 )
 from starplot.utils import azimuth_to_string
-from starplot.plotters.text import CollisionHandler
 
 
 class OpticPlot(
     BasePlot,
     ExtentMaskMixin,
-    StarPlotterMixin,
     DsoPlotterMixin,
-    GradientBackgroundMixin,
+    TextPlotterMixin,
     LegendPlotterMixin,
 ):
     """Creates a new optic plot.
@@ -64,9 +59,6 @@ class OpticPlot(
 
     """
 
-    _coordinate_system = CoordinateSystem.AZ_ALT
-    _gradient_direction = GradientDirection.RADIAL
-
     FIELD_OF_VIEW_MAX = 20
 
     def __init__(
@@ -75,7 +67,7 @@ class OpticPlot(
         dec: float,
         optic: Optic,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
         point_label_handler: CollisionHandler = None,
@@ -91,6 +83,21 @@ class OpticPlot(
         observer = observer or Observer()
         style = style or PlotStyle().extend(extensions.OPTIC)
 
+        self.ra = ra
+        self.dec = dec
+        self.raise_on_below_horizon = raise_on_below_horizon
+        self.optic = optic
+        self.observer = observer
+
+        self.ephemeris_name = ephemeris
+        # self.ephemeris = load(ephemeris)
+        # self.earth = self.ephemeris["earth"]
+
+        self._calc_position()
+
+        projection = Equidistant(center_ra=self.pos_az, center_dec=self.pos_alt)
+        clip_path = self.optic.polygon(self.pos_az, self.pos_alt)
+
         super().__init__(
             observer,
             ephemeris,
@@ -102,33 +109,23 @@ class OpticPlot(
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
-            *args,
+            projection=projection,
+            bounds=clip_path.bounds,
+            invert_x=optic.invert_x,
+            invert_y=optic.invert_y,
+            clip_path=clip_path,
+            crs=CoordinateReferenceSystem.ENU,
             **kwargs,
         )
+
         self.logger.debug("Creating OpticPlot...")
 
-        if isinstance(optic, Camera) and style.has_gradient_background():
-            raise ValueError("Gradient backgrounds are not yet supported for cameras.")
-
-        self.ra = ra
-        self.dec = dec
-        self.raise_on_below_horizon = raise_on_below_horizon
-
-        self.optic = optic
-        self._crs = ccrs.CRS(
-            proj4_params=[
-                ("proj", "latlong"),
-                ("a", "6378137"),
-            ],
-            globe=ccrs.Globe(ellipse="sphere", flattening=0),
-        )
         if self.optic.true_fov > self.FIELD_OF_VIEW_MAX:
             raise ValueError(
                 f"Field of View too big: {self.optic.true_fov} (max = {self.FIELD_OF_VIEW_MAX}). Tip: Use horizon or map plots for wider fields of view."
             )
-        self._calc_position()
+
         self._adjust_radec_minmax()
-        self._init_plot()
 
     @property
     def alt(self):
@@ -164,9 +161,6 @@ class OpticPlot(
 
         return list(zip(df["x"], df["y"]))
 
-    def _plot_kwargs(self) -> dict:
-        return dict(transform=self._crs)
-
     def in_bounds(self, ra, dec) -> bool:
         """Determine if a coordinate is within the bounds of the plot.
 
@@ -190,11 +184,8 @@ class OpticPlot(
         Returns:
             True if the coordinate is in bounds, otherwise False
         """
-        x, y = self._proj.transform_point(az, alt, self._crs)
-        return self.optic.in_bounds(x, y, scale)
-
-    def _polygon(self, points, style, **kwargs):
-        super()._polygon(points, style, transform=self._crs, **kwargs)
+        x_axes, y_axes = self.canvas._to_axes(az, alt)
+        return 0 <= x_axes <= 1 and 0 <= y_axes <= 1
 
     def _calc_position(self):
         self.observe = self.observer.observe(self.ephemeris_name)
@@ -253,27 +244,54 @@ class OpticPlot(
         )
         return df
 
-    def _scatter_stars(self, ras, decs, sizes, alphas, colors, style=None, **kwargs):
-        plotted = super()._scatter_stars(
-            ras, decs, sizes, alphas, colors, style, **kwargs
+    @use_style(LabelStyle, "table")
+    def info(self, style: TableStyle = None):
+        """
+        Plots a table with info about the plot, including:
+
+        - Target's position (alt/az and ra/dec)
+        - Observer's position (lat/lon and date/time)
+        - Optic details (type, magnification, FOV)
+
+        Args:
+            style: If `None`, then the plot's style for tables will be used
+        """
+
+        dt_str = (
+            self.observer.dt.strftime("%m/%d/%Y @ %H:%M:%S")
+            + " "
+            + self.observer.dt.tzname()
         )
 
-        if isinstance(self._background_clip_path, patches.Rectangle):
-            # convert to generic path to handle possible rotation angle:
-            clip_path = path.Path(self._background_clip_path.get_corners())
-            plotted.set_clip_path(clip_path, transform=self.ax.transData)
-        else:
-            plotted.set_clip_path(self._background_clip_path)
+        headers = [
+            "Target (Alt/Az)",
+            "Target (RA/DEC)",
+            "Observer Lat, Lon",
+            "Observer Date/Time",
+            f"Optic - {self.optic.label}",
+        ]
+        rows = [
+            [
+                f"{self.pos_alt:.0f}\N{DEGREE SIGN} / {self.pos_az:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az)})",
+                f"{(self.ra / 15):.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
+                f"{self.observer.lat:.2f}\N{DEGREE SIGN}, {self.observer.lon:.2f}\N{DEGREE SIGN}",
+                dt_str,
+                str(self.optic),
+            ]
+        ]
 
+        self.canvas.table(headers=headers, rows=rows, style=style)
+
+    @profile
     @use_style(ObjectStyle, "star")
     def stars(
         self,
         where: list = None,
         where_labels: list = None,
-        catalog: Catalog = BIG_SKY_MAG11,
+        catalog: Catalog | Path | str = BIG_SKY_MAG11,
         style: ObjectStyle = None,
-        size_fn: Callable[[Star], float] = callables.size_by_magnitude_for_optic,
-        alpha_fn: Callable[[Star], float] = callables.alpha_by_magnitude,
+        size_fn: Callable[[Star], float] = None,
+        opacity_fn: Callable[[Star], float] = None,
         color_fn: Callable[[Star], str] = None,
         label_fn: Callable[[Star], str] = Star.get_label,
         legend_label: str = "Star",
@@ -287,12 +305,12 @@ class OpticPlot(
         Plots stars
 
         Args:
-            where: A list of expressions that determine which stars to plot. See [Selecting Objects](reference-selecting-objects.md) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot. See [Selecting Objects](reference-selecting-objects.md) for details.
-            catalog: The catalog of stars to use -- see [catalogs overview](data/overview.md) for details
+            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
+            catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
             style: If `None`, then the plot's style for stars will be used
-            size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
-            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
+            size_fn: Callable for calculating the marker size of each star. Defaults to [`callables.size_by_fov_factory(self.optic.true_fov)`][starplot.callables.size_by_fov_factory]
+            opacity_fn: Callable for calculating the opacity value of each star. If `None`, then the marker style's opacity will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
             label_fn: Callable for determining the label of each star.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
@@ -300,23 +318,18 @@ class OpticPlot(
             flamsteed_labels: If True, then Flamsteed number labels for stars will be plotted.
             sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             sql_labels: SQL query for selecting stars that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
-            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
         """
-        optic_star_multiplier = self.FIELD_OF_VIEW_MAX / self.optic.true_fov
-        size_fn_mx = None
 
-        if size_fn is not None:
-
-            def size_fn_mx(s):
-                return size_fn(s) * optic_star_multiplier * 0.68
+        size_fn = size_fn or callables.size_by_fov_factory(self.optic.true_fov)
 
         super().stars(
             where=where,
             where_labels=where_labels,
             catalog=catalog,
             style=style,
-            size_fn=size_fn_mx,
-            alpha_fn=alpha_fn,
+            size_fn=size_fn,
+            opacity_fn=opacity_fn,
             color_fn=color_fn,
             label_fn=label_fn,
             legend_label=legend_label,
@@ -326,144 +339,3 @@ class OpticPlot(
             sql_labels=sql_labels,
             collision_handler=collision_handler,
         )
-
-    @use_style(LabelStyle, "info_text")
-    def info(self, style: LabelStyle = None):
-        """
-        Plots a table with info about the plot, including:
-
-        - Target's position (alt/az and ra/dec)
-        - Observer's position (lat/lon and date/time)
-        - Optic details (type, magnification, FOV)
-
-        Args:
-            style: If `None`, then the plot's style for info text will be used
-        """
-        self.ax.set_xlim(-1.22 * self.optic.xlim, 1.22 * self.optic.xlim)
-        self.ax.set_ylim(-1.1 * self.optic.ylim, 1.1 * self.optic.ylim)
-        self.optic.transform(
-            self.ax
-        )  # apply transform again because new xy limits will undo the transform
-
-        dt_str = (
-            self.observer.dt.strftime("%m/%d/%Y @ %H:%M:%S")
-            + " "
-            + self.observer.dt.tzname()
-        )
-        font_size = style.font_size * self.scale
-
-        column_labels = [
-            "Target (Alt/Az)",
-            "Target (RA/DEC)",
-            "Observer Lat, Lon",
-            "Observer Date/Time",
-            f"Optic - {self.optic.label}",
-        ]
-        values = [
-            f"{self.pos_alt:.0f}\N{DEGREE SIGN} / {self.pos_az:.0f}\N{DEGREE SIGN} ({azimuth_to_string(self.pos_az)})",
-            f"{(self.ra / 15):.2f}h / {self.dec:.2f}\N{DEGREE SIGN}",
-            f"{self.observer.lat:.2f}\N{DEGREE SIGN}, {self.observer.lon:.2f}\N{DEGREE SIGN}",
-            dt_str,
-            str(self.optic),
-        ]
-        widths = [0.15, 0.15, 0.2, 0.2, 0.3]
-
-        table = self.ax.table(
-            cellText=[values],
-            cellLoc="center",
-            colWidths=widths,
-            rowLabels=[None],
-            colLabels=column_labels,
-            loc="bottom",
-            edges="vertical",
-        )
-        table.auto_set_font_size(False)
-        table.set_fontsize(style.font_size)
-        table.scale(1, 5)
-
-        # Apply style to all cells
-        for row in [0, 1]:
-            for col in range(len(values)):
-                table[row, col].set_text_props(**style.matplot_kwargs(self.scale))
-
-        # Apply some styles only to the header row
-        for col in range(len(values)):
-            table[0, col].set_text_props(fontweight="heavy", fontsize=font_size * 1.2)
-
-    def _plot_border(self):
-        # since we're using AzimuthalEquidistant projection, the center will always be (0, 0)
-        x = 0
-        y = 0
-
-        if self.style.has_gradient_background():
-            background_color = "#ffffff00"
-            # self._plot_gradient_background(self.style.background_color)
-        else:
-            background_color = self.style.background_color.as_hex()
-
-        # Background of Viewable Area
-        self._background_clip_path = self.optic.patch(
-            x,
-            y,
-            facecolor=background_color,
-            linewidth=0,
-            fill=True,
-            zorder=ZOrderEnum.LAYER_1,
-        )
-        self.ax.set_facecolor(background_color)
-        self.ax.add_patch(self._background_clip_path)
-        self._update_clip_path_polygon(buffer=15)
-
-        # Inner Border
-        # inner_border = self.optic.patch(
-        #     x,
-        #     y,
-        #     linewidth=2 * self.scale,
-        #     edgecolor=self.style.border_line_color.as_hex(),
-        #     fill=False,
-        #     zorder=ZOrderEnum.LAYER_5 + 100,
-        # )
-        # self.ax.add_patch(inner_border)
-
-        if self.style.has_gradient_background():
-            self._plot_gradient_background(self.style.background_color)
-
-        # Outer border
-        outer_border = self.optic.patch(
-            x,
-            y,
-            padding=0.05,
-            linewidth=25 * self.scale,
-            edgecolor=self.style.border_bg_color.as_hex(),
-            fill=False,
-            zorder=ZOrderEnum.LAYER_5,
-        )
-        self.ax.add_patch(outer_border)
-
-    def _init_plot(self):
-        self._proj = ccrs.AzimuthalEquidistant(
-            central_longitude=self.pos_az,
-            central_latitude=self.pos_alt,
-        )
-        self._proj.threshold = 1000
-        self.fig = plt.figure(
-            figsize=(self.figure_size, self.figure_size),
-            facecolor=self.style.figure_background_color.as_hex(),
-            # layout="constrained",
-            dpi=DPI,
-        )
-        self.ax = self.fig.add_subplot(1, 1, 1, projection=self._proj)
-        self.fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
-
-        self.ax.xaxis.set_visible(False)
-        self.ax.yaxis.set_visible(False)
-        self.ax.axis("off")
-
-        self._fit_to_ax()
-        self.ax.set_xlim(-1.06 * self.optic.xlim, 1.06 * self.optic.xlim)
-        self.ax.set_ylim(-1.06 * self.optic.ylim, 1.06 * self.optic.ylim)
-        self.optic.transform(self.ax)
-        self._plot_border()
-
-        # if self.gradient_preset:
-        #     self.apply_gradient_background(self.gradient_preset)

@@ -10,10 +10,14 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
+    - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
 
-    - name: Build Docker Image
-      run: make build
+    - name: Install dependencies
+      run: make install env
     
+    - name: Download test fonts
+      run: make download-test-fonts
+      
     - name: Check Lint
       run: make lint CI=true
     
@@ -21,13 +25,10 @@ jobs:
       run: make format CI=true ARGS=--check
     
     - name: Build sky.db
-      run: make db CI=true
+      run: make db setup CI=true
 
     - name: Run Tests
-      run: make test CI=true
-    
-    - name: Check Image Hashes
-      run: make check-hashes CI=true
+      run: make test check-hashes CI=true
     
     - name: Build
       run: make flit-build

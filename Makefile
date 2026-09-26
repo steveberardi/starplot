@@ -1,20 +1,14 @@
-PYTHON=./venv/bin/python
-DE421_URL=https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de421.bsp
+PYTHON_VERSION=3.12
 
 ifeq ($(CI), true)
  DR_ARGS=-e FLIT_USERNAME -e FLIT_PASSWORD
 else
- DR_ARGS=-it --env-file ./.env
+ DR_ARGS=-it 
+ #--env-file ./.env
 endif
 
-ifeq ($(PROFILE), true)
- SCRATCH_ARGS=-m cProfile -o results.prof
-else
- SCRATCH_ARGS=
-endif
-
+DOTENV=--env-file $(shell pwd)/.env
 DOCKER_RUN=docker run --rm $(DR_ARGS) -v $(shell pwd):/starplot starplot-dev bash -c
-DOCKER_BUILDER=starplot-builder
 
 DOCKER_BUILD_PYTHON=docker build -t starplot-$(PYTHON_VERSION) $(DOCKER_BUILD_ARGS) --build-arg="PYTHON_VERSION=$(PYTHON_VERSION)" .
 DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) starplot-$(PYTHON_VERSION)
@@ -22,124 +16,155 @@ DOCKER_RUN_PYTHON_TEST=docker run --rm $(DR_ARGS) starplot-$(PYTHON_VERSION)
 export PYTHONPATH=./src/
 
 # ------------------------------------------------------------------
-build: PYTHON_VERSION=3.11.14
+install:
+	uv sync --all-groups --all-extras
+
+build: PYTHON_VERSION=3.12.12
 build: DOCKER_BUILD_ARGS=-t starplot-dev
 build:
 	touch -a .env
 	$(DOCKER_BUILD_PYTHON)
 
+env:
+	test -f .env || echo "STARPLOT_DATA_PATH=$(CURDIR)/data/" > .env
+
 lint:
-	$(DOCKER_RUN) "ruff check src/ tests/ hash_checks/ $(ARGS)"
+	uv run $(DOTENV) ruff check $(ARGS) src/ tests/ hash_checks/ 
 
 format:
-	$(DOCKER_RUN) "python -m black src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/ $(ARGS)"
+	uv run $(DOTENV) ruff format $(ARGS) src/ tests/ scripts/ examples/ hash_checks/ tutorial/ data/
 
 test:
-	$(DOCKER_RUN) "python -m pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html ."
+	uv run $(DOTENV) pytest $(ARGS) --cov=src/ --cov-report=term --cov-report=html tests/
+
+test-python-version:
+	uv run $(DOTENV) --python $(PYTHON_VERSION) --isolated pytest tests/
 
 check-hashes:
-	$(DOCKER_RUN) "python hash_checks/hashio.py check"
+	rm -f hash_checks/data/*.png
+	uv run $(DOTENV) python hash_checks/hashio.py check
+
+check-hashes-python-version:
+	rm -f hash_checks/data/*.png
+	uv run $(DOTENV) --python $(PYTHON_VERSION) hash_checks/hashio.py check
 
 lock-hashes:
-	$(DOCKER_RUN) "python hash_checks/hashio.py lock"
+	uv run $(DOTENV) python hash_checks/hashio.py lock
 
-mypy:
-	$(DOCKER_RUN) "mypy --ignore-missing-imports src/starplot/"
+e2e:
+	find e2e/actual -name '*.svg' -delete 2>/dev/null || true
+	uv run $(DOTENV) --python $(PYTHON_VERSION) e2e/run.py
 
-bash:
-	$(DOCKER_RUN) bash
+e2e-lock:
+	find e2e/actual -name '*.svg' -delete 2>/dev/null || true
+	uv run $(DOTENV) python e2e/run.py --lock
 
 shell:
-	$(DOCKER_RUN) ipython
-
-scratchpad:
-	$(DOCKER_RUN) "python $(SCRATCH_ARGS) scripts/scratchpad.py"
+	uv run $(DOTENV) ipython
 
 marimo: DR_ARGS=-it -p 9009:9009
 marimo:
-	$(DOCKER_RUN) "marimo edit scripts/marimo.py --no-token  --host 0.0.0.0 --port 9009"
+	uv run $(DOTENV) marimo edit scripts/marimo.py --no-token  --host 0.0.0.0 --port 9009
 
 examples:
-	$(DOCKER_RUN) "cd examples && rm -f *.png && rm -f *.jpg && python examples.py"
+	cd examples && rm -f *.png && rm -f *.jpg && uv run $(DOTENV) examples.py
 
 tutorial:
-	$(DOCKER_RUN) "cd tutorial && python build.py"
+	cd tutorial && uv run $(DOTENV) build.py
 
 profile: DR_ARGS=-it -p 8081:8081
 profile:
 	$(DOCKER_RUN) "python -m cProfile -o temp/results.prof scripts/scratchpad.py && \
 	snakeviz -s -p 8081 -H 0.0.0.0 temp/results.prof"
 
-# builds ALL data files and then database:
 db: 
-	@$(DOCKER_RUN) "python data/scripts/db.py"
+	uv run $(DOTENV) data/scripts/db.py
 
 build-data-clean:
 	mkdir -p data/build
 	rm -rf data/build/*
 
 build-star-designations:
-	@$(DOCKER_RUN) "python data/scripts/star_designations.py"
-
-build-doc-data:
-	@$(DOCKER_RUN) "python data/scripts/docdata.py"
+	uv run $(DOTENV) data/scripts/star_designations.py
 
 version:
-	@$(DOCKER_RUN) "python -c 'import starplot as sp; print(sp.__version__)'"
+	uv run $(DOTENV) python -c 'import starplot as sp; print(sp.__version__)'
+
+setup:
+	uv run $(DOTENV) starplot setup
+
+download-test-fonts:
+	uv run $(DOTENV) scripts/download_test_fonts.py
+
+dev: env db setup download-test-fonts
 
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------
-test-3.10: PYTHON_VERSION=3.10.19
+test-3.10: PYTHON_VERSION=3.10.21
 test-3.10:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test-3.11: PYTHON_VERSION=3.11.14
+test-3.11: PYTHON_VERSION=3.11.16
 test-3.11:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test-3.12: PYTHON_VERSION=3.12.12
+test-3.12: PYTHON_VERSION=3.12.14
 test-3.12:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
-test-3.13: PYTHON_VERSION=3.13.8
+test-3.13: PYTHON_VERSION=3.13.15
 test-3.13:
+	$(DOCKER_BUILD_PYTHON)
+	$(DOCKER_RUN_PYTHON_TEST)
+
+# there are warnings with 3.14, but tests/checks pass
+# needs more investigation
+test-3.14: PYTHON_VERSION=3.14.7
+test-3.14:
 	$(DOCKER_BUILD_PYTHON)
 	$(DOCKER_RUN_PYTHON_TEST)
 
 # ------------------------------------------------------------------
 # Docs
-docs-serve: DR_ARGS=-it -p 8000:8000
 docs-serve:
-	$(DOCKER_RUN) "mkdocs serve -a 0.0.0.0:8000 -q --watch src/"
+	uv run $(DOTENV) zensical serve
 
 docs-build:
-	$(DOCKER_RUN) "mkdocs build"
+	uv run $(DOTENV) zensical build -c
 
-docs-publish:
-	$(DOCKER_RUN) "mkdocs gh-deploy --force"
+docs-references:
+	uv run $(DOTENV) docs/scripts/data.py
+	uv run $(DOTENV) docs/scripts/markers.py
+	uv run $(DOTENV) docs/scripts/gradients.py
+	uv run $(DOTENV) docs/scripts/projections.py
+	uv run $(DOTENV) docs/scripts/projection_list.py
+	uv run $(DOTENV) docs/scripts/style_explorer.py
+
+docs: docs-references docs-build
+
 
 # ------------------------------------------------------------------
 # PyPi - build & publish
 flit-build:
-	$(DOCKER_RUN) "uv run flit build"
+	uv run $(DOTENV) flit build --no-use-vcs
 
 flit-publish:
-	$(DOCKER_RUN) "uv run flit publish"
+	uv run $(DOTENV) flit publish
 
 flit-install:
 	FLIT_ROOT_INSTALL=1 flit install
 
 # ------------------------------------------------------------------
 # Utils
-ephemeris:
-	$(DOCKER_RUN) "python -m jplephem excerpt 2025/1/1 2050/1/1 $(DE421_URL) de421sub.bsp"
-
 scripts:
-	$(DOCKER_RUN) "python ./scripts/$(SCRIPT).py"
+	uv run $(DOTENV) python ./scripts/$(SCRIPT).py
+
+list-fonts:
+	uv run $(DOTENV) python ./scripts/list_fonts.py
 
 clean:
 	rm -rf __pycache__
@@ -149,4 +174,4 @@ clean:
 	rm -rf htmlcov
 	rm -f tests/data/*.png
 
-.PHONY: build test shell flit-build flit-publish clean ephemeris scratchpad examples scripts tutorial
+.PHONY: build test shell flit-build flit-publish clean ephemeris examples scripts tutorial list-fonts e2e

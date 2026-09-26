@@ -1,31 +1,33 @@
 import random
-
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import numpy as np
+from flaky import flake
 from shapely import Polygon
 
 from starplot import (
-    MapPlot,
-    styles,
     DSO,
-    Star,
-    DsoType,
-    Moon,
+    Binoculars,
+    CollisionHandler,
     Constellation,
-    _,
-    Observer,
-    Miller,
+    DsoType,
+    Equidistant,
+    MapPlot,
     Mercator,
+    Miller,
     Mollweide,
+    Moon,
+    Observer,
+    PlateCarree,
+    Scope,
+    Star,
     StereoNorth,
     StereoSouth,
-    PlateCarree,
-    CollisionHandler,
-    Binoculars,
-    Scope,
+    _,
+    geometry,
+    styles,
 )
 
 HERE = Path(__file__).resolve().parent
@@ -147,8 +149,7 @@ def check_map_orion_extra():
             "marker": {
                 "size": 30,
                 "symbol": "square",
-                "fill": "full",
-                "color": "#ff6868",
+                "fill": "#ff6868",
             },
             "label": {
                 "offset_x": 50,
@@ -166,8 +167,8 @@ def check_map_orion_extra():
         (7 * 15, -10),
         5,
         style=styles.PolygonStyle(
-            fill_color="blue",
-            alpha=0.14,
+            fill="blue",
+            opacity=0.14,
         ),
         legend_label="blue circle",
     )
@@ -177,12 +178,12 @@ def check_map_orion_extra():
     mercator_base.arrow(
         origin=(alhena.ra, alhena.dec),
         target=(ain.ra, ain.dec),
-        style__head_width=140,
-        style__body_width=80,
+        style__head_width=50,
+        style__body_width=20,
     )
 
     mercator_base.legend()
-    mercator_base.export(filename, padding=0.5)
+    mercator_base.export(filename)
     return filename
 
 
@@ -209,7 +210,7 @@ def check_map_coma_berenices_dso_size():
     p.constellations()
     p.constellation_borders()
     p.constellation_labels(collision_handler=HANDLER)
-    p.export(filename, padding=0.5)
+    p.export(filename)
     return filename
 
 
@@ -261,6 +262,7 @@ def check_map_with_planets_gradient():
         style=styles.PlotStyle().extend(
             styles.extensions.BLUE_GOLD,
             styles.extensions.GRADIENT_PRE_DAWN,
+            styles.extensions.MAP,
         ),
         resolution=RESOLUTION,
         autoscale=True,
@@ -316,7 +318,7 @@ def check_map_scope_bino_fov():
         optic=binoculars,
     )
     p.title("M45 :: TV-85 / 14mm @ 82deg, 10x binos @ 65deg")
-    p.export(filename, padding=0.3)
+    p.export(filename)
     return filename
 
 
@@ -347,7 +349,7 @@ def check_map_custom_stars():
         -5,
         style={"font_size": 20, "offset_x": 40, "offset_y": 100},
     )
-    p.export(filename, padding=0.3)
+    p.export(filename)
     return filename
 
 
@@ -360,7 +362,7 @@ def check_map_wrapping():
     )
 
     p = MapPlot(
-        projection=StereoNorth(),
+        projection=StereoNorth(center_ra=330),
         ra_min=18 * 15,
         ra_max=26 * 15,
         dec_min=30,
@@ -382,7 +384,7 @@ def check_map_wrapping():
     p.constellations()
     p.constellation_labels(collision_handler=HANDLER)
     p.title("Andromeda + nebula + Vega")
-    p.export(filename, padding=0.3)
+    p.export(filename)
     return filename
 
 
@@ -403,7 +405,7 @@ def check_map_mollweide():
     p.stars(
         where=[_.magnitude < 4.2],
         where_labels=[_.magnitude < 1.8],
-        style__marker__color="blue",
+        style__marker__fill="blue",
     )
     p.constellations()
     p.dsos(
@@ -417,36 +419,8 @@ def check_map_mollweide():
     )
     p.milky_way()
     p.gridlines(labels=False)
-    p.export(filename, padding=0.1)
+    p.export(filename)
     return filename
-
-
-# TODO : re-enable this when we solidify the mollweide gradient option
-# def check_map_mollweide_gradient():
-#     filename = DATA_PATH / "map-mollweide-gradient.png"
-#     style_gradient = STYLE.extend({"background_color": "#ffffff00"})
-#     p = MapPlot(
-#         projection=Projection.MOLLWEIDE,
-#         style=style_gradient,
-#         resolution=RESOLUTION,
-#         autoscale=True,
-#         gradient_preset=[
-#             [0.0, "#000000"],
-#             [0.4, "#151e47"],
-#             [0.45, "#2c3675"],
-#             [0.55, "#232c6d"],
-#             [0.6, "#182250"],
-#             [1.0, "#000000"],
-#         ],
-#     )
-#     p.stars(
-#         where=[_.magnitude < 4],
-#         where_labels=[_.magnitude < 1.8],
-#     )
-#     p.constellations()
-#     p.milky_way(style={"alpha": 0.2, "color": "#9C9C9C"})
-#     p.export(filename, padding=0.1)
-#     return filename
 
 
 def check_map_gridlines():
@@ -470,17 +444,16 @@ def check_map_gridlines():
 
     p.stars(where=[_.magnitude < 6], style__marker__size=45)
 
-    p.gridlines(tick_marks=True)
-
+    p.gridlines()
     p.gridlines(
         ra_locations=list(np.arange(0, 360, 3.75)),
-        ra_formatter_fn=lambda d: None,
-        dec_formatter_fn=lambda d: None,
         dec_locations=list(np.arange(-90, 90, 1)),
-        style__line__alpha=0.2,
+        ra_label_fn=lambda d: None,
+        dec_label_fn=lambda d: None,
+        style__line__opacity=0.2,
     )
 
-    p.export(filename, padding=0.3)
+    p.export(filename)
 
     return filename
 
@@ -506,14 +479,13 @@ def check_map_moon_phase_waxing_crescent():
     )
     p.gridlines(
         ra_locations=list(np.arange(0, 24 * 15, 0.05 * 15)),
-        ra_formatter_fn=lambda d: None,
-        dec_formatter_fn=lambda d: None,
         dec_locations=list(np.arange(-90, 90, 0.25)),
-        style__line__alpha=0.2,
+        ra_label_fn=lambda d: None,
+        dec_label_fn=lambda d: None,
+        style__line__opacity=0.2,
     )
     filename = DATA_PATH / "map-moon-phase-waxing-crescent.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -554,10 +526,10 @@ def check_map_plot_limit_by_geometry():
 
     filename = DATA_PATH / "map-limit-by-geometry.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
+@flake
 def check_map_plot_custom_clip_path_virgo():
     virgo = Constellation.get(iau_id="vir")
     p = MapPlot(
@@ -596,14 +568,13 @@ def check_map_plot_custom_clip_path_virgo():
             (13.42 * 15, -11.1613),  # Spica
         ],
         style__line={
-            "color": "red",
+            "stroke": "red",
             "width": 9,
         },
     )
 
     filename = DATA_PATH / "map-custom-clip-path-virgo.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -615,18 +586,16 @@ def check_map_label_callables():
         dec_min=22,
         dec_max=26,
         style=STYLE,
-        resolution=2000,
-        autoscale=True,
+        scale=1.5,
     )
     m45 = DSO.get(m="45")
 
     p.polygon(
         geometry=m45.geometry,
-        style__color=None,
-        style__fill_color=STYLE.dso_open_cluster.marker.color,
-        style__edge_color="red",
-        style__edge_width=16,
-        style__line_style=(0, (4, 8)),
+        style__fill=STYLE.dso_open_cluster.marker.fill,
+        style__stroke="red",
+        style__stroke_width=16,
+        style__dash_array=(8, 32),
     )
 
     p.stars(
@@ -638,7 +607,6 @@ def check_map_label_callables():
 
     filename = DATA_PATH / "map-m45-label-callables.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -659,7 +627,6 @@ def check_map_milky_way_multi_polygon():
 
     filename = DATA_PATH / "map-milky-way-multi-polygon.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -687,7 +654,6 @@ def check_map_allow_all_collisions():
     p.dsos(where=[_.magnitude < 10], where_true_size=[False])
     filename = DATA_PATH / "map-allow-all-collisions.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
@@ -714,10 +680,10 @@ def check_map_allow_marker_and_line_collisions():
     p.dsos(where=[_.magnitude < 10], where_true_size=[False])
     filename = DATA_PATH / "map-allow-some-collisions.png"
     p.export(filename)
-    p.close_fig()
     return filename
 
 
+@flake
 def check_map_constellation_clip_path():
     constellation = Constellation.get(iau_id="and")
 
@@ -777,12 +743,10 @@ def check_map_constellation_clip_path():
         bayer_labels=True,
     )
 
-    p.title(constellation.name, style__line_spacing=80)
-
-    p.ax.set_axis_off()  # hide the axis background that's outside the clip path
+    p.title(constellation.name)
 
     filename = DATA_PATH / "map-constellation-clip-path.png"
-    p.export(filename, padding=0.5)
+    p.export(filename)
 
     return filename
 
@@ -802,5 +766,67 @@ def check_map_plate_caree():
     p.gridlines()
     p.ecliptic()
     p.constellations()
+    p.export(filename)
+    return filename
+
+
+def check_map_font_fallback():
+    filename = DATA_PATH / "map-font-fallback.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.GRAYSCALE,
+        styles.extensions.MAP,
+    )
+    style.title.font_name = "ThisFontDoesNotExist12345"
+    style.constellation_labels.font_name = "AlsoNotARealFont"
+
+    p = MapPlot(
+        projection=Miller(),
+        ra_min=3.6 * 15,
+        ra_max=7.8 * 15,
+        dec_min=-16,
+        dec_max=23.6,
+        style=style,
+        resolution=RESOLUTION,
+        autoscale=True,
+    )
+    p.constellations()
+    p.constellation_labels()
+    p.stars(where=[_.magnitude < 6])
+    p.title("Font Fallback Test")
+
+    p.export(filename)
+
+    return filename
+
+
+@flake
+def check_map_equidistant_tissot():
+    filename = DATA_PATH / "map-equidistant-tissot.png"
+
+    style = styles.PlotStyle().extend(
+        styles.extensions.STARPLOT,
+        styles.extensions.MAP,
+    )
+    style.axes.border.width = 2
+    style.axes.border.stroke = "#153358CA"
+    style.axes.background.fill = "#2E343B"
+    style.figure.background.fill = None
+    style.tissot.fill = "#4476B3E4"
+
+    p = MapPlot(
+        projection=Equidistant(),
+        style=style,
+        resolution=RESOLUTION,
+        # radius capped at 90 degrees -- MapPlot's clip_path pipeline can't
+        # yet correctly render a clip_path spanning the whole sphere
+        clip_path=geometry.circle(
+            center=(180, 0),
+            diameter_degrees=179,
+            num_pts=200,
+        ),
+    )
+    p.gridlines()
+    p.tissot()
     p.export(filename)
     return filename

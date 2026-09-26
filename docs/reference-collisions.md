@@ -1,3 +1,5 @@
+# Label Collision Handling
+
 One of the biggest contributors to the visual quality of a map is labeling, which includes choosing carefully _what_ to label and also choosing good _positions_ for those labels. Obviously, you don't want labels to collide with each other, but there's also a few more subtle things to consider when labeling points and areas on a map. Starplot has a `CollisionHandler` to control some of these things.
 
 When you create a plot, you can specify the default collision handler for three different types of labels:
@@ -26,14 +28,14 @@ Below are the defaults for each type of collision handler. These are the default
 CollisionHandler(
     attempts=10,
     anchor_fallbacks=[
-        AnchorPointEnum.BOTTOM_RIGHT,
-        AnchorPointEnum.TOP_LEFT,
-        AnchorPointEnum.TOP_RIGHT,
-        AnchorPointEnum.BOTTOM_LEFT,
-        AnchorPointEnum.BOTTOM_CENTER,
-        AnchorPointEnum.TOP_CENTER,
-        AnchorPointEnum.RIGHT_CENTER,
-        AnchorPointEnum.LEFT_CENTER,
+        AnchorPoint.BOTTOM_RIGHT,
+        AnchorPoint.TOP_LEFT,
+        AnchorPoint.TOP_RIGHT,
+        AnchorPoint.BOTTOM_LEFT,
+        AnchorPoint.BOTTOM_CENTER,
+        AnchorPoint.TOP_CENTER,
+        AnchorPoint.RIGHT_CENTER,
+        AnchorPoint.LEFT_CENTER,
     ]
 )
 ```

@@ -1,0 +1,1 @@
+--8<-- "docs/images/reference/style_explorer.html"

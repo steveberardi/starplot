@@ -6,9 +6,7 @@ style = PlotStyle().extend(
     extensions.MAP,
     {
         "legend": {
-            "location": "lower right",  # show legend inside map
-            "num_columns": 3,
-            "background_alpha": 1,
+            "location": "inside_bottom_right",  # show legend inside map
         },
     },
 )
@@ -20,7 +18,7 @@ p = MapPlot(
     dec_min=-15,
     dec_max=27,
     style=style,
-    resolution=3600,
+    resolution=1200,
     autoscale=True,  # automatically adjust the scale based on the resolution
 )
 
@@ -29,16 +27,19 @@ p.constellations()
 p.constellation_borders()
 
 p.stars(
-    where=[_.magnitude < 8],
-    where_labels=[_.magnitude < 3],
+    where=[_.magnitude < 6.4],
+    where_labels=[_.magnitude < 4],
     bayer_labels=True,
     flamsteed_labels=True,
 )  # include Bayer and Flamsteed labels with the stars
 
-
-p.nebula(where=[(_.magnitude < 9) | (_.magnitude.isnull())], where_labels=[False])
+p.nebula(
+    where=[(_.magnitude < 6.4) | (_.magnitude.isnull())],
+    where_true_size=[_.size > 0.5],
+)
 p.open_clusters(
-    where=[(_.magnitude < 9) | (_.magnitude.isnull())], where_labels=[False]
+    where=[(_.magnitude < 6.4) | (_.magnitude.isnull())],
+    where_true_size=[_.size > 0.5],
 )
 
 p.milky_way()
@@ -48,4 +49,4 @@ p.legend()  # add a legend
 
 p.constellation_labels()  # Plot the constellation labels last for best placement
 
-p.export("tutorial_04.png", padding=0.2, transparent=True)
+p.export("tutorial_04.svg")

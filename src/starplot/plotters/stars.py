@@ -1,19 +1,20 @@
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
-import rtree
 import numpy as np
+import rtree
 from ibis import _ as ibis_table
 from skyfield.api import Star as SkyfieldStar
 
-from starplot import callables
+from starplot.callables import size_by_magnitude
 from starplot.data import stars
-from starplot.data.catalogs import Catalog, BIG_SKY_MAG11
+from starplot.data.catalogs import BIG_SKY_MAG11, Catalog
 from starplot.data.translations import translate
 from starplot.models.star import Star, from_tuple
-from starplot.styles import ObjectStyle, use_style
-from starplot.profile import profile
 from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
+from starplot.styles import GradientStyle, ObjectStyle, use_style
+from starplot.utils import normalize_where
 
 
 class StarPlotterMixin:
@@ -27,35 +28,18 @@ class StarPlotterMixin:
             sql=sql,
         )
 
-    def _scatter_stars(self, ras, decs, sizes, alphas, colors, style=None, **kwargs):
+    def _scatter_stars(self, ras, decs, sizes, opacity_values, colors, style, gid):
         style = style or self.style.star
-        edge_colors = kwargs.pop("edgecolors", None)
 
-        if not edge_colors:
-            if style.marker.edge_color:
-                edge_colors = style.marker.edge_color.as_hex()
-            else:
-                edge_colors = "none"
-
-        plotted = self.ax.scatter(
-            ras,
-            decs,
-            s=sizes,
-            c=colors,
-            marker=kwargs.pop("symbol", None) or style.marker.symbol_matplot,
-            zorder=kwargs.pop("zorder", None) or style.marker.zorder,
-            edgecolors=edge_colors,
-            alpha=alphas,
-            gid="stars",
-            **self._plot_kwargs(),
-            **kwargs,
+        self.canvas.markers(
+            xs=np.array(ras),
+            ys=np.array(decs),
+            style=style.marker,
+            gid=gid,
+            sizes=sizes,
+            colors=colors,
+            opacity_values=opacity_values,
         )
-
-        if self._background_clip_path is not None:
-            plotted.set_clip_on(True)
-            plotted.set_clip_path(self._background_clip_path)
-
-        return plotted
 
     def _star_labels(
         self,
@@ -92,25 +76,32 @@ class StarPlotterMixin:
             bayer_desig = s.bayer
             flamsteed_num = s.flamsteed
 
+            # star_sizes are already scaled by self.scale (they're reused
+            # directly for rendering the markers), but _offset_from_marker
+            # applies self.scale itself -- undo it here so the marker size it
+            # sees matches its own convention (e.g. style.marker.size, as
+            # passed by marker() and dsos.py), instead of being scaled twice
+            marker_size = star_sizes[i] / self.scale
+
             if label:
                 self.text(
                     label,
                     s.ra,
                     s.dec,
-                    style=style.label.offset_from_marker(
-                        marker_symbol=style.marker.symbol,
-                        marker_size=star_sizes[i],
-                        scale=self.scale,
+                    style=self._offset_from_marker(
+                        style=style.label,
+                        text=label,
+                        marker_size=marker_size,
                     ),
                     collision_handler=collision_handler,
                     gid="stars-label-name",
                 )
 
             if bayer_labels and bayer_desig and s.is_primary:
-                _bayer.append((bayer_desig, s.ra, s.dec, star_sizes[i]))
+                _bayer.append((bayer_desig, s.ra, s.dec, marker_size))
 
             if flamsteed_labels and flamsteed_num and not bayer_desig and s.is_primary:
-                _flamsteed.append((flamsteed_num, s.ra, s.dec, star_sizes[i]))
+                _flamsteed.append((flamsteed_num, s.ra, s.dec, marker_size))
 
         # Plot bayer/flamsteed
         for bayer_desig, ra, dec, star_size in _bayer:
@@ -118,10 +109,10 @@ class StarPlotterMixin:
                 bayer_desig,
                 ra,
                 dec,
-                style=self.style.bayer_labels.offset_from_marker(
-                    marker_symbol=style.marker.symbol,
+                style=self._offset_from_marker(
+                    style=self.style.bayer_labels,
+                    text=bayer_desig,
                     marker_size=star_size,
-                    scale=self.scale,
                 ),
                 collision_handler=collision_handler,
                 gid="stars-label-bayer",
@@ -132,10 +123,10 @@ class StarPlotterMixin:
                 flamsteed_num,
                 ra,
                 dec,
-                style=self.style.flamsteed_labels.offset_from_marker(
-                    marker_symbol=style.marker.symbol,
+                style=self._offset_from_marker(
+                    style=self.style.flamsteed_labels,
+                    text=str(flamsteed_num),
                     marker_size=star_size,
-                    scale=self.scale,
                 ),
                 collision_handler=collision_handler,
                 gid="stars-label-flamsteed",
@@ -152,31 +143,33 @@ class StarPlotterMixin:
     @use_style(ObjectStyle, "star")
     def stars(
         self,
-        where: list = None,
-        where_labels: list = None,
+        where: list | None = None,
+        where_labels: list | bool | None = None,
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
         style: ObjectStyle = None,
-        size_fn: Callable[[Star], float] = callables.size_by_magnitude,
-        alpha_fn: Callable[[Star], float] = None,
-        color_fn: Callable[[Star], str] = None,
+        size_fn: Callable[[Star], float] | None = size_by_magnitude,
+        opacity_fn: Callable[[Star], float] | None = None,
+        color_fn: Callable[[Star], str | GradientStyle] | None = None,
         label_fn: Callable[[Star], str] = Star.get_label,
         legend_label: str = "Star",
         bayer_labels: bool = False,
         flamsteed_labels: bool = False,
-        sql: str = None,
-        sql_labels: str = None,
+        sql: str | None = None,
+        sql_labels: str | None = None,
         collision_handler: CollisionHandler = None,
+        gid_markers: str = "stars",
+        gid_labels: str = "stars-labels",
     ):
         """
         Plots stars
 
         Args:
-            where: A list of expressions that determine which stars to plot. See [Selecting Objects](reference-selecting-objects.md) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](reference-selecting-objects.md) for details.
-            catalog: The catalog of stars to use -- see [catalogs overview](data/overview.md) for details
+            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). Can also be a boolean: if `False` then no labels will be plotted.. See [Selecting Objects](/reference-selecting-objects/) for details.
+            catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
             style: If `None`, then the plot's style for stars will be used
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
-            alpha_fn: Callable for calculating the alpha value (aka "opacity") of each star. If `None`, then the marker style's alpha will be used.
+            opacity_fn: Callable for calculating the opacity value of each star. If `None`, then the marker style's opacity will be used.
             color_fn: Callable for calculating the color of each star. If `None`, then the marker style's color will be used.
             label_fn: Callable for determining the label of each star.
             legend_label: Label for stars in the legend. If `None`, then they will not be in the legend.
@@ -185,19 +178,21 @@ class StarPlotterMixin:
             sql: SQL query for selecting stars (table name is `_`). This query will be applied _after_ any filters in the `where` kwarg.
             sql_labels: SQL query for selecting stars that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
+            gid_markers: Group id for the markers in the exported SVG
+            gid_labels: Group id for the labels in the exported SVG
+
         """
 
         # fallback to style if callables are None
-        color_hex = (
-            style.marker.color.as_hex()
-        )  # calculate color hex once here to avoid repeated calls in color_fn()
         size_fn = size_fn or (lambda d: style.marker.size)
-        alpha_fn = alpha_fn or (lambda d: style.marker.alpha)
-        color_fn = color_fn or (lambda d: color_hex)
+        opacity_fn = opacity_fn or (lambda d: style.marker.opacity)
+        color_fn = color_fn or (lambda d: style.marker.fill)
+
+        self._last_used_size_fn = size_fn
 
         handler = collision_handler or self.point_label_handler
-        where = where or []
-        where_labels = where_labels or []
+        where = normalize_where(where)
+        where_labels = normalize_where(where_labels)
         stars_to_index = []
 
         star_results = self._load_stars(catalog, filters=where, sql=sql)
@@ -230,15 +225,9 @@ class StarPlotterMixin:
         starz = []
         rtree_id = 1
 
-        transformed = self._proj.transform_points(
-            self._crs,
+        stars_df["display_x"], stars_df["display_y"] = self.canvas._to_display(
             stars_df["x"].to_numpy(),
             stars_df["y"].to_numpy(),
-        )
-        stars_df["data_x"] = transformed[:, 0]
-        stars_df["data_y"] = transformed[:, 1]
-        stars_df[["display_x", "display_y"]] = self.ax.transData.transform(
-            stars_df[["data_x", "data_y"]].to_numpy()
         )
         stars_df = stars_df[(stars_df["display_x"] >= 0) & (stars_df["display_y"] >= 0)]
 
@@ -246,13 +235,13 @@ class StarPlotterMixin:
             display_x, display_y = star.display_x, star.display_y
 
             obj = from_tuple(star)
-            size = size_fn(obj) * self.scale**2
-            alpha = alpha_fn(obj)
-            color = color_fn(obj) or style.marker.color.as_hex()
+            size = size_fn(obj) * self.scale
+            opacity = opacity_fn(obj)
+            color = color_fn(obj) or style.marker.fill
 
-            if obj.magnitude < 5:
+            if size > 10:
                 rtree_id += 1
-                radius = size**0.5 / 5
+                radius = size / 2.5
                 bbox = np.array(
                     (
                         display_x - radius,
@@ -273,32 +262,28 @@ class StarPlotterMixin:
                     # if the index has no stars yet, then wait until end to load for better performance
                     stars_to_index.append((rtree_id, bbox, None))
 
-            starz.append((star.x, star.y, size, alpha, color, obj))
+            starz.append((star.x, star.y, size, opacity, color, obj))
 
         starz.sort(key=lambda s: s[2], reverse=True)  # sort by descending size
 
         if not starz:
-            self.logger.debug(f"Star count = {len(starz)}")
+            self.logger.debug("No stars found.")
             return
 
-        x, y, sizes, alphas, colors, star_objects = zip(*starz)
+        x, y, sizes, opacity_values, colors, star_objects = zip(*starz)
 
         self._objects.stars.extend(star_objects)
 
         self.logger.debug(f"Star count = {len(star_objects)}")
 
-        # Plot Stars
         self._scatter_stars(
             x,
             y,
             sizes,
-            alphas,
+            opacity_values,
             colors,
             style=style,
-            zorder=style.marker.zorder,
-            edgecolors=style.marker.edge_color.as_hex()
-            if style.marker.edge_color
-            else "none",
+            gid=gid_markers,
         )
 
         _legend_label = translate(legend_label, self.language) or legend_label
@@ -307,13 +292,14 @@ class StarPlotterMixin:
         if stars_to_index:
             self._stars_rtree = rtree.index.Index(stars_to_index)
 
-        self._star_labels(
-            star_objects,
-            sizes,
-            label_pks,
-            style,
-            bayer_labels,
-            flamsteed_labels,
-            label_fn,
-            handler,
-        )
+        with self.canvas.group(gid=gid_labels):
+            self._star_labels(
+                star_objects,
+                sizes,
+                label_pks,
+                style,
+                bayer_labels,
+                flamsteed_labels,
+                label_fn,
+                handler,
+            )

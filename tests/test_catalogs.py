@@ -1,6 +1,6 @@
 from shapely import Point
 
-from starplot import Star, DSO
+from starplot import DSO, Star
 from starplot.data import Catalog
 
 from .utils import TEST_DATA_PATH

@@ -1,20 +1,17 @@
-import numpy as np
-from matplotlib import path, patches
-
+from starplot import geometry
 from starplot.coordinates import CoordinateSystem
 from starplot.data.translations import translate
-from starplot.plots.map import MapPlot
 from starplot.models.observer import Observer
+from starplot.plots.map import MapPlot
+from starplot.plotters.text import CollisionHandler
+from starplot.profile import profile
 from starplot.projections import Stereographic
 from starplot.styles import (
-    LabelStyle,
-    PlotStyle,
     PathStyle,
-    GradientDirection,
+    PlotStyle,
     extensions,
 )
 from starplot.styles.helpers import use_style
-from starplot.plotters.text import CollisionHandler
 
 
 class ZenithPlot(MapPlot):
@@ -38,29 +35,35 @@ class ZenithPlot(MapPlot):
     """
 
     _coordinate_system = CoordinateSystem.RA_DEC
-    _gradient_direction = GradientDirection.RADIAL
 
     def __init__(
         self,
         observer: Observer = None,
-        ephemeris: str = "de421.bsp",
+        ephemeris: str = "de440s.bsp",
         style: PlotStyle = None,
         resolution: int = 4096,
         point_label_handler: CollisionHandler = None,
         area_label_handler: CollisionHandler = None,
         path_label_handler: CollisionHandler = None,
-        scale: float = 1.0,
+        scale: float = 1,
         autoscale: bool = False,
         suppress_warnings: bool = True,
         *args,
         **kwargs,
     ) -> "ZenithPlot":
         observer = observer or Observer()
+        style = style or PlotStyle().extend(extensions.MAP)
+
         projection = Stereographic(
             center_ra=observer.lst,
             center_dec=observer.lat,
         )
-        style = style or PlotStyle().extend(extensions.MAP)
+
+        clip_path = geometry.circle(
+            center=(observer.lst, observer.lat),
+            diameter_degrees=180,
+            num_pts=400,
+        )
 
         super().__init__(
             projection,
@@ -68,131 +71,98 @@ class ZenithPlot(MapPlot):
             360,
             -90,
             90,
-            observer,
-            ephemeris,
-            style,
-            resolution,
+            observer=observer,
+            ephemeris=ephemeris,
+            style=style,
+            resolution=resolution,
             point_label_handler=point_label_handler,
             area_label_handler=area_label_handler,
             path_label_handler=path_label_handler,
-            clip_path=None,
+            clip_path=clip_path,
             scale=scale,
             autoscale=autoscale,
             suppress_warnings=suppress_warnings,
-            *args,
             **kwargs,
         )
 
+    @profile
     @use_style(PathStyle, "horizon")
     def horizon(
         self,
         style: PathStyle = None,
-        labels: list = ["N", "E", "S", "W"],
+        labels: list | None = None,
     ):
         """
-        Draws a [great circle](https://en.wikipedia.org/wiki/Great_circle) representing the horizon for the given `lat`, `lon` at time `dt` (so you must define these when creating the plot to use this function)
+        Plots the horizon for the observer of the plot
 
         Args:
             style: Style of the horizon path. If None, then the plot's style definition will be used.
-            labels: List of labels for cardinal directions. **NOTE: labels should be in the order: North, East, South, West.**
+            labels: List of labels for cardinal directions. Default: `["N", "E", "S", "W"]`. **NOTE: labels should be in the order: North, East, South, West.**
         """
+        labels = ["N", "E", "S", "W"] if labels is None else labels
         if self.observer is None:
             raise ValueError("observer is required for plotting the horizon")
 
+        _labels = []
+        if labels:
+            labels = [translate(label, self.language) for label in labels]
+            _labels = [
+                (
+                    [self.observer.radec(0, alt) for alt in range(-5, 6, 5)],
+                    labels[0],
+                    ("top",),
+                ),
+                (
+                    [self.observer.radec(90, alt) for alt in range(-5, 6, 5)],
+                    labels[1],
+                    ("left",),
+                ),
+                (
+                    [self.observer.radec(180, alt) for alt in range(-5, 6, 5)],
+                    labels[2],
+                    ("bottom",),
+                ),
+                (
+                    [self.observer.radec(270, alt) for alt in range(-5, 6, 5)],
+                    labels[3],
+                    ("right",),
+                ),
+            ]
+
+        self.canvas._axes_frame(style, labels=_labels)
+
+    @profile
+    @use_style(PathStyle, "gridlines")
+    def gridlines(
+        self,
+        style: PathStyle = None,
+        ra_locations: list[float] = None,
+        dec_locations: list[float] = None,
+    ):
         """
-        For zenith projections, we plot the horizon as a patch to make a more perfect circle
-        """
-        style_kwargs = style.line.matplot_kwargs(self.scale)
-        style_kwargs["clip_on"] = False
-        style_kwargs["edgecolor"] = style_kwargs.pop("color")
-        patch = patches.Circle(
-            (0.50, 0.50),
-            radius=0.454,
-            facecolor=None,
-            fill=False,
-            transform=self.ax.transAxes,
-            **style_kwargs,
-        )
-        self.ax.add_patch(patch)
-        self._background_clip_path = patch
-        self._update_clip_path_polygon(
-            buffer=style.line.width / 2 + 2 * style.line.edge_width + 40
-        )
+        Plots gridlines.
 
-        if not labels:
-            return
-
-        labels = [translate(label, self.language) for label in labels]
-
-        label_ax_coords = [
-            (0.5, 0.95),  # north
-            (0.045, 0.5),  # east
-            (0.5, 0.045),  # south
-            (0.954, 0.5),  # west
-        ]
-        for label, coords in zip(labels, label_ax_coords):
-            self.ax.annotate(
-                label,
-                coords,
-                xycoords=self.ax.transAxes,
-                clip_on=False,
-                **style.label.matplot_kwargs(self.scale),
-            )
-
-    def _adjust_radec_minmax(self):
-        self.ra_min = 0
-        self.ra_max = 360
-        self.dec_min = -90
-        self.dec_max = 90
-
-    def _set_extent(self):
-        theta = np.linspace(0, 2 * np.pi, 100)
-        center, radius = [0.5, 0.5], 0.45
-        verts = np.vstack([np.sin(theta), np.cos(theta)]).T
-        circle = path.Path(verts * radius + center)
-        extent = self.ax.get_extent(crs=self._proj)
-        self.ax.set_extent((p / 3.548 for p in extent), crs=self._proj)
-        self.ax.set_boundary(circle, transform=self.ax.transAxes)
-
-    @use_style(LabelStyle, "info_text")
-    def info(self, style: LabelStyle = None):
-        """
-        Plots info text in the lower left corner, including date/time and lat/lon.
+        _Gridline labels are not yet supported for zenith plots._
 
         Args:
-            style: Styling of the info text. If None, then the plot's style definition will be used.
+            style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
+            ra_locations: List of Right Ascension locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees.
+            dec_locations: List of Declination locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
         """
-        dt_str = self.dt.strftime("%m/%d/%Y @ %H:%M:%S") + " " + self.dt.tzname()
-        info = f"{str(self.observer.lat)}, {str(self.observer.lon)}\n{dt_str}"
-        self.ax.text(
-            0.05,
-            0.05,
-            info,
-            transform=self.ax.transAxes,
-            **style.matplot_kwargs(self.scale),
+
+        super().gridlines(
+            style=style,
+            labels=False,
+            ra_locations=ra_locations,
+            dec_locations=dec_locations,
         )
 
-    def _plot_background_clip_path(self):
-        if self.style.has_gradient_background():
-            background_color = "#ffffff00"
-            self._plot_gradient_background(self.style.background_color)
-        else:
-            background_color = self.style.background_color.as_hex()
-
-        self._background_clip_path = patches.Circle(
-            (0.50, 0.50),
-            radius=0.45,
-            fill=True,
-            facecolor=background_color,
-            # edgecolor=self.style.border_line_color.as_hex(),
-            linewidth=0,
-            zorder=-2_000,
-            transform=self.ax.transAxes,
-        )
-        self.ax.set_facecolor(background_color)
-
-        self.ax.add_patch(self._background_clip_path)
-        self._update_clip_path_polygon(buffer=20)
+    def _adjust_radec_minmax(self):
+        _, dec_min, _, dec_max = self.canvas.bounds
+        self.ra_min = 0
+        self.ra_max = 360
+        self.dec_min = dec_min - 1
+        self.dec_max = dec_max + 1
 
     def _prepare_star_coords(self, df, limit_by_altaz=False):
         # TODO : reconcile this commented code

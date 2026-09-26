@@ -32,9 +32,8 @@ p = OpticPlot(
         fov=65,
     ),
     style=style,
-    resolution=2048,
-    autoscale=True,
+    resolution=4000,
 )
 p.stars(where=[_.magnitude < 12])
 
-p.export("tutorial_05.png", padding=0.1, transparent=True)
+p.export("tutorial_05.svg")

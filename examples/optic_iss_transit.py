@@ -58,25 +58,25 @@ for sat in iss.trajectory(dt_start, dt_end, step=timedelta(seconds=1)):
         sat.dec,
         style={
             "marker": {
-                "size": 60,
-                "edge_width": 2,
+                "size": 80,
+                "stroke_width": 4,
                 "symbol": "plus",
-                "color": marker_color,
+                "fill": marker_color,
                 "zorder": 5_000,
             },
             "label": {
-                "font_color": label_color,
-                "anchor_point": "bottom center",
-                "border_color": "#000",
-                "border_width": 6,
-                "font_size": 38,
+                "fill": label_color,
+                "anchor_point": "bottom_center",
+                "stroke": "#000",
+                "stroke_width": 6,
+                "font_size": 48,
                 "font_weight": 800,
-                "offset_x": 0,
-                "offset_y": -40,
+                "offset_x": "auto",
+                "offset_y": "auto",
                 "zorder": 5_000,
             },
         },
         label=sat.observer.dt.strftime("%-H:%M:%S"),
     )
 
-p.export("optic_iss_transit.png", padding=0.1, transparent=True)
+p.export("optic_iss_transit.png")

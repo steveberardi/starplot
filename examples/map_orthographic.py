@@ -8,6 +8,7 @@ from starplot.styles import PlotStyle, extensions
 style = PlotStyle().extend(
     extensions.BLUE_MEDIUM,
     extensions.MAP,
+    extensions.FIGURE_TRANSPARENT,
 )
 
 tz = ZoneInfo("America/Los_Angeles")
@@ -25,32 +26,31 @@ p = MapPlot(
     ),
     observer=observer,
     style=style,
-    resolution=2800,
-    scale=0.86,  # lower the scale since it shows a large area
+    scale=1.1,
 )
 p.gridlines(labels=False)
 p.constellations()
 p.constellation_borders()
 
-p.stars(where=[_.magnitude < 7], where_labels=[False])
+p.stars(where=[_.magnitude < 7], where_labels=False)
 p.open_clusters(
     where=[_.magnitude < 12],
-    where_labels=[False],
-    where_true_size=[False],
+    where_labels=False,
+    where_true_size=False,
 )
 p.galaxies(
     where=[_.magnitude < 12],
-    where_labels=[False],
-    where_true_size=[False],
+    where_labels=False,
+    where_true_size=False,
 )
 p.nebula(
     where=[_.magnitude < 12],
-    where_labels=[False],
-    where_true_size=[False],
+    where_labels=False,
+    where_true_size=False,
 )
 
 p.ecliptic()
 p.celestial_equator()
 p.milky_way()
 
-p.export("map_orthographic.png", padding=0.3, transparent=True)
+p.export("map_orthographic.png")

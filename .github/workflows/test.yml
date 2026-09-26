@@ -13,47 +13,70 @@ on:
 jobs:
   test-lint-build:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
     - uses: actions/checkout@v6
-    - name: Build Docker Image
-      run: make build
+    - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+    - name: Install dependencies
+      run: make install env
+    - name: Download test fonts
+      run: make download-test-fonts
     - name: Build sky.db
-      run: make db CI=true
+      run: make db setup CI=true
     - name: Check Lint
       run: make lint CI=true
     - name: Check Format
       run: make format CI=true ARGS=--check
     - name: Run Tests
-      run: make test CI=true
-    - name: Check Image Hashes
-      run: make check-hashes CI=true
+      id: run-tests
+      run: make test-python-version PYTHON_VERSION=${{ matrix.python-version }} CI=true
+    - name: Run hash checks
+      id: run-hash-checks
+      run: make check-hashes-python-version PYTHON_VERSION=${{ matrix.python-version }} CI=true
+    - name: Build examples
+      if: always()
+      run: make examples
+    - name: Build tutorial
+      if: always()
+      run: make tutorial
+    - name: Build docs
+      if: always()
+      run: make docs
+    - name: Set Short SHA
+      if: always()
+      run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+    - id: 'auth'
+      if: always()
+      uses: 'google-github-actions/auth@v3'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+    - name: 'Set up Google Cloud SDK'
+      if: always()
+      uses: 'google-github-actions/setup-gcloud@v3'
+      with:
+        version: '>= 363.0.0'
+    - name: 'Upload docs on failure'
+      if: always()
+      run: 'gsutil -m rsync -R -d site gs://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}/docs/'
+    - name: 'Upload hash check results on failure'
+      if: always()
+      run: |
+        gsutil cp hash_checks/results.html gs://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}/hash-checks/results.html
+        gsutil -m rsync -r hash_checks/data gs://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}/hash-checks/data/
+    - name: 'Print results URLs'
+      if: always()
+      run: |
+        BASE="https://archives.starplot.dev/test-runs/$SHORT_SHA/${{ matrix.python-version }}"
+        echo "docs: $BASE/docs/index.html"
+        echo "hash checks: $BASE/hash-checks/results.html"
+        echo "### Test run artifacts (Python ${{ matrix.python-version }})" >> "$GITHUB_STEP_SUMMARY"
+        echo "- [docs]($BASE/docs/index.html)" >> "$GITHUB_STEP_SUMMARY"
+        echo "- [hash checks]($BASE/hash-checks/results.html)" >> "$GITHUB_STEP_SUMMARY"
     - name: Build PIP Package
       run: make flit-build
-
-  test-python-3-10:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - name: Run Tests - Python 3.10
-      run: make test-3.10 CI=true
-  
-  test-python-3-11:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - name: Run Tests - Python 3.11
-      run: make test-3.11 CI=true
-  
-  test-python-3-12:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - name: Run Tests - Python 3.12
-      run: make test-3.12 CI=true
-  
-  test-python-3-13:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - name: Run Tests - Python 3.13
-      run: make test-3.13 CI=true

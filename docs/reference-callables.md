@@ -1,10 +1,17 @@
-<h1>Callables</h1>
+# Callables
 
-Callables allow you to define your own functions for calculating a few of the style properties for stars: size, alpha (opacity), color, and the star's label. DSOs support callables for alpha and labels only. Starplot has a few basic callables built-in, but you can also create your own.
+Many functions in Starplot allow you to pass a callable for creating dynamic styles and labels for objects. For example, when you plot stars you can optionally specify a callable for determining the size of each star. Starplot has a few basic callables built-in, but you can also create your own.
 
-???- tip "What's a Callable?"
+- Built-In Callables: [Size](#size), [Color](#color), [Labels](#labels)
 
-    In Python, a "callable" is anything that can be "called" — e.g. a function or a class with `__call__` implemented.
+- [Creating your own callable](#creating-your-own-callable)
+
+- _[See chapter 8 of the tutorial for an example of using a callable :material-arrow-right:](tutorial/08.md)_
+
+
+???- tip  "What's a Callable?"
+
+    In Python, a "callable" is anything that can be "called" (e.g. a function or a class with `__call__` implemented).
 
     As a simple example, here's how you can pass a callable to Python's `sorted` function to sort a list of strings by their length:
     ```python
@@ -34,35 +41,75 @@ Callables allow you to define your own functions for calculating a few of the st
     
     ```
 
+<div class="divider"></div>
 
-## Example
+## Size
 
-Here's a basic example of using one of the built-in callables to colorize the stars based on their BV index:
+### ::: starplot.callables.size_by_magnitude
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
 
-```python hl_lines="18"
-from starplot import MapPlot, Mercator, callables, _
-from starplot.styles import PlotStyle, extensions
+### ::: starplot.callables.size_by_magnitude_galaxy
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
 
-style = PlotStyle().extend(
-    extensions.GRAYSCALE_DARK,
-    extensions.MAP,
-)
-p = MapPlot(
-    projection=Mercator(),
-    ra_min=3.4,
-    ra_max=8,
-    dec_min=-16,
-    dec_max=25.6,
-    style=style,
-)
-p.stars(
-    where=[_.magnitude < 12],
-    color_fn=callables.color_by_bv, # <-- here's where we specify the callable
-)
-p.constellations()
+### ::: starplot.callables.size_by_fov_factory
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
 
-p.export("orion_colored_stars.png")
-```
+<div class="divider"></div>
+
+## Color
+
+### ::: starplot.callables.color_by_bv
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+### ::: starplot.callables.color_by_bv_gradient
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+<div class="divider"></div>
+
+## Labels
+
+### ::: starplot.callables.floor_hours_label
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+### ::: starplot.callables.rounded_degrees_label
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+### ::: starplot.callables.azimuth_with_cardinal_direction_label_factory
+    options:
+        inherited_members: true
+        merge_init_into_class: true
+        show_root_heading: true
+        show_source: true
+
+<div class="divider"></div>
 
 ## Creating Your Own Callable
 Let's say you wanted to create a plot where the stars brighter than magnitude 4 should be colored blue and stars dimmer than that should be colored red. Here's a way to do that with a custom callable:
@@ -84,9 +131,5 @@ p.stars(
 ```
 Every callable for stars is passed an instance of [`Star`][starplot.Star], so you can reference various properties of stars in your callables. Similarly, every callable for a DSO is passed an instance of [`DSO`][starplot.DSO].
 
-# ::: starplot.callables
-    options:
-        inherited_members: true
-        merge_init_into_class: true
-        show_root_heading: true
-        docstring_section_style: list
+
+<br/><br/><br/>

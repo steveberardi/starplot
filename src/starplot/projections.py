@@ -1,8 +1,76 @@
 from abc import ABC
-from functools import cached_property
+from enum import Enum
+from typing import ClassVar
 
-from cartopy import crs as ccrs
+import numpy as np
 from pydantic import BaseModel, Field
+from pyproj import CRS, Transformer
+
+from starplot.constants import PROJ_R
+from starplot.geometry import circle
+
+
+class CoordinateReferenceSystem(str, Enum):
+    ENU = f"+proj=longlat +ellps=sphere +R={PROJ_R}"
+    WNU = f"+proj=longlat +ellps=sphere +axis=wnu +R={PROJ_R}"
+
+
+def latlon_bounds_to_projection(
+    lon_min: float,
+    lat_min: float,
+    lon_max: float,
+    lat_max: float,
+    target_crs: str | CRS,
+    source_crs: CRS,
+    densify_pts: int = 2_000,
+    curved: bool = False,
+    transformer: Transformer = None,
+) -> tuple[float, float, float, float]:
+    """
+    Convert a lat/lon bounding box to a target projection.
+
+    Args:
+        lat_min, lat_max: Latitude range in degrees
+        lon_min, lon_max: Longitude range in degrees
+        target_crs: Any pyproj-accepted CRS string (EPSG code, PROJ string, WKT)
+        densify_edges: Sample points along each edge (important for curved projections)
+        densify_pts: Number of points per edge when densifying
+        curved: Set to True for curved projections (e.g. Mollweide) to also sample interior points
+
+    Returns:
+        Bounds in the target projection's native units
+    """
+    transformer = transformer or Transformer.from_crs(
+        source_crs, target_crs, always_xy=True
+    )
+
+    # Sample along all 4 edges to catch curved projection boundaries
+    top = [(lon, lat_max) for lon in np.linspace(lon_min, lon_max, densify_pts)]
+    bottom = [(lon, lat_min) for lon in np.linspace(lon_min, lon_max, densify_pts)]
+    left = [(lon_min, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
+    right = [(lon_max, lat) for lat in np.linspace(lat_min, lat_max, densify_pts)]
+
+    corners = top + bottom + left + right
+
+    if curved:
+        # Interior grid to catch extremes on curved projections
+        interior_lons = np.linspace(lon_min, lon_max, densify_pts)
+        interior_lats = np.linspace(lat_min, lat_max, densify_pts)
+        glon, glat = np.meshgrid(interior_lons, interior_lats)
+        interior = list(zip(glon.ravel(), glat.ravel()))
+        corners += interior
+
+    lons, lats = zip(*corners)
+
+    xs, ys = transformer.transform(lons, lats)
+
+    # Filter out inf values (points that don't project)
+    valid = [(x, y) for x, y in zip(xs, ys) if abs(x) < 1e15 and abs(y) < 1e15]
+    if not valid:
+        raise ValueError("No valid projected points — check your CRS and bounds")
+
+    xs_v, ys_v = zip(*valid)
+    return min(xs_v), min(ys_v), max(xs_v), max(ys_v)
 
 
 class CenterRA(BaseModel, ABC):
@@ -25,29 +93,73 @@ class Azimuth(BaseModel, ABC):
 
 
 class ProjectionBase(BaseModel, ABC):
-    threshold: int = 1000
+    name: ClassVar[str] = None
+    r: ClassVar[int] = PROJ_R
+    units: ClassVar[str] = "m"
+    proj_def_base: ClassVar[str | None] = None
+    global_only: ClassVar[bool] = False
+    curved: ClassVar[bool] = False
+    wraps: ClassVar[bool] = False
 
-    _ccrs = None
+    # Set on hemisphere-limited projections (e.g. Orthographic): points
+    # farther than this many degrees from (center_ra, center_dec) aren't
+    # actually visible, even if PROJ still returns a finite (but wrong,
+    # mirrored) projected coordinate for them -- see geometry.py's
+    # split_line_at_horizon/split_ring_at_horizon, which use this to cut
+    # lines/polygons in RA/DEC space before projecting, since there's no
+    # reliable jump/non-finite signature to catch this after the fact.
+    max_angular_distance: ClassVar[float | None] = None
 
     class Config:
         arbitrary_types_allowed = True
 
-    @cached_property
-    def crs(self):
-        kwargs = {}
+    @property
+    def global_bounds(self):
+        return latlon_bounds_to_projection(
+            -180,
+            -90,
+            180,
+            90,
+            source_crs=CRS.from_proj4(CoordinateReferenceSystem.ENU.value),
+            target_crs=CRS.from_proj4(self.proj_def_base),
+            densify_pts=90,
+        )
+
+    def get_transformer(
+        self, source_crs: CRS, ignored_params: list[str] | None = None
+    ) -> Transformer:
+        return Transformer.from_crs(
+            source_crs,
+            self.get_crs(source_crs, ignored_params=ignored_params),
+            always_xy=True,
+        )
+
+    def get_crs(self, source_crs: CRS, ignored_params: list[str] | None = None) -> CRS:
+        params = {
+            "proj": self.name,
+            "R": self.r,
+            "units": self.units,
+            # "over": None, # this creates problem with mollweide projection
+        }
+        ignored_params = ignored_params or []
 
         if hasattr(self, "center_ra"):
-            kwargs["central_longitude"] = -1 * self.center_ra
+            axis_props = [(a.abbrev, a.direction) for a in source_crs.axis_info]
+            if ("lon", "west") in axis_props:
+                params["lon_0"] = 360 - self.center_ra
+            else:
+                params["lon_0"] = self.center_ra
 
         if hasattr(self, "center_dec"):
-            kwargs["central_latitude"] = self.center_dec
+            params["lat_0"] = self.center_dec
 
         if hasattr(self, "azimuth"):
-            kwargs["azimuth"] = self.azimuth
+            params["alpha"] = self.azimuth
+            params["lonc"] = params["lon_0"]
 
-        c = self._ccrs(**kwargs)
-        c.threshold = self.threshold
-        return c
+        return CRS.from_dict(
+            {k: v for k, v in params.items() if k not in ignored_params}
+        )
 
 
 class AutoProjection:
@@ -89,96 +201,170 @@ class AutoProjection:
     ) -> bool:
         return ra_min == 0 and ra_max == 360 and dec_min == -90 and dec_max == 90
 
-    def crs(self, ra_min: float, ra_max: float, dec_min: float, dec_max: float):
-        central_longitude = -1 * (ra_min + ra_max) / 2
+    # def crs(self, ra_min: float, ra_max: float, dec_min: float, dec_max: float):
+    #     central_longitude = -1 * (ra_min + ra_max) / 2
 
-        if self._is_global(ra_min, ra_max, dec_min, dec_max):
-            c = ccrs.Mollweide(central_longitude=central_longitude)
+    #     if self._is_global(ra_min, ra_max, dec_min, dec_max):
+    #         c = ccrs.Mollweide(central_longitude=central_longitude)
 
-        elif dec_max < 75 and dec_min > -75:
-            c = ccrs.Miller(central_longitude=central_longitude)
+    #     elif dec_max < 75 and dec_min > -75:
+    #         c = ccrs.Miller(central_longitude=central_longitude)
 
-        elif dec_max > 75 and dec_min >= 0:
-            c = ccrs.NorthPolarStereo(central_longitude=central_longitude)
+    #     elif dec_max > 75 and dec_min >= 0:
+    #         c = ccrs.NorthPolarStereo(central_longitude=central_longitude)
 
-        elif dec_max <= 0 and dec_min < -75:
-            c = ccrs.SouthPolarStereo(central_longitude=central_longitude)
+    #     elif dec_max <= 0 and dec_min < -75:
+    #         c = ccrs.SouthPolarStereo(central_longitude=central_longitude)
 
-        else:
-            c = ccrs.Miller(central_longitude=central_longitude)
+    #     else:
+    #         c = ccrs.Miller(central_longitude=central_longitude)
 
-        c.threshold = 1_000
-
-        return c
+    #     return c
 
 
 class Miller(ProjectionBase, CenterRA):
     """Similar to Mercator: good for declinations between -70 and 70, but distorts objects near the poles"""
 
-    _ccrs = ccrs.Miller
+    name: ClassVar[str] = "mill"
+    proj_def_base: ClassVar[str] = f"+proj=mill +R={PROJ_R} +units=m"
+    wraps: ClassVar[bool] = True
 
 
 class Mercator(ProjectionBase, CenterRA):
     """Good for declinations between -70 and 70, but distorts objects near the poles"""
 
-    _ccrs = ccrs.Mercator
+    name: ClassVar[str] = "merc"
+    proj_def_base: ClassVar[str] = f"+proj=merc +R={PROJ_R} +units=m"
+    wraps: ClassVar[bool] = True
 
 
 class PlateCarree(ProjectionBase, CenterRA):
     """An equirectangular projection"""
 
-    _ccrs = ccrs.PlateCarree
+    name: ClassVar[str] = "eqc"
+    proj_def_base: ClassVar[str] = f"+proj=eqc +R={PROJ_R} +units=m"
+    wraps: ClassVar[bool] = True
 
 
 class ObliqueMercator(ProjectionBase, CenterRADEC, Azimuth):
-    """Oblique Mercator projection"""
+    """A cylindrical projection like Mercator, but the "cylinder" is wrapped around a specified great circle instead of the equator — you set that circle with center_ra/center_dec (a point on it) and azimuth (its direction there). This makes it useful for framing a narrow band of sky that runs at an angle to the RA/DEC grid — e.g. tracing the Milky Way's galactic plane, an eclipse path, or a satellite ground track — with low, Mercator-like distortion right along that line and shapes/angles preserved locally (it's conformal)."""
 
-    _ccrs = ccrs.ObliqueMercator
+    name: ClassVar[str] = "omerc"
+    proj_def_base: ClassVar[str] = f"+proj=omerc +R={PROJ_R} +units=m"
+    wraps: ClassVar[bool] = True
 
 
 class Mollweide(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
 
-    _ccrs = ccrs.Mollweide
+    proj_def_base: ClassVar[str] = f"+proj=moll +R={PROJ_R} +units=m"
+    global_only: ClassVar[bool] = True
+    curved: ClassVar[bool] = True
+    wraps: ClassVar[bool] = True
+
+    name: ClassVar[str] = "moll"
+
+    def global_clip_path(self):
+        p0 = [(self.center_ra + 179.999999999, lat - 90) for lat in range(181)]
+        p1 = [(self.center_ra - 179.999999999, lat - 90) for lat in range(181)]
+        return p0 + p1
 
 
 class Equidistant(ProjectionBase, CenterRADEC):
     """Shows accurate distances from the center position. Often used for planispheres."""
 
-    _ccrs = ccrs.AzimuthalEquidistant
+    name: ClassVar[str] = "aeqd"
+    proj_def_base: ClassVar[str] = f"+proj=aeqd +R={PROJ_R} +units=m"
 
 
 class StereoNorth(ProjectionBase, CenterRA):
     """Good for objects near the north celestial pole, but distorts objects near the mid declinations"""
 
-    _ccrs = ccrs.NorthPolarStereo
+    name: ClassVar[str] = "stere"
+    center_dec: ClassVar[float] = 90
+
+    proj_def_base: ClassVar[str] = f"+proj=stere +lat_0=90 +R={PROJ_R} +units=m"
 
 
 class StereoSouth(ProjectionBase, CenterRA):
     """Good for objects near the south celestial pole, but distorts objects near the mid declinations"""
 
-    _ccrs = ccrs.SouthPolarStereo
+    name: ClassVar[str] = "stere"
+    center_dec: float = -90
 
 
 class Robinson(ProjectionBase, CenterRA):
     """Good for showing the entire celestial sphere in one plot"""
 
-    _ccrs = ccrs.Robinson
+    name: ClassVar[str] = "robin"
+    proj_def_base: ClassVar[str] = f"+proj=robin +R={PROJ_R} +units=m"
+
+    global_only: ClassVar[bool] = True
+    curved: ClassVar[bool] = True
+    wraps: ClassVar[bool] = True
+
+    def global_clip_path(self):
+        p0 = [(self.center_ra + 179.999999999, lat - 90) for lat in range(181)]
+        p1 = [(self.center_ra - 179.999999999, lat - 90) for lat in range(181)]
+        return p0 + p1
 
 
 class LambertAzEqArea(ProjectionBase, CenterRADEC):
     """Lambert Azimuthal Equal-Area projection - accurately shows area, but distorts angles."""
 
-    _ccrs = ccrs.LambertAzimuthalEqualArea
-
-
-class Orthographic(ProjectionBase, CenterRADEC):
-    """Shows the celestial sphere as a 3D-looking globe. Objects near the edges will be distorted."""
-
-    _ccrs = ccrs.Orthographic
+    name: ClassVar[str] = "laea"
 
 
 class Stereographic(ProjectionBase, CenterRADEC):
     """Similar to the North/South Stereographic projection, but allows custom central declination"""
 
-    _ccrs = ccrs.Stereographic
+    name: ClassVar[str] = "stere"
+    proj_def_base: ClassVar[str] = f"+proj=stere +R={PROJ_R} +units=m"
+
+
+class Gnomonic(ProjectionBase, CenterRADEC):
+    """Gnomonic projection"""
+
+    name: ClassVar[str] = "gnom"
+    proj_def_base: ClassVar[str] = f"+proj=gnom +R={PROJ_R} +units=m"
+
+
+class Orthographic(ProjectionBase, CenterRADEC):
+    """
+    Orthographic projection - shows the sky as seen from an infinite distance, like a view of the globe.
+
+    Similar to the Stereographic/Gnomonic projections, but distorts angles/shapes instead of straight lines,
+    and can only show one hemisphere (up to 90 degrees from center) at a time.
+    """
+
+    name: ClassVar[str] = "ortho"
+    proj_def_base: ClassVar[str] = f"+proj=ortho +R={PROJ_R} +units=m"
+    curved: ClassVar[bool] = True
+    wraps: ClassVar[bool] = True
+    max_angular_distance: ClassVar[float | None] = 90.0
+
+    @property
+    def global_bounds(self):
+        # Unlike cylindrical/pseudo-cylindrical projections, orthographic
+        # always maps the visible hemisphere to a disc of radius R centered
+        # at the origin, regardless of center_ra/center_dec -- so this can
+        # be computed directly instead of via the generic edge-sampling
+        # approach in latlon_bounds_to_projection(), which (built for
+        # rectangular lat/lon regions) degenerates to a near-zero-width
+        # bounding box here, since the sampled edges of the full -180..180/
+        # -90..90 region collapse to little more than a line under this
+        # projection.
+        return -PROJ_R, -PROJ_R, PROJ_R, PROJ_R
+
+    def global_clip_path(self):
+        # The limb of the visible hemisphere is just the set of points
+        # exactly 90 degrees from the center -- a circle in RA/DEC space,
+        # same helper used for the other azimuthal projections' clip paths
+        # in docs/scripts/projections.py.
+        return list(
+            circle(
+                center=(self.center_ra, self.center_dec),
+                diameter_degrees=179.98,
+                num_pts=360,
+            ).exterior.coords
+        )

@@ -1,20 +1,30 @@
+figure:
+  background:
+    fill: null
+axes:
+  border:
+    width: 8
+
+legend:
+  location: "outside_bottom_right"
+
 star:
   label:
-    font_size: 36
-  marker:
-    size: 30
+    font_size: 58
 bayer_labels:
-  font_size: 40
+  font_size: 56
 flamsteed_labels:
-  font_size: 40
+  font_size: 50
+
 planets:
   marker:
-    size: 30
-legend:
-  location: "lower center"
+    size: 60
+
+
 ecliptic:
   label:
-    font_size: 27
+    font_size: 60
 celestial_equator:
   label:
-    font_size: 27
+    font_size: 60
+

@@ -18,9 +18,8 @@ p = ZenithPlot(
     observer=observer,
     style=PlotStyle().extend(
         extensions.BLUE_MEDIUM,
+        extensions.FIGURE_TRANSPARENT,
     ),
-    resolution=3600,
-    autoscale=True,
 )
 p.horizon()
 p.constellations()
@@ -34,4 +33,4 @@ p.celestial_equator()
 p.milky_way()
 p.constellation_labels()
 
-p.export("star_chart_french.png", transparent=True, padding=0.1)
+p.export("star_chart_french.png")

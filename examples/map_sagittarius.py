@@ -2,7 +2,7 @@ from starplot import MapPlot, Miller, callables, _
 from starplot.styles import PlotStyle, extensions
 
 style = PlotStyle().extend(
-    extensions.ANTIQUE,
+    # extensions.ANTIQUE,
     extensions.MAP,
 )
 p = MapPlot(
@@ -13,19 +13,18 @@ p = MapPlot(
     dec_max=-3,
     style=style,
     resolution=4000,
-    autoscale=True,
+    # autoscale=True,
 )
 p.constellations()
 p.constellation_borders()
 
 p.stars(
     where=[_.magnitude <= 3],
-    size_fn=lambda d: callables.size_by_magnitude(d) * 2,  # make them 2x bigger
     style__marker__symbol="star_8",
     style__label__offset_x=8,
     style__label__offset_y=-8,
-    style__label__border_width=2,
-    style__label__border_color="#fefaed",
+    style__label__stroke_width=2,
+    style__label__stroke="#fefaed",
 )
 p.stars(
     where=[
@@ -57,4 +56,4 @@ p.ecliptic()
 p.celestial_equator()
 p.milky_way()
 p.constellation_labels()
-p.export("map_sagittarius.png", padding=0.08)
+p.export("map_sagittarius.png")

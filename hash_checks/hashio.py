@@ -1,21 +1,20 @@
-import sys
 import inspect
-import time
 import multiprocessing as mp
-
+import sys
+import time
+import traceback
 from pathlib import Path
 
+import galaxy_checks
+import horizon_checks
 import imagehash
+import map_checks
+import optic_checks
 import yaml
-
+import zenith_checks
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from PIL import Image
 from rich.console import Console
-
-import map_checks
-import optic_checks
-import zenith_checks
-import horizon_checks
 
 TEMPLATE_NAME = "template.html"
 
@@ -39,6 +38,9 @@ class Hashio:
     def __init__(self, callables: list, lockfile: str = HERE / "hashlock.yml") -> None:
         self.callables = callables
         self._lockfile_path = lockfile
+        self._flaky_names = {
+            c.__name__[len("check_") :] for c in callables if getattr(c, "flaky", False)
+        }
 
     @staticmethod
     def find_functions(module):
@@ -68,7 +70,7 @@ class Hashio:
         return str(imagehash.colorhash(img))
 
     def _dhash(self, img) -> str:
-        r, g, b, a = img.split()
+        r, g, b = img.convert("RGB").split()
         hash_red = imagehash.dhash(r)
         hash_green = imagehash.dhash(g)
         hash_blue = imagehash.dhash(b)
@@ -80,13 +82,22 @@ class Hashio:
     def _call_wrapper(self, c):
         func_name = c.__name__[6:]
         console.print(f"{func_name}...")
-        filename = c()
-        img = Image.open(filename)
-        return func_name, {
-            "filename": str(filename),
-            "dhash": self._dhash(img),
-            "phash": self._phash(img),
-        }
+        try:
+            filename = c()
+            img = Image.open(filename)
+            return func_name, {
+                "filename": str(filename),
+                "dhash": self._dhash(img),
+                "phash": self._phash(img),
+                "exception": None,
+            }
+        except:  # noqa E722
+            return func_name, {
+                "filename": "EXCEPTION",
+                "dhash": "EXCEPTION",
+                "phash": "EXCEPTION",
+                "exception": traceback.format_exc(),
+            }
 
     def _get_hashes(self) -> dict:
         """Gets hashes for all callables"""
@@ -102,11 +113,23 @@ class Hashio:
         passed = {}
         failed = {}
         new = {}
+        flaky = {}
         hashes = self._get_hashes()
         hashlock = self._load_lockfile()
 
         console.print("\nChecking hashes...", style="bold")
         for func_name, values in hashes.items():
+            is_flaky = func_name in self._flaky_names
+
+            if values["exception"]:
+                if is_flaky:
+                    flaky[func_name] = values
+                    console.print(f"{func_name}...FLAKY EXCEPTION", style="yellow")
+                else:
+                    failed[func_name] = values
+                    console.print(f"{func_name}...EXCEPTION", style="yellow")
+                continue
+
             values["filename"] = Path(values["filename"]).relative_to(HERE)
 
             if func_name not in hashlock:
@@ -122,25 +145,36 @@ class Hashio:
             ):
                 values["dhash_expected"] = hashlock[func_name]["dhash"]
                 values["phash_expected"] = hashlock[func_name]["phash"]
-                failed[func_name] = values
-                console.print(f"{func_name}...FAIL", style="red")
+                if is_flaky:
+                    flaky[func_name] = values
+                    console.print(f"{func_name}...FLAKY", style="yellow")
+                else:
+                    failed[func_name] = values
+                    console.print(f"{func_name}...FAIL", style="red")
 
             else:
                 passed[func_name] = values
                 console.print(f"{func_name}...", style="green")
 
-        return passed, failed, new
+        return passed, failed, new, flaky
 
     def check(self):
         env = Environment(loader=FileSystemLoader(HERE), autoescape=select_autoescape())
         template = env.get_template(str(TEMPLATE_NAME))
 
-        passed, failed, new = self._check()
+        passed, failed, new, flaky = self._check()
 
         with open(RESULTS_PATH, "w") as results_file:
-            results_file.write(template.render(passed=passed, failed=failed, new=new))
+            results_file.write(
+                template.render(passed=passed, failed=failed, new=new, flaky=flaky)
+            )
 
-        return len(passed.keys()), len(failed.keys()), len(new.keys())
+        return (
+            len(passed.keys()),
+            len(failed.keys()),
+            len(new.keys()),
+            len(flaky.keys()),
+        )
 
     def lock(self):
         """Updates lockfile with hashes of all callables"""
@@ -158,6 +192,7 @@ if __name__ == "__main__":
     callables += Hashio.find_functions(zenith_checks)
     callables += Hashio.find_functions(optic_checks)
     callables += Hashio.find_functions(horizon_checks)
+    callables += Hashio.find_functions(galaxy_checks)
 
     h = Hashio(callables=callables)
 
@@ -166,10 +201,13 @@ if __name__ == "__main__":
         console.print(":lock: Hashes locked!", style="bold green")
         console.print(f":stopwatch: Time: {round(time.time() - start)}s")
     elif command.lower() == "check":
-        passed, failed, new = h.check()
+        passed, failed, new, flaky = h.check()
         console.print(f":stopwatch: {round(time.time() - start)}s")
 
         console.print(f"\nPASSED: {passed}\n", style="green")
+
+        if flaky:
+            console.print(f"FLAKY : {flaky}\n", style="yellow")
 
         # if failed:
         #     console.print("FAILED: retrying...\n", style="bold red")
@@ -178,6 +216,6 @@ if __name__ == "__main__":
         if failed or new:
             console.print(f"FAILED: {failed}\n", style="bold red")
             console.print(f"NEW   : {new}\n", style="blue")
-            exit(1)
+            sys.exit(1)
     else:
         raise ValueError(f"Unrecognized command: {command}")

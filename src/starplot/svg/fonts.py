@@ -1,0 +1,278 @@
+import sys
+import zipfile
+from functools import cache
+from pathlib import Path
+
+from fontTools.pens.boundsPen import BoundsPen
+from fontTools.ttLib import TTFont
+
+from starplot.config import settings
+from starplot.data.utils import download
+
+FONTS_PATH = settings.data_path / "fonts"
+
+FALLBACK_FONTS = ["liberation sans", "liberation-sans", "arial", "verdana"]
+
+
+RECOMMENDED_FONTS = {
+    "inter": {
+        "url": "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip",
+        "extract_files": [
+            "extras/ttf/Inter-Regular.ttf",
+            "extras/ttf/Inter-Thin.ttf",
+            "extras/ttf/Inter-Light.ttf",
+            "extras/ttf/Inter-ExtraLight.ttf",
+            "extras/ttf/Inter-Medium.ttf",
+            "extras/ttf/Inter-Italic.ttf",
+            "extras/ttf/Inter-ThinItalic.ttf",
+            "extras/ttf/Inter-LightItalic.ttf",
+            "extras/ttf/Inter-ExtraLightItalic.ttf",
+            "extras/ttf/Inter-MediumItalic.ttf",
+            "extras/ttf/Inter-SemiBoldItalic.ttf",
+            "extras/ttf/Inter-BoldItalic.ttf",
+            "extras/ttf/Inter-ExtraBoldItalic.ttf",
+            "extras/ttf/Inter-BlackItalic.ttf",
+            "extras/ttf/Inter-Bold.ttf",
+            "extras/ttf/Inter-SemiBold.ttf",
+            "extras/ttf/Inter-ExtraBold.ttf",
+            "extras/ttf/Inter-Black.ttf",
+        ],
+    },
+    "gfs-didot": {
+        "url": "https://github.com/google/fonts/raw/refs/heads/main/ofl/gfsdidot/GFSDidot-Regular.ttf",
+        "extract_files": None,
+    },
+}
+
+
+def get_font_paths() -> list[Path]:
+    paths = []
+
+    if sys.platform == "win32":
+        paths = [
+            Path(r"C:\Windows\Fonts"),
+            Path.home() / "AppData" / "Local" / "Microsoft" / "Windows" / "Fonts",
+        ]
+    elif sys.platform == "darwin":
+        paths = [
+            Path("/System/Library/Fonts"),
+            Path("/Library/Fonts"),
+            Path.home() / "Library" / "Fonts",
+        ]
+    else:  # Linux / BSD / etc
+        paths = [
+            Path("/usr/share/fonts"),
+            Path("/usr/local/share/fonts"),
+            Path.home() / ".fonts",
+            Path.home() / ".local" / "share" / "fonts",
+        ]
+
+    paths.append(FONTS_PATH)
+
+    return [p for p in paths if p.exists()]
+
+
+def get_font_filenames(extensions: tuple[str] = (".ttf", ".otf")) -> list[Path]:
+    fonts = []
+    for d in get_font_paths():
+        for ext in extensions:
+            fonts.extend(d.rglob(f"*{ext}"))
+    return fonts
+
+
+def get_font_info(font_path: str) -> dict:
+    # TODO : handle font collections (.ttc) and variable fonts
+
+    font = TTFont(font_path)
+    os2 = font.get("OS/2")
+
+    # record = font["name"].getName(1, 3, 1, 0x0409)
+    # name = record.toUnicode() if record else None
+
+    name = font["name"].getDebugName(16) or font["name"].getDebugName(1)
+
+    if not name:
+        return None
+
+    weight = os2.usWeightClass if os2 else 400
+    italic = bool(os2.fsSelection & 0x01) if os2 else False
+    # bold = bool(os2.fsSelection & 0x20) if os2 else False
+
+    return name.lower(), weight, italic
+
+
+@cache
+def build_font_index() -> dict:
+    """
+    Returns dictionary that maps font properties to their filename.
+
+    Each key is a tuple of properties:
+
+    (family, weight, italic, bold) = font_path
+    """
+    result = {}
+    for font_path in get_font_filenames():
+        key = get_font_info(font_path)
+        if key:
+            result[key] = font_path
+
+    return result
+
+
+@cache
+def find_font(family: str, weight: int, italic: bool) -> TTFont:
+    font_index = build_font_index()
+    font_path = font_index.get((family.lower(), weight, italic))
+
+    # 1. Try getting same font but normal weight
+    if not font_path and weight != 400:
+        font_path = font_index.get((family.lower(), 400, italic))
+
+    # 2. Try getting a fallback font
+    if not font_path:
+        for fallback in FALLBACK_FONTS:
+            font_path = font_index.get((fallback, weight, italic)) or font_index.get(
+                (fallback, 400, False)
+            )
+            if font_path:
+                break
+
+    # 3. Just use the first font that's found
+    if not font_path and font_index:
+        font_path = next(iter(font_index.values()))
+
+    # 4. If no fonts are found, raise exception
+    if not font_path:
+        tried = ", ".join(repr(f) for f in [family, *FALLBACK_FONTS])
+        raise ValueError(
+            f"No fonts found on this system (tried {tried}). Starplot needs "
+            "at least one font installed to render text."
+        )
+
+    return TTFont(font_path)
+
+
+@cache
+def _glyph_ink_bounds(
+    family: str, weight: int, italic: bool, char: str
+) -> tuple[float, float] | None:
+    """
+    Returns (ymin, ymax) ink extents of a single glyph, in font units
+    (unscaled) -- i.e. the actual drawn extent of this specific glyph, as
+    opposed to the font-wide `hhea` ascent/descent metrics (which are sized
+    to fit the tallest/lowest glyph anywhere in the font, e.g. accented
+    capitals, even when the glyph being measured doesn't need that much
+    room). Cached per (font, char) since walking a glyph's outline is more
+    expensive than reading a font-wide constant, but the result never
+    changes for a given font+char.
+
+    Returns None if the glyph isn't in the font's cmap or has no ink
+    (e.g. a space).
+    """
+    font = find_font(family=family, weight=weight, italic=italic)
+    cmap = font.getBestCmap()
+
+    if ord(char) not in cmap:
+        return None
+
+    glyph_set = font.getGlyphSet()
+    pen = BoundsPen(glyph_set)
+    glyph_set[cmap[ord(char)]].draw(pen)
+
+    if pen.bounds is None:
+        return None
+
+    _, ymin, _, ymax = pen.bounds
+    return ymin, ymax
+
+
+def _line_ink_bounds(
+    line: str, font: TTFont, font_name: str, font_weight: int, italic: bool
+) -> tuple[float, float]:
+    """Returns (ymin, ymax) ink extents (font units) across all glyphs in a line."""
+    ymin_all = None
+    ymax_all = None
+
+    for char in line:
+        bounds = _glyph_ink_bounds(font_name, font_weight, italic, char)
+        if bounds is None:
+            continue
+        ymin, ymax = bounds
+        ymin_all = ymin if ymin_all is None else min(ymin_all, ymin)
+        ymax_all = ymax if ymax_all is None else max(ymax_all, ymax)
+
+    if ymin_all is None:
+        # no glyphs with ink found (e.g. blank/space-only line) -- fall back
+        # to the font-wide metrics so we still return something sane
+        return -abs(font["hhea"].descent), font["hhea"].ascent
+
+    return ymin_all, ymax_all
+
+
+def get_text_hw(
+    text: str,
+    font_name: str,
+    font_size: int,
+    font_weight: int = 400,
+    italic: bool = False,
+) -> tuple[float, float, float]:
+    """
+    Measures the rendered size of (possibly multi-line) text, using the actual
+    ink extents of its specific glyphs -- this must stay consistent with how
+    Text.render_as_path (starplot/svg/elements.py) renders text, since it's
+    used to build the collision-detection bounding box for labels. A rough
+    per-character average isn't accurate enough: for bold/large text it can
+    noticeably underestimate the true width and let labels overlap.
+
+    Returns:
+        (height, width, ascent) -- `ascent` is how far the first line's glyphs
+        extend above its baseline; `height - ascent` is how far the text extends
+        below that same baseline (descent of the last line, plus the baseline
+        shift of any additional lines).
+    """
+    font = find_font(family=font_name, weight=font_weight, italic=italic)
+    cmap = font.getBestCmap()
+    hmtx = font["hmtx"].metrics
+    scale = font_size / font["head"].unitsPerEm
+
+    lines = text.split("\n")
+    width = max(
+        sum(hmtx[cmap[ord(c)]][0] for c in line if ord(c) in cmap) * scale
+        for line in lines
+    )
+
+    _, first_ymax = _line_ink_bounds(lines[0], font, font_name, font_weight, italic)
+    if len(lines) > 1:
+        last_ymin, _ = _line_ink_bounds(lines[-1], font, font_name, font_weight, italic)
+    else:
+        last_ymin, _ = _line_ink_bounds(lines[0], font, font_name, font_weight, italic)
+
+    ascent = max(0, first_ymax) * scale
+    descent = -min(0, last_ymin) * scale
+    # must match the line_height used when rendering multi-line text as paths
+    # (see Text.render_as_path in starplot/svg/elements.py)
+    line_height = font_size * 1.13
+    height = ascent + (len(lines) - 1) * line_height + descent
+    return height, width, ascent
+
+
+def download_fonts():
+    FONTS_PATH.mkdir(parents=True, exist_ok=True)
+
+    for font, props in RECOMMENDED_FONTS.items():
+        path = FONTS_PATH / font
+        path.mkdir(parents=True, exist_ok=True)
+
+        download_path = path / props["url"].split("/")[-1]
+        download(
+            url=props["url"],
+            download_path=download_path,
+            description=f"Font ({font})",
+        )
+
+        extract_files = props.get("extract_files")
+
+        if extract_files:
+            with zipfile.ZipFile(download_path) as zf:
+                for member in extract_files:
+                    zf.extract(member, path)

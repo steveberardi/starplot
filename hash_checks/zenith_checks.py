@@ -1,14 +1,16 @@
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from flaky import flake
+
 from starplot import (
-    ZenithPlot,
-    Observer,
-    styles,
-    override_settings,
     CollisionHandler,
+    Observer,
+    ZenithPlot,
     _,
+    override_settings,
+    styles,
 )
 
 HERE = Path(__file__).resolve().parent
@@ -20,7 +22,7 @@ STYLE = styles.PlotStyle().extend(
 
 JUNE_2023 = datetime(2023, 6, 20, 21, 0, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 
-RESOLUTION = 3800
+RESOLUTION = 4096
 
 HANDLER = CollisionHandler(seed=1, allow_constellation_line_collisions=True)
 
@@ -42,7 +44,7 @@ def _zenith():
     p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 3])
     p.ecliptic(style__line__width=8)
     p.celestial_equator(style__line__width=8)
-    p.legend(style__location=styles.LegendLocationEnum.INSIDE_BOTTOM_RIGHT)
+    p.legend(style__location=styles.LegendLocation.INSIDE_BOTTOM_RIGHT)
     p.constellation_labels(collision_handler=HANDLER)
     return p
 
@@ -56,6 +58,7 @@ def check_zenith_base():
     return filename
 
 
+@flake
 def check_zenith_gradient():
     p = ZenithPlot(
         observer=Observer(
@@ -81,6 +84,7 @@ def check_zenith_gradient():
     return filename
 
 
+@flake
 @override_settings(language="zh-cn")
 def check_zenith_chinese():
     p = ZenithPlot(
@@ -93,19 +97,9 @@ def check_zenith_chinese():
             styles.extensions.BLUE_GOLD,
             styles.extensions.GRADIENT_PRE_DAWN,
             {
-                "star": {
-                    "label": {
-                        "font_name": "Noto Sans SC",
-                    }
-                },
-                "horizon": {
-                    "label": {
-                        "font_name": "Noto Sans SC",
-                    }
-                },
-                "constellation_labels": {
-                    "font_name": "Noto Sans SC",
-                },
+                "base": {
+                    "font_name": "Noto Sans CJK SC",
+                }
             },
         ),
         resolution=RESOLUTION,

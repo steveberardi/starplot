@@ -1,21 +1,20 @@
-from starplot import _, GalaxyPlot, DSO
+from starplot import GalaxyPlot, DSO, _
 from starplot.styles import PlotStyle, extensions
-from starplot.callables import size_by_magnitude_factory
 
-_sizer = size_by_magnitude_factory(6, 0.03, 12)
 
 style = PlotStyle().extend(
     extensions.BLUE_NIGHT,
     extensions.MAP,
+    {
+        "figure": {
+            "padding": 60,
+        }
+    },
 )
 
-p = GalaxyPlot(
-    style=style,
-    resolution=5000,
-    scale=0.83,
-)
+p = GalaxyPlot(style=style)
+
 p.gridlines()
-
 p.galactic_equator(num_labels=2)
 p.celestial_equator(num_labels=2)
 p.ecliptic(num_labels=2)
@@ -23,20 +22,19 @@ p.ecliptic(num_labels=2)
 p.milky_way()
 
 p.stars(
-    where=[_.magnitude < 7],
+    where=[_.magnitude < 6],
     where_labels=[False],
-    size_fn=_sizer,
-    style__marker__edge_color="#c5c5c5",
+    style__marker__stroke="#c5c5c5",
 )
 
 lmc = DSO.get(name="ESO056-115")
 smc = DSO.get(name="NGC0292")
 mc_style = {
-    "font_color": "#acc2e0",
+    "fill": "#acc2e0",
     "font_size": 42,
     "font_weight": 700,
-    "border_width": 8,
-    "border_color": "#1e232a",
+    "stroke_width": 8,
+    "stroke": "#1e232a",
 }
 
 p.text(
@@ -62,4 +60,4 @@ p.legend()
 
 p.title("Open Clusters Around the Milky Way", style__font_size=86)
 
-p.export("map_galaxy.png", padding=1)
+p.export("map_galaxy.png")

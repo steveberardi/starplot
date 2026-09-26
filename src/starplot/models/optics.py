@@ -1,29 +1,21 @@
 import math
-
 from abc import ABC, abstractmethod
 
 import pyproj
-from matplotlib import patches
 from pydantic import BaseModel, computed_field
 
+from starplot import geometry
 from starplot.utils import in_circle
 
 
 class Optic(BaseModel, ABC):
     """Abstract class for defining Optics."""
 
+    invert_x: bool = False
+    invert_y: bool = False
+
     def __str__(self):
         return "Optic"
-
-    @property
-    @abstractmethod
-    def xlim(self):
-        pass
-
-    @property
-    @abstractmethod
-    def ylim(self):
-        pass
 
     @property
     @abstractmethod
@@ -31,10 +23,7 @@ class Optic(BaseModel, ABC):
         return "Abstract Optic"
 
     @abstractmethod
-    def patch(self, center_x, center_y) -> patches.Patch:
-        pass
-
-    def transform(self, axis) -> None:
+    def polygon(self, center_x, center_y):
         pass
 
     @abstractmethod
@@ -97,23 +86,14 @@ class Scope(Optic):
         return f"{self.focal_length:.0f}mm w/ {self.eyepiece_focal_length:.0f}mm ({self.magnification:.0f}x) @  {self.eyepiece_fov:.0f}\N{DEGREE SIGN} = {self.true_fov:.2f}\N{DEGREE SIGN} TFOV"
 
     @property
-    def xlim(self):
-        return self.radius
-
-    @property
-    def ylim(self):
-        return self.radius
-
-    @property
     def label(self):
         return "Scope"
 
-    def patch(self, center_x, center_y, **kwargs):
-        padding = kwargs.pop("padding", 0)
-        return patches.Circle(
-            (center_x, center_y),
-            radius=self.radius + padding,
-            **kwargs,
+    def polygon(self, center_x, center_y):
+        return geometry.circle(
+            center=(center_x, center_y),
+            diameter_degrees=self.true_fov,
+            num_pts=200,
         )
 
     def in_bounds(self, x, y, scale: float = 1) -> bool:
@@ -138,12 +118,11 @@ class Refractor(Scope):
 
     """
 
+    invert_x: bool = True
+
     @property
     def label(self):
         return "Refractor"
-
-    def transform(self, axis) -> None:
-        axis.invert_xaxis()
 
 
 class Reflector(Scope):
@@ -164,13 +143,12 @@ class Reflector(Scope):
 
     """
 
+    invert_x: bool = True
+    invert_y: bool = True
+
     @property
     def label(self):
         return "Reflector"
-
-    def transform(self, axis) -> None:
-        axis.invert_xaxis()
-        axis.invert_yaxis()
 
 
 class Binoculars(Optic):
@@ -206,23 +184,14 @@ class Binoculars(Optic):
         return f"{self.magnification:.0f}x @ {self.fov:.0f}\N{DEGREE SIGN} = {self.true_fov}\N{DEGREE SIGN}"
 
     @property
-    def xlim(self):
-        return self.radius
-
-    @property
-    def ylim(self):
-        return self.radius
-
-    @property
     def label(self):
         return "Binoculars"
 
-    def patch(self, center_x, center_y, **kwargs):
-        padding = kwargs.pop("padding", 0)
-        return patches.Circle(
-            (center_x, center_y),
-            radius=self.radius + padding,
-            **kwargs,
+    def polygon(self, center_x, center_y):
+        return geometry.circle(
+            center=(center_x, center_y),
+            diameter_degrees=self.true_fov,
+            num_pts=200,
         )
 
     def in_bounds(self, x, y, scale: float = 1) -> bool:
@@ -232,18 +201,14 @@ class Binoculars(Optic):
 class Camera(Optic):
     """Creates a new Camera optic
 
-    Note:
-        Field of view for each dimension is calculated using the following formula:
+    Field of view for each dimension is calculated using the following formula:
 
-        ```
-        TFOV = 2 * arctan( d / (2 * f) )
-        ```
+    ```
+    # d = sensor size (height or width)
+    # f = focal length of lens
 
-        _Where_:
-
-        d = sensor size (height or width)
-
-        f = focal length of lens
+    field_of_view = 2 * arctan( d / (2 * f) )
+    ```
 
     Args:
         sensor_height: Height of camera sensor (mm)
@@ -301,34 +266,15 @@ class Camera(Optic):
         return f"{self.sensor_width}x{self.sensor_height} w/ {self.lens_focal_length:.0f}mm lens = {self.true_fov_x:.2f}\N{DEGREE SIGN} x {self.true_fov_y:.2f}\N{DEGREE SIGN}"
 
     @property
-    def xlim(self):
-        x_offset = self.radius_x * self.rotation / 180
-        if self.rotation:
-            x_offset *= 1.1
-        return self.radius_x + x_offset
-
-    @property
-    def ylim(self):
-        y_offset = self.radius_y * math.sin(math.radians(self.rotation))
-        if self.rotation:
-            y_offset *= 1.2
-        return self.radius_y + y_offset
-
-    @property
     def label(self):
         return "Camera"
 
-    def patch(self, center_x, center_y, **kwargs):
-        padding = kwargs.pop("padding", 0)
-        x = center_x - self.radius_x - padding
-        y = center_y - self.radius_y - padding
-        return patches.Rectangle(
-            (x, y),
-            self.radius_x * 2 + padding,
-            self.radius_y * 2 + padding,
+    def polygon(self, center_x, center_y):
+        return geometry.rectangle(
+            center=(center_x, center_y),
+            height_degrees=self.true_fov_y,
+            width_degrees=self.true_fov_x,
             angle=self.rotation,
-            rotation_point="center",
-            **kwargs,
         )
 
     def in_bounds(self, x, y, scale: float = 1) -> bool:

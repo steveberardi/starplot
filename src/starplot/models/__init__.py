@@ -1,21 +1,21 @@
-# ruff: noqa: F401,F403
+# ruff: noqa: F401
 
-from .constellation import Constellation, ConstellationBorder
 from .comet import Comet
+from .constellation import Constellation, ConstellationBorder
 from .dso import DSO, DsoType
-from .star import Star
-from .planet import Planet
+from .milky_way import MilkyWay
 from .moon import Moon
-from .sun import Sun
+from .objects import ObjectList
+from .observer import Observer
 from .optics import (
-    Optic,
-    Scope,
-    Reflector,
-    Refractor,
     Binoculars,
     Camera,
+    Optic,
+    Reflector,
+    Refractor,
+    Scope,
 )
-from .objects import ObjectList
+from .planet import Planet
 from .satellite import Satellite
-from .observer import Observer
-from .milky_way import MilkyWay
+from .star import Star
+from .sun import Sun

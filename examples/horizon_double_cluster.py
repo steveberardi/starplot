@@ -15,7 +15,7 @@ from starplot import (
 
 style = PlotStyle().extend(
     style_extensions.BLUE_NIGHT,
-    style_extensions.MAP,
+    style_extensions.HORIZON,
     style_extensions.GRADIENT_ASTRONOMICAL_TWILIGHT,
 )
 
@@ -37,9 +37,12 @@ p = HorizonPlot(
     azimuth=(325, 440),
     observer=observer,
     style=style,
-    resolution=4096,
-    scale=1.35,
+    scale=1.15,
 )
+
+p.style.gridlines.line.width = 2
+p.gridlines()
+
 p.constellations(where=[_.iau_id.isin(["cas", "umi", "per"])])
 p.stars(
     where=[_.hip.isin(cas.star_hip_ids + umi.star_hip_ids + per.star_hip_ids)],
@@ -66,11 +69,6 @@ p.arrow(
     target=(double_cluster.ra, double_cluster.dec),
     scale=0.92,
     style__zorder=0,
-    style__head_width=100,
 )
 
-p.horizon()
-p.style.gridlines.line.width = 2
-p.gridlines()
-
-p.export("horizon_double_cluster.png", padding=0.25)
+p.export("horizon_double_cluster.png")

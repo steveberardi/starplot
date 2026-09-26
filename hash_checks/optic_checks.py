@@ -1,8 +1,10 @@
-from pathlib import Path
 from datetime import datetime, timedelta
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from starplot import styles, OpticPlot, callables, Moon, _, Satellite, Observer
+from flaky import flake
+
+from starplot import Moon, Observer, OpticPlot, Satellite, _, callables, styles
 from starplot.models import optics
 
 HERE = Path(__file__).resolve().parent
@@ -29,8 +31,8 @@ style_blue = styles.PlotStyle().extend(
 POWAY = {"lat": 32.97, "lon": -117.038611}
 
 plot_kwargs = dict(
-    resolution=2048,
-    autoscale=True,
+    resolution=4096,
+    scale=1,
 )
 
 observer_dec_16_poway = Observer(
@@ -100,13 +102,13 @@ def check_optic_wrapping():
     optic_plot.stars(
         where=[_.magnitude < 8],
         style__marker__symbol="star",
-        style__marker__size=600,
+        size_fn=lambda s: 80,
     )
     optic_plot.rectangle(
         center=(23.9 * 15, 17.5),
         height_degrees=1,
         width_degrees=2,
-        style__fill_color="red",
+        style__fill="red",
     )
     optic_plot.info()
     filename = DATA_PATH / "optic-wrapping.png"
@@ -134,7 +136,7 @@ def check_optic_clipping():
     optic_plot.nebula()
     optic_plot.title("Orion Nebula")
     filename = DATA_PATH / "optic-clipping.png"
-    optic_plot.export(filename, padding=0.4)
+    optic_plot.export(filename)
     return filename
 
 
@@ -176,7 +178,7 @@ def check_optic_m45_scope():
     optic_plot.stars(
         where=[_.magnitude < 12],
         color_fn=callables.color_by_bv,
-        style={"label": {"font_color": "#7df597"}},
+        style={"label": {"fill": "#7df597"}},
     )
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-scope.png"
@@ -185,7 +187,14 @@ def check_optic_m45_scope():
 
 
 def check_optic_m45_scope_gradient():
-    style_gradient = style_dark.extend(styles.extensions.GRADIENT_PRE_DAWN)
+    style_gradient = style_dark.extend(
+        styles.extensions.GRADIENT_PRE_DAWN,
+        {
+            "star": {
+                "marker": {"stroke_width": 0},
+            }
+        },
+    )
     optic_plot = OpticPlot(
         # M45
         ra=3.7836111111 * 15,
@@ -201,8 +210,8 @@ def check_optic_m45_scope_gradient():
     )
     optic_plot.stars(
         where=[_.magnitude < 12],
-        color_fn=callables.color_by_bv,
-        style={"label": {"font_color": "#7df597"}},
+        color_fn=callables.color_by_bv_gradient,
+        style={"label": {"fill": "#7df597"}},
     )
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-scope-gradient.png"
@@ -246,13 +255,10 @@ def check_optic_m45_camera():
         style=style_dark,
         **plot_kwargs,
     )
-    optic_plot.stars(
-        where=[_.magnitude < 12], style__marker__symbol=styles.MarkerSymbolEnum.STAR
-    )
+    optic_plot.stars(where=[_.magnitude < 12], style__marker__symbol="star")
     optic_plot.info()
     filename = DATA_PATH / "optic-m45-camera.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
@@ -276,10 +282,10 @@ def check_optic_camera_rotated():
     optic_plot.info()
     filename = DATA_PATH / "optic-camera-rotated-m45.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
+@flake
 def check_optic_solar_eclipse_binoculars():
     observer = Observer(
         dt=dt_april_8,
@@ -301,7 +307,6 @@ def check_optic_solar_eclipse_binoculars():
     optic_plot.sun(true_size=True)
     filename = DATA_PATH / "optic-binoculars-eclipse.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
@@ -324,10 +329,10 @@ def check_optic_moon_phase_waxing_crescent():
     )
     filename = DATA_PATH / "optic-moon-phase-waxing-crescent.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
+@flake
 def check_optic_moon_phase_new():
     observer = Observer(
         dt=dt_april_8,
@@ -351,7 +356,6 @@ def check_optic_moon_phase_new():
     )
     filename = DATA_PATH / "optic-moon-phase-new.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
@@ -379,7 +383,6 @@ def check_optic_moon_phase_full():
     )
     filename = DATA_PATH / "optic-moon-phase-full.png"
     optic_plot.export(filename)
-    optic_plot.close_fig()
     return filename
 
 
@@ -437,7 +440,7 @@ def check_optic_iss_moon_transit():
                 "marker": {
                     "size": 70,
                     "symbol": symbol,
-                    "color": marker_color,
+                    "fill": marker_color,
                     "zorder": 5_000,
                 },
             },
@@ -445,5 +448,4 @@ def check_optic_iss_moon_transit():
 
     filename = DATA_PATH / "optic-iss-moon-transit.png"
     p.export(filename)
-    p.close_fig()
     return filename

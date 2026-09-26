@@ -1,40 +1,61 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from starplot import Observer, Star, Binoculars, styles, callables, _
+from starplot import Observer, HorizonPlot, styles, callables, DSO, _
 
 tz = ZoneInfo("America/Los_Angeles")
-tonight = datetime.now(tz).replace(hour=21)
+dt = datetime(2025, 11, 18, 21, 30, 0, tzinfo=tz)
 
 observer = Observer(
-    dt=tonight,
+    dt=dt,
     lat=32.97,
     lon=-117.038611,
 )
 
 style = styles.PlotStyle().extend(
     styles.extensions.GRAYSCALE_DARK,
-    styles.extensions.OPTIC,
+    styles.extensions.HORIZON,
 )
+style.axes.background.fill = {
+    "stops": styles.gradients.NIGHT,
+    "type": "linear",
+}
+style.figure.background.fill = "#000"
 
-antares = Star.get(name="Antares")
-
-p = antares.create_optic(
+p = HorizonPlot(
+    altitude=(0, 70),
+    azimuth=(30, 150),
     observer=observer,
-    optic=Binoculars(
-        magnification=10,
-        fov=65,
-    ),
     style=style,
-    raise_on_below_horizon=False,
+    resolution=2000,
     autoscale=True,
 )
-
+p.ground(min_altitude=5, max_altitude=8)
 p.stars(
-    where=[_.magnitude < 12],
-    where_labels=[_.magnitude < 8],
-    bayer_labels=True,
-    color_fn=callables.color_by_bv,  # <-- here's where we specify the callable
+    where=[_.magnitude < 3.6],
+    where_labels=[_.magnitude < 1.6],
+    # callable to color the stars based on their BV index:
+    color_fn=callables.color_by_bv_gradient,
+    # callable to make dimmer stars semi-transparent:
+    opacity_fn=lambda s: 1 if s.magnitude < 2 else 0.5,
 )
 
-p.export("tutorial_08.png", padding=0)
+style.gridlines.label.font_size *= 1.2  # make the labels 20% bigger
+style.gridlines.label.fill = "#e5ecf3"
+style.gridlines.line.width = 0  # hide the gridlines, we just want the labels
+p.gridlines(alt_label_locations=[])
+
+# Plot a dotted circle around the Pleiades (M45) and an arrow pointing to it
+m45 = DSO.get(m="45")
+p.polygon(
+    geometry=m45.geometry,
+    style={
+        "fill": None,
+        "stroke": "#fffb0e",
+        "stroke_width": 6,
+        "dash_array": "dotted",
+    },
+)
+p.arrow(target=(m45.ra, m45.dec))
+
+p.export("tutorial_08.svg")

@@ -1,9 +1,10 @@
 import math
+from collections.abc import Callable
 
-from typing import Callable
-
+from starplot.data.translations import translate
 from starplot.models import Star
-from starplot.utils import bv_to_hex_color
+from starplot.styles import GradientStyle
+from starplot.utils import bv_to_hex_color, hex_to_rgb, lighten_hex_color
 
 
 def size_by_magnitude_factory(
@@ -43,124 +44,77 @@ def size_by_magnitude_factory(
     return size_fn
 
 
-_size_by_magnitude_default = size_by_magnitude_factory(7.6, 4)
-
-
-def size_by_magnitude_log(star: Star) -> float:
-    """
-    Calculates size by logarithmic scale of magnitude:
-
-    ```python
-    if magnitude >= 7.6:
-        size = 2.36
-    else:
-        size = 20 ** math.log(8 - magnitude)
-    ```
-    """
-    return _size_by_magnitude_default(star)
-
-
 def size_by_magnitude(star: Star) -> float:
     """
     Simple sizing by magnitude, using a step size of 1.
 
-    ```python
-    if mag <= 0:
-        size = 3800
-    elif mag <= 1:  # 0..1
-        size = 2400
-    elif mag <= 2:  # 1..2
-        size = 1600
-    elif mag <= 3:  # 2..3
-        size = 1000
-    elif mag <= 4:  # 3..4
-        size = 600
-    elif mag <= 5:  # 4..5
-        size = 300
-    elif mag <= 6:  # 5..6
-        size = 120
-    elif mag <= 7:  # 6..7
-        size = 60
-    elif mag <= 8:  # 7..8
-        size = 40
-    else:           # > 8
-        size = 20
-
-    ```
+    Args:
+        star: The Star instance to size
     """
     mag = star.magnitude
     size = 0
     if mag <= 0:
-        size = 3800
-    elif mag <= 1:  # 0..1
-        size = 2400
+        size = 50
+    elif mag <= 1:  # <= 1
+        size = 42
     elif mag <= 2:  # 1..2
-        size = 1600
+        size = 32
     elif mag <= 3:  # 2..3
-        size = 1000
+        size = 25
     elif mag <= 4:  # 3..4
-        size = 600
+        size = 18
     elif mag <= 5:  # 4..5
-        size = 300
+        size = 10
     elif mag <= 6:  # 5..6
-        size = 120
+        size = 8
     elif mag <= 7:  # 6..7
-        size = 60
+        size = 6
     elif mag <= 8:  # 7..8
-        size = 40
-    else:  # > 8
-        size = 20
+        size = 3
+    elif mag <= 9:
+        size = 2
+    else:
+        size = 1.25
 
     return size
 
 
-def size_by_magnitude_simple(star: Star) -> float:
-    """Very simple sizer by magnitude for map plots"""
-    m = star.magnitude
-    if m < 1.6:
-        return (9 - m) ** 2.85
-    elif m < 4.6:
-        return (8 - m) ** 2.92
-    elif m < 5.8:
-        return (9 - m) ** 2.46
-
-    return 2.23
-
-
-def size_by_magnitude_for_optic(star: Star) -> float:
-    """Very simple sizer by magnitude for optic plots"""
-    m = star.magnitude
-
-    if m < 4.6:
-        return (9 - m) ** 3.6 * 9
-    elif m < 5.85:
-        return (9 - m) ** 3.6 * 9
-    elif m < 9:
-        return (13 - m) ** 1.8 * 9
-
-    return 4.8 * 6
-
-
-def alpha_by_magnitude(star: Star) -> float:
+def size_by_fov_factory(fov: float) -> Callable[[Star], float]:
     """
-    Basic calculator for alpha, based on magnitude:
+    Returns a callable for sizing stars based on the field of view of an optic.
 
-    ```python
-    if magnitude < 4.6:
-        alpha = 1
-    elif magnitude < 5.8:
-        alpha = 0.9
-    else:
-        alpha = (16 - m) * 0.09
-    ```
+    _This is the default star sizing function for OpticPlot._
+
+    Args:
+        fov: Field of view (in degrees)
     """
-    m = star.magnitude
-    if m < 4.6:
-        return 1
-    elif m < 5.8:
-        return 0.9
+    fov_multiplier = 20 / fov
 
-    return (16 - m) * 0.09
+    return lambda s: size_by_magnitude(s) * fov_multiplier * 0.64
+
+
+def size_by_magnitude_galaxy(star: Star) -> float:
+    """
+    Star sizer for galaxy plots that assumes only brighter stars will be plotted, so it uses smaller sizes overall.
+
+    _This is the default star sizing function for GalaxyPlot._
+
+    Args:
+        star: The Star instance to size
+    """
+    sizes = [
+        15,
+        15,
+        10,
+        8,
+        5,
+        3,
+        2,
+        1,
+    ]
+    mag = max(0, star.magnitude)
+    mag_index = min(int(mag), len(sizes) - 1)
+    return sizes[mag_index]
 
 
 def color_by_bv(star: Star) -> str:
@@ -174,3 +128,76 @@ def color_by_bv(star: Star) -> str:
     else:
         bv = star.bv
     return bv_to_hex_color(bv)
+
+
+def color_by_bv_gradient(star: Star) -> GradientStyle:
+    """
+    Calculates a radial gradient by the object's [B-V index](https://en.wikipedia.org/wiki/Color_index),
+    meant to resemble how a star looks through binoculars or a telescope: a bright core that gradually fades to fully transparent at the edge.
+
+    Uses the same base color as `color_by_bv`, lightened at the center of the gradient and faded to transparent at the outer edge.
+    """
+    color = color_by_bv(star) or "#ffffff"
+    r, g, b = hex_to_rgb(color)
+
+    return GradientStyle(
+        stops=(
+            (0.0, f"rgba({r}, {g}, {b}, 0)"),
+            (0.6, color),
+            (1.0, lighten_hex_color(color, 0.2)),
+        ),
+        type="radial",
+    )
+
+
+def floor_hours_label(value: float) -> str:
+    """
+    Returns the floor of the value, with an 'h' appended to it.
+
+    Example: `floor_hours_label(50) = '3h'`
+
+    Args:
+        value: The value to label
+
+    """
+    return f"{math.floor(value / 15)}h"
+
+
+def rounded_degrees_label(value: float) -> str:
+    """
+    Returns the rounded value with a degree symbol appended to it.
+
+    Example: `rounded_degrees_label(50.45) = '50°'`
+
+    Args:
+        value: The value to label
+
+    """
+    return f"{round(value)}° "
+
+
+def azimuth_with_cardinal_direction_label_factory(
+    language: str,
+) -> Callable[[float], str]:
+    """
+    Returns a callable for labeling azimuth values. The callable returns the cardinal directions
+    (e.g. North, South, etc) where applicable, and returns the rounded azimuth value with a degree
+    symbol appended for other azimuths (e.g. `'120°'`).
+
+    _This is the default label function for azimuths on HorizonPlot._
+
+    Args:
+        language: Language for the cardinal directions
+    """
+
+    def az_label_fn(az):
+        cardinal_directions = {
+            0: "NORTH",
+            90: "EAST",
+            180: "SOUTH",
+            270: "WEST",
+        }
+        label = translate(cardinal_directions.get(az), language)
+        return label.upper() if label else f"{round(az)}\u00b0"
+
+    return az_label_fn

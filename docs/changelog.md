@@ -1,4 +1,18 @@
+## v0.21.x
+[Migration Guide](migration-guides/0.21.0.md)
+
+- Replaces the plotting backend (matplotlib + cartopy) with an SVG-first backend
+- Adds support for gradient backgrounds on markers, polygons, and the figure background
+- Adds support for styling the axes border
+- Adds the Gnomonic projection
+- Refactors styling framework with more consistent naming
+- Removed fonts from PyPI package, to reduce our filesize
+- Adds support for Python 3.14
+
+---
+
 ## v0.20.x
+[Documentation](https://archives.starplot.dev/0.20.7/)
 
 - Adds a `GalaxyPlot` for plotting in galactic coordinates
 - Adds label support to lines with automatic angle adjustment
@@ -17,6 +31,8 @@
 - [**v0.20.5**] Adds Italian translation
 - [**v0.20.6**] Pins `cartopy` version to `<= 0.24.1`
 - [**v0.20.7**] Adds Dutch translation
+
+---
 
 ## v0.19.x
 [Documentation](https://archives.starplot.dev/0.19.6/)

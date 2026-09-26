@@ -1,22 +1,22 @@
 import pytest
-
 from pydantic import ValidationError
-from pydantic.color import Color
+from pydantic_extra_types.color import Color
 
 from starplot import MapPlot, Miller
-from starplot.styles import PlotStyle, FontWeightEnum, LineStyle, LineStyleEnum
+from starplot.styles import DashArray, FontWeight, LineStyle, PlotStyle
 
 
 @pytest.mark.parametrize(
     "kwargs",
     [
+        dict(axes={"background": {"fill": "#fff"}}),
+        dict(axes={"background": {"fill": Color("#ff8e8e")}}),
+        dict(axes={"background": {"fill": "rgb(1,2,3)"}}),
+        dict(star={"label": {"font_weight": FontWeight.BOLD}}),
         dict(
-            background_color="#fff",
+            axes={"background": {"fill": "#fff"}},
+            constellation_lines={"width": 2},
         ),
-        dict(background_color=Color("#ff8e8e")),
-        dict(background_color="rgb(12,12,12)"),
-        dict(star={"label": {"font_weight": FontWeightEnum.BOLD}}),
-        dict(background_color="#fff", constellation_lines={"width": 2}),
     ],
 )
 def test_plot_style_valid(kwargs):
@@ -29,12 +29,11 @@ def test_plot_style_valid(kwargs):
 @pytest.mark.parametrize(
     "kwargs",
     [
-        dict(background_color=2),
-        dict(background_color=None),
-        dict(background_color="rgb(12,12,12,12,12)"),
-        dict(background_color="#fff", constellation="hello"),
+        dict(axes={"background": {"fill": 2}}),
+        dict(axes={"background": {"fill": "rgb(1,1,1,1,1,1,1,1,1)"}}),
+        dict(constellation="hello"),
         dict(star={"label": {"font_weight": "invalid"}}),
-        dict(background_color="#fff", extra_stuff="hello"),
+        dict(extra_stuff="hello"),
     ],
 )
 def test_plot_style_invalid(kwargs):
@@ -43,8 +42,8 @@ def test_plot_style_invalid(kwargs):
 
 
 def test_style_enums_use_strings():
-    line_style = LineStyle(style=LineStyleEnum.DASHED)
-    assert line_style.style == "dashed"
+    line_style = LineStyle(dash_array=DashArray.DASHED)
+    assert line_style.dash_array == "dashed"
 
 
 def test_style_context_manager():
