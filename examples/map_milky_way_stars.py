@@ -17,7 +17,7 @@ p = MapPlot(
     scale=0.36,
 )
 p.stars(
-    where=[_.magnitude < 11],
+    where=[_.magnitude < 12],
     where_labels=False,
     opacity_fn=lambda s: 0.9 if s.magnitude < 9 else 0.6,
     catalog=BIG_SKY,

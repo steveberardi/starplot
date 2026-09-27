@@ -71,11 +71,6 @@ p.export("starchart.svg")
 [https://starplot.dev](https://starplot.dev)
 
 
-## Demo
-For a demo of Starplot's zenith charts, check out: 
-
-[Sky Atlas - Star Chart Creator](https://skyatlas.app/star-charts/)
-
 ## Getting Help / Updates
 
 - Chat with other starplotters on our [Discord server](https://discord.gg/WewJJjshFu)

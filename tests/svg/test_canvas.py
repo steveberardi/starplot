@@ -14,6 +14,8 @@ from starplot.projections import (
     Equidistant,
     Orthographic,
     PlateCarree,
+    Stereographic,
+    StereoNorth,
 )
 from starplot.styles import (
     GradientStyle,
@@ -665,6 +667,45 @@ class TestInitBounds:
         assert not canvas._is_global()
         assert canvas.minx != canvas.maxx
         assert math.isfinite(canvas.minx) and math.isfinite(canvas.maxx)
+
+    def test_bounds_include_pole_inside_clip_path(self):
+        # GIVEN an equatorial Stereographic canvas whose circular clip path
+        # (radius 110 degrees) contains both celestial poles
+        clip_path = _geometry.circle(center=(180, 0), diameter_degrees=220, num_pts=200)
+
+        # WHEN it initializes its bounds
+        canvas = _canvas(Stereographic(), bounds=[0, -90, 360, 90], clip_path=clip_path)
+
+        # THEN the RA/DEC bounds reach both poles
+        assert canvas.bounds[1] == -90
+        assert canvas.bounds[3] == 90
+
+    def test_extent_containing_stereographic_antipode_is_centered(self):
+        # GIVEN a Stereographic projection centered at dec 40, and an extent
+        # that contains its antipode (RA 280, dec -40)
+        projection = Stereographic(center_ra=100, center_dec=40)
+
+        # WHEN constructing the canvas
+        canvas = _canvas(projection, bounds=[0, -60, 360, 90])
+
+        # THEN the projection's center lands in the middle of the plot, and a
+        # point 100 degrees from center is still inside the plot
+        assert canvas._extent_contains_projection_singularity()
+        assert canvas._to_axes(100, 40) == pytest.approx((0.5, 0.5), abs=1e-6)
+        x, y = canvas._to_axes(100 + 180, 50)
+        assert 0 <= x <= 1 and 0 <= y <= 1
+
+    def test_extent_away_from_center_is_not_recentered(self):
+        # GIVEN a StereoNorth projection (centered on the north pole) with an
+        # extent that doesn't include the pole or its antipode
+        canvas = _canvas(StereoNorth(), bounds=[161.25, 47, 213, 65])
+
+        # WHEN it initializes its bounds
+        # THEN the bounds are not re-centered on the pole, so the pole stays
+        # outside the plot instead of being padded into view
+        assert not canvas._extent_contains_projection_singularity()
+        _, y = canvas._to_axes(0, 90)
+        assert not (0 <= y <= 1)
 
 
 class TestRefreshFigureDimensions:
