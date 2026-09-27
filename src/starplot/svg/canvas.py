@@ -16,7 +16,10 @@ from starplot import geometry as _geometry
 from starplot.config import settings
 from starplot.projections import (
     CoordinateReferenceSystem,
+    Equidistant,
+    LambertAzEqArea,
     ProjectionBase,
+    Stereographic,
     latlon_bounds_to_projection,
 )
 from starplot.styles import (
@@ -150,6 +153,53 @@ class Canvas:
             and abs(self.bounds[1] - self.bounds[3]) >= 179
         )
 
+    def _extent_contains_projection_singularity(self) -> bool:
+        """
+        Returns True if the extent contains the antipode of an azimuthal
+        projection's center, where the projection is either undefined
+        (stereographic) or stretched into a ring around the whole disc
+        (equidistant, Lambert equal-area).
+        """
+        if not isinstance(
+            self.projection, (Stereographic, Equidistant, LambertAzEqArea)
+        ):
+            return False
+
+        ra_min, dec_min, ra_max, dec_max = self.bounds
+        antipode_ra = (self.projection.center_ra + 180) % 360
+        antipode_dec = -self.projection.center_dec
+
+        if not dec_min <= antipode_dec <= dec_max:
+            return False
+
+        ra_span = ra_max - ra_min
+        return ra_span >= 360 or (antipode_ra - ra_min) % 360 <= ra_span
+
+    def _radec_bounds_from_projected(self) -> tuple[float, float, float, float]:
+        """
+        Converts the projected bounds back to RA/DEC bounds, making sure they include
+        any celestial pole that's inside the projected bounds.
+        """
+        ra_min, dec_min, ra_max, dec_max = self.tx.transform_bounds(
+            *self.projected_bounds, direction="INVERSE"
+        )
+
+        # transform_bounds only samples the edges of the projected box, so it can miss a
+        # pole that's inside the box (e.g. the south pole in an equatorial Stereographic
+        # plot), which leaves things like meridian gridlines stopping short of that pole
+        for pole_dec in (90, -90):
+            px, py = self.tx.transform(0, pole_dec)
+            if not (np.isfinite(px) and np.isfinite(py)):
+                continue
+            if self.minx <= px <= self.maxx and self.miny <= py <= self.maxy:
+                ra_min, ra_max = -180.0, 180.0
+                if pole_dec > 0:
+                    dec_max = 90.0
+                else:
+                    dec_min = -90.0
+
+        return ra_min, dec_min, ra_max, dec_max
+
     def _init_bounds(self):
         """
         Calculates true bounds from user-bounds, which can change slightly as a result of the map projection used.
@@ -163,9 +213,7 @@ class Canvas:
                 *self.clip_path.bounds, densify_pts=1_000
             )
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
-            self.bounds = self.tx.transform_bounds(
-                *self.projected_bounds, direction="INVERSE"
-            )
+            self.bounds = self._radec_bounds_from_projected()
         elif self._is_global():
             self.minx, self.miny, self.maxx, self.maxy = self.projection.global_bounds
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
@@ -184,10 +232,22 @@ class Canvas:
                 curved=self.projection.curved,
                 transformer=self.tx,
             )
+
+            if self._extent_contains_projection_singularity():
+                cx, cy = self.tx.transform(
+                    self.projection.center_ra, self.projection.center_dec
+                )
+                radius = max(
+                    abs(self.minx - cx),
+                    abs(self.maxx - cx),
+                    abs(self.miny - cy),
+                    abs(self.maxy - cy),
+                )
+                self.minx, self.maxx = cx - radius, cx + radius
+                self.miny, self.maxy = cy - radius, cy + radius
+
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
-            self.bounds = self.tx.transform_bounds(
-                *self.projected_bounds, direction="INVERSE"
-            )
+            self.bounds = self._radec_bounds_from_projected()
 
         self._refresh_figure_dimensions()
 
@@ -239,9 +299,7 @@ class Canvas:
             self.maxy = lerp(maxy, miny, ay0)
 
             self.projected_bounds = self.minx, self.miny, self.maxx, self.maxy
-            self.bounds = self.tx.transform_bounds(
-                *self.projected_bounds, direction="INVERSE"
-            )
+            self.bounds = self._radec_bounds_from_projected()
 
             self._refresh_figure_dimensions()
 

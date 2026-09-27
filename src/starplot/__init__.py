@@ -2,7 +2,7 @@
 
 """Star charts and maps of the sky"""
 
-__version__ = "0.21.0"
+__version__ = "0.21.1"
 
 import contextlib
 
