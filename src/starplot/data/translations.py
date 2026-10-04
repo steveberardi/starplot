@@ -46,7 +46,56 @@ LABELS = {
         "w": "w",
         "milky way": "milky way",
     },
+    "de": {
+        "legend": "legende",
+        "star magnitude": "sternhelligkeit",
+        "star": "stern",
+        "deep sky object": "deep sky objekt",
+        "open cluster": "offener sternhaufen",
+        "globular cluster": "kugelsternhaufen",
+        "nebula": "nebel",
+        "galaxy": "galaxie",
+        "dark nebula": "dunkelnebel",
+        "association of stars": "sternassoziation",
+        "double star": "doppelstern",
+        "emission nebula": "emissionsnebel",
+        "galaxy pair": "galaxienpaar",
+        "galaxy triplet": "galaxientriplet",
+        "galaxy cluster": "galaxienhaufen",
+        "group of galaxies": "galaxiengruppe",
+        "hii ionized region": "hii-region",
+        "nova star": "nova",
+        "planetary nebula": "planetarischer nebel",
+        "reflection nebula": "reflexionsnebel",
+        "star cluster nebula": "sternhaufen",
+        "supernova remnant": "supernovaüberrest",
+        "unknown": "unbekannt",
+        "planet": "planet",
+        "mercury": "merkur",
+        "venus": "venus",
+        "mars": "mars",
+        "jupiter": "jupiter",
+        "saturn": "saturn",
+        "uranus": "uranus",
+        "neptune": "neptun",
+        "pluto": "pluto",
+        "sun": "sonne",
+        "moon": "mond",
+        "north": "norden",
+        "east": "osten",
+        "south": "süden",
+        "west": "westen",
+        "ecliptic": "ekliptik",
+        "celestial equator": "himmelsäquator",
+        "n": "n",
+        "e": "e",
+        "s": "s",
+        "w": "w",
+        "milky way": "milchstraße",
+    },
     "es": {
+        "legend": "leyenda",
+        "star magnitude": "magnitud estelar",
         "star": "estrella",
         "deep sky object": "objeto de cielo profundo",
         "open cluster": "cúmulo abierto",
@@ -68,6 +117,7 @@ LABELS = {
         "star cluster nebula": "nebulosa de cúmulo abierto",
         "supernova remnant": "remanente de supernova",
         "unknown": "desconocido",
+        "planet": "planeta",
         "mercury": "mercurio",
         "venus": "venus",
         "mars": "marte",
@@ -327,6 +377,7 @@ LABELS = {
     },
     "lt": {
         "legend": "legenda",
+        "star magnitude": "žvaigždžių ryškis",
         "star": "žvaigždė",
         "deep sky object": "tolimojo kosmoso objektas",
         "open cluster": "padrikasis spiečius",
@@ -348,6 +399,7 @@ LABELS = {
         "star cluster nebula": "žvaigždžių spiečiaus ūkas",
         "supernova remnant": "supernovos liekana",
         "unknown": "nežinomas",
+        "planet": "planeta",
         "mercury": "Merkurijus",
         "venus": "Venera",
         "mars": "Marsas",
@@ -422,6 +474,7 @@ LABELS = {
 
 LANGUAGES = [
     "en-us",
+    "de",
     "es",
     "fa",
     "fr",
@@ -434,9 +487,6 @@ LANGUAGES = [
 
 
 def language_name_column(language: str, column_prefix: str = "name") -> str:
-    # if language.lower() not in LANGUAGES:
-    #     raise ValueError("Unsupported language")
-
     language_name = language.replace("-", "_").lower()
     return f"{column_prefix}_{language_name}"
 

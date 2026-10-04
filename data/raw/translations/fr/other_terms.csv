@@ -1,4 +1,6 @@
 English,French
+legend,légende
+star magnitude,magnitude des étoiles
 star,étoile
 deep sky object,objet du ciel profond
 open cluster,amas ouvert
@@ -20,6 +22,7 @@ reflection nebula,nébuleuse par réflexion
 star cluster nebula,nébuleuse d’amas d’étoiles
 supernova remnant,rémanent de supernova
 unknown,inconnu
+planet,planète
 Mercury,Mercure
 Venus,Venus
 Mars,Mars

@@ -1,4 +1,6 @@
 English,Dutch
+legend,legende
+star magnitude,ster magnitude
 star,ster
 deep sky object,deep-sky object
 open cluster,open sterrenhoop
@@ -20,6 +22,7 @@ reflection nebula,reflectienevel
 star cluster nebula,sterrenhoopnevel
 supernova remnant,supernova restant
 unknown,onbekend
+planet,planeet
 Mercury,Mercurius
 Venus,Venus
 Mars,Mars

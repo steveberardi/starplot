@@ -21,7 +21,7 @@ The format of each file should be pretty self-explanatory, but here's a referenc
 
 Please follow these steps in a pull request to submit a new translation:
 
-1. Create a new directory here (`data/raw/translations`) with the name in [ISO-639-1 format](https://en.wikipedia.org/wiki/ISO_639-1)
+1. Create a new directory here (`data/raw/translations`) with the name in [ISO-639-1 format](https://en.wikipedia.org/wiki/ISO_639-1) of the language
 2. In that new directory, create the following files (in the format of existing files):
     - `constellation_names.csv`
     - `dso_names.csv`
@@ -32,6 +32,11 @@ Please follow these steps in a pull request to submit a new translation:
     - Doc-string for `Settings.language` [here](https://github.com/steveberardi/starplot/blob/main/src/starplot/config.py)
 4. Copy the values from `other_terms.csv` to the `LABELS` dictionary [here](https://github.com/steveberardi/starplot/blob/main/src/starplot/data/translations.py)
 5. Include a `readme.md` file in the data folder that explains the source of the translation (e.g. a well known astronomy book in the language, astronomical society, etc) - [see example here](https://github.com/steveberardi/starplot/blob/main/data/raw/translations/it/readme.md)
+6. Add test cases for the translation in [test_languages.py](https://github.com/steveberardi/starplot/blob/main/tests/test_languages.py)
+
+### Testing your translation
+
+Starplot uses Parquet files for some translations, which must be created before using your translation in plots/tests/etc. Once you have all the CSVs in the translation directory, you can build the Parquet files with `make db`. After that, `make test` should see the new translation you added.
 
 ## Reviewing / fixing existing translations
 

@@ -1,4 +1,6 @@
 English,Deutsch
+legend,Legende
+star magnitude,Sternhelligkeit
 star,Stern
 deep sky object,Deep Sky Objekt
 open cluster,Offener Sternhaufen
@@ -8,7 +10,7 @@ galaxy,Galaxie
 dark nebula,Dunkelnebel
 association of stars,Sternassoziation
 double star,Doppelstern
-emission nebula,Emmissionsnebel
+emission nebula,Emissionsnebel
 galaxy pair,Galaxienpaar
 galaxy triplet,Galaxientriplet
 galaxy cluster,Galaxienhaufen
@@ -20,6 +22,7 @@ reflection nebula,Reflexionsnebel
 star cluster nebula,Sternhaufen
 supernova remnant,Supernovaüberrest
 unknown,unbekannt
+planet,Planet
 Mercury,Merkur
 Venus,Venus
 Mars,Mars
@@ -40,4 +43,4 @@ N (abbreviation for north),N (Abkürzung für Norden)
 E (abbreviation for east),E (Abkürzung für Osten)
 S (abbreviation for south),S (Abkürzung für Süden)
 W (abbreviation for west),W (Abkürzung für Westen)
-Milky Way,Michstrasse
+Milky Way,Milchstraße

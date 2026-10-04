@@ -1,4 +1,6 @@
 English,zh-CN
+legend,图例
+star magnitude,星等
 star,恒星
 deep sky object,深空天体
 open cluster,疏散星团
@@ -20,6 +22,7 @@ reflection nebula,反射星云
 star cluster nebula,星团星云
 supernova remnant,超新星遗迹
 unknown,未知天体
+planet,行星
 Mercury,水星
 Venus,金星
 Mars,火星

@@ -1,4 +1,6 @@
 English,English
+legend,legend
+star magnitude,star magnitude
 star,star
 deep sky object,deep sky object
 open cluster,open cluster
@@ -20,6 +22,7 @@ reflection nebula,reflection nebula
 star cluster nebula,star cluster nebula
 supernova remnant,supernova remnant
 unknown,unknown
+planet,planet
 Mercury,Mercury
 Venus,Venus
 Mars,Mars
