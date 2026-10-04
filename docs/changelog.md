@@ -9,6 +9,7 @@
 - Removed fonts from PyPI package, to reduce our filesize
 - Adds support for Python 3.14
 - [**v0.21.1**] Fixes a couple bugs with a few azimuthal projections
+- [**v0.21.2**] Adds German translation
 
 ---
 

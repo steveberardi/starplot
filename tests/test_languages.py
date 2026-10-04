@@ -7,8 +7,8 @@ class TestLanguages:
     @pytest.mark.parametrize(
         "star_hip_id, language, expected_value",
         [
-            (11767, "de", "Polarstern",
             (11767, "en-us", "Polaris"),
+            (11767, "de", "Polarstern"),
             (11767, "fr", "Étoile Polaire"),
             (11767, "zh-cn", "北极星"),
             (11767, "lt", "Šiaurinė žvaigždė (Polaris)"),
@@ -26,15 +26,15 @@ class TestLanguages:
     @pytest.mark.parametrize(
         "constellation_id, language, expected_value",
         [
-            ("cma", "de"   , "Großer Hund"), 
             ("cma", "en-us", "Canis Major"),
-            ("and", "es", "Andrómeda"),
+            ("cma", "de", "Großer Hund"),
             ("cma", "fr", "Grand chien"),
             ("cma", "zh-cn", "大犬"),
             ("cma", "lt", "Didysis Šuo"),
             ("cma", "fa", "سگ بزرگ"),
             ("cma", "it", "Cane Maggiore"),
             ("cma", "nl", "Grote Hond"),
+            ("and", "es", "Andrómeda"),
         ],
     )
     def test_constellation_name(self, constellation_id, language, expected_value):
@@ -45,8 +45,8 @@ class TestLanguages:
     @pytest.mark.parametrize(
         "messier, language, expected_value",
         [
-            ("11", "de"   ,"Wildentenhaufen"),
             ("11", "en-us", "Wild Duck Cluster"),
+            ("11", "de", "Wildentenhaufen"),
             ("11", "es", "Cúmulo Patos Salvajes"),
             ("11", "fr", "Amas du Canard sauvage"),
             ("11", "zh-cn", "野鸭星团"),
