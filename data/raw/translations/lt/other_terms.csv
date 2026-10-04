@@ -1,4 +1,6 @@
 ﻿English,Lithuanian
+legend,legenda
+star magnitude,žvaigždžių ryškis
 star,žvaigždė
 deep sky object,tolimojo kosmoso objektas
 open cluster,padrikasis spiečius
@@ -20,6 +22,7 @@ reflection nebula,atspindžio ūkas
 star cluster nebula,žvaigždžių spiečiaus ūkas
 supernova remnant,supernovos liekana
 unknown,nežinomas
+planet,planeta
 Mercury,Merkurijus
 Venus,Venera
 Mars,Marsas

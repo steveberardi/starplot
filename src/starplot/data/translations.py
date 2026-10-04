@@ -94,6 +94,8 @@ LABELS = {
         "milky way": "milchstraße",
     },
     "es": {
+        "legend": "leyenda",
+        "star magnitude": "magnitud estelar",
         "star": "estrella",
         "deep sky object": "objeto de cielo profundo",
         "open cluster": "cúmulo abierto",
@@ -115,6 +117,7 @@ LABELS = {
         "star cluster nebula": "nebulosa de cúmulo abierto",
         "supernova remnant": "remanente de supernova",
         "unknown": "desconocido",
+        "planet": "planeta",
         "mercury": "mercurio",
         "venus": "venus",
         "mars": "marte",
@@ -374,6 +377,7 @@ LABELS = {
     },
     "lt": {
         "legend": "legenda",
+        "star magnitude": "žvaigždžių ryškis",
         "star": "žvaigždė",
         "deep sky object": "tolimojo kosmoso objektas",
         "open cluster": "padrikasis spiečius",
@@ -395,6 +399,7 @@ LABELS = {
         "star cluster nebula": "žvaigždžių spiečiaus ūkas",
         "supernova remnant": "supernovos liekana",
         "unknown": "nežinomas",
+        "planet": "planeta",
         "mercury": "Merkurijus",
         "venus": "Venera",
         "mars": "Marsas",
