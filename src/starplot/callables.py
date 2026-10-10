@@ -1,6 +1,8 @@
 import math
 from collections.abc import Callable
 
+import numpy as np
+
 from starplot.data.translations import translate
 from starplot.models import Star
 from starplot.styles import GradientStyle
@@ -123,7 +125,7 @@ def color_by_bv(star: Star) -> str:
 
     Color hex values from: [Mitchell Charity](http://www.vendian.org/mncharity/dir3/starcolor/details.html)
     """
-    if math.isnan(star.bv):
+    if star.bv is None or np.isnan(star.bv):
         bv = 0
     else:
         bv = star.bv
