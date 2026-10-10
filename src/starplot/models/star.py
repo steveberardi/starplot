@@ -79,7 +79,10 @@ class Star(CatalogObject, SkyObject):
         return pa.schema(list(base_schema) + star_fields)
 
     def __post_init__(self):
-        self.bayer = self.bayer or None
+        # pandas 3 represents missing strings as NaN instead of None
+        self.name = self.name if isinstance(self.name, str) else None
+        self.tyc = self.tyc if isinstance(self.tyc, str) else None
+        self.bayer = self.bayer if isinstance(self.bayer, str) and self.bayer else None
         self.hip = (
             int(self.hip) if self.hip is not None and np.isfinite(self.hip) else None
         )
