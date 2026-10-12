@@ -1387,5 +1387,5 @@ class Canvas:
             # )
             return
 
-        with open(_filename, "w", buffering=1024 * 1024) as outfile:
+        with open(_filename, "w", buffering=1024 * 1024, encoding="utf-8") as outfile:
             outfile.write(self.render(text_as_path=text_as_path))

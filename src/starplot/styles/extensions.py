@@ -9,7 +9,7 @@ EXT_PATH = HERE / "ext"
 
 
 def load(filename: str) -> dict:
-    with open(EXT_PATH / filename, "r") as infile:
+    with open(EXT_PATH / filename, "r", encoding="utf-8") as infile:
         return yaml.safe_load(infile)
 
 

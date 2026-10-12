@@ -1,5 +1,8 @@
 import logging
 import math
+import os
+import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -927,3 +930,40 @@ class TestExport:
         assert content.startswith("<svg")
         assert content.rstrip().endswith("</svg>")
         assert content == canvas.render()
+
+    def test_export_svg_non_ascii_text_with_non_utf8_locale(self, tmp_path):
+        # GIVEN a locale whose default file encoding can't represent "\u03bc"
+        # (e.g. cp1252 on Windows) -- simulated by disabling Python's UTF-8
+        # mode and locale coercion under the C locale, which makes open() use ASCII
+        out_file = tmp_path / "out.svg"
+        script = (
+            "import sys\n"
+            "import logging\n"
+            "from starplot.projections import CoordinateReferenceSystem, PlateCarree\n"
+            "from starplot.styles import LabelStyle, PlotStyle\n"
+            "from starplot.svg.canvas import Canvas\n"
+            "canvas = Canvas(resolution=1000, projection=PlateCarree(),"
+            " bounds=[10, -40, 80, 40], style=PlotStyle(),"
+            " crs=CoordinateReferenceSystem.WNU, logger=logging.getLogger('t'))\n"
+            "canvas.text(30, 0, 'Mu \\u03bc Cephei', LabelStyle())\n"
+            "canvas.export(sys.argv[1])\n"
+        )
+        env = {
+            **os.environ,
+            "LC_ALL": "C",
+            "PYTHONUTF8": "0",
+            "PYTHONCOERCECLOCALE": "0",
+        }
+
+        # WHEN exporting to an svg file
+        result = subprocess.run(
+            [sys.executable, "-c", script, str(out_file)],
+            env=env,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+
+        # THEN it succeeds and the file is written as UTF-8
+        assert result.returncode == 0, result.stderr
+        assert "\u03bc" in out_file.read_text(encoding="utf-8")

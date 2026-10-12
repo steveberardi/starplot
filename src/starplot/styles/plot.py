@@ -535,7 +535,7 @@ class PlotStyle(BaseStyle):
         Returns:
             PlotStyle: A new instance of a PlotStyle
         """
-        with open(filename, "r") as sfile:
+        with open(filename, "r", encoding="utf-8") as sfile:
             style = yaml.safe_load(sfile)
             return PlotStyle().extend(style)
 
@@ -546,7 +546,7 @@ class PlotStyle(BaseStyle):
         Args:
             filename: Filename of style file
         """
-        with open(filename, "w") as outfile:
+        with open(filename, "w", encoding="utf-8") as outfile:
             style_json = self.model_dump_json()
             style_yaml = yaml.dump(json.loads(style_json))
             outfile.write(style_yaml)
