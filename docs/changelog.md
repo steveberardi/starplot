@@ -11,6 +11,7 @@
 - [**v0.21.1**] Fixes a couple bugs with a few azimuthal projections
 - [**v0.21.2**] Adds German translation
 - [**v0.21.3**] Adds support for Pandas 3+
+- [**v0.21.4**] Fixes character encoding issue on exports
 
 ---
 
