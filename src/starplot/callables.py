@@ -92,7 +92,7 @@ def size_by_fov_factory(fov: float) -> Callable[[Star], float]:
     """
     if fov > 20:
         return size_by_magnitude
-    
+
     fov_multiplier = 20 / fov
 
     return lambda s: size_by_magnitude(s) * fov_multiplier * 0.64
