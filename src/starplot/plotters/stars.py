@@ -51,86 +51,92 @@ class StarPlotterMixin:
         flamsteed_labels: bool,
         label_fn: Callable[[Star], str],
         collision_handler: CollisionHandler,
+        gid_labels: str,
     ):
         _bayer = []
         _flamsteed = []
 
         # Plot all star common names first
-        for i, s in enumerate(star_objects):
-            if s.pk not in label_pks:
-                continue
+        with self.canvas.group(gid=f"{gid_labels}-name"):
+            for i, s in enumerate(star_objects):
+                if s.pk not in label_pks:
+                    continue
 
-            if (
-                s.hip
-                and s.hip in self._labeled_stars
-                or s.tyc
-                and s.tyc in self._labeled_stars
-            ):
-                continue
-            elif s.hip:
-                self._labeled_stars.append(s.hip)
-            elif s.tyc:
-                self._labeled_stars.append(s.tyc)
+                if (
+                    s.hip
+                    and s.hip in self._labeled_stars
+                    or s.tyc
+                    and s.tyc in self._labeled_stars
+                ):
+                    continue
+                elif s.hip:
+                    self._labeled_stars.append(s.hip)
+                elif s.tyc:
+                    self._labeled_stars.append(s.tyc)
 
-            label = label_fn(s)
-            bayer_desig = s.bayer
-            flamsteed_num = s.flamsteed
+                label = label_fn(s)
+                bayer_desig = s.bayer
+                flamsteed_num = s.flamsteed
 
-            # star_sizes are already scaled by self.scale (they're reused
-            # directly for rendering the markers), but _offset_from_marker
-            # applies self.scale itself -- undo it here so the marker size it
-            # sees matches its own convention (e.g. style.marker.size, as
-            # passed by marker() and dsos.py), instead of being scaled twice
-            marker_size = star_sizes[i] / self.scale
+                # star_sizes are already scaled by self.scale (they're reused
+                # directly for rendering the markers), but _offset_from_marker
+                # applies self.scale itself -- undo it here so the marker size it
+                # sees matches its own convention (e.g. style.marker.size, as
+                # passed by marker() and dsos.py), instead of being scaled twice
+                marker_size = star_sizes[i] / self.scale
 
-            if label:
-                self.text(
-                    label,
-                    s.ra,
-                    s.dec,
-                    style=self._offset_from_marker(
-                        style=style.label,
-                        text=label,
-                        marker_size=marker_size,
-                    ),
-                    collision_handler=collision_handler,
-                    gid="stars-label-name",
-                )
+                if label:
+                    self.text(
+                        label,
+                        s.ra,
+                        s.dec,
+                        style=self._offset_from_marker(
+                            style=style.label,
+                            text=label,
+                            marker_size=marker_size,
+                        ),
+                        collision_handler=collision_handler,
+                    )
 
-            if bayer_labels and bayer_desig and s.is_primary:
-                _bayer.append((bayer_desig, s.ra, s.dec, marker_size))
+                if bayer_labels and bayer_desig and s.is_primary:
+                    _bayer.append((bayer_desig, s.ra, s.dec, marker_size))
 
-            if flamsteed_labels and flamsteed_num and not bayer_desig and s.is_primary:
-                _flamsteed.append((flamsteed_num, s.ra, s.dec, marker_size))
+                if (
+                    flamsteed_labels
+                    and flamsteed_num
+                    and not bayer_desig
+                    and s.is_primary
+                ):
+                    _flamsteed.append((flamsteed_num, s.ra, s.dec, marker_size))
 
         # Plot bayer/flamsteed
-        for bayer_desig, ra, dec, star_size in _bayer:
-            self.text(
-                bayer_desig,
-                ra,
-                dec,
-                style=self._offset_from_marker(
-                    style=self.style.bayer_labels,
-                    text=bayer_desig,
-                    marker_size=star_size,
-                ),
-                collision_handler=collision_handler,
-                gid="stars-label-bayer",
-            )
+        with self.canvas.group(gid=f"{gid_labels}-bayer"):
+            for bayer_desig, ra, dec, star_size in _bayer:
+                self.text(
+                    bayer_desig,
+                    ra,
+                    dec,
+                    style=self._offset_from_marker(
+                        style=self.style.bayer_labels,
+                        text=bayer_desig,
+                        marker_size=star_size,
+                    ),
+                    collision_handler=collision_handler,
+                )
 
-        for flamsteed_num, ra, dec, star_size in _flamsteed:
-            self.text(
-                flamsteed_num,
-                ra,
-                dec,
-                style=self._offset_from_marker(
-                    style=self.style.flamsteed_labels,
-                    text=str(flamsteed_num),
-                    marker_size=star_size,
-                ),
-                collision_handler=collision_handler,
-                gid="stars-label-flamsteed",
-            )
+        with self.canvas.group(gid=f"{gid_labels}-flamsteed"):
+            for flamsteed_num, ra, dec, star_size in _flamsteed:
+                self.text(
+                    flamsteed_num,
+                    ra,
+                    dec,
+                    style=self._offset_from_marker(
+                        style=self.style.flamsteed_labels,
+                        text=str(flamsteed_num),
+                        marker_size=star_size,
+                    ),
+                    collision_handler=collision_handler,
+                )
 
     def _prepare_star_coords(self, df, limit_by_altaz=False):
         df["x"], df["y"] = (
@@ -179,7 +185,7 @@ class StarPlotterMixin:
             sql_labels: SQL query for selecting stars that will be labeled (table name is `_`). Applied _after_ any filters in the `where_labels` kwarg.
             collision_handler: An instance of [CollisionHandler][starplot.CollisionHandler] that describes what to do on label collisions with other labels, markers, etc. If `None`, then the collision handler of the plot will be used.
             gid_markers: Group id for the markers in the exported SVG
-            gid_labels: Group id for the labels in the exported SVG
+            gid_labels: Prefix for the group ids of the labels in the exported SVG (one group per label type, e.g. `stars-labels-name`, `stars-labels-bayer`, `stars-labels-flamsteed`)
 
         """
 
@@ -292,14 +298,14 @@ class StarPlotterMixin:
         if stars_to_index:
             self._stars_rtree = rtree.index.Index(stars_to_index)
 
-        with self.canvas.group(gid=gid_labels):
-            self._star_labels(
-                star_objects,
-                sizes,
-                label_pks,
-                style,
-                bayer_labels,
-                flamsteed_labels,
-                label_fn,
-                handler,
-            )
+        self._star_labels(
+            star_objects,
+            sizes,
+            label_pks,
+            style,
+            bayer_labels,
+            flamsteed_labels,
+            label_fn,
+            handler,
+            gid_labels,
+        )

@@ -646,7 +646,12 @@ class TextPlotterMixin:
         dy = dy[order]
         display_xy = np.column_stack([dx, dy])
 
-        display_xy = [(x, y) for x, y in display_xy if x >= 0 and y >= 0]
+        # only consider points on the visible canvas, otherwise off-canvas points skew where "center" is
+        display_xy = [
+            (x, y)
+            for x, y in display_xy
+            if 0 <= x <= self.canvas.width and 0 <= y <= self.canvas.height
+        ]
         num_positions = len(display_xy)
 
         if min_spacing is None:
@@ -700,7 +705,7 @@ class TextPlotterMixin:
                 x1,
                 y1,
             )
-            bbox = create_bbox(x0, y0, height=height, width=width)
+            bbox = create_bbox(x0 - width / 2, y0, height=height, width=width)
             bbox = rotate_bbox(bbox, angle)
 
             # TODO : find better bbox (that's rotated with text)
@@ -726,6 +731,7 @@ class TextPlotterMixin:
                     style=style,
                     angle=angle,
                     cs=CoordinateSystem.DISPLAY,
+                    attrs={"text-anchor": "middle"},
                 )
                 self._add_label_to_rtree(text, bbox=bbox)
                 plotted_positions.add(pos)

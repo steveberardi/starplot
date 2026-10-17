@@ -1,5 +1,18 @@
+## v0.22.x
+[Documentation](https://archives.starplot.dev/0.22.0/)
+
+- Adds support for "naked eye" optic plots, increasing FOV limit to 60 degrees
+- Adds support for plotting constellations, gridlines, and horizon on optic plots
+- Updates default catalog for Milky Way
+- Adds missing German translation for Pisces
+- Fixes bug with grouping star label SVG elements
+- Adds a double border circle marker
+- Drops official support for Python 3.10 (EOL)
+
+---
+
 ## v0.21.x
-[Migration Guide](migration-guides/0.21.0.md)
+[Documentation](https://archives.starplot.dev/0.21.4/) | [Migration Guide](migration-guides/0.21.0.md)
 
 - Replaces the plotting backend (matplotlib + cartopy) with an SVG-first backend
 - Adds support for gradient backgrounds on markers, polygons, and the figure background

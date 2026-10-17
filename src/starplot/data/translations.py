@@ -45,6 +45,7 @@ LABELS = {
         "s": "s",
         "w": "w",
         "milky way": "milky way",
+        "horizon": "horizon",
     },
     "de": {
         "legend": "legende",
@@ -92,6 +93,7 @@ LABELS = {
         "s": "s",
         "w": "w",
         "milky way": "milchstraße",
+        "horizon": "Horizont",
     },
     "es": {
         "legend": "leyenda",
@@ -139,6 +141,7 @@ LABELS = {
         "s": "s",
         "w": "o",
         "milky way": "vía láctea",
+        "horizon": "horizonte",
     },
     "fr": {
         "legend": "légende",
@@ -186,6 +189,7 @@ LABELS = {
         "s": "s",
         "w": "o",
         "milky way": "voie lactée",
+        "horizon": "horizon",
     },
     "it": {
         "legend": "legenda",
@@ -233,6 +237,7 @@ LABELS = {
         "s": "s",
         "w": "o",
         "milky way": "via lattea",
+        "horizon": "orizzonte",
     },
     "zh-cn": {
         "legend": "图例",
@@ -280,6 +285,7 @@ LABELS = {
         "s": "南",
         "w": "西",
         "milky way": "银河",
+        "horizon": "地平线",
     },
     "zh-tw": {
         "legend": "圖例",
@@ -327,6 +333,7 @@ LABELS = {
         "s": "南",
         "w": "西",
         "milky way": "銀河",
+        "horizon": "地平線",
     },
     "fa": {
         "legend": "راهنما",
@@ -374,6 +381,7 @@ LABELS = {
         "s": "ج",
         "w": "غ",
         "milky way": "کهکشان راه شیری",
+        "horizon": "افق",
     },
     "lt": {
         "legend": "legenda",
@@ -421,6 +429,7 @@ LABELS = {
         "s": "P",
         "w": "V",
         "milky way": "Paukščių Takas",
+        "horizon": "horizontas",
     },
     "nl": {
         "legend": "legende",
@@ -468,6 +477,7 @@ LABELS = {
         "s": "z",
         "w": "w",
         "milky way": "melkweg",
+        "horizon": "horizon",
     },
 }
 

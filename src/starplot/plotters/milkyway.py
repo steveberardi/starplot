@@ -1,9 +1,9 @@
 from ibis import _
 from shapely import MultiPolygon, box, union_all
 
+from starplot.constants import EDGE_BUFFER
 from starplot.data import db
 from starplot.data.catalogs import MILKY_WAY, Catalog
-from starplot.geometry import split_polygon_at_zero
 from starplot.models.milky_way import from_tuple
 from starplot.profile import profile
 from starplot.styles import PolygonStyle
@@ -37,11 +37,7 @@ class MilkyWayPlotterMixin:
         df = mw.filter(_.geometry.intersects(extent)).order_by("pk").to_pandas()
 
         milky_ways = [from_tuple(m) for m in df.itertuples()]
-
-        polygons = []
-        for milky_way in milky_ways:
-            polygons.extend(split_polygon_at_zero(milky_way.geometry))
-
+        polygons = [m.geometry for m in milky_ways]
         mw_union = union_all(polygons)
 
         if isinstance(mw_union, MultiPolygon):
@@ -51,17 +47,21 @@ class MilkyWayPlotterMixin:
 
         with self.canvas.group(gid=gid):
             for p in polygons:
-                bounds = box(0, self.dec_min - 5, 360, self.dec_max + 5)
+                # vertices at exactly RA 0 or 360 project to the opposite edge from their neighbors (creating
+                # jumps in the polygon), so keep everything just inside the seam
+                bounds = box(
+                    EDGE_BUFFER, self.dec_min - 5, 360 - EDGE_BUFFER, self.dec_max + 5
+                )
                 p = p.intersection(bounds)
 
                 if isinstance(p, MultiPolygon):
                     for pp in p.geoms:
                         self.polygon(
-                            geometry=pp.buffer(-0.001),
+                            geometry=pp,
                             style=style,
                         )
                 else:
                     self.polygon(
-                        geometry=p.buffer(-0.001),
+                        geometry=p,
                         style=style,
                     )

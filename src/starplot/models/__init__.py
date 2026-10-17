@@ -10,6 +10,7 @@ from .observer import Observer
 from .optics import (
     Binoculars,
     Camera,
+    NakedEye,
     Optic,
     Reflector,
     Refractor,

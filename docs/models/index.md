@@ -49,6 +49,7 @@ Starplot has models to represent an observer and some of the objects you can plo
 ### :material-telescope: Optics
 
 - [Binoculars](optics.md#starplot.models.Binoculars)
+- [NakedEye](optics.md#starplot.models.NakedEye)
 - [Scope](optics.md#starplot.models.Scope)
 - [Refractor](optics.md#starplot.models.Refractor)
 - [Reflector](optics.md#starplot.models.Reflector)

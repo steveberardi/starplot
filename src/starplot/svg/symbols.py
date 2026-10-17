@@ -273,11 +273,37 @@ def satellite(x: float, y: float, size: float, attrs: dict):
     )
 
 
+def circle_double_border(x: float, y: float, size: float, attrs: dict):
+    def ring(radius: float):
+        return Circle(
+            cx=x,
+            cy=y,
+            r=round(radius, settings.precision),
+            attrs={"fill": "none"},
+        )
+
+    return Group(
+        attrs=attrs,
+        children=[
+            # the filled center is always solid, even if the border is dashed
+            Circle(
+                cx=x,
+                cy=y,
+                r=round(size * 0.27, settings.precision),
+                attrs={"stroke-dasharray": "none"},
+            ),
+            ring(size * 0.375),
+            ring(size * 0.46),
+        ],
+    )
+
+
 SYMBOL_FUNCTIONS = {
     "circle": circle,
     "circle_cross": circle_cross,
     "circle_crosshair": circle_crosshair,
     "circle_line": circle_line,
+    "circle_double_border": circle_double_border,
     "ellipse": ellipse,
     "square": square,
     "triangle": triangle,

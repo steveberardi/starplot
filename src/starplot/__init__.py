@@ -2,7 +2,7 @@
 
 """Star charts and maps of the sky"""
 
-__version__ = "0.21.4"
+__version__ = "0.22.0"
 
 import contextlib
 
@@ -20,6 +20,7 @@ from .models import (
     DsoType,
     MilkyWay,
     Moon,
+    NakedEye,
     ObjectList,
     Observer,
     Planet,
