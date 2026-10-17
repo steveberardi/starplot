@@ -37,11 +37,7 @@ class MilkyWayPlotterMixin:
         df = mw.filter(_.geometry.intersects(extent)).order_by("pk").to_pandas()
 
         milky_ways = [from_tuple(m) for m in df.itertuples()]
-
-        polygons = []
-        for milky_way in milky_ways:
-            polygons.extend(split_polygon_at_zero(milky_way.geometry))
-
+        polygons = [m.geometry for m in milky_ways]
         mw_union = union_all(polygons)
 
         if isinstance(mw_union, MultiPolygon):
@@ -57,11 +53,11 @@ class MilkyWayPlotterMixin:
                 if isinstance(p, MultiPolygon):
                     for pp in p.geoms:
                         self.polygon(
-                            geometry=pp.buffer(-0.001),
+                            geometry=pp, #.buffer(-0.001),
                             style=style,
                         )
                 else:
                     self.polygon(
-                        geometry=p.buffer(-0.001),
+                        geometry=p, #.buffer(-0.001),
                         style=style,
                     )
