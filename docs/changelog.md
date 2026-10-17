@@ -7,6 +7,7 @@
 - Adds missing German translation for Pisces
 - Fixes bug with grouping star label SVG elements
 - Adds a double border circle marker
+- Drops official support for Python 3.10 (EOL)
 
 ---
 
