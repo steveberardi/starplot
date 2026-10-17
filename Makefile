@@ -101,11 +101,6 @@ dev: env db setup download-test-fonts
 # ------------------------------------------------------------------
 # Python version testing
 # ------------------------------------------------------------------
-test-3.10: PYTHON_VERSION=3.10.21
-test-3.10:
-	$(DOCKER_BUILD_PYTHON)
-	$(DOCKER_RUN_PYTHON_TEST)
-
 test-3.11: PYTHON_VERSION=3.11.16
 test-3.11:
 	$(DOCKER_BUILD_PYTHON)
