@@ -53,11 +53,11 @@ class MilkyWayPlotterMixin:
                 if isinstance(p, MultiPolygon):
                     for pp in p.geoms:
                         self.polygon(
-                            geometry=pp, #.buffer(-0.001),
+                            geometry=pp,
                             style=style,
                         )
                 else:
                     self.polygon(
-                        geometry=p, #.buffer(-0.001),
+                        geometry=p,
                         style=style,
                     )

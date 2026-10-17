@@ -21,6 +21,7 @@ MarkerSymbol = Literal[
     "triangle",
     "circle_cross",
     "circle_crosshair",
+    "circle_double_border",
     "circle_line",
     "comet",
     "star_4",

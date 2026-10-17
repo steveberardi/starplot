@@ -211,6 +211,23 @@ class TestSymbols:
             "</g>"
         )
 
+    def test_circle_double_border_renders_expected_svg(self):
+        # GIVEN a circle-double-border symbol
+        el = symbols.circle_double_border(X, Y, SIZE, ATTRS)
+
+        # WHEN rendering it
+        out = el.render()
+
+        # THEN it's a group with a solid center circle and two unfilled rings
+        # that inherit stroke styling from the group
+        assert out == (
+            '<g fill="red">\n'
+            '  <circle cx="50" cy="50" r="5.4" stroke-dasharray="none" />\n'
+            '  <circle cx="50" cy="50" r="7.5" fill="none" />\n'
+            '  <circle cx="50" cy="50" r="9.2" fill="none" />\n'
+            "</g>"
+        )
+
 
 class TestCreate:
     def test_dispatches_to_the_matching_symbol_function(self):

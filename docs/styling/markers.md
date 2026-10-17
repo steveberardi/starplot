@@ -88,6 +88,12 @@ Below are previews of all marker symbols available in Starplot. Many aspects of 
 `satellite`{: .marker-symbol-name}
 </div>
 
+<div class="marker-symbol-card" markdown>
+![Circle Double Border](../images/reference/marker_circle_double_border.svg){ loading=lazy .marker-symbol-img}
+
+`circle_double_border`{: .marker-symbol-name}
+</div>
+
 </div>
 
 
