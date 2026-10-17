@@ -1,5 +1,15 @@
+## v0.22.x
+[Documentation](https://archives.starplot.dev/0.22.0/)
+
+- Adds support for "naked eye" optic plots, increasing FOV limit to 60 degrees
+- Adds support for plotting constellations and gridlines on optic plots
+- Updates default catalog for Milky Way
+
+
+---
+
 ## v0.21.x
-[Migration Guide](migration-guides/0.21.0.md)
+[Documentation](https://archives.starplot.dev/0.21.4/) | [Migration Guide](migration-guides/0.21.0.md)
 
 - Replaces the plotting backend (matplotlib + cartopy) with an SVG-first backend
 - Adds support for gradient backgrounds on markers, polygons, and the figure background
