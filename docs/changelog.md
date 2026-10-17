@@ -5,7 +5,7 @@
 - Adds support for plotting constellations, gridlines, and horizon on optic plots
 - Updates default catalog for Milky Way
 - Adds missing German translation for Pisces
-
+- Fixes bug with grouping star label SVG elements
 
 ---
 
