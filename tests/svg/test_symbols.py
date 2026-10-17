@@ -7,20 +7,20 @@ ATTRS = {"fill": "red"}
 class TestSymbols:
     def test_circle_renders_expected_svg(self):
         # GIVEN a circle symbol
-        el = symbols.circle(X, Y, SIZE, ATTRS)
+        element = symbols.circle(X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a single <circle> with radius = size / 2
         assert out == '<circle cx="50" cy="50" r="10.0" fill="red" />'
 
     def test_circle_cross_renders_expected_svg(self):
         # GIVEN a circle-cross symbol
-        el = symbols.circle_cross(X, Y, SIZE, ATTRS)
+        element = symbols.circle_cross(X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a group containing the circle and its two crossing lines
         assert out == (
@@ -33,10 +33,10 @@ class TestSymbols:
 
     def test_circle_crosshair_renders_expected_svg(self):
         # GIVEN a circle-crosshair symbol
-        el = symbols.circle_crosshair(X, Y, SIZE, ATTRS)
+        element = symbols.circle_crosshair(X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a group containing a small circle and 4 tick marks, one per side
         assert out == (
@@ -51,10 +51,10 @@ class TestSymbols:
 
     def test_circle_line_renders_expected_svg(self):
         # GIVEN a circle-line symbol
-        el = symbols.circle_line(X, Y, SIZE, ATTRS)
+        element = symbols.circle_line(X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a group with the circle and a horizontal line, whose
         # stroke-width is doubled from the (default) base width of 2
@@ -67,10 +67,10 @@ class TestSymbols:
 
     def test_ellipse_renders_expected_svg(self):
         # GIVEN an ellipse symbol
-        el = symbols.ellipse(X, Y, SIZE, ATTRS)
+        element = symbols.ellipse(X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a single <ellipse>, rotated -20 degrees around its center
         assert out == (
@@ -80,20 +80,20 @@ class TestSymbols:
 
     def test_square_renders_expected_svg(self):
         # GIVEN a square symbol
-        el = symbols.square(X, Y, SIZE, ATTRS)
+        element = symbols.square(X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a single <rect> centered on (x, y)
         assert out == '<rect x="40.0" y="40.0" height="20" width="20" fill="red" />'
 
     def test_triangle_renders_expected_svg(self):
         # GIVEN a triangle symbol
-        el = symbols.triangle(X, Y, SIZE, ATTRS)
+        element = symbols.triangle(X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a single <polygon> with 3 points
         assert out == (
@@ -102,10 +102,10 @@ class TestSymbols:
 
     def test_diamond_renders_expected_svg(self):
         # GIVEN a diamond symbol
-        el = symbols.diamond(X, Y, SIZE, ATTRS)
+        element = symbols.diamond(X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a single <polygon> with 4 points (top, right, bottom, left)
         assert out == (
@@ -114,10 +114,10 @@ class TestSymbols:
 
     def test_star_renders_expected_svg(self):
         # GIVEN a 5-pointed star symbol
-        el = symbols.SYMBOL_FUNCTIONS["star"](X, Y, SIZE, ATTRS)
+        element = symbols.SYMBOL_FUNCTIONS["star"](X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a single <polygon> with 10 points (5 outer, 5 inner)
         assert out == (
@@ -128,10 +128,10 @@ class TestSymbols:
 
     def test_star_4_renders_expected_svg(self):
         # GIVEN a 4-pointed star symbol
-        el = symbols.SYMBOL_FUNCTIONS["star_4"](X, Y, SIZE, ATTRS)
+        element = symbols.SYMBOL_FUNCTIONS["star_4"](X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a single <polygon> with 8 points (4 outer, 4 inner)
         assert out == (
@@ -141,10 +141,10 @@ class TestSymbols:
 
     def test_star_8_renders_expected_svg(self):
         # GIVEN an 8-pointed star symbol
-        el = symbols.SYMBOL_FUNCTIONS["star_8"](X, Y, SIZE, ATTRS)
+        element = symbols.SYMBOL_FUNCTIONS["star_8"](X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a single <polygon> with 16 points (8 outer, 8 inner)
         assert out == (
@@ -157,10 +157,10 @@ class TestSymbols:
 
     def test_plus_renders_expected_svg(self):
         # GIVEN a plus symbol
-        el = symbols.plus(X, Y, SIZE, ATTRS)
+        element = symbols.plus(X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a single <polygon> tracing the 12-point plus-sign outline
         assert out == (
@@ -171,10 +171,10 @@ class TestSymbols:
 
     def test_comet_renders_expected_svg(self):
         # GIVEN a comet symbol, using a small step count for a readable arc
-        el = symbols.comet(X, Y, SIZE, ATTRS, steps=4)
+        element = symbols.comet(X, Y, SIZE, ATTRS, steps=4)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a single <polygon>: a tip, the two points where the tail
         # meets the head circle, and the arc (5 points for steps=4) between them
@@ -188,10 +188,10 @@ class TestSymbols:
 
     def test_satellite_renders_expected_svg(self):
         # GIVEN a satellite symbol
-        el = symbols.satellite(X, Y, SIZE, ATTRS)
+        element = symbols.satellite(X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a group (rotated -45 degrees) with 2 solar panels, a body,
         # grid lines on each panel, and lines connecting the panels to the body
@@ -213,10 +213,10 @@ class TestSymbols:
 
     def test_circle_double_border_renders_expected_svg(self):
         # GIVEN a circle-double-border symbol
-        el = symbols.circle_double_border(X, Y, SIZE, ATTRS)
+        element = symbols.circle_double_border(X, Y, SIZE, ATTRS)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN it's a group with a solid center circle and two unfilled rings
         # that inherit stroke styling from the group
@@ -241,10 +241,10 @@ class TestCreate:
 
     def test_none_attrs_defaults_to_empty_dict(self):
         # GIVEN a call to create() with attrs=None
-        el = symbols.create(X, Y, SIZE, "circle", None)
+        element = symbols.create(X, Y, SIZE, "circle", None)
 
         # WHEN rendering it
-        out = el.render()
+        out = element.render()
 
         # THEN no extra attributes are added to the element
         assert out == '<circle cx="50" cy="50" r="10.0" />'

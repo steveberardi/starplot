@@ -1,3 +1,6 @@
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 import pytest
 
 from starplot import (
@@ -89,9 +92,6 @@ class TestLanguages:
         assert translate("HORIZON", language) == expected_value
 
     def test_optic_plot_horizon_label_is_translated_and_stays_uppercase(self):
-        from datetime import datetime
-        from zoneinfo import ZoneInfo
-
         with override_settings(language="de"):
             plot = OpticPlot(
                 ra=84.0534,

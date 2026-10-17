@@ -6,6 +6,7 @@
 - Updates default catalog for Milky Way
 - Adds missing German translation for Pisces
 - Fixes bug with grouping star label SVG elements
+- Adds a double border circle marker
 
 ---
 

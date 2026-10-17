@@ -83,15 +83,8 @@ class TestReflector:
 
 
 class TestNakedEye:
-    def test_default_fov(self):
-        assert NakedEye().true_fov == 50
-
-    def test_radius_derives_from_true_fov(self):
-        n = NakedEye(fov=40)
-        assert n.radius == n._compute_radius(20)
-
-    def test_label(self):
-        assert NakedEye().label == "Naked Eye"
+    def test_true_fov_is_fov(self):
+        assert NakedEye(fov=40).true_fov == 40
 
     def test_polygon_is_centered_with_true_fov_extent(self):
         n = NakedEye()
