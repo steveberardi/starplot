@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from functools import cache, cached_property
 
 import numpy as np
@@ -18,7 +18,7 @@ class Observer(BaseModel):
     Represents an observer at a specific time and place.
     """
 
-    dt: AwareDatetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    dt: AwareDatetime = Field(default_factory=lambda: datetime.now(UTC))
     """
     Date and time of observation (**must be timezone-aware**).
     
