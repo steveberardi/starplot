@@ -2,7 +2,14 @@ import math
 
 import pytest
 
-from starplot.models.optics import Binoculars, Camera, Reflector, Refractor, Scope
+from starplot.models.optics import (
+    Binoculars,
+    Camera,
+    NakedEye,
+    Reflector,
+    Refractor,
+    Scope,
+)
 
 
 class TestScope:
@@ -73,6 +80,30 @@ class TestReflector:
     def test_label(self):
         r = Reflector(focal_length=1000, eyepiece_focal_length=10, eyepiece_fov=50)
         assert r.label == "Reflector"
+
+
+class TestNakedEye:
+    def test_default_fov(self):
+        assert NakedEye().true_fov == 50
+
+    def test_radius_derives_from_true_fov(self):
+        n = NakedEye(fov=40)
+        assert n.radius == n._compute_radius(20)
+
+    def test_label(self):
+        assert NakedEye().label == "Naked Eye"
+
+    def test_polygon_is_centered_with_true_fov_extent(self):
+        n = NakedEye()
+        poly = n.polygon(90, 0)
+        assert poly.centroid.x == pytest.approx(90, abs=1e-6)
+        minx, _, maxx, _ = poly.bounds
+        assert maxx - minx == pytest.approx(n.true_fov, rel=0.1)
+
+    def test_in_bounds(self):
+        n = NakedEye()
+        assert n.in_bounds(0, 0)
+        assert not n.in_bounds(n.radius * 1.1, 0)
 
 
 class TestBinoculars:

@@ -11,6 +11,7 @@ from starplot.models import Optic, Star
 from starplot.models.observer import Observer
 from starplot.plots.base import BasePlot
 from starplot.plotters import (
+    ConstellationPlotterMixin,
     DsoPlotterMixin,
     LegendPlotterMixin,
     TextPlotterMixin,
@@ -21,6 +22,7 @@ from starplot.projections import CoordinateReferenceSystem, Equidistant
 from starplot.styles import (
     LabelStyle,
     ObjectStyle,
+    PathStyle,
     PlotStyle,
     TableStyle,
     extensions,
@@ -32,6 +34,7 @@ from starplot.utils import azimuth_to_string
 class OpticPlot(
     BasePlot,
     ExtentMaskMixin,
+    ConstellationPlotterMixin,
     DsoPlotterMixin,
     TextPlotterMixin,
     LegendPlotterMixin,
@@ -59,7 +62,7 @@ class OpticPlot(
 
     """
 
-    FIELD_OF_VIEW_MAX = 20
+    FIELD_OF_VIEW_MAX = 60
 
     def __init__(
         self,
@@ -237,12 +240,39 @@ class OpticPlot(
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_altaz(y, x)  # alt = y, az = x
 
-    def _prepare_star_coords(self, df):
+    def _prepare_star_coords(self, df, limit_by_altaz=True):
         df["x"], df["y"] = self.observer._apparent(
             obj=SkyfieldStar.from_dataframe(df),
             ephemeris=self.ephemeris_name,
         )
         return df
+
+    @profile
+    @use_style(PathStyle, "horizon")
+    def horizon(
+        self,
+        style: PathStyle = None,
+        label: str | None = "HORIZON",
+        num_labels: int = 1,
+    ):
+        """
+        Plots the horizon (altitude = 0) for the observer of the plot
+
+        Args:
+            style: Style of the horizon path. If None, then the plot's style definition will be used.
+            label: Label for the horizon. Set to `None` to hide the label.
+            num_labels: Number of labels to plot along the horizon
+        """
+        # x = azimuth and y = altitude on optic plots, so no coordinate conversion is needed
+        coordinates = [(az, 0) for az in range(361)]
+
+        self.line(
+            coordinates=coordinates,
+            style=style,
+            label=label,
+            num_labels=num_labels,
+            skip_prepare=True,
+        )
 
     @use_style(LabelStyle, "table")
     def info(self, style: TableStyle = None):

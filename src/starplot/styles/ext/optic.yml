@@ -21,6 +21,17 @@ planets:
     size: 60
 
 
+horizon:
+  line:
+    stroke: '#8c8c8c'
+    width: 6
+    dash_array: dashed
+  label:
+    font_size: 56
+    font_weight: 400
+    stroke: '#000'
+    stroke_width: 4
+
 ecliptic:
   label:
     font_size: 60

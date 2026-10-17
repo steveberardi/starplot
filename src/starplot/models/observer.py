@@ -2,6 +2,7 @@ from collections.abc import Callable
 from datetime import datetime, timezone
 from functools import cache, cached_property
 
+import numpy as np
 from pydantic import AwareDatetime, BaseModel, Field, computed_field
 from skyfield.api import Star as SkyfieldStar
 from skyfield.api import wgs84
@@ -104,15 +105,25 @@ class Observer(BaseModel):
     def _apparent(self, obj: SkyfieldStar, ephemeris: str = "de440s.bsp"):
         """Returns apparent AZ, ALT of object"""
         pressure_mbar = self.pressure if self.pressure is not None else "standard"
-        pos_alt, pos_az, _ = (
-            self.observe(ephemeris)(obj)
-            .apparent()
-            .altaz(
-                temperature_C=self.temperature,
-                pressure_mbar=pressure_mbar,
-            )
+        apparent = self.observe(ephemeris)(obj).apparent()
+        geometric_alt, pos_az, _ = apparent.altaz()
+        geometric_degrees = np.asarray(geometric_alt.degrees)
+
+        # Skyfield's refraction cuts off abruptly below -1 degrees altitude, which makes anything
+        # crossing that altitude jump. Holding refraction constant below the horizon (instead of dropping to zero)
+        # keeps apparent positions continuous
+        above_horizon = np.maximum(geometric_degrees, 0)
+        refracted = apparent.center.refract(
+            above_horizon,
+            self.temperature,
+            pressure_mbar,
         )
-        return pos_az.degrees, pos_alt.degrees
+        pos_alt = geometric_degrees + (refracted.degrees - above_horizon)
+
+        if pos_alt.ndim == 0:
+            pos_alt = float(pos_alt)
+
+        return pos_az.degrees, pos_alt
 
     def radec(
         self, az: float, alt: float, ephemeris: str = "de440s.bsp"

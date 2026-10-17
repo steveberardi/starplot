@@ -20,6 +20,7 @@ from .models import (
     DsoType,
     MilkyWay,
     Moon,
+    NakedEye,
     ObjectList,
     Observer,
     Planet,
