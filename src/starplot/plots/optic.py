@@ -7,6 +7,7 @@ from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables, geometry
 from starplot.data.catalogs import BIG_SKY_MAG11, Catalog
+from starplot.data.translations import translate
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Optic, Star
 from starplot.models.observer import Observer
@@ -350,6 +351,10 @@ class OpticPlot(
             label: Label for the horizon. Set to `None` to hide the label.
             num_labels: Number of labels to plot along the horizon
         """
+        if label:
+            translated = translate(label, self.language)
+            label = translated.upper() if label.isupper() else translated
+
         # x = azimuth and y = altitude on optic plots, so no coordinate conversion is needed
         coordinates = [(az, 0) for az in range(361)]
 

@@ -1,6 +1,15 @@
 import pytest
 
-from starplot import DSO, Constellation, Star, override_settings
+from starplot import (
+    DSO,
+    Constellation,
+    NakedEye,
+    Observer,
+    OpticPlot,
+    Star,
+    override_settings,
+)
+from starplot.data.translations import translate
 
 
 class TestLanguages:
@@ -60,3 +69,42 @@ class TestLanguages:
         with override_settings(language=language):
             dso = DSO.get(m=messier)
             assert dso.common_names == [expected_value]
+
+    @pytest.mark.parametrize(
+        "language, expected_value",
+        [
+            ("en-us", "Horizon"),
+            ("de", "Horizont"),
+            ("es", "Horizonte"),
+            ("fa", "افق"),
+            ("fr", "Horizon"),
+            ("it", "Orizzonte"),
+            ("lt", "Horizontas"),
+            ("nl", "Horizon"),
+            ("zh-cn", "地平线"),
+            ("zh-tw", "地平線"),
+        ],
+    )
+    def test_horizon_label(self, language, expected_value):
+        assert translate("HORIZON", language) == expected_value
+
+    def test_optic_plot_horizon_label_is_translated_and_stays_uppercase(self):
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+
+        with override_settings(language="de"):
+            plot = OpticPlot(
+                ra=84.0534,
+                dec=-1.2019,
+                observer=Observer(
+                    dt=datetime(
+                        2025, 12, 21, 19, 0, tzinfo=ZoneInfo("America/Los_Angeles")
+                    ),
+                    lat=32.9628,
+                    lon=-117.0359,
+                ),
+                optic=NakedEye(),
+            )
+            plot.horizon()
+
+        assert "HORIZONT" in plot.canvas.render()
