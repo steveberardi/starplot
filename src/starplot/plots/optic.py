@@ -1,3 +1,4 @@
+import math
 from collections.abc import Callable
 from pathlib import Path
 
@@ -13,6 +14,7 @@ from starplot.plots.base import BasePlot
 from starplot.plotters import (
     ConstellationPlotterMixin,
     DsoPlotterMixin,
+    GridlinesPlotterMixin,
     LegendPlotterMixin,
     TextPlotterMixin,
 )
@@ -30,12 +32,36 @@ from starplot.styles import (
 )
 from starplot.utils import azimuth_to_string
 
+GRID_STEPS = [0.1, 0.25, 0.5, 1, 2, 5, 10, 15, 30, 45]
+
+
+def _nice_step(target: float, steps: list[float]) -> float:
+    """Returns the smallest step that's at least as big as the target (or the biggest step)"""
+    return next((step for step in steps if step >= target), steps[-1])
+
+
+def _multiples(step, minimum, maximum) -> list:
+    """Returns the multiples of the step between minimum and maximum"""
+    first = math.ceil(minimum / step)
+    last = math.floor(maximum / step)
+    return [round(i * step, 6) for i in range(first, last + 1)]
+
+
+def degrees_label(value: float) -> str:
+    """Degrees and arcminutes, only including the parts that are needed (e.g. `10°` or `5° 30′`)"""
+    sign = "-" if value < 0 else ""
+    degrees, arcminutes = divmod(round(abs(value) * 60), 60)
+    if arcminutes:
+        return f"{sign}{degrees}\N{DEGREE SIGN} {arcminutes}\N{PRIME}"
+    return f"{sign}{degrees}\N{DEGREE SIGN}"
+
 
 class OpticPlot(
     BasePlot,
     ExtentMaskMixin,
     ConstellationPlotterMixin,
     DsoPlotterMixin,
+    GridlinesPlotterMixin,
     TextPlotterMixin,
     LegendPlotterMixin,
 ):
@@ -246,6 +272,67 @@ class OpticPlot(
             ephemeris=self.ephemeris_name,
         )
         return df
+
+    @profile
+    @use_style(PathStyle, "gridlines")
+    def gridlines(
+        self,
+        style: PathStyle = None,
+        labels: bool = True,
+        az_locations: list[float] = None,
+        alt_locations: list[float] = None,
+        az_label_fn: Callable[[float], str] = None,
+        alt_label_fn: Callable[[float], str] = degrees_label,
+        az_label_locations: list[str] = None,
+        alt_label_locations: list[str] = None,
+    ):
+        """
+        Plots gridlines of azimuth and altitude
+
+        Args:
+            style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
+            labels: If True, then labels for each gridline will be plotted on the outside of the axes.
+            az_locations: List of azimuth locations for the gridlines (in degrees, 0...360). Defaults to evenly spaced lines based on the field of view of the optic.
+            alt_locations: List of altitude locations for the gridlines (in degrees, -90...90). Defaults to evenly spaced lines based on the field of view of the optic.
+            az_label_fn: Callable for creating labels of azimuth gridlines. Defaults to cardinal directions where applicable, and degrees/arcminutes otherwise.
+            alt_label_fn: Callable for creating labels of altitude gridlines. Defaults to degrees/arcminutes (e.g. `5° 30′`).
+            az_label_locations: Locations where labels will be plotted (options: `top` and/or `bottom`). Defaults to `['top', 'bottom']`
+            alt_label_locations: Locations where labels will be plotted (options: `left` and/or `right`). Defaults to `['left', 'right']`
+        """
+        az_min, alt_min, az_max, alt_max = self.canvas.bounds
+        fov = self.optic.true_fov
+
+        alt_step = _nice_step(fov / 5, GRID_STEPS)
+        az_step = _nice_step(
+            fov / 5 / max(math.cos(math.radians(self.pos_alt)), 0.1), GRID_STEPS
+        )
+
+        if az_locations is None:
+            az_locations = _multiples(az_step, az_min, az_max)
+        if alt_locations is None:
+            alt_locations = [
+                alt for alt in _multiples(alt_step, alt_min, alt_max) if -90 < alt < 90
+            ]
+
+        if az_label_fn is None:
+            cardinal_label_fn = callables.azimuth_with_cardinal_direction_label_factory(
+                self.language
+            )
+
+            def az_label_fn(az):
+                az = az % 360
+                return cardinal_label_fn(az) if az % 90 == 0 else degrees_label(az)
+
+        super().gridlines(
+            style=style,
+            labels=labels,
+            lon_locations=az_locations,
+            lat_locations=alt_locations,
+            lon_label_fn=az_label_fn,
+            lat_label_fn=alt_label_fn,
+            lon_label_locations=az_label_locations,
+            lat_label_locations=alt_label_locations,
+        )
 
     @profile
     @use_style(PathStyle, "horizon")

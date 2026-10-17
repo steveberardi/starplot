@@ -2,8 +2,9 @@
 [Documentation](https://archives.starplot.dev/0.22.0/)
 
 - Adds support for "naked eye" optic plots, increasing FOV limit to 60 degrees
-- Adds support for plotting constellations and gridlines on optic plots
+- Adds support for plotting constellations, gridlines, and horizon on optic plots
 - Updates default catalog for Milky Way
+- Adds missing German translation for Pisces
 
 
 ---

@@ -183,6 +183,11 @@ optic_moon_phase_waxing_crescent:
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/optic-moon-phase-waxing-crescent.png
   phash: 917646991b666e99
+optic_orion_naked_eye:
+  dhash: 64d4a4a0928ef07064c4a0a0928ef07060d4a2a09286f070
+  exception: null
+  filename: /Users/steveberardi/src/starplot/hash_checks/data/optic-orion-naked-eye.png
+  phash: c46e0aa57bc62c9b
 optic_orion_nebula_refractor:
   dhash: f0cca4f072e2ec70f0cca4f072e2ec70f0cca4f072e2ec70
   exception: null
