@@ -479,7 +479,7 @@ def check_optic_orion_naked_eye():
         optic=optics.NakedEye(),
         observer=observer,
         style=style_night,
-        **plot_kwargs,
+        resolution=2800,
     )
     p.gridlines()
     p.constellations()
