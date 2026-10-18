@@ -6,12 +6,15 @@ from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables, geometry
 from starplot.data.catalogs import BIG_SKY_MAG11, Catalog
+from starplot.data.translations import translate
 from starplot.mixins import ExtentMaskMixin
 from starplot.models import Optic, Star
 from starplot.models.observer import Observer
 from starplot.plots.base import BasePlot
 from starplot.plotters import (
+    ConstellationPlotterMixin,
     DsoPlotterMixin,
+    GridlinesPlotterMixin,
     LegendPlotterMixin,
     TextPlotterMixin,
 )
@@ -21,6 +24,7 @@ from starplot.projections import CoordinateReferenceSystem, Equidistant
 from starplot.styles import (
     LabelStyle,
     ObjectStyle,
+    PathStyle,
     PlotStyle,
     TableStyle,
     extensions,
@@ -32,7 +36,9 @@ from starplot.utils import azimuth_to_string
 class OpticPlot(
     BasePlot,
     ExtentMaskMixin,
+    ConstellationPlotterMixin,
     DsoPlotterMixin,
+    GridlinesPlotterMixin,
     TextPlotterMixin,
     LegendPlotterMixin,
 ):
@@ -59,7 +65,7 @@ class OpticPlot(
 
     """
 
-    FIELD_OF_VIEW_MAX = 20
+    FIELD_OF_VIEW_MAX = 60
 
     def __init__(
         self,
@@ -237,12 +243,92 @@ class OpticPlot(
     def _in_bounds_xy(self, x: float, y: float) -> bool:
         return self.in_bounds_altaz(y, x)  # alt = y, az = x
 
-    def _prepare_star_coords(self, df):
+    def _prepare_star_coords(self, df, limit_by_altaz=True):
         df["x"], df["y"] = self.observer._apparent(
             obj=SkyfieldStar.from_dataframe(df),
             ephemeris=self.ephemeris_name,
         )
         return df
+
+    @profile
+    @use_style(PathStyle, "gridlines")
+    def gridlines(
+        self,
+        style: PathStyle = None,
+        labels: bool = True,
+        az_locations: list[float] = None,
+        alt_locations: list[float] = None,
+        az_label_fn: Callable[[float], str] = None,
+        alt_label_fn: Callable[[float], str] = callables.rounded_degrees_label,
+        az_label_locations: list[str] = None,
+        alt_label_locations: list[str] = None,
+    ):
+        """
+        Plots gridlines
+
+        Args:
+            style: Styling of the gridlines. If None, then the plot's style (specified when creating the plot) will be used
+            labels: If True, then labels for each gridline will be plotted on the outside of the axes.
+            az_locations: List of azimuth locations for the gridlines (in degrees, 0...360). Defaults to every 15 degrees
+            alt_locations: List of altitude locations for the gridlines (in degrees, -90...90). Defaults to every 10 degrees.
+            az_label_fn: Callable for creating labels of azimuth gridlines. Defaults to [azimuth_with_cardinal_direction_label_factory(self.language)][starplot.callables.azimuth_with_cardinal_direction_label_factory]
+            alt_label_fn: Callable for creating labels of altitude gridlines
+            az_label_locations: Locations where labels will be plotted (options: `top` and/or `bottom`). Defaults to `['bottom']`
+            alt_label_locations: Locations where labels will be plotted (options: `left` and/or `right`). Defaults to `['left', 'right']`
+        """
+        az_locations = az_locations or [x for x in range(0, 375, 15)]
+        alt_locations = alt_locations or [
+            y
+            for y in range(-20, 90, 10)
+            if self.canvas.bounds[1] < y < self.canvas.bounds[3]
+        ]
+
+        az_label_fn = (
+            az_label_fn
+            or callables.azimuth_with_cardinal_direction_label_factory(self.language)
+        )
+
+        super().gridlines(
+            style=style,
+            labels=labels,
+            lon_locations=az_locations,
+            lat_locations=alt_locations,
+            lon_label_fn=az_label_fn,
+            lat_label_fn=alt_label_fn,
+            lon_label_locations=az_label_locations,
+            lat_label_locations=alt_label_locations,
+        )
+
+    @profile
+    @use_style(PathStyle, "horizon")
+    def horizon(
+        self,
+        style: PathStyle = None,
+        label: str | None = "HORIZON",
+        num_labels: int = 1,
+    ):
+        """
+        Plots the horizon (altitude = 0) for the observer of the plot
+
+        Args:
+            style: Style of the horizon path. If None, then the plot's style definition will be used.
+            label: Label for the horizon. Set to `None` to hide the label.
+            num_labels: Number of labels to plot along the horizon
+        """
+        if label:
+            translated = translate(label, self.language)
+            label = translated.upper() if label.isupper() else translated
+
+        # x = azimuth and y = altitude on optic plots, so no coordinate conversion is needed
+        coordinates = [(az, 0) for az in range(361)]
+
+        self.line(
+            coordinates=coordinates,
+            style=style,
+            label=label,
+            num_labels=num_labels,
+            skip_prepare=True,
+        )
 
     @use_style(LabelStyle, "table")
     def info(self, style: TableStyle = None):

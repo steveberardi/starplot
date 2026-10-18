@@ -817,6 +817,7 @@ class Canvas:
         """Plots text, with an optional rotation angle."""
 
         dx, dy = self._to_display(x, y, cs)
+        dx, dy = round(dx, settings.precision), round(dy, settings.precision)
 
         attrs = attrs or {}
         _attrs = {**style.css(self.scale, base=self.style.base), **attrs}
@@ -921,7 +922,12 @@ class Canvas:
                 y += symbol_size / 2
                 label_x = x + symbol_size + symbol_padding
                 label_attrs = style.labels.css(scale, base=self.style.base)
-                label_element = Text(x=label_x, y=y, text=label, attrs=label_attrs)
+                label_element = Text(
+                    x=round(label_x, settings.precision),
+                    y=round(y, settings.precision),
+                    text=label,
+                    attrs=label_attrs,
+                )
 
                 sections_elements.append(
                     Group(
@@ -1046,7 +1052,12 @@ class Canvas:
 
         def cell_text(value, x: float, row_top: float, row_height: float, style, attrs):
             y = row_top + row_height / 2 + style.font_size * scale / 2.75
-            return Text(x=x, y=y, text=str(value), attrs=attrs)
+            return Text(
+                x=round(x, settings.precision),
+                y=round(y, settings.precision),
+                text=str(value),
+                attrs=attrs,
+            )
 
         elements = []
 

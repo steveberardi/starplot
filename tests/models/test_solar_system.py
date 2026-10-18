@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -8,7 +8,7 @@ from starplot import Moon, Observer, Planet, Sun
 
 class TestMoon:
     def test_moon_get(self):
-        dt = datetime(2023, 8, 27, 23, 0, 0, 0, tzinfo=timezone.utc)
+        dt = datetime(2023, 8, 27, 23, 0, 0, 0, tzinfo=UTC)
         observer = Observer(
             dt=dt,
             lat=None,
@@ -24,7 +24,7 @@ class TestMoon:
         assert m.illumination == pytest.approx(0.7553895183806317)
 
     def test_moon_get_new_moon(self):
-        dt = datetime(2024, 4, 8, 12, 0, 0, 0, tzinfo=timezone.utc)
+        dt = datetime(2024, 4, 8, 12, 0, 0, 0, tzinfo=UTC)
         observer = Observer(
             dt=dt,
             lat=None,
@@ -36,7 +36,7 @@ class TestMoon:
         assert m.illumination == 0.02061433440290572
 
     def test_moon_get_full_moon(self):
-        dt = datetime(2024, 4, 23, 14, 0, 0, 0, tzinfo=timezone.utc)
+        dt = datetime(2024, 4, 23, 14, 0, 0, 0, tzinfo=UTC)
         observer = Observer(
             dt=dt,
             lat=None,
@@ -75,7 +75,7 @@ class TestSolarEclipse:
 
 class TestPlanet:
     def test_planet_get(self):
-        dt = datetime(2024, 4, 7, 21, 0, 0, 0, tzinfo=timezone.utc)
+        dt = datetime(2024, 4, 7, 21, 0, 0, 0, tzinfo=UTC)
         observer = Observer(
             dt=dt,
             lat=None,
@@ -88,7 +88,7 @@ class TestPlanet:
         assert jupiter.apparent_size == 0.00916289062469268
 
     def test_planet_all(self):
-        dt = datetime(2024, 4, 7, 21, 0, 0, 0, tzinfo=timezone.utc)
+        dt = datetime(2024, 4, 7, 21, 0, 0, 0, tzinfo=UTC)
         observer = Observer(
             dt=dt,
             lat=None,

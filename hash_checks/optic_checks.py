@@ -4,7 +4,16 @@ from zoneinfo import ZoneInfo
 
 from flaky import flake
 
-from starplot import Moon, Observer, OpticPlot, Satellite, _, callables, styles
+from starplot import (
+    Moon,
+    Observer,
+    OpticPlot,
+    Satellite,
+    Star,
+    _,
+    callables,
+    styles,
+)
 from starplot.models import optics
 
 HERE = Path(__file__).resolve().parent
@@ -25,6 +34,11 @@ style_dark = styles.PlotStyle().extend(
 )
 style_blue = styles.PlotStyle().extend(
     styles.extensions.BLUE_DARK,
+    styles.extensions.OPTIC,
+)
+style_night = styles.PlotStyle().extend(
+    styles.extensions.BLUE_NIGHT,
+    styles.extensions.GRADIENT_NIGHT,
     styles.extensions.OPTIC,
 )
 
@@ -447,5 +461,41 @@ def check_optic_iss_moon_transit():
         )
 
     filename = DATA_PATH / "optic-iss-moon-transit.png"
+    p.export(filename)
+    return filename
+
+
+@flake
+def check_optic_orion_naked_eye():
+    observer = Observer(
+        dt=datetime(2025, 12, 21, 19, 0, 0, 0, tzinfo=tz),
+        lat=32.9628,  # Poway, CA
+        lon=-117.0359,
+    )
+    alnilam = Star.get(name="Alnilam")
+    p = OpticPlot(
+        # Orion's belt, rising in the east
+        ra=alnilam.ra,
+        dec=alnilam.dec,
+        optic=optics.NakedEye(),
+        observer=observer,
+        style=style_night,
+        resolution=2800,
+    )
+    p.gridlines()
+    p.constellations()
+    p.stars(
+        where=[_.magnitude < 3.5],
+        where_labels=[False],
+        color_fn=callables.color_by_bv_gradient,
+        size_fn=lambda s: callables.size_by_magnitude(s) * 0.8,
+    )
+    p.dsos(where=[_.magnitude < 4.1], where_labels=[False])
+    p.constellation_borders()
+    p.constellation_labels()
+    p.horizon()
+    p.info()
+
+    filename = DATA_PATH / "optic-orion-naked-eye.png"
     p.export(filename)
     return filename

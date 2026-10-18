@@ -12,3 +12,5 @@ DE_421 = "de421.bsp"
 DE_440S = "de440s.bsp"
 DE_440 = "de440.bsp"
 DE_441 = "de441.bsp"
+
+EDGE_BUFFER = 1e-6

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -44,7 +44,7 @@ def test_map_objects_list():
 
 
 def test_map_objects_list_planets():
-    dt = datetime(2023, 8, 27, 23, 0, 0, 0, tzinfo=timezone.utc)
+    dt = datetime(2023, 8, 27, 23, 0, 0, 0, tzinfo=UTC)
 
     p = MapPlot(
         projection=Miller(),

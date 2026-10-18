@@ -198,6 +198,49 @@ class Binoculars(Optic):
         return in_circle(x, y, 0, 0, self.radius * scale)
 
 
+class NakedEye(Optic):
+    """Creates a new NakedEye optic, which plots a circular field of view with no magnification
+
+    Args:
+        fov: Field of view (degrees) of the naked eye. Defaults to `50`.
+
+    Returns:
+        NakedEye: A new instance of a NakedEye optic
+
+    """
+
+    fov: float = 50
+    """Field of view (degrees)"""
+
+    @computed_field
+    @property
+    def true_fov(self) -> float:
+        """True field of view (same as `fov`, since there's no magnification)"""
+        return self.fov
+
+    @computed_field
+    @property
+    def radius(self) -> float:
+        return self._compute_radius(self.true_fov / 2)
+
+    def __str__(self):
+        return f"Naked Eye @ {self.fov:.0f}\N{DEGREE SIGN}"
+
+    @property
+    def label(self):
+        return "Naked Eye"
+
+    def polygon(self, center_x, center_y):
+        return geometry.circle(
+            center=(center_x, center_y),
+            diameter_degrees=self.true_fov,
+            num_pts=200,
+        )
+
+    def in_bounds(self, x, y, scale: float = 1) -> bool:
+        return in_circle(x, y, 0, 0, self.radius * scale)
+
+
 class Camera(Optic):
     """Creates a new Camera optic
 

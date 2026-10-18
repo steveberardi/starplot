@@ -50,6 +50,7 @@ marker_styles = {
     "star_4": default_style,
     "star_8": default_style,
     "triangle": default_style,
+    "circle_double_border": default_style,
 }
 
 

@@ -10,6 +10,14 @@ Optics are another set of models you instantiate directly when creating [OpticPl
         show_root_heading: true
         heading_level: 2
 
+::: starplot.models.NakedEye
+    options:
+        inherited_members: true
+        show_docstring_attributes: true
+        merge_init_into_class: true
+        show_root_heading: true
+        heading_level: 2
+
 ::: starplot.models.Scope
     options:
         inherited_members: true

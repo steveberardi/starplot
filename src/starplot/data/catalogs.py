@@ -343,8 +343,8 @@ CONSTELLATION_BORDERS = Catalog(
 )
 
 MILKY_WAY = Catalog(
-    path=settings.data_path / "milky_way-0.1.0.parquet",
-    url="https://github.com/steveberardi/starplot-milkyway/releases/download/v0.1.0/milky_way.parquet",
+    path=settings.data_path / "milky_way-0.2.1.parquet",
+    url="https://github.com/steveberardi/starplot-milkyway/releases/download/v0.2.1/milky_way-0.2.1.parquet",
 )
 
 
