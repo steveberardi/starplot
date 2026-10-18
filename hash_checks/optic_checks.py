@@ -464,6 +464,7 @@ def check_optic_iss_moon_transit():
     p.export(filename)
     return filename
 
+
 @flake
 def check_optic_orion_naked_eye():
     observer = Observer(
