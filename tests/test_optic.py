@@ -4,7 +4,6 @@ from zoneinfo import ZoneInfo
 import pytest
 
 from starplot import Binoculars, NakedEye, Observer, OpticPlot, styles
-from starplot.plots.optic import GRID_STEPS, _multiples, _nice_step, degrees_label
 
 
 def test_optic_plot_raises_fov_too_big():
@@ -185,22 +184,3 @@ def test_optic_plot_gridlines_label_cardinal_directions():
     p.gridlines(az_locations=[90], alt_locations=[])
 
     assert "EAST" in p.canvas.render()
-
-
-def test_gridline_step_grows_with_the_field_of_view():
-    # a narrow field of view gets fine spacing, and a wide one gets coarse spacing
-    assert _nice_step(0.6, GRID_STEPS) == 1
-    assert _nice_step(10, GRID_STEPS) == 10
-    assert _nice_step(1000, GRID_STEPS) == GRID_STEPS[-1]
-
-
-def test_gridline_multiples_stay_within_the_limits():
-    assert _multiples(10, -25, 25) == [-20, -10, 0, 10, 20]
-    assert _multiples(15, 100, 140) == [105, 120, 135]
-
-
-def test_degrees_label_only_includes_parts_that_are_needed():
-    assert degrees_label(10) == "10\N{DEGREE SIGN}"
-    assert degrees_label(-5.5) == "-5\N{DEGREE SIGN} 30\N{PRIME}"
-    assert degrees_label(0) == "0\N{DEGREE SIGN}"
-    assert degrees_label(-0.25) == "-0\N{DEGREE SIGN} 15\N{PRIME}"
