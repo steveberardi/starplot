@@ -1,6 +1,6 @@
 import math
 
-from starplot.config import settings
+from starplot.settings import settings
 from starplot.styles.types import MarkerSymbol
 from starplot.svg.elements import Circle, Ellipse, Group, Line, Polygon, Rectangle
 

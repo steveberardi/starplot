@@ -4,11 +4,8 @@
 
 __version__ = "0.22.0"
 
-import contextlib
-
 from ibis import _
 
-from .config import settings
 from .data import Catalog
 from .models import (
     DSO,
@@ -40,20 +37,5 @@ from .plots import (
 )
 from .plotters.text import CollisionHandler
 from .projections import *
+from .settings import Settings, settings
 from .styles import *
-
-
-@contextlib.contextmanager
-def override_settings(**kwargs):
-    original = {}
-
-    for key, value in kwargs.items():
-        original[key] = getattr(settings, key, None)
-        setattr(settings, key, value)
-
-    try:
-        yield
-
-    finally:
-        for key, value in original.items():
-            setattr(settings, key, value)

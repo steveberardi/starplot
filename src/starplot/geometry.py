@@ -8,8 +8,8 @@ from shapely import union_all
 from shapely.errors import GEOSException
 from shapely.geometry import LineString, Point, Polygon
 
-from starplot.config import settings
 from starplot.constants import PROJ_R
+from starplot.settings import settings
 
 GEOD = pyproj.Geod(f"+a={PROJ_R} +f=0.0", sphere=True)
 

@@ -6,11 +6,11 @@ import rtree
 from shapely import Point, box
 from shapely.errors import GEOSException
 
-from starplot.config import settings
 from starplot.geometry import (
     random_point_in_polygon_at_distance,
     union_at_zero,
 )
+from starplot.settings import settings
 from starplot.styles import AnchorPoint, LabelStyle
 from starplot.styles.helpers import use_style
 from starplot.svg.canvas import CoordinateSystem

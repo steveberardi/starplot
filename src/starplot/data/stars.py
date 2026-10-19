@@ -4,10 +4,10 @@ from pathlib import Path
 from ibis import _
 from shapely import MultiPolygon, Polygon
 
-from starplot.config import settings
 from starplot.data import db
 from starplot.data.catalogs import BIG_SKY_MAG11, Catalog, SpatialQueryMethod
 from starplot.data.translations import LANGUAGE_NAME_COLUMNS, language_name_column
+from starplot.settings import settings
 
 
 @cache

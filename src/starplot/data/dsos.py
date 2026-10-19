@@ -3,13 +3,13 @@ from pathlib import Path
 
 from ibis import _
 
-from starplot.config import settings
 from starplot.data import db
 from starplot.data.catalogs import Catalog, SpatialQueryMethod
 from starplot.data.translations import (
     LANGUAGES,
     language_name_column,
 )
+from starplot.settings import settings
 
 
 @cache

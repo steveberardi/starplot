@@ -6,8 +6,6 @@ from shapely import LineString, Polygon
 
 from starplot import geometry as _geometry
 from starplot import models
-from starplot.config import SvgTextType
-from starplot.config import settings as StarplotSettings
 from starplot.data import ecliptic, load
 from starplot.data.translations import translate
 from starplot.models.moon import MoonPhase
@@ -24,6 +22,8 @@ from starplot.projections import (
     StereoNorth,
     StereoSouth,
 )
+from starplot.settings import SvgTextType
+from starplot.settings import settings as StarplotSettings
 from starplot.styles import (
     AnchorPoint,
     ObjectStyle,

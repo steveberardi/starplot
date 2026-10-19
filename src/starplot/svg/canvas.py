@@ -13,7 +13,6 @@ from shapely.affinity import translate as _translate_shape
 from shapely.ops import transform as _transform_shape
 
 from starplot import geometry as _geometry
-from starplot.config import settings
 from starplot.projections import (
     CoordinateReferenceSystem,
     Equidistant,
@@ -22,6 +21,7 @@ from starplot.projections import (
     Stereographic,
     latlon_bounds_to_projection,
 )
+from starplot.settings import settings
 from starplot.styles import (
     GradientStyle,
     LabelStyle,

@@ -11,8 +11,8 @@ from astropy_healpix import HEALPix
 from ibis import Table
 from shapely import Geometry, MultiPolygon, Polygon
 
-from starplot.config import settings
 from starplot.data.utils import download
+from starplot.settings import settings
 
 if TYPE_CHECKING:
     from starplot.models.base import SkyObject

@@ -2,8 +2,8 @@ from functools import cache
 
 from ibis import duckdb
 
-from starplot.config import settings
 from starplot.data import DataFiles
+from starplot.settings import settings
 
 NAME_TABLES = {
     "star_designations": DataFiles.STAR_DESIGNATIONS,

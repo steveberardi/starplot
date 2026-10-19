@@ -1,8 +1,8 @@
 import sys
 
-from starplot.config import settings
 from starplot.data import db
 from starplot.data.catalogs import download_all_catalogs
+from starplot.settings import settings
 from starplot.svg.fonts import download_fonts
 
 COMMANDS = ["setup"]
