@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from ibis import _
 from shapely import LineString, MultiPolygon, Polygon
 
+from starplot.constants import NEW_LINE_CHARACTER
 from starplot.data.catalogs import CONSTELLATIONS_IAU, Catalog
 from starplot.data.constellations import load
 from starplot.models.base import CatalogObject, SkyObject
@@ -133,10 +134,10 @@ class Constellation(CatalogObject, SkyObject):
         """
         Default function for determining the plotted label for a constellation
 
-        Returns the uppercase name of the constellation.
+        Returns the uppercase name of the constellation, and replaces spaces with new lines.
 
         """
-        return constellation.name.upper().replace(" ", "\n")
+        return constellation.name.upper().replace(" ", NEW_LINE_CHARACTER)
 
 
 def from_tuple(c: tuple) -> Constellation:

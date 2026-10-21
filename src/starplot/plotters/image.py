@@ -18,6 +18,22 @@ CHUNK_ROWS = 256
 OUTLINE_POINTS = 50
 
 
+def _inverse_gnomonic(xi, eta, ra0, dec0):
+    """Inverse of `_gnomonic`. Returns (ra, dec) in degrees."""
+    ra0, dec0 = np.radians(ra0), np.radians(dec0)
+    rho = np.hypot(xi, eta)
+    c = np.arctan(rho)
+    sin_c, cos_c = np.sin(c), np.cos(c)
+
+    # rho == 0 is the tangent point itself, where the ratios below are 0/0
+    safe_rho = np.where(rho == 0, 1, rho)
+    dec = np.arcsin(cos_c * np.sin(dec0) + eta * sin_c * np.cos(dec0) / safe_rho)
+    dra = np.arctan2(
+        xi * sin_c, rho * np.cos(dec0) * cos_c - eta * np.sin(dec0) * sin_c
+    )
+    return np.degrees(ra0 + dra) % 360, np.degrees(dec)
+
+
 class PixelSkyModel:
     """
     Affine mapping between image pixels and the tangent plane at the center of the control points.
@@ -74,21 +90,6 @@ class PixelSkyModel:
         ) / (cos_c)
         return xi, eta, valid
 
-    def _inverse_gnomonic(self, xi, eta, ra0, dec0):
-        """Inverse of `_gnomonic`. Returns (ra, dec) in degrees."""
-        ra0, dec0 = np.radians(ra0), np.radians(dec0)
-        rho = np.hypot(xi, eta)
-        c = np.arctan(rho)
-        sin_c, cos_c = np.sin(c), np.cos(c)
-
-        # rho == 0 is the tangent point itself, where the ratios below are 0/0
-        safe_rho = np.where(rho == 0, 1, rho)
-        dec = np.arcsin(cos_c * np.sin(dec0) + eta * sin_c * np.cos(dec0) / safe_rho)
-        dra = np.arctan2(
-            xi * sin_c, rho * np.cos(dec0) * cos_c - eta * np.sin(dec0) * sin_c
-        )
-        return np.degrees(ra0 + dra) % 360, np.degrees(dec)
-
     def sky_to_pixel(self, ra, dec):
         """Returns (px, py, valid) for sky coordinates in degrees."""
         xi, eta, valid = self._gnomonic(ra, dec, self.ra0, self.dec0)
@@ -104,7 +105,7 @@ class PixelSkyModel:
         eta = self._linear_inv[1, 0] * (px - self._offset[0]) + self._linear_inv[
             1, 1
         ] * (py - self._offset[1])
-        return self._inverse_gnomonic(xi, eta, self.ra0, self.dec0)
+        return _inverse_gnomonic(xi, eta, self.ra0, self.dec0)
 
 
 def _sample_bilinear(pixels: np.ndarray, px, py) -> np.ndarray:
