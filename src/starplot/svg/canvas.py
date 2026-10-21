@@ -37,6 +37,7 @@ from starplot.svg import fonts, png, symbols
 from starplot.svg.elements import (
     ClipPath,
     Group,
+    Image,
     Line,
     Polygon,
     Polyline,
@@ -146,6 +147,18 @@ class Canvas:
             return x.astype(int), y.astype(int)
 
         return np.round(x, settings.precision), np.round(y, settings.precision)
+
+    def _from_display(self, x, y):
+        """Inverse of `_to_display` for DATA coordinates. Points outside the projection come back as non-finite."""
+        if self.invert_x:
+            x = self.width - x
+
+        if self.invert_y:
+            y = self.height - y
+
+        px = lerp(self.minx, self.maxx, x / self.width)
+        py = lerp(self.miny, self.maxy, 1 - y / self.height)
+        return self.tx.transform(px, py, direction="INVERSE")
 
     def _is_global(self):
         return self.projection.global_only or (
@@ -446,6 +459,25 @@ class Canvas:
         self._add_element(
             group_zorder,
             Group(id=gid, attrs=attrs or {}, children=[e for _, e in frame]),
+        )
+
+    def image(
+        self,
+        href: str,
+        x: float,
+        y: float,
+        width: float,
+        height: float,
+        zorder: float,
+        opacity: float = 1.0,
+    ) -> None:
+        """Embeds a raster image, positioned in display coordinates."""
+        attrs = {"href": href, "preserveAspectRatio": "none"}
+        if opacity != 1:
+            attrs["opacity"] = opacity
+
+        self._add_element(
+            zorder, Image(x=x, y=y, width=width, height=height, attrs=attrs)
         )
 
     def marker(self, x, y, style: MarkerStyle) -> None:

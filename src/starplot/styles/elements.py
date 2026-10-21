@@ -343,6 +343,14 @@ class ArrowStyle(PolygonStyle):
         }
 
 
+class ImageStyle(BaseStyle):
+    opacity: float = Field(default=1.0, ge=0, le=1)
+    """Opacity of the image, from 0 (transparent) to 1 (opaque)"""
+
+    zorder: int = ZOrder.LAYER_1
+    """Z-order of the image. By default it's on the bottom layer, just above the axes background."""
+
+
 class LabelStyle(BaseStyle):
     """Styling properties for a label."""
 

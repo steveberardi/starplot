@@ -70,6 +70,11 @@
         show_docstring_attributes: true
         inherited_members: true
 
+::: starplot.styles.ImageStyle
+    options:
+        show_root_heading: true
+        show_docstring_attributes: true
+
 ::: starplot.styles.TitleStyle
     options:
         show_root_heading: true

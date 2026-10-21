@@ -15,6 +15,7 @@ from starplot.styles.elements import (
     ArrowStyle,
     AxesStyle,
     FigureStyle,
+    ImageStyle,
     LabelStyle,
     LegendStyle,
     LineStyle,
@@ -462,6 +463,9 @@ class PlotStyle(BaseStyle):
         zorder=ZOrder.LAYER_4,
     )
     """Styling for arrows"""
+
+    image: ImageStyle = ImageStyle()
+    """Styling for images"""
 
     tissot: PolygonStyle = PolygonStyle(
         fill="#2e62ae",

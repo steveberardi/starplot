@@ -69,8 +69,17 @@ GROUPS = [
         ],
     ),
     (
-        "Generic Shapes",
-        ["line", "polygon", "circle", "ellipse", "rectangle", "marker", "text"],
+        "Plotting Functions",
+        [
+            "line",
+            "polygon",
+            "circle",
+            "ellipse",
+            "rectangle",
+            "marker",
+            "text",
+            "image",
+        ],
     ),
 ]
 

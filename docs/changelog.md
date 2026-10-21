@@ -1,3 +1,10 @@
+## v0.23.x
+[Documentation](https://archives.starplot.dev/0.23.0/)
+
+- Adds an `image` overlay plotting function to map, horizon, and optic plots
+
+---
+
 ## v0.22.x
 [Documentation](https://archives.starplot.dev/0.22.0/)
 
