@@ -3,7 +3,17 @@ from pydantic import ValidationError
 from pydantic_extra_types.color import Color
 
 from starplot import MapPlot, Miller
-from starplot.styles import DashArray, FontWeight, LineStyle, PlotStyle
+from starplot.styles import (
+    ConstellationStyle,
+    DashArray,
+    FontWeight,
+    LabelStyle,
+    LineStyle,
+    PlotStyle,
+    StarStyle,
+    extensions,
+    use_style,
+)
 
 
 @pytest.mark.parametrize(
@@ -15,7 +25,7 @@ from starplot.styles import DashArray, FontWeight, LineStyle, PlotStyle
         dict(star={"label": {"font_weight": FontWeight.BOLD}}),
         dict(
             axes={"background": {"fill": "#fff"}},
-            constellation_lines={"width": 2},
+            constellation={"line": {"width": 2}},
         ),
     ],
 )
@@ -61,3 +71,92 @@ def test_style_context_manager():
 
     # AND when I exit the context manager, it should revert to the original style
     assert p.style.dso_open_cluster.label.font_size == 128
+
+
+def test_star_style_includes_bayer_and_flamsteed_labels():
+    style = PlotStyle()
+
+    assert isinstance(style.star, StarStyle)
+    assert isinstance(style.star.bayer_label, LabelStyle)
+    assert isinstance(style.star.flamsteed_label, LabelStyle)
+    assert style.star.bayer_label.font_name == "GFS Didot"
+
+
+def test_constellation_style_has_line_label_and_border():
+    style = PlotStyle()
+
+    assert isinstance(style.constellation, ConstellationStyle)
+    assert style.constellation.line.stroke.as_hex() == "#c8c8c8"
+    assert style.constellation.border.dash_array == (3, 6)
+    assert style.constellation.label.font_size == 40
+
+
+def test_planet_style_is_singular():
+    assert PlotStyle().planet.marker.size == 28
+
+    with pytest.raises(ValidationError):
+        PlotStyle(planets={"marker": {"size": 10}})
+
+
+@pytest.mark.parametrize(
+    "old_field",
+    [
+        "bayer_labels",
+        "flamsteed_labels",
+        "constellation_lines",
+        "constellation_borders",
+    ],
+)
+def test_removed_style_fields_are_rejected(old_field):
+    with pytest.raises(ValidationError):
+        PlotStyle(**{old_field: {}})
+
+
+def test_extend_nested_star_and_constellation_styles():
+    style = PlotStyle().extend(
+        {
+            "star": {"bayer_label": {"font_size": 99}},
+            "constellation": {"line": {"width": 7}, "border": {"width": 3}},
+        }
+    )
+
+    assert style.star.bayer_label.font_size == 99
+    assert style.star.flamsteed_label.font_size == 26
+    assert style.star.marker.size == 20
+    assert style.constellation.line.width == 7
+    assert style.constellation.border.width == 3
+    assert style.constellation.label.font_size == 40
+
+
+@pytest.mark.parametrize(
+    "extension",
+    [
+        value
+        for name, value in vars(extensions).items()
+        if name.isupper() and isinstance(value, dict)
+    ],
+)
+def test_extensions_are_valid_for_plot_style(extension):
+    PlotStyle().extend(extension)
+
+
+def test_use_style_resolves_nested_style_attr():
+    class Plot:
+        style = PlotStyle().extend({"constellation": {"line": {"width": 7}}})
+
+        @use_style(LineStyle, "constellation.line")
+        def draw(self, style: LineStyle = None):
+            return style
+
+    plot = Plot()
+
+    # uses the plot's style by default
+    assert plot.draw().width == 7
+
+    # merges kwarg overrides into the plot's style
+    overridden = plot.draw(style__stroke="#f00")
+    assert overridden.width == 7
+    assert overridden.stroke.as_hex() == "#f00"
+
+    # merges dict overrides into the plot's style
+    assert plot.draw(style={"width": 2}).stroke.as_hex() == "#c8c8c8"

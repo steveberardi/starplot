@@ -84,9 +84,11 @@ from starplot import PlotStyle
 
 style = PlotStyle().extend(
     {
-        "bayer_labels": {
-            "font_name": "Literata",
-            "font_size": 10
+        "star": {
+            "bayer_label": {
+                "font_name": "Literata",
+                "font_size": 10
+            }
         }
     }
 )
@@ -94,8 +96,8 @@ style = PlotStyle().extend(
 Alternatively, you can do this:
 ```python
 style = PlotStyle()
-style.bayer_labels.font_name = "Literata"
-style.bayer_labels.font_size = 10
+style.star.bayer_label.font_name = "Literata"
+style.star.bayer_label.font_size = 10
 
 ```
 

@@ -25,9 +25,9 @@ from starplot.profile import profile
 from starplot.projections import CoordinateReferenceSystem, Equidistant
 from starplot.styles import (
     LabelStyle,
-    ObjectStyle,
     PathStyle,
     PlotStyle,
+    StarStyle,
     TableStyle,
     extensions,
     use_style,
@@ -374,13 +374,13 @@ class OpticPlot(
         self.canvas.table(headers=headers, rows=rows, style=style)
 
     @profile
-    @use_style(ObjectStyle, "star")
+    @use_style(StarStyle, "star")
     def stars(
         self,
         where: list | str = None,
         where_labels: list | str = None,
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
-        style: ObjectStyle = None,
+        style: StarStyle = None,
         size_fn: Callable[[Star], float] = None,
         opacity_fn: Callable[[Star], float] = None,
         color_fn: Callable[[Star], str] = None,

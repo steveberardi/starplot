@@ -10,7 +10,7 @@ style = PlotStyle().extend(
     extensions.GRADIENT_PRE_DAWN,
 )
 style.figure.padding = 40
-style.constellation_lines.width = 4
+style.constellation.line.width = 4
 style.star.marker.stroke_width = 0
 
 dt = datetime(2025, 8, 20, 21, 0, 0, 0, tzinfo=ZoneInfo("Pacific/Honolulu"))

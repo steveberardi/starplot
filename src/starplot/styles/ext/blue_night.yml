@@ -72,27 +72,28 @@ star:
   marker:
     fill: hsl(210, 29%, 98%)
     stroke: hsl(210, 29%, 15%)
+  bayer_label:
+    opacity: 0.9
+    fill: hsl(210, 29%, 94%)
+  flamsteed_label:
+    opacity: 0.9
+    fill: hsl(210, 29%, 94%)
 
-bayer_labels:
-  opacity: 0.9
-  fill: hsl(210, 29%, 94%)
 
-flamsteed_labels:
-  opacity: 0.9
-  fill: hsl(210, 29%, 94%)
 
 
 # Constellations
-constellation_lines:
-  opacity: 0.64
-  stroke: hsl(91, 60%, 70%)
-constellation_labels:
-  opacity: 1
-  fill: hsl(210, 10%, 56%)
-  stroke: hsl(210, 29%, 15%)
-constellation_borders:
-  width: 2
-  stroke: hsl(209, 50%, 74%)
+constellation:
+  line:
+    opacity: 0.64
+    stroke: hsl(91, 60%, 70%)
+  label:
+    opacity: 1
+    fill: hsl(210, 10%, 56%)
+    stroke: hsl(210, 29%, 15%)
+  border:
+    width: 2
+    stroke: hsl(209, 50%, 74%)
 
 # Milky Way
 milky_way:
@@ -176,7 +177,7 @@ moon:
   marker:
     fill: '#e9e9e9'
 
-planets:
+planet:
   label:
     fill: hsl(37, 80%, 76%)
   marker:

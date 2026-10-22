@@ -39,12 +39,13 @@ ecliptic:
     stroke: hsl(359, 98%, 49%)
 
 # Constellations
-constellation_labels:
-  fill: '#7c7c7c'
-constellation_lines:
-  opacity: 0.52
-  stroke: '#6ba832'
-  width: 3
+constellation:
+  label:
+    fill: '#7c7c7c'
+  line:
+    opacity: 0.52
+    stroke: '#6ba832'
+    width: 3
 
 dso_double_star:
   marker:
@@ -109,7 +110,7 @@ milky_way:
   opacity: 0.25
   fill: hsl(203, 70%, 81%)
   stroke_width: 0
-planets:
+planet:
   marker:
     opacity: 0.4
     fill: '#f89d00'

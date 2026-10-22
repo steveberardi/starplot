@@ -29,9 +29,9 @@ from starplot.plotters.text import CollisionHandler
 from starplot.profile import profile
 from starplot.projections import CoordinateReferenceSystem, Mollweide
 from starplot.styles import (
-    ObjectStyle,
     PathStyle,
     PlotStyle,
+    StarStyle,
     extensions,
     use_style,
 )
@@ -272,13 +272,13 @@ class GalaxyPlot(
         )
 
     @profile
-    @use_style(ObjectStyle, "star")
+    @use_style(StarStyle, "star")
     def stars(
         self,
         where: list | str = None,
         where_labels: list | str = None,
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
-        style: ObjectStyle = None,
+        style: StarStyle = None,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_galaxy,
         opacity_fn: Callable[[Star], float] = None,
         color_fn: Callable[[Star], str] = None,

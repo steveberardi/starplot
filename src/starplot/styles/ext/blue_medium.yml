@@ -17,17 +17,18 @@ title:
 star:
   marker:
     stroke: '#f1f6ff'
-bayer_labels:
-  opacity: 1
-  fill: '#000'
+  bayer_label:
+    opacity: 1
+    fill: '#000'
 
 # Constellations
-constellation_labels:
-  opacity: 1
-  fill: hsl(212, 20%, 36%)
-constellation_lines:
-  opacity: 0.45
-  stroke: hsl(91, 60%, 43%)
+constellation:
+  label:
+    opacity: 1
+    fill: hsl(212, 20%, 36%)
+  line:
+    opacity: 0.45
+    stroke: hsl(91, 60%, 43%)
 
 celestial_equator:
   label:
@@ -45,7 +46,7 @@ ecliptic:
     stroke: hsl(207, 75%, 48%)
     opacity: 1
 
-planets:
+planet:
   marker:
     opacity: 1
     fill: hsl(37, 78%, 80%)

@@ -479,8 +479,31 @@ class ObjectStyle(BaseStyle):
     """Style for the object's label (see [LabelStyle][starplot.styles.LabelStyle])"""
 
 
+class StarStyle(ObjectStyle):
+    """Defines the style for stars, including the labels for Bayer designations and Flamsteed numbers"""
+
+    bayer_label: LabelStyle = LabelStyle()
+    """Style for the star's Bayer designation label (see [LabelStyle][starplot.styles.LabelStyle])"""
+
+    flamsteed_label: LabelStyle = LabelStyle()
+    """Style for the star's Flamsteed number label (see [LabelStyle][starplot.styles.LabelStyle])"""
+
+
+class ConstellationStyle(BaseStyle):
+    """Defines the style for constellations"""
+
+    line: LineStyle = LineStyle()
+    """Style for the constellation lines (see [LineStyle][starplot.styles.LineStyle])"""
+
+    label: LabelStyle = LabelStyle()
+    """Style for the constellation labels (see [LabelStyle][starplot.styles.LabelStyle])"""
+
+    border: LineStyle = LineStyle()
+    """Style for the constellation borders (see [LineStyle][starplot.styles.LineStyle])"""
+
+
 class PathStyle(BaseStyle):
-    """Defines the style for a path (e.g. constellation lines)"""
+    """Defines the style for a path (e.g. the ecliptic)"""
 
     line: LineStyle = LineStyle()
     """Style for the line (see [LineStyle][starplot.styles.LineStyle])"""

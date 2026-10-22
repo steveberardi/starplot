@@ -31,16 +31,16 @@ star:
   marker:
     fill: hsl(136, 0%, 92%)
     stroke: hsl(136, 0%, 10%)
+  bayer_label:
+    fill: hsl(136, 0%, 80%)
+  flamsteed_label:
+    fill: hsl(136, 0%, 80%)
 sun:
   label:
     fill: hsl(136, 0%, 90%)
   marker:
     fill: hsl(136, 0%, 97%)
     stroke: hsl(136, 0%, 97%)
-bayer_labels:
-  fill: hsl(136, 0%, 80%)
-flamsteed_labels:
-  fill: hsl(136, 0%, 80%)
 celestial_equator:
   label:
     fill: '#999'
@@ -48,13 +48,14 @@ celestial_equator:
     stroke: '#999'
 
 # Constellations
-constellation_labels:
-  fill: hsl(136, 0%, 77%)
-constellation_lines:
-  stroke: hsl(136, 0%, 30%)
-constellation_borders:
-  stroke: hsl(136, 0%, 42%)
-  opacity: 0.5
+constellation:
+  label:
+    fill: hsl(136, 0%, 77%)
+  line:
+    stroke: hsl(136, 0%, 30%)
+  border:
+    stroke: hsl(136, 0%, 42%)
+    opacity: 0.5
 
 dso_double_star:
   label:
@@ -117,7 +118,7 @@ milky_way:
   opacity: 0.1
   fill: hsl(136, 0%, 62%)
   stroke_width: 0
-planets:
+planet:
   label:
     fill: hsl(136, 0%, 97%)
   marker:

@@ -14,6 +14,7 @@ from starplot.styles.constants import (
 from starplot.styles.elements import (
     ArrowStyle,
     AxesStyle,
+    ConstellationStyle,
     FigureStyle,
     ImageStyle,
     LabelStyle,
@@ -24,6 +25,7 @@ from starplot.styles.elements import (
     PathStyle,
     PlotBaseStyle,
     PolygonStyle,
+    StarStyle,
     TableStyle,
     TitleStyle,
 )
@@ -81,7 +83,7 @@ class PlotStyle(BaseStyle):
     )
     """Styling for the data table of the plot, which is always plotted below the axes. Currently, this is only available in optic plots."""
 
-    star: ObjectStyle = ObjectStyle(
+    star: StarStyle = StarStyle(
         marker=MarkerStyle(
             zorder=ZOrder.LAYER_3 + 1,
             size=20,
@@ -94,31 +96,27 @@ class PlotStyle(BaseStyle):
             offset_x="auto",
             offset_y="auto",
         ),
+        bayer_label=LabelStyle(
+            font_size=36,
+            font_weight=FontWeight.LIGHT,
+            font_name="GFS Didot",
+            zorder=ZOrder.LAYER_4,
+            anchor_point=AnchorPoint.TOP_LEFT,
+            offset_x="auto",
+            offset_y="auto",
+        ),
+        flamsteed_label=LabelStyle(
+            font_size=26,
+            font_weight=FontWeight.LIGHT,
+            zorder=ZOrder.LAYER_4,
+            anchor_point=AnchorPoint.BOTTOM_LEFT,
+            offset_x="auto",
+            offset_y="auto",
+        ),
     )
-    """Styling for stars"""
+    """Styling for stars, including their Bayer and Flamsteed labels"""
 
-    bayer_labels: LabelStyle = LabelStyle(
-        font_size=36,
-        font_weight=FontWeight.LIGHT,
-        font_name="GFS Didot",
-        zorder=ZOrder.LAYER_4,
-        anchor_point=AnchorPoint.TOP_LEFT,
-        offset_x="auto",
-        offset_y="auto",
-    )
-    """Styling for Bayer labels of stars"""
-
-    flamsteed_labels: LabelStyle = LabelStyle(
-        font_size=26,
-        font_weight=FontWeight.LIGHT,
-        zorder=ZOrder.LAYER_4,
-        anchor_point=AnchorPoint.BOTTOM_LEFT,
-        offset_x="auto",
-        offset_y="auto",
-    )
-    """Styling for Flamsteed number labels of stars"""
-
-    planets: ObjectStyle = ObjectStyle(
+    planet: ObjectStyle = ObjectStyle(
         marker=MarkerStyle(
             symbol="circle",
             size=28,
@@ -298,29 +296,27 @@ class PlotStyle(BaseStyle):
     )
     """Styling for 'duplicate record' (as designated by OpenNGC) types of deep sky objects"""
 
-    constellation_lines: LineStyle = LineStyle(
-        stroke="#c8c8c8",
-        width=5,
-        zorder=ZOrder.LAYER_3,
+    constellation: ConstellationStyle = ConstellationStyle(
+        line=LineStyle(
+            stroke="#c8c8c8",
+            width=5,
+            zorder=ZOrder.LAYER_3,
+        ),
+        border=LineStyle(
+            stroke="#000",
+            width=2.5,
+            dash_array=(3, 6),
+            opacity=0.5,
+            zorder=ZOrder.LAYER_3,
+        ),
+        label=LabelStyle(
+            font_size=40,
+            zorder=ZOrder.LAYER_3,
+            anchor_point=AnchorPoint.CENTER,
+            stroke_width=0,
+        ),
     )
-    """Styling for constellation lines"""
-
-    constellation_borders: LineStyle = LineStyle(
-        stroke="#000",
-        width=2.5,
-        dash_array=(3, 6),
-        opacity=0.5,
-        zorder=ZOrder.LAYER_3,
-    )
-    """Styling for constellation borders"""
-
-    constellation_labels: LabelStyle = LabelStyle(
-        font_size=40,
-        zorder=ZOrder.LAYER_3,
-        anchor_point=AnchorPoint.CENTER,
-        stroke_width=0,
-    )
-    """Styling for constellation labels"""
+    """Styling for constellations (lines, labels, and borders)"""
 
     milky_way: PolygonStyle = PolygonStyle(
         fill="#d9d9d9",

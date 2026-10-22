@@ -4,6 +4,10 @@
 - Adds an `image` overlay plotting function to map, horizon, and optic plots
 - Normalizes sizing of circle-based markers
 - Adds support for defining `where_*` kwargs as SQL `WHERE` clauses
+- **Breaking:** Restructures some `PlotStyle` fields:
+    - `bayer_labels` and `flamsteed_labels` are now `star.bayer_label` and `star.flamsteed_label`
+    - `constellation_lines`, `constellation_labels`, and `constellation_borders` are now `constellation.line`, `constellation.label`, and `constellation.border`
+    - `planets` is now `planet`
 
 
 ---

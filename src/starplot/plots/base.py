@@ -496,7 +496,7 @@ class BasePlot(StarPlotterMixin, ABC):
                 style=style.to_marker_style(symbol="circle"),
             )
 
-    @use_style(ObjectStyle, "planets")
+    @use_style(ObjectStyle, "planet")
     def planets(
         self,
         style: ObjectStyle = None,

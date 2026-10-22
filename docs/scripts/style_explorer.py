@@ -29,8 +29,8 @@ OUTPUT_PATH = REPO_ROOT / "docs" / "images" / "reference" / "style_explorer.html
 # Groups of PlotStyle's own properties, in the order they should appear.
 GROUPS = [
     ("Layout", ["base", "axes", "figure", "title", "table", "legend"]),
-    ("Stars", ["star", "bayer_labels", "flamsteed_labels"]),
-    ("Solar System", ["planets", "moon", "sun"]),
+    ("Stars", ["star"]),
+    ("Solar System", ["planet", "moon", "sun"]),
     (
         "Deep Sky Objects",
         [
@@ -49,10 +49,7 @@ GROUPS = [
             "dso_duplicate",
         ],
     ),
-    (
-        "Constellations",
-        ["constellation_lines", "constellation_borders", "constellation_labels"],
-    ),
+    ("Constellations", ["constellation"]),
     (
         "Sky Features",
         [

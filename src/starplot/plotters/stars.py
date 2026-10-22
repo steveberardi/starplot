@@ -13,7 +13,7 @@ from starplot.data.translations import translate
 from starplot.models.star import Star, from_tuple
 from starplot.plotters.text import CollisionHandler
 from starplot.profile import profile
-from starplot.styles import GradientStyle, ObjectStyle, use_style
+from starplot.styles import GradientStyle, ObjectStyle, StarStyle, use_style
 from starplot.svg import symbols
 from starplot.utils import apply_where, normalize_where
 
@@ -119,7 +119,7 @@ class StarPlotterMixin:
                     ra,
                     dec,
                     style=self._offset_from_marker(
-                        style=self.style.bayer_labels,
+                        style=style.bayer_label,
                         text=bayer_desig,
                         marker_size=star_size,
                         marker_symbol=style.marker.symbol,
@@ -134,7 +134,7 @@ class StarPlotterMixin:
                     ra,
                     dec,
                     style=self._offset_from_marker(
-                        style=self.style.flamsteed_labels,
+                        style=style.flamsteed_label,
                         text=str(flamsteed_num),
                         marker_size=star_size,
                         marker_symbol=style.marker.symbol,
@@ -150,13 +150,13 @@ class StarPlotterMixin:
         return df
 
     @profile
-    @use_style(ObjectStyle, "star")
+    @use_style(StarStyle, "star")
     def stars(
         self,
         where: list | str | None = None,
         where_labels: list | str | bool | None = None,
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
-        style: ObjectStyle = None,
+        style: StarStyle = None,
         size_fn: Callable[[Star], float] | None = size_by_magnitude,
         opacity_fn: Callable[[Star], float] | None = None,
         color_fn: Callable[[Star], str | GradientStyle] | None = None,

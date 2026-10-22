@@ -62,7 +62,7 @@ class ConstellationPlotterMixin:
         return {star.hip: (star.x, star.y) for star in df.itertuples()}
 
     @profile
-    @use_style(LineStyle, "constellation_lines")
+    @use_style(LineStyle, "constellation.line")
     def constellations(
         self,
         style: LineStyle = None,
@@ -171,7 +171,7 @@ class ConstellationPlotterMixin:
                 )
 
     @profile
-    @use_style(LineStyle, "constellation_borders")
+    @use_style(LineStyle, "constellation.border")
     def constellation_borders(
         self,
         style: LineStyle = None,
@@ -218,7 +218,7 @@ class ConstellationPlotterMixin:
                 )
 
     @profile
-    @use_style(LabelStyle, "constellation_labels")
+    @use_style(LabelStyle, "constellation.label")
     def constellation_labels(
         self,
         style: LabelStyle = None,
