@@ -2,6 +2,7 @@
 [Documentation](https://archives.starplot.dev/0.23.0/)
 
 - Adds an `image` overlay plotting function to map, horizon, and optic plots
+- Normalizes sizing of circle-based markers
 
 ---
 

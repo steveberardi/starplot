@@ -33,6 +33,7 @@ from starplot.styles import (
     TitleStyle,
 )
 from starplot.styles.helpers import use_style
+from starplot.svg import symbols
 from starplot.svg.canvas import Canvas, CoordinateSystem
 from starplot.warnings import suppress
 
@@ -258,13 +259,15 @@ class BasePlot(StarPlotterMixin, ABC):
         # Add to spatial index
         display_x, display_y = self.canvas._to_display(x, y)
         if display_x > 0 and display_y > 0:
-            radius = style.marker.size * self.scale / 2
+            extent_w, extent_h = symbols.extent(
+                style.marker.symbol, style.marker.size * self.scale
+            )
             bbox = np.array(
                 (
-                    display_x - radius,
-                    display_y - radius,
-                    display_x + radius,
-                    display_y + radius,
+                    display_x - extent_w / 2,
+                    display_y - extent_h / 2,
+                    display_x + extent_w / 2,
+                    display_y + extent_h / 2,
                 )
             )
             self._markers_rtree.insert(0, bbox, None)
@@ -280,6 +283,7 @@ class BasePlot(StarPlotterMixin, ABC):
                     style=style.label,
                     text=label,
                     marker_size=style.marker.size,
+                    marker_symbol=style.marker.symbol,
                 ),
                 collision_handler=collision_handler or self.point_label_handler,
             )

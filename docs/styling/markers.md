@@ -2,6 +2,8 @@
 
 Below are previews of all marker symbols available in Starplot. Many aspects of the symbol can be customized through its style, including fill color, edge color, edge thickness, edge style (solid, dotted, dashed, etc), opacity, and much more. See [`MarkerStyle`][starplot.MarkerStyle] for details.
 
+Most symbols fit inside a square with sides equal to the marker's `size`. The exceptions are `circle_line`, `circle_crosshair`, and `circle_double_border`: for these symbols, `size` is the diameter of the circle, so they're the same size as a `circle` marker with the same `size` (and the rest of the symbol extends outside of that circle).
+
 <div class="marker-symbol-grid" markdown>
 
 <div class="marker-symbol-card" markdown>

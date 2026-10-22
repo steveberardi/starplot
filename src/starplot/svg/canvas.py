@@ -942,7 +942,16 @@ class Canvas:
 
             for label, config in handles.items():
                 marker_style, size = config
-                marker_size = (size or style.symbol_size) * scale
+                if size:
+                    marker_size = size * scale
+                else:
+                    # the whole symbol (not just its circle) should fit in the symbol slot
+                    marker_size = symbol_size / max(
+                        symbols.extent(marker_style.symbol, 1)
+                    )
+                marker_width, marker_height = symbols.extent(
+                    marker_style.symbol, marker_size
+                )
                 marker_element = symbols.create(
                     x + symbol_size / 2,
                     y,
@@ -974,8 +983,8 @@ class Canvas:
                     font_weight=style.labels.font_weight,
                     italic=style.labels.font_style == "italic",
                 )
-                height += max(marker_size, h) + label_padding
-                w += marker_size + symbol_padding + padding_x * 2
+                height += max(marker_height, h) + label_padding
+                w += marker_width + symbol_padding + padding_x * 2
 
                 width = max(width, w)
 

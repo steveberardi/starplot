@@ -158,7 +158,12 @@ class MarkerStyle(BaseStyle):
     """Symbol for marker."""
 
     size: float = 24
-    """Size of marker in pixels"""
+    """
+    Size of marker in pixels. 
+    
+    Most symbols fit inside a square with sides equal to the size. The exceptions are `circle_line`, `circle_crosshair`, and `circle_double_border`: 
+    for these, the size is the diameter of the symbol's _circle_ (so it's the same as a `circle` marker with the same size), and the rest of the symbol extends beyond it.
+    """
 
     opacity: float = Field(default=1.0, ge=0, le=1)
     """Opacity (transparency) of the marker (0 to 1)"""

@@ -342,6 +342,7 @@ class DsoPlotterMixin:
                                 style=style.label,
                                 text=label,
                                 marker_size=style.marker.size,
+                                marker_symbol=style.marker.symbol,
                             ),
                             collision_handler=handler,
                         )

@@ -12,7 +12,22 @@ from starplot.svg.elements import Circle, Ellipse, Group, Line, Polygon, Rectang
   │              │
   └──────────────┘
 (0,100)        (100,100)
+
+Sizing:
+
+Most symbols are sized so that they fit inside a square with sides equal to `size`.
+
+The circle-based symbols that have extra parts outside of the circle (`circle_line`,
+`circle_crosshair`, and `circle_double_border`) are the exception: their `size` is the
+diameter of their circle, so that the circle is the same as a plain `circle` marker of
+the same size. Use `extent()` to get the full width and height of a symbol.
 """
+
+# half-length of the line in `circle_line`, relative to the radius of its circle
+CIRCLE_LINE_EXTENT = 1.8
+
+# outer ring radius of `circle_double_border`, relative to the radius of its center circle
+CIRCLE_DOUBLE_BORDER_EXTENT = 1.7038
 
 
 def circle_cross(x, y, size, attrs):
@@ -28,7 +43,7 @@ def circle_cross(x, y, size, attrs):
 
 
 def circle_crosshair(x, y, size, attrs):
-    r = round(size / 4, settings.precision)
+    r = round(size / 2, settings.precision)
     n = round(2 * r, settings.precision)
 
     return Group(
@@ -45,7 +60,7 @@ def circle_crosshair(x, y, size, attrs):
 
 def circle_line(x, y, size, attrs):
     r = round(size / 2, settings.precision)
-    n = round(1.8 * r, settings.precision)
+    n = round(CIRCLE_LINE_EXTENT * r, settings.precision)
     return Group(
         attrs=attrs,
         children=[
@@ -67,8 +82,12 @@ def circle(x, y, size, attrs):
 
 
 def ellipse(x, y, size, attrs):
-    rx = round(size * 0.5, settings.precision)
-    ry = round(size * 0.3, settings.precision)
+    angle = math.radians(20)
+    aspect = 0.6
+    # scaled so the rotated ellipse's horizontal extent is exactly the box width
+    rx = size / 2 / math.sqrt(math.cos(angle) ** 2 + (aspect * math.sin(angle)) ** 2)
+    rx = round(rx, settings.precision)
+    ry = round(rx * aspect, settings.precision)
     _attrs = {
         "transform": f"rotate(-20, {x}, {y})",
         **attrs,
@@ -94,6 +113,8 @@ def triangle(
     attrs: dict,
 ):
     r = size / math.sqrt(3)
+    # the shape spans from -r to r/2 around its circumcenter, so shift it to center its bounding box
+    y = y + r / 4
     points = []
     for i in range(3):
         angle = math.radians(-90 + i * 120)
@@ -167,9 +188,21 @@ def plus(x: float, y: float, size: float, attrs: dict):
 
 
 def comet(cx: float, cy: float, size: float, attrs: dict, steps: int = 100):
-    head_r = size * 0.172
-    tail_len = size * 0.7
     tail_angle = math.radians(45)
+
+    # Head radius and tail length keep the original comet proportions. The bounding
+    # box of the head + tail is a square (the tail is at 45 degrees), so it's scaled
+    # uniformly to fill the size box, then shifted so the box is centered on (cx, cy).
+    head_r = 0.172
+    tail_len = 0.7
+    extent = head_r + tail_len * math.cos(tail_angle)
+    scale = size / extent
+    head_r *= scale
+    tail_len *= scale
+
+    offset = (extent * scale) / 2 - head_r
+    cx -= offset
+    cy += offset
 
     tip = (
         cx + math.cos(tail_angle) * tail_len,
@@ -194,6 +227,8 @@ def comet(cx: float, cy: float, size: float, attrs: dict, steps: int = 100):
 
 
 def satellite(x: float, y: float, size: float, attrs: dict):
+    # scaled so the rotated panel corners touch the box edges
+    size = size * math.sqrt(2) / 2 / 0.64
     panel_w = size * 0.36
     panel_h = size * 0.24
     gap = size * 0.05
@@ -274,6 +309,7 @@ def satellite(x: float, y: float, size: float, attrs: dict):
 
 
 def circle_double_border(x: float, y: float, size: float, attrs: dict):
+    # `size` is the diameter of the solid center circle; the rings are outside of it
     def ring(radius: float):
         return Circle(
             cx=x,
@@ -289,11 +325,11 @@ def circle_double_border(x: float, y: float, size: float, attrs: dict):
             Circle(
                 cx=x,
                 cy=y,
-                r=round(size * 0.27, settings.precision),
+                r=round(size / 2, settings.precision),
                 attrs={"stroke-dasharray": "none"},
             ),
-            ring(size * 0.375),
-            ring(size * 0.46),
+            ring(size * 0.6944),
+            ring(size * 0.8519),
         ],
     )
 
@@ -315,6 +351,17 @@ SYMBOL_FUNCTIONS = {
     "comet": comet,
     "satellite": satellite,
 }
+
+
+def extent(symbol: MarkerSymbol, size: float) -> tuple[float, float]:
+    """Returns the full (width, height) of a symbol drawn at the given size"""
+    if symbol == "circle_line":
+        return size * CIRCLE_LINE_EXTENT, size
+    if symbol == "circle_crosshair":
+        return size * 2, size * 2
+    if symbol == "circle_double_border":
+        return size * CIRCLE_DOUBLE_BORDER_EXTENT, size * CIRCLE_DOUBLE_BORDER_EXTENT
+    return size, size
 
 
 def create(x, y, size, symbol: MarkerSymbol, attrs: dict):

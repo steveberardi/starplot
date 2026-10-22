@@ -84,7 +84,7 @@ map_orion_base:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-orion-base.png
   phash: be79d3649585a194
 map_orion_extra:
-  dhash: 1a1b39772b6d64680a1b395b2b6f646a4a1bb9962b2f6468
+  dhash: 1a1b39772b6d64680a1b39532b6f646a4a1bb9962b2f6468
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-orion-extra.png
   phash: bf715f648186909e
@@ -94,10 +94,10 @@ map_plate_caree:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-plate-caree.png
   phash: c43d69c6749a67b0
 map_plot_custom_clip_path_virgo:
-  dhash: 0302d24b262d2c0c0323c66e262d24040315c42f2e2d2404
+  dhash: 0302d26b262d240c0323c62e262f24040333442e262f2404
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-custom-clip-path-virgo.png
-  phash: ee49e8eaeb436094
+  phash: ee4be8eaebc22094
 map_plot_limit_by_geometry:
   dhash: 80a088a4568c6c8082b090a4568c6480a02098a4568c6480
   exception: null

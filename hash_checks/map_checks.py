@@ -540,8 +540,7 @@ def check_map_plot_custom_clip_path_virgo():
         dec_max=17,
         style=STYLE.extend(
             {
-                "dso_open_cluster": {"marker": {"size": 20}},
-                "dso_galaxy": {"marker": {"size": 20}},
+                "dso_galaxy": {"marker": {"size": 30}},
             }
         ),
         resolution=RESOLUTION,

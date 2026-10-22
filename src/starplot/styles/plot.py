@@ -223,7 +223,6 @@ class PlotStyle(BaseStyle):
         marker=MarkerStyle(
             symbol="circle_crosshair",
             stroke_width=1.6,
-            size=26,
             zorder=ZOrder.LAYER_3 - 1,
         ),
         label=LabelStyle(offset_x="auto", offset_y="auto"),

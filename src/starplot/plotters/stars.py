@@ -14,6 +14,7 @@ from starplot.models.star import Star, from_tuple
 from starplot.plotters.text import CollisionHandler
 from starplot.profile import profile
 from starplot.styles import GradientStyle, ObjectStyle, use_style
+from starplot.svg import symbols
 from starplot.utils import normalize_where
 
 
@@ -94,6 +95,7 @@ class StarPlotterMixin:
                             style=style.label,
                             text=label,
                             marker_size=marker_size,
+                            marker_symbol=style.marker.symbol,
                         ),
                         collision_handler=collision_handler,
                     )
@@ -120,6 +122,7 @@ class StarPlotterMixin:
                         style=self.style.bayer_labels,
                         text=bayer_desig,
                         marker_size=star_size,
+                        marker_symbol=style.marker.symbol,
                     ),
                     collision_handler=collision_handler,
                 )
@@ -134,6 +137,7 @@ class StarPlotterMixin:
                         style=self.style.flamsteed_labels,
                         text=str(flamsteed_num),
                         marker_size=star_size,
+                        marker_symbol=style.marker.symbol,
                     ),
                     collision_handler=collision_handler,
                 )
@@ -247,13 +251,15 @@ class StarPlotterMixin:
 
             if size > 10:
                 rtree_id += 1
-                radius = size / 2.5
+                extent_w, extent_h = symbols.extent(style.marker.symbol, size)
+                radius_x = extent_w / 2.5
+                radius_y = extent_h / 2.5
                 bbox = np.array(
                     (
-                        display_x - radius,
-                        display_y - radius,
-                        display_x + radius,
-                        display_y + radius,
+                        display_x - radius_x,
+                        display_y - radius_y,
+                        display_x + radius_x,
+                        display_y + radius_y,
                     )
                 )
                 if self.debug_text:

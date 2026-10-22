@@ -41,11 +41,11 @@ class TestSymbols:
         # THEN it's a group containing a small circle and 4 tick marks, one per side
         assert out == (
             '<g fill="red">\n'
-            '  <circle cx="50" cy="50" r="5.0" />\n'
-            '  <line x1="50" y1="45.0" x2="50" y2="40.0" />\n'
-            '  <line x1="55.0" y1="50" x2="60.0" y2="50" />\n'
-            '  <line x1="50" y1="55.0" x2="50" y2="60.0" />\n'
-            '  <line x1="45.0" y1="50" x2="40.0" y2="50" />\n'
+            '  <circle cx="50" cy="50" r="10.0" />\n'
+            '  <line x1="50" y1="40.0" x2="50" y2="30.0" />\n'
+            '  <line x1="60.0" y1="50" x2="70.0" y2="50" />\n'
+            '  <line x1="50" y1="60.0" x2="50" y2="70.0" />\n'
+            '  <line x1="40.0" y1="50" x2="30.0" y2="50" />\n'
             "</g>"
         )
 
@@ -74,7 +74,7 @@ class TestSymbols:
 
         # THEN it's a single <ellipse>, rotated -20 degrees around its center
         assert out == (
-            '<ellipse cx="50" cy="50" rx="10.0" ry="6.0" '
+            '<ellipse cx="50" cy="50" rx="10.3968" ry="6.2381" '
             'transform="rotate(-20, 50, 50)" fill="red" />'
         )
 
@@ -97,7 +97,7 @@ class TestSymbols:
 
         # THEN it's a single <polygon> with 3 points
         assert out == (
-            '<polygon points="50.0,38.453 60.0,55.7735 40.0,55.7735" fill="red" />'
+            '<polygon points="50.0,41.3397 60.0,58.6603 40.0,58.6603" fill="red" />'
         )
 
     def test_diamond_renders_expected_svg(self):
@@ -179,11 +179,12 @@ class TestSymbols:
         # THEN it's a single <polygon>: a tip, the two points where the tail
         # meets the head circle, and the arc (5 points for steps=4) between them
         assert out == (
-            '<polygon points="59.89949493661167,40.10050506338834 '
-            "47.56755267271828,47.56755267271828 47.56755267271828,47.56755267271828 "
-            "46.56,50.0 47.56755267271828,52.43244732728172 50.0,53.44 "
-            "52.43244732728172,52.43244732728172 52.43244732728172,52.43244732728172 "
-            '59.89949493661167,40.10050506338834" fill="red" />'
+            '<polygon points="60.0,40.00000000000001 '
+            "41.51063091594711,51.19539779401368 41.51063091594711,51.19539779401368 "
+            "40.0,54.842383439033284 41.51063091594711,58.48936908405289 "
+            "45.157616560966716,60.0 48.80460220598632,58.48936908405289 "
+            "48.80460220598632,58.48936908405289 "
+            '60.0,40.00000000000001" fill="red" />'
         )
 
     def test_satellite_renders_expected_svg(self):
@@ -197,17 +198,17 @@ class TestSymbols:
         # grid lines on each panel, and lines connecting the panels to the body
         assert out == (
             '<g fill="red" transform="rotate(-45, 50, 50)">\n'
-            '  <rect x="39.6" y="47.6" height="4.8" width="7.2" />\n'
-            '  <rect x="53.2" y="47.6" height="4.8" width="7.2" />\n'
-            '  <rect x="47.8" y="48.0" height="4.0" width="4.4" />\n'
-            '  <line x1="42.0" y1="47.6" x2="42.0" y2="52.4" />\n'
-            '  <line x1="44.4" y1="47.6" x2="44.4" y2="52.4" />\n'
-            '  <line x1="39.6" y1="50" x2="46.8" y2="50" />\n'
-            '  <line x1="55.6" y1="47.6" x2="55.6" y2="52.4" />\n'
-            '  <line x1="58.0" y1="47.6" x2="58.0" y2="52.4" />\n'
-            '  <line x1="53.2" y1="50" x2="60.4" y2="50" />\n'
-            '  <line x1="46.8" y1="50" x2="47.8" y2="50" />\n'
-            '  <line x1="52.2" y1="50" x2="53.2" y2="50" />\n'
+            '  <rect x="38.5095" y="47.3483" height="5.3033" width="7.955" />\n'
+            '  <rect x="53.5355" y="47.3483" height="5.3033" width="7.955" />\n'
+            '  <rect x="47.5693" y="47.7903" height="4.4194" width="4.8614" />\n'
+            '  <line x1="41.1612" y1="47.3483" x2="41.1612" y2="52.6516" />\n'
+            '  <line x1="43.8128" y1="47.3483" x2="43.8128" y2="52.6516" />\n'
+            '  <line x1="38.5095" y1="50" x2="46.4645" y2="50" />\n'
+            '  <line x1="56.1872" y1="47.3483" x2="56.1872" y2="52.6516" />\n'
+            '  <line x1="58.8388" y1="47.3483" x2="58.8388" y2="52.6516" />\n'
+            '  <line x1="53.5355" y1="50" x2="61.4905" y2="50" />\n'
+            '  <line x1="46.4645" y1="50" x2="47.5693" y2="50" />\n'
+            '  <line x1="52.4307" y1="50" x2="53.5355" y2="50" />\n'
             "</g>"
         )
 
@@ -222,11 +223,51 @@ class TestSymbols:
         # that inherit stroke styling from the group
         assert out == (
             '<g fill="red">\n'
-            '  <circle cx="50" cy="50" r="5.4" stroke-dasharray="none" />\n'
-            '  <circle cx="50" cy="50" r="7.5" fill="none" />\n'
-            '  <circle cx="50" cy="50" r="9.2" fill="none" />\n'
+            '  <circle cx="50" cy="50" r="10.0" stroke-dasharray="none" />\n'
+            '  <circle cx="50" cy="50" r="13.888" fill="none" />\n'
+            '  <circle cx="50" cy="50" r="17.038" fill="none" />\n'
             "</g>"
         )
+
+
+class TestExtent:
+    def test_symbols_that_fit_in_their_box_have_an_extent_equal_to_size(self):
+        for symbol in ("circle", "square", "diamond", "star", "plus", "triangle"):
+            assert symbols.extent(symbol, 20) == (20, 20)
+
+    def test_circle_line_extends_horizontally_past_its_circle(self):
+        assert symbols.extent("circle_line", 20) == (36, 20)
+
+    def test_circle_crosshair_extends_to_twice_its_circle(self):
+        assert symbols.extent("circle_crosshair", 20) == (40, 40)
+
+    def test_circle_double_border_extends_to_its_outer_ring(self):
+        width, height = symbols.extent("circle_double_border", 20)
+        assert width == height == 20 * 0.8519 * 2
+
+    def test_extent_matches_rendered_symbol(self):
+        # the outermost point of the rendered symbol should be half the extent from the center
+        crosshair = symbols.circle_crosshair(0, 0, 20, {}).render()
+        assert 'x2="20.0"' in crosshair  # right tick ends at half of extent (40 / 2)
+
+        line = symbols.circle_line(0, 0, 20, {}).render()
+        assert 'x2="18.0"' in line  # line ends at half of extent (36 / 2)
+
+
+class TestCircleSize:
+    def test_circle_family_symbols_have_a_circle_with_the_size_as_diameter(self):
+        # so a circle-based symbol can be swapped for a plain circle without changing its size
+        for symbol in (
+            "circle",
+            "circle_cross",
+            "circle_line",
+            "circle_crosshair",
+            "circle_double_border",
+        ):
+            element = symbols.create(0, 0, 20, symbol, {})
+            circles = element.children if element.children else [element]
+            center = next(c for c in circles if c.name == "circle")
+            assert center.r == 10.0
 
 
 class TestCreate:
