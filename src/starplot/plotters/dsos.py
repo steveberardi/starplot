@@ -15,7 +15,7 @@ from starplot.models.dso import (
 )
 from starplot.plotters.text import CollisionHandler
 from starplot.profile import profile
-from starplot.utils import normalize_where
+from starplot.utils import apply_where, normalize_where
 
 
 class DsoPlotterMixin:
@@ -25,7 +25,7 @@ class DsoPlotterMixin:
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
-        where = kwargs.pop("where", [])
+        where = normalize_where(kwargs.pop("where", []))
         where.append(_.m.notnull())
         self.dsos(where=where, **kwargs)
 
@@ -35,7 +35,7 @@ class DsoPlotterMixin:
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
-        where = kwargs.pop("where", [])
+        where = normalize_where(kwargs.pop("where", []))
         where.append(_.type == DsoType.OPEN_CLUSTER.value)
         self.dsos(where=where, **kwargs)
 
@@ -45,7 +45,7 @@ class DsoPlotterMixin:
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
-        where = kwargs.pop("where", [])
+        where = normalize_where(kwargs.pop("where", []))
         where.append(_.type == DsoType.GLOBULAR_CLUSTER.value)
         self.dsos(where=where, **kwargs)
 
@@ -64,7 +64,7 @@ class DsoPlotterMixin:
             DsoType.GALAXY_PAIR.value,
             DsoType.GALAXY_TRIPLET.value,
         ]
-        where = kwargs.pop("where", [])
+        where = normalize_where(kwargs.pop("where", []))
         where.append(_.type.isin(galaxy_types))
         self.dsos(where=where, **kwargs)
 
@@ -89,7 +89,7 @@ class DsoPlotterMixin:
             DsoType.HII_IONIZED_REGION.value,
             DsoType.PLANETARY_NEBULA.value,
         ]
-        where = kwargs.pop("where", [])
+        where = normalize_where(kwargs.pop("where", []))
         where.append(_.type.isin(nebula_types))
         self.dsos(where=where, **kwargs)
 
@@ -112,7 +112,7 @@ class DsoPlotterMixin:
             DsoType.REFLECTION_NEBULA.value,
             DsoType.HII_IONIZED_REGION.value,
         ]
-        where = kwargs.pop("where", [])
+        where = normalize_where(kwargs.pop("where", []))
         where.append(_.type.isin(nebula_types))
         self.dsos(where=where, **kwargs)
 
@@ -122,7 +122,7 @@ class DsoPlotterMixin:
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
-        where = kwargs.pop("where", [])
+        where = normalize_where(kwargs.pop("where", []))
         where.append(_.type == DsoType.PLANETARY_NEBULA.value)
         self.dsos(where=where, **kwargs)
 
@@ -132,16 +132,16 @@ class DsoPlotterMixin:
 
         This is just a small wrapper around the `dsos()` function, so any `kwargs` will be passed through.
         """
-        where = kwargs.pop("where", [])
+        where = normalize_where(kwargs.pop("where", []))
         where.append(_.type == DsoType.DARK_NEBULA.value)
         self.dsos(where=where, **kwargs)
 
     @profile
     def dsos(
         self,
-        where: list | bool | None = None,
-        where_labels: list | bool | None = None,
-        where_true_size: list | bool | None = None,
+        where: list | str | bool | None = None,
+        where_labels: list | str | bool | None = None,
+        where_true_size: list | str | bool | None = None,
         legend_labels: Mapping[DsoType, str] = DSO_LEGEND_LABELS,
         opacity_fn: Callable[[DSO], float] | None = None,
         label_fn: Callable[[DSO], str] = DSO.get_label,
@@ -156,9 +156,9 @@ class DsoPlotterMixin:
         Plots Deep Sky Objects (DSOs).
 
         Args:
-            where: A list of expressions that determine which DSOs to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which DSOs are labeled on the plot. By default all DSOs are labeled. See [Selecting Objects](/reference-selecting-objects/) for details. Can also be a boolean: if `False` then no labels will be plotted.
-            where_true_size: A list of expressions that determine which DSOs are plotted as their true apparent size in the sky. By default all DSOs are plotted as their true size. Can also be a boolean: if `False` then no DSOs will be plotted as their true size.
+            where: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which DSOs to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which DSOs are labeled on the plot. By default all DSOs are labeled. See [Selecting Objects](/reference-selecting-objects/) for details. Can also be a boolean: if `False` then no labels will be plotted.
+            where_true_size: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which DSOs are plotted as their true apparent size in the sky. By default all DSOs are plotted as their true size. Can also be a boolean: if `False` then no DSOs will be plotted as their true size.
             legend_labels: A dictionary that maps a `DsoType` to the legend label that'll be plotted for that type of DSO. If you want to hide all DSO legend labels, then set this arg to `None`.
             opacity_fn: Callable for calculating the opacity value of each DSO. If `None`, then the marker style's opacity will be used.
             label_fn: Callable for determining the label of each DSO.
@@ -190,12 +190,10 @@ class DsoPlotterMixin:
         dso_results = load(extent=extent, filters=where, sql=sql, catalog=catalog)
 
         dsos_labeled = dso_results
-        for f in where_labels:
-            dsos_labeled = dsos_labeled.filter(f)
+        dsos_labeled = apply_where(dsos_labeled, where_labels)
 
         dsos_true_size = dso_results
-        for f in where_true_size:
-            dsos_true_size = dsos_true_size.filter(f)
+        dsos_true_size = apply_where(dsos_true_size, where_true_size)
 
         if sql_labels:
             result = dsos_labeled.alias("_").sql(sql_labels).select("pk").execute()

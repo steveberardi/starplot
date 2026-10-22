@@ -106,7 +106,7 @@ class Constellation(CatalogObject, SkyObject):
     def find(
         cls,
         catalog: Catalog = CONSTELLATIONS_IAU,
-        where: list | None = None,
+        where: list | str | None = None,
         sql: str | None = None,
     ) -> list["Constellation"]:
         """
@@ -114,7 +114,7 @@ class Constellation(CatalogObject, SkyObject):
 
         Args:
             catalog: The catalog of constellations to use
-            where: A list of expressions that determine which constellations to find. See [Selecting Objects](reference-selecting-objects.md) for details.
+            where: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which constellations to find. See [Selecting Objects](reference-selecting-objects.md) for details.
             sql: SQL query for selecting constellations (table name is "_")
 
         Returns:

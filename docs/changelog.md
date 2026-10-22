@@ -3,6 +3,8 @@
 
 - Adds an `image` overlay plotting function to map, horizon, and optic plots
 - Normalizes sizing of circle-based markers
+- Adds support for defining `where_*` kwargs as SQL `WHERE` clauses
+
 
 ---
 

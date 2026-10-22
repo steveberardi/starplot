@@ -7,6 +7,7 @@ from starplot.data import db
 from starplot.data.catalogs import Catalog
 from starplot.data.translations import LANGUAGE_NAME_COLUMNS, language_name_column
 from starplot.settings import settings
+from starplot.utils import apply_where, normalize_where
 
 
 @cache
@@ -54,14 +55,14 @@ def load(
     filters=None,
     sql=None,
 ):
-    filters = filters or []
+    filters = normalize_where(filters)
     c = table(catalog=catalog, language=settings.language)
 
     if extent:
         filters.append(_.boundary.intersects(extent))
 
     if filters:
-        c = c.filter(*filters)
+        c = apply_where(c, filters)
 
     if sql:
         result = c.alias("_").sql(sql).select("pk").execute()

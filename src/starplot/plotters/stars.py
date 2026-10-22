@@ -15,7 +15,7 @@ from starplot.plotters.text import CollisionHandler
 from starplot.profile import profile
 from starplot.styles import GradientStyle, ObjectStyle, use_style
 from starplot.svg import symbols
-from starplot.utils import normalize_where
+from starplot.utils import apply_where, normalize_where
 
 
 class StarPlotterMixin:
@@ -153,8 +153,8 @@ class StarPlotterMixin:
     @use_style(ObjectStyle, "star")
     def stars(
         self,
-        where: list | None = None,
-        where_labels: list | bool | None = None,
+        where: list | str | None = None,
+        where_labels: list | str | bool | None = None,
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] | None = size_by_magnitude,
@@ -174,8 +174,8 @@ class StarPlotterMixin:
         Plots stars
 
         Args:
-            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). Can also be a boolean: if `False` then no labels will be plotted.. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). Can also be a boolean: if `False` then no labels will be plotted.. See [Selecting Objects](/reference-selecting-objects/) for details.
             catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
             style: If `None`, then the plot's style for stars will be used
             size_fn: Callable for calculating the marker size of each star. If `None`, then the marker style's size will be used.
@@ -208,8 +208,7 @@ class StarPlotterMixin:
         star_results = self._load_stars(catalog, filters=where, sql=sql)
 
         star_results_labeled = star_results
-        for f in where_labels:
-            star_results_labeled = star_results_labeled.filter(f)
+        star_results_labeled = apply_where(star_results_labeled, where_labels)
 
         if sql_labels:
             result = (

@@ -275,8 +275,8 @@ class GalaxyPlot(
     @use_style(ObjectStyle, "star")
     def stars(
         self,
-        where: list = None,
-        where_labels: list = None,
+        where: list | str = None,
+        where_labels: list | str = None,
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
         style: ObjectStyle = None,
         size_fn: Callable[[Star], float] = callables.size_by_magnitude_galaxy,
@@ -294,8 +294,8 @@ class GalaxyPlot(
         Plots stars
 
         Args:
-            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
             catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
             style: If `None`, then the plot's style for stars will be used
             size_fn: Callable for calculating the marker size of each star.
