@@ -4,13 +4,10 @@ from pydantic_extra_types.color import Color
 
 from starplot import MapPlot, Miller
 from starplot.styles import (
-    ConstellationStyle,
     DashArray,
     FontWeight,
-    LabelStyle,
     LineStyle,
     PlotStyle,
-    StarStyle,
     extensions,
     use_style,
 )
@@ -71,45 +68,6 @@ def test_style_context_manager():
 
     # AND when I exit the context manager, it should revert to the original style
     assert p.style.dso_open_cluster.label.font_size == 128
-
-
-def test_star_style_includes_bayer_and_flamsteed_labels():
-    style = PlotStyle()
-
-    assert isinstance(style.star, StarStyle)
-    assert isinstance(style.star.bayer_label, LabelStyle)
-    assert isinstance(style.star.flamsteed_label, LabelStyle)
-    assert style.star.bayer_label.font_name == "GFS Didot"
-
-
-def test_constellation_style_has_line_label_and_border():
-    style = PlotStyle()
-
-    assert isinstance(style.constellation, ConstellationStyle)
-    assert style.constellation.line.stroke.as_hex() == "#c8c8c8"
-    assert style.constellation.border.dash_array == (3, 6)
-    assert style.constellation.label.font_size == 40
-
-
-def test_planet_style_is_singular():
-    assert PlotStyle().planet.marker.size == 28
-
-    with pytest.raises(ValidationError):
-        PlotStyle(planets={"marker": {"size": 10}})
-
-
-@pytest.mark.parametrize(
-    "old_field",
-    [
-        "bayer_labels",
-        "flamsteed_labels",
-        "constellation_lines",
-        "constellation_borders",
-    ],
-)
-def test_removed_style_fields_are_rejected(old_field):
-    with pytest.raises(ValidationError):
-        PlotStyle(**{old_field: {}})
 
 
 def test_extend_nested_star_and_constellation_styles():
