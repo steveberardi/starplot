@@ -165,7 +165,7 @@ class Star(CatalogObject, SkyObject):
     def find(
         cls,
         catalog: Catalog = BIG_SKY_MAG11,
-        where: list | None = None,
+        where: list | str | None = None,
         sql: str | None = None,
     ) -> list["Star"]:
         """
@@ -173,7 +173,7 @@ class Star(CatalogObject, SkyObject):
 
         Args:
             catalog: The catalog of stars to use
-            where: A list of expressions that determine which stars to find. See [Selecting Objects](reference-selecting-objects.md) for details.
+            where: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which stars to find. See [Selecting Objects](reference-selecting-objects.md) for details.
             sql: SQL query for selecting stars (table name is "_")
 
         Returns:

@@ -13,6 +13,7 @@ from starplot.plotters import (
     ConstellationPlotterMixin,
     DsoPlotterMixin,
     GridlinesPlotterMixin,
+    ImagePlotterMixin,
     LegendPlotterMixin,
     MilkyWayPlotterMixin,
     TextPlotterMixin,
@@ -45,6 +46,7 @@ class MapPlot(
     ArrowPlotterMixin,
     LegendPlotterMixin,
     GridlinesPlotterMixin,
+    ImagePlotterMixin,
 ):
     """Creates a new map plot.
 

@@ -9,7 +9,7 @@ from starplot import (
     Observer,
     ZenithPlot,
     _,
-    override_settings,
+    settings,
     styles,
 )
 
@@ -85,30 +85,30 @@ def check_zenith_gradient():
 
 
 @flake
-@override_settings(language="zh-cn")
 def check_zenith_chinese():
-    p = ZenithPlot(
-        observer=Observer(
-            lat=32.97,
-            lon=-117.038611,
-            dt=JUNE_2023,
-        ),
-        style=styles.PlotStyle().extend(
-            styles.extensions.BLUE_GOLD,
-            styles.extensions.GRADIENT_PRE_DAWN,
-            {
-                "base": {
-                    "font_name": "Noto Sans CJK SC",
-                }
-            },
-        ),
-        resolution=RESOLUTION,
-        autoscale=True,
-    )
-    p.horizon()
-    p.constellations()
-    p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 4])
-    p.constellation_labels(collision_handler=HANDLER)
-    filename = DATA_PATH / "zenith-chinese.png"
-    p.export(filename)
-    return filename
+    with settings(language="zh-cn"):
+        p = ZenithPlot(
+            observer=Observer(
+                lat=32.97,
+                lon=-117.038611,
+                dt=JUNE_2023,
+            ),
+            style=styles.PlotStyle().extend(
+                styles.extensions.BLUE_GOLD,
+                styles.extensions.GRADIENT_PRE_DAWN,
+                {
+                    "base": {
+                        "font_name": "Noto Sans CJK SC",
+                    }
+                },
+            ),
+            resolution=RESOLUTION,
+            autoscale=True,
+        )
+        p.horizon()
+        p.constellations()
+        p.stars(where=[_.magnitude < 4.6], where_labels=[_.magnitude < 4])
+        p.constellation_labels(collision_handler=HANDLER)
+        filename = DATA_PATH / "zenith-chinese.png"
+        p.export(filename)
+        return filename

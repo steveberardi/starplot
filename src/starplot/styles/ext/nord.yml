@@ -36,15 +36,16 @@ ecliptic:
     stroke: '#D99CBA'
 
 # Constellations
-constellation_labels:
-  opacity: 0.7
-  fill: rgb(230, 204, 147)
-constellation_lines:
-  opacity: 0.36
-  stroke: rgb(230, 204, 147)
-constellation_borders:
-  stroke: hsl(220, 16%, 12%)
-  opacity: 0.8
+constellation:
+  label:
+    opacity: 0.7
+    fill: rgb(230, 204, 147)
+  line:
+    opacity: 0.36
+    stroke: rgb(230, 204, 147)
+  border:
+    stroke: hsl(220, 16%, 12%)
+    opacity: 0.8
 
 dso_double_star:
   marker:
@@ -120,7 +121,7 @@ milky_way:
   opacity: 0.16
   fill: '#95a3bf'
 
-planets:
+planet:
   label:
     fill: '#D99CCF'
   marker:
@@ -133,6 +134,9 @@ star:
   marker:
     fill: '#88c0d0'
     stroke: '#4c566a'
+  bayer_label:
+    opacity: 0.9
+    fill: '#85c9de'
 sun:
   label:
     fill: '#88c0d0'
@@ -145,9 +149,6 @@ moon:
   marker:
     fill: '#88c0d0'
 
-bayer_labels:
-  opacity: 0.9
-  fill: '#85c9de'
 
 legend:
   background:

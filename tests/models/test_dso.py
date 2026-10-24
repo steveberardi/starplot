@@ -22,6 +22,10 @@ class TestDSO:
         sql_results = DSO.find(sql="select * from _ where m is not null")
         assert len(sql_results) == 110
 
+    def test_dso_find_where_string(self):
+        results = DSO.find(where="m is not null")
+        assert len(results) == len(DSO.find(where=[_.m.notnull()]))
+
     def test_dso_find_duplicate(self):
         results = DSO.find(where=[_.ngc == "5273"])
         assert len(results) == 2

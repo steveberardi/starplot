@@ -163,7 +163,7 @@ list-fonts:
 
 clean:
 	rm -rf __pycache__
-	rm -rf venv
+	rm -rf .venv
 	rm -rf dist
 	rm -rf site
 	rm -rf htmlcov

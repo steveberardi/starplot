@@ -10,8 +10,6 @@ from shapely import Polygon as ShapelyPolygon
 from shapely import box
 
 from starplot import geometry as _geometry
-from starplot import override_settings
-from starplot.config import settings
 from starplot.projections import (
     CoordinateReferenceSystem,
     Equidistant,
@@ -20,6 +18,7 @@ from starplot.projections import (
     Stereographic,
     StereoNorth,
 )
+from starplot.settings import settings
 from starplot.styles import (
     GradientStyle,
     LegendStyle,
@@ -162,7 +161,7 @@ class TestCoordinateConversions:
 
     def test_to_display_precision_zero_truncates_to_int(self):
         # GIVEN a canvas with precision=0 and an array-valued point
-        with override_settings(precision=0):
+        with settings(precision=0):
             canvas = _canvas(PlateCarree(), bounds=[10, -40, 80, 40])
             xs = np.array([45.2])
             ys = np.array([10.2])
@@ -180,7 +179,7 @@ class TestCoordinateConversions:
         # GIVEN a canvas with precision=0 and invert_x/invert_y enabled
         xs = np.array([30.0])
         ys = np.array([-20.0])
-        with override_settings(precision=0):
+        with settings(precision=0):
             inverted = _canvas(
                 PlateCarree(),
                 bounds=[10, -40, 80, 40],

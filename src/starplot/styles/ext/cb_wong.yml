@@ -34,12 +34,13 @@ celestial_equator:
     stroke: hsl(202, 100%, 35%)
 
 # Constellations
-constellation_labels:
-  fill: '#c5c5c5'
-constellation_lines:
-  opacity: 0.346
-  stroke: hsl(202, 100%, 35%)
-  width: 2
+constellation:
+  label:
+    fill: '#c5c5c5'
+  line:
+    opacity: 0.346
+    stroke: hsl(202, 100%, 35%)
+    width: 2
 
 dso_double_star:
   marker:
@@ -112,7 +113,7 @@ milky_way:
   opacity: 0.18
   fill: hsl(202, 77%, 63%)
   stroke_width: 0
-planets:
+planet:
   marker:
     opacity: 0.6
     fill: hsl(42, 100%, 45%)

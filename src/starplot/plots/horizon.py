@@ -18,6 +18,7 @@ from starplot.plotters import (
     ConstellationPlotterMixin,
     DsoPlotterMixin,
     GridlinesPlotterMixin,
+    ImagePlotterMixin,
     LegendPlotterMixin,
     MilkyWayPlotterMixin,
     TextPlotterMixin,
@@ -125,6 +126,7 @@ class HorizonPlot(
     ArrowPlotterMixin,
     TextPlotterMixin,
     GridlinesPlotterMixin,
+    ImagePlotterMixin,
 ):
     """Creates a new horizon plot.
 

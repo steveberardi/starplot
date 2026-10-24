@@ -64,7 +64,7 @@ milky_way:
   opacity: 0.28
   fill: '#d9d9d9'
   stroke_width: 0
-planets:
+planet:
   marker:
     fill: '#000'
 sun:

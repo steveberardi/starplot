@@ -57,21 +57,22 @@ star:
     stroke: rgb(46, 61, 74)
   label:
     fill: rgb(244, 233, 203)
-bayer_labels:
-  opacity: 1
-  fill: rgb(244, 233, 203)
-flamsteed_labels:
-  fill: rgb(244, 233, 203)
+  bayer_label:
+    opacity: 1
+    fill: rgb(244, 233, 203)
+  flamsteed_label:
+    fill: rgb(244, 233, 203)
 
 # Constellations
-constellation_labels:
-  opacity: 0.75
-  fill: rgb(244, 233, 203)
-constellation_lines:
-  opacity: 0.8
-  stroke: rgb(34, 124, 130)
-constellation_borders:
-  stroke: hsl(208, 23%, 2%)
+constellation:
+  label:
+    opacity: 0.75
+    fill: rgb(244, 233, 203)
+  line:
+    opacity: 0.8
+    stroke: rgb(34, 124, 130)
+  border:
+    stroke: hsl(208, 23%, 2%)
 
 # Milky Way
 milky_way:
@@ -80,7 +81,7 @@ milky_way:
   stroke_width: 0
 
 # Solar System
-planets:
+planet:
   label:
     fill: hsl(284, 78%, 90%)
   marker:

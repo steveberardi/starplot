@@ -5,6 +5,7 @@ import pandas as pd
 from skyfield.api import Star as SkyfieldStar
 
 from starplot import callables, geometry
+from starplot.coordinates import CoordinateSystem
 from starplot.data.catalogs import BIG_SKY_MAG11, Catalog
 from starplot.data.translations import translate
 from starplot.mixins import ExtentMaskMixin
@@ -15,6 +16,7 @@ from starplot.plotters import (
     ConstellationPlotterMixin,
     DsoPlotterMixin,
     GridlinesPlotterMixin,
+    ImagePlotterMixin,
     LegendPlotterMixin,
     TextPlotterMixin,
 )
@@ -23,9 +25,9 @@ from starplot.profile import profile
 from starplot.projections import CoordinateReferenceSystem, Equidistant
 from starplot.styles import (
     LabelStyle,
-    ObjectStyle,
     PathStyle,
     PlotStyle,
+    StarStyle,
     TableStyle,
     extensions,
     use_style,
@@ -41,6 +43,7 @@ class OpticPlot(
     GridlinesPlotterMixin,
     TextPlotterMixin,
     LegendPlotterMixin,
+    ImagePlotterMixin,
 ):
     """Creates a new optic plot.
 
@@ -64,6 +67,8 @@ class OpticPlot(
         OpticPlot: A new instance of an OpticPlot
 
     """
+
+    _coordinate_system = CoordinateSystem.AZ_ALT
 
     FIELD_OF_VIEW_MAX = 60
 
@@ -369,13 +374,13 @@ class OpticPlot(
         self.canvas.table(headers=headers, rows=rows, style=style)
 
     @profile
-    @use_style(ObjectStyle, "star")
+    @use_style(StarStyle, "star")
     def stars(
         self,
-        where: list = None,
-        where_labels: list = None,
+        where: list | str = None,
+        where_labels: list | str = None,
         catalog: Catalog | Path | str = BIG_SKY_MAG11,
-        style: ObjectStyle = None,
+        style: StarStyle = None,
         size_fn: Callable[[Star], float] = None,
         opacity_fn: Callable[[Star], float] = None,
         color_fn: Callable[[Star], str] = None,
@@ -391,8 +396,8 @@ class OpticPlot(
         Plots stars
 
         Args:
-            where: A list of expressions that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
-            where_labels: A list of expressions that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which stars to plot. See [Selecting Objects](/reference-selecting-objects/) for details.
+            where_labels: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which stars are labeled on the plot (this includes all labels: name, Bayer, and Flamsteed). If you want to hide **all** labels, then set this arg to `[False]`. See [Selecting Objects](/reference-selecting-objects/) for details.
             catalog: The catalog of stars to use -- see [catalogs overview](/data/overview/) for details
             style: If `None`, then the plot's style for stars will be used
             size_fn: Callable for calculating the marker size of each star. Defaults to [`callables.size_by_fov_factory(self.optic.true_fov)`][starplot.callables.size_by_fov_factory]

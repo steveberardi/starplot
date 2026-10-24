@@ -20,6 +20,15 @@ def merge_dict(dict_1: dict, dict_2: dict) -> None:
             dict_1[k] = v
 
 
+def _get_style(plot_style, style_attr: str, default=None):
+    """Gets a (possibly nested) style from the plot style, e.g. `constellation.line`"""
+    for name in style_attr.split("."):
+        plot_style = getattr(plot_style, name, None)
+        if plot_style is None:
+            return default
+    return plot_style
+
+
 def use_style(style_class, style_attr: str | None = None):
     def decorator(func):
         params = list(inspect.signature(func).parameters.keys())
@@ -41,7 +50,7 @@ def use_style(style_class, style_attr: str | None = None):
             if style and isinstance(style, dict):
                 if style_attr is not None:
                     # if style is a dict and there's a base style, then we just want to merge the changes
-                    base_style = getattr(args[0].style, style_attr).model_dump_json()
+                    base_style = _get_style(args[0].style, style_attr).model_dump_json()
                     base_style = json.loads(base_style)
 
                     merge_dict(base_style, style)
@@ -62,7 +71,7 @@ def use_style(style_class, style_attr: str | None = None):
                         prev = part
                     t.setdefault(prev, val)
                 if style_attr is not None:
-                    base_style = getattr(args[0].style, style_attr).model_dump_json()
+                    base_style = _get_style(args[0].style, style_attr).model_dump_json()
                     base_style = json.loads(base_style)
 
                     merge_dict(base_style, styling_overrides)
@@ -80,7 +89,7 @@ def use_style(style_class, style_attr: str | None = None):
 
             elif style is None and style_attr is not None:
                 # if no style overrides and there's a base style, then just pass the base style
-                kwargs["style"] = getattr(args[0].style, style_attr, None)
+                kwargs["style"] = _get_style(args[0].style, style_attr)
 
             elif style is None and not style_in_positional:
                 kwargs["style"] = style_class()

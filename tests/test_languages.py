@@ -10,9 +10,9 @@ from starplot import (
     Observer,
     OpticPlot,
     Star,
-    override_settings,
 )
 from starplot.data.translations import translate
+from starplot.settings import settings
 
 
 class TestLanguages:
@@ -31,7 +31,7 @@ class TestLanguages:
         ],
     )
     def test_star_name(self, star_hip_id, language, expected_value):
-        with override_settings(language=language):
+        with settings(language=language):
             star = Star.get(hip=star_hip_id)
             assert star.name == expected_value
 
@@ -50,7 +50,7 @@ class TestLanguages:
         ],
     )
     def test_constellation_name(self, constellation_id, language, expected_value):
-        with override_settings(language=language):
+        with settings(language=language):
             constellation = Constellation.get(iau_id=constellation_id)
             assert constellation.name == expected_value
 
@@ -69,7 +69,7 @@ class TestLanguages:
         ],
     )
     def test_dso_name(self, messier, language, expected_value):
-        with override_settings(language=language):
+        with settings(language=language):
             dso = DSO.get(m=messier)
             assert dso.common_names == [expected_value]
 
@@ -92,7 +92,7 @@ class TestLanguages:
         assert translate("HORIZON", language) == expected_value
 
     def test_optic_plot_horizon_label_is_translated_and_stays_uppercase(self):
-        with override_settings(language="de"):
+        with settings(language="de"):
             plot = OpticPlot(
                 ra=84.0534,
                 dec=-1.2019,

@@ -1,3 +1,5 @@
+import sys
+
 PROJ_R = 6378137
 
 GLOBAL_BOUNDS = [
@@ -14,3 +16,5 @@ DE_440 = "de440.bsp"
 DE_441 = "de441.bsp"
 
 EDGE_BUFFER = 1e-6
+
+NEW_LINE_CHARACTER = "\r\n" if sys.platform.startswith("win") else "\n"

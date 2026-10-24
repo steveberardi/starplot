@@ -158,7 +158,12 @@ class MarkerStyle(BaseStyle):
     """Symbol for marker."""
 
     size: float = 24
-    """Size of marker in pixels"""
+    """
+    Size of marker in pixels. 
+    
+    Most symbols fit inside a square with sides equal to the size. The exceptions are `circle_line`, `circle_crosshair`, and `circle_double_border`: 
+    for these, the size is the diameter of the symbol's _circle_ (so it's the same as a `circle` marker with the same size), and the rest of the symbol extends beyond it.
+    """
 
     opacity: float = Field(default=1.0, ge=0, le=1)
     """Opacity (transparency) of the marker (0 to 1)"""
@@ -343,6 +348,14 @@ class ArrowStyle(PolygonStyle):
         }
 
 
+class ImageStyle(BaseStyle):
+    opacity: float = Field(default=1.0, ge=0, le=1)
+    """Opacity of the image, from 0 (transparent) to 1 (opaque)"""
+
+    zorder: int = ZOrder.LAYER_1
+    """Z-order of the image. By default it's on the bottom layer, just above the axes background."""
+
+
 class LabelStyle(BaseStyle):
     """Styling properties for a label."""
 
@@ -466,8 +479,31 @@ class ObjectStyle(BaseStyle):
     """Style for the object's label (see [LabelStyle][starplot.styles.LabelStyle])"""
 
 
+class StarStyle(ObjectStyle):
+    """Defines the style for stars, including the labels for Bayer designations and Flamsteed numbers"""
+
+    bayer_label: LabelStyle = LabelStyle()
+    """Style for the star's Bayer designation label (see [LabelStyle][starplot.styles.LabelStyle])"""
+
+    flamsteed_label: LabelStyle = LabelStyle()
+    """Style for the star's Flamsteed number label (see [LabelStyle][starplot.styles.LabelStyle])"""
+
+
+class ConstellationStyle(BaseStyle):
+    """Defines the style for constellations"""
+
+    line: LineStyle = LineStyle()
+    """Style for the constellation lines (see [LineStyle][starplot.styles.LineStyle])"""
+
+    label: LabelStyle = LabelStyle()
+    """Style for the constellation labels (see [LabelStyle][starplot.styles.LabelStyle])"""
+
+    border: LineStyle = LineStyle()
+    """Style for the constellation borders (see [LineStyle][starplot.styles.LineStyle])"""
+
+
 class PathStyle(BaseStyle):
-    """Defines the style for a path (e.g. constellation lines)"""
+    """Defines the style for a path (e.g. the ecliptic)"""
 
     line: LineStyle = LineStyle()
     """Style for the line (see [LineStyle][starplot.styles.LineStyle])"""

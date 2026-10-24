@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from ibis import _
 from shapely import LineString, MultiPolygon, Polygon
 
+from starplot.constants import NEW_LINE_CHARACTER
 from starplot.data.catalogs import CONSTELLATIONS_IAU, Catalog
 from starplot.data.constellations import load
 from starplot.models.base import CatalogObject, SkyObject
@@ -105,7 +106,7 @@ class Constellation(CatalogObject, SkyObject):
     def find(
         cls,
         catalog: Catalog = CONSTELLATIONS_IAU,
-        where: list | None = None,
+        where: list | str | None = None,
         sql: str | None = None,
     ) -> list["Constellation"]:
         """
@@ -113,7 +114,7 @@ class Constellation(CatalogObject, SkyObject):
 
         Args:
             catalog: The catalog of constellations to use
-            where: A list of expressions that determine which constellations to find. See [Selecting Objects](reference-selecting-objects.md) for details.
+            where: A list of expressions (or a SQL WHERE clause string, e.g. `"magnitude < 8"`) that determine which constellations to find. See [Selecting Objects](reference-selecting-objects.md) for details.
             sql: SQL query for selecting constellations (table name is "_")
 
         Returns:
@@ -133,10 +134,10 @@ class Constellation(CatalogObject, SkyObject):
         """
         Default function for determining the plotted label for a constellation
 
-        Returns the uppercase name of the constellation.
+        Returns the uppercase name of the constellation, and replaces spaces with new lines.
 
         """
-        return constellation.name.upper().replace(" ", "\n")
+        return constellation.name.upper().replace(" ", NEW_LINE_CHARACTER)
 
 
 def from_tuple(c: tuple) -> Constellation:

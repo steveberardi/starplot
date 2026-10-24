@@ -1,4 +1,5 @@
 import numpy as np
+from ibis import _
 
 
 def in_circle(x, y, center_x=0, center_y=0, radius=0.9) -> bool:
@@ -119,15 +120,36 @@ def points_on_line(start, end, num_points=100):
     return list(zip(x_coords, y_coords))
 
 
-def normalize_where(where: list | bool) -> list:
-    """Normalizes a where kwarg to a list"""
+def normalize_where(where: list | str | bool | None) -> list:
+    """Normalizes a where kwarg to a new list"""
     if where is False:
         return [False]
 
     if where is True:
         return []
 
-    return where or []
+    if isinstance(where, str):
+        return [where]
+
+    return list(where or [])
+
+
+def apply_where(table, filters: list):
+    """
+    Applies a list of filters to an ibis table. Each filter can be an ibis expression or
+    a string, which is the condition of a SQL WHERE clause (the table name is `_`).
+    """
+    expressions = [f for f in filters if not isinstance(f, str)]
+
+    if expressions:
+        table = table.filter(*expressions)
+
+    for clause in filters:
+        if isinstance(clause, str):
+            result = table.alias("_").sql(f"SELECT pk FROM _ WHERE {clause}").execute()
+            table = table.filter(_.pk.isin(result["pk"].to_list()))
+
+    return table
 
 
 def normalize(value: float, min_val: float, max_val: float) -> float:

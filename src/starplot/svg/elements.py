@@ -82,6 +82,17 @@ class Rectangle(Element):
 
 
 @dataclass(slots=True, kw_only=True)
+class Image(Element):
+    name = "image"
+    props = ("x", "y", "height", "width")
+
+    x: float
+    y: float
+    height: float
+    width: float
+
+
+@dataclass(slots=True, kw_only=True)
 class Polygon(Element):
     name = "polygon"
     props = ("points",)

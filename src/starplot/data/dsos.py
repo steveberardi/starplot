@@ -3,13 +3,14 @@ from pathlib import Path
 
 from ibis import _
 
-from starplot.config import settings
 from starplot.data import db
 from starplot.data.catalogs import Catalog, SpatialQueryMethod
 from starplot.data.translations import (
     LANGUAGES,
     language_name_column,
 )
+from starplot.settings import settings
+from starplot.utils import apply_where, normalize_where
 
 
 @cache
@@ -52,7 +53,7 @@ def load(
     filters=None,
     sql=None,
 ):
-    filters = filters or []
+    filters = normalize_where(filters)
     con = db.connect()
     dsos = table(con=con, catalog=catalog, language=settings.language)
 
@@ -75,7 +76,7 @@ def load(
     filters.extend([_.ra.notnull() & _.dec.notnull()])
 
     if filters:
-        dsos = dsos.filter(*filters)
+        dsos = apply_where(dsos, filters)
 
     if sql:
         result = dsos.alias("_").sql(sql).select("pk").execute()

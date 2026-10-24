@@ -6,13 +6,15 @@ import rtree
 from shapely import Point, box
 from shapely.errors import GEOSException
 
-from starplot.config import settings
 from starplot.geometry import (
     random_point_in_polygon_at_distance,
     union_at_zero,
 )
+from starplot.settings import settings
 from starplot.styles import AnchorPoint, LabelStyle
 from starplot.styles.helpers import use_style
+from starplot.styles.types import MarkerSymbol
+from starplot.svg import symbols
 from starplot.svg.canvas import CoordinateSystem
 from starplot.svg.fonts import get_text_hw
 
@@ -286,7 +288,11 @@ class TextPlotterMixin:
         return True
 
     def _offset_from_marker(
-        self, style: LabelStyle, text: str, marker_size: float
+        self,
+        style: LabelStyle,
+        text: str,
+        marker_size: float,
+        marker_symbol: MarkerSymbol = "circle",
     ) -> LabelStyle:
         if style.offset_x != "auto" and style.offset_y != "auto":
             new_style = style.model_copy()
@@ -304,13 +310,17 @@ class TextPlotterMixin:
             font_weight=style.font_weight,
             italic=style.font_style == "italic",
         )
-        size = marker_size * self.scale
+        # the full extent of the marker can be larger than its size (e.g. circle_line)
+        marker_width, marker_height = symbols.extent(
+            marker_symbol, marker_size * self.scale
+        )
         offset_x = style.offset_x
         offset_y = style.offset_y
 
         if offset_x == "auto":
             offset_x = round(
-                size / 2 + AUTO_OFFSET_PADDING * self.scale, settings.precision
+                marker_width / 2 + AUTO_OFFSET_PADDING * self.scale,
+                settings.precision,
             )
         else:
             offset_x = offset_x * self.scale
@@ -324,7 +334,7 @@ class TextPlotterMixin:
             # passes close by. The +6 buffer (matching offset_x's gap)
             # guarantees a bit of breathing room beyond the marker edge.
             offset_y = round(
-                size / 2 - height / 2 + AUTO_OFFSET_PADDING * self.scale,
+                marker_height / 2 - height / 2 + AUTO_OFFSET_PADDING * self.scale,
                 settings.precision,
             )
         else:

@@ -13,7 +13,6 @@ from shapely.affinity import translate as _translate_shape
 from shapely.ops import transform as _transform_shape
 
 from starplot import geometry as _geometry
-from starplot.config import settings
 from starplot.projections import (
     CoordinateReferenceSystem,
     Equidistant,
@@ -22,6 +21,7 @@ from starplot.projections import (
     Stereographic,
     latlon_bounds_to_projection,
 )
+from starplot.settings import settings
 from starplot.styles import (
     GradientStyle,
     LabelStyle,
@@ -37,6 +37,7 @@ from starplot.svg import fonts, png, symbols
 from starplot.svg.elements import (
     ClipPath,
     Group,
+    Image,
     Line,
     Polygon,
     Polyline,
@@ -146,6 +147,18 @@ class Canvas:
             return x.astype(int), y.astype(int)
 
         return np.round(x, settings.precision), np.round(y, settings.precision)
+
+    def _from_display(self, x, y):
+        """Inverse of `_to_display` for DATA coordinates. Points outside the projection come back as non-finite."""
+        if self.invert_x:
+            x = self.width - x
+
+        if self.invert_y:
+            y = self.height - y
+
+        px = lerp(self.minx, self.maxx, x / self.width)
+        py = lerp(self.miny, self.maxy, 1 - y / self.height)
+        return self.tx.transform(px, py, direction="INVERSE")
 
     def _is_global(self):
         return self.projection.global_only or (
@@ -446,6 +459,25 @@ class Canvas:
         self._add_element(
             group_zorder,
             Group(id=gid, attrs=attrs or {}, children=[e for _, e in frame]),
+        )
+
+    def image(
+        self,
+        href: str,
+        x: float,
+        y: float,
+        width: float,
+        height: float,
+        zorder: float,
+        opacity: float = 1.0,
+    ) -> None:
+        """Embeds a raster image, positioned in display coordinates."""
+        attrs = {"href": href, "preserveAspectRatio": "none"}
+        if opacity != 1:
+            attrs["opacity"] = opacity
+
+        self._add_element(
+            zorder, Image(x=x, y=y, width=width, height=height, attrs=attrs)
         )
 
     def marker(self, x, y, style: MarkerStyle) -> None:
@@ -910,7 +942,16 @@ class Canvas:
 
             for label, config in handles.items():
                 marker_style, size = config
-                marker_size = (size or style.symbol_size) * scale
+                if size:
+                    marker_size = size * scale
+                else:
+                    # the whole symbol (not just its circle) should fit in the symbol slot
+                    marker_size = symbol_size / max(
+                        symbols.extent(marker_style.symbol, 1)
+                    )
+                marker_width, marker_height = symbols.extent(
+                    marker_style.symbol, marker_size
+                )
                 marker_element = symbols.create(
                     x + symbol_size / 2,
                     y,
@@ -942,8 +983,8 @@ class Canvas:
                     font_weight=style.labels.font_weight,
                     italic=style.labels.font_style == "italic",
                 )
-                height += max(marker_size, h) + label_padding
-                w += marker_size + symbol_padding + padding_x * 2
+                height += max(marker_height, h) + label_padding
+                w += marker_width + symbol_padding + padding_x * 2
 
                 width = max(width, w)
 
