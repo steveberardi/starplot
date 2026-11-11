@@ -76,7 +76,7 @@ style.dso_galaxy.marker.stroke = "#e463ed"
 style.dso_galaxy.marker.stroke_width = 4
 style.dso_galaxy.marker.opacity = 1
 
-style.dso_galaxy.label.font_size = 60
+style.dso_galaxy.label.font_size = 72
 style.dso_galaxy.label.font_weight = 700
 
 p = OpticPlot(
@@ -107,6 +107,7 @@ for galaxy in DSO.find(where=[_.m.isin([31, 32, 110])]):
         width_degrees=galaxy.min_ax / 60,
         angle=-galaxy.angle,
         style=p.style.dso_galaxy.marker.to_polygon_style(),
+        num_pts=360,
     )
     p.text(f"M{galaxy.m}", galaxy.ra, galaxy.dec, style=p.style.dso_galaxy.label)
 
