@@ -3,7 +3,6 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from starplot import DSO, Observer, OpticPlot, Scope, callables, _
-from starplot.plotters.image import PixelSkyModel
 from starplot.styles import PlotStyle, extensions
 
 
@@ -31,17 +30,7 @@ CONTROL_POINTS = [
     ((643.1, 152.1), (11.5197, 41.5368)),  # TYC 2805-700-1
 ]
 
-# center the plot on the middle of the photo
-center_ra, center_dec = PixelSkyModel(CONTROL_POINTS).pixel_to_sky(
-    IMAGE_SIZE[0] / 2, IMAGE_SIZE[1] / 2
-)
-
-observer = Observer(
-    dt=datetime(2023, 10, 14, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific")),
-    lat=33.363484,
-    lon=-116.836394,
-)
-
+# custom gradient background
 NIGHT_SUBTLE = (
     (0.0, "hsl(240, 14%, 10%)"),
     (0.25, "hsl(240, 14%, 5%)"),
@@ -49,7 +38,14 @@ NIGHT_SUBTLE = (
     (1.0, "#000000"),
 )
 
-# extensions.OPTIC must come before the custom style so it doesn't override the border width
+m31 = DSO.get(m="31")
+
+observer = Observer(
+    dt=datetime(2026, 10, 13, 21, 0, 0, tzinfo=ZoneInfo("US/Pacific")),
+    lat=33.363484,
+    lon=-116.836394,
+)
+
 style = PlotStyle().extend(
     extensions.GRAYSCALE_DARK,
     extensions.OPTIC,
@@ -58,7 +54,7 @@ style = PlotStyle().extend(
             "background": {"fill": {"stops": NIGHT_SUBTLE, "type": "radial"}},
             "border": {
                 "stroke": "#3A3A3A",
-                "width": 30,
+                "width": 32,
             },
         }
     },
@@ -75,8 +71,8 @@ style.dso_galaxy.label.font_size = 72
 style.dso_galaxy.label.font_weight = 700
 
 p = OpticPlot(
-    ra=float(center_ra),
-    dec=float(center_dec),
+    ra=m31.ra,
+    dec=m31.dec,
     optic=Scope(focal_length=714, eyepiece_focal_length=28, eyepiece_fov=82),
     observer=observer,
     resolution=2800,
@@ -87,14 +83,12 @@ p = OpticPlot(
 p.image(IMAGE, CONTROL_POINTS)
 
 p.stars(
-    where=[_.magnitude < 11],
-    where_labels=[_.magnitude < 8],
-    opacity_fn=lambda s: 0.75,
+    where=[_.magnitude < 12],
     color_fn=callables.color_by_bv_gradient,
     style__marker__stroke=None,
 )
 
-# Plot Andromeda (M31) and its satellite galaxies (M32, M110)
+# plot Andromeda (M31) and its satellite galaxies (M32, M110)
 p.dsos(
     where=[_.m.isin([31, 32, 110])],
     where_true_size=True,
