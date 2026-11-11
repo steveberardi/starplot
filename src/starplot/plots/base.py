@@ -426,7 +426,7 @@ class BasePlot(StarPlotterMixin, ABC):
         width_degrees: float,
         style: PolygonStyle,
         angle: float = 0,
-        num_pts: int = 100,
+        num_pts: int = 360,
         start_angle: int = 0,
         end_angle: int = 360,
         legend_label: str = None,

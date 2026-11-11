@@ -107,7 +107,6 @@ for galaxy in DSO.find(where=[_.m.isin([31, 32, 110])]):
         width_degrees=galaxy.min_ax / 60,
         angle=-galaxy.angle,
         style=p.style.dso_galaxy.marker.to_polygon_style(),
-        num_pts=360,
     )
     p.text(f"M{galaxy.m}", galaxy.ra, galaxy.dec, style=p.style.dso_galaxy.label)
 
