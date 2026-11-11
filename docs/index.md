@@ -9,11 +9,11 @@ Starplot is a Python library for creating star charts and maps of the sky
 
 <div class="grid cards feature-cards" markdown>
 
-- <img src="images/examples/map_orion.png" width="600"> <h3>__Maps__</h3> shows an area that you define in one of many available map projections
-- <img src="images/examples/horizon_gradient.png" width="600"> <h3>Horizon Charts</h3> shows the horizon at a specific time and place
-- <img src="images/examples/star_chart_basic.png" height="600" width="600"> <h3>Zenith Charts</h3> shows the entire sky at a specific time and place
-- <img src="images/examples/optic_image_overlay.png" width="600"> <h3>Optic Charts</h3> shows what you'll see through an optic (e.g. telescope) at a specific time and place
-- <img src="images/examples/galaxy.png" height="600" width="600"> <h3>Galaxy Charts</h3> shows the entire sky in galactic coordinates
+- <a class="glightbox" href="images/examples/map_orion.png"><img src="images/examples/map_orion-sm.png" class="off-glb" width="600"></a> <h3>__Maps__</h3> shows an area that you define in one of many available map projections
+- <a class="glightbox" href="images/examples/horizon_gradient.png"><img src="images/examples/horizon_gradient-sm.png" class="off-glb" width="600"></a> <h3>Horizon Charts</h3> shows the horizon at a specific time and place
+- <a class="glightbox" href="images/examples/star_chart_basic.png"><img src="images/examples/star_chart_basic-sm.png" class="off-glb" height="600" width="600"></a> <h3>Zenith Charts</h3> shows the entire sky at a specific time and place
+- <a class="glightbox" href="images/examples/optic_image_overlay.png"><img src="images/examples/optic_image_overlay-sm.png" class="off-glb" width="600"></a> <h3>Optic Charts</h3> shows what you'll see through an optic (e.g. telescope) at a specific time and place
+- <a class="glightbox" href="images/examples/galaxy.png"><img src="images/examples/galaxy-sm.png" class="off-glb" height="600" width="600"></a> <h3>Galaxy Charts</h3> shows the entire sky in galactic coordinates
 
 - <a href="examples/">
 <img src="images/examples/map_big_dipper-sm.png" class="square-crop off-glb"> 

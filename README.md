@@ -14,7 +14,8 @@
 - **Planets and Deep Sky Objects (DSOs)** - with support for plotting their true extent
 - **Comets and Satellites** - easy trajectory plotting
 - **Custom Styles** - for all objects and with 8+ built-in themes
-- **Export** - SVG or PNG
+- **Export to SVG or PNG** - with easy scaling for png exports
+- **Image overlays** - given a set of control points
 - **Data Backend** - powered by DuckDB + Ibis for fast object lookup
 - **Custom Data Catalogs** - with helpers for building and optimizing
 - **Label Collision Avoidance** - ensuring all labels are readable
@@ -30,8 +31,8 @@
 *Horizon at a specific time and place:*
 ![horizon-plot](https://starplot.dev/images/examples/horizon_gradient.png)
 
-*The Pleiades star cluster, as seen through a refractor telescope from a specific time and place:*
-![optic-pleiades](https://starplot.dev/images/examples/optic_m45.png)
+*Andromeda Galaxy image overlay, as seen through a refractor telescope from a specific time and place:*
+![optic-image](https://starplot.dev/images/examples/optic_image_overlay.png)
 
 ## Basic Usage
 
