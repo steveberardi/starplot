@@ -10,7 +10,7 @@ from starplot.styles import PlotStyle, extensions
 IMAGE = Path(__file__).parent / "andromeda.jpeg"
 IMAGE_SIZE = (1200, 1200)
 
-# Control points that match a pixel position in the image with 
+# Control points that match a pixel position in the image with
 # its sky position: ((x, y), (ra, dec)) in degrees.
 CONTROL_POINTS = [
     ((231.9, 870.0), (10.5060, 40.6883)),  # HIP 3293
@@ -54,19 +54,14 @@ style = PlotStyle().extend(
     extensions.GRAYSCALE_DARK,
     extensions.OPTIC,
     {
-            "axes": {
-                "background": {
-                    "fill": {
-                        "stops": NIGHT_SUBTLE,
-                        "type": "radial"
-                    }
-                },
-                "border": {
-                    "stroke": "#3A3A3A",
-                    "width": 30,
-                }
-            }
-        },
+        "axes": {
+            "background": {"fill": {"stops": NIGHT_SUBTLE, "type": "radial"}},
+            "border": {
+                "stroke": "#3A3A3A",
+                "width": 30,
+            },
+        }
+    },
     extensions.FIGURE_TRANSPARENT,
 )
 
