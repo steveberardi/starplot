@@ -101,8 +101,6 @@ class OpticPlot(
         self.observer = observer
 
         self.ephemeris_name = ephemeris
-        # self.ephemeris = load(ephemeris)
-        # self.earth = self.ephemeris["earth"]
 
         self._calc_position()
 

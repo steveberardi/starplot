@@ -1418,6 +1418,8 @@ class Canvas:
 
     def render(self, text_as_path: bool = False) -> str:
         """Renders the canvas to an SVG string"""
+        # rebuilt here so changes to the border style after plot creation take effect
+        self._init_axes_border()
         return self.layout.render(self.style, text_as_path, self.scale)
 
     def export(

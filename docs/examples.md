@@ -68,6 +68,12 @@
         </a>
     </li>
     <li>
+        <a href="examples/optic-image-overlay/">
+            <img src="images/examples/optic_image_overlay-sm.png" alt="Image Overlay on an Optic Plot of the Andromeda Galaxy" class="off-glb" loading="lazy"/>
+            <p class="example-card-title">Image Overlay on an Optic Plot</p>
+        </a>
+    </li>
+    <li>
         <a href="examples/map-milky-way-stars/">
             <img src="images/examples/map_milky_way_stars-sm.png" alt="Stars of the Milky Way" class="off-glb">
             <p class="example-card-title">The Milky Way</p>
