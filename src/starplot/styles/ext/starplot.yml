@@ -23,13 +23,19 @@ figure:
 title:
   fill: hsl(205, 75%, 5%)
 
-bayer_labels:
-  opacity: 0.8
-  fill: hsl(205, 42%, 28%)
+star:
+  label:
+    fill: hsl(205, 60%, 12%)
+  marker:
+    fill: hsl(205, 83%, 16%)
+    stroke: hsl(205, 80%, 3%)
+  bayer_label:
+    opacity: 0.8
+    fill: hsl(205, 42%, 28%)
+  flamsteed_label:
+    opacity: 0.8
+    fill: hsl(205, 42%, 28%)
 
-flamsteed_labels:
-  opacity: 0.8
-  fill: hsl(205, 42%, 28%)
 
 horizon:
   line:
@@ -61,16 +67,17 @@ ecliptic:
     opacity: 1
 
 # Constellations
-constellation_lines:
-  opacity: 0.58
-  stroke: hsl(205, 45%, 42%)
-constellation_labels:
-  opacity: 0.58
-  fill: hsl(205, 48%, 35%)
-constellation_borders:
-  width: 2
-  opacity: 0.7
-  stroke: hsl(205, 42%, 48%)
+constellation:
+  line:
+    opacity: 0.58
+    stroke: hsl(205, 45%, 42%)
+  label:
+    opacity: 0.58
+    fill: hsl(205, 48%, 35%)
+  border:
+    width: 2
+    opacity: 0.7
+    stroke: hsl(205, 42%, 48%)
 
 dso_double_star:
   label:
@@ -144,7 +151,7 @@ milky_way:
   fill: hsl(205, 50%, 66%)
   stroke_width: 0
 
-planets:
+planet:
   label:
     fill: hsl(205, 58%, 22%)
   marker:
@@ -158,12 +165,6 @@ moon:
   marker:
     fill: hsl(205, 40%, 26%)
 
-star:
-  label:
-    fill: hsl(205, 60%, 12%)
-  marker:
-    fill: hsl(205, 83%, 16%)
-    stroke: hsl(205, 80%, 3%)
 
 sun:
   label:

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from skyfield.api import Loader
 
-from starplot.config import settings
+from starplot.settings import settings
 
 load = Loader(settings.data_path)  # used for loading ephemeris
 

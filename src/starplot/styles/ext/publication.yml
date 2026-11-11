@@ -3,6 +3,7 @@ star:
     stroke_width: 0
     stroke: null
 
-constellation_labels:
-  stroke_width: 0
-  stroke: null
+constellation:
+  label:
+    stroke_width: 0
+    stroke: null

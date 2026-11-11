@@ -540,8 +540,7 @@ def check_map_plot_custom_clip_path_virgo():
         dec_max=17,
         style=STYLE.extend(
             {
-                "dso_open_cluster": {"marker": {"size": 20}},
-                "dso_galaxy": {"marker": {"size": 20}},
+                "dso_galaxy": {"marker": {"size": 30}},
             }
         ),
         resolution=RESOLUTION,
@@ -723,7 +722,7 @@ def check_map_constellation_clip_path():
 
     p.line(
         geometry=constellation.border,
-        style__line=p.style.constellation_borders,
+        style__line=p.style.constellation.border,
     )
 
     for hip1, hip2 in constellation.star_hip_lines:
@@ -734,7 +733,7 @@ def check_map_constellation_clip_path():
                 (star1.ra, star1.dec),
                 (star2.ra, star2.dec),
             ],
-            style__line=p.style.constellation_lines,
+            style__line=p.style.constellation.line,
         )
 
     p.stars(
@@ -778,7 +777,7 @@ def check_map_font_fallback():
         styles.extensions.MAP,
     )
     style.title.font_name = "ThisFontDoesNotExist12345"
-    style.constellation_labels.font_name = "AlsoNotARealFont"
+    style.constellation.label.font_name = "AlsoNotARealFont"
 
     p = MapPlot(
         projection=Miller(),

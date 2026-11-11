@@ -11,12 +11,12 @@ legend:
 star:
   label:
     font_size: 58
-bayer_labels:
-  font_size: 56
-flamsteed_labels:
-  font_size: 50
+  bayer_label:
+    font_size: 56
+  flamsteed_label:
+    font_size: 50
 
-planets:
+planet:
   marker:
     size: 60
 

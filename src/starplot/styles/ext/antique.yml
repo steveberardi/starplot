@@ -32,13 +32,19 @@ zenith:
 title:
   fill: hsl(60, 20%, 93%)
 
-bayer_labels:
-  opacity: 0.9
-  fill: hsl(60, 3%, 17%)
+star:
+  marker:
+    fill: hsl(60, 12%, 24%)
+    stroke: hsl(48, 80%, 96%)
+  label:
+    fill: hsl(60, 3%, 24%)
+  bayer_label:
+    opacity: 0.9
+    fill: hsl(60, 3%, 17%)
+  flamsteed_label:
+    opacity: 0.9
+    fill: hsl(60, 3%, 17%)
 
-flamsteed_labels:
-  opacity: 0.9
-  fill: hsl(60, 3%, 17%)
 
 # Lines
 celestial_equator:
@@ -58,18 +64,19 @@ ecliptic:
     opacity: 1
 
 # Constellations
-constellation_lines:
-  opacity: 0.3
-  stroke: hsl(48, 80%, 14%)
-constellation_labels:
-  font_weight: 200
-  fill: hsl(60, 3%, 52%)
-  opacity: 0.46
-  font_name: "serif"
-constellation_borders:
-  stroke: hsl(37, 33%, 40%)
-  opacity: 0.8
-  zorder: -500
+constellation:
+  line:
+    opacity: 0.3
+    stroke: hsl(48, 80%, 14%)
+  label:
+    font_weight: 200
+    fill: hsl(60, 3%, 52%)
+    opacity: 0.46
+    font_name: "serif"
+  border:
+    stroke: hsl(37, 33%, 40%)
+    opacity: 0.8
+    zorder: -500
 
 milky_way:
   opacity: 0.2
@@ -84,13 +91,7 @@ gridlines:
     opacity: 0.6
     stroke: hsl(68, 11%, 71%)
     width: 1
-star:
-  marker:
-    fill: hsl(60, 12%, 24%)
-    stroke: hsl(48, 80%, 96%)
-  label:
-    fill: hsl(60, 3%, 24%)
-planets:
+planet:
   marker:
     symbol: circle
     opacity: 0.68

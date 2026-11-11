@@ -35,6 +35,12 @@ class TestStar:
         bright_stars = Star.find(sql="select * from _ where magnitude < 3")
         assert len(bright_stars) == 196
 
+    def test_star_find_where_string(self):
+        from_string = Star.find(where="magnitude < 3 and name is not null")
+        from_exprs = Star.find(where=[_.magnitude < 3, _.name.notnull()])
+        assert len(from_string) > 0
+        assert {s.pk for s in from_string} == {s.pk for s in from_exprs}
+
     def test_star_find_intersects(self):
         m45 = DSO.get(m="45")
         m45_stars = Star.find(

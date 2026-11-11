@@ -1,5 +1,6 @@
 
 
-constellation_labels:
-  font_size: 50
-  font_weight: 800
+constellation:
+  label:
+    font_size: 50
+    font_weight: 800

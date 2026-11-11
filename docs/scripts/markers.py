@@ -8,6 +8,7 @@ from typing import get_args
 from starplot import MapPlot, Miller
 from starplot.styles import MarkerStyle, ObjectStyle, PlotStyle, extensions
 from starplot.styles.types import MarkerSymbol
+from starplot.svg import symbols
 
 OUTPUT_DIR = Path(__file__).resolve().parent.parent / "images" / "reference"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -56,10 +57,12 @@ marker_styles = {
 
 for symbol_str in get_args(MarkerSymbol):
     marker_style = default_style
-    marker_style.size = 64
     marker_style.symbol = symbol_str
     marker_style.stroke_width = default_style.stroke_width
 
+    # size is the diameter of the circle for circle-based symbols, so scale it down
+    # to fit the whole symbol in the same box as all the others
+    marker_style.size = 64 / max(symbols.extent(symbol_str, 1))
 
     object_style = ObjectStyle(marker=marker_style)
 

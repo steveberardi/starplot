@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from starplot.config import settings
+from starplot.settings import settings
 from starplot.styles import (
     GradientStyle,
     HorizontalAlignment,

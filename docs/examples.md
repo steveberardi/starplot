@@ -68,15 +68,15 @@
         </a>
     </li>
     <li>
-        <a href="examples/map-milky-way-stars/">
-            <img src="images/examples/map_milky_way_stars-sm.png" alt="Stars of the Milky Way" class="off-glb">
-            <p class="example-card-title">The Milky Way</p>
+        <a href="examples/optic-image-overlay/">
+            <img src="images/examples/optic_image_overlay-sm.png" alt="Image Overlay on an Optic Plot of the Andromeda Galaxy" class="off-glb" loading="lazy"/>
+            <p class="example-card-title">Image Overlay on an Optic Plot</p>
         </a>
     </li>
     <li>
-        <a href="examples/map-big-dipper/">
-            <img src="images/examples/map_big_dipper-sm.png" alt="Map of the Big Dipper" class="off-glb" loading="lazy"/>
-            <p class="example-card-title">The Big Dipper</p>
+        <a href="examples/map-milky-way-stars/">
+            <img src="images/examples/map_milky_way_stars-sm.png" alt="Stars of the Milky Way" class="off-glb">
+            <p class="example-card-title">The Milky Way</p>
         </a>
     </li>
     <li>
@@ -101,6 +101,12 @@
         <a href="examples/map-orthographic/">
             <img src="images/examples/map_orthographic-sm.png" alt="Orthographic Map" class="off-glb" loading="lazy"/>
             <p class="example-card-title">Orthographic Map</p>
+        </a>
+    </li>
+    <li>
+        <a href="examples/map-big-dipper/">
+            <img src="images/examples/map_big_dipper-sm.png" alt="Map of the Big Dipper" class="off-glb" loading="lazy"/>
+            <p class="example-card-title">The Big Dipper</p>
         </a>
     </li>
     <li>

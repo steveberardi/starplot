@@ -82,5 +82,39 @@ class Settings:
     )
     """Number of decimal places to round coordinates and dimensions to when rendering SVG output."""
 
+    def __post_init__(self):
+        self._pending = {}
+        self._saved = []
+
+    def __call__(self, **overrides):
+        """
+        Temporarily override settings in a `with` block:
+
+        ```python
+        with settings(language="de"):
+            ...
+        ```
+        """
+        unknown = set(overrides) - set(self.__dataclass_fields__)
+        if unknown:
+            raise AttributeError(f"Unknown settings: {', '.join(sorted(unknown))}")
+
+        self._pending = overrides
+        return self
+
+    def __enter__(self):
+        # A stack lets nested `with` blocks each restore their own previous values
+        self._saved.append({key: getattr(self, key) for key in self._pending})
+
+        for key, value in self._pending.items():
+            setattr(self, key, value)
+
+        self._pending = {}
+        return self
+
+    def __exit__(self, *exc_info):
+        for key, value in self._saved.pop().items():
+            setattr(self, key, value)
+
 
 settings = Settings()

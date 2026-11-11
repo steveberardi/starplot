@@ -3,9 +3,9 @@ import random
 import numpy as np
 from shapely import LineString, Polygon, affinity, ops
 
-from starplot.config import settings
 from starplot.geometry import circle
 from starplot.profile import profile
+from starplot.settings import settings
 from starplot.styles import ArrowStyle
 from starplot.styles.helpers import use_style
 from starplot.utils import points_on_line

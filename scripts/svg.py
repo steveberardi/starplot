@@ -31,7 +31,7 @@ from starplot.styles import (
     LabelStyle,
 )
 
-from starplot.config import settings as StarplotSettings
+from starplot.settings import settings as StarplotSettings
 
 StarplotSettings.svg_text_type = "element"
 

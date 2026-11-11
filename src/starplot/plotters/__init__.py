@@ -4,6 +4,7 @@ from .arrow import ArrowPlotterMixin
 from .constellations import ConstellationPlotterMixin
 from .dsos import DsoPlotterMixin
 from .gridlines import GridlinesPlotterMixin
+from .image import ImagePlotterMixin
 from .legend import LegendPlotterMixin
 from .milkyway import MilkyWayPlotterMixin
 from .stars import StarPlotterMixin

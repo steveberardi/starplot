@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 import pytest
 
 from starplot import MapPlot, Mercator, Miller, Observer, Star, _
+from starplot.styles import LabelStyle
 
 
 def test_map_radec_invalid():
@@ -111,3 +112,52 @@ def test_plots_at_astrometric():
         if s.hip == 87937:
             assert 269.454 == round(s.ra, 3)
             assert 4.668 == round(s.dec, 3)
+
+
+def _marker_plot():
+    return MapPlot(
+        projection=Mercator(),
+        ra_min=8 * 15,
+        ra_max=9 * 15,
+        dec_min=10,
+        dec_max=20,
+    )
+
+
+def test_auto_label_offset_uses_full_marker_extent():
+    p = _marker_plot()
+    style = LabelStyle(offset_x="auto", offset_y="auto")
+
+    circle = p._offset_from_marker(style, "label", 20, "circle")
+    crosshair = p._offset_from_marker(style, "label", 20, "circle_crosshair")
+    line = p._offset_from_marker(style, "label", 20, "circle_line")
+
+    # the crosshair is 2x its circle in both directions, so the label moves out by
+    # an extra half of the circle's diameter
+    assert crosshair.offset_x - circle.offset_x == pytest.approx(10 * p.scale)
+    assert crosshair.offset_y - circle.offset_y == pytest.approx(10 * p.scale)
+
+    # the line only extends horizontally
+    assert line.offset_x - circle.offset_x == pytest.approx(8 * p.scale)
+    assert line.offset_y == circle.offset_y
+
+
+def test_marker_collision_box_uses_full_marker_extent():
+    p = _marker_plot()
+    ra, dec = 8.5 * 15, 15
+    p.marker(
+        ra=ra,
+        dec=dec,
+        style={"marker": {"symbol": "circle_line", "size": 20}},
+    )
+    x, y = p.canvas._to_display(*p._prepare_coords(ra, dec))
+    half_circle = 10 * p.scale
+    half_line = 18 * p.scale
+
+    # inside the line's extent, but outside of its circle
+    beyond_circle = (x + half_circle + 1, y, x + half_line - 1, y + 1)
+    assert p._is_marker_collision(beyond_circle)
+
+    # past the end of the line
+    beyond_line = (x + half_line + 2, y, x + half_line + 4, y + 1)
+    assert not p._is_marker_collision(beyond_line)

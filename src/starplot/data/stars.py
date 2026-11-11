@@ -4,10 +4,11 @@ from pathlib import Path
 from ibis import _
 from shapely import MultiPolygon, Polygon
 
-from starplot.config import settings
 from starplot.data import db
 from starplot.data.catalogs import BIG_SKY_MAG11, Catalog, SpatialQueryMethod
 from starplot.data.translations import LANGUAGE_NAME_COLUMNS, language_name_column
+from starplot.settings import settings
+from starplot.utils import apply_where, normalize_where
 
 
 @cache
@@ -48,7 +49,7 @@ def load(
     filters=None,
     sql=None,
 ):
-    filters = filters or []
+    filters = normalize_where(filters)
     con = db.connect()
     stars = table(con=con, catalog=catalog, language=settings.language)
 
@@ -69,7 +70,7 @@ def load(
         stars = stars.filter(stars.geometry.intersects(extent))
 
     if filters:
-        stars = stars.filter(*filters)
+        stars = apply_where(stars, filters)
 
     if sql:
         result = stars.alias("_").sql(sql).select("pk").execute()

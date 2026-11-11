@@ -1,7 +1,7 @@
 import tarfile
 
-from starplot.config import settings
 from starplot.data.utils import download
+from starplot.settings import settings
 
 FONTS_PATH = settings.data_path / "fonts"
 FONTS_PATH.mkdir(parents=True, exist_ok=True)

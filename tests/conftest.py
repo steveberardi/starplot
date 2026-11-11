@@ -15,11 +15,13 @@ def temp_data_path(tmp_path):
     whatever test runs next. Without this, catalogs that already exist on
     disk here would make `download_if_not_exists()` skip calling download().
     """
-    from starplot import cli, config, data
+    from starplot import cli, data
     from starplot.data import catalogs
     from starplot.svg import fonts
 
-    modules = [config, data, catalogs, fonts, cli]
+    # `starplot.settings` is the settings object, so the module must be imported by name
+    settings_module = importlib.import_module("starplot.settings")
+    modules = [settings_module, data, catalogs, fonts, cli]
     original = os.environ.get("STARPLOT_DATA_PATH")
     os.environ["STARPLOT_DATA_PATH"] = str(tmp_path)
     for module in modules:

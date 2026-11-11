@@ -29,6 +29,20 @@ STARPLOT_LANGUAGE=fr
 ```
 </div>
 
+## Temporary overrides
+
+To change settings for just part of your code, call `settings` in a `with` block. The previous values are restored when the block exits:
+
+```python
+from starplot import settings
+
+with settings(language="de", svg_text_type="path"):
+    # Plots created here will use German labels and SVG text as paths
+    ...
+
+# Back to the previous settings here
+```
+
 ---
 
 ## `data_path`
@@ -93,7 +107,7 @@ Number of decimal places to round coordinates and dimensions to when rendering S
 
 
 <!-- 
-::: starplot.config.Settings
+::: starplot.settings.Settings
     options:
         show_docstring_attributes: true
         separate_signature: true

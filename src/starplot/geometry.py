@@ -8,8 +8,8 @@ from shapely import union_all
 from shapely.errors import GEOSException
 from shapely.geometry import LineString, Point, Polygon
 
-from starplot.config import settings
 from starplot.constants import PROJ_R
+from starplot.settings import settings
 
 GEOD = pyproj.Geod(f"+a={PROJ_R} +f=0.0", sphere=True)
 
@@ -131,8 +131,8 @@ def ellipse(
         width_degrees: Width of ellipse in degrees
         angle: Angle to rotate ellipse, in degrees
         num_pts: Number of evenly-spaced points to generate for the ellipse. At least 100 is recommended to ensure good-looking curves.
-        start_angle: Angle to start drawing the ellipse
-        end_angle: Angle to stop drawing the ellipse
+        start_angle: Parametric angle to start drawing the ellipse, measured from the height axis
+        end_angle: Parametric angle to stop drawing the ellipse
 
     Returns:
         Polygon of ellipse
@@ -149,12 +149,16 @@ def ellipse(
     lons = []
     lats = []
     points = []
-    for angle_pt in np.arange(start_angle, end_angle + step_size, step_size):
-        radians = math.radians(angle_pt)
-        radius_a = (height * width) / math.sqrt(
-            height**2 * (math.sin(radians)) ** 2 + width**2 * (math.cos(radians)) ** 2
-        )
-        lon, lat, _ = GEOD.fwd([ra], [dec], angle + angle_pt, radius_a)
+    for t in np.arange(start_angle, end_angle + step_size, step_size):
+        radians = math.radians(t)
+        along_height = height * math.cos(radians)
+        along_width = width * math.sin(radians)
+
+        # sample by the parametric angle (instead of the polar angle) to keep
+        # points dense at the tips of a long ellipse, where the curve is sharpest
+        radius = math.hypot(along_height, along_width)
+        offset = math.degrees(math.atan2(along_width, along_height))
+        lon, lat, _ = GEOD.fwd([ra], [dec], angle + offset, radius)
 
         lons.append(lon[0])
         lats.append(lat[0])
