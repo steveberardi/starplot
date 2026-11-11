@@ -80,11 +80,12 @@ p = OpticPlot(
     optic=Scope(focal_length=714, eyepiece_focal_length=28, eyepiece_fov=82),
     observer=observer,
     resolution=2800,
-    scale=0.8,
+    scale=0.9,
     style=style,
 )
 
 p.image(IMAGE, CONTROL_POINTS)
+
 p.stars(
     where=[_.magnitude < 11],
     where_labels=[_.magnitude < 8],
@@ -93,16 +94,10 @@ p.stars(
     style__marker__stroke=None,
 )
 
-# Outline M31 (Andromeda Galaxy) and its satellite galaxies M32 and M110, using their size and orientation from the catalog.
-# The catalog's position angle is measured from north toward east, while ellipse() rotates clockwise, so the angle is negated.
-for galaxy in DSO.find(where=[_.m.isin([31, 32, 110])]):
-    p.ellipse(
-        (galaxy.ra, galaxy.dec),
-        height_degrees=galaxy.maj_ax / 60,
-        width_degrees=galaxy.min_ax / 60,
-        angle=-galaxy.angle,
-        style=p.style.dso_galaxy.marker.to_polygon_style(),
-    )
-    p.text(f"M{galaxy.m}", galaxy.ra, galaxy.dec, style=p.style.dso_galaxy.label)
+# Plot Andromeda (M31) and its satellite galaxies (M32, M110)
+p.dsos(
+    where=[_.m.isin([31, 32, 110])],
+    where_true_size=True,
+)
 
 p.export("optic_image_overlay.png")

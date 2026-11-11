@@ -59,10 +59,10 @@ map_gridlines:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-gridlines.png
   phash: cbb44b172d3261a7
 map_label_callables:
-  dhash: 80e0e0c8c8e0a080d8982c0c2cac98e0c09a9c0d0d9c98a0
+  dhash: 80e0e0c8c8e0a080d8982c0c2cac98e0c0989c0d0d9e98a0
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/map-m45-label-callables.png
-  phash: b232c9c94ee74ccc
+  phash: b232c9d94ec74ccc
 map_milky_way_multi_polygon:
   dhash: 93cbe2f2ec6432da93cba2f2ec6632dac2c4b0d96c64129a
   exception: null
@@ -134,10 +134,10 @@ optic_camera_rotated:
   filename: /Users/steveberardi/src/starplot/hash_checks/data/optic-camera-rotated-m45.png
   phash: d0993f62f0af0366
 optic_clipping:
-  dhash: 709838e6d2e2fcfc7098b8e6dae2fcfc70c8bae4f6e2fcf4
+  dhash: 709838e6e2e2fcfc7098b8e6eae2fcfc70c8bae4f6e2fcf4
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/optic-clipping.png
-  phash: 95687a852f953d98
+  phash: 95687a852f953d1a
 optic_iss_moon_transit:
   dhash: f0d48eb0b48ad4f0f0d48ab0b48ac4f0f0d48ab2b4aac4f0
   exception: null
@@ -187,12 +187,12 @@ optic_orion_naked_eye:
   dhash: 64c4a2a092ccf07064d4a4a092ccf07060c4a2a092ccf070
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/optic-orion-naked-eye.png
-  phash: c46e0b957fca2499
+  phash: c46c0bd57fca2499
 optic_orion_nebula_refractor:
-  dhash: f0cca4f072e2ec70f0cca4f072e2ec70f0cca4f072e2ec70
+  dhash: f0cca4f872e2ec70f0cca4f872e2ec70f0cca4f872e2ec70
   exception: null
   filename: /Users/steveberardi/src/starplot/hash_checks/data/optic-orion-nebula-refractor.png
-  phash: 87b4344bcb5a2cb6
+  phash: 87b4344bcb5a2eb4
 optic_polaris_binoculars:
   dhash: f0c48a10908ac070f0c48a10908ac070f0c48a10908ac070
   exception: null

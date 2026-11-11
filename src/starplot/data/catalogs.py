@@ -322,8 +322,8 @@ This is an _abridged_ version of the Big Sky Catalog.
 """
 
 OPEN_NGC = Catalog(
-    path=settings.data_path / "ongc.0.1.2.parquet",
-    url="https://github.com/steveberardi/starplot-ongc/releases/download/v0.1.2/ongc.0.1.2.parquet",
+    path=settings.data_path / "ongc.0.2.0.parquet",
+    url="https://github.com/steveberardi/starplot-ongc/releases/download/v0.2.0/ongc.0.2.0.parquet",
 )
 """
 [OpenNGC](https://github.com/mattiaverga/OpenNGC) catalog, including nebulae outlines.
