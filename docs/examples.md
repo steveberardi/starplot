@@ -80,12 +80,6 @@
         </a>
     </li>
     <li>
-        <a href="examples/map-big-dipper/">
-            <img src="images/examples/map_big_dipper-sm.png" alt="Map of the Big Dipper" class="off-glb" loading="lazy"/>
-            <p class="example-card-title">The Big Dipper</p>
-        </a>
-    </li>
-    <li>
         <a href="examples/optic-iss-transit/">
             <img src="images/examples/optic_iss_transit-sm.png" alt="ISS Moon Transit" class="off-glb" loading="lazy"/>
             <p class="example-card-title">ISS Moon Transit</p>
@@ -107,6 +101,12 @@
         <a href="examples/map-orthographic/">
             <img src="images/examples/map_orthographic-sm.png" alt="Orthographic Map" class="off-glb" loading="lazy"/>
             <p class="example-card-title">Orthographic Map</p>
+        </a>
+    </li>
+    <li>
+        <a href="examples/map-big-dipper/">
+            <img src="images/examples/map_big_dipper-sm.png" alt="Map of the Big Dipper" class="off-glb" loading="lazy"/>
+            <p class="example-card-title">The Big Dipper</p>
         </a>
     </li>
     <li>

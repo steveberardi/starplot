@@ -12,7 +12,7 @@ Starplot is a Python library for creating star charts and maps of the sky
 - <img src="images/examples/map_orion.png" width="600"> <h3>__Maps__</h3> shows an area that you define in one of many available map projections
 - <img src="images/examples/horizon_gradient.png" width="600"> <h3>Horizon Charts</h3> shows the horizon at a specific time and place
 - <img src="images/examples/star_chart_basic.png" height="600" width="600"> <h3>Zenith Charts</h3> shows the entire sky at a specific time and place
-- <img src="images/examples/optic_m45.png" width="600"> <h3>Optic Charts</h3> shows what you'll see through an optic (e.g. telescope) at a specific time and place
+- <img src="images/examples/optic_image_overlay.png" width="600"> <h3>Optic Charts</h3> shows what you'll see through an optic (e.g. telescope) at a specific time and place
 - <img src="images/examples/galaxy.png" height="600" width="600"> <h3>Galaxy Charts</h3> shows the entire sky in galactic coordinates
 
 - <a href="examples/">
@@ -33,8 +33,8 @@ Starplot is a Python library for creating star charts and maps of the sky
     <li><strong>Planets and Deep Sky Objects (DSOs)</strong> - with support for plotting their true extent</li>
     <li><strong>Comets and Satellites</strong> - easy trajectory plotting</li>
     <li><strong>Custom Styles</strong> - for all objects and with 8+ built-in themes</li>
-    <li><strong>Export to SVG or PNG</strong></li>
-    <li><strong>Image overlays</strong></li>
+    <li><strong>Export to SVG or PNG</strong> - with easy scaling for png exports</li>
+    <li><strong>Image overlays</strong> - given a set of control points</li>
     <li><strong>Data Backend</strong> - powered by DuckDB + Ibis for fast object lookup</li>
     <li><strong>Custom Data Catalogs</strong> - with helpers for building and optimizing</li>
     <li><strong>Label Collision Avoidance</strong> - ensuring all labels are readable</li>

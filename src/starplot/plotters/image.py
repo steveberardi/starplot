@@ -159,9 +159,7 @@ class ImagePlotterMixin:
         gid: str = "image",
     ):
         """
-        Overlays an image on the plot, positioned by control points that map pixels in the image to coordinates in the sky.
-
-        The image is transformed to fit the plot's projection, so it will line up with the stars and other objects on the plot.
+        Overlays an image on the plot, positioned by control points that map pixels in the image to coordinates in the sky. The image is transformed to fit the plot's projection, so it will line up with the stars and other objects on the plot.
 
         Args:
             image: Path to an image file, or a Pillow `Image`

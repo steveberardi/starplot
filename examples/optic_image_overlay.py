@@ -67,8 +67,8 @@ style = PlotStyle().extend(
 
 # outline the galaxies instead of filling them, so the photo shows through
 style.dso_galaxy.marker.fill = None
-style.dso_galaxy.marker.stroke = "#e463ed"
-style.dso_galaxy.marker.stroke_width = 4
+style.dso_galaxy.marker.stroke = "#86c7f2"
+style.dso_galaxy.marker.stroke_width = 5
 style.dso_galaxy.marker.opacity = 1
 
 style.dso_galaxy.label.font_size = 72

@@ -8,7 +8,7 @@
 
 <table class="table-coming-soon">
     <tr>
-        <td>v0.23</td>
+        <td>v0.24</td>
         <td>
             <h4>⭐ Next Release ⭐</h4>
             <ul>
@@ -20,7 +20,7 @@
         <td></td>
     </tr>
     <tr>
-        <td>v0.24+</td>
+        <td>v0.25+</td>
         <td>
             <ul>
                 <li>Planet moons</li>
