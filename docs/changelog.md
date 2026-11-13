@@ -10,6 +10,7 @@
     - `bayer_labels` and `flamsteed_labels` are now `star.bayer_label` and `star.flamsteed_label`
     - `constellation_lines`, `constellation_labels`, and `constellation_borders` are now `constellation.line`, `constellation.label`, and `constellation.border`
     - `planets` is now `planet`
+- [**v0.23.1**] Fixes a bug with the stroke width on circle-based markers
 
 ---
 

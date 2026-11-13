@@ -41,7 +41,7 @@ class TestSymbols:
         # THEN it's a group containing a small circle and 4 tick marks, one per side
         assert out == (
             '<g fill="red">\n'
-            '  <circle cx="50" cy="50" r="10.0" />\n'
+            '  <circle cx="50" cy="50" r="10.0" stroke-width="0" />\n'
             '  <line x1="50" y1="40.0" x2="50" y2="30.0" />\n'
             '  <line x1="60.0" y1="50" x2="70.0" y2="50" />\n'
             '  <line x1="50" y1="60.0" x2="50" y2="70.0" />\n'
@@ -60,7 +60,7 @@ class TestSymbols:
         # stroke-width is doubled from the (default) base width of 2
         assert out == (
             '<g fill="red">\n'
-            '  <circle cx="50" cy="50" r="10.0" />\n'
+            '  <circle cx="50" cy="50" r="10.0" stroke-width="0" />\n'
             '  <line x1="32.0" y1="50" x2="68.0" y2="50" stroke-width="4" />\n'
             "</g>"
         )
@@ -223,7 +223,7 @@ class TestSymbols:
         # that inherit stroke styling from the group
         assert out == (
             '<g fill="red">\n'
-            '  <circle cx="50" cy="50" r="10.0" stroke-dasharray="none" />\n'
+            '  <circle cx="50" cy="50" r="10.0" stroke-dasharray="none" stroke-width="0" />\n'
             '  <circle cx="50" cy="50" r="13.888" fill="none" />\n'
             '  <circle cx="50" cy="50" r="17.038" fill="none" />\n'
             "</g>"

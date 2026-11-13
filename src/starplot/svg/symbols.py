@@ -49,7 +49,7 @@ def circle_crosshair(x, y, size, attrs):
     return Group(
         attrs=attrs,
         children=[
-            Circle(cx=x, cy=y, r=r),
+            Circle(cx=x, cy=y, r=r, attrs={"stroke-width": 0}),
             Line(x1=x, y1=y - r, x2=x, y2=y - n),
             Line(x1=x + r, y1=y, x2=x + n, y2=y),
             Line(x1=x, y1=y + r, x2=x, y2=y + n),
@@ -64,7 +64,7 @@ def circle_line(x, y, size, attrs):
     return Group(
         attrs=attrs,
         children=[
-            Circle(cx=x, cy=y, r=r),
+            Circle(cx=x, cy=y, r=r, attrs={"stroke-width": 0}),
             Line(
                 x1=x - n,
                 y1=y,
@@ -72,6 +72,32 @@ def circle_line(x, y, size, attrs):
                 y2=y,
                 attrs={"stroke-width": (attrs.get("stroke-width") or 2) * 2},
             ),
+        ],
+    )
+
+
+def circle_double_border(x: float, y: float, size: float, attrs: dict):
+    # `size` is the diameter of the solid center circle; the rings are outside of it
+    def ring(radius: float):
+        return Circle(
+            cx=x,
+            cy=y,
+            r=round(radius, settings.precision),
+            attrs={"fill": "none"},
+        )
+
+    return Group(
+        attrs=attrs,
+        children=[
+            # the filled center is always solid, even if the border is dashed
+            Circle(
+                cx=x,
+                cy=y,
+                r=round(size / 2, settings.precision),
+                attrs={"stroke-dasharray": "none", "stroke-width": 0},
+            ),
+            ring(size * 0.6944),
+            ring(size * 0.8519),
         ],
     )
 
@@ -305,32 +331,6 @@ def satellite(x: float, y: float, size: float, attrs: dict):
     return Group(
         attrs={**attrs, "transform": f"rotate(-45, {x}, {y})"},
         children=elements,
-    )
-
-
-def circle_double_border(x: float, y: float, size: float, attrs: dict):
-    # `size` is the diameter of the solid center circle; the rings are outside of it
-    def ring(radius: float):
-        return Circle(
-            cx=x,
-            cy=y,
-            r=round(radius, settings.precision),
-            attrs={"fill": "none"},
-        )
-
-    return Group(
-        attrs=attrs,
-        children=[
-            # the filled center is always solid, even if the border is dashed
-            Circle(
-                cx=x,
-                cy=y,
-                r=round(size / 2, settings.precision),
-                attrs={"stroke-dasharray": "none"},
-            ),
-            ring(size * 0.6944),
-            ring(size * 0.8519),
-        ],
     )
 
 
