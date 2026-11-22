@@ -10,7 +10,7 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is (i.e. what you expected to happen and what actually happened instead).
 
-**To Reproduce**
+**Steps To Reproduce**
 Share code that triggers the bug
 
 **Expected behavior**
@@ -22,7 +22,6 @@ If applicable, add screenshots to help explain your problem.
 **Environment Details (please complete the following information):**
 - Starplot version
 - Python version
-- Matplotlib version
 - OS: [e.g. macOS, Ubuntu, Windows, etc]
 
 
