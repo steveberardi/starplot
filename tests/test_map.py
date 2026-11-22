@@ -161,3 +161,16 @@ def test_marker_collision_box_uses_full_marker_extent():
     # past the end of the line
     beyond_line = (x + half_line + 2, y, x + half_line + 4, y + 1)
     assert not p._is_marker_collision(beyond_line)
+
+
+def test_milky_way_outside_extent():
+    # Coma Berenices is far from the Milky Way, so no polygons should be plotted
+    p = MapPlot(
+        projection=Miller(),
+        ra_min=185,
+        ra_max=200,
+        dec_min=20,
+        dec_max=35,
+        resolution=1600,
+    )
+    p.milky_way()
