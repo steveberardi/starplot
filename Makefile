@@ -168,5 +168,6 @@ clean:
 	rm -rf site
 	rm -rf htmlcov
 	rm -f tests/data/*.png
+	rm -f uv.lock
 
 .PHONY: build test shell flit-build flit-publish clean ephemeris examples scripts tutorial list-fonts e2e
